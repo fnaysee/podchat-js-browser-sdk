@@ -1,0 +1,54 @@
+{
+  "name": "podchat-browser",
+  "version": "12.5.0-snapshot.14",
+  "description": "Javascript SDK to use POD's Chat Service - Browser Only",
+  "main": "./src/chat.js",
+  "scripts": {
+    "test": "mocha --reporter spec --exit",
+    "bundle": "browserify browser-bundling.js -o ./dist/podchat-12.5.0.js",
+    "bundle:test": "browserify browser-bundling.js -o ./examples/bundle-test.js",
+    "publish:snapshot": "npm run version:snapshot && npm publish --tag snapshot",
+    "version:snapshot": "npm version prerelease --preid snapshot",
+    "publish:release": "npm run version:release && npm publish",
+    "version:release": "npm version 12.5.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FanapSoft/pod-chat-browser-js-sdk.git"
+  },
+  "keywords": [
+    "POD",
+    "Chat",
+    "Fanap",
+    "Dirana"
+  ],
+  "engines": {
+    "node": ">=4.2.4"
+  },
+  "author": "Masoud Amjadi <masoudmanson@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/FanapSoft/pod-chat-browser-js-sdk/issues"
+  },
+  "homepage": "https://github.com/FanapSoft/pod-chat-browser-js-sdk#readme",
+  "dependencies": {
+    "@sentry/browser": "^6.11.0",
+    "@sentry/tracing": "^6.11.0",
+    "crypto-js": "^4.0.0",
+    "dexie": "^2.0.4",
+    "dompurify": "^2.3.3",
+    "faker": "^5.5.3",
+    "kurento-utils": "^6.16.0",
+    "node-rsa": "^1.1.1",
+    "podasync-ws-only": "^2.7.9",
+    "query-string": "^6.8.1",
+    "webrtc-adapter": "^8.0.0"
+  },
+  "devDependencies": {
+    "mocha": "^8.1.1"
+  },
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  }
+}
