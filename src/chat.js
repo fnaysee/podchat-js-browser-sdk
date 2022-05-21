@@ -42,7 +42,7 @@
 
         if (!!Sentry) {
             Sentry.init({
-                dsn: 'https://784a14966f6a416b8b58a4b144aef0f5@talk-sentry.sakku-khatam.ir/4',
+                dsn: 'http://784a14966f6a416b8b58a4b144aef0f5@talksentry.sakku-khatam.ir:9000/4',
                 attachStacktrace: true
             });
             Sentry.setContext("Chat Params", params);
