@@ -154,6 +154,7 @@
                 'VOICE': 0x0,
                 'VIDEO': 0x1
             },
+            generalTypeCode = params.typeCode,
             callOptions = params.callOptions,
             useInternalTurnAddress = !!(params.callOptions && params.callOptions.useInternalTurnAddress),
             callTurnIp = (params.callOptions
@@ -1156,7 +1157,7 @@
             callReceived = function (params, callback) {
                 var receiveCallData = {
                     chatMessageVOType: chatMessageVOTypes.RECEIVE_CALL_REQUEST,
-                    typeCode: params.typeCode,
+                    typeCode: generalTypeCode, //params.typeCode,
                     pushMsgType: 3,
                     token: token
                 };
@@ -1191,7 +1192,7 @@
 
                 var endCallData = {
                     chatMessageVOType: chatMessageVOTypes.END_CALL_REQUEST,
-                    typeCode: params.typeCode,
+                    typeCode: generalTypeCode, //params.typeCode,
                     pushMsgType: 3,
                     token: token
                 };
@@ -3099,7 +3100,7 @@
         this.startCall = function (params, callback) {
             var startCallData = {
                 chatMessageVOType: chatMessageVOTypes.CALL_REQUEST,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 pushMsgType: 3,
                 token: token
             }, content = {
@@ -3193,7 +3194,7 @@
         this.startGroupCall = function (params, callback) {
             var startCallData = {
                 chatMessageVOType: chatMessageVOTypes.GROUP_CALL_REQUEST,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 pushMsgType: 3,
                 token: token
             }, content = {
@@ -3280,7 +3281,7 @@
         this.terminateCall = function (params, callback) {
             var terminateCallData = {
                 chatMessageVOType: chatMessageVOTypes.TERMINATE_CALL,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 pushMsgType: 3,
                 token: token
             }, content = {};
@@ -3315,7 +3316,7 @@
         this.acceptCall = function (params, callback) {
             var acceptCallData = {
                 chatMessageVOType: chatMessageVOTypes.ACCEPT_CALL,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 pushMsgType: 3,
                 token: token
             }, content = {};
@@ -3369,7 +3370,7 @@
         this.rejectCall = this.cancelCall = function (params, callback) {
             var rejectCallData = {
                 chatMessageVOType: chatMessageVOTypes.REJECT_CALL,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 pushMsgType: 3,
                 token: token
             };
@@ -3404,7 +3405,7 @@
         this.startRecordingCall = function (params, callback) {
             var recordCallData = {
                 chatMessageVOType: chatMessageVOTypes.RECORD_CALL,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 pushMsgType: 3,
                 token: token,
                 content: {}
@@ -3447,7 +3448,7 @@
         this.stopRecordingCall = function (params, callback) {
             var stopRecordingCallData = {
                 chatMessageVOType: chatMessageVOTypes.END_RECORD_CALL,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 pushMsgType: 3,
                 token: token
             };
@@ -3480,7 +3481,7 @@
         this.startScreenShare = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.START_SCREEN_SHARE,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 pushMsgType: 3,
                 token: token
             };
@@ -3539,7 +3540,7 @@
         this.endScreenShare = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.END_SCREEN_SHARE,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 pushMsgType: 3,
                 token: token
             };
@@ -3636,7 +3637,7 @@
         this.getCallsList = function (params, callback) {
             var getCallListData = {
                 chatMessageVOType: chatMessageVOTypes.GET_CALLS,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 pushMsgType: 3,
                 token: token
             }, content = {};
@@ -3761,7 +3762,7 @@
         this.deleteFromCallList = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.DELETE_FROM_CALL_HISTORY,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: []
             };
 
@@ -3807,7 +3808,7 @@
         this.getCallParticipants = function (params, callback) {
             var sendMessageParams = {
                 chatMessageVOType: chatMessageVOTypes.ACTIVE_CALL_PARTICIPANTS,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode,//params.typeCode,
                 content: {}
             };
 
@@ -3890,7 +3891,7 @@
 
             var sendMessageParams = {
                 chatMessageVOType: chatMessageVOTypes.ADD_CALL_PARTICIPANT,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode,//params.typeCode,
                 content: []
             };
 
@@ -3950,7 +3951,7 @@
 
             var sendMessageParams = {
                 chatMessageVOType: chatMessageVOTypes.REMOVE_CALL_PARTICIPANT,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: []
             };
 
@@ -3990,7 +3991,7 @@
 
             var sendMessageParams = {
                 chatMessageVOType: chatMessageVOTypes.MUTE_CALL_PARTICIPANT,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: []
             };
 
@@ -4035,7 +4036,7 @@
 
             var sendMessageParams = {
                 chatMessageVOType: chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: []
             };
 
@@ -4090,7 +4091,7 @@
         this.turnOnVideoCall = function (params, callback) {
             var turnOnVideoData = {
                 chatMessageVOType: chatMessageVOTypes.TURN_ON_VIDEO_CALL,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode,//params.typeCode,
                 pushMsgType: 3,
                 token: token
             };
@@ -4139,7 +4140,7 @@
         this.turnOffVideoCall = function (params, callback) {
             var turnOffVideoData = {
                 chatMessageVOType: chatMessageVOTypes.TURN_OFF_VIDEO_CALL,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode,//params.typeCode,
                 pushMsgType: 3,
                 token: token
             };

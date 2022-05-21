@@ -1257,7 +1257,7 @@
 
                     return chatMessaging.sendMessage({
                         chatMessageVOType: chatMessageVOTypes.USER_INFO,
-                        typeCode: params.typeCode
+                        typeCode: generalTypeCode //params.typeCode
                     }, {
                         onResult: function (result) {
                             var returnData = {
@@ -1528,6 +1528,10 @@
              * @return {undefined}
              */
             chatMessageHandler = function (chatMessage) {
+                if(chatMessage.typeCode !== generalTypeCode) {
+                    return;
+                }
+
                 var threadId = chatMessage.subjectId,
                     type = chatMessage.type,
                     messageContent = (typeof chatMessage.content === 'string' && Utility.isValidJson(chatMessage.content))
@@ -4623,7 +4627,7 @@
 
                 var sendMessageParams = {
                     chatMessageVOType: chatMessageVOTypes.GET_THREADS,
-                    typeCode: params.typeCode,
+                    typeCode: generalTypeCode, //params.typeCode,
                     content: content
                 };
 
@@ -4908,7 +4912,7 @@
             getAllThreads = function (params, callback) {
                 var sendMessageParams = {
                     chatMessageVOType: chatMessageVOTypes.GET_THREADS,
-                    typeCode: params.typeCode,
+                    typeCode: generalTypeCode, //params.typeCode,
                     content: {}
                 };
 
@@ -4983,7 +4987,7 @@
                 if (parseInt(params.threadId) > 0) {
                     var sendMessageParams = {
                             chatMessageVOType: chatMessageVOTypes.GET_HISTORY,
-                            typeCode: params.typeCode,
+                            typeCode: generalTypeCode, //params.typeCode,
                             content: {},
                             subjectId: params.threadId
                         },
@@ -6170,7 +6174,7 @@
             updateThreadInfo = function (params, callback) {
                 var updateThreadInfoData = {
                         chatMessageVOType: chatMessageVOTypes.UPDATE_THREAD_INFO,
-                        typeCode: params.typeCode,
+                        typeCode: generalTypeCode, //params.typeCode,
                         content: {},
                         pushMsgType: 3,
                         token: token
@@ -6236,7 +6240,7 @@
                             putInChatUploadQueue({
                                 message: {
                                     chatMessageVOType: chatMessageVOTypes.UPDATE_THREAD_INFO,
-                                    typeCode: params.typeCode,
+                                    typeCode: generalTypeCode, //params.typeCode,
                                     subjectId: threadId,
                                     content: threadInfoContent,
                                     metadata: threadInfoContent.metadata,
@@ -6287,7 +6291,7 @@
 
                         return chatMessaging.sendMessage({
                             chatMessageVOType: chatMessageVOTypes.UPDATE_THREAD_INFO,
-                            typeCode: params.typeCode,
+                            typeCode: generalTypeCode, //params.typeCode,
                             subjectId: threadId,
                             content: threadInfoContent,
                             metadata: threadInfoContent.metadata,
@@ -6306,7 +6310,7 @@
 
                         return chatMessaging.sendMessage({
                             chatMessageVOType: chatMessageVOTypes.UPDATE_THREAD_INFO,
-                            typeCode: params.typeCode,
+                            typeCode: generalTypeCode,//params.typeCode,
                             subjectId: threadId,
                             content: threadInfoContent,
                             metadata: threadInfoContent.metadata,
@@ -6406,7 +6410,7 @@
             getThreadParticipants = function (params, callback) {
                 var sendMessageParams = {
                         chatMessageVOType: chatMessageVOTypes.THREAD_PARTICIPANTS,
-                        typeCode: params.typeCode,
+                        typeCode: generalTypeCode,//params.typeCode,
                         content: {},
                         subjectId: params.threadId
                     },
@@ -6647,7 +6651,7 @@
             deliver = function (params) {
                 return chatMessaging.sendMessage({
                     chatMessageVOType: chatMessageVOTypes.DELIVERY,
-                    typeCode: params.typeCode,
+                    typeCode: generalTypeCode, //params.typeCode,
                     content: params.messageId,
                     pushMsgType: 3
                 });
@@ -6667,7 +6671,7 @@
             seen = function (params) {
                 return chatMessaging.sendMessage({
                     chatMessageVOType: chatMessageVOTypes.SEEN,
-                    typeCode: params.typeCode,
+                    typeCode: generalTypeCode, //params.typeCode,
                     content: params.messageId,
                     pushMsgType: 3
                 });
@@ -8668,7 +8672,7 @@
                         putInChatUploadQueue({
                             message: {
                                 chatMessageVOType: chatMessageVOTypes.MESSAGE,
-                                typeCode: params.typeCode,
+                                typeCode: generalTypeCode, //params.typeCode,
                                 messageType: (params.messageType && typeof params.messageType.toUpperCase() !== 'undefined' && chatMessageTypes[params.messageType.toUpperCase()] > 0) ? chatMessageTypes[params.messageType.toUpperCase()] : 1,
                                 subjectId: params.threadId,
                                 repliedTo: params.repliedTo,
@@ -9457,7 +9461,7 @@
             setRoleToUser = function (params, callback) {
                 var setRoleData = {
                     chatMessageVOType: chatMessageVOTypes.SET_ROLE_TO_USER,
-                    typeCode: params.typeCode,
+                    typeCode: generalTypeCode, //params.typeCode,
                     content: [],
                     pushMsgType: 3,
                     token: token
@@ -9496,7 +9500,7 @@
             removeRoleFromUser = function (params, callback) {
                 var setAdminData = {
                     chatMessageVOType: chatMessageVOTypes.REMOVE_ROLE_FROM_USER,
-                    typeCode: params.typeCode,
+                    typeCode: generalTypeCode, //params.typeCode,
                     content: [],
                     pushMsgType: 3,
                     token: token
@@ -9535,7 +9539,7 @@
             unPinMessage = function (params, callback) {
                 return chatMessaging.sendMessage({
                     chatMessageVOType: chatMessageVOTypes.UNPIN_MESSAGE,
-                    typeCode: params.typeCode,
+                    typeCode: generalTypeCode, //params.typeCode,
                     subjectId: params.messageId,
                     content: JSON.stringify({
                         'notifyAll': (typeof params.notifyAll === 'boolean') ? params.notifyAll : false
@@ -9994,7 +9998,7 @@
             return getHistory({
                 threadId: params.threadId,
                 allMentioned: true,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode,//params.typeCode,
                 count: params.count || 50,
                 offset: params.offset || 0,
                 cache: false,
@@ -10009,7 +10013,7 @@
             return getHistory({
                 threadId: params.threadId,
                 unreadMentioned: true,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode,//params.typeCode,
                 count: params.count || 50,
                 offset: params.offset || 0,
                 cache: false,
@@ -10023,7 +10027,7 @@
         this.getAllUnreadMessagesCount = function (params, callback) {
             return chatMessaging.sendMessage({
                 chatMessageVOType: chatMessageVOTypes.ALL_UNREAD_MESSAGE_COUNT,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode,//params.typeCode,
                 content: JSON.stringify({
                     'mute': (typeof params.countMuteThreads === 'boolean') ? params.countMuteThreads : false
                 }),
@@ -10090,7 +10094,7 @@
 
             var sendMessageParams = {
                 chatMessageVOType: chatMessageVOTypes.GET_CONTACTS,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: content
             };
 
@@ -10330,7 +10334,7 @@
              */
             var sendMessageParams = {
                 chatMessageVOType: chatMessageVOTypes.ADD_PARTICIPANT,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: []
             };
             if (params) {
@@ -10394,7 +10398,7 @@
 
             var sendMessageParams = {
                 chatMessageVOType: chatMessageVOTypes.REMOVE_PARTICIPANT,
-                typeCode: params.typeCode
+                typeCode: generalTypeCode //params.typeCode
             };
 
             if (params) {
@@ -10441,7 +10445,7 @@
 
             var sendMessageParams = {
                 chatMessageVOType: chatMessageVOTypes.LEAVE_THREAD,
-                typeCode: params.typeCode
+                typeCode: generalTypeCode//params.typeCode
             };
 
             if (params) {
@@ -10594,7 +10598,7 @@
 
             var sendMessageParams = {
                 chatMessageVOType: chatMessageVOTypes.CREATE_THREAD,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode,//params.typeCode,
                 content: content
             };
 
@@ -10685,7 +10689,7 @@
 
             var sendMessageParams = {
                 chatMessageVOType: chatMessageVOTypes.CREATE_THREAD,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode,//params.typeCode,
                 content: content
             };
 
@@ -10724,7 +10728,7 @@
             putInChatSendQueue({
                 message: {
                     chatMessageVOType: chatMessageVOTypes.MESSAGE,
-                    typeCode: params.typeCode,
+                    typeCode: generalTypeCode, //params.typeCode,
                     messageType: (params.messageType && typeof params.messageType.toUpperCase() !== 'undefined' && chatMessageTypes[params.messageType.toUpperCase()] > 0) ? chatMessageTypes[params.messageType.toUpperCase()] : chatMessageTypes.TEXT,
                     subjectId: params.threadId,
                     repliedTo: params.repliedTo,
@@ -10752,7 +10756,7 @@
 
             return chatMessaging.sendMessage({
                 chatMessageVOType: chatMessageVOTypes.BOT_MESSAGE,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 subjectId: params.messageId,
                 content: params.content,
                 uniqueId: params.uniqueId,
@@ -10821,7 +10825,7 @@
             }
             var sendMessageParams = {
                 chatMessageVOType: chatMessageVOTypes.CREATE_THREAD,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: content
             };
             return chatMessaging.sendMessage(sendMessageParams, {
@@ -11002,7 +11006,7 @@
 
             var clearHistoryParams = {
                 chatMessageVOType: chatMessageVOTypes.CLEAR_HISTORY,
-                typeCode: params.typeCode
+                typeCode: generalTypeCode, //params.typeCode
             };
 
             if (params) {
@@ -11081,7 +11085,7 @@
         this.editMessage = function (params, callback) {
             return chatMessaging.sendMessage({
                 chatMessageVOType: chatMessageVOTypes.EDIT_MESSAGE,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 messageType: params.messageType,
                 subjectId: params.messageId,
                 repliedTo: params.repliedTo,
@@ -11159,7 +11163,7 @@
         this.deleteMessage = function (params, callback) {
             return chatMessaging.sendMessage({
                 chatMessageVOType: chatMessageVOTypes.DELETE_MESSAGE,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 subjectId: params.messageId,
                 uniqueId: params.uniqueId,
                 content: JSON.stringify({
@@ -11280,7 +11284,7 @@
 
             return chatMessaging.sendMessage({
                 chatMessageVOType: chatMessageVOTypes.DELETE_MESSAGE,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: {
                     uniqueIds: uniqueIdsList,
                     ids: messageIdsList,
@@ -11302,7 +11306,7 @@
             putInChatSendQueue({
                 message: {
                     chatMessageVOType: chatMessageVOTypes.MESSAGE,
-                    typeCode: params.typeCode,
+                    typeCode: generalTypeCode, //params.typeCode,
                     messageType: 1,
                     subjectId: params.threadId,
                     repliedTo: params.repliedTo,
@@ -11347,7 +11351,7 @@
                 putInChatUploadQueue({
                     message: {
                         chatMessageVOType: chatMessageVOTypes.MESSAGE,
-                        typeCode: params.typeCode,
+                        typeCode: generalTypeCode, //params.typeCode,
                         messageType: (params.messageType && typeof params.messageType.toUpperCase() !== 'undefined' && chatMessageTypes[params.messageType.toUpperCase()] > 0) ? chatMessageTypes[params.messageType.toUpperCase()] : 1,
                         subjectId: params.threadId,
                         repliedTo: params.repliedTo,
@@ -11438,7 +11442,7 @@
             putInChatSendQueue({
                 message: {
                     chatMessageVOType: chatMessageVOTypes.FORWARD_MESSAGE,
-                    typeCode: params.typeCode,
+                    typeCode: generalTypeCode,//params.typeCode,
                     subjectId: params.threadId,
                     repliedTo: params.repliedTo,
                     content: messageIdsList,
@@ -11487,7 +11491,7 @@
 
             var deliveryListData = {
                 chatMessageVOType: chatMessageVOTypes.GET_MESSAGE_DELEVERY_PARTICIPANTS,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode,//params.typeCode,
                 content: {},
                 pushMsgType: 3,
                 token: token,
@@ -11515,7 +11519,7 @@
         this.getMessageSeenList = function (params, callback) {
             var seenListData = {
                 chatMessageVOType: chatMessageVOTypes.GET_MESSAGE_SEEN_PARTICIPANTS,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: {},
                 pushMsgType: 3,
                 token: token,
@@ -11547,7 +11551,7 @@
         this.muteThread = function (params, callback) {
             return chatMessaging.sendMessage({
                 chatMessageVOType: chatMessageVOTypes.MUTE_THREAD,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 subjectId: params.threadId,
                 content: {},
                 pushMsgType: 3,
@@ -11562,7 +11566,7 @@
         this.unMuteThread = function (params, callback) {
             return chatMessaging.sendMessage({
                 chatMessageVOType: chatMessageVOTypes.UNMUTE_THREAD,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 subjectId: params.threadId,
                 content: {},
                 pushMsgType: 3,
@@ -11577,7 +11581,7 @@
         this.closeThread = function (params, callback) {
             return chatMessaging.sendMessage({
                 chatMessageVOType: chatMessageVOTypes.CLOSE_THREAD,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 subjectId: params.threadId,
                 content: {},
                 pushMsgType: 3,
@@ -11592,7 +11596,7 @@
         this.joinPublicThread = function (params, callback) {
             var joinThreadData = {
                 chatMessageVOType: chatMessageVOTypes.JOIN_THREAD,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: '',
                 pushMsgType: 3,
                 token: token
@@ -11612,7 +11616,7 @@
         this.isPublicThreadNameAvailable = function (params, callback) {
             var isNameAvailableData = {
                 chatMessageVOType: chatMessageVOTypes.IS_NAME_AVAILABLE,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: '',
                 pushMsgType: 3,
                 token: token
@@ -11632,7 +11636,7 @@
         this.changeThreadPrivacy = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.CHANGE_THREAD_PRIVACY,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 pushMsgType: 3,
                 content: {},
                 token: token,
@@ -11690,7 +11694,7 @@
         this.pinThread = function (params, callback) {
             return chatMessaging.sendMessage({
                 chatMessageVOType: chatMessageVOTypes.PIN_THREAD,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 subjectId: params.threadId,
                 content: {},
                 pushMsgType: 3,
@@ -11705,7 +11709,7 @@
         this.unPinThread = function (params, callback) {
             return chatMessaging.sendMessage({
                 chatMessageVOType: chatMessageVOTypes.UNPIN_THREAD,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 subjectId: params.threadId,
                 content: {},
                 pushMsgType: 3,
@@ -11720,7 +11724,7 @@
         this.deleteThread = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.DELETE_MESSAGE_THREAD,
-                typeCode: params.typeCode
+                typeCode: generalTypeCode//params.typeCode
             };
 
             if (params) {
@@ -11755,7 +11759,7 @@
         this.pinMessage = function (params, callback) {
             return chatMessaging.sendMessage({
                 chatMessageVOType: chatMessageVOTypes.PIN_MESSAGE,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode,//params.typeCode,
                 subjectId: params.messageId,
                 content: JSON.stringify({
                     'notifyAll': (typeof params.notifyAll === 'boolean') ? params.notifyAll : false
@@ -11774,7 +11778,7 @@
         this.spamPrivateThread = function (params, callback) {
             var spamData = {
                 chatMessageVOType: chatMessageVOTypes.SPAM_PV_THREAD,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 pushMsgType: 3,
                 token: token,
                 timeout: params.timeout
@@ -11797,7 +11801,7 @@
 
             var blockData = {
                 chatMessageVOType: chatMessageVOTypes.BLOCK,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: {},
                 pushMsgType: 3,
                 token: token,
@@ -11831,7 +11835,7 @@
         this.unblock = function (params, callback) {
             var unblockData = {
                 chatMessageVOType: chatMessageVOTypes.UNBLOCK,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 pushMsgType: 3,
                 token: token,
                 content: {},
@@ -11887,7 +11891,7 @@
 
             var getBlockedData = {
                 chatMessageVOType: chatMessageVOTypes.GET_BLOCKED,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: content,
                 pushMsgType: 3,
                 token: token,
@@ -11940,7 +11944,7 @@
 
             var getNotSeenDurationData = {
                 chatMessageVOType: chatMessageVOTypes.GET_NOT_SEEN_DURATION,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: content,
                 pushMsgType: 3,
                 token: token,
@@ -11981,11 +11985,11 @@
                     data.lastName = '';
                 }
 
-                if (typeof params.typeCode === 'string') {
+/*                if (typeof params.typeCode === 'string') {
                     data.typeCode = params.typeCode;
-                } else if (generalTypeCode) {
+                } else if (generalTypeCode) {*/
                     data.typeCode = generalTypeCode;
-                }
+                //}
 
                 if (typeof params.cellphoneNumber === 'string') {
                     data.cellphoneNumber = params.cellphoneNumber;
@@ -12570,9 +12574,10 @@
                     data.id = whereClause.id = params.id;
                 }
 
-                if (parseInt(params.typeCode) > 0) {
-                    data.typeCode = whereClause.typeCode = params.typeCode;
-                }
+                // if (parseInt(params.typeCode) > 0) {
+                //     data.typeCode = whereClause.typeCode = params.typeCode;
+                // }
+                data.typeCode = whereClause.typeCode = generalTypeCode;//params.typeCode;
 
                 if (parseInt(params.size) > 0) {
                     data.size = params.size;
@@ -12858,7 +12863,7 @@
         this.createBot = function (params, callback) {
             var createBotData = {
                 chatMessageVOType: chatMessageVOTypes.CREATE_BOT,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode,//params.typeCode,
                 content: '',
                 pushMsgType: 3,
                 token: token
@@ -12898,7 +12903,7 @@
         this.defineBotCommand = function (params, callback) {
             var defineBotCommandData = {
                 chatMessageVOType: chatMessageVOTypes.DEFINE_BOT_COMMAND,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: {},
                 pushMsgType: 3,
                 token: token
@@ -12943,7 +12948,7 @@
         this.removeBotCommand = function (params, callback) {
             var defineBotCommandData = {
                 chatMessageVOType: chatMessageVOTypes.REMOVE_BOT_COMMANDS,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: {},
                 pushMsgType: 3,
                 token: token
@@ -12993,7 +12998,7 @@
         this.startBot = function (params, callback) {
             var startBotData = {
                 chatMessageVOType: chatMessageVOTypes.START_BOT,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: {},
                 pushMsgType: 3,
                 token: token
@@ -13034,7 +13039,7 @@
         this.stopBot = function (params, callback) {
             var stopBotData = {
                 chatMessageVOType: chatMessageVOTypes.STOP_BOT,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: {},
                 pushMsgType: 3,
                 token: token
@@ -13075,7 +13080,7 @@
         this.getBotCommandsList = function (params, callback) {
             var getBotCommandsListData = {
                 chatMessageVOType: chatMessageVOTypes.BOT_COMMANDS,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: {},
                 pushMsgType: 3,
                 token: token
@@ -13112,7 +13117,7 @@
         this.getThreadAllBots = function (params, callback) {
             var getThreadBotsData = {
                 chatMessageVOType: chatMessageVOTypes.THREAD_ALL_BOTS,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: {},
                 pushMsgType: 3,
                 token: token
@@ -13147,7 +13152,7 @@
         this.createTag = function (params, callback) {
             var createTagData = {
                 chatMessageVOType: chatMessageVOTypes.CREATE_TAG,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: {},
                 pushMsgType: 3,
                 token: token
@@ -13181,7 +13186,7 @@
         this.editTag = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.EDIT_TAG,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: {},
                 pushMsgType: 3,
                 token: token
@@ -13225,7 +13230,7 @@
         this.deleteTag = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.DELETE_TAG,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: {},
                 pushMsgType: 3,
                 token: token
@@ -13259,7 +13264,7 @@
         this.getTagList = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.GET_TAG_LIST,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: {},
                 pushMsgType: 3,
                 token: token
@@ -13275,7 +13280,7 @@
         this.addTagParticipants = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.ADD_TAG_PARTICIPANT,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: []
             };
 
@@ -13315,7 +13320,7 @@
         this.removeTagParticipants = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.REMOVE_TAG_PARTICIPANT,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: []
             };
 
@@ -13355,7 +13360,7 @@
         this.registerAssistant = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.REGISTER_ASSISTANT,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: []
             };
 
@@ -13424,7 +13429,7 @@
         this.deactivateAssistant = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.DEACTIVATE_ASSISTANT,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: []
             };
 
@@ -13486,7 +13491,7 @@
         this.blockAssistant = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.BLOCK_ASSISTANT,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: []
             };
 
@@ -13548,7 +13553,7 @@
         this.unblockAssistant = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.UNBLOCK_ASSISTANT,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: []
             };
 
@@ -13610,7 +13615,7 @@
         this.getAssistantsList = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.GET_ASSISTANTS,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: {},
                 pushMsgType: 3,
                 token: token
@@ -13647,7 +13652,7 @@
         this.getBlockedAssistantsList = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.BLOCKED_ASSISTANTS,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: {},
                 pushMsgType: 3,
                 token: token
@@ -13684,7 +13689,7 @@
         this.getAssistantsHistory = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.ASSISTANT_HISTORY,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: {
                     offset: +params.offset > 0 ? +params.offset : 0,
                     count: +params.count > 0 ? +params.count : config.getHistoryCount
@@ -13811,7 +13816,7 @@
             var stackArr = [], wantedCount = 10000, stepCount = 500, offset = 0;
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.EXPORT_CHAT,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode,//params.typeCode,
                 content: {
                     offset: +params.offset > 0 ? +params.offset : offset,
                     count: +params.count > 0 ? +params.count : wantedCount,//config.getHistoryCount,
@@ -14015,7 +14020,7 @@
 
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.MUTUAL_GROUPS,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode,//params.typeCode,
                 content: {
                     count: count,
                     offset: offset
@@ -14097,7 +14102,7 @@
 
             var locationPingData = {
                 chatMessageVOType: chatMessageVOTypes.LOCATION_PING,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 pushMsgType: 3,
                 token: token
             }, content = {};
