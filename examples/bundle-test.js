@@ -56365,6 +56365,7 @@ WildEmitter.mixin(WildEmitter);
                 'VOICE': 0x0,
                 'VIDEO': 0x1
             },
+            generalTypeCode = params.typeCode,
             callOptions = params.callOptions,
             useInternalTurnAddress = !!(params.callOptions && params.callOptions.useInternalTurnAddress),
             callTurnIp = (params.callOptions
@@ -57367,7 +57368,7 @@ WildEmitter.mixin(WildEmitter);
             callReceived = function (params, callback) {
                 var receiveCallData = {
                     chatMessageVOType: chatMessageVOTypes.RECEIVE_CALL_REQUEST,
-                    typeCode: params.typeCode,
+                    typeCode: generalTypeCode, //params.typeCode,
                     pushMsgType: 3,
                     token: token
                 };
@@ -57402,7 +57403,7 @@ WildEmitter.mixin(WildEmitter);
 
                 var endCallData = {
                     chatMessageVOType: chatMessageVOTypes.END_CALL_REQUEST,
-                    typeCode: params.typeCode,
+                    typeCode: generalTypeCode, //params.typeCode,
                     pushMsgType: 3,
                     token: token
                 };
@@ -59310,7 +59311,7 @@ WildEmitter.mixin(WildEmitter);
         this.startCall = function (params, callback) {
             var startCallData = {
                 chatMessageVOType: chatMessageVOTypes.CALL_REQUEST,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 pushMsgType: 3,
                 token: token
             }, content = {
@@ -59404,7 +59405,7 @@ WildEmitter.mixin(WildEmitter);
         this.startGroupCall = function (params, callback) {
             var startCallData = {
                 chatMessageVOType: chatMessageVOTypes.GROUP_CALL_REQUEST,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 pushMsgType: 3,
                 token: token
             }, content = {
@@ -59491,7 +59492,7 @@ WildEmitter.mixin(WildEmitter);
         this.terminateCall = function (params, callback) {
             var terminateCallData = {
                 chatMessageVOType: chatMessageVOTypes.TERMINATE_CALL,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 pushMsgType: 3,
                 token: token
             }, content = {};
@@ -59526,7 +59527,7 @@ WildEmitter.mixin(WildEmitter);
         this.acceptCall = function (params, callback) {
             var acceptCallData = {
                 chatMessageVOType: chatMessageVOTypes.ACCEPT_CALL,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 pushMsgType: 3,
                 token: token
             }, content = {};
@@ -59580,7 +59581,7 @@ WildEmitter.mixin(WildEmitter);
         this.rejectCall = this.cancelCall = function (params, callback) {
             var rejectCallData = {
                 chatMessageVOType: chatMessageVOTypes.REJECT_CALL,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 pushMsgType: 3,
                 token: token
             };
@@ -59615,7 +59616,7 @@ WildEmitter.mixin(WildEmitter);
         this.startRecordingCall = function (params, callback) {
             var recordCallData = {
                 chatMessageVOType: chatMessageVOTypes.RECORD_CALL,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 pushMsgType: 3,
                 token: token,
                 content: {}
@@ -59658,7 +59659,7 @@ WildEmitter.mixin(WildEmitter);
         this.stopRecordingCall = function (params, callback) {
             var stopRecordingCallData = {
                 chatMessageVOType: chatMessageVOTypes.END_RECORD_CALL,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 pushMsgType: 3,
                 token: token
             };
@@ -59691,7 +59692,7 @@ WildEmitter.mixin(WildEmitter);
         this.startScreenShare = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.START_SCREEN_SHARE,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 pushMsgType: 3,
                 token: token
             };
@@ -59750,7 +59751,7 @@ WildEmitter.mixin(WildEmitter);
         this.endScreenShare = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.END_SCREEN_SHARE,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 pushMsgType: 3,
                 token: token
             };
@@ -59847,7 +59848,7 @@ WildEmitter.mixin(WildEmitter);
         this.getCallsList = function (params, callback) {
             var getCallListData = {
                 chatMessageVOType: chatMessageVOTypes.GET_CALLS,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 pushMsgType: 3,
                 token: token
             }, content = {};
@@ -59972,7 +59973,7 @@ WildEmitter.mixin(WildEmitter);
         this.deleteFromCallList = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.DELETE_FROM_CALL_HISTORY,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: []
             };
 
@@ -60018,7 +60019,7 @@ WildEmitter.mixin(WildEmitter);
         this.getCallParticipants = function (params, callback) {
             var sendMessageParams = {
                 chatMessageVOType: chatMessageVOTypes.ACTIVE_CALL_PARTICIPANTS,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode,//params.typeCode,
                 content: {}
             };
 
@@ -60101,7 +60102,7 @@ WildEmitter.mixin(WildEmitter);
 
             var sendMessageParams = {
                 chatMessageVOType: chatMessageVOTypes.ADD_CALL_PARTICIPANT,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode,//params.typeCode,
                 content: []
             };
 
@@ -60161,7 +60162,7 @@ WildEmitter.mixin(WildEmitter);
 
             var sendMessageParams = {
                 chatMessageVOType: chatMessageVOTypes.REMOVE_CALL_PARTICIPANT,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: []
             };
 
@@ -60201,7 +60202,7 @@ WildEmitter.mixin(WildEmitter);
 
             var sendMessageParams = {
                 chatMessageVOType: chatMessageVOTypes.MUTE_CALL_PARTICIPANT,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: []
             };
 
@@ -60246,7 +60247,7 @@ WildEmitter.mixin(WildEmitter);
 
             var sendMessageParams = {
                 chatMessageVOType: chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: []
             };
 
@@ -60301,7 +60302,7 @@ WildEmitter.mixin(WildEmitter);
         this.turnOnVideoCall = function (params, callback) {
             var turnOnVideoData = {
                 chatMessageVOType: chatMessageVOTypes.TURN_ON_VIDEO_CALL,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode,//params.typeCode,
                 pushMsgType: 3,
                 token: token
             };
@@ -60350,7 +60351,7 @@ WildEmitter.mixin(WildEmitter);
         this.turnOffVideoCall = function (params, callback) {
             var turnOffVideoData = {
                 chatMessageVOType: chatMessageVOTypes.TURN_OFF_VIDEO_CALL,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode,//params.typeCode,
                 pushMsgType: 3,
                 token: token
             };
@@ -60597,7 +60598,7 @@ WildEmitter.mixin(WildEmitter);
 
         if (!!Sentry) {
             Sentry.init({
-                dsn: 'https://784a14966f6a416b8b58a4b144aef0f5@talk-sentry.sakku-khatam.ir/4',
+                dsn: 'http://784a14966f6a416b8b58a4b144aef0f5@talksentry.sakku-khatam.ir:9000/4',
                 attachStacktrace: true
             });
             Sentry.setContext("Chat Params", params);
@@ -61812,7 +61813,7 @@ WildEmitter.mixin(WildEmitter);
 
                     return chatMessaging.sendMessage({
                         chatMessageVOType: chatMessageVOTypes.USER_INFO,
-                        typeCode: params.typeCode
+                        typeCode: generalTypeCode//params.typeCode
                     }, {
                         onResult: function (result) {
                             var returnData = {
@@ -62083,6 +62084,10 @@ WildEmitter.mixin(WildEmitter);
              * @return {undefined}
              */
             chatMessageHandler = function (chatMessage) {
+                if(chatMessage.typeCode && chatMessage.typeCode !== generalTypeCode) {
+                    return;
+                }
+
                 var threadId = chatMessage.subjectId,
                     type = chatMessage.type,
                     messageContent = (typeof chatMessage.content === 'string' && Utility.isValidJson(chatMessage.content))
@@ -65178,7 +65183,7 @@ WildEmitter.mixin(WildEmitter);
 
                 var sendMessageParams = {
                     chatMessageVOType: chatMessageVOTypes.GET_THREADS,
-                    typeCode: params.typeCode,
+                    typeCode: generalTypeCode, //params.typeCode,
                     content: content
                 };
 
@@ -65463,7 +65468,7 @@ WildEmitter.mixin(WildEmitter);
             getAllThreads = function (params, callback) {
                 var sendMessageParams = {
                     chatMessageVOType: chatMessageVOTypes.GET_THREADS,
-                    typeCode: params.typeCode,
+                    typeCode: generalTypeCode, //params.typeCode,
                     content: {}
                 };
 
@@ -65538,7 +65543,7 @@ WildEmitter.mixin(WildEmitter);
                 if (parseInt(params.threadId) > 0) {
                     var sendMessageParams = {
                             chatMessageVOType: chatMessageVOTypes.GET_HISTORY,
-                            typeCode: params.typeCode,
+                            typeCode: generalTypeCode, //params.typeCode,
                             content: {},
                             subjectId: params.threadId
                         },
@@ -66725,7 +66730,7 @@ WildEmitter.mixin(WildEmitter);
             updateThreadInfo = function (params, callback) {
                 var updateThreadInfoData = {
                         chatMessageVOType: chatMessageVOTypes.UPDATE_THREAD_INFO,
-                        typeCode: params.typeCode,
+                        typeCode: generalTypeCode, //params.typeCode,
                         content: {},
                         pushMsgType: 3,
                         token: token
@@ -66791,7 +66796,7 @@ WildEmitter.mixin(WildEmitter);
                             putInChatUploadQueue({
                                 message: {
                                     chatMessageVOType: chatMessageVOTypes.UPDATE_THREAD_INFO,
-                                    typeCode: params.typeCode,
+                                    typeCode: generalTypeCode, //params.typeCode,
                                     subjectId: threadId,
                                     content: threadInfoContent,
                                     metadata: threadInfoContent.metadata,
@@ -66842,7 +66847,7 @@ WildEmitter.mixin(WildEmitter);
 
                         return chatMessaging.sendMessage({
                             chatMessageVOType: chatMessageVOTypes.UPDATE_THREAD_INFO,
-                            typeCode: params.typeCode,
+                            typeCode: generalTypeCode, //params.typeCode,
                             subjectId: threadId,
                             content: threadInfoContent,
                             metadata: threadInfoContent.metadata,
@@ -66861,7 +66866,7 @@ WildEmitter.mixin(WildEmitter);
 
                         return chatMessaging.sendMessage({
                             chatMessageVOType: chatMessageVOTypes.UPDATE_THREAD_INFO,
-                            typeCode: params.typeCode,
+                            typeCode: generalTypeCode,//params.typeCode,
                             subjectId: threadId,
                             content: threadInfoContent,
                             metadata: threadInfoContent.metadata,
@@ -66961,7 +66966,7 @@ WildEmitter.mixin(WildEmitter);
             getThreadParticipants = function (params, callback) {
                 var sendMessageParams = {
                         chatMessageVOType: chatMessageVOTypes.THREAD_PARTICIPANTS,
-                        typeCode: params.typeCode,
+                        typeCode: generalTypeCode,//params.typeCode,
                         content: {},
                         subjectId: params.threadId
                     },
@@ -67202,7 +67207,7 @@ WildEmitter.mixin(WildEmitter);
             deliver = function (params) {
                 return chatMessaging.sendMessage({
                     chatMessageVOType: chatMessageVOTypes.DELIVERY,
-                    typeCode: params.typeCode,
+                    typeCode: generalTypeCode, //params.typeCode,
                     content: params.messageId,
                     pushMsgType: 3
                 });
@@ -67222,7 +67227,7 @@ WildEmitter.mixin(WildEmitter);
             seen = function (params) {
                 return chatMessaging.sendMessage({
                     chatMessageVOType: chatMessageVOTypes.SEEN,
-                    typeCode: params.typeCode,
+                    typeCode: generalTypeCode, //params.typeCode,
                     content: params.messageId,
                     pushMsgType: 3
                 });
@@ -69223,7 +69228,7 @@ WildEmitter.mixin(WildEmitter);
                         putInChatUploadQueue({
                             message: {
                                 chatMessageVOType: chatMessageVOTypes.MESSAGE,
-                                typeCode: params.typeCode,
+                                typeCode: generalTypeCode, //params.typeCode,
                                 messageType: (params.messageType && typeof params.messageType.toUpperCase() !== 'undefined' && chatMessageTypes[params.messageType.toUpperCase()] > 0) ? chatMessageTypes[params.messageType.toUpperCase()] : 1,
                                 subjectId: params.threadId,
                                 repliedTo: params.repliedTo,
@@ -70012,7 +70017,7 @@ WildEmitter.mixin(WildEmitter);
             setRoleToUser = function (params, callback) {
                 var setRoleData = {
                     chatMessageVOType: chatMessageVOTypes.SET_ROLE_TO_USER,
-                    typeCode: params.typeCode,
+                    typeCode: generalTypeCode, //params.typeCode,
                     content: [],
                     pushMsgType: 3,
                     token: token
@@ -70051,7 +70056,7 @@ WildEmitter.mixin(WildEmitter);
             removeRoleFromUser = function (params, callback) {
                 var setAdminData = {
                     chatMessageVOType: chatMessageVOTypes.REMOVE_ROLE_FROM_USER,
-                    typeCode: params.typeCode,
+                    typeCode: generalTypeCode, //params.typeCode,
                     content: [],
                     pushMsgType: 3,
                     token: token
@@ -70090,7 +70095,7 @@ WildEmitter.mixin(WildEmitter);
             unPinMessage = function (params, callback) {
                 return chatMessaging.sendMessage({
                     chatMessageVOType: chatMessageVOTypes.UNPIN_MESSAGE,
-                    typeCode: params.typeCode,
+                    typeCode: generalTypeCode, //params.typeCode,
                     subjectId: params.messageId,
                     content: JSON.stringify({
                         'notifyAll': (typeof params.notifyAll === 'boolean') ? params.notifyAll : false
@@ -70549,7 +70554,7 @@ WildEmitter.mixin(WildEmitter);
             return getHistory({
                 threadId: params.threadId,
                 allMentioned: true,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode,//params.typeCode,
                 count: params.count || 50,
                 offset: params.offset || 0,
                 cache: false,
@@ -70564,7 +70569,7 @@ WildEmitter.mixin(WildEmitter);
             return getHistory({
                 threadId: params.threadId,
                 unreadMentioned: true,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode,//params.typeCode,
                 count: params.count || 50,
                 offset: params.offset || 0,
                 cache: false,
@@ -70578,7 +70583,7 @@ WildEmitter.mixin(WildEmitter);
         this.getAllUnreadMessagesCount = function (params, callback) {
             return chatMessaging.sendMessage({
                 chatMessageVOType: chatMessageVOTypes.ALL_UNREAD_MESSAGE_COUNT,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode,//params.typeCode,
                 content: JSON.stringify({
                     'mute': (typeof params.countMuteThreads === 'boolean') ? params.countMuteThreads : false
                 }),
@@ -70645,7 +70650,7 @@ WildEmitter.mixin(WildEmitter);
 
             var sendMessageParams = {
                 chatMessageVOType: chatMessageVOTypes.GET_CONTACTS,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: content
             };
 
@@ -70885,7 +70890,7 @@ WildEmitter.mixin(WildEmitter);
              */
             var sendMessageParams = {
                 chatMessageVOType: chatMessageVOTypes.ADD_PARTICIPANT,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: []
             };
             if (params) {
@@ -70949,7 +70954,7 @@ WildEmitter.mixin(WildEmitter);
 
             var sendMessageParams = {
                 chatMessageVOType: chatMessageVOTypes.REMOVE_PARTICIPANT,
-                typeCode: params.typeCode
+                typeCode: generalTypeCode //params.typeCode
             };
 
             if (params) {
@@ -70996,7 +71001,7 @@ WildEmitter.mixin(WildEmitter);
 
             var sendMessageParams = {
                 chatMessageVOType: chatMessageVOTypes.LEAVE_THREAD,
-                typeCode: params.typeCode
+                typeCode: generalTypeCode//params.typeCode
             };
 
             if (params) {
@@ -71149,7 +71154,7 @@ WildEmitter.mixin(WildEmitter);
 
             var sendMessageParams = {
                 chatMessageVOType: chatMessageVOTypes.CREATE_THREAD,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode,//params.typeCode,
                 content: content
             };
 
@@ -71240,7 +71245,7 @@ WildEmitter.mixin(WildEmitter);
 
             var sendMessageParams = {
                 chatMessageVOType: chatMessageVOTypes.CREATE_THREAD,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode,//params.typeCode,
                 content: content
             };
 
@@ -71279,7 +71284,7 @@ WildEmitter.mixin(WildEmitter);
             putInChatSendQueue({
                 message: {
                     chatMessageVOType: chatMessageVOTypes.MESSAGE,
-                    typeCode: params.typeCode,
+                    typeCode: generalTypeCode, //params.typeCode,
                     messageType: (params.messageType && typeof params.messageType.toUpperCase() !== 'undefined' && chatMessageTypes[params.messageType.toUpperCase()] > 0) ? chatMessageTypes[params.messageType.toUpperCase()] : chatMessageTypes.TEXT,
                     subjectId: params.threadId,
                     repliedTo: params.repliedTo,
@@ -71307,7 +71312,7 @@ WildEmitter.mixin(WildEmitter);
 
             return chatMessaging.sendMessage({
                 chatMessageVOType: chatMessageVOTypes.BOT_MESSAGE,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 subjectId: params.messageId,
                 content: params.content,
                 uniqueId: params.uniqueId,
@@ -71376,7 +71381,7 @@ WildEmitter.mixin(WildEmitter);
             }
             var sendMessageParams = {
                 chatMessageVOType: chatMessageVOTypes.CREATE_THREAD,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: content
             };
             return chatMessaging.sendMessage(sendMessageParams, {
@@ -71557,7 +71562,7 @@ WildEmitter.mixin(WildEmitter);
 
             var clearHistoryParams = {
                 chatMessageVOType: chatMessageVOTypes.CLEAR_HISTORY,
-                typeCode: params.typeCode
+                typeCode: generalTypeCode, //params.typeCode
             };
 
             if (params) {
@@ -71636,7 +71641,7 @@ WildEmitter.mixin(WildEmitter);
         this.editMessage = function (params, callback) {
             return chatMessaging.sendMessage({
                 chatMessageVOType: chatMessageVOTypes.EDIT_MESSAGE,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 messageType: params.messageType,
                 subjectId: params.messageId,
                 repliedTo: params.repliedTo,
@@ -71714,7 +71719,7 @@ WildEmitter.mixin(WildEmitter);
         this.deleteMessage = function (params, callback) {
             return chatMessaging.sendMessage({
                 chatMessageVOType: chatMessageVOTypes.DELETE_MESSAGE,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 subjectId: params.messageId,
                 uniqueId: params.uniqueId,
                 content: JSON.stringify({
@@ -71835,7 +71840,7 @@ WildEmitter.mixin(WildEmitter);
 
             return chatMessaging.sendMessage({
                 chatMessageVOType: chatMessageVOTypes.DELETE_MESSAGE,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: {
                     uniqueIds: uniqueIdsList,
                     ids: messageIdsList,
@@ -71857,7 +71862,7 @@ WildEmitter.mixin(WildEmitter);
             putInChatSendQueue({
                 message: {
                     chatMessageVOType: chatMessageVOTypes.MESSAGE,
-                    typeCode: params.typeCode,
+                    typeCode: generalTypeCode, //params.typeCode,
                     messageType: 1,
                     subjectId: params.threadId,
                     repliedTo: params.repliedTo,
@@ -71902,7 +71907,7 @@ WildEmitter.mixin(WildEmitter);
                 putInChatUploadQueue({
                     message: {
                         chatMessageVOType: chatMessageVOTypes.MESSAGE,
-                        typeCode: params.typeCode,
+                        typeCode: generalTypeCode, //params.typeCode,
                         messageType: (params.messageType && typeof params.messageType.toUpperCase() !== 'undefined' && chatMessageTypes[params.messageType.toUpperCase()] > 0) ? chatMessageTypes[params.messageType.toUpperCase()] : 1,
                         subjectId: params.threadId,
                         repliedTo: params.repliedTo,
@@ -71993,7 +71998,7 @@ WildEmitter.mixin(WildEmitter);
             putInChatSendQueue({
                 message: {
                     chatMessageVOType: chatMessageVOTypes.FORWARD_MESSAGE,
-                    typeCode: params.typeCode,
+                    typeCode: generalTypeCode,//params.typeCode,
                     subjectId: params.threadId,
                     repliedTo: params.repliedTo,
                     content: messageIdsList,
@@ -72042,7 +72047,7 @@ WildEmitter.mixin(WildEmitter);
 
             var deliveryListData = {
                 chatMessageVOType: chatMessageVOTypes.GET_MESSAGE_DELEVERY_PARTICIPANTS,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode,//params.typeCode,
                 content: {},
                 pushMsgType: 3,
                 token: token,
@@ -72070,7 +72075,7 @@ WildEmitter.mixin(WildEmitter);
         this.getMessageSeenList = function (params, callback) {
             var seenListData = {
                 chatMessageVOType: chatMessageVOTypes.GET_MESSAGE_SEEN_PARTICIPANTS,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: {},
                 pushMsgType: 3,
                 token: token,
@@ -72102,7 +72107,7 @@ WildEmitter.mixin(WildEmitter);
         this.muteThread = function (params, callback) {
             return chatMessaging.sendMessage({
                 chatMessageVOType: chatMessageVOTypes.MUTE_THREAD,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 subjectId: params.threadId,
                 content: {},
                 pushMsgType: 3,
@@ -72117,7 +72122,7 @@ WildEmitter.mixin(WildEmitter);
         this.unMuteThread = function (params, callback) {
             return chatMessaging.sendMessage({
                 chatMessageVOType: chatMessageVOTypes.UNMUTE_THREAD,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 subjectId: params.threadId,
                 content: {},
                 pushMsgType: 3,
@@ -72132,7 +72137,7 @@ WildEmitter.mixin(WildEmitter);
         this.closeThread = function (params, callback) {
             return chatMessaging.sendMessage({
                 chatMessageVOType: chatMessageVOTypes.CLOSE_THREAD,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 subjectId: params.threadId,
                 content: {},
                 pushMsgType: 3,
@@ -72147,7 +72152,7 @@ WildEmitter.mixin(WildEmitter);
         this.joinPublicThread = function (params, callback) {
             var joinThreadData = {
                 chatMessageVOType: chatMessageVOTypes.JOIN_THREAD,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: '',
                 pushMsgType: 3,
                 token: token
@@ -72167,7 +72172,7 @@ WildEmitter.mixin(WildEmitter);
         this.isPublicThreadNameAvailable = function (params, callback) {
             var isNameAvailableData = {
                 chatMessageVOType: chatMessageVOTypes.IS_NAME_AVAILABLE,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: '',
                 pushMsgType: 3,
                 token: token
@@ -72187,7 +72192,7 @@ WildEmitter.mixin(WildEmitter);
         this.changeThreadPrivacy = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.CHANGE_THREAD_PRIVACY,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 pushMsgType: 3,
                 content: {},
                 token: token,
@@ -72245,7 +72250,7 @@ WildEmitter.mixin(WildEmitter);
         this.pinThread = function (params, callback) {
             return chatMessaging.sendMessage({
                 chatMessageVOType: chatMessageVOTypes.PIN_THREAD,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 subjectId: params.threadId,
                 content: {},
                 pushMsgType: 3,
@@ -72260,7 +72265,7 @@ WildEmitter.mixin(WildEmitter);
         this.unPinThread = function (params, callback) {
             return chatMessaging.sendMessage({
                 chatMessageVOType: chatMessageVOTypes.UNPIN_THREAD,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 subjectId: params.threadId,
                 content: {},
                 pushMsgType: 3,
@@ -72275,7 +72280,7 @@ WildEmitter.mixin(WildEmitter);
         this.deleteThread = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.DELETE_MESSAGE_THREAD,
-                typeCode: params.typeCode
+                typeCode: generalTypeCode//params.typeCode
             };
 
             if (params) {
@@ -72310,7 +72315,7 @@ WildEmitter.mixin(WildEmitter);
         this.pinMessage = function (params, callback) {
             return chatMessaging.sendMessage({
                 chatMessageVOType: chatMessageVOTypes.PIN_MESSAGE,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode,//params.typeCode,
                 subjectId: params.messageId,
                 content: JSON.stringify({
                     'notifyAll': (typeof params.notifyAll === 'boolean') ? params.notifyAll : false
@@ -72329,7 +72334,7 @@ WildEmitter.mixin(WildEmitter);
         this.spamPrivateThread = function (params, callback) {
             var spamData = {
                 chatMessageVOType: chatMessageVOTypes.SPAM_PV_THREAD,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 pushMsgType: 3,
                 token: token,
                 timeout: params.timeout
@@ -72352,7 +72357,7 @@ WildEmitter.mixin(WildEmitter);
 
             var blockData = {
                 chatMessageVOType: chatMessageVOTypes.BLOCK,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: {},
                 pushMsgType: 3,
                 token: token,
@@ -72386,7 +72391,7 @@ WildEmitter.mixin(WildEmitter);
         this.unblock = function (params, callback) {
             var unblockData = {
                 chatMessageVOType: chatMessageVOTypes.UNBLOCK,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 pushMsgType: 3,
                 token: token,
                 content: {},
@@ -72442,7 +72447,7 @@ WildEmitter.mixin(WildEmitter);
 
             var getBlockedData = {
                 chatMessageVOType: chatMessageVOTypes.GET_BLOCKED,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: content,
                 pushMsgType: 3,
                 token: token,
@@ -72495,7 +72500,7 @@ WildEmitter.mixin(WildEmitter);
 
             var getNotSeenDurationData = {
                 chatMessageVOType: chatMessageVOTypes.GET_NOT_SEEN_DURATION,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: content,
                 pushMsgType: 3,
                 token: token,
@@ -73128,6 +73133,7 @@ WildEmitter.mixin(WildEmitter);
                 if (parseInt(params.typeCode) > 0) {
                     data.typeCode = whereClause.typeCode = params.typeCode;
                 }
+                // data.typeCode = whereClause.typeCode = generalTypeCode;//params.typeCode;
 
                 if (parseInt(params.size) > 0) {
                     data.size = params.size;
@@ -73413,7 +73419,7 @@ WildEmitter.mixin(WildEmitter);
         this.createBot = function (params, callback) {
             var createBotData = {
                 chatMessageVOType: chatMessageVOTypes.CREATE_BOT,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode,//params.typeCode,
                 content: '',
                 pushMsgType: 3,
                 token: token
@@ -73453,7 +73459,7 @@ WildEmitter.mixin(WildEmitter);
         this.defineBotCommand = function (params, callback) {
             var defineBotCommandData = {
                 chatMessageVOType: chatMessageVOTypes.DEFINE_BOT_COMMAND,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: {},
                 pushMsgType: 3,
                 token: token
@@ -73498,7 +73504,7 @@ WildEmitter.mixin(WildEmitter);
         this.removeBotCommand = function (params, callback) {
             var defineBotCommandData = {
                 chatMessageVOType: chatMessageVOTypes.REMOVE_BOT_COMMANDS,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: {},
                 pushMsgType: 3,
                 token: token
@@ -73548,7 +73554,7 @@ WildEmitter.mixin(WildEmitter);
         this.startBot = function (params, callback) {
             var startBotData = {
                 chatMessageVOType: chatMessageVOTypes.START_BOT,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: {},
                 pushMsgType: 3,
                 token: token
@@ -73589,7 +73595,7 @@ WildEmitter.mixin(WildEmitter);
         this.stopBot = function (params, callback) {
             var stopBotData = {
                 chatMessageVOType: chatMessageVOTypes.STOP_BOT,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: {},
                 pushMsgType: 3,
                 token: token
@@ -73630,7 +73636,7 @@ WildEmitter.mixin(WildEmitter);
         this.getBotCommandsList = function (params, callback) {
             var getBotCommandsListData = {
                 chatMessageVOType: chatMessageVOTypes.BOT_COMMANDS,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: {},
                 pushMsgType: 3,
                 token: token
@@ -73667,7 +73673,7 @@ WildEmitter.mixin(WildEmitter);
         this.getThreadAllBots = function (params, callback) {
             var getThreadBotsData = {
                 chatMessageVOType: chatMessageVOTypes.THREAD_ALL_BOTS,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: {},
                 pushMsgType: 3,
                 token: token
@@ -73702,7 +73708,7 @@ WildEmitter.mixin(WildEmitter);
         this.createTag = function (params, callback) {
             var createTagData = {
                 chatMessageVOType: chatMessageVOTypes.CREATE_TAG,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: {},
                 pushMsgType: 3,
                 token: token
@@ -73736,7 +73742,7 @@ WildEmitter.mixin(WildEmitter);
         this.editTag = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.EDIT_TAG,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: {},
                 pushMsgType: 3,
                 token: token
@@ -73780,7 +73786,7 @@ WildEmitter.mixin(WildEmitter);
         this.deleteTag = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.DELETE_TAG,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: {},
                 pushMsgType: 3,
                 token: token
@@ -73814,7 +73820,7 @@ WildEmitter.mixin(WildEmitter);
         this.getTagList = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.GET_TAG_LIST,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: {},
                 pushMsgType: 3,
                 token: token
@@ -73830,7 +73836,7 @@ WildEmitter.mixin(WildEmitter);
         this.addTagParticipants = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.ADD_TAG_PARTICIPANT,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: []
             };
 
@@ -73870,7 +73876,7 @@ WildEmitter.mixin(WildEmitter);
         this.removeTagParticipants = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.REMOVE_TAG_PARTICIPANT,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: []
             };
 
@@ -73910,7 +73916,7 @@ WildEmitter.mixin(WildEmitter);
         this.registerAssistant = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.REGISTER_ASSISTANT,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: []
             };
 
@@ -73979,7 +73985,7 @@ WildEmitter.mixin(WildEmitter);
         this.deactivateAssistant = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.DEACTIVATE_ASSISTANT,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: []
             };
 
@@ -74041,7 +74047,7 @@ WildEmitter.mixin(WildEmitter);
         this.blockAssistant = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.BLOCK_ASSISTANT,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: []
             };
 
@@ -74103,7 +74109,7 @@ WildEmitter.mixin(WildEmitter);
         this.unblockAssistant = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.UNBLOCK_ASSISTANT,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: []
             };
 
@@ -74165,7 +74171,7 @@ WildEmitter.mixin(WildEmitter);
         this.getAssistantsList = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.GET_ASSISTANTS,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: {},
                 pushMsgType: 3,
                 token: token
@@ -74202,7 +74208,7 @@ WildEmitter.mixin(WildEmitter);
         this.getBlockedAssistantsList = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.BLOCKED_ASSISTANTS,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: {},
                 pushMsgType: 3,
                 token: token
@@ -74239,7 +74245,7 @@ WildEmitter.mixin(WildEmitter);
         this.getAssistantsHistory = function (params, callback) {
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.ASSISTANT_HISTORY,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 content: {
                     offset: +params.offset > 0 ? +params.offset : 0,
                     count: +params.count > 0 ? +params.count : config.getHistoryCount
@@ -74366,7 +74372,7 @@ WildEmitter.mixin(WildEmitter);
             var stackArr = [], wantedCount = 10000, stepCount = 500, offset = 0;
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.EXPORT_CHAT,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode,//params.typeCode,
                 content: {
                     offset: +params.offset > 0 ? +params.offset : offset,
                     count: +params.count > 0 ? +params.count : wantedCount,//config.getHistoryCount,
@@ -74570,7 +74576,7 @@ WildEmitter.mixin(WildEmitter);
 
             var sendData = {
                 chatMessageVOType: chatMessageVOTypes.MUTUAL_GROUPS,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode,//params.typeCode,
                 content: {
                     count: count,
                     offset: offset
@@ -74652,7 +74658,7 @@ WildEmitter.mixin(WildEmitter);
 
             var locationPingData = {
                 chatMessageVOType: chatMessageVOTypes.LOCATION_PING,
-                typeCode: params.typeCode,
+                typeCode: generalTypeCode, //params.typeCode,
                 pushMsgType: 3,
                 token: token
             }, content = {};

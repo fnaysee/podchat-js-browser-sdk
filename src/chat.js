@@ -1257,7 +1257,7 @@
 
                     return chatMessaging.sendMessage({
                         chatMessageVOType: chatMessageVOTypes.USER_INFO,
-                        typeCode: generalTypeCode //params.typeCode
+                        typeCode: generalTypeCode//params.typeCode
                     }, {
                         onResult: function (result) {
                             var returnData = {
@@ -1528,7 +1528,7 @@
              * @return {undefined}
              */
             chatMessageHandler = function (chatMessage) {
-                if(chatMessage.typeCode !== generalTypeCode) {
+                if(chatMessage.typeCode && chatMessage.typeCode !== generalTypeCode) {
                     return;
                 }
 
@@ -11985,11 +11985,11 @@
                     data.lastName = '';
                 }
 
-/*                if (typeof params.typeCode === 'string') {
+                if (typeof params.typeCode === 'string') {
                     data.typeCode = params.typeCode;
-                } else if (generalTypeCode) {*/
+                } else if (generalTypeCode) {
                     data.typeCode = generalTypeCode;
-                //}
+                }
 
                 if (typeof params.cellphoneNumber === 'string') {
                     data.cellphoneNumber = params.cellphoneNumber;
@@ -12574,10 +12574,10 @@
                     data.id = whereClause.id = params.id;
                 }
 
-                // if (parseInt(params.typeCode) > 0) {
-                //     data.typeCode = whereClause.typeCode = params.typeCode;
-                // }
-                data.typeCode = whereClause.typeCode = generalTypeCode;//params.typeCode;
+                if (parseInt(params.typeCode) > 0) {
+                    data.typeCode = whereClause.typeCode = params.typeCode;
+                }
+                // data.typeCode = whereClause.typeCode = generalTypeCode;//params.typeCode;
 
                 if (parseInt(params.size) > 0) {
                     data.size = params.size;
