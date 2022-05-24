@@ -26736,7 +26736,7 @@ function config (name) {
 },{}],188:[function(require,module,exports){
 window.PodChat = require('./src/chat.js');
 
-},{"./src/chat.js":331}],189:[function(require,module,exports){
+},{"./src/chat.js":332}],189:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var core_1 = require("@sentry/core");
@@ -26787,7 +26787,7 @@ var BrowserBackend = /** @class */ (function (_super) {
 }(core_1.BaseBackend));
 exports.BrowserBackend = BrowserBackend;
 
-},{"./eventbuilder":191,"./transports":207,"@sentry/core":213,"@sentry/types":228,"@sentry/utils":238,"tslib":313}],190:[function(require,module,exports){
+},{"./eventbuilder":191,"./transports":207,"@sentry/core":213,"@sentry/types":228,"@sentry/utils":238,"tslib":314}],190:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var core_1 = require("@sentry/core");
@@ -26864,7 +26864,7 @@ var BrowserClient = /** @class */ (function (_super) {
 }(core_1.BaseClient));
 exports.BrowserClient = BrowserClient;
 
-},{"./backend":189,"./helpers":193,"./integrations":198,"@sentry/core":213,"@sentry/utils":238,"tslib":313}],191:[function(require,module,exports){
+},{"./backend":189,"./helpers":193,"./integrations":198,"@sentry/core":213,"@sentry/utils":238,"tslib":314}],191:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var types_1 = require("@sentry/types");
@@ -26989,7 +26989,7 @@ function eventFromString(input, syntheticException, options) {
 }
 exports.eventFromString = eventFromString;
 
-},{"./parsers":202,"./tracekit":204,"@sentry/types":228,"@sentry/utils":238,"tslib":313}],192:[function(require,module,exports){
+},{"./parsers":202,"./tracekit":204,"@sentry/types":228,"@sentry/utils":238,"tslib":314}],192:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var types_1 = require("@sentry/types");
 exports.Severity = types_1.Severity;
@@ -27199,7 +27199,7 @@ function injectReportDialog(options) {
 }
 exports.injectReportDialog = injectReportDialog;
 
-},{"@sentry/core":213,"@sentry/utils":238,"tslib":313}],194:[function(require,module,exports){
+},{"@sentry/core":213,"@sentry/utils":238,"tslib":314}],194:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 tslib_1.__exportStar(require("./exports"), exports);
@@ -27217,7 +27217,7 @@ if (_window.Sentry && _window.Sentry.Integrations) {
 var INTEGRATIONS = tslib_1.__assign(tslib_1.__assign(tslib_1.__assign({}, windowIntegrations), core_1.Integrations), BrowserIntegrations);
 exports.Integrations = INTEGRATIONS;
 
-},{"./exports":192,"./integrations":198,"./transports":207,"@sentry/core":213,"@sentry/utils":238,"tslib":313}],195:[function(require,module,exports){
+},{"./exports":192,"./integrations":198,"./transports":207,"@sentry/core":213,"@sentry/utils":238,"tslib":314}],195:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -27487,7 +27487,7 @@ var Breadcrumbs = /** @class */ (function () {
 }());
 exports.Breadcrumbs = Breadcrumbs;
 
-},{"@sentry/core":213,"@sentry/types":228,"@sentry/utils":238,"tslib":313}],196:[function(require,module,exports){
+},{"@sentry/core":213,"@sentry/types":228,"@sentry/utils":238,"tslib":314}],196:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 /** Deduplication filter */
 var Dedupe = /** @class */ (function () {
@@ -27857,7 +27857,7 @@ var GlobalHandlers = /** @class */ (function () {
 }());
 exports.GlobalHandlers = GlobalHandlers;
 
-},{"../eventbuilder":191,"../helpers":193,"@sentry/core":213,"@sentry/types":228,"@sentry/utils":238,"tslib":313}],198:[function(require,module,exports){
+},{"../eventbuilder":191,"../helpers":193,"@sentry/core":213,"@sentry/types":228,"@sentry/utils":238,"tslib":314}],198:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var globalhandlers_1 = require("./globalhandlers");
 exports.GlobalHandlers = globalhandlers_1.GlobalHandlers;
@@ -27939,7 +27939,7 @@ var LinkedErrors = /** @class */ (function () {
 }());
 exports.LinkedErrors = LinkedErrors;
 
-},{"../parsers":202,"../tracekit":204,"@sentry/core":213,"@sentry/utils":238,"tslib":313}],200:[function(require,module,exports){
+},{"../parsers":202,"../tracekit":204,"@sentry/core":213,"@sentry/utils":238,"tslib":314}],200:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var utils_1 = require("@sentry/utils");
@@ -28171,7 +28171,7 @@ var TryCatch = /** @class */ (function () {
 }());
 exports.TryCatch = TryCatch;
 
-},{"../helpers":193,"@sentry/utils":238,"tslib":313}],201:[function(require,module,exports){
+},{"../helpers":193,"@sentry/utils":238,"tslib":314}],201:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var core_1 = require("@sentry/core");
@@ -28215,7 +28215,7 @@ var UserAgent = /** @class */ (function () {
 }());
 exports.UserAgent = UserAgent;
 
-},{"@sentry/core":213,"@sentry/utils":238,"tslib":313}],202:[function(require,module,exports){
+},{"@sentry/core":213,"@sentry/utils":238,"tslib":314}],202:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("@sentry/utils");
 var tracekit_1 = require("./tracekit");
@@ -28540,7 +28540,7 @@ function startSessionTracking() {
     });
 }
 
-},{"./client":190,"./helpers":193,"./integrations":198,"@sentry/core":213,"@sentry/utils":238,"tslib":313}],204:[function(require,module,exports){
+},{"./client":190,"./helpers":193,"./integrations":198,"@sentry/core":213,"@sentry/utils":238,"tslib":314}],204:[function(require,module,exports){
 /**
  * This was originally forked from https://github.com/occ/TraceKit, but has since been
  * largely modified and is now maintained as part of Sentry JS SDK.
@@ -28771,7 +28771,7 @@ function extractMessage(ex) {
     return message;
 }
 
-},{"tslib":313}],205:[function(require,module,exports){
+},{"tslib":314}],205:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var core_1 = require("@sentry/core");
@@ -28898,7 +28898,7 @@ var BaseTransport = /** @class */ (function () {
 }());
 exports.BaseTransport = BaseTransport;
 
-},{"@sentry/core":213,"@sentry/types":228,"@sentry/utils":238,"tslib":313}],206:[function(require,module,exports){
+},{"@sentry/core":213,"@sentry/types":228,"@sentry/utils":238,"tslib":314}],206:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var core_1 = require("@sentry/core");
@@ -29044,7 +29044,7 @@ var FetchTransport = /** @class */ (function (_super) {
 }(base_1.BaseTransport));
 exports.FetchTransport = FetchTransport;
 
-},{"./base":205,"@sentry/core":213,"@sentry/utils":238,"tslib":313}],207:[function(require,module,exports){
+},{"./base":205,"@sentry/core":213,"@sentry/utils":238,"tslib":314}],207:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var base_1 = require("./base");
 exports.BaseTransport = base_1.BaseTransport;
@@ -29117,7 +29117,7 @@ var XHRTransport = /** @class */ (function (_super) {
 }(base_1.BaseTransport));
 exports.XHRTransport = XHRTransport;
 
-},{"./base":205,"@sentry/core":213,"@sentry/utils":238,"tslib":313}],209:[function(require,module,exports){
+},{"./base":205,"@sentry/core":213,"@sentry/utils":238,"tslib":314}],209:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 // TODO: Remove in the next major release and rely only on @sentry/core SDK_VERSION and SdkInfo metadata
 exports.SDK_NAME = 'sentry.javascript.browser';
@@ -29820,7 +29820,7 @@ var BaseClient = /** @class */ (function () {
 }());
 exports.BaseClient = BaseClient;
 
-},{"./integration":214,"@sentry/hub":223,"@sentry/types":228,"@sentry/utils":238,"tslib":313}],213:[function(require,module,exports){
+},{"./integration":214,"@sentry/hub":223,"@sentry/types":228,"@sentry/utils":238,"tslib":314}],213:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var minimal_1 = require("@sentry/minimal");
 exports.addBreadcrumb = minimal_1.addBreadcrumb;
@@ -29932,7 +29932,7 @@ function setupIntegrations(options) {
 }
 exports.setupIntegrations = setupIntegrations;
 
-},{"@sentry/hub":223,"@sentry/utils":238,"tslib":313}],215:[function(require,module,exports){
+},{"@sentry/hub":223,"@sentry/utils":238,"tslib":314}],215:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var originalFunctionToString;
 /** Patch toString calls to return proper name for wrapped functions */
@@ -30142,7 +30142,7 @@ var InboundFilters = /** @class */ (function () {
 }());
 exports.InboundFilters = InboundFilters;
 
-},{"@sentry/hub":223,"@sentry/utils":238,"tslib":313}],217:[function(require,module,exports){
+},{"@sentry/hub":223,"@sentry/utils":238,"tslib":314}],217:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var functiontostring_1 = require("./functiontostring");
 exports.FunctionToString = functiontostring_1.FunctionToString;
@@ -30233,7 +30233,7 @@ function eventToSentryRequest(event, api) {
 }
 exports.eventToSentryRequest = eventToSentryRequest;
 
-},{"tslib":313}],219:[function(require,module,exports){
+},{"tslib":314}],219:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var hub_1 = require("@sentry/hub");
 var utils_1 = require("@sentry/utils");
@@ -30809,7 +30809,7 @@ function setHubOnCarrier(carrier, hub) {
 }
 exports.setHubOnCarrier = setHubOnCarrier;
 
-},{"./scope":224,"./session":225,"@sentry/types":228,"@sentry/utils":238,"tslib":313}],223:[function(require,module,exports){
+},{"./scope":224,"./session":225,"@sentry/types":228,"@sentry/utils":238,"tslib":314}],223:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var scope_1 = require("./scope");
 exports.addGlobalEventProcessor = scope_1.addGlobalEventProcessor;
@@ -31274,7 +31274,7 @@ function addGlobalEventProcessor(callback) {
 }
 exports.addGlobalEventProcessor = addGlobalEventProcessor;
 
-},{"@sentry/utils":238,"tslib":313}],225:[function(require,module,exports){
+},{"@sentry/utils":238,"tslib":314}],225:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var types_1 = require("@sentry/types");
 var utils_1 = require("@sentry/utils");
@@ -31707,7 +31707,7 @@ function startTransaction(context, customSamplingContext) {
 }
 exports.startTransaction = startTransaction;
 
-},{"@sentry/hub":223,"tslib":313}],228:[function(require,module,exports){
+},{"@sentry/hub":223,"tslib":314}],228:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var loglevel_1 = require("./loglevel");
 exports.LogLevel = loglevel_1.LogLevel;
@@ -32074,7 +32074,7 @@ var Dsn = /** @class */ (function () {
 }());
 exports.Dsn = Dsn;
 
-},{"./error":237,"tslib":313}],237:[function(require,module,exports){
+},{"./error":237,"tslib":314}],237:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var polyfill_1 = require("./polyfill");
@@ -32093,7 +32093,7 @@ var SentryError = /** @class */ (function (_super) {
 }(Error));
 exports.SentryError = SentryError;
 
-},{"./polyfill":247,"tslib":313}],238:[function(require,module,exports){
+},{"./polyfill":247,"tslib":314}],238:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 tslib_1.__exportStar(require("./async"), exports);
@@ -32115,7 +32115,7 @@ tslib_1.__exportStar(require("./supports"), exports);
 tslib_1.__exportStar(require("./syncpromise"), exports);
 tslib_1.__exportStar(require("./time"), exports);
 
-},{"./async":234,"./browser":235,"./dsn":236,"./error":237,"./instrument":239,"./is":240,"./logger":241,"./memo":242,"./misc":243,"./node":244,"./object":245,"./path":246,"./promisebuffer":248,"./stacktrace":249,"./string":250,"./supports":251,"./syncpromise":252,"./time":253,"tslib":313}],239:[function(require,module,exports){
+},{"./async":234,"./browser":235,"./dsn":236,"./error":237,"./instrument":239,"./is":240,"./logger":241,"./memo":242,"./misc":243,"./node":244,"./object":245,"./path":246,"./promisebuffer":248,"./stacktrace":249,"./string":250,"./supports":251,"./syncpromise":252,"./time":253,"tslib":314}],239:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var is_1 = require("./is");
@@ -32660,7 +32660,7 @@ function instrumentUnhandledRejection() {
     };
 }
 
-},{"./is":240,"./logger":241,"./misc":243,"./object":245,"./stacktrace":249,"./supports":251,"tslib":313}],240:[function(require,module,exports){
+},{"./is":240,"./logger":241,"./misc":243,"./object":245,"./stacktrace":249,"./supports":251,"tslib":314}],240:[function(require,module,exports){
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -33600,7 +33600,7 @@ function dropUndefinedKeys(val) {
 exports.dropUndefinedKeys = dropUndefinedKeys;
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./browser":235,"./is":240,"./memo":242,"./stacktrace":249,"./string":250,"tslib":313}],246:[function(require,module,exports){
+},{"./browser":235,"./is":240,"./memo":242,"./stacktrace":249,"./string":250,"tslib":314}],246:[function(require,module,exports){
 // Slightly modified (no IE8 support, ES6) and transcribed to TypeScript
 // https://raw.githubusercontent.com/calvinmetcalf/rollup-plugin-node-builtins/master/src/es6/path.js
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -47379,7 +47379,7 @@ module.exports = function(stream, options) {
   return harker;
 }
 
-},{"wildemitter":329}],294:[function(require,module,exports){
+},{"wildemitter":330}],294:[function(require,module,exports){
 arguments[4][132][0].apply(exports,arguments)
 },{"dup":132}],295:[function(require,module,exports){
 (function (global){(function (){
@@ -48326,7 +48326,7 @@ exports.WebRtcPeerSendonly = WebRtcPeerSendonly
 exports.WebRtcPeerSendrecv = WebRtcPeerSendrecv
 exports.hark = harkUtils
 
-},{"events":100,"freeice":290,"hark":293,"inherits":294,"kurento-browser-extensions":296,"merge":299,"sdp-translator":309,"ua-parser-js":314,"uuid/v4":317}],298:[function(require,module,exports){
+},{"events":100,"freeice":290,"hark":293,"inherits":294,"kurento-browser-extensions":296,"merge":299,"sdp-translator":310,"ua-parser-js":315,"uuid/v4":318}],298:[function(require,module,exports){
 /*
  * (C) Copyright 2014 Kurento (http://kurento.org/)
  *
@@ -48614,15 +48614,17 @@ module.exports = function(input) {
          *******************************************************/
 
         var PodSocketClass,
-            PodUtility;
-
+            PodUtility,
+            LogLevel
         if (typeof(require) !== 'undefined' && typeof(exports) !== 'undefined') {
             PodSocketClass = require('./socket.js');
             PodUtility = require('../utility/utility.js');
+            LogLevel = require('../utility/logger.js');
         }
         else {
             PodSocketClass = POD.Socket;
             PodUtility = POD.AsyncUtility;
+            LogLevel = POD.LogLevel;
         }
 
         var Utility = new PodUtility();
@@ -48661,6 +48663,7 @@ module.exports = function(input) {
                 CLOSING: 2, // The connection is in the process of closing.
                 CLOSED: 3 // The connection is closed or couldn't be opened.
             },
+            logLevel = LogLevel(params.logLevel),
             isNode = Utility.isNode(),
             isSocketOpen = false,
             isDeviceRegister = false,
@@ -48723,7 +48726,8 @@ module.exports = function(input) {
                     socketAddress: params.socketAddress,
                     wsConnectionWaitTime: params.wsConnectionWaitTime,
                     connectionCheckTimeout: params.connectionCheckTimeout,
-                    connectionCheckTimeoutThreshold: params.connectionCheckTimeoutThreshold
+                    connectionCheckTimeoutThreshold: params.connectionCheckTimeoutThreshold,
+                    logLevel: logLevel
                 });
 
                 checkIfSocketHasOpennedTimeoutId = setTimeout(function () {
@@ -48957,9 +48961,12 @@ module.exports = function(input) {
 
                 if (peerId !== undefined) {
                     content.refresh = true;
+                    content.renew = false;
+
                 }
                 else {
                     content.renew = true;
+                    content.refresh = false;
                 }
 
                 pushSendData({
@@ -49311,7 +49318,7 @@ module.exports = function(input) {
     }
 })();
 
-},{"../utility/utility.js":303,"./socket.js":302}],302:[function(require,module,exports){
+},{"../utility/logger.js":303,"../utility/utility.js":304,"./socket.js":302}],302:[function(require,module,exports){
 (function() {
   /*
    * Socket Module to connect and handle Socket functionalities
@@ -49336,12 +49343,45 @@ module.exports = function(input) {
       eventCallback = {},
       socket,
       waitForSocketToConnectTimeoutId,
-      forceCloseSocket = false,
-      forceCloseSocketTimeout,
       socketRealTimeStatusInterval,
-      sendPingTimeout,
+      //sendPingTimeout,
       socketCloseTimeout,
-      forceCloseTimeout;
+      forceCloseTimeout,
+      logLevel = params.logLevel,
+      pingController = new PingManager({waitTime: connectionCheckTimeout});
+
+
+    function PingManager(params) {
+      const config = {
+        normalWaitTime: params.waitTime,
+
+        lastRequestTimeoutId: null,
+        lastReceivedMessageTime: 0,
+      }
+
+      return {
+        setPingTimeout() {
+          config.lastRequestTimeoutId = setInterval(()=>{
+            ping();
+            //this.watchForPingResponse();
+          }, config.normalWaitTime)
+        },
+        resetPingLoop() {
+          this.updateLastReceivedMessageTime();
+          this.stopPingLoop();
+          this.setPingTimeout();
+          // this.retries = 0;
+        },
+        stopPingLoop(){
+          // config.retries = 0;
+          clearInterval(config.lastRequestTimeoutId);
+          // clearTimeout(config.responseTimeoutId)
+        },
+        updateLastReceivedMessageTime() {
+          config.lastReceivedMessageTime = new Date().getTime();
+        },
+      }
+    }
 
     /*******************************************************
      *            P R I V A T E   M E T H O D S            *
@@ -49373,59 +49413,26 @@ module.exports = function(input) {
 
           socket.onopen = function(event) {
             waitForSocketToConnect(function() {
+              pingController.resetPingLoop();
               eventCallback["open"]();
             });
           }
 
           socket.onmessage = function(event) {
+            pingController.resetPingLoop();
+
             var messageData = JSON.parse(event.data);
             eventCallback["message"](messageData);
-
-            /**
-             * To avoid manually closing socket's connection
-             */
-            forceCloseSocket = false;
-
-            socketCloseTimeout && clearTimeout(socketCloseTimeout);
-            forceCloseTimeout && clearTimeout(forceCloseTimeout);
-
-            socketCloseTimeout = setTimeout(function() {
-              /**
-               * If message's type is not 5, socket won't get any acknowledge packet,therefore
-               * you may think that connection has been closed and you would force socket
-               * to close, but before that you should make sure that connection is actually closed!
-               * for that, you must send a ping message and if that message don't get any
-               * responses too, you are allowed to manually kill socket connection.
-               */
-              ping();
-
-              /**
-               * We set forceCloseSocket as true so that if your ping's response don't make it
-               * you close your socket
-               */
-              forceCloseSocket = true;
-
-              /**
-               * If type of messages are not 5, you won't get ant ACK packets
-               * for that being said, we send a ping message to be sure of
-               * socket connection's state. The ping message should have an
-               * ACK, if not, you're allowed to close your socket after
-               * 4 * [connectionCheckTimeout] seconds
-               */
-              forceCloseTimeout = setTimeout(function() {
-                if (forceCloseSocket) {
-                  socket.close();
-                }
-              }, connectionCheckTimeout);
-
-            }, connectionCheckTimeout * 1.5);
           }
 
           socket.onclose = function(event) {
+            pingController.stopPingLoop();
+            logLevel.debug && console.debug("[Async][Socket.js] socket.onclose happened. EventData:", event);
             onCloseHandler(event);
           }
 
           socket.onerror = function(event) {
+            logLevel.debug && console.debug("[Async][Socket.js] socket.onerror happened. EventData:", event);
             eventCallback["error"](event);
           }
         } catch (error) {
@@ -49438,9 +49445,7 @@ module.exports = function(input) {
       },
 
       onCloseHandler = function(event) {
-        sendPingTimeout && clearTimeout(sendPingTimeout);
-        socketCloseTimeout && clearTimeout(socketCloseTimeout);
-        forceCloseTimeout && clearTimeout(forceCloseTimeout);
+        pingController.stopPingLoop();
         eventCallback["close"](event);
       },
 
@@ -49475,11 +49480,6 @@ module.exports = function(input) {
           data.trackerId = params.trackerId;
         }
 
-        sendPingTimeout && clearTimeout(sendPingTimeout);
-        sendPingTimeout = setTimeout(function() {
-          ping();
-        }, connectionCheckTimeout);
-
         try {
           if (params.content) {
             data.content = JSON.stringify(params.content);
@@ -49512,9 +49512,7 @@ module.exports = function(input) {
     }
 
     this.close = function() {
-      sendPingTimeout && clearTimeout(sendPingTimeout);
-      socketCloseTimeout && clearTimeout(socketCloseTimeout);
-      forceCloseTimeout && clearTimeout(forceCloseTimeout);
+      logLevel.debug && console.debug("[Async][Socket.js] Closing socket by call to this.close");
       socket.close();
     }
 
@@ -49533,6 +49531,42 @@ module.exports = function(input) {
 })();
 
 },{"isomorphic-ws":295}],303:[function(require,module,exports){
+function LogLevel(logLevel){
+    let ll = logLevel || 2;
+    switch (ll) {
+        case 1:
+            return {
+                error: true,
+                debug: false,
+                info: false,
+            }
+        case 2:
+            return {
+                error: true,
+                debug: true,
+                info: false,
+            }
+        case 3:
+            return {
+                error: true,
+                debug: true,
+                info: true,
+            }
+    }
+}
+
+
+if (typeof module !== 'undefined' && typeof module.exports != 'undefined') {
+    module.exports = LogLevel;
+}
+else {
+    if (!window.POD) {
+        window.POD = {};
+    }
+    window.POD.LogLevel = LogLevel;
+}
+
+},{}],304:[function(require,module,exports){
 (function (global){(function (){
 (function() {
   /**
@@ -49760,7 +49794,7 @@ module.exports = function(input) {
 })();
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],304:[function(require,module,exports){
+},{}],305:[function(require,module,exports){
 var grammar = module.exports = {
   v: [{
       name: 'version',
@@ -50019,7 +50053,7 @@ Object.keys(grammar).forEach(function (key) {
   });
 });
 
-},{}],305:[function(require,module,exports){
+},{}],306:[function(require,module,exports){
 var parser = require('./parser');
 var writer = require('./writer');
 
@@ -50029,7 +50063,7 @@ exports.parseFmtpConfig = parser.parseFmtpConfig;
 exports.parsePayloads = parser.parsePayloads;
 exports.parseRemoteCandidates = parser.parseRemoteCandidates;
 
-},{"./parser":306,"./writer":307}],306:[function(require,module,exports){
+},{"./parser":307,"./writer":308}],307:[function(require,module,exports){
 var toIntIfInt = function (v) {
   return String(Number(v)) === v ? Number(v) : v;
 };
@@ -50124,7 +50158,7 @@ exports.parseRemoteCandidates = function (str) {
   return candidates;
 };
 
-},{"./grammar":304}],307:[function(require,module,exports){
+},{"./grammar":305}],308:[function(require,module,exports){
 var grammar = require('./grammar');
 
 // customized util.format - discards excess arguments and can void middle ones
@@ -50240,7 +50274,7 @@ module.exports = function (session, opts) {
   return sdp.join('\r\n') + '\r\n';
 };
 
-},{"./grammar":304}],308:[function(require,module,exports){
+},{"./grammar":305}],309:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -50281,7 +50315,7 @@ module.exports = function arrayEquals(array) {
 };
 
 
-},{}],309:[function(require,module,exports){
+},{}],310:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -50299,7 +50333,7 @@ module.exports = function arrayEquals(array) {
 
 exports.Interop = require('./interop');
 
-},{"./interop":310}],310:[function(require,module,exports){
+},{"./interop":311}],311:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -51184,7 +51218,7 @@ Interop.prototype.toUnifiedPlan = function(desc) {
     //#endregion
 };
 
-},{"./array-equals":308,"./transform":311}],311:[function(require,module,exports){
+},{"./array-equals":309,"./transform":312}],312:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -51298,7 +51332,7 @@ exports.parse = function(sdp) {
 };
 
 
-},{"sdp-transform":305}],312:[function(require,module,exports){
+},{"sdp-transform":306}],313:[function(require,module,exports){
 /* eslint-env node */
 'use strict';
 
@@ -52059,7 +52093,7 @@ SDPUtils.isValidSDP = function (blob) {
 if ((typeof module === 'undefined' ? 'undefined' : _typeof(module)) === 'object') {
   module.exports = SDPUtils;
 }
-},{}],313:[function(require,module,exports){
+},{}],314:[function(require,module,exports){
 (function (global){(function (){
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -52347,7 +52381,7 @@ var __createBinding;
 });
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],314:[function(require,module,exports){
+},{}],315:[function(require,module,exports){
 /*!
  * UAParser.js v0.7.24
  * Lightweight JavaScript-based User-Agent string parser
@@ -53286,7 +53320,7 @@ var __createBinding;
 
 })(typeof window === 'object' ? window : this);
 
-},{}],315:[function(require,module,exports){
+},{}],316:[function(require,module,exports){
 /**
  * Convert array of 16 byte values to UUID string format of the form:
  * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
@@ -53314,7 +53348,7 @@ function bytesToUuid(buf, offset) {
 
 module.exports = bytesToUuid;
 
-},{}],316:[function(require,module,exports){
+},{}],317:[function(require,module,exports){
 // Unique ID creation requires a high quality random # generator.  In the
 // browser this is a little complicated due to unknown quality of Math.random()
 // and inconsistent support for the `crypto` API.  We do the best we can via
@@ -53350,7 +53384,7 @@ if (getRandomValues) {
   };
 }
 
-},{}],317:[function(require,module,exports){
+},{}],318:[function(require,module,exports){
 var rng = require('./lib/rng');
 var bytesToUuid = require('./lib/bytesToUuid');
 
@@ -53381,7 +53415,7 @@ function v4(options, buf, offset) {
 
 module.exports = v4;
 
-},{"./lib/bytesToUuid":315,"./lib/rng":316}],318:[function(require,module,exports){
+},{"./lib/bytesToUuid":316,"./lib/rng":317}],319:[function(require,module,exports){
 /*
  *  Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
  *
@@ -53402,7 +53436,7 @@ var _adapter_factory = require('./adapter_factory.js');
 var adapter = (0, _adapter_factory.adapterFactory)({ window: typeof window === 'undefined' ? undefined : window });
 exports.default = adapter;
 
-},{"./adapter_factory.js":319}],319:[function(require,module,exports){
+},{"./adapter_factory.js":320}],320:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -53567,7 +53601,7 @@ function adapterFactory() {
 
 // Browser shims.
 
-},{"./chrome/chrome_shim":320,"./common_shim":323,"./firefox/firefox_shim":324,"./safari/safari_shim":327,"./utils":328,"sdp":312}],320:[function(require,module,exports){
+},{"./chrome/chrome_shim":321,"./common_shim":324,"./firefox/firefox_shim":325,"./safari/safari_shim":328,"./utils":329,"sdp":313}],321:[function(require,module,exports){
 /*
  *  Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
  *
@@ -54316,7 +54350,7 @@ function fixNegotiationNeeded(window, browserDetails) {
   });
 }
 
-},{"../utils.js":328,"./getdisplaymedia":321,"./getusermedia":322}],321:[function(require,module,exports){
+},{"../utils.js":329,"./getdisplaymedia":322,"./getusermedia":323}],322:[function(require,module,exports){
 /*
  *  Copyright (c) 2018 The adapter.js project authors. All Rights Reserved.
  *
@@ -54367,7 +54401,7 @@ function shimGetDisplayMedia(window, getSourceId) {
   };
 }
 
-},{}],322:[function(require,module,exports){
+},{}],323:[function(require,module,exports){
 /*
  *  Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
  *
@@ -54572,7 +54606,7 @@ function shimGetUserMedia(window, browserDetails) {
   }
 }
 
-},{"../utils.js":328}],323:[function(require,module,exports){
+},{"../utils.js":329}],324:[function(require,module,exports){
 /*
  *  Copyright (c) 2017 The WebRTC project authors. All Rights Reserved.
  *
@@ -54960,7 +54994,7 @@ function shimAddIceCandidateNullOrEmpty(window, browserDetails) {
   };
 }
 
-},{"./utils":328,"sdp":312}],324:[function(require,module,exports){
+},{"./utils":329,"sdp":313}],325:[function(require,module,exports){
 /*
  *  Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
  *
@@ -55295,7 +55329,7 @@ function shimCreateAnswer(window) {
   };
 }
 
-},{"../utils":328,"./getdisplaymedia":325,"./getusermedia":326}],325:[function(require,module,exports){
+},{"../utils":329,"./getdisplaymedia":326,"./getusermedia":327}],326:[function(require,module,exports){
 /*
  *  Copyright (c) 2018 The adapter.js project authors. All Rights Reserved.
  *
@@ -55334,7 +55368,7 @@ function shimGetDisplayMedia(window, preferredMediaSource) {
   };
 }
 
-},{}],326:[function(require,module,exports){
+},{}],327:[function(require,module,exports){
 /*
  *  Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
  *
@@ -55411,7 +55445,7 @@ function shimGetUserMedia(window, browserDetails) {
   }
 }
 
-},{"../utils":328}],327:[function(require,module,exports){
+},{"../utils":329}],328:[function(require,module,exports){
 /*
  *  Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
  *
@@ -55780,7 +55814,7 @@ function shimAudioContext(window) {
   window.AudioContext = window.webkitAudioContext;
 }
 
-},{"../utils":328}],328:[function(require,module,exports){
+},{"../utils":329}],329:[function(require,module,exports){
 /*
  *  Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
  *
@@ -56051,7 +56085,7 @@ function filterStats(result, track, outbound) {
   return filteredResult;
 }
 
-},{}],329:[function(require,module,exports){
+},{}],330:[function(require,module,exports){
 /*
 WildEmitter.js is a slim little event emitter by @henrikjoreteg largely based
 on @visionmedia's Emitter from UI Kit.
@@ -56208,7 +56242,7 @@ WildEmitter.mixin = function (constructor) {
 
 WildEmitter.mixin(WildEmitter);
 
-},{}],330:[function(require,module,exports){
+},{}],331:[function(require,module,exports){
 (function () {
     /**
      * Global Variables
@@ -60553,7 +60587,7 @@ WildEmitter.mixin(WildEmitter);
     }
 })();
 
-},{"kurento-utils":298,"webrtc-adapter":318}],331:[function(require,module,exports){
+},{"kurento-utils":298,"webrtc-adapter":319}],332:[function(require,module,exports){
 'use strict';
 
 (function () {
@@ -74807,7 +74841,7 @@ WildEmitter.mixin(WildEmitter);
     }
 })();
 
-},{"./call.module.js":330,"./events.module.js":332,"./messaging.module.js":333,"./utility/utility.js":334,"@sentry/browser":194,"dexie":288,"podasync-ws-only":301}],332:[function(require,module,exports){
+},{"./call.module.js":331,"./events.module.js":333,"./messaging.module.js":334,"./utility/utility.js":335,"@sentry/browser":194,"dexie":288,"podasync-ws-only":301}],333:[function(require,module,exports){
 (function () {
     /**
      * Global Variables
@@ -74931,7 +74965,7 @@ WildEmitter.mixin(WildEmitter);
     }
 })();
 
-},{}],333:[function(require,module,exports){
+},{}],334:[function(require,module,exports){
 (function () {
     /**
      * Global Variables
@@ -75243,7 +75277,7 @@ WildEmitter.mixin(WildEmitter);
     }
 })();
 
-},{"dompurify":289}],334:[function(require,module,exports){
+},{"dompurify":289}],335:[function(require,module,exports){
 (function (global){(function (){
 (function() {
 

@@ -5,6 +5,11 @@ to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.i
 
 ## [12.5.2-snapshot.1] - 2022-05-24
 ### Changed
+- Update async package
+
+
+## [12.5.2-snapshot.0] - 2022-05-24
+### Changed
 - Changed typeCode handling functionality
 - Updated sentry server URL
 
