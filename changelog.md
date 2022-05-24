@@ -6,7 +6,8 @@ to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.i
 ## [12.5.2-snapshot.3] - 2022-05-24
 ### Changed
 - Update sentry url
-- 
+
+
 ## [12.5.2-snapshot.2] - 2022-05-24
 ### Changed
 - Update async package
