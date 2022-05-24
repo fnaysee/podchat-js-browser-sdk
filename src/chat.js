@@ -508,7 +508,8 @@
                     connectionCheckTimeoutThreshold: connectionCheckTimeoutThreshold,
                     messageTtl: messageTtl,
                     reconnectOnClose: reconnectOnClose,
-                    asyncLogging: asyncLogging
+                    asyncLogging: asyncLogging,
+                    logLevel: (consoleLogging ? 3 : 1)
                 });
                 callModule.asyncInitialized(asyncClient);
                 chatMessaging.asyncInitialized(asyncClient);
