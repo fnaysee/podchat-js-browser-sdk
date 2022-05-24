@@ -60632,7 +60632,7 @@ WildEmitter.mixin(WildEmitter);
 
         if (!!Sentry) {
             Sentry.init({
-                dsn: 'http://784a14966f6a416b8b58a4b144aef0f5@talksentry.sakku-khatam.ir:9000/4',
+                dsn: 'https://784a14966f6a416b8b58a4b144aef0f5:733b76b6354f4547a7428bb8c7489bf2@talksentry.sakku-khatam.ir/4',
                 attachStacktrace: true
             });
             Sentry.setContext("Chat Params", params);
@@ -61098,7 +61098,8 @@ WildEmitter.mixin(WildEmitter);
                     connectionCheckTimeoutThreshold: connectionCheckTimeoutThreshold,
                     messageTtl: messageTtl,
                     reconnectOnClose: reconnectOnClose,
-                    asyncLogging: asyncLogging
+                    asyncLogging: asyncLogging,
+                    logLevel: (consoleLogging ? 3 : 1)
                 });
                 callModule.asyncInitialized(asyncClient);
                 chatMessaging.asyncInitialized(asyncClient);
