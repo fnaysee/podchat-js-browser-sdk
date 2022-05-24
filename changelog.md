@@ -1,7 +1,28 @@
 # Changelog
 
 All notable changes to this project will be documented here.
-to see complete list of changelog please visit [ChangeLog](https://github.com/masoudmanson/pod-chat/blob/master/changelog.md)
+to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.ir/pod/pod-basic-sdk/chat-js-browser-sdk/-/blob/master/changelog.md)
+
+## [12.5.1] - 2022-05-24
+## [12.5.0] - 2022-05-24
+### Added
+- Config to timeout the call request
+- Failover call turn servers
+- Improved call process handling
+- Event for new participant to detect call is being recorded
+- Events for file download progress
+- Changed resizeScreenShare
+- Event to detect users are speaking in a call
+
+### Changed
+- Improved janus servers connectivity (internally)
+- Refactored topic peers handling
+
+### Fixed
+- htmlElements is undefined
+- screenShare bugs
+- topic reconnect loop errors
+
 
 ## [12.3.1] - 2022-02-06
 ### Added
