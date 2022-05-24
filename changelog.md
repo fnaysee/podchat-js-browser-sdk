@@ -3,7 +3,7 @@
 All notable changes to this project will be documented here.
 to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.ir/pod/pod-basic-sdk/chat-js-browser-sdk/-/blob/master/changelog.md)
 
-## [12.5.2-snapshot.1] - 2022-05-24
+## [12.5.2-snapshot.2] - 2022-05-24
 ### Changed
 - Update async package
 
