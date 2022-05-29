@@ -56718,7 +56718,14 @@ WildEmitter.mixin(WildEmitter);
                                 options.sendSource = 'screen';
                                 resolve(options);
                             }).catch(function (error) {
-                                console.error("[SDK][navigator.mediaDevices.getDisplayMedia]", error);
+                                let errorString = "[SDK][navigator.mediaDevices.getDisplayMedia]" + JSON.stringify(error)
+                                console.error(errorString);
+                                chatEvents.fireEvent('callEvents', {
+                                    type: 'CALL_ERROR',
+                                    code: 7000,
+                                    message: errorString,
+                                    environmentDetails: getSDKCallDetails()
+                                });
                                 explainUserMediaError(error, 'video', 'screen');
                                 //resolve(options);
                             });
@@ -56758,7 +56765,14 @@ WildEmitter.mixin(WildEmitter);
                     config.state = peerStates.CONNECTING;
                     config.peer = new KurentoUtils.WebRtcPeer[WebRtcFunction](options, function (err) {
                         if (err) {
-                            console.error("[SDK][start/webRtc " + config.direction + "  " + config.mediaType + " Peer] Error: " + explainUserMediaError(err, config.mediaType));
+                            let errorString = "[SDK][start/webRtc " + config.direction + "  " + config.mediaType + " Peer] Error: " + explainUserMediaError(err, config.mediaType);
+                            console.error(errorString);
+                            chatEvents.fireEvent('callEvents', {
+                                type: 'CALL_ERROR',
+                                code: 7000,
+                                message: errorString,
+                                environmentDetails: getSDKCallDetails()
+                            });
                             return;
                         }
 
@@ -56780,7 +56794,14 @@ WildEmitter.mixin(WildEmitter);
                         } else {
                             config.peer.generateOffer((err, sdpOffer) => {
                                 if (err) {
-                                    console.error("[SDK][start/WebRc " + config.direction + "  " + config.mediaType + " Peer/generateOffer] " + err);
+                                    let errorString = "[SDK][start/WebRc " + config.direction + "  " + config.mediaType + " Peer/generateOffer] " + err
+                                    console.error(errorString);
+                                    chatEvents.fireEvent('callEvents', {
+                                        type: 'CALL_ERROR',
+                                        code: 7000,
+                                        message: errorString,
+                                        environmentDetails: getSDKCallDetails()
+                                    });
                                     return;
                                 }
                                 manager.sendSDPOfferRequestMessage(sdpOffer, 1);
@@ -57993,12 +58014,12 @@ WildEmitter.mixin(WildEmitter);
             },
 
             explainUserMediaError = function (err, deviceType, deviceSource) {
-                chatEvents.fireEvent('callEvents', {
+                /*chatEvents.fireEvent('callEvents', {
                     type: 'CALL_ERROR',
                     code: 7000,
                     message: err,
                     environmentDetails: getSDKCallDetails()
-                });
+                });*/
 
                 const n = err.name;
                 if (n === 'NotFoundError' || n === 'DevicesNotFoundError') {
@@ -74881,6 +74902,7 @@ WildEmitter.mixin(WildEmitter);
             this.uniqueId = error.uniqueId ? error.uniqueId : '';
             this.token = token;
             this.error =  JSON.stringify((error.error ? error.error : error));
+            this.environmentDetails = error.environmentDetails
         };
 
         this.updateToken = function (newToken) {
@@ -74917,7 +74939,22 @@ WildEmitter.mixin(WildEmitter);
                         Sentry.setExtra('errorCode', err.code);
                         Sentry.setExtra('uniqueId', err.uniqueId);
                         Sentry.setExtra('token', err.token);
+                        Sentry.setExtra('SDKParams', {
+                            platformHost: params.platformHost,
+                            podSpaceFileServer: params.podSpaceFileServer,
+                            socketAddress: params.socketAddress,
+                            ssoHost: params.ssoHost,
+                            typeCode: params.typeCode,
+                            serverName: params.serverName,
+                            callRequestTimeout: params.callRequestTimeout,
+                            asyncRequestTimeout: params.asyncRequestTimeout,
+                            httpUploadRequestTimeout: params.httpUploadRequestTimeout,
+                            callOptions: params.callOptions
+                        });
+
                         Sentry.setTag('Error code:', (err.code ? err.code : ''))
+                        if(err.environmentDetails)
+                            Sentry.setExtra("environmentDetails", err.environmentDetails)
                         Sentry.captureException(err.error, {
                             logger: eventName
                         });

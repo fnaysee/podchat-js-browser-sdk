@@ -473,7 +473,14 @@
                                 options.sendSource = 'screen';
                                 resolve(options);
                             }).catch(function (error) {
-                                console.error("[SDK][navigator.mediaDevices.getDisplayMedia]", error);
+                                let errorString = "[SDK][navigator.mediaDevices.getDisplayMedia]" + JSON.stringify(error)
+                                console.error(errorString);
+                                chatEvents.fireEvent('callEvents', {
+                                    type: 'CALL_ERROR',
+                                    code: 7000,
+                                    message: errorString,
+                                    environmentDetails: getSDKCallDetails()
+                                });
                                 explainUserMediaError(error, 'video', 'screen');
                                 //resolve(options);
                             });
@@ -513,7 +520,14 @@
                     config.state = peerStates.CONNECTING;
                     config.peer = new KurentoUtils.WebRtcPeer[WebRtcFunction](options, function (err) {
                         if (err) {
-                            console.error("[SDK][start/webRtc " + config.direction + "  " + config.mediaType + " Peer] Error: " + explainUserMediaError(err, config.mediaType));
+                            let errorString = "[SDK][start/webRtc " + config.direction + "  " + config.mediaType + " Peer] Error: " + explainUserMediaError(err, config.mediaType);
+                            console.error(errorString);
+                            chatEvents.fireEvent('callEvents', {
+                                type: 'CALL_ERROR',
+                                code: 7000,
+                                message: errorString,
+                                environmentDetails: getSDKCallDetails()
+                            });
                             return;
                         }
 
@@ -535,7 +549,14 @@
                         } else {
                             config.peer.generateOffer((err, sdpOffer) => {
                                 if (err) {
-                                    console.error("[SDK][start/WebRc " + config.direction + "  " + config.mediaType + " Peer/generateOffer] " + err);
+                                    let errorString = "[SDK][start/WebRc " + config.direction + "  " + config.mediaType + " Peer/generateOffer] " + err
+                                    console.error(errorString);
+                                    chatEvents.fireEvent('callEvents', {
+                                        type: 'CALL_ERROR',
+                                        code: 7000,
+                                        message: errorString,
+                                        environmentDetails: getSDKCallDetails()
+                                    });
                                     return;
                                 }
                                 manager.sendSDPOfferRequestMessage(sdpOffer, 1);
@@ -1748,12 +1769,12 @@
             },
 
             explainUserMediaError = function (err, deviceType, deviceSource) {
-                chatEvents.fireEvent('callEvents', {
+                /*chatEvents.fireEvent('callEvents', {
                     type: 'CALL_ERROR',
                     code: 7000,
                     message: err,
                     environmentDetails: getSDKCallDetails()
-                });
+                });*/
 
                 const n = err.name;
                 if (n === 'NotFoundError' || n === 'DevicesNotFoundError') {

@@ -36,6 +36,7 @@
             this.uniqueId = error.uniqueId ? error.uniqueId : '';
             this.token = token;
             this.error =  JSON.stringify((error.error ? error.error : error));
+            this.environmentDetails = error.environmentDetails
         };
 
         this.updateToken = function (newToken) {
@@ -72,7 +73,22 @@
                         Sentry.setExtra('errorCode', err.code);
                         Sentry.setExtra('uniqueId', err.uniqueId);
                         Sentry.setExtra('token', err.token);
+                        Sentry.setExtra('SDKParams', {
+                            platformHost: params.platformHost,
+                            podSpaceFileServer: params.podSpaceFileServer,
+                            socketAddress: params.socketAddress,
+                            ssoHost: params.ssoHost,
+                            typeCode: params.typeCode,
+                            serverName: params.serverName,
+                            callRequestTimeout: params.callRequestTimeout,
+                            asyncRequestTimeout: params.asyncRequestTimeout,
+                            httpUploadRequestTimeout: params.httpUploadRequestTimeout,
+                            callOptions: params.callOptions
+                        });
+
                         Sentry.setTag('Error code:', (err.code ? err.code : ''))
+                        if(err.environmentDetails)
+                            Sentry.setExtra("environmentDetails", err.environmentDetails)
                         Sentry.captureException(err.error, {
                             logger: eventName
                         });
