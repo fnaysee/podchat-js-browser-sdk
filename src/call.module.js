@@ -16,12 +16,10 @@
 
         var Utility = params.Utility,
             currentModuleInstance = this,
-            Sentry = params.Sentry,
             asyncClient = params.asyncClient,
             chatEvents = params.chatEvents,
             chatMessaging = params.chatMessaging,
             token = params.token,
-            messagesCallbacks = {},
             asyncRequestTimeouts = {},
             chatMessageVOTypes = {
                 CREATE_THREAD: 1,
@@ -192,7 +190,7 @@
             currentCallParams = {},
             currentCallId = null,
             newCallId = null,
-            shouldReconnectCallTimeout = null,
+            //shouldReconnectCallTimeout = null,
             callMetaDataTypes = {
                 POORCONNECTION: 1,
                 POORCONNECTIONRESOLVED: 2,
@@ -221,7 +219,6 @@
             callStopQueue = {
                 callStarted: false,
             },
-            callServerName,
             callServerController = new callServerManager(),
             messageTtl = params.messageTtl || 10000,
             config = {

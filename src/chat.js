@@ -53,7 +53,6 @@
         var asyncClient,
             peerId,
             oldPeerId,
-            userInfo,
             token = params.token,
             generalTypeCode = params.typeCode || 'default',
             mapApiKey = params.mapApiKey || '8b77db18704aa646ee5aaea13e7370f4f88b9e8c',
@@ -74,17 +73,13 @@
             grantDeviceIdFromSSO = (params.grantDeviceIdFromSSO && typeof params.grantDeviceIdFromSSO === 'boolean')
                 ? params.grantDeviceIdFromSSO
                 : false,
-            messagesCallbacks = {},
             messagesDelivery = {},
             messagesSeen = {},
             deliveryInterval,
             deliveryIntervalPitch = params.deliveryIntervalPitch || 2000,
             seenInterval,
             seenIntervalPitch = params.seenIntervalPitch || 2000,
-            sendMessageCallbacks = {},
-            threadCallbacks = {},
             getImageFromLinkObjects = {},
-            asyncRequestTimeouts = {},
             chatMessageVOTypes = {
                 CREATE_THREAD: 1,
                 MESSAGE: 2,
@@ -260,10 +255,6 @@
                 'THREAD': 2,
                 'CONTACTS': 3
             },
-            currentCallId = null,
-            callTopics = {},
-            webpeers = {},
-            webpeersMetadata = {},
             callRequestController = {
                 callRequestReceived: false,
                 callEstablishedInMySide: false,
@@ -273,10 +264,6 @@
                     }
                     return false;
                 }
-            },
-            uiRemoteMedias = {},
-            callStopQueue = {
-                callStarted: false,
             },
             systemMessageIntervalPitch = params.systemMessageIntervalPitch || 1000,
             isTypingInterval,
@@ -290,7 +277,6 @@
             queueConnectionTimeout = params.queueConnectionTimeout,
             socketAddress = params.socketAddress,
             serverName = params.serverName || '',
-            callServerName,
             wsConnectionWaitTime = params.wsConnectionWaitTime,
             connectionRetryInterval = params.connectionRetryInterval,
             msgPriority = params.msgPriority || 1,
@@ -298,7 +284,6 @@
             reconnectOnClose = params.reconnectOnClose,
             asyncLogging = params.asyncLogging,
             chatPingMessageInterval = 20000,
-            sendPingTimeout,
             getUserInfoTimeout,
             config = {
                 getHistoryCount: 50
@@ -391,14 +376,13 @@
             },
             getUserInfoRetry = 5,
             getUserInfoRetryCount = 0,
-            chatState = false,
             chatFullStateObject = {},
             httpRequestObject = {},
             connectionCheckTimeout = params.connectionCheckTimeout,
             connectionCheckTimeoutThreshold = params.connectionCheckTimeoutThreshold,
             httpRequestTimeout = (params.httpRequestTimeout >= 0) ? params.httpRequestTimeout : 0,
             asyncRequestTimeout = (typeof params.asyncRequestTimeout === 'number' && params.asyncRequestTimeout >= 0) ? params.asyncRequestTimeout : 0,
-            callRequestTimeout = (typeof params.callRequestTimeout === 'number' && params.callRequestTimeout >= 0) ? params.callRequestTimeout : 10000,
+            //callRequestTimeout = (typeof params.callRequestTimeout === 'number' && params.callRequestTimeout >= 0) ? params.callRequestTimeout : 10000,
             httpUploadRequestTimeout = (params.httpUploadRequestTimeout >= 0) ? params.httpUploadRequestTimeout : 0,
             actualTimingLog = (params.asyncLogging.actualTiming && typeof params.asyncLogging.actualTiming === 'boolean')
                 ? params.asyncLogging.actualTiming
