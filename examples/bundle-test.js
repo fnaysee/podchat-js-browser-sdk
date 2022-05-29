@@ -56261,12 +56261,10 @@ WildEmitter.mixin(WildEmitter);
 
         var Utility = params.Utility,
             currentModuleInstance = this,
-            Sentry = params.Sentry,
             asyncClient = params.asyncClient,
             chatEvents = params.chatEvents,
             chatMessaging = params.chatMessaging,
             token = params.token,
-            messagesCallbacks = {},
             asyncRequestTimeouts = {},
             chatMessageVOTypes = {
                 CREATE_THREAD: 1,
@@ -56437,7 +56435,7 @@ WildEmitter.mixin(WildEmitter);
             currentCallParams = {},
             currentCallId = null,
             newCallId = null,
-            shouldReconnectCallTimeout = null,
+            //shouldReconnectCallTimeout = null,
             callMetaDataTypes = {
                 POORCONNECTION: 1,
                 POORCONNECTIONRESOLVED: 2,
@@ -56466,7 +56464,6 @@ WildEmitter.mixin(WildEmitter);
             callStopQueue = {
                 callStarted: false,
             },
-            callServerName,
             callServerController = new callServerManager(),
             messageTtl = params.messageTtl || 10000,
             config = {
@@ -60273,8 +60270,8 @@ WildEmitter.mixin(WildEmitter);
 
             //TODO: should be moved to event 113 when server fixes
 
-            currentModuleInstance.pauseMice({});
-            callUsers[chatMessaging.userInfo.id].audioStopManager.disableStream();
+            // currentModuleInstance.pauseMice({});
+            // callUsers[chatMessaging.userInfo.id].audioStopManager.disableStream();
 
             return chatMessaging.sendMessage(sendMessageParams, {
                 onResult: function (result) {
@@ -60317,10 +60314,10 @@ WildEmitter.mixin(WildEmitter);
             }
 
             //TODO: Should be moved to event from chat server (when chat server fixes the bug)
-            var myId = chatMessaging.userInfo.id
-                , myUser = callUsers[myId];
+            //var myId = chatMessaging.userInfo.id
+                //, myUser = callUsers[myId];
 
-            if(myUser.audioStopManager.isStreamPaused()) {
+/*            if(myUser.audioStopManager.isStreamPaused()) {
                 if (myUser.audioStopManager.isStreamStopped()){
                     callStateController.activateParticipantStream(
                         myId,
@@ -60334,7 +60331,7 @@ WildEmitter.mixin(WildEmitter);
                     currentModuleInstance.resumeMice({});
                 }
                 myUser.audioStopManager.reset();
-            }
+            }*/
 
             return chatMessaging.sendMessage(sendMessageParams, {
                 onResult: function (result) {
@@ -60664,7 +60661,6 @@ WildEmitter.mixin(WildEmitter);
         var asyncClient,
             peerId,
             oldPeerId,
-            userInfo,
             token = params.token,
             generalTypeCode = params.typeCode || 'default',
             mapApiKey = params.mapApiKey || '8b77db18704aa646ee5aaea13e7370f4f88b9e8c',
@@ -60685,17 +60681,13 @@ WildEmitter.mixin(WildEmitter);
             grantDeviceIdFromSSO = (params.grantDeviceIdFromSSO && typeof params.grantDeviceIdFromSSO === 'boolean')
                 ? params.grantDeviceIdFromSSO
                 : false,
-            messagesCallbacks = {},
             messagesDelivery = {},
             messagesSeen = {},
             deliveryInterval,
             deliveryIntervalPitch = params.deliveryIntervalPitch || 2000,
             seenInterval,
             seenIntervalPitch = params.seenIntervalPitch || 2000,
-            sendMessageCallbacks = {},
-            threadCallbacks = {},
             getImageFromLinkObjects = {},
-            asyncRequestTimeouts = {},
             chatMessageVOTypes = {
                 CREATE_THREAD: 1,
                 MESSAGE: 2,
@@ -60871,10 +60863,6 @@ WildEmitter.mixin(WildEmitter);
                 'THREAD': 2,
                 'CONTACTS': 3
             },
-            currentCallId = null,
-            callTopics = {},
-            webpeers = {},
-            webpeersMetadata = {},
             callRequestController = {
                 callRequestReceived: false,
                 callEstablishedInMySide: false,
@@ -60884,10 +60872,6 @@ WildEmitter.mixin(WildEmitter);
                     }
                     return false;
                 }
-            },
-            uiRemoteMedias = {},
-            callStopQueue = {
-                callStarted: false,
             },
             systemMessageIntervalPitch = params.systemMessageIntervalPitch || 1000,
             isTypingInterval,
@@ -60901,7 +60885,6 @@ WildEmitter.mixin(WildEmitter);
             queueConnectionTimeout = params.queueConnectionTimeout,
             socketAddress = params.socketAddress,
             serverName = params.serverName || '',
-            callServerName,
             wsConnectionWaitTime = params.wsConnectionWaitTime,
             connectionRetryInterval = params.connectionRetryInterval,
             msgPriority = params.msgPriority || 1,
@@ -60909,7 +60892,6 @@ WildEmitter.mixin(WildEmitter);
             reconnectOnClose = params.reconnectOnClose,
             asyncLogging = params.asyncLogging,
             chatPingMessageInterval = 20000,
-            sendPingTimeout,
             getUserInfoTimeout,
             config = {
                 getHistoryCount: 50
@@ -61002,14 +60984,13 @@ WildEmitter.mixin(WildEmitter);
             },
             getUserInfoRetry = 5,
             getUserInfoRetryCount = 0,
-            chatState = false,
             chatFullStateObject = {},
             httpRequestObject = {},
             connectionCheckTimeout = params.connectionCheckTimeout,
             connectionCheckTimeoutThreshold = params.connectionCheckTimeoutThreshold,
             httpRequestTimeout = (params.httpRequestTimeout >= 0) ? params.httpRequestTimeout : 0,
             asyncRequestTimeout = (typeof params.asyncRequestTimeout === 'number' && params.asyncRequestTimeout >= 0) ? params.asyncRequestTimeout : 0,
-            callRequestTimeout = (typeof params.callRequestTimeout === 'number' && params.callRequestTimeout >= 0) ? params.callRequestTimeout : 10000,
+            //callRequestTimeout = (typeof params.callRequestTimeout === 'number' && params.callRequestTimeout >= 0) ? params.callRequestTimeout : 10000,
             httpUploadRequestTimeout = (params.httpUploadRequestTimeout >= 0) ? params.httpUploadRequestTimeout : 0,
             actualTimingLog = (params.asyncLogging.actualTiming && typeof params.asyncLogging.actualTiming === 'boolean')
                 ? params.asyncLogging.actualTiming
