@@ -4,8 +4,8 @@ All notable changes to this project will be documented here.
 to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.ir/pod/pod-basic-sdk/chat-js-browser-sdk/-/blob/master/changelog.md)
 
 ## [12.5.2-snapshot.5] - 2022-05-29
-### Changed
-- Fixes user being muted when muting others
+### Fixed
+-  User being muted when muting others
 
 ## [12.5.2-snapshot.4] - 2022-05-29
 ### Changed
