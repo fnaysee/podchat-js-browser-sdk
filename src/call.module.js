@@ -4025,8 +4025,8 @@
 
             //TODO: should be moved to event 113 when server fixes
 
-            currentModuleInstance.pauseMice({});
-            callUsers[chatMessaging.userInfo.id].audioStopManager.disableStream();
+            // currentModuleInstance.pauseMice({});
+            // callUsers[chatMessaging.userInfo.id].audioStopManager.disableStream();
 
             return chatMessaging.sendMessage(sendMessageParams, {
                 onResult: function (result) {
@@ -4069,10 +4069,10 @@
             }
 
             //TODO: Should be moved to event from chat server (when chat server fixes the bug)
-            var myId = chatMessaging.userInfo.id
-                , myUser = callUsers[myId];
+            //var myId = chatMessaging.userInfo.id
+                //, myUser = callUsers[myId];
 
-            if(myUser.audioStopManager.isStreamPaused()) {
+/*            if(myUser.audioStopManager.isStreamPaused()) {
                 if (myUser.audioStopManager.isStreamStopped()){
                     callStateController.activateParticipantStream(
                         myId,
@@ -4086,7 +4086,7 @@
                     currentModuleInstance.resumeMice({});
                 }
                 myUser.audioStopManager.reset();
-            }
+            }*/
 
             return chatMessaging.sendMessage(sendMessageParams, {
                 onResult: function (result) {
