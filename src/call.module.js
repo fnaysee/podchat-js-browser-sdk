@@ -1505,7 +1505,8 @@
                         el.setAttribute('id', 'uiRemoteAudio-' + user.audioTopicName);
                         el.setAttribute('class', callAudioTagClassName);
                         el.setAttribute('autoplay', '');
-                        el.setAttribute('muted', '');
+                        if(user.direction === 'send')
+                            el.setAttribute('muted', '');
                         el.setAttribute('controls', '');
                     }
 
