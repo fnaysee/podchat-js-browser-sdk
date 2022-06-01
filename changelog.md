@@ -3,9 +3,13 @@
 All notable changes to this project will be documented here.
 to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.ir/pod/pod-basic-sdk/chat-js-browser-sdk/-/blob/master/changelog.md)
 
+## [12.5.2-snapshot.7] - 2022-06-1
+### Changed
+- Removed CALL_ENDED from LEAVE_CALL event in GroupCall
+
 ## [12.5.2-snapshot.6] - 2022-05-31
 ### Fixed
-- Fixed play not permitted in ios devices
+- Mute audio send only not all audio tags (Causes problems in Apple devices)
 
 ## [12.5.2-snapshot.5] - 2022-05-29
 ### Fixed
