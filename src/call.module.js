@@ -2673,12 +2673,12 @@
                         if(screenShareInfo.isStarted() && screenShareInfo.getOwner() === messageContent[0].userId)
                             callStateController.removeScreenShareFromCall()
 
-                        if(messageContent[0].userId === chatMessaging.userInfo.id) {
+/*                        if(messageContent[0].userId === chatMessaging.userInfo.id) {
                             chatEvents.fireEvent('callEvents', {
                                 type: 'CALL_ENDED',
                                 callId: threadId
                             });
-                        }
+                        }*/
                     }
 
                     //If I'm the only call participant, stop the call
