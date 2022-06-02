@@ -1,5 +1,8 @@
 'use strict';
-
+/**
+ * POD Chat Browser v12.5.2
+ *
+ */
 (function () {
     /*
      * Pod Chat Browser Module
@@ -14233,5 +14236,7 @@
             window.POD = {};
         }
         window.POD.Chat = Chat;
+        //For backward compatibility
+        window.PodChat = Chat;
     }
 })();
