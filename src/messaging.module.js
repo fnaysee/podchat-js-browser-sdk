@@ -1,20 +1,13 @@
-(function () {
-    /**
-     * Global Variables
-     */
-    var DOMPurify;
+import { chatMessageVOTypes } from "./lib/constants"
+import DOMPurify from 'dompurify'
 
+// (function () {
     /**
      * Communicates with chat server
      * @param params
      * @constructor
      */
     function ChatMessaging(params) {
-        if (typeof (require) !== 'undefined' && typeof (exports) !== 'undefined') {
-            DOMPurify = require('dompurify');
-        } else {
-            DOMPurify = window.DOMPurify;
-        }
 
         var currentModuleInstance = this,
             asyncClient = params.asyncClient,
@@ -22,7 +15,6 @@
             Utility = params.Utility,
             consoleLogging = params.consoleLogging,
             generalTypeCode = params.generalTypeCode,
-            chatMessageVOTypes = params.chatMessageVOTypes,
             chatPingMessageInterval = params.chatPingMessageInterval,
             asyncRequestTimeout = params.asyncRequestTimeout,
             messageTtl = params.messageTtl,
@@ -299,12 +291,13 @@
 
     }
 
-    if (typeof module !== 'undefined' && typeof module.exports != 'undefined') {
-        module.exports = ChatMessaging;
-    } else {
-        if (!window.POD) {
-            window.POD = {};
-        }
-        window.POD.ChatMessaging = ChatMessaging;
-    }
-})();
+    // if (typeof module !== 'undefined' && typeof module.exports != 'undefined') {
+    //     module.exports = ChatMessaging;
+    // } else {
+    //     if (!window.POD) {
+    //         window.POD = {};
+    //     }
+    //     window.POD.ChatMessaging = ChatMessaging;
+    // }
+// })();
+export default ChatMessaging;

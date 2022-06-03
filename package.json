@@ -3,6 +3,7 @@
   "version": "12.5.2-snapshot.8",
   "description": "Javascript SDK to use POD's Chat Service - Browser Only",
   "main": "./dist/node/chat.js",
+  "type": "module",
   "scripts": {
     "test": "mocha --reporter spec --exit",
     "publish:snapshot": "npm run version:snapshot && npm publish --tag snapshot",

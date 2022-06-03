@@ -1,4 +1,4 @@
-(function () {
+// (function () {
     /**
      * Global Variables
      */
@@ -127,12 +127,13 @@
         }
     }
 
-    if (typeof module !== 'undefined' && typeof module.exports != 'undefined') {
+/*    if (typeof module !== 'undefined' && typeof module.exports != 'undefined') {
         module.exports = ChatEvents;
-    } else {
-        if (!window.POD) {
-            window.POD = {};
-        }
-        window.POD.ChatEvents = ChatEvents;
-    }
-})();
+    } else {*/
+        // if (!window.POD) {
+        //     window.POD = {};
+        // }
+        // window.POD.ChatEvents = ChatEvents;
+    // }
+// })();
+export default ChatEvents;
