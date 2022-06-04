@@ -1,21 +1,19 @@
 "use strict";
 
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports["default"] = void 0;
 
-// (function () {
+var _utility = _interopRequireDefault(require("./utility/utility"));
 
-/**
- * Global Variables
- */
 function ChatEvents(params) {
-  //if (typeof (require) !== 'undefined' && typeof (exports) !== 'undefined') {} else {}
   var Sentry = params.Sentry,
       currentModuleInstance = this,
-      Utility = params.Utility,
-      consoleLogging = params.consoleLogging,
+      //Utility = params.Utility,
+  consoleLogging = params.consoleLogging,
       token = params.token,
       eventCallbacks = {
     connect: {},
@@ -108,7 +106,8 @@ function ChatEvents(params) {
 
   this.on = function (eventName, callback) {
     if (eventCallbacks[eventName]) {
-      var id = Utility.generateUUID();
+      var id = _utility["default"].generateUUID();
+
       eventCallbacks[eventName][id] = callback;
       return id;
     }
@@ -130,16 +129,6 @@ function ChatEvents(params) {
     }
   };
 }
-/*    if (typeof module !== 'undefined' && typeof module.exports != 'undefined') {
-        module.exports = ChatEvents;
-    } else {*/
-// if (!window.POD) {
-//     window.POD = {};
-// }
-// window.POD.ChatEvents = ChatEvents;
-// }
-// })();
-
 
 var _default = ChatEvents;
 exports["default"] = _default;

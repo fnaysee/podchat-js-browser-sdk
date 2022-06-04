@@ -11,24 +11,15 @@ var _typeof2 = _interopRequireDefault(require("@babel/runtime/helpers/typeof"));
 
 var _constants = require("./lib/constants");
 
+var _kurentoUtils = _interopRequireDefault(require("kurento-utils"));
+
+var _utility = _interopRequireDefault(require("./utility/utility"));
+
+// import WebrtcAdapter from 'webrtc-adapter'
 // (function () {
-
-/**
- * Global Variables
- */
-var KurentoUtils, WebrtcAdapter;
-
 function ChatCall(params) {
-  if (typeof require !== 'undefined' && typeof module !== 'undefined') {
-    KurentoUtils = require('kurento-utils');
-    WebrtcAdapter = require('webrtc-adapter');
-  } else {
-    KurentoUtils = window.kurentoUtils;
-    WebrtcAdapter = window.adapter;
-  }
-
-  var Utility = params.Utility,
-      currentModuleInstance = this,
+  var //Utility = params.Utility,
+  currentModuleInstance = this,
       asyncClient = params.asyncClient,
       chatEvents = params.chatEvents,
       chatMessaging = params.chatMessaging,
@@ -374,7 +365,7 @@ function ChatCall(params) {
             topicElement = user.htmlElements[config.topic]; //topicMetaData = user.topicMetaData[config.topic];
 
         config.state = peerStates.CONNECTING;
-        config.peer = new KurentoUtils.WebRtcPeer[WebRtcFunction](options, function (err) {
+        config.peer = new _kurentoUtils["default"].WebRtcPeer[WebRtcFunction](options, function (err) {
           if (err) {
             var errorString = "[SDK][start/webRtc " + config.direction + "  " + config.mediaType + " Peer] Error: " + explainUserMediaError(err, config.mediaType);
             console.error(errorString);
@@ -848,7 +839,7 @@ function ChatCall(params) {
     if (typeof params.uniqueId != 'undefined') {
       uniqueId = params.uniqueId;
     } else {
-      uniqueId = Utility.generateUUID();
+      uniqueId = _utility["default"].generateUUID();
     }
 
     message.uniqueId = uniqueId;
@@ -2085,7 +2076,7 @@ function ChatCall(params) {
   };
 
   this.callMessageHandler = function (callMessage) {
-    var jsonMessage = typeof callMessage.content === 'string' && Utility.isValidJson(callMessage.content) ? JSON.parse(callMessage.content) : callMessage.content,
+    var jsonMessage = typeof callMessage.content === 'string' && _utility["default"].isValidJson(callMessage.content) ? JSON.parse(callMessage.content) : callMessage.content,
         uniqueId = jsonMessage.uniqueId;
     asyncRequestTimeouts[uniqueId] && clearTimeout(asyncRequestTimeouts[uniqueId]);
 
@@ -2207,7 +2198,7 @@ function ChatCall(params) {
         }, function (r) {});
 
         if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         chatEvents.fireEvent('callEvents', {
@@ -2234,7 +2225,7 @@ function ChatCall(params) {
 
       case chatMessageVOTypes.ACCEPT_CALL:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         chatEvents.fireEvent('callEvents', {
@@ -2249,7 +2240,7 @@ function ChatCall(params) {
 
       case chatMessageVOTypes.REJECT_CALL:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         chatEvents.fireEvent('callEvents', {
@@ -2264,7 +2255,7 @@ function ChatCall(params) {
 
       case chatMessageVOTypes.RECEIVE_CALL_REQUEST:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         if (messageContent.callId > 0) {
@@ -2299,7 +2290,7 @@ function ChatCall(params) {
         }
 
         if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         chatEvents.fireEvent('callEvents', {
@@ -2344,7 +2335,7 @@ function ChatCall(params) {
 
       case chatMessageVOTypes.END_CALL_REQUEST:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         chatEvents.fireEvent('callEvents', {
@@ -2360,7 +2351,7 @@ function ChatCall(params) {
 
       case chatMessageVOTypes.END_CALL:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         chatEvents.fireEvent('callEvents', {
@@ -2376,7 +2367,7 @@ function ChatCall(params) {
 
       case chatMessageVOTypes.GET_CALLS:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         break;
@@ -2387,7 +2378,7 @@ function ChatCall(params) {
 
       case chatMessageVOTypes.RECONNECT:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         chatEvents.fireEvent('callEvents', {
@@ -2402,7 +2393,7 @@ function ChatCall(params) {
 
       case chatMessageVOTypes.CONNECT:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         chatEvents.fireEvent('callEvents', {
@@ -2442,7 +2433,7 @@ function ChatCall(params) {
         }, function (r) {});
 
         if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         if (messageContent.callId > 0) {
@@ -2464,7 +2455,7 @@ function ChatCall(params) {
 
       case chatMessageVOTypes.LEAVE_CALL:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         chatEvents.fireEvent('callEvents', {
@@ -2498,7 +2489,7 @@ function ChatCall(params) {
 
       case chatMessageVOTypes.ADD_CALL_PARTICIPANT:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         break;
@@ -2509,7 +2500,7 @@ function ChatCall(params) {
 
       case chatMessageVOTypes.CALL_PARTICIPANT_JOINED:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         if (Array.isArray(messageContent)) {
@@ -2567,7 +2558,7 @@ function ChatCall(params) {
 
       case chatMessageVOTypes.REMOVE_CALL_PARTICIPANT:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         chatEvents.fireEvent('callEvents', {
@@ -2582,7 +2573,7 @@ function ChatCall(params) {
 
       case chatMessageVOTypes.TERMINATE_CALL:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         chatEvents.fireEvent('callEvents', {
@@ -2598,7 +2589,7 @@ function ChatCall(params) {
 
       case chatMessageVOTypes.MUTE_CALL_PARTICIPANT:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         if (Array.isArray(messageContent)) {
@@ -2630,7 +2621,7 @@ function ChatCall(params) {
 
       case chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         var myId = chatMessaging.userInfo.id;
@@ -2677,7 +2668,7 @@ function ChatCall(params) {
 
       case chatMessageVOTypes.CANCEL_GROUP_CALL:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         chatEvents.fireEvent('callEvents', {
@@ -2692,7 +2683,7 @@ function ChatCall(params) {
 
       case chatMessageVOTypes.ACTIVE_CALL_PARTICIPANTS:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         break;
@@ -2717,7 +2708,7 @@ function ChatCall(params) {
 
       case chatMessageVOTypes.TURN_ON_VIDEO_CALL:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         if (Array.isArray(messageContent)) {
@@ -2744,7 +2735,7 @@ function ChatCall(params) {
 
       case chatMessageVOTypes.TURN_OFF_VIDEO_CALL:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         if (Array.isArray(messageContent)) {
@@ -2771,7 +2762,7 @@ function ChatCall(params) {
 
       case chatMessageVOTypes.RECORD_CALL:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         chatEvents.fireEvent('callEvents', {
@@ -2788,7 +2779,7 @@ function ChatCall(params) {
 
       case chatMessageVOTypes.END_RECORD_CALL:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         chatEvents.fireEvent('callEvents', {
@@ -2807,7 +2798,7 @@ function ChatCall(params) {
         screenShareInfo.setOwner(messageContent.screenOwner.id);
 
         if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         } else if (!screenShareInfo.iAmOwner()) {
           callStateController.addScreenShareToCall("receive", false);
         }
@@ -2825,7 +2816,7 @@ function ChatCall(params) {
       case chatMessageVOTypes.END_SCREEN_SHARE:
         // screenShareInfo.setIAmOwner(false);
         if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         } else if (!screenShareInfo.iAmOwner()) {
           consoleLogging && console.log("[SDK][END_SCREEN_SHARE], im not owner of screen");
           callStateController.removeScreenShareFromCall();
@@ -2843,7 +2834,7 @@ function ChatCall(params) {
 
       case chatMessageVOTypes.DELETE_FROM_CALL_HISTORY:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent));
         }
 
         chatEvents.fireEvent('callEvents', {
@@ -2860,7 +2851,7 @@ function ChatCall(params) {
         if (!callRequestController.callEstablishedInMySide) return;
 
         if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         chatEvents.fireEvent('callEvents', {
@@ -2877,7 +2868,7 @@ function ChatCall(params) {
 
       case chatMessageVOTypes.GET_CALLS_TO_JOIN:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         break;

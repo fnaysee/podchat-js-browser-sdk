@@ -1,21 +1,13 @@
 import { chatMessageVOTypes } from "./lib/constants"
+
+import KurentoUtils from 'kurento-utils'
+// import WebrtcAdapter from 'webrtc-adapter'
+import Utility from "./utility/utility"
+
 // (function () {
-    /**
-     * Global Variables
-     */
-    var KurentoUtils,
-        WebrtcAdapter;
-
     function ChatCall(params) {
-        if (typeof (require) !== 'undefined' && typeof (module) !== 'undefined') {
-            KurentoUtils = require('kurento-utils');
-            WebrtcAdapter = require('webrtc-adapter');
-        } else {
-            KurentoUtils = window.kurentoUtils;
-            WebrtcAdapter = window.adapter;
-        }
 
-        var Utility = params.Utility,
+        var //Utility = params.Utility,
             currentModuleInstance = this,
             asyncClient = params.asyncClient,
             chatEvents = params.chatEvents,

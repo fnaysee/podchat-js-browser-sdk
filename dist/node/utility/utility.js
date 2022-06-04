@@ -589,5 +589,6 @@ if (!window.POD) {
 
 window.POD.ChatUtility = ChatUtility; // }
 
-var _default = ChatUtility;
+var _default = new ChatUtility();
+
 exports["default"] = _default;

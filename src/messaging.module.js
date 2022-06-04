@@ -1,6 +1,6 @@
 import { chatMessageVOTypes } from "./lib/constants"
 import DOMPurify from 'dompurify'
-
+import Utility from "./utility/utility"
 // (function () {
     /**
      * Communicates with chat server
@@ -12,7 +12,7 @@ import DOMPurify from 'dompurify'
         var currentModuleInstance = this,
             asyncClient = params.asyncClient,
             Sentry = params.Sentry,
-            Utility = params.Utility,
+            //Utility = params.Utility,
             consoleLogging = params.consoleLogging,
             generalTypeCode = params.generalTypeCode,
             chatPingMessageInterval = params.chatPingMessageInterval,

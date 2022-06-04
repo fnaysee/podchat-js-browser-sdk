@@ -570,4 +570,4 @@ if (!window.POD) {
 }
 window.POD.ChatUtility = ChatUtility;
     // }
-export default ChatUtility
+export default new ChatUtility()

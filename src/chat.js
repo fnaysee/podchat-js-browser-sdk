@@ -1,11 +1,10 @@
 'use strict';
 /**
- * POD Chat Browser v12.5.2
+ * POD Chat Browser
  *
  */
-
 import Async from "podasync-ws-only"
-import ChatUtility from "./utility/utility"
+import Utility from "./utility/utility"
 import Dexie from "dexie"
 import Sentry from "@sentry/browser"
 import ChatCall from "./call.module"
@@ -14,7 +13,7 @@ import ChatMessaging from "./messaging.module"
 
 import { chatMessageVOTypes } from "./lib/constants"
 
-const Utility = new ChatUtility();
+// const Utility = new ChatUtility();
 
 // (function () {
     /*
@@ -279,13 +278,13 @@ const Utility = new ChatUtility();
 
         var chatEvents = new ChatEvents(Object.assign(params, {
                 Sentry: Sentry,
-                Utility: Utility,
+                //Utility: Utility,
                 consoleLogging: consoleLogging,
             })),
             chatMessaging = new ChatMessaging(Object.assign(params, {
                 asyncClient: asyncClient,
                 Sentry: Sentry,
-                Utility: Utility,
+                //Utility: Utility,
                 consoleLogging: consoleLogging,
                 generalTypeCode: generalTypeCode,
                 chatPingMessageInterval: chatPingMessageInterval,
@@ -296,7 +295,7 @@ const Utility = new ChatUtility();
             })),
             callModule = new ChatCall(Object.assign(params, {
                 Sentry: Sentry,
-                Utility: Utility,
+                //Utility: Utility,
                 consoleLogging: consoleLogging,
                 chatEvents: chatEvents,
                 asyncClient: asyncClient,

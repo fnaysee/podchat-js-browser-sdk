@@ -69,7 +69,7 @@ var BrowserBackend = /** @class */ (function (_super) {
 }(core_1.BaseBackend));
 exports.BrowserBackend = BrowserBackend;
 
-},{"./eventbuilder":5,"./transports":21,"@sentry/core":27,"@sentry/types":42,"@sentry/utils":52,"tslib":316}],4:[function(require,module,exports){
+},{"./eventbuilder":5,"./transports":21,"@sentry/core":27,"@sentry/types":42,"@sentry/utils":52,"tslib":315}],4:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var core_1 = require("@sentry/core");
@@ -146,7 +146,7 @@ var BrowserClient = /** @class */ (function (_super) {
 }(core_1.BaseClient));
 exports.BrowserClient = BrowserClient;
 
-},{"./backend":3,"./helpers":7,"./integrations":12,"@sentry/core":27,"@sentry/utils":52,"tslib":316}],5:[function(require,module,exports){
+},{"./backend":3,"./helpers":7,"./integrations":12,"@sentry/core":27,"@sentry/utils":52,"tslib":315}],5:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var types_1 = require("@sentry/types");
@@ -271,7 +271,7 @@ function eventFromString(input, syntheticException, options) {
 }
 exports.eventFromString = eventFromString;
 
-},{"./parsers":16,"./tracekit":18,"@sentry/types":42,"@sentry/utils":52,"tslib":316}],6:[function(require,module,exports){
+},{"./parsers":16,"./tracekit":18,"@sentry/types":42,"@sentry/utils":52,"tslib":315}],6:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var types_1 = require("@sentry/types");
 exports.Severity = types_1.Severity;
@@ -481,7 +481,7 @@ function injectReportDialog(options) {
 }
 exports.injectReportDialog = injectReportDialog;
 
-},{"@sentry/core":27,"@sentry/utils":52,"tslib":316}],8:[function(require,module,exports){
+},{"@sentry/core":27,"@sentry/utils":52,"tslib":315}],8:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 tslib_1.__exportStar(require("./exports"), exports);
@@ -499,7 +499,7 @@ if (_window.Sentry && _window.Sentry.Integrations) {
 var INTEGRATIONS = tslib_1.__assign(tslib_1.__assign(tslib_1.__assign({}, windowIntegrations), core_1.Integrations), BrowserIntegrations);
 exports.Integrations = INTEGRATIONS;
 
-},{"./exports":6,"./integrations":12,"./transports":21,"@sentry/core":27,"@sentry/utils":52,"tslib":316}],9:[function(require,module,exports){
+},{"./exports":6,"./integrations":12,"./transports":21,"@sentry/core":27,"@sentry/utils":52,"tslib":315}],9:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -769,7 +769,7 @@ var Breadcrumbs = /** @class */ (function () {
 }());
 exports.Breadcrumbs = Breadcrumbs;
 
-},{"@sentry/core":27,"@sentry/types":42,"@sentry/utils":52,"tslib":316}],10:[function(require,module,exports){
+},{"@sentry/core":27,"@sentry/types":42,"@sentry/utils":52,"tslib":315}],10:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 /** Deduplication filter */
 var Dedupe = /** @class */ (function () {
@@ -1139,7 +1139,7 @@ var GlobalHandlers = /** @class */ (function () {
 }());
 exports.GlobalHandlers = GlobalHandlers;
 
-},{"../eventbuilder":5,"../helpers":7,"@sentry/core":27,"@sentry/types":42,"@sentry/utils":52,"tslib":316}],12:[function(require,module,exports){
+},{"../eventbuilder":5,"../helpers":7,"@sentry/core":27,"@sentry/types":42,"@sentry/utils":52,"tslib":315}],12:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var globalhandlers_1 = require("./globalhandlers");
 exports.GlobalHandlers = globalhandlers_1.GlobalHandlers;
@@ -1221,7 +1221,7 @@ var LinkedErrors = /** @class */ (function () {
 }());
 exports.LinkedErrors = LinkedErrors;
 
-},{"../parsers":16,"../tracekit":18,"@sentry/core":27,"@sentry/utils":52,"tslib":316}],14:[function(require,module,exports){
+},{"../parsers":16,"../tracekit":18,"@sentry/core":27,"@sentry/utils":52,"tslib":315}],14:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var utils_1 = require("@sentry/utils");
@@ -1453,7 +1453,7 @@ var TryCatch = /** @class */ (function () {
 }());
 exports.TryCatch = TryCatch;
 
-},{"../helpers":7,"@sentry/utils":52,"tslib":316}],15:[function(require,module,exports){
+},{"../helpers":7,"@sentry/utils":52,"tslib":315}],15:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var core_1 = require("@sentry/core");
@@ -1497,7 +1497,7 @@ var UserAgent = /** @class */ (function () {
 }());
 exports.UserAgent = UserAgent;
 
-},{"@sentry/core":27,"@sentry/utils":52,"tslib":316}],16:[function(require,module,exports){
+},{"@sentry/core":27,"@sentry/utils":52,"tslib":315}],16:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("@sentry/utils");
 var tracekit_1 = require("./tracekit");
@@ -1822,7 +1822,7 @@ function startSessionTracking() {
     });
 }
 
-},{"./client":4,"./helpers":7,"./integrations":12,"@sentry/core":27,"@sentry/utils":52,"tslib":316}],18:[function(require,module,exports){
+},{"./client":4,"./helpers":7,"./integrations":12,"@sentry/core":27,"@sentry/utils":52,"tslib":315}],18:[function(require,module,exports){
 /**
  * This was originally forked from https://github.com/occ/TraceKit, but has since been
  * largely modified and is now maintained as part of Sentry JS SDK.
@@ -2053,7 +2053,7 @@ function extractMessage(ex) {
     return message;
 }
 
-},{"tslib":316}],19:[function(require,module,exports){
+},{"tslib":315}],19:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var core_1 = require("@sentry/core");
@@ -2180,7 +2180,7 @@ var BaseTransport = /** @class */ (function () {
 }());
 exports.BaseTransport = BaseTransport;
 
-},{"@sentry/core":27,"@sentry/types":42,"@sentry/utils":52,"tslib":316}],20:[function(require,module,exports){
+},{"@sentry/core":27,"@sentry/types":42,"@sentry/utils":52,"tslib":315}],20:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var core_1 = require("@sentry/core");
@@ -2326,7 +2326,7 @@ var FetchTransport = /** @class */ (function (_super) {
 }(base_1.BaseTransport));
 exports.FetchTransport = FetchTransport;
 
-},{"./base":19,"@sentry/core":27,"@sentry/utils":52,"tslib":316}],21:[function(require,module,exports){
+},{"./base":19,"@sentry/core":27,"@sentry/utils":52,"tslib":315}],21:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var base_1 = require("./base");
 exports.BaseTransport = base_1.BaseTransport;
@@ -2399,7 +2399,7 @@ var XHRTransport = /** @class */ (function (_super) {
 }(base_1.BaseTransport));
 exports.XHRTransport = XHRTransport;
 
-},{"./base":19,"@sentry/core":27,"@sentry/utils":52,"tslib":316}],23:[function(require,module,exports){
+},{"./base":19,"@sentry/core":27,"@sentry/utils":52,"tslib":315}],23:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 // TODO: Remove in the next major release and rely only on @sentry/core SDK_VERSION and SdkInfo metadata
 exports.SDK_NAME = 'sentry.javascript.browser';
@@ -3102,7 +3102,7 @@ var BaseClient = /** @class */ (function () {
 }());
 exports.BaseClient = BaseClient;
 
-},{"./integration":28,"@sentry/hub":37,"@sentry/types":42,"@sentry/utils":52,"tslib":316}],27:[function(require,module,exports){
+},{"./integration":28,"@sentry/hub":37,"@sentry/types":42,"@sentry/utils":52,"tslib":315}],27:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var minimal_1 = require("@sentry/minimal");
 exports.addBreadcrumb = minimal_1.addBreadcrumb;
@@ -3214,7 +3214,7 @@ function setupIntegrations(options) {
 }
 exports.setupIntegrations = setupIntegrations;
 
-},{"@sentry/hub":37,"@sentry/utils":52,"tslib":316}],29:[function(require,module,exports){
+},{"@sentry/hub":37,"@sentry/utils":52,"tslib":315}],29:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var originalFunctionToString;
 /** Patch toString calls to return proper name for wrapped functions */
@@ -3424,7 +3424,7 @@ var InboundFilters = /** @class */ (function () {
 }());
 exports.InboundFilters = InboundFilters;
 
-},{"@sentry/hub":37,"@sentry/utils":52,"tslib":316}],31:[function(require,module,exports){
+},{"@sentry/hub":37,"@sentry/utils":52,"tslib":315}],31:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var functiontostring_1 = require("./functiontostring");
 exports.FunctionToString = functiontostring_1.FunctionToString;
@@ -3515,7 +3515,7 @@ function eventToSentryRequest(event, api) {
 }
 exports.eventToSentryRequest = eventToSentryRequest;
 
-},{"tslib":316}],33:[function(require,module,exports){
+},{"tslib":315}],33:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var hub_1 = require("@sentry/hub");
 var utils_1 = require("@sentry/utils");
@@ -4091,7 +4091,7 @@ function setHubOnCarrier(carrier, hub) {
 }
 exports.setHubOnCarrier = setHubOnCarrier;
 
-},{"./scope":38,"./session":39,"@sentry/types":42,"@sentry/utils":52,"tslib":316}],37:[function(require,module,exports){
+},{"./scope":38,"./session":39,"@sentry/types":42,"@sentry/utils":52,"tslib":315}],37:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var scope_1 = require("./scope");
 exports.addGlobalEventProcessor = scope_1.addGlobalEventProcessor;
@@ -4556,7 +4556,7 @@ function addGlobalEventProcessor(callback) {
 }
 exports.addGlobalEventProcessor = addGlobalEventProcessor;
 
-},{"@sentry/utils":52,"tslib":316}],39:[function(require,module,exports){
+},{"@sentry/utils":52,"tslib":315}],39:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var types_1 = require("@sentry/types");
 var utils_1 = require("@sentry/utils");
@@ -4989,7 +4989,7 @@ function startTransaction(context, customSamplingContext) {
 }
 exports.startTransaction = startTransaction;
 
-},{"@sentry/hub":37,"tslib":316}],42:[function(require,module,exports){
+},{"@sentry/hub":37,"tslib":315}],42:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var loglevel_1 = require("./loglevel");
 exports.LogLevel = loglevel_1.LogLevel;
@@ -5356,7 +5356,7 @@ var Dsn = /** @class */ (function () {
 }());
 exports.Dsn = Dsn;
 
-},{"./error":51,"tslib":316}],51:[function(require,module,exports){
+},{"./error":51,"tslib":315}],51:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var polyfill_1 = require("./polyfill");
@@ -5375,7 +5375,7 @@ var SentryError = /** @class */ (function (_super) {
 }(Error));
 exports.SentryError = SentryError;
 
-},{"./polyfill":61,"tslib":316}],52:[function(require,module,exports){
+},{"./polyfill":61,"tslib":315}],52:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 tslib_1.__exportStar(require("./async"), exports);
@@ -5397,7 +5397,7 @@ tslib_1.__exportStar(require("./supports"), exports);
 tslib_1.__exportStar(require("./syncpromise"), exports);
 tslib_1.__exportStar(require("./time"), exports);
 
-},{"./async":48,"./browser":49,"./dsn":50,"./error":51,"./instrument":53,"./is":54,"./logger":55,"./memo":56,"./misc":57,"./node":58,"./object":59,"./path":60,"./promisebuffer":62,"./stacktrace":63,"./string":64,"./supports":65,"./syncpromise":66,"./time":67,"tslib":316}],53:[function(require,module,exports){
+},{"./async":48,"./browser":49,"./dsn":50,"./error":51,"./instrument":53,"./is":54,"./logger":55,"./memo":56,"./misc":57,"./node":58,"./object":59,"./path":60,"./promisebuffer":62,"./stacktrace":63,"./string":64,"./supports":65,"./syncpromise":66,"./time":67,"tslib":315}],53:[function(require,module,exports){
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var is_1 = require("./is");
@@ -5942,7 +5942,7 @@ function instrumentUnhandledRejection() {
     };
 }
 
-},{"./is":54,"./logger":55,"./misc":57,"./object":59,"./stacktrace":63,"./supports":65,"tslib":316}],54:[function(require,module,exports){
+},{"./is":54,"./logger":55,"./misc":57,"./object":59,"./stacktrace":63,"./supports":65,"tslib":315}],54:[function(require,module,exports){
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -6882,7 +6882,7 @@ function dropUndefinedKeys(val) {
 exports.dropUndefinedKeys = dropUndefinedKeys;
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./browser":49,"./is":54,"./memo":56,"./stacktrace":63,"./string":64,"tslib":316}],60:[function(require,module,exports){
+},{"./browser":49,"./is":54,"./memo":56,"./stacktrace":63,"./string":64,"tslib":315}],60:[function(require,module,exports){
 // Slightly modified (no IE8 support, ES6) and transcribed to TypeScript
 // https://raw.githubusercontent.com/calvinmetcalf/rollup-plugin-node-builtins/master/src/es6/path.js
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -20114,7 +20114,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":114,"./_stream_duplex":115,"./internal/streams/async_iterator":120,"./internal/streams/buffer_list":121,"./internal/streams/destroy":122,"./internal/streams/from":124,"./internal/streams/state":126,"./internal/streams/stream":127,"_process":268,"buffer":131,"events":204,"inherits":241,"string_decoder/":313,"util":86}],118:[function(require,module,exports){
+},{"../errors":114,"./_stream_duplex":115,"./internal/streams/async_iterator":120,"./internal/streams/buffer_list":121,"./internal/streams/destroy":122,"./internal/streams/from":124,"./internal/streams/state":126,"./internal/streams/stream":127,"_process":268,"buffer":131,"events":204,"inherits":241,"string_decoder/":312,"util":86}],118:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -21016,7 +21016,7 @@ Writable.prototype._destroy = function (err, cb) {
   cb(err);
 };
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":114,"./_stream_duplex":115,"./internal/streams/destroy":122,"./internal/streams/state":126,"./internal/streams/stream":127,"_process":268,"buffer":131,"inherits":241,"util-deprecate":318}],120:[function(require,module,exports){
+},{"../errors":114,"./_stream_duplex":115,"./internal/streams/destroy":122,"./internal/streams/state":126,"./internal/streams/stream":127,"_process":268,"buffer":131,"inherits":241,"util-deprecate":317}],120:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -23758,7 +23758,7 @@ CipherBase.prototype._toString = function (value, enc, fin) {
 
 module.exports = CipherBase
 
-},{"inherits":241,"safe-buffer":279,"stream":298,"string_decoder":313}],133:[function(require,module,exports){
+},{"inherits":241,"safe-buffer":279,"stream":297,"string_decoder":312}],133:[function(require,module,exports){
 (function (Buffer){(function (){
 var elliptic = require('elliptic')
 var BN = require('bn.js')
@@ -23920,7 +23920,7 @@ module.exports = function createHash (alg) {
   return new Hash(sha(alg))
 }
 
-},{"cipher-base":132,"inherits":241,"md5.js":246,"ripemd160":278,"sha.js":291}],136:[function(require,module,exports){
+},{"cipher-base":132,"inherits":241,"md5.js":246,"ripemd160":278,"sha.js":290}],136:[function(require,module,exports){
 var MD5 = require('md5.js')
 
 module.exports = function (buffer) {
@@ -23991,7 +23991,7 @@ module.exports = function createHmac (alg, key) {
   return new Hmac(alg, key)
 }
 
-},{"./legacy":138,"cipher-base":132,"create-hash/md5":136,"inherits":241,"ripemd160":278,"safe-buffer":279,"sha.js":291}],138:[function(require,module,exports){
+},{"./legacy":138,"cipher-base":132,"create-hash/md5":136,"inherits":241,"ripemd160":278,"safe-buffer":279,"sha.js":290}],138:[function(require,module,exports){
 'use strict'
 var inherits = require('inherits')
 var Buffer = require('safe-buffer').Buffer
@@ -35978,7 +35978,7 @@ return Dexie;
 
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
-},{"timers":315}],181:[function(require,module,exports){
+},{"timers":314}],181:[function(require,module,exports){
 (function (Buffer){(function (){
 var generatePrime = require('./lib/generatePrime')
 var primes = require('./lib/primes.json')
@@ -42540,7 +42540,7 @@ module.exports = function(stream, options) {
   return harker;
 }
 
-},{"wildemitter":333}],210:[function(require,module,exports){
+},{"wildemitter":321}],210:[function(require,module,exports){
 'use strict'
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('readable-stream').Transform
@@ -42645,11 +42645,11 @@ arguments[4][115][0].apply(exports,arguments)
 arguments[4][116][0].apply(exports,arguments)
 },{"./_stream_transform":215,"dup":116,"inherits":241}],214:[function(require,module,exports){
 arguments[4][117][0].apply(exports,arguments)
-},{"../errors":211,"./_stream_duplex":212,"./internal/streams/async_iterator":217,"./internal/streams/buffer_list":218,"./internal/streams/destroy":219,"./internal/streams/from":221,"./internal/streams/state":223,"./internal/streams/stream":224,"_process":268,"buffer":131,"dup":117,"events":204,"inherits":241,"string_decoder/":313,"util":86}],215:[function(require,module,exports){
+},{"../errors":211,"./_stream_duplex":212,"./internal/streams/async_iterator":217,"./internal/streams/buffer_list":218,"./internal/streams/destroy":219,"./internal/streams/from":221,"./internal/streams/state":223,"./internal/streams/stream":224,"_process":268,"buffer":131,"dup":117,"events":204,"inherits":241,"string_decoder/":312,"util":86}],215:[function(require,module,exports){
 arguments[4][118][0].apply(exports,arguments)
 },{"../errors":211,"./_stream_duplex":212,"dup":118,"inherits":241}],216:[function(require,module,exports){
 arguments[4][119][0].apply(exports,arguments)
-},{"../errors":211,"./_stream_duplex":212,"./internal/streams/destroy":219,"./internal/streams/state":223,"./internal/streams/stream":224,"_process":268,"buffer":131,"dup":119,"inherits":241,"util-deprecate":318}],217:[function(require,module,exports){
+},{"../errors":211,"./_stream_duplex":212,"./internal/streams/destroy":219,"./internal/streams/state":223,"./internal/streams/stream":224,"_process":268,"buffer":131,"dup":119,"inherits":241,"util-deprecate":317}],217:[function(require,module,exports){
 arguments[4][120][0].apply(exports,arguments)
 },{"./end-of-stream":220,"_process":268,"dup":120}],218:[function(require,module,exports){
 arguments[4][121][0].apply(exports,arguments)
@@ -45077,7 +45077,7 @@ exports.WebRtcPeerSendonly = WebRtcPeerSendonly
 exports.WebRtcPeerSendrecv = WebRtcPeerSendrecv
 exports.hark = harkUtils
 
-},{"events":204,"freeice":206,"hark":209,"inherits":241,"kurento-browser-extensions":243,"merge":247,"sdp-translator":286,"ua-parser-js":317,"uuid/v4":321}],245:[function(require,module,exports){
+},{"events":204,"freeice":206,"hark":209,"inherits":241,"kurento-browser-extensions":243,"merge":247,"sdp-translator":286,"ua-parser-js":316,"uuid/v4":320}],245:[function(require,module,exports){
 /*
  * (C) Copyright 2014 Kurento (http://kurento.org/)
  *
@@ -46330,7 +46330,7 @@ function pbkdf2 (password, salt, iterations, keylen, digest) {
 
 module.exports = pbkdf2
 
-},{"./default-encoding":260,"./precondition":261,"./to-buffer":263,"create-hash/md5":136,"ripemd160":278,"safe-buffer":279,"sha.js":291}],263:[function(require,module,exports){
+},{"./default-encoding":260,"./precondition":261,"./to-buffer":263,"create-hash/md5":136,"ripemd160":278,"safe-buffer":279,"sha.js":290}],263:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 module.exports = function (thing, encoding, name) {
@@ -49998,767 +49998,6 @@ exports.parse = function(sdp) {
 
 
 },{"sdp-transform":282}],289:[function(require,module,exports){
-/* eslint-env node */
-'use strict';
-
-// SDP helpers.
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var SDPUtils = {};
-
-// Generate an alphanumeric identifier for cname or mids.
-// TODO: use UUIDs instead? https://gist.github.com/jed/982883
-SDPUtils.generateIdentifier = function () {
-  return Math.random().toString(36).substr(2, 10);
-};
-
-// The RTCP CNAME used by all peerconnections from the same JS.
-SDPUtils.localCName = SDPUtils.generateIdentifier();
-
-// Splits SDP into lines, dealing with both CRLF and LF.
-SDPUtils.splitLines = function (blob) {
-  return blob.trim().split('\n').map(function (line) {
-    return line.trim();
-  });
-};
-// Splits SDP into sessionpart and mediasections. Ensures CRLF.
-SDPUtils.splitSections = function (blob) {
-  var parts = blob.split('\nm=');
-  return parts.map(function (part, index) {
-    return (index > 0 ? 'm=' + part : part).trim() + '\r\n';
-  });
-};
-
-// Returns the session description.
-SDPUtils.getDescription = function (blob) {
-  var sections = SDPUtils.splitSections(blob);
-  return sections && sections[0];
-};
-
-// Returns the individual media sections.
-SDPUtils.getMediaSections = function (blob) {
-  var sections = SDPUtils.splitSections(blob);
-  sections.shift();
-  return sections;
-};
-
-// Returns lines that start with a certain prefix.
-SDPUtils.matchPrefix = function (blob, prefix) {
-  return SDPUtils.splitLines(blob).filter(function (line) {
-    return line.indexOf(prefix) === 0;
-  });
-};
-
-// Parses an ICE candidate line. Sample input:
-// candidate:702786350 2 udp 41819902 8.8.8.8 60769 typ relay raddr 8.8.8.8
-// rport 55996"
-// Input can be prefixed with a=.
-SDPUtils.parseCandidate = function (line) {
-  var parts = void 0;
-  // Parse both variants.
-  if (line.indexOf('a=candidate:') === 0) {
-    parts = line.substring(12).split(' ');
-  } else {
-    parts = line.substring(10).split(' ');
-  }
-
-  var candidate = {
-    foundation: parts[0],
-    component: { 1: 'rtp', 2: 'rtcp' }[parts[1]] || parts[1],
-    protocol: parts[2].toLowerCase(),
-    priority: parseInt(parts[3], 10),
-    ip: parts[4],
-    address: parts[4], // address is an alias for ip.
-    port: parseInt(parts[5], 10),
-    // skip parts[6] == 'typ'
-    type: parts[7]
-  };
-
-  for (var i = 8; i < parts.length; i += 2) {
-    switch (parts[i]) {
-      case 'raddr':
-        candidate.relatedAddress = parts[i + 1];
-        break;
-      case 'rport':
-        candidate.relatedPort = parseInt(parts[i + 1], 10);
-        break;
-      case 'tcptype':
-        candidate.tcpType = parts[i + 1];
-        break;
-      case 'ufrag':
-        candidate.ufrag = parts[i + 1]; // for backward compatibility.
-        candidate.usernameFragment = parts[i + 1];
-        break;
-      default:
-        // extension handling, in particular ufrag. Don't overwrite.
-        if (candidate[parts[i]] === undefined) {
-          candidate[parts[i]] = parts[i + 1];
-        }
-        break;
-    }
-  }
-  return candidate;
-};
-
-// Translates a candidate object into SDP candidate attribute.
-// This does not include the a= prefix!
-SDPUtils.writeCandidate = function (candidate) {
-  var sdp = [];
-  sdp.push(candidate.foundation);
-
-  var component = candidate.component;
-  if (component === 'rtp') {
-    sdp.push(1);
-  } else if (component === 'rtcp') {
-    sdp.push(2);
-  } else {
-    sdp.push(component);
-  }
-  sdp.push(candidate.protocol.toUpperCase());
-  sdp.push(candidate.priority);
-  sdp.push(candidate.address || candidate.ip);
-  sdp.push(candidate.port);
-
-  var type = candidate.type;
-  sdp.push('typ');
-  sdp.push(type);
-  if (type !== 'host' && candidate.relatedAddress && candidate.relatedPort) {
-    sdp.push('raddr');
-    sdp.push(candidate.relatedAddress);
-    sdp.push('rport');
-    sdp.push(candidate.relatedPort);
-  }
-  if (candidate.tcpType && candidate.protocol.toLowerCase() === 'tcp') {
-    sdp.push('tcptype');
-    sdp.push(candidate.tcpType);
-  }
-  if (candidate.usernameFragment || candidate.ufrag) {
-    sdp.push('ufrag');
-    sdp.push(candidate.usernameFragment || candidate.ufrag);
-  }
-  return 'candidate:' + sdp.join(' ');
-};
-
-// Parses an ice-options line, returns an array of option tags.
-// Sample input:
-// a=ice-options:foo bar
-SDPUtils.parseIceOptions = function (line) {
-  return line.substr(14).split(' ');
-};
-
-// Parses a rtpmap line, returns RTCRtpCoddecParameters. Sample input:
-// a=rtpmap:111 opus/48000/2
-SDPUtils.parseRtpMap = function (line) {
-  var parts = line.substr(9).split(' ');
-  var parsed = {
-    payloadType: parseInt(parts.shift(), 10) // was: id
-  };
-
-  parts = parts[0].split('/');
-
-  parsed.name = parts[0];
-  parsed.clockRate = parseInt(parts[1], 10); // was: clockrate
-  parsed.channels = parts.length === 3 ? parseInt(parts[2], 10) : 1;
-  // legacy alias, got renamed back to channels in ORTC.
-  parsed.numChannels = parsed.channels;
-  return parsed;
-};
-
-// Generates a rtpmap line from RTCRtpCodecCapability or
-// RTCRtpCodecParameters.
-SDPUtils.writeRtpMap = function (codec) {
-  var pt = codec.payloadType;
-  if (codec.preferredPayloadType !== undefined) {
-    pt = codec.preferredPayloadType;
-  }
-  var channels = codec.channels || codec.numChannels || 1;
-  return 'a=rtpmap:' + pt + ' ' + codec.name + '/' + codec.clockRate + (channels !== 1 ? '/' + channels : '') + '\r\n';
-};
-
-// Parses a extmap line (headerextension from RFC 5285). Sample input:
-// a=extmap:2 urn:ietf:params:rtp-hdrext:toffset
-// a=extmap:2/sendonly urn:ietf:params:rtp-hdrext:toffset
-SDPUtils.parseExtmap = function (line) {
-  var parts = line.substr(9).split(' ');
-  return {
-    id: parseInt(parts[0], 10),
-    direction: parts[0].indexOf('/') > 0 ? parts[0].split('/')[1] : 'sendrecv',
-    uri: parts[1]
-  };
-};
-
-// Generates an extmap line from RTCRtpHeaderExtensionParameters or
-// RTCRtpHeaderExtension.
-SDPUtils.writeExtmap = function (headerExtension) {
-  return 'a=extmap:' + (headerExtension.id || headerExtension.preferredId) + (headerExtension.direction && headerExtension.direction !== 'sendrecv' ? '/' + headerExtension.direction : '') + ' ' + headerExtension.uri + '\r\n';
-};
-
-// Parses a fmtp line, returns dictionary. Sample input:
-// a=fmtp:96 vbr=on;cng=on
-// Also deals with vbr=on; cng=on
-SDPUtils.parseFmtp = function (line) {
-  var parsed = {};
-  var kv = void 0;
-  var parts = line.substr(line.indexOf(' ') + 1).split(';');
-  for (var j = 0; j < parts.length; j++) {
-    kv = parts[j].trim().split('=');
-    parsed[kv[0].trim()] = kv[1];
-  }
-  return parsed;
-};
-
-// Generates a fmtp line from RTCRtpCodecCapability or RTCRtpCodecParameters.
-SDPUtils.writeFmtp = function (codec) {
-  var line = '';
-  var pt = codec.payloadType;
-  if (codec.preferredPayloadType !== undefined) {
-    pt = codec.preferredPayloadType;
-  }
-  if (codec.parameters && Object.keys(codec.parameters).length) {
-    var params = [];
-    Object.keys(codec.parameters).forEach(function (param) {
-      if (codec.parameters[param] !== undefined) {
-        params.push(param + '=' + codec.parameters[param]);
-      } else {
-        params.push(param);
-      }
-    });
-    line += 'a=fmtp:' + pt + ' ' + params.join(';') + '\r\n';
-  }
-  return line;
-};
-
-// Parses a rtcp-fb line, returns RTCPRtcpFeedback object. Sample input:
-// a=rtcp-fb:98 nack rpsi
-SDPUtils.parseRtcpFb = function (line) {
-  var parts = line.substr(line.indexOf(' ') + 1).split(' ');
-  return {
-    type: parts.shift(),
-    parameter: parts.join(' ')
-  };
-};
-
-// Generate a=rtcp-fb lines from RTCRtpCodecCapability or RTCRtpCodecParameters.
-SDPUtils.writeRtcpFb = function (codec) {
-  var lines = '';
-  var pt = codec.payloadType;
-  if (codec.preferredPayloadType !== undefined) {
-    pt = codec.preferredPayloadType;
-  }
-  if (codec.rtcpFeedback && codec.rtcpFeedback.length) {
-    // FIXME: special handling for trr-int?
-    codec.rtcpFeedback.forEach(function (fb) {
-      lines += 'a=rtcp-fb:' + pt + ' ' + fb.type + (fb.parameter && fb.parameter.length ? ' ' + fb.parameter : '') + '\r\n';
-    });
-  }
-  return lines;
-};
-
-// Parses a RFC 5576 ssrc media attribute. Sample input:
-// a=ssrc:3735928559 cname:something
-SDPUtils.parseSsrcMedia = function (line) {
-  var sp = line.indexOf(' ');
-  var parts = {
-    ssrc: parseInt(line.substr(7, sp - 7), 10)
-  };
-  var colon = line.indexOf(':', sp);
-  if (colon > -1) {
-    parts.attribute = line.substr(sp + 1, colon - sp - 1);
-    parts.value = line.substr(colon + 1);
-  } else {
-    parts.attribute = line.substr(sp + 1);
-  }
-  return parts;
-};
-
-// Parse a ssrc-group line (see RFC 5576). Sample input:
-// a=ssrc-group:semantics 12 34
-SDPUtils.parseSsrcGroup = function (line) {
-  var parts = line.substr(13).split(' ');
-  return {
-    semantics: parts.shift(),
-    ssrcs: parts.map(function (ssrc) {
-      return parseInt(ssrc, 10);
-    })
-  };
-};
-
-// Extracts the MID (RFC 5888) from a media section.
-// Returns the MID or undefined if no mid line was found.
-SDPUtils.getMid = function (mediaSection) {
-  var mid = SDPUtils.matchPrefix(mediaSection, 'a=mid:')[0];
-  if (mid) {
-    return mid.substr(6);
-  }
-};
-
-// Parses a fingerprint line for DTLS-SRTP.
-SDPUtils.parseFingerprint = function (line) {
-  var parts = line.substr(14).split(' ');
-  return {
-    algorithm: parts[0].toLowerCase(), // algorithm is case-sensitive in Edge.
-    value: parts[1].toUpperCase() // the definition is upper-case in RFC 4572.
-  };
-};
-
-// Extracts DTLS parameters from SDP media section or sessionpart.
-// FIXME: for consistency with other functions this should only
-//   get the fingerprint line as input. See also getIceParameters.
-SDPUtils.getDtlsParameters = function (mediaSection, sessionpart) {
-  var lines = SDPUtils.matchPrefix(mediaSection + sessionpart, 'a=fingerprint:');
-  // Note: a=setup line is ignored since we use the 'auto' role in Edge.
-  return {
-    role: 'auto',
-    fingerprints: lines.map(SDPUtils.parseFingerprint)
-  };
-};
-
-// Serializes DTLS parameters to SDP.
-SDPUtils.writeDtlsParameters = function (params, setupType) {
-  var sdp = 'a=setup:' + setupType + '\r\n';
-  params.fingerprints.forEach(function (fp) {
-    sdp += 'a=fingerprint:' + fp.algorithm + ' ' + fp.value + '\r\n';
-  });
-  return sdp;
-};
-
-// Parses a=crypto lines into
-//   https://rawgit.com/aboba/edgertc/master/msortc-rs4.html#dictionary-rtcsrtpsdesparameters-members
-SDPUtils.parseCryptoLine = function (line) {
-  var parts = line.substr(9).split(' ');
-  return {
-    tag: parseInt(parts[0], 10),
-    cryptoSuite: parts[1],
-    keyParams: parts[2],
-    sessionParams: parts.slice(3)
-  };
-};
-
-SDPUtils.writeCryptoLine = function (parameters) {
-  return 'a=crypto:' + parameters.tag + ' ' + parameters.cryptoSuite + ' ' + (_typeof(parameters.keyParams) === 'object' ? SDPUtils.writeCryptoKeyParams(parameters.keyParams) : parameters.keyParams) + (parameters.sessionParams ? ' ' + parameters.sessionParams.join(' ') : '') + '\r\n';
-};
-
-// Parses the crypto key parameters into
-//   https://rawgit.com/aboba/edgertc/master/msortc-rs4.html#rtcsrtpkeyparam*
-SDPUtils.parseCryptoKeyParams = function (keyParams) {
-  if (keyParams.indexOf('inline:') !== 0) {
-    return null;
-  }
-  var parts = keyParams.substr(7).split('|');
-  return {
-    keyMethod: 'inline',
-    keySalt: parts[0],
-    lifeTime: parts[1],
-    mkiValue: parts[2] ? parts[2].split(':')[0] : undefined,
-    mkiLength: parts[2] ? parts[2].split(':')[1] : undefined
-  };
-};
-
-SDPUtils.writeCryptoKeyParams = function (keyParams) {
-  return keyParams.keyMethod + ':' + keyParams.keySalt + (keyParams.lifeTime ? '|' + keyParams.lifeTime : '') + (keyParams.mkiValue && keyParams.mkiLength ? '|' + keyParams.mkiValue + ':' + keyParams.mkiLength : '');
-};
-
-// Extracts all SDES parameters.
-SDPUtils.getCryptoParameters = function (mediaSection, sessionpart) {
-  var lines = SDPUtils.matchPrefix(mediaSection + sessionpart, 'a=crypto:');
-  return lines.map(SDPUtils.parseCryptoLine);
-};
-
-// Parses ICE information from SDP media section or sessionpart.
-// FIXME: for consistency with other functions this should only
-//   get the ice-ufrag and ice-pwd lines as input.
-SDPUtils.getIceParameters = function (mediaSection, sessionpart) {
-  var ufrag = SDPUtils.matchPrefix(mediaSection + sessionpart, 'a=ice-ufrag:')[0];
-  var pwd = SDPUtils.matchPrefix(mediaSection + sessionpart, 'a=ice-pwd:')[0];
-  if (!(ufrag && pwd)) {
-    return null;
-  }
-  return {
-    usernameFragment: ufrag.substr(12),
-    password: pwd.substr(10)
-  };
-};
-
-// Serializes ICE parameters to SDP.
-SDPUtils.writeIceParameters = function (params) {
-  var sdp = 'a=ice-ufrag:' + params.usernameFragment + '\r\n' + 'a=ice-pwd:' + params.password + '\r\n';
-  if (params.iceLite) {
-    sdp += 'a=ice-lite\r\n';
-  }
-  return sdp;
-};
-
-// Parses the SDP media section and returns RTCRtpParameters.
-SDPUtils.parseRtpParameters = function (mediaSection) {
-  var description = {
-    codecs: [],
-    headerExtensions: [],
-    fecMechanisms: [],
-    rtcp: []
-  };
-  var lines = SDPUtils.splitLines(mediaSection);
-  var mline = lines[0].split(' ');
-  for (var i = 3; i < mline.length; i++) {
-    // find all codecs from mline[3..]
-    var pt = mline[i];
-    var rtpmapline = SDPUtils.matchPrefix(mediaSection, 'a=rtpmap:' + pt + ' ')[0];
-    if (rtpmapline) {
-      var codec = SDPUtils.parseRtpMap(rtpmapline);
-      var fmtps = SDPUtils.matchPrefix(mediaSection, 'a=fmtp:' + pt + ' ');
-      // Only the first a=fmtp:<pt> is considered.
-      codec.parameters = fmtps.length ? SDPUtils.parseFmtp(fmtps[0]) : {};
-      codec.rtcpFeedback = SDPUtils.matchPrefix(mediaSection, 'a=rtcp-fb:' + pt + ' ').map(SDPUtils.parseRtcpFb);
-      description.codecs.push(codec);
-      // parse FEC mechanisms from rtpmap lines.
-      switch (codec.name.toUpperCase()) {
-        case 'RED':
-        case 'ULPFEC':
-          description.fecMechanisms.push(codec.name.toUpperCase());
-          break;
-        default:
-          // only RED and ULPFEC are recognized as FEC mechanisms.
-          break;
-      }
-    }
-  }
-  SDPUtils.matchPrefix(mediaSection, 'a=extmap:').forEach(function (line) {
-    description.headerExtensions.push(SDPUtils.parseExtmap(line));
-  });
-  // FIXME: parse rtcp.
-  return description;
-};
-
-// Generates parts of the SDP media section describing the capabilities /
-// parameters.
-SDPUtils.writeRtpDescription = function (kind, caps) {
-  var sdp = '';
-
-  // Build the mline.
-  sdp += 'm=' + kind + ' ';
-  sdp += caps.codecs.length > 0 ? '9' : '0'; // reject if no codecs.
-  sdp += ' UDP/TLS/RTP/SAVPF ';
-  sdp += caps.codecs.map(function (codec) {
-    if (codec.preferredPayloadType !== undefined) {
-      return codec.preferredPayloadType;
-    }
-    return codec.payloadType;
-  }).join(' ') + '\r\n';
-
-  sdp += 'c=IN IP4 0.0.0.0\r\n';
-  sdp += 'a=rtcp:9 IN IP4 0.0.0.0\r\n';
-
-  // Add a=rtpmap lines for each codec. Also fmtp and rtcp-fb.
-  caps.codecs.forEach(function (codec) {
-    sdp += SDPUtils.writeRtpMap(codec);
-    sdp += SDPUtils.writeFmtp(codec);
-    sdp += SDPUtils.writeRtcpFb(codec);
-  });
-  var maxptime = 0;
-  caps.codecs.forEach(function (codec) {
-    if (codec.maxptime > maxptime) {
-      maxptime = codec.maxptime;
-    }
-  });
-  if (maxptime > 0) {
-    sdp += 'a=maxptime:' + maxptime + '\r\n';
-  }
-
-  if (caps.headerExtensions) {
-    caps.headerExtensions.forEach(function (extension) {
-      sdp += SDPUtils.writeExtmap(extension);
-    });
-  }
-  // FIXME: write fecMechanisms.
-  return sdp;
-};
-
-// Parses the SDP media section and returns an array of
-// RTCRtpEncodingParameters.
-SDPUtils.parseRtpEncodingParameters = function (mediaSection) {
-  var encodingParameters = [];
-  var description = SDPUtils.parseRtpParameters(mediaSection);
-  var hasRed = description.fecMechanisms.indexOf('RED') !== -1;
-  var hasUlpfec = description.fecMechanisms.indexOf('ULPFEC') !== -1;
-
-  // filter a=ssrc:... cname:, ignore PlanB-msid
-  var ssrcs = SDPUtils.matchPrefix(mediaSection, 'a=ssrc:').map(function (line) {
-    return SDPUtils.parseSsrcMedia(line);
-  }).filter(function (parts) {
-    return parts.attribute === 'cname';
-  });
-  var primarySsrc = ssrcs.length > 0 && ssrcs[0].ssrc;
-  var secondarySsrc = void 0;
-
-  var flows = SDPUtils.matchPrefix(mediaSection, 'a=ssrc-group:FID').map(function (line) {
-    var parts = line.substr(17).split(' ');
-    return parts.map(function (part) {
-      return parseInt(part, 10);
-    });
-  });
-  if (flows.length > 0 && flows[0].length > 1 && flows[0][0] === primarySsrc) {
-    secondarySsrc = flows[0][1];
-  }
-
-  description.codecs.forEach(function (codec) {
-    if (codec.name.toUpperCase() === 'RTX' && codec.parameters.apt) {
-      var encParam = {
-        ssrc: primarySsrc,
-        codecPayloadType: parseInt(codec.parameters.apt, 10)
-      };
-      if (primarySsrc && secondarySsrc) {
-        encParam.rtx = { ssrc: secondarySsrc };
-      }
-      encodingParameters.push(encParam);
-      if (hasRed) {
-        encParam = JSON.parse(JSON.stringify(encParam));
-        encParam.fec = {
-          ssrc: primarySsrc,
-          mechanism: hasUlpfec ? 'red+ulpfec' : 'red'
-        };
-        encodingParameters.push(encParam);
-      }
-    }
-  });
-  if (encodingParameters.length === 0 && primarySsrc) {
-    encodingParameters.push({
-      ssrc: primarySsrc
-    });
-  }
-
-  // we support both b=AS and b=TIAS but interpret AS as TIAS.
-  var bandwidth = SDPUtils.matchPrefix(mediaSection, 'b=');
-  if (bandwidth.length) {
-    if (bandwidth[0].indexOf('b=TIAS:') === 0) {
-      bandwidth = parseInt(bandwidth[0].substr(7), 10);
-    } else if (bandwidth[0].indexOf('b=AS:') === 0) {
-      // use formula from JSEP to convert b=AS to TIAS value.
-      bandwidth = parseInt(bandwidth[0].substr(5), 10) * 1000 * 0.95 - 50 * 40 * 8;
-    } else {
-      bandwidth = undefined;
-    }
-    encodingParameters.forEach(function (params) {
-      params.maxBitrate = bandwidth;
-    });
-  }
-  return encodingParameters;
-};
-
-// parses http://draft.ortc.org/#rtcrtcpparameters*
-SDPUtils.parseRtcpParameters = function (mediaSection) {
-  var rtcpParameters = {};
-
-  // Gets the first SSRC. Note that with RTX there might be multiple
-  // SSRCs.
-  var remoteSsrc = SDPUtils.matchPrefix(mediaSection, 'a=ssrc:').map(function (line) {
-    return SDPUtils.parseSsrcMedia(line);
-  }).filter(function (obj) {
-    return obj.attribute === 'cname';
-  })[0];
-  if (remoteSsrc) {
-    rtcpParameters.cname = remoteSsrc.value;
-    rtcpParameters.ssrc = remoteSsrc.ssrc;
-  }
-
-  // Edge uses the compound attribute instead of reducedSize
-  // compound is !reducedSize
-  var rsize = SDPUtils.matchPrefix(mediaSection, 'a=rtcp-rsize');
-  rtcpParameters.reducedSize = rsize.length > 0;
-  rtcpParameters.compound = rsize.length === 0;
-
-  // parses the rtcp-mux attrіbute.
-  // Note that Edge does not support unmuxed RTCP.
-  var mux = SDPUtils.matchPrefix(mediaSection, 'a=rtcp-mux');
-  rtcpParameters.mux = mux.length > 0;
-
-  return rtcpParameters;
-};
-
-SDPUtils.writeRtcpParameters = function (rtcpParameters) {
-  var sdp = '';
-  if (rtcpParameters.reducedSize) {
-    sdp += 'a=rtcp-rsize\r\n';
-  }
-  if (rtcpParameters.mux) {
-    sdp += 'a=rtcp-mux\r\n';
-  }
-  if (rtcpParameters.ssrc !== undefined && rtcpParameters.cname) {
-    sdp += 'a=ssrc:' + rtcpParameters.ssrc + ' cname:' + rtcpParameters.cname + '\r\n';
-  }
-  return sdp;
-};
-
-// parses either a=msid: or a=ssrc:... msid lines and returns
-// the id of the MediaStream and MediaStreamTrack.
-SDPUtils.parseMsid = function (mediaSection) {
-  var parts = void 0;
-  var spec = SDPUtils.matchPrefix(mediaSection, 'a=msid:');
-  if (spec.length === 1) {
-    parts = spec[0].substr(7).split(' ');
-    return { stream: parts[0], track: parts[1] };
-  }
-  var planB = SDPUtils.matchPrefix(mediaSection, 'a=ssrc:').map(function (line) {
-    return SDPUtils.parseSsrcMedia(line);
-  }).filter(function (msidParts) {
-    return msidParts.attribute === 'msid';
-  });
-  if (planB.length > 0) {
-    parts = planB[0].value.split(' ');
-    return { stream: parts[0], track: parts[1] };
-  }
-};
-
-// SCTP
-// parses draft-ietf-mmusic-sctp-sdp-26 first and falls back
-// to draft-ietf-mmusic-sctp-sdp-05
-SDPUtils.parseSctpDescription = function (mediaSection) {
-  var mline = SDPUtils.parseMLine(mediaSection);
-  var maxSizeLine = SDPUtils.matchPrefix(mediaSection, 'a=max-message-size:');
-  var maxMessageSize = void 0;
-  if (maxSizeLine.length > 0) {
-    maxMessageSize = parseInt(maxSizeLine[0].substr(19), 10);
-  }
-  if (isNaN(maxMessageSize)) {
-    maxMessageSize = 65536;
-  }
-  var sctpPort = SDPUtils.matchPrefix(mediaSection, 'a=sctp-port:');
-  if (sctpPort.length > 0) {
-    return {
-      port: parseInt(sctpPort[0].substr(12), 10),
-      protocol: mline.fmt,
-      maxMessageSize: maxMessageSize
-    };
-  }
-  var sctpMapLines = SDPUtils.matchPrefix(mediaSection, 'a=sctpmap:');
-  if (sctpMapLines.length > 0) {
-    var parts = sctpMapLines[0].substr(10).split(' ');
-    return {
-      port: parseInt(parts[0], 10),
-      protocol: parts[1],
-      maxMessageSize: maxMessageSize
-    };
-  }
-};
-
-// SCTP
-// outputs the draft-ietf-mmusic-sctp-sdp-26 version that all browsers
-// support by now receiving in this format, unless we originally parsed
-// as the draft-ietf-mmusic-sctp-sdp-05 format (indicated by the m-line
-// protocol of DTLS/SCTP -- without UDP/ or TCP/)
-SDPUtils.writeSctpDescription = function (media, sctp) {
-  var output = [];
-  if (media.protocol !== 'DTLS/SCTP') {
-    output = ['m=' + media.kind + ' 9 ' + media.protocol + ' ' + sctp.protocol + '\r\n', 'c=IN IP4 0.0.0.0\r\n', 'a=sctp-port:' + sctp.port + '\r\n'];
-  } else {
-    output = ['m=' + media.kind + ' 9 ' + media.protocol + ' ' + sctp.port + '\r\n', 'c=IN IP4 0.0.0.0\r\n', 'a=sctpmap:' + sctp.port + ' ' + sctp.protocol + ' 65535\r\n'];
-  }
-  if (sctp.maxMessageSize !== undefined) {
-    output.push('a=max-message-size:' + sctp.maxMessageSize + '\r\n');
-  }
-  return output.join('');
-};
-
-// Generate a session ID for SDP.
-// https://tools.ietf.org/html/draft-ietf-rtcweb-jsep-20#section-5.2.1
-// recommends using a cryptographically random +ve 64-bit value
-// but right now this should be acceptable and within the right range
-SDPUtils.generateSessionId = function () {
-  return Math.random().toString().substr(2, 21);
-};
-
-// Write boiler plate for start of SDP
-// sessId argument is optional - if not supplied it will
-// be generated randomly
-// sessVersion is optional and defaults to 2
-// sessUser is optional and defaults to 'thisisadapterortc'
-SDPUtils.writeSessionBoilerplate = function (sessId, sessVer, sessUser) {
-  var sessionId = void 0;
-  var version = sessVer !== undefined ? sessVer : 2;
-  if (sessId) {
-    sessionId = sessId;
-  } else {
-    sessionId = SDPUtils.generateSessionId();
-  }
-  var user = sessUser || 'thisisadapterortc';
-  // FIXME: sess-id should be an NTP timestamp.
-  return 'v=0\r\n' + 'o=' + user + ' ' + sessionId + ' ' + version + ' IN IP4 127.0.0.1\r\n' + 's=-\r\n' + 't=0 0\r\n';
-};
-
-// Gets the direction from the mediaSection or the sessionpart.
-SDPUtils.getDirection = function (mediaSection, sessionpart) {
-  // Look for sendrecv, sendonly, recvonly, inactive, default to sendrecv.
-  var lines = SDPUtils.splitLines(mediaSection);
-  for (var i = 0; i < lines.length; i++) {
-    switch (lines[i]) {
-      case 'a=sendrecv':
-      case 'a=sendonly':
-      case 'a=recvonly':
-      case 'a=inactive':
-        return lines[i].substr(2);
-      default:
-      // FIXME: What should happen here?
-    }
-  }
-  if (sessionpart) {
-    return SDPUtils.getDirection(sessionpart);
-  }
-  return 'sendrecv';
-};
-
-SDPUtils.getKind = function (mediaSection) {
-  var lines = SDPUtils.splitLines(mediaSection);
-  var mline = lines[0].split(' ');
-  return mline[0].substr(2);
-};
-
-SDPUtils.isRejected = function (mediaSection) {
-  return mediaSection.split(' ', 2)[1] === '0';
-};
-
-SDPUtils.parseMLine = function (mediaSection) {
-  var lines = SDPUtils.splitLines(mediaSection);
-  var parts = lines[0].substr(2).split(' ');
-  return {
-    kind: parts[0],
-    port: parseInt(parts[1], 10),
-    protocol: parts[2],
-    fmt: parts.slice(3).join(' ')
-  };
-};
-
-SDPUtils.parseOLine = function (mediaSection) {
-  var line = SDPUtils.matchPrefix(mediaSection, 'o=')[0];
-  var parts = line.substr(2).split(' ');
-  return {
-    username: parts[0],
-    sessionId: parts[1],
-    sessionVersion: parseInt(parts[2], 10),
-    netType: parts[3],
-    addressType: parts[4],
-    address: parts[5]
-  };
-};
-
-// a very naive interpretation of a valid SDP.
-SDPUtils.isValidSDP = function (blob) {
-  if (typeof blob !== 'string' || blob.length === 0) {
-    return false;
-  }
-  var lines = SDPUtils.splitLines(blob);
-  for (var i = 0; i < lines.length; i++) {
-    if (lines[i].length < 2 || lines[i].charAt(1) !== '=') {
-      return false;
-    }
-    // TODO: check the modifier a bit more.
-  }
-  return true;
-};
-
-// Expose public methods.
-if ((typeof module === 'undefined' ? 'undefined' : _typeof(module)) === 'object') {
-  module.exports = SDPUtils;
-}
-},{}],290:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 // prototype class for hash functions
@@ -50841,7 +50080,7 @@ Hash.prototype._update = function () {
 
 module.exports = Hash
 
-},{"safe-buffer":279}],291:[function(require,module,exports){
+},{"safe-buffer":279}],290:[function(require,module,exports){
 var exports = module.exports = function SHA (algorithm) {
   algorithm = algorithm.toLowerCase()
 
@@ -50858,7 +50097,7 @@ exports.sha256 = require('./sha256')
 exports.sha384 = require('./sha384')
 exports.sha512 = require('./sha512')
 
-},{"./sha":292,"./sha1":293,"./sha224":294,"./sha256":295,"./sha384":296,"./sha512":297}],292:[function(require,module,exports){
+},{"./sha":291,"./sha1":292,"./sha224":293,"./sha256":294,"./sha384":295,"./sha512":296}],291:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-0, as defined
  * in FIPS PUB 180-1
@@ -50954,7 +50193,7 @@ Sha.prototype._hash = function () {
 
 module.exports = Sha
 
-},{"./hash":290,"inherits":241,"safe-buffer":279}],293:[function(require,module,exports){
+},{"./hash":289,"inherits":241,"safe-buffer":279}],292:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
  * in FIPS PUB 180-1
@@ -51055,7 +50294,7 @@ Sha1.prototype._hash = function () {
 
 module.exports = Sha1
 
-},{"./hash":290,"inherits":241,"safe-buffer":279}],294:[function(require,module,exports){
+},{"./hash":289,"inherits":241,"safe-buffer":279}],293:[function(require,module,exports){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
  * in FIPS 180-2
@@ -51110,7 +50349,7 @@ Sha224.prototype._hash = function () {
 
 module.exports = Sha224
 
-},{"./hash":290,"./sha256":295,"inherits":241,"safe-buffer":279}],295:[function(require,module,exports){
+},{"./hash":289,"./sha256":294,"inherits":241,"safe-buffer":279}],294:[function(require,module,exports){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
  * in FIPS 180-2
@@ -51247,7 +50486,7 @@ Sha256.prototype._hash = function () {
 
 module.exports = Sha256
 
-},{"./hash":290,"inherits":241,"safe-buffer":279}],296:[function(require,module,exports){
+},{"./hash":289,"inherits":241,"safe-buffer":279}],295:[function(require,module,exports){
 var inherits = require('inherits')
 var SHA512 = require('./sha512')
 var Hash = require('./hash')
@@ -51306,7 +50545,7 @@ Sha384.prototype._hash = function () {
 
 module.exports = Sha384
 
-},{"./hash":290,"./sha512":297,"inherits":241,"safe-buffer":279}],297:[function(require,module,exports){
+},{"./hash":289,"./sha512":296,"inherits":241,"safe-buffer":279}],296:[function(require,module,exports){
 var inherits = require('inherits')
 var Hash = require('./hash')
 var Buffer = require('safe-buffer').Buffer
@@ -51568,7 +50807,7 @@ Sha512.prototype._hash = function () {
 
 module.exports = Sha512
 
-},{"./hash":290,"inherits":241,"safe-buffer":279}],298:[function(require,module,exports){
+},{"./hash":289,"inherits":241,"safe-buffer":279}],297:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -51699,35 +50938,35 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":204,"inherits":241,"readable-stream/lib/_stream_duplex.js":300,"readable-stream/lib/_stream_passthrough.js":301,"readable-stream/lib/_stream_readable.js":302,"readable-stream/lib/_stream_transform.js":303,"readable-stream/lib/_stream_writable.js":304,"readable-stream/lib/internal/streams/end-of-stream.js":308,"readable-stream/lib/internal/streams/pipeline.js":310}],299:[function(require,module,exports){
+},{"events":204,"inherits":241,"readable-stream/lib/_stream_duplex.js":299,"readable-stream/lib/_stream_passthrough.js":300,"readable-stream/lib/_stream_readable.js":301,"readable-stream/lib/_stream_transform.js":302,"readable-stream/lib/_stream_writable.js":303,"readable-stream/lib/internal/streams/end-of-stream.js":307,"readable-stream/lib/internal/streams/pipeline.js":309}],298:[function(require,module,exports){
 arguments[4][114][0].apply(exports,arguments)
-},{"dup":114}],300:[function(require,module,exports){
+},{"dup":114}],299:[function(require,module,exports){
 arguments[4][115][0].apply(exports,arguments)
-},{"./_stream_readable":302,"./_stream_writable":304,"_process":268,"dup":115,"inherits":241}],301:[function(require,module,exports){
+},{"./_stream_readable":301,"./_stream_writable":303,"_process":268,"dup":115,"inherits":241}],300:[function(require,module,exports){
 arguments[4][116][0].apply(exports,arguments)
-},{"./_stream_transform":303,"dup":116,"inherits":241}],302:[function(require,module,exports){
+},{"./_stream_transform":302,"dup":116,"inherits":241}],301:[function(require,module,exports){
 arguments[4][117][0].apply(exports,arguments)
-},{"../errors":299,"./_stream_duplex":300,"./internal/streams/async_iterator":305,"./internal/streams/buffer_list":306,"./internal/streams/destroy":307,"./internal/streams/from":309,"./internal/streams/state":311,"./internal/streams/stream":312,"_process":268,"buffer":131,"dup":117,"events":204,"inherits":241,"string_decoder/":313,"util":86}],303:[function(require,module,exports){
+},{"../errors":298,"./_stream_duplex":299,"./internal/streams/async_iterator":304,"./internal/streams/buffer_list":305,"./internal/streams/destroy":306,"./internal/streams/from":308,"./internal/streams/state":310,"./internal/streams/stream":311,"_process":268,"buffer":131,"dup":117,"events":204,"inherits":241,"string_decoder/":312,"util":86}],302:[function(require,module,exports){
 arguments[4][118][0].apply(exports,arguments)
-},{"../errors":299,"./_stream_duplex":300,"dup":118,"inherits":241}],304:[function(require,module,exports){
+},{"../errors":298,"./_stream_duplex":299,"dup":118,"inherits":241}],303:[function(require,module,exports){
 arguments[4][119][0].apply(exports,arguments)
-},{"../errors":299,"./_stream_duplex":300,"./internal/streams/destroy":307,"./internal/streams/state":311,"./internal/streams/stream":312,"_process":268,"buffer":131,"dup":119,"inherits":241,"util-deprecate":318}],305:[function(require,module,exports){
+},{"../errors":298,"./_stream_duplex":299,"./internal/streams/destroy":306,"./internal/streams/state":310,"./internal/streams/stream":311,"_process":268,"buffer":131,"dup":119,"inherits":241,"util-deprecate":317}],304:[function(require,module,exports){
 arguments[4][120][0].apply(exports,arguments)
-},{"./end-of-stream":308,"_process":268,"dup":120}],306:[function(require,module,exports){
+},{"./end-of-stream":307,"_process":268,"dup":120}],305:[function(require,module,exports){
 arguments[4][121][0].apply(exports,arguments)
-},{"buffer":131,"dup":121,"util":86}],307:[function(require,module,exports){
+},{"buffer":131,"dup":121,"util":86}],306:[function(require,module,exports){
 arguments[4][122][0].apply(exports,arguments)
-},{"_process":268,"dup":122}],308:[function(require,module,exports){
+},{"_process":268,"dup":122}],307:[function(require,module,exports){
 arguments[4][123][0].apply(exports,arguments)
-},{"../../../errors":299,"dup":123}],309:[function(require,module,exports){
+},{"../../../errors":298,"dup":123}],308:[function(require,module,exports){
 arguments[4][124][0].apply(exports,arguments)
-},{"dup":124}],310:[function(require,module,exports){
+},{"dup":124}],309:[function(require,module,exports){
 arguments[4][125][0].apply(exports,arguments)
-},{"../../../errors":299,"./end-of-stream":308,"dup":125}],311:[function(require,module,exports){
+},{"../../../errors":298,"./end-of-stream":307,"dup":125}],310:[function(require,module,exports){
 arguments[4][126][0].apply(exports,arguments)
-},{"../../../errors":299,"dup":126}],312:[function(require,module,exports){
+},{"../../../errors":298,"dup":126}],311:[function(require,module,exports){
 arguments[4][127][0].apply(exports,arguments)
-},{"dup":127,"events":204}],313:[function(require,module,exports){
+},{"dup":127,"events":204}],312:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -52024,9 +51263,9 @@ function simpleWrite(buf) {
 function simpleEnd(buf) {
   return buf && buf.length ? this.write(buf) : '';
 }
-},{"safe-buffer":314}],314:[function(require,module,exports){
+},{"safe-buffer":313}],313:[function(require,module,exports){
 arguments[4][129][0].apply(exports,arguments)
-},{"buffer":131,"dup":129}],315:[function(require,module,exports){
+},{"buffer":131,"dup":129}],314:[function(require,module,exports){
 (function (setImmediate,clearImmediate){(function (){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
@@ -52105,7 +51344,7 @@ exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate :
   delete immediateIds[id];
 };
 }).call(this)}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
-},{"process/browser.js":268,"timers":315}],316:[function(require,module,exports){
+},{"process/browser.js":268,"timers":314}],315:[function(require,module,exports){
 (function (global){(function (){
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -52393,7 +51632,7 @@ var __createBinding;
 });
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],317:[function(require,module,exports){
+},{}],316:[function(require,module,exports){
 /*!
  * UAParser.js v0.7.24
  * Lightweight JavaScript-based User-Agent string parser
@@ -53332,7 +52571,7 @@ var __createBinding;
 
 })(typeof window === 'object' ? window : this);
 
-},{}],318:[function(require,module,exports){
+},{}],317:[function(require,module,exports){
 (function (global){(function (){
 
 /**
@@ -53403,7 +52642,7 @@ function config (name) {
 }
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],319:[function(require,module,exports){
+},{}],318:[function(require,module,exports){
 /**
  * Convert array of 16 byte values to UUID string format of the form:
  * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
@@ -53431,7 +52670,7 @@ function bytesToUuid(buf, offset) {
 
 module.exports = bytesToUuid;
 
-},{}],320:[function(require,module,exports){
+},{}],319:[function(require,module,exports){
 // Unique ID creation requires a high quality random # generator.  In the
 // browser this is a little complicated due to unknown quality of Math.random()
 // and inconsistent support for the `crypto` API.  We do the best we can via
@@ -53467,7 +52706,7 @@ if (getRandomValues) {
   };
 }
 
-},{}],321:[function(require,module,exports){
+},{}],320:[function(require,module,exports){
 var rng = require('./lib/rng');
 var bytesToUuid = require('./lib/bytesToUuid');
 
@@ -53498,2677 +52737,7 @@ function v4(options, buf, offset) {
 
 module.exports = v4;
 
-},{"./lib/bytesToUuid":319,"./lib/rng":320}],322:[function(require,module,exports){
-/*
- *  Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
- *
- *  Use of this source code is governed by a BSD-style license
- *  that can be found in the LICENSE file in the root of the source
- *  tree.
- */
-/* eslint-env node */
-
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _adapter_factory = require('./adapter_factory.js');
-
-var adapter = (0, _adapter_factory.adapterFactory)({ window: typeof window === 'undefined' ? undefined : window });
-exports.default = adapter;
-
-},{"./adapter_factory.js":323}],323:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.adapterFactory = adapterFactory;
-
-var _utils = require('./utils');
-
-var utils = _interopRequireWildcard(_utils);
-
-var _chrome_shim = require('./chrome/chrome_shim');
-
-var chromeShim = _interopRequireWildcard(_chrome_shim);
-
-var _firefox_shim = require('./firefox/firefox_shim');
-
-var firefoxShim = _interopRequireWildcard(_firefox_shim);
-
-var _safari_shim = require('./safari/safari_shim');
-
-var safariShim = _interopRequireWildcard(_safari_shim);
-
-var _common_shim = require('./common_shim');
-
-var commonShim = _interopRequireWildcard(_common_shim);
-
-var _sdp = require('sdp');
-
-var sdp = _interopRequireWildcard(_sdp);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-// Shimming starts here.
-/*
- *  Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
- *
- *  Use of this source code is governed by a BSD-style license
- *  that can be found in the LICENSE file in the root of the source
- *  tree.
- */
-function adapterFactory() {
-  var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-      window = _ref.window;
-
-  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {
-    shimChrome: true,
-    shimFirefox: true,
-    shimSafari: true
-  };
-
-  // Utils.
-  var logging = utils.log;
-  var browserDetails = utils.detectBrowser(window);
-
-  var adapter = {
-    browserDetails: browserDetails,
-    commonShim: commonShim,
-    extractVersion: utils.extractVersion,
-    disableLog: utils.disableLog,
-    disableWarnings: utils.disableWarnings,
-    // Expose sdp as a convenience. For production apps include directly.
-    sdp: sdp
-  };
-
-  // Shim browser if found.
-  switch (browserDetails.browser) {
-    case 'chrome':
-      if (!chromeShim || !chromeShim.shimPeerConnection || !options.shimChrome) {
-        logging('Chrome shim is not included in this adapter release.');
-        return adapter;
-      }
-      if (browserDetails.version === null) {
-        logging('Chrome shim can not determine version, not shimming.');
-        return adapter;
-      }
-      logging('adapter.js shimming chrome.');
-      // Export to the adapter global object visible in the browser.
-      adapter.browserShim = chromeShim;
-
-      // Must be called before shimPeerConnection.
-      commonShim.shimAddIceCandidateNullOrEmpty(window, browserDetails);
-
-      chromeShim.shimGetUserMedia(window, browserDetails);
-      chromeShim.shimMediaStream(window, browserDetails);
-      chromeShim.shimPeerConnection(window, browserDetails);
-      chromeShim.shimOnTrack(window, browserDetails);
-      chromeShim.shimAddTrackRemoveTrack(window, browserDetails);
-      chromeShim.shimGetSendersWithDtmf(window, browserDetails);
-      chromeShim.shimGetStats(window, browserDetails);
-      chromeShim.shimSenderReceiverGetStats(window, browserDetails);
-      chromeShim.fixNegotiationNeeded(window, browserDetails);
-
-      commonShim.shimRTCIceCandidate(window, browserDetails);
-      commonShim.shimConnectionState(window, browserDetails);
-      commonShim.shimMaxMessageSize(window, browserDetails);
-      commonShim.shimSendThrowTypeError(window, browserDetails);
-      commonShim.removeExtmapAllowMixed(window, browserDetails);
-      break;
-    case 'firefox':
-      if (!firefoxShim || !firefoxShim.shimPeerConnection || !options.shimFirefox) {
-        logging('Firefox shim is not included in this adapter release.');
-        return adapter;
-      }
-      logging('adapter.js shimming firefox.');
-      // Export to the adapter global object visible in the browser.
-      adapter.browserShim = firefoxShim;
-
-      // Must be called before shimPeerConnection.
-      commonShim.shimAddIceCandidateNullOrEmpty(window, browserDetails);
-
-      firefoxShim.shimGetUserMedia(window, browserDetails);
-      firefoxShim.shimPeerConnection(window, browserDetails);
-      firefoxShim.shimOnTrack(window, browserDetails);
-      firefoxShim.shimRemoveStream(window, browserDetails);
-      firefoxShim.shimSenderGetStats(window, browserDetails);
-      firefoxShim.shimReceiverGetStats(window, browserDetails);
-      firefoxShim.shimRTCDataChannel(window, browserDetails);
-      firefoxShim.shimAddTransceiver(window, browserDetails);
-      firefoxShim.shimGetParameters(window, browserDetails);
-      firefoxShim.shimCreateOffer(window, browserDetails);
-      firefoxShim.shimCreateAnswer(window, browserDetails);
-
-      commonShim.shimRTCIceCandidate(window, browserDetails);
-      commonShim.shimConnectionState(window, browserDetails);
-      commonShim.shimMaxMessageSize(window, browserDetails);
-      commonShim.shimSendThrowTypeError(window, browserDetails);
-      break;
-    case 'safari':
-      if (!safariShim || !options.shimSafari) {
-        logging('Safari shim is not included in this adapter release.');
-        return adapter;
-      }
-      logging('adapter.js shimming safari.');
-      // Export to the adapter global object visible in the browser.
-      adapter.browserShim = safariShim;
-
-      // Must be called before shimCallbackAPI.
-      commonShim.shimAddIceCandidateNullOrEmpty(window, browserDetails);
-
-      safariShim.shimRTCIceServerUrls(window, browserDetails);
-      safariShim.shimCreateOfferLegacy(window, browserDetails);
-      safariShim.shimCallbacksAPI(window, browserDetails);
-      safariShim.shimLocalStreamsAPI(window, browserDetails);
-      safariShim.shimRemoteStreamsAPI(window, browserDetails);
-      safariShim.shimTrackEventTransceiver(window, browserDetails);
-      safariShim.shimGetUserMedia(window, browserDetails);
-      safariShim.shimAudioContext(window, browserDetails);
-
-      commonShim.shimRTCIceCandidate(window, browserDetails);
-      commonShim.shimMaxMessageSize(window, browserDetails);
-      commonShim.shimSendThrowTypeError(window, browserDetails);
-      commonShim.removeExtmapAllowMixed(window, browserDetails);
-      break;
-    default:
-      logging('Unsupported browser!');
-      break;
-  }
-
-  return adapter;
-}
-
-// Browser shims.
-
-},{"./chrome/chrome_shim":324,"./common_shim":327,"./firefox/firefox_shim":328,"./safari/safari_shim":331,"./utils":332,"sdp":289}],324:[function(require,module,exports){
-/*
- *  Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
- *
- *  Use of this source code is governed by a BSD-style license
- *  that can be found in the LICENSE file in the root of the source
- *  tree.
- */
-/* eslint-env node */
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.shimGetDisplayMedia = exports.shimGetUserMedia = undefined;
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var _getusermedia = require('./getusermedia');
-
-Object.defineProperty(exports, 'shimGetUserMedia', {
-  enumerable: true,
-  get: function get() {
-    return _getusermedia.shimGetUserMedia;
-  }
-});
-
-var _getdisplaymedia = require('./getdisplaymedia');
-
-Object.defineProperty(exports, 'shimGetDisplayMedia', {
-  enumerable: true,
-  get: function get() {
-    return _getdisplaymedia.shimGetDisplayMedia;
-  }
-});
-exports.shimMediaStream = shimMediaStream;
-exports.shimOnTrack = shimOnTrack;
-exports.shimGetSendersWithDtmf = shimGetSendersWithDtmf;
-exports.shimGetStats = shimGetStats;
-exports.shimSenderReceiverGetStats = shimSenderReceiverGetStats;
-exports.shimAddTrackRemoveTrackWithNative = shimAddTrackRemoveTrackWithNative;
-exports.shimAddTrackRemoveTrack = shimAddTrackRemoveTrack;
-exports.shimPeerConnection = shimPeerConnection;
-exports.fixNegotiationNeeded = fixNegotiationNeeded;
-
-var _utils = require('../utils.js');
-
-var utils = _interopRequireWildcard(_utils);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function shimMediaStream(window) {
-  window.MediaStream = window.MediaStream || window.webkitMediaStream;
-}
-
-function shimOnTrack(window) {
-  if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) === 'object' && window.RTCPeerConnection && !('ontrack' in window.RTCPeerConnection.prototype)) {
-    Object.defineProperty(window.RTCPeerConnection.prototype, 'ontrack', {
-      get: function get() {
-        return this._ontrack;
-      },
-      set: function set(f) {
-        if (this._ontrack) {
-          this.removeEventListener('track', this._ontrack);
-        }
-        this.addEventListener('track', this._ontrack = f);
-      },
-
-      enumerable: true,
-      configurable: true
-    });
-    var origSetRemoteDescription = window.RTCPeerConnection.prototype.setRemoteDescription;
-    window.RTCPeerConnection.prototype.setRemoteDescription = function setRemoteDescription() {
-      var _this = this;
-
-      if (!this._ontrackpoly) {
-        this._ontrackpoly = function (e) {
-          // onaddstream does not fire when a track is added to an existing
-          // stream. But stream.onaddtrack is implemented so we use that.
-          e.stream.addEventListener('addtrack', function (te) {
-            var receiver = void 0;
-            if (window.RTCPeerConnection.prototype.getReceivers) {
-              receiver = _this.getReceivers().find(function (r) {
-                return r.track && r.track.id === te.track.id;
-              });
-            } else {
-              receiver = { track: te.track };
-            }
-
-            var event = new Event('track');
-            event.track = te.track;
-            event.receiver = receiver;
-            event.transceiver = { receiver: receiver };
-            event.streams = [e.stream];
-            _this.dispatchEvent(event);
-          });
-          e.stream.getTracks().forEach(function (track) {
-            var receiver = void 0;
-            if (window.RTCPeerConnection.prototype.getReceivers) {
-              receiver = _this.getReceivers().find(function (r) {
-                return r.track && r.track.id === track.id;
-              });
-            } else {
-              receiver = { track: track };
-            }
-            var event = new Event('track');
-            event.track = track;
-            event.receiver = receiver;
-            event.transceiver = { receiver: receiver };
-            event.streams = [e.stream];
-            _this.dispatchEvent(event);
-          });
-        };
-        this.addEventListener('addstream', this._ontrackpoly);
-      }
-      return origSetRemoteDescription.apply(this, arguments);
-    };
-  } else {
-    // even if RTCRtpTransceiver is in window, it is only used and
-    // emitted in unified-plan. Unfortunately this means we need
-    // to unconditionally wrap the event.
-    utils.wrapPeerConnectionEvent(window, 'track', function (e) {
-      if (!e.transceiver) {
-        Object.defineProperty(e, 'transceiver', { value: { receiver: e.receiver } });
-      }
-      return e;
-    });
-  }
-}
-
-function shimGetSendersWithDtmf(window) {
-  // Overrides addTrack/removeTrack, depends on shimAddTrackRemoveTrack.
-  if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) === 'object' && window.RTCPeerConnection && !('getSenders' in window.RTCPeerConnection.prototype) && 'createDTMFSender' in window.RTCPeerConnection.prototype) {
-    var shimSenderWithDtmf = function shimSenderWithDtmf(pc, track) {
-      return {
-        track: track,
-        get dtmf() {
-          if (this._dtmf === undefined) {
-            if (track.kind === 'audio') {
-              this._dtmf = pc.createDTMFSender(track);
-            } else {
-              this._dtmf = null;
-            }
-          }
-          return this._dtmf;
-        },
-        _pc: pc
-      };
-    };
-
-    // augment addTrack when getSenders is not available.
-    if (!window.RTCPeerConnection.prototype.getSenders) {
-      window.RTCPeerConnection.prototype.getSenders = function getSenders() {
-        this._senders = this._senders || [];
-        return this._senders.slice(); // return a copy of the internal state.
-      };
-      var origAddTrack = window.RTCPeerConnection.prototype.addTrack;
-      window.RTCPeerConnection.prototype.addTrack = function addTrack(track, stream) {
-        var sender = origAddTrack.apply(this, arguments);
-        if (!sender) {
-          sender = shimSenderWithDtmf(this, track);
-          this._senders.push(sender);
-        }
-        return sender;
-      };
-
-      var origRemoveTrack = window.RTCPeerConnection.prototype.removeTrack;
-      window.RTCPeerConnection.prototype.removeTrack = function removeTrack(sender) {
-        origRemoveTrack.apply(this, arguments);
-        var idx = this._senders.indexOf(sender);
-        if (idx !== -1) {
-          this._senders.splice(idx, 1);
-        }
-      };
-    }
-    var origAddStream = window.RTCPeerConnection.prototype.addStream;
-    window.RTCPeerConnection.prototype.addStream = function addStream(stream) {
-      var _this2 = this;
-
-      this._senders = this._senders || [];
-      origAddStream.apply(this, [stream]);
-      stream.getTracks().forEach(function (track) {
-        _this2._senders.push(shimSenderWithDtmf(_this2, track));
-      });
-    };
-
-    var origRemoveStream = window.RTCPeerConnection.prototype.removeStream;
-    window.RTCPeerConnection.prototype.removeStream = function removeStream(stream) {
-      var _this3 = this;
-
-      this._senders = this._senders || [];
-      origRemoveStream.apply(this, [stream]);
-
-      stream.getTracks().forEach(function (track) {
-        var sender = _this3._senders.find(function (s) {
-          return s.track === track;
-        });
-        if (sender) {
-          // remove sender
-          _this3._senders.splice(_this3._senders.indexOf(sender), 1);
-        }
-      });
-    };
-  } else if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) === 'object' && window.RTCPeerConnection && 'getSenders' in window.RTCPeerConnection.prototype && 'createDTMFSender' in window.RTCPeerConnection.prototype && window.RTCRtpSender && !('dtmf' in window.RTCRtpSender.prototype)) {
-    var origGetSenders = window.RTCPeerConnection.prototype.getSenders;
-    window.RTCPeerConnection.prototype.getSenders = function getSenders() {
-      var _this4 = this;
-
-      var senders = origGetSenders.apply(this, []);
-      senders.forEach(function (sender) {
-        return sender._pc = _this4;
-      });
-      return senders;
-    };
-
-    Object.defineProperty(window.RTCRtpSender.prototype, 'dtmf', {
-      get: function get() {
-        if (this._dtmf === undefined) {
-          if (this.track.kind === 'audio') {
-            this._dtmf = this._pc.createDTMFSender(this.track);
-          } else {
-            this._dtmf = null;
-          }
-        }
-        return this._dtmf;
-      }
-    });
-  }
-}
-
-function shimGetStats(window) {
-  if (!window.RTCPeerConnection) {
-    return;
-  }
-
-  var origGetStats = window.RTCPeerConnection.prototype.getStats;
-  window.RTCPeerConnection.prototype.getStats = function getStats() {
-    var _this5 = this;
-
-    var _arguments = Array.prototype.slice.call(arguments),
-        selector = _arguments[0],
-        onSucc = _arguments[1],
-        onErr = _arguments[2];
-
-    // If selector is a function then we are in the old style stats so just
-    // pass back the original getStats format to avoid breaking old users.
-
-
-    if (arguments.length > 0 && typeof selector === 'function') {
-      return origGetStats.apply(this, arguments);
-    }
-
-    // When spec-style getStats is supported, return those when called with
-    // either no arguments or the selector argument is null.
-    if (origGetStats.length === 0 && (arguments.length === 0 || typeof selector !== 'function')) {
-      return origGetStats.apply(this, []);
-    }
-
-    var fixChromeStats_ = function fixChromeStats_(response) {
-      var standardReport = {};
-      var reports = response.result();
-      reports.forEach(function (report) {
-        var standardStats = {
-          id: report.id,
-          timestamp: report.timestamp,
-          type: {
-            localcandidate: 'local-candidate',
-            remotecandidate: 'remote-candidate'
-          }[report.type] || report.type
-        };
-        report.names().forEach(function (name) {
-          standardStats[name] = report.stat(name);
-        });
-        standardReport[standardStats.id] = standardStats;
-      });
-
-      return standardReport;
-    };
-
-    // shim getStats with maplike support
-    var makeMapStats = function makeMapStats(stats) {
-      return new Map(Object.keys(stats).map(function (key) {
-        return [key, stats[key]];
-      }));
-    };
-
-    if (arguments.length >= 2) {
-      var successCallbackWrapper_ = function successCallbackWrapper_(response) {
-        onSucc(makeMapStats(fixChromeStats_(response)));
-      };
-
-      return origGetStats.apply(this, [successCallbackWrapper_, selector]);
-    }
-
-    // promise-support
-    return new Promise(function (resolve, reject) {
-      origGetStats.apply(_this5, [function (response) {
-        resolve(makeMapStats(fixChromeStats_(response)));
-      }, reject]);
-    }).then(onSucc, onErr);
-  };
-}
-
-function shimSenderReceiverGetStats(window) {
-  if (!((typeof window === 'undefined' ? 'undefined' : _typeof(window)) === 'object' && window.RTCPeerConnection && window.RTCRtpSender && window.RTCRtpReceiver)) {
-    return;
-  }
-
-  // shim sender stats.
-  if (!('getStats' in window.RTCRtpSender.prototype)) {
-    var origGetSenders = window.RTCPeerConnection.prototype.getSenders;
-    if (origGetSenders) {
-      window.RTCPeerConnection.prototype.getSenders = function getSenders() {
-        var _this6 = this;
-
-        var senders = origGetSenders.apply(this, []);
-        senders.forEach(function (sender) {
-          return sender._pc = _this6;
-        });
-        return senders;
-      };
-    }
-
-    var origAddTrack = window.RTCPeerConnection.prototype.addTrack;
-    if (origAddTrack) {
-      window.RTCPeerConnection.prototype.addTrack = function addTrack() {
-        var sender = origAddTrack.apply(this, arguments);
-        sender._pc = this;
-        return sender;
-      };
-    }
-    window.RTCRtpSender.prototype.getStats = function getStats() {
-      var sender = this;
-      return this._pc.getStats().then(function (result) {
-        return (
-          /* Note: this will include stats of all senders that
-           *   send a track with the same id as sender.track as
-           *   it is not possible to identify the RTCRtpSender.
-           */
-          utils.filterStats(result, sender.track, true)
-        );
-      });
-    };
-  }
-
-  // shim receiver stats.
-  if (!('getStats' in window.RTCRtpReceiver.prototype)) {
-    var origGetReceivers = window.RTCPeerConnection.prototype.getReceivers;
-    if (origGetReceivers) {
-      window.RTCPeerConnection.prototype.getReceivers = function getReceivers() {
-        var _this7 = this;
-
-        var receivers = origGetReceivers.apply(this, []);
-        receivers.forEach(function (receiver) {
-          return receiver._pc = _this7;
-        });
-        return receivers;
-      };
-    }
-    utils.wrapPeerConnectionEvent(window, 'track', function (e) {
-      e.receiver._pc = e.srcElement;
-      return e;
-    });
-    window.RTCRtpReceiver.prototype.getStats = function getStats() {
-      var receiver = this;
-      return this._pc.getStats().then(function (result) {
-        return utils.filterStats(result, receiver.track, false);
-      });
-    };
-  }
-
-  if (!('getStats' in window.RTCRtpSender.prototype && 'getStats' in window.RTCRtpReceiver.prototype)) {
-    return;
-  }
-
-  // shim RTCPeerConnection.getStats(track).
-  var origGetStats = window.RTCPeerConnection.prototype.getStats;
-  window.RTCPeerConnection.prototype.getStats = function getStats() {
-    if (arguments.length > 0 && arguments[0] instanceof window.MediaStreamTrack) {
-      var track = arguments[0];
-      var sender = void 0;
-      var receiver = void 0;
-      var err = void 0;
-      this.getSenders().forEach(function (s) {
-        if (s.track === track) {
-          if (sender) {
-            err = true;
-          } else {
-            sender = s;
-          }
-        }
-      });
-      this.getReceivers().forEach(function (r) {
-        if (r.track === track) {
-          if (receiver) {
-            err = true;
-          } else {
-            receiver = r;
-          }
-        }
-        return r.track === track;
-      });
-      if (err || sender && receiver) {
-        return Promise.reject(new DOMException('There are more than one sender or receiver for the track.', 'InvalidAccessError'));
-      } else if (sender) {
-        return sender.getStats();
-      } else if (receiver) {
-        return receiver.getStats();
-      }
-      return Promise.reject(new DOMException('There is no sender or receiver for the track.', 'InvalidAccessError'));
-    }
-    return origGetStats.apply(this, arguments);
-  };
-}
-
-function shimAddTrackRemoveTrackWithNative(window) {
-  // shim addTrack/removeTrack with native variants in order to make
-  // the interactions with legacy getLocalStreams behave as in other browsers.
-  // Keeps a mapping stream.id => [stream, rtpsenders...]
-  window.RTCPeerConnection.prototype.getLocalStreams = function getLocalStreams() {
-    var _this8 = this;
-
-    this._shimmedLocalStreams = this._shimmedLocalStreams || {};
-    return Object.keys(this._shimmedLocalStreams).map(function (streamId) {
-      return _this8._shimmedLocalStreams[streamId][0];
-    });
-  };
-
-  var origAddTrack = window.RTCPeerConnection.prototype.addTrack;
-  window.RTCPeerConnection.prototype.addTrack = function addTrack(track, stream) {
-    if (!stream) {
-      return origAddTrack.apply(this, arguments);
-    }
-    this._shimmedLocalStreams = this._shimmedLocalStreams || {};
-
-    var sender = origAddTrack.apply(this, arguments);
-    if (!this._shimmedLocalStreams[stream.id]) {
-      this._shimmedLocalStreams[stream.id] = [stream, sender];
-    } else if (this._shimmedLocalStreams[stream.id].indexOf(sender) === -1) {
-      this._shimmedLocalStreams[stream.id].push(sender);
-    }
-    return sender;
-  };
-
-  var origAddStream = window.RTCPeerConnection.prototype.addStream;
-  window.RTCPeerConnection.prototype.addStream = function addStream(stream) {
-    var _this9 = this;
-
-    this._shimmedLocalStreams = this._shimmedLocalStreams || {};
-
-    stream.getTracks().forEach(function (track) {
-      var alreadyExists = _this9.getSenders().find(function (s) {
-        return s.track === track;
-      });
-      if (alreadyExists) {
-        throw new DOMException('Track already exists.', 'InvalidAccessError');
-      }
-    });
-    var existingSenders = this.getSenders();
-    origAddStream.apply(this, arguments);
-    var newSenders = this.getSenders().filter(function (newSender) {
-      return existingSenders.indexOf(newSender) === -1;
-    });
-    this._shimmedLocalStreams[stream.id] = [stream].concat(newSenders);
-  };
-
-  var origRemoveStream = window.RTCPeerConnection.prototype.removeStream;
-  window.RTCPeerConnection.prototype.removeStream = function removeStream(stream) {
-    this._shimmedLocalStreams = this._shimmedLocalStreams || {};
-    delete this._shimmedLocalStreams[stream.id];
-    return origRemoveStream.apply(this, arguments);
-  };
-
-  var origRemoveTrack = window.RTCPeerConnection.prototype.removeTrack;
-  window.RTCPeerConnection.prototype.removeTrack = function removeTrack(sender) {
-    var _this10 = this;
-
-    this._shimmedLocalStreams = this._shimmedLocalStreams || {};
-    if (sender) {
-      Object.keys(this._shimmedLocalStreams).forEach(function (streamId) {
-        var idx = _this10._shimmedLocalStreams[streamId].indexOf(sender);
-        if (idx !== -1) {
-          _this10._shimmedLocalStreams[streamId].splice(idx, 1);
-        }
-        if (_this10._shimmedLocalStreams[streamId].length === 1) {
-          delete _this10._shimmedLocalStreams[streamId];
-        }
-      });
-    }
-    return origRemoveTrack.apply(this, arguments);
-  };
-}
-
-function shimAddTrackRemoveTrack(window, browserDetails) {
-  if (!window.RTCPeerConnection) {
-    return;
-  }
-  // shim addTrack and removeTrack.
-  if (window.RTCPeerConnection.prototype.addTrack && browserDetails.version >= 65) {
-    return shimAddTrackRemoveTrackWithNative(window);
-  }
-
-  // also shim pc.getLocalStreams when addTrack is shimmed
-  // to return the original streams.
-  var origGetLocalStreams = window.RTCPeerConnection.prototype.getLocalStreams;
-  window.RTCPeerConnection.prototype.getLocalStreams = function getLocalStreams() {
-    var _this11 = this;
-
-    var nativeStreams = origGetLocalStreams.apply(this);
-    this._reverseStreams = this._reverseStreams || {};
-    return nativeStreams.map(function (stream) {
-      return _this11._reverseStreams[stream.id];
-    });
-  };
-
-  var origAddStream = window.RTCPeerConnection.prototype.addStream;
-  window.RTCPeerConnection.prototype.addStream = function addStream(stream) {
-    var _this12 = this;
-
-    this._streams = this._streams || {};
-    this._reverseStreams = this._reverseStreams || {};
-
-    stream.getTracks().forEach(function (track) {
-      var alreadyExists = _this12.getSenders().find(function (s) {
-        return s.track === track;
-      });
-      if (alreadyExists) {
-        throw new DOMException('Track already exists.', 'InvalidAccessError');
-      }
-    });
-    // Add identity mapping for consistency with addTrack.
-    // Unless this is being used with a stream from addTrack.
-    if (!this._reverseStreams[stream.id]) {
-      var newStream = new window.MediaStream(stream.getTracks());
-      this._streams[stream.id] = newStream;
-      this._reverseStreams[newStream.id] = stream;
-      stream = newStream;
-    }
-    origAddStream.apply(this, [stream]);
-  };
-
-  var origRemoveStream = window.RTCPeerConnection.prototype.removeStream;
-  window.RTCPeerConnection.prototype.removeStream = function removeStream(stream) {
-    this._streams = this._streams || {};
-    this._reverseStreams = this._reverseStreams || {};
-
-    origRemoveStream.apply(this, [this._streams[stream.id] || stream]);
-    delete this._reverseStreams[this._streams[stream.id] ? this._streams[stream.id].id : stream.id];
-    delete this._streams[stream.id];
-  };
-
-  window.RTCPeerConnection.prototype.addTrack = function addTrack(track, stream) {
-    var _this13 = this;
-
-    if (this.signalingState === 'closed') {
-      throw new DOMException('The RTCPeerConnection\'s signalingState is \'closed\'.', 'InvalidStateError');
-    }
-    var streams = [].slice.call(arguments, 1);
-    if (streams.length !== 1 || !streams[0].getTracks().find(function (t) {
-      return t === track;
-    })) {
-      // this is not fully correct but all we can manage without
-      // [[associated MediaStreams]] internal slot.
-      throw new DOMException('The adapter.js addTrack polyfill only supports a single ' + ' stream which is associated with the specified track.', 'NotSupportedError');
-    }
-
-    var alreadyExists = this.getSenders().find(function (s) {
-      return s.track === track;
-    });
-    if (alreadyExists) {
-      throw new DOMException('Track already exists.', 'InvalidAccessError');
-    }
-
-    this._streams = this._streams || {};
-    this._reverseStreams = this._reverseStreams || {};
-    var oldStream = this._streams[stream.id];
-    if (oldStream) {
-      // this is using odd Chrome behaviour, use with caution:
-      // https://bugs.chromium.org/p/webrtc/issues/detail?id=7815
-      // Note: we rely on the high-level addTrack/dtmf shim to
-      // create the sender with a dtmf sender.
-      oldStream.addTrack(track);
-
-      // Trigger ONN async.
-      Promise.resolve().then(function () {
-        _this13.dispatchEvent(new Event('negotiationneeded'));
-      });
-    } else {
-      var newStream = new window.MediaStream([track]);
-      this._streams[stream.id] = newStream;
-      this._reverseStreams[newStream.id] = stream;
-      this.addStream(newStream);
-    }
-    return this.getSenders().find(function (s) {
-      return s.track === track;
-    });
-  };
-
-  // replace the internal stream id with the external one and
-  // vice versa.
-  function replaceInternalStreamId(pc, description) {
-    var sdp = description.sdp;
-    Object.keys(pc._reverseStreams || []).forEach(function (internalId) {
-      var externalStream = pc._reverseStreams[internalId];
-      var internalStream = pc._streams[externalStream.id];
-      sdp = sdp.replace(new RegExp(internalStream.id, 'g'), externalStream.id);
-    });
-    return new RTCSessionDescription({
-      type: description.type,
-      sdp: sdp
-    });
-  }
-  function replaceExternalStreamId(pc, description) {
-    var sdp = description.sdp;
-    Object.keys(pc._reverseStreams || []).forEach(function (internalId) {
-      var externalStream = pc._reverseStreams[internalId];
-      var internalStream = pc._streams[externalStream.id];
-      sdp = sdp.replace(new RegExp(externalStream.id, 'g'), internalStream.id);
-    });
-    return new RTCSessionDescription({
-      type: description.type,
-      sdp: sdp
-    });
-  }
-  ['createOffer', 'createAnswer'].forEach(function (method) {
-    var nativeMethod = window.RTCPeerConnection.prototype[method];
-    var methodObj = _defineProperty({}, method, function () {
-      var _this14 = this;
-
-      var args = arguments;
-      var isLegacyCall = arguments.length && typeof arguments[0] === 'function';
-      if (isLegacyCall) {
-        return nativeMethod.apply(this, [function (description) {
-          var desc = replaceInternalStreamId(_this14, description);
-          args[0].apply(null, [desc]);
-        }, function (err) {
-          if (args[1]) {
-            args[1].apply(null, err);
-          }
-        }, arguments[2]]);
-      }
-      return nativeMethod.apply(this, arguments).then(function (description) {
-        return replaceInternalStreamId(_this14, description);
-      });
-    });
-    window.RTCPeerConnection.prototype[method] = methodObj[method];
-  });
-
-  var origSetLocalDescription = window.RTCPeerConnection.prototype.setLocalDescription;
-  window.RTCPeerConnection.prototype.setLocalDescription = function setLocalDescription() {
-    if (!arguments.length || !arguments[0].type) {
-      return origSetLocalDescription.apply(this, arguments);
-    }
-    arguments[0] = replaceExternalStreamId(this, arguments[0]);
-    return origSetLocalDescription.apply(this, arguments);
-  };
-
-  // TODO: mangle getStats: https://w3c.github.io/webrtc-stats/#dom-rtcmediastreamstats-streamidentifier
-
-  var origLocalDescription = Object.getOwnPropertyDescriptor(window.RTCPeerConnection.prototype, 'localDescription');
-  Object.defineProperty(window.RTCPeerConnection.prototype, 'localDescription', {
-    get: function get() {
-      var description = origLocalDescription.get.apply(this);
-      if (description.type === '') {
-        return description;
-      }
-      return replaceInternalStreamId(this, description);
-    }
-  });
-
-  window.RTCPeerConnection.prototype.removeTrack = function removeTrack(sender) {
-    var _this15 = this;
-
-    if (this.signalingState === 'closed') {
-      throw new DOMException('The RTCPeerConnection\'s signalingState is \'closed\'.', 'InvalidStateError');
-    }
-    // We can not yet check for sender instanceof RTCRtpSender
-    // since we shim RTPSender. So we check if sender._pc is set.
-    if (!sender._pc) {
-      throw new DOMException('Argument 1 of RTCPeerConnection.removeTrack ' + 'does not implement interface RTCRtpSender.', 'TypeError');
-    }
-    var isLocal = sender._pc === this;
-    if (!isLocal) {
-      throw new DOMException('Sender was not created by this connection.', 'InvalidAccessError');
-    }
-
-    // Search for the native stream the senders track belongs to.
-    this._streams = this._streams || {};
-    var stream = void 0;
-    Object.keys(this._streams).forEach(function (streamid) {
-      var hasTrack = _this15._streams[streamid].getTracks().find(function (track) {
-        return sender.track === track;
-      });
-      if (hasTrack) {
-        stream = _this15._streams[streamid];
-      }
-    });
-
-    if (stream) {
-      if (stream.getTracks().length === 1) {
-        // if this is the last track of the stream, remove the stream. This
-        // takes care of any shimmed _senders.
-        this.removeStream(this._reverseStreams[stream.id]);
-      } else {
-        // relying on the same odd chrome behaviour as above.
-        stream.removeTrack(sender.track);
-      }
-      this.dispatchEvent(new Event('negotiationneeded'));
-    }
-  };
-}
-
-function shimPeerConnection(window, browserDetails) {
-  if (!window.RTCPeerConnection && window.webkitRTCPeerConnection) {
-    // very basic support for old versions.
-    window.RTCPeerConnection = window.webkitRTCPeerConnection;
-  }
-  if (!window.RTCPeerConnection) {
-    return;
-  }
-
-  // shim implicit creation of RTCSessionDescription/RTCIceCandidate
-  if (browserDetails.version < 53) {
-    ['setLocalDescription', 'setRemoteDescription', 'addIceCandidate'].forEach(function (method) {
-      var nativeMethod = window.RTCPeerConnection.prototype[method];
-      var methodObj = _defineProperty({}, method, function () {
-        arguments[0] = new (method === 'addIceCandidate' ? window.RTCIceCandidate : window.RTCSessionDescription)(arguments[0]);
-        return nativeMethod.apply(this, arguments);
-      });
-      window.RTCPeerConnection.prototype[method] = methodObj[method];
-    });
-  }
-}
-
-// Attempt to fix ONN in plan-b mode.
-function fixNegotiationNeeded(window, browserDetails) {
-  utils.wrapPeerConnectionEvent(window, 'negotiationneeded', function (e) {
-    var pc = e.target;
-    if (browserDetails.version < 72 || pc.getConfiguration && pc.getConfiguration().sdpSemantics === 'plan-b') {
-      if (pc.signalingState !== 'stable') {
-        return;
-      }
-    }
-    return e;
-  });
-}
-
-},{"../utils.js":332,"./getdisplaymedia":325,"./getusermedia":326}],325:[function(require,module,exports){
-/*
- *  Copyright (c) 2018 The adapter.js project authors. All Rights Reserved.
- *
- *  Use of this source code is governed by a BSD-style license
- *  that can be found in the LICENSE file in the root of the source
- *  tree.
- */
-/* eslint-env node */
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.shimGetDisplayMedia = shimGetDisplayMedia;
-function shimGetDisplayMedia(window, getSourceId) {
-  if (window.navigator.mediaDevices && 'getDisplayMedia' in window.navigator.mediaDevices) {
-    return;
-  }
-  if (!window.navigator.mediaDevices) {
-    return;
-  }
-  // getSourceId is a function that returns a promise resolving with
-  // the sourceId of the screen/window/tab to be shared.
-  if (typeof getSourceId !== 'function') {
-    console.error('shimGetDisplayMedia: getSourceId argument is not ' + 'a function');
-    return;
-  }
-  window.navigator.mediaDevices.getDisplayMedia = function getDisplayMedia(constraints) {
-    return getSourceId(constraints).then(function (sourceId) {
-      var widthSpecified = constraints.video && constraints.video.width;
-      var heightSpecified = constraints.video && constraints.video.height;
-      var frameRateSpecified = constraints.video && constraints.video.frameRate;
-      constraints.video = {
-        mandatory: {
-          chromeMediaSource: 'desktop',
-          chromeMediaSourceId: sourceId,
-          maxFrameRate: frameRateSpecified || 3
-        }
-      };
-      if (widthSpecified) {
-        constraints.video.mandatory.maxWidth = widthSpecified;
-      }
-      if (heightSpecified) {
-        constraints.video.mandatory.maxHeight = heightSpecified;
-      }
-      return window.navigator.mediaDevices.getUserMedia(constraints);
-    });
-  };
-}
-
-},{}],326:[function(require,module,exports){
-/*
- *  Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
- *
- *  Use of this source code is governed by a BSD-style license
- *  that can be found in the LICENSE file in the root of the source
- *  tree.
- */
-/* eslint-env node */
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-exports.shimGetUserMedia = shimGetUserMedia;
-
-var _utils = require('../utils.js');
-
-var utils = _interopRequireWildcard(_utils);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-var logging = utils.log;
-
-function shimGetUserMedia(window, browserDetails) {
-  var navigator = window && window.navigator;
-
-  if (!navigator.mediaDevices) {
-    return;
-  }
-
-  var constraintsToChrome_ = function constraintsToChrome_(c) {
-    if ((typeof c === 'undefined' ? 'undefined' : _typeof(c)) !== 'object' || c.mandatory || c.optional) {
-      return c;
-    }
-    var cc = {};
-    Object.keys(c).forEach(function (key) {
-      if (key === 'require' || key === 'advanced' || key === 'mediaSource') {
-        return;
-      }
-      var r = _typeof(c[key]) === 'object' ? c[key] : { ideal: c[key] };
-      if (r.exact !== undefined && typeof r.exact === 'number') {
-        r.min = r.max = r.exact;
-      }
-      var oldname_ = function oldname_(prefix, name) {
-        if (prefix) {
-          return prefix + name.charAt(0).toUpperCase() + name.slice(1);
-        }
-        return name === 'deviceId' ? 'sourceId' : name;
-      };
-      if (r.ideal !== undefined) {
-        cc.optional = cc.optional || [];
-        var oc = {};
-        if (typeof r.ideal === 'number') {
-          oc[oldname_('min', key)] = r.ideal;
-          cc.optional.push(oc);
-          oc = {};
-          oc[oldname_('max', key)] = r.ideal;
-          cc.optional.push(oc);
-        } else {
-          oc[oldname_('', key)] = r.ideal;
-          cc.optional.push(oc);
-        }
-      }
-      if (r.exact !== undefined && typeof r.exact !== 'number') {
-        cc.mandatory = cc.mandatory || {};
-        cc.mandatory[oldname_('', key)] = r.exact;
-      } else {
-        ['min', 'max'].forEach(function (mix) {
-          if (r[mix] !== undefined) {
-            cc.mandatory = cc.mandatory || {};
-            cc.mandatory[oldname_(mix, key)] = r[mix];
-          }
-        });
-      }
-    });
-    if (c.advanced) {
-      cc.optional = (cc.optional || []).concat(c.advanced);
-    }
-    return cc;
-  };
-
-  var shimConstraints_ = function shimConstraints_(constraints, func) {
-    if (browserDetails.version >= 61) {
-      return func(constraints);
-    }
-    constraints = JSON.parse(JSON.stringify(constraints));
-    if (constraints && _typeof(constraints.audio) === 'object') {
-      var remap = function remap(obj, a, b) {
-        if (a in obj && !(b in obj)) {
-          obj[b] = obj[a];
-          delete obj[a];
-        }
-      };
-      constraints = JSON.parse(JSON.stringify(constraints));
-      remap(constraints.audio, 'autoGainControl', 'googAutoGainControl');
-      remap(constraints.audio, 'noiseSuppression', 'googNoiseSuppression');
-      constraints.audio = constraintsToChrome_(constraints.audio);
-    }
-    if (constraints && _typeof(constraints.video) === 'object') {
-      // Shim facingMode for mobile & surface pro.
-      var face = constraints.video.facingMode;
-      face = face && ((typeof face === 'undefined' ? 'undefined' : _typeof(face)) === 'object' ? face : { ideal: face });
-      var getSupportedFacingModeLies = browserDetails.version < 66;
-
-      if (face && (face.exact === 'user' || face.exact === 'environment' || face.ideal === 'user' || face.ideal === 'environment') && !(navigator.mediaDevices.getSupportedConstraints && navigator.mediaDevices.getSupportedConstraints().facingMode && !getSupportedFacingModeLies)) {
-        delete constraints.video.facingMode;
-        var matches = void 0;
-        if (face.exact === 'environment' || face.ideal === 'environment') {
-          matches = ['back', 'rear'];
-        } else if (face.exact === 'user' || face.ideal === 'user') {
-          matches = ['front'];
-        }
-        if (matches) {
-          // Look for matches in label, or use last cam for back (typical).
-          return navigator.mediaDevices.enumerateDevices().then(function (devices) {
-            devices = devices.filter(function (d) {
-              return d.kind === 'videoinput';
-            });
-            var dev = devices.find(function (d) {
-              return matches.some(function (match) {
-                return d.label.toLowerCase().includes(match);
-              });
-            });
-            if (!dev && devices.length && matches.includes('back')) {
-              dev = devices[devices.length - 1]; // more likely the back cam
-            }
-            if (dev) {
-              constraints.video.deviceId = face.exact ? { exact: dev.deviceId } : { ideal: dev.deviceId };
-            }
-            constraints.video = constraintsToChrome_(constraints.video);
-            logging('chrome: ' + JSON.stringify(constraints));
-            return func(constraints);
-          });
-        }
-      }
-      constraints.video = constraintsToChrome_(constraints.video);
-    }
-    logging('chrome: ' + JSON.stringify(constraints));
-    return func(constraints);
-  };
-
-  var shimError_ = function shimError_(e) {
-    if (browserDetails.version >= 64) {
-      return e;
-    }
-    return {
-      name: {
-        PermissionDeniedError: 'NotAllowedError',
-        PermissionDismissedError: 'NotAllowedError',
-        InvalidStateError: 'NotAllowedError',
-        DevicesNotFoundError: 'NotFoundError',
-        ConstraintNotSatisfiedError: 'OverconstrainedError',
-        TrackStartError: 'NotReadableError',
-        MediaDeviceFailedDueToShutdown: 'NotAllowedError',
-        MediaDeviceKillSwitchOn: 'NotAllowedError',
-        TabCaptureError: 'AbortError',
-        ScreenCaptureError: 'AbortError',
-        DeviceCaptureError: 'AbortError'
-      }[e.name] || e.name,
-      message: e.message,
-      constraint: e.constraint || e.constraintName,
-      toString: function toString() {
-        return this.name + (this.message && ': ') + this.message;
-      }
-    };
-  };
-
-  var getUserMedia_ = function getUserMedia_(constraints, onSuccess, onError) {
-    shimConstraints_(constraints, function (c) {
-      navigator.webkitGetUserMedia(c, onSuccess, function (e) {
-        if (onError) {
-          onError(shimError_(e));
-        }
-      });
-    });
-  };
-  navigator.getUserMedia = getUserMedia_.bind(navigator);
-
-  // Even though Chrome 45 has navigator.mediaDevices and a getUserMedia
-  // function which returns a Promise, it does not accept spec-style
-  // constraints.
-  if (navigator.mediaDevices.getUserMedia) {
-    var origGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
-    navigator.mediaDevices.getUserMedia = function (cs) {
-      return shimConstraints_(cs, function (c) {
-        return origGetUserMedia(c).then(function (stream) {
-          if (c.audio && !stream.getAudioTracks().length || c.video && !stream.getVideoTracks().length) {
-            stream.getTracks().forEach(function (track) {
-              track.stop();
-            });
-            throw new DOMException('', 'NotFoundError');
-          }
-          return stream;
-        }, function (e) {
-          return Promise.reject(shimError_(e));
-        });
-      });
-    };
-  }
-}
-
-},{"../utils.js":332}],327:[function(require,module,exports){
-/*
- *  Copyright (c) 2017 The WebRTC project authors. All Rights Reserved.
- *
- *  Use of this source code is governed by a BSD-style license
- *  that can be found in the LICENSE file in the root of the source
- *  tree.
- */
-/* eslint-env node */
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-exports.shimRTCIceCandidate = shimRTCIceCandidate;
-exports.shimMaxMessageSize = shimMaxMessageSize;
-exports.shimSendThrowTypeError = shimSendThrowTypeError;
-exports.shimConnectionState = shimConnectionState;
-exports.removeExtmapAllowMixed = removeExtmapAllowMixed;
-exports.shimAddIceCandidateNullOrEmpty = shimAddIceCandidateNullOrEmpty;
-
-var _sdp = require('sdp');
-
-var _sdp2 = _interopRequireDefault(_sdp);
-
-var _utils = require('./utils');
-
-var utils = _interopRequireWildcard(_utils);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function shimRTCIceCandidate(window) {
-  // foundation is arbitrarily chosen as an indicator for full support for
-  // https://w3c.github.io/webrtc-pc/#rtcicecandidate-interface
-  if (!window.RTCIceCandidate || window.RTCIceCandidate && 'foundation' in window.RTCIceCandidate.prototype) {
-    return;
-  }
-
-  var NativeRTCIceCandidate = window.RTCIceCandidate;
-  window.RTCIceCandidate = function RTCIceCandidate(args) {
-    // Remove the a= which shouldn't be part of the candidate string.
-    if ((typeof args === 'undefined' ? 'undefined' : _typeof(args)) === 'object' && args.candidate && args.candidate.indexOf('a=') === 0) {
-      args = JSON.parse(JSON.stringify(args));
-      args.candidate = args.candidate.substr(2);
-    }
-
-    if (args.candidate && args.candidate.length) {
-      // Augment the native candidate with the parsed fields.
-      var nativeCandidate = new NativeRTCIceCandidate(args);
-      var parsedCandidate = _sdp2.default.parseCandidate(args.candidate);
-      var augmentedCandidate = Object.assign(nativeCandidate, parsedCandidate);
-
-      // Add a serializer that does not serialize the extra attributes.
-      augmentedCandidate.toJSON = function toJSON() {
-        return {
-          candidate: augmentedCandidate.candidate,
-          sdpMid: augmentedCandidate.sdpMid,
-          sdpMLineIndex: augmentedCandidate.sdpMLineIndex,
-          usernameFragment: augmentedCandidate.usernameFragment
-        };
-      };
-      return augmentedCandidate;
-    }
-    return new NativeRTCIceCandidate(args);
-  };
-  window.RTCIceCandidate.prototype = NativeRTCIceCandidate.prototype;
-
-  // Hook up the augmented candidate in onicecandidate and
-  // addEventListener('icecandidate', ...)
-  utils.wrapPeerConnectionEvent(window, 'icecandidate', function (e) {
-    if (e.candidate) {
-      Object.defineProperty(e, 'candidate', {
-        value: new window.RTCIceCandidate(e.candidate),
-        writable: 'false'
-      });
-    }
-    return e;
-  });
-}
-
-function shimMaxMessageSize(window, browserDetails) {
-  if (!window.RTCPeerConnection) {
-    return;
-  }
-
-  if (!('sctp' in window.RTCPeerConnection.prototype)) {
-    Object.defineProperty(window.RTCPeerConnection.prototype, 'sctp', {
-      get: function get() {
-        return typeof this._sctp === 'undefined' ? null : this._sctp;
-      }
-    });
-  }
-
-  var sctpInDescription = function sctpInDescription(description) {
-    if (!description || !description.sdp) {
-      return false;
-    }
-    var sections = _sdp2.default.splitSections(description.sdp);
-    sections.shift();
-    return sections.some(function (mediaSection) {
-      var mLine = _sdp2.default.parseMLine(mediaSection);
-      return mLine && mLine.kind === 'application' && mLine.protocol.indexOf('SCTP') !== -1;
-    });
-  };
-
-  var getRemoteFirefoxVersion = function getRemoteFirefoxVersion(description) {
-    // TODO: Is there a better solution for detecting Firefox?
-    var match = description.sdp.match(/mozilla...THIS_IS_SDPARTA-(\d+)/);
-    if (match === null || match.length < 2) {
-      return -1;
-    }
-    var version = parseInt(match[1], 10);
-    // Test for NaN (yes, this is ugly)
-    return version !== version ? -1 : version;
-  };
-
-  var getCanSendMaxMessageSize = function getCanSendMaxMessageSize(remoteIsFirefox) {
-    // Every implementation we know can send at least 64 KiB.
-    // Note: Although Chrome is technically able to send up to 256 KiB, the
-    //       data does not reach the other peer reliably.
-    //       See: https://bugs.chromium.org/p/webrtc/issues/detail?id=8419
-    var canSendMaxMessageSize = 65536;
-    if (browserDetails.browser === 'firefox') {
-      if (browserDetails.version < 57) {
-        if (remoteIsFirefox === -1) {
-          // FF < 57 will send in 16 KiB chunks using the deprecated PPID
-          // fragmentation.
-          canSendMaxMessageSize = 16384;
-        } else {
-          // However, other FF (and RAWRTC) can reassemble PPID-fragmented
-          // messages. Thus, supporting ~2 GiB when sending.
-          canSendMaxMessageSize = 2147483637;
-        }
-      } else if (browserDetails.version < 60) {
-        // Currently, all FF >= 57 will reset the remote maximum message size
-        // to the default value when a data channel is created at a later
-        // stage. :(
-        // See: https://bugzilla.mozilla.org/show_bug.cgi?id=1426831
-        canSendMaxMessageSize = browserDetails.version === 57 ? 65535 : 65536;
-      } else {
-        // FF >= 60 supports sending ~2 GiB
-        canSendMaxMessageSize = 2147483637;
-      }
-    }
-    return canSendMaxMessageSize;
-  };
-
-  var getMaxMessageSize = function getMaxMessageSize(description, remoteIsFirefox) {
-    // Note: 65536 bytes is the default value from the SDP spec. Also,
-    //       every implementation we know supports receiving 65536 bytes.
-    var maxMessageSize = 65536;
-
-    // FF 57 has a slightly incorrect default remote max message size, so
-    // we need to adjust it here to avoid a failure when sending.
-    // See: https://bugzilla.mozilla.org/show_bug.cgi?id=1425697
-    if (browserDetails.browser === 'firefox' && browserDetails.version === 57) {
-      maxMessageSize = 65535;
-    }
-
-    var match = _sdp2.default.matchPrefix(description.sdp, 'a=max-message-size:');
-    if (match.length > 0) {
-      maxMessageSize = parseInt(match[0].substr(19), 10);
-    } else if (browserDetails.browser === 'firefox' && remoteIsFirefox !== -1) {
-      // If the maximum message size is not present in the remote SDP and
-      // both local and remote are Firefox, the remote peer can receive
-      // ~2 GiB.
-      maxMessageSize = 2147483637;
-    }
-    return maxMessageSize;
-  };
-
-  var origSetRemoteDescription = window.RTCPeerConnection.prototype.setRemoteDescription;
-  window.RTCPeerConnection.prototype.setRemoteDescription = function setRemoteDescription() {
-    this._sctp = null;
-    // Chrome decided to not expose .sctp in plan-b mode.
-    // As usual, adapter.js has to do an 'ugly worakaround'
-    // to cover up the mess.
-    if (browserDetails.browser === 'chrome' && browserDetails.version >= 76) {
-      var _getConfiguration = this.getConfiguration(),
-          sdpSemantics = _getConfiguration.sdpSemantics;
-
-      if (sdpSemantics === 'plan-b') {
-        Object.defineProperty(this, 'sctp', {
-          get: function get() {
-            return typeof this._sctp === 'undefined' ? null : this._sctp;
-          },
-
-          enumerable: true,
-          configurable: true
-        });
-      }
-    }
-
-    if (sctpInDescription(arguments[0])) {
-      // Check if the remote is FF.
-      var isFirefox = getRemoteFirefoxVersion(arguments[0]);
-
-      // Get the maximum message size the local peer is capable of sending
-      var canSendMMS = getCanSendMaxMessageSize(isFirefox);
-
-      // Get the maximum message size of the remote peer.
-      var remoteMMS = getMaxMessageSize(arguments[0], isFirefox);
-
-      // Determine final maximum message size
-      var maxMessageSize = void 0;
-      if (canSendMMS === 0 && remoteMMS === 0) {
-        maxMessageSize = Number.POSITIVE_INFINITY;
-      } else if (canSendMMS === 0 || remoteMMS === 0) {
-        maxMessageSize = Math.max(canSendMMS, remoteMMS);
-      } else {
-        maxMessageSize = Math.min(canSendMMS, remoteMMS);
-      }
-
-      // Create a dummy RTCSctpTransport object and the 'maxMessageSize'
-      // attribute.
-      var sctp = {};
-      Object.defineProperty(sctp, 'maxMessageSize', {
-        get: function get() {
-          return maxMessageSize;
-        }
-      });
-      this._sctp = sctp;
-    }
-
-    return origSetRemoteDescription.apply(this, arguments);
-  };
-}
-
-function shimSendThrowTypeError(window) {
-  if (!(window.RTCPeerConnection && 'createDataChannel' in window.RTCPeerConnection.prototype)) {
-    return;
-  }
-
-  // Note: Although Firefox >= 57 has a native implementation, the maximum
-  //       message size can be reset for all data channels at a later stage.
-  //       See: https://bugzilla.mozilla.org/show_bug.cgi?id=1426831
-
-  function wrapDcSend(dc, pc) {
-    var origDataChannelSend = dc.send;
-    dc.send = function send() {
-      var data = arguments[0];
-      var length = data.length || data.size || data.byteLength;
-      if (dc.readyState === 'open' && pc.sctp && length > pc.sctp.maxMessageSize) {
-        throw new TypeError('Message too large (can send a maximum of ' + pc.sctp.maxMessageSize + ' bytes)');
-      }
-      return origDataChannelSend.apply(dc, arguments);
-    };
-  }
-  var origCreateDataChannel = window.RTCPeerConnection.prototype.createDataChannel;
-  window.RTCPeerConnection.prototype.createDataChannel = function createDataChannel() {
-    var dataChannel = origCreateDataChannel.apply(this, arguments);
-    wrapDcSend(dataChannel, this);
-    return dataChannel;
-  };
-  utils.wrapPeerConnectionEvent(window, 'datachannel', function (e) {
-    wrapDcSend(e.channel, e.target);
-    return e;
-  });
-}
-
-/* shims RTCConnectionState by pretending it is the same as iceConnectionState.
- * See https://bugs.chromium.org/p/webrtc/issues/detail?id=6145#c12
- * for why this is a valid hack in Chrome. In Firefox it is slightly incorrect
- * since DTLS failures would be hidden. See
- * https://bugzilla.mozilla.org/show_bug.cgi?id=1265827
- * for the Firefox tracking bug.
- */
-function shimConnectionState(window) {
-  if (!window.RTCPeerConnection || 'connectionState' in window.RTCPeerConnection.prototype) {
-    return;
-  }
-  var proto = window.RTCPeerConnection.prototype;
-  Object.defineProperty(proto, 'connectionState', {
-    get: function get() {
-      return {
-        completed: 'connected',
-        checking: 'connecting'
-      }[this.iceConnectionState] || this.iceConnectionState;
-    },
-
-    enumerable: true,
-    configurable: true
-  });
-  Object.defineProperty(proto, 'onconnectionstatechange', {
-    get: function get() {
-      return this._onconnectionstatechange || null;
-    },
-    set: function set(cb) {
-      if (this._onconnectionstatechange) {
-        this.removeEventListener('connectionstatechange', this._onconnectionstatechange);
-        delete this._onconnectionstatechange;
-      }
-      if (cb) {
-        this.addEventListener('connectionstatechange', this._onconnectionstatechange = cb);
-      }
-    },
-
-    enumerable: true,
-    configurable: true
-  });
-
-  ['setLocalDescription', 'setRemoteDescription'].forEach(function (method) {
-    var origMethod = proto[method];
-    proto[method] = function () {
-      if (!this._connectionstatechangepoly) {
-        this._connectionstatechangepoly = function (e) {
-          var pc = e.target;
-          if (pc._lastConnectionState !== pc.connectionState) {
-            pc._lastConnectionState = pc.connectionState;
-            var newEvent = new Event('connectionstatechange', e);
-            pc.dispatchEvent(newEvent);
-          }
-          return e;
-        };
-        this.addEventListener('iceconnectionstatechange', this._connectionstatechangepoly);
-      }
-      return origMethod.apply(this, arguments);
-    };
-  });
-}
-
-function removeExtmapAllowMixed(window, browserDetails) {
-  /* remove a=extmap-allow-mixed for webrtc.org < M71 */
-  if (!window.RTCPeerConnection) {
-    return;
-  }
-  if (browserDetails.browser === 'chrome' && browserDetails.version >= 71) {
-    return;
-  }
-  if (browserDetails.browser === 'safari' && browserDetails.version >= 605) {
-    return;
-  }
-  var nativeSRD = window.RTCPeerConnection.prototype.setRemoteDescription;
-  window.RTCPeerConnection.prototype.setRemoteDescription = function setRemoteDescription(desc) {
-    if (desc && desc.sdp && desc.sdp.indexOf('\na=extmap-allow-mixed') !== -1) {
-      var sdp = desc.sdp.split('\n').filter(function (line) {
-        return line.trim() !== 'a=extmap-allow-mixed';
-      }).join('\n');
-      // Safari enforces read-only-ness of RTCSessionDescription fields.
-      if (window.RTCSessionDescription && desc instanceof window.RTCSessionDescription) {
-        arguments[0] = new window.RTCSessionDescription({
-          type: desc.type,
-          sdp: sdp
-        });
-      } else {
-        desc.sdp = sdp;
-      }
-    }
-    return nativeSRD.apply(this, arguments);
-  };
-}
-
-function shimAddIceCandidateNullOrEmpty(window, browserDetails) {
-  // Support for addIceCandidate(null or undefined)
-  // as well as addIceCandidate({candidate: "", ...})
-  // https://bugs.chromium.org/p/chromium/issues/detail?id=978582
-  // Note: must be called before other polyfills which change the signature.
-  if (!(window.RTCPeerConnection && window.RTCPeerConnection.prototype)) {
-    return;
-  }
-  var nativeAddIceCandidate = window.RTCPeerConnection.prototype.addIceCandidate;
-  if (!nativeAddIceCandidate || nativeAddIceCandidate.length === 0) {
-    return;
-  }
-  window.RTCPeerConnection.prototype.addIceCandidate = function addIceCandidate() {
-    if (!arguments[0]) {
-      if (arguments[1]) {
-        arguments[1].apply(null);
-      }
-      return Promise.resolve();
-    }
-    // Firefox 68+ emits and processes {candidate: "", ...}, ignore
-    // in older versions.
-    // Native support for ignoring exists for Chrome M77+.
-    // Safari ignores as well, exact version unknown but works in the same
-    // version that also ignores addIceCandidate(null).
-    if ((browserDetails.browser === 'chrome' && browserDetails.version < 78 || browserDetails.browser === 'firefox' && browserDetails.version < 68 || browserDetails.browser === 'safari') && arguments[0] && arguments[0].candidate === '') {
-      return Promise.resolve();
-    }
-    return nativeAddIceCandidate.apply(this, arguments);
-  };
-}
-
-},{"./utils":332,"sdp":289}],328:[function(require,module,exports){
-/*
- *  Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
- *
- *  Use of this source code is governed by a BSD-style license
- *  that can be found in the LICENSE file in the root of the source
- *  tree.
- */
-/* eslint-env node */
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.shimGetDisplayMedia = exports.shimGetUserMedia = undefined;
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var _getusermedia = require('./getusermedia');
-
-Object.defineProperty(exports, 'shimGetUserMedia', {
-  enumerable: true,
-  get: function get() {
-    return _getusermedia.shimGetUserMedia;
-  }
-});
-
-var _getdisplaymedia = require('./getdisplaymedia');
-
-Object.defineProperty(exports, 'shimGetDisplayMedia', {
-  enumerable: true,
-  get: function get() {
-    return _getdisplaymedia.shimGetDisplayMedia;
-  }
-});
-exports.shimOnTrack = shimOnTrack;
-exports.shimPeerConnection = shimPeerConnection;
-exports.shimSenderGetStats = shimSenderGetStats;
-exports.shimReceiverGetStats = shimReceiverGetStats;
-exports.shimRemoveStream = shimRemoveStream;
-exports.shimRTCDataChannel = shimRTCDataChannel;
-exports.shimAddTransceiver = shimAddTransceiver;
-exports.shimGetParameters = shimGetParameters;
-exports.shimCreateOffer = shimCreateOffer;
-exports.shimCreateAnswer = shimCreateAnswer;
-
-var _utils = require('../utils');
-
-var utils = _interopRequireWildcard(_utils);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function shimOnTrack(window) {
-  if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) === 'object' && window.RTCTrackEvent && 'receiver' in window.RTCTrackEvent.prototype && !('transceiver' in window.RTCTrackEvent.prototype)) {
-    Object.defineProperty(window.RTCTrackEvent.prototype, 'transceiver', {
-      get: function get() {
-        return { receiver: this.receiver };
-      }
-    });
-  }
-}
-
-function shimPeerConnection(window, browserDetails) {
-  if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) !== 'object' || !(window.RTCPeerConnection || window.mozRTCPeerConnection)) {
-    return; // probably media.peerconnection.enabled=false in about:config
-  }
-  if (!window.RTCPeerConnection && window.mozRTCPeerConnection) {
-    // very basic support for old versions.
-    window.RTCPeerConnection = window.mozRTCPeerConnection;
-  }
-
-  if (browserDetails.version < 53) {
-    // shim away need for obsolete RTCIceCandidate/RTCSessionDescription.
-    ['setLocalDescription', 'setRemoteDescription', 'addIceCandidate'].forEach(function (method) {
-      var nativeMethod = window.RTCPeerConnection.prototype[method];
-      var methodObj = _defineProperty({}, method, function () {
-        arguments[0] = new (method === 'addIceCandidate' ? window.RTCIceCandidate : window.RTCSessionDescription)(arguments[0]);
-        return nativeMethod.apply(this, arguments);
-      });
-      window.RTCPeerConnection.prototype[method] = methodObj[method];
-    });
-  }
-
-  var modernStatsTypes = {
-    inboundrtp: 'inbound-rtp',
-    outboundrtp: 'outbound-rtp',
-    candidatepair: 'candidate-pair',
-    localcandidate: 'local-candidate',
-    remotecandidate: 'remote-candidate'
-  };
-
-  var nativeGetStats = window.RTCPeerConnection.prototype.getStats;
-  window.RTCPeerConnection.prototype.getStats = function getStats() {
-    var _arguments = Array.prototype.slice.call(arguments),
-        selector = _arguments[0],
-        onSucc = _arguments[1],
-        onErr = _arguments[2];
-
-    return nativeGetStats.apply(this, [selector || null]).then(function (stats) {
-      if (browserDetails.version < 53 && !onSucc) {
-        // Shim only promise getStats with spec-hyphens in type names
-        // Leave callback version alone; misc old uses of forEach before Map
-        try {
-          stats.forEach(function (stat) {
-            stat.type = modernStatsTypes[stat.type] || stat.type;
-          });
-        } catch (e) {
-          if (e.name !== 'TypeError') {
-            throw e;
-          }
-          // Avoid TypeError: "type" is read-only, in old versions. 34-43ish
-          stats.forEach(function (stat, i) {
-            stats.set(i, Object.assign({}, stat, {
-              type: modernStatsTypes[stat.type] || stat.type
-            }));
-          });
-        }
-      }
-      return stats;
-    }).then(onSucc, onErr);
-  };
-}
-
-function shimSenderGetStats(window) {
-  if (!((typeof window === 'undefined' ? 'undefined' : _typeof(window)) === 'object' && window.RTCPeerConnection && window.RTCRtpSender)) {
-    return;
-  }
-  if (window.RTCRtpSender && 'getStats' in window.RTCRtpSender.prototype) {
-    return;
-  }
-  var origGetSenders = window.RTCPeerConnection.prototype.getSenders;
-  if (origGetSenders) {
-    window.RTCPeerConnection.prototype.getSenders = function getSenders() {
-      var _this = this;
-
-      var senders = origGetSenders.apply(this, []);
-      senders.forEach(function (sender) {
-        return sender._pc = _this;
-      });
-      return senders;
-    };
-  }
-
-  var origAddTrack = window.RTCPeerConnection.prototype.addTrack;
-  if (origAddTrack) {
-    window.RTCPeerConnection.prototype.addTrack = function addTrack() {
-      var sender = origAddTrack.apply(this, arguments);
-      sender._pc = this;
-      return sender;
-    };
-  }
-  window.RTCRtpSender.prototype.getStats = function getStats() {
-    return this.track ? this._pc.getStats(this.track) : Promise.resolve(new Map());
-  };
-}
-
-function shimReceiverGetStats(window) {
-  if (!((typeof window === 'undefined' ? 'undefined' : _typeof(window)) === 'object' && window.RTCPeerConnection && window.RTCRtpSender)) {
-    return;
-  }
-  if (window.RTCRtpSender && 'getStats' in window.RTCRtpReceiver.prototype) {
-    return;
-  }
-  var origGetReceivers = window.RTCPeerConnection.prototype.getReceivers;
-  if (origGetReceivers) {
-    window.RTCPeerConnection.prototype.getReceivers = function getReceivers() {
-      var _this2 = this;
-
-      var receivers = origGetReceivers.apply(this, []);
-      receivers.forEach(function (receiver) {
-        return receiver._pc = _this2;
-      });
-      return receivers;
-    };
-  }
-  utils.wrapPeerConnectionEvent(window, 'track', function (e) {
-    e.receiver._pc = e.srcElement;
-    return e;
-  });
-  window.RTCRtpReceiver.prototype.getStats = function getStats() {
-    return this._pc.getStats(this.track);
-  };
-}
-
-function shimRemoveStream(window) {
-  if (!window.RTCPeerConnection || 'removeStream' in window.RTCPeerConnection.prototype) {
-    return;
-  }
-  window.RTCPeerConnection.prototype.removeStream = function removeStream(stream) {
-    var _this3 = this;
-
-    utils.deprecated('removeStream', 'removeTrack');
-    this.getSenders().forEach(function (sender) {
-      if (sender.track && stream.getTracks().includes(sender.track)) {
-        _this3.removeTrack(sender);
-      }
-    });
-  };
-}
-
-function shimRTCDataChannel(window) {
-  // rename DataChannel to RTCDataChannel (native fix in FF60):
-  // https://bugzilla.mozilla.org/show_bug.cgi?id=1173851
-  if (window.DataChannel && !window.RTCDataChannel) {
-    window.RTCDataChannel = window.DataChannel;
-  }
-}
-
-function shimAddTransceiver(window) {
-  // https://github.com/webrtcHacks/adapter/issues/998#issuecomment-516921647
-  // Firefox ignores the init sendEncodings options passed to addTransceiver
-  // https://bugzilla.mozilla.org/show_bug.cgi?id=1396918
-  if (!((typeof window === 'undefined' ? 'undefined' : _typeof(window)) === 'object' && window.RTCPeerConnection)) {
-    return;
-  }
-  var origAddTransceiver = window.RTCPeerConnection.prototype.addTransceiver;
-  if (origAddTransceiver) {
-    window.RTCPeerConnection.prototype.addTransceiver = function addTransceiver() {
-      this.setParametersPromises = [];
-      var initParameters = arguments[1];
-      var shouldPerformCheck = initParameters && 'sendEncodings' in initParameters;
-      if (shouldPerformCheck) {
-        // If sendEncodings params are provided, validate grammar
-        initParameters.sendEncodings.forEach(function (encodingParam) {
-          if ('rid' in encodingParam) {
-            var ridRegex = /^[a-z0-9]{0,16}$/i;
-            if (!ridRegex.test(encodingParam.rid)) {
-              throw new TypeError('Invalid RID value provided.');
-            }
-          }
-          if ('scaleResolutionDownBy' in encodingParam) {
-            if (!(parseFloat(encodingParam.scaleResolutionDownBy) >= 1.0)) {
-              throw new RangeError('scale_resolution_down_by must be >= 1.0');
-            }
-          }
-          if ('maxFramerate' in encodingParam) {
-            if (!(parseFloat(encodingParam.maxFramerate) >= 0)) {
-              throw new RangeError('max_framerate must be >= 0.0');
-            }
-          }
-        });
-      }
-      var transceiver = origAddTransceiver.apply(this, arguments);
-      if (shouldPerformCheck) {
-        // Check if the init options were applied. If not we do this in an
-        // asynchronous way and save the promise reference in a global object.
-        // This is an ugly hack, but at the same time is way more robust than
-        // checking the sender parameters before and after the createOffer
-        // Also note that after the createoffer we are not 100% sure that
-        // the params were asynchronously applied so we might miss the
-        // opportunity to recreate offer.
-        var sender = transceiver.sender;
-
-        var params = sender.getParameters();
-        if (!('encodings' in params) ||
-        // Avoid being fooled by patched getParameters() below.
-        params.encodings.length === 1 && Object.keys(params.encodings[0]).length === 0) {
-          params.encodings = initParameters.sendEncodings;
-          sender.sendEncodings = initParameters.sendEncodings;
-          this.setParametersPromises.push(sender.setParameters(params).then(function () {
-            delete sender.sendEncodings;
-          }).catch(function () {
-            delete sender.sendEncodings;
-          }));
-        }
-      }
-      return transceiver;
-    };
-  }
-}
-
-function shimGetParameters(window) {
-  if (!((typeof window === 'undefined' ? 'undefined' : _typeof(window)) === 'object' && window.RTCRtpSender)) {
-    return;
-  }
-  var origGetParameters = window.RTCRtpSender.prototype.getParameters;
-  if (origGetParameters) {
-    window.RTCRtpSender.prototype.getParameters = function getParameters() {
-      var params = origGetParameters.apply(this, arguments);
-      if (!('encodings' in params)) {
-        params.encodings = [].concat(this.sendEncodings || [{}]);
-      }
-      return params;
-    };
-  }
-}
-
-function shimCreateOffer(window) {
-  // https://github.com/webrtcHacks/adapter/issues/998#issuecomment-516921647
-  // Firefox ignores the init sendEncodings options passed to addTransceiver
-  // https://bugzilla.mozilla.org/show_bug.cgi?id=1396918
-  if (!((typeof window === 'undefined' ? 'undefined' : _typeof(window)) === 'object' && window.RTCPeerConnection)) {
-    return;
-  }
-  var origCreateOffer = window.RTCPeerConnection.prototype.createOffer;
-  window.RTCPeerConnection.prototype.createOffer = function createOffer() {
-    var _this4 = this,
-        _arguments2 = arguments;
-
-    if (this.setParametersPromises && this.setParametersPromises.length) {
-      return Promise.all(this.setParametersPromises).then(function () {
-        return origCreateOffer.apply(_this4, _arguments2);
-      }).finally(function () {
-        _this4.setParametersPromises = [];
-      });
-    }
-    return origCreateOffer.apply(this, arguments);
-  };
-}
-
-function shimCreateAnswer(window) {
-  // https://github.com/webrtcHacks/adapter/issues/998#issuecomment-516921647
-  // Firefox ignores the init sendEncodings options passed to addTransceiver
-  // https://bugzilla.mozilla.org/show_bug.cgi?id=1396918
-  if (!((typeof window === 'undefined' ? 'undefined' : _typeof(window)) === 'object' && window.RTCPeerConnection)) {
-    return;
-  }
-  var origCreateAnswer = window.RTCPeerConnection.prototype.createAnswer;
-  window.RTCPeerConnection.prototype.createAnswer = function createAnswer() {
-    var _this5 = this,
-        _arguments3 = arguments;
-
-    if (this.setParametersPromises && this.setParametersPromises.length) {
-      return Promise.all(this.setParametersPromises).then(function () {
-        return origCreateAnswer.apply(_this5, _arguments3);
-      }).finally(function () {
-        _this5.setParametersPromises = [];
-      });
-    }
-    return origCreateAnswer.apply(this, arguments);
-  };
-}
-
-},{"../utils":332,"./getdisplaymedia":329,"./getusermedia":330}],329:[function(require,module,exports){
-/*
- *  Copyright (c) 2018 The adapter.js project authors. All Rights Reserved.
- *
- *  Use of this source code is governed by a BSD-style license
- *  that can be found in the LICENSE file in the root of the source
- *  tree.
- */
-/* eslint-env node */
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.shimGetDisplayMedia = shimGetDisplayMedia;
-function shimGetDisplayMedia(window, preferredMediaSource) {
-  if (window.navigator.mediaDevices && 'getDisplayMedia' in window.navigator.mediaDevices) {
-    return;
-  }
-  if (!window.navigator.mediaDevices) {
-    return;
-  }
-  window.navigator.mediaDevices.getDisplayMedia = function getDisplayMedia(constraints) {
-    if (!(constraints && constraints.video)) {
-      var err = new DOMException('getDisplayMedia without video ' + 'constraints is undefined');
-      err.name = 'NotFoundError';
-      // from https://heycam.github.io/webidl/#idl-DOMException-error-names
-      err.code = 8;
-      return Promise.reject(err);
-    }
-    if (constraints.video === true) {
-      constraints.video = { mediaSource: preferredMediaSource };
-    } else {
-      constraints.video.mediaSource = preferredMediaSource;
-    }
-    return window.navigator.mediaDevices.getUserMedia(constraints);
-  };
-}
-
-},{}],330:[function(require,module,exports){
-/*
- *  Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
- *
- *  Use of this source code is governed by a BSD-style license
- *  that can be found in the LICENSE file in the root of the source
- *  tree.
- */
-/* eslint-env node */
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-exports.shimGetUserMedia = shimGetUserMedia;
-
-var _utils = require('../utils');
-
-var utils = _interopRequireWildcard(_utils);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function shimGetUserMedia(window, browserDetails) {
-  var navigator = window && window.navigator;
-  var MediaStreamTrack = window && window.MediaStreamTrack;
-
-  navigator.getUserMedia = function (constraints, onSuccess, onError) {
-    // Replace Firefox 44+'s deprecation warning with unprefixed version.
-    utils.deprecated('navigator.getUserMedia', 'navigator.mediaDevices.getUserMedia');
-    navigator.mediaDevices.getUserMedia(constraints).then(onSuccess, onError);
-  };
-
-  if (!(browserDetails.version > 55 && 'autoGainControl' in navigator.mediaDevices.getSupportedConstraints())) {
-    var remap = function remap(obj, a, b) {
-      if (a in obj && !(b in obj)) {
-        obj[b] = obj[a];
-        delete obj[a];
-      }
-    };
-
-    var nativeGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
-    navigator.mediaDevices.getUserMedia = function (c) {
-      if ((typeof c === 'undefined' ? 'undefined' : _typeof(c)) === 'object' && _typeof(c.audio) === 'object') {
-        c = JSON.parse(JSON.stringify(c));
-        remap(c.audio, 'autoGainControl', 'mozAutoGainControl');
-        remap(c.audio, 'noiseSuppression', 'mozNoiseSuppression');
-      }
-      return nativeGetUserMedia(c);
-    };
-
-    if (MediaStreamTrack && MediaStreamTrack.prototype.getSettings) {
-      var nativeGetSettings = MediaStreamTrack.prototype.getSettings;
-      MediaStreamTrack.prototype.getSettings = function () {
-        var obj = nativeGetSettings.apply(this, arguments);
-        remap(obj, 'mozAutoGainControl', 'autoGainControl');
-        remap(obj, 'mozNoiseSuppression', 'noiseSuppression');
-        return obj;
-      };
-    }
-
-    if (MediaStreamTrack && MediaStreamTrack.prototype.applyConstraints) {
-      var nativeApplyConstraints = MediaStreamTrack.prototype.applyConstraints;
-      MediaStreamTrack.prototype.applyConstraints = function (c) {
-        if (this.kind === 'audio' && (typeof c === 'undefined' ? 'undefined' : _typeof(c)) === 'object') {
-          c = JSON.parse(JSON.stringify(c));
-          remap(c, 'autoGainControl', 'mozAutoGainControl');
-          remap(c, 'noiseSuppression', 'mozNoiseSuppression');
-        }
-        return nativeApplyConstraints.apply(this, [c]);
-      };
-    }
-  }
-}
-
-},{"../utils":332}],331:[function(require,module,exports){
-/*
- *  Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
- *
- *  Use of this source code is governed by a BSD-style license
- *  that can be found in the LICENSE file in the root of the source
- *  tree.
- */
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-exports.shimLocalStreamsAPI = shimLocalStreamsAPI;
-exports.shimRemoteStreamsAPI = shimRemoteStreamsAPI;
-exports.shimCallbacksAPI = shimCallbacksAPI;
-exports.shimGetUserMedia = shimGetUserMedia;
-exports.shimConstraints = shimConstraints;
-exports.shimRTCIceServerUrls = shimRTCIceServerUrls;
-exports.shimTrackEventTransceiver = shimTrackEventTransceiver;
-exports.shimCreateOfferLegacy = shimCreateOfferLegacy;
-exports.shimAudioContext = shimAudioContext;
-
-var _utils = require('../utils');
-
-var utils = _interopRequireWildcard(_utils);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function shimLocalStreamsAPI(window) {
-  if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) !== 'object' || !window.RTCPeerConnection) {
-    return;
-  }
-  if (!('getLocalStreams' in window.RTCPeerConnection.prototype)) {
-    window.RTCPeerConnection.prototype.getLocalStreams = function getLocalStreams() {
-      if (!this._localStreams) {
-        this._localStreams = [];
-      }
-      return this._localStreams;
-    };
-  }
-  if (!('addStream' in window.RTCPeerConnection.prototype)) {
-    var _addTrack = window.RTCPeerConnection.prototype.addTrack;
-    window.RTCPeerConnection.prototype.addStream = function addStream(stream) {
-      var _this = this;
-
-      if (!this._localStreams) {
-        this._localStreams = [];
-      }
-      if (!this._localStreams.includes(stream)) {
-        this._localStreams.push(stream);
-      }
-      // Try to emulate Chrome's behaviour of adding in audio-video order.
-      // Safari orders by track id.
-      stream.getAudioTracks().forEach(function (track) {
-        return _addTrack.call(_this, track, stream);
-      });
-      stream.getVideoTracks().forEach(function (track) {
-        return _addTrack.call(_this, track, stream);
-      });
-    };
-
-    window.RTCPeerConnection.prototype.addTrack = function addTrack(track) {
-      var _this2 = this;
-
-      for (var _len = arguments.length, streams = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        streams[_key - 1] = arguments[_key];
-      }
-
-      if (streams) {
-        streams.forEach(function (stream) {
-          if (!_this2._localStreams) {
-            _this2._localStreams = [stream];
-          } else if (!_this2._localStreams.includes(stream)) {
-            _this2._localStreams.push(stream);
-          }
-        });
-      }
-      return _addTrack.apply(this, arguments);
-    };
-  }
-  if (!('removeStream' in window.RTCPeerConnection.prototype)) {
-    window.RTCPeerConnection.prototype.removeStream = function removeStream(stream) {
-      var _this3 = this;
-
-      if (!this._localStreams) {
-        this._localStreams = [];
-      }
-      var index = this._localStreams.indexOf(stream);
-      if (index === -1) {
-        return;
-      }
-      this._localStreams.splice(index, 1);
-      var tracks = stream.getTracks();
-      this.getSenders().forEach(function (sender) {
-        if (tracks.includes(sender.track)) {
-          _this3.removeTrack(sender);
-        }
-      });
-    };
-  }
-}
-
-function shimRemoteStreamsAPI(window) {
-  if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) !== 'object' || !window.RTCPeerConnection) {
-    return;
-  }
-  if (!('getRemoteStreams' in window.RTCPeerConnection.prototype)) {
-    window.RTCPeerConnection.prototype.getRemoteStreams = function getRemoteStreams() {
-      return this._remoteStreams ? this._remoteStreams : [];
-    };
-  }
-  if (!('onaddstream' in window.RTCPeerConnection.prototype)) {
-    Object.defineProperty(window.RTCPeerConnection.prototype, 'onaddstream', {
-      get: function get() {
-        return this._onaddstream;
-      },
-      set: function set(f) {
-        var _this4 = this;
-
-        if (this._onaddstream) {
-          this.removeEventListener('addstream', this._onaddstream);
-          this.removeEventListener('track', this._onaddstreampoly);
-        }
-        this.addEventListener('addstream', this._onaddstream = f);
-        this.addEventListener('track', this._onaddstreampoly = function (e) {
-          e.streams.forEach(function (stream) {
-            if (!_this4._remoteStreams) {
-              _this4._remoteStreams = [];
-            }
-            if (_this4._remoteStreams.includes(stream)) {
-              return;
-            }
-            _this4._remoteStreams.push(stream);
-            var event = new Event('addstream');
-            event.stream = stream;
-            _this4.dispatchEvent(event);
-          });
-        });
-      }
-    });
-    var origSetRemoteDescription = window.RTCPeerConnection.prototype.setRemoteDescription;
-    window.RTCPeerConnection.prototype.setRemoteDescription = function setRemoteDescription() {
-      var pc = this;
-      if (!this._onaddstreampoly) {
-        this.addEventListener('track', this._onaddstreampoly = function (e) {
-          e.streams.forEach(function (stream) {
-            if (!pc._remoteStreams) {
-              pc._remoteStreams = [];
-            }
-            if (pc._remoteStreams.indexOf(stream) >= 0) {
-              return;
-            }
-            pc._remoteStreams.push(stream);
-            var event = new Event('addstream');
-            event.stream = stream;
-            pc.dispatchEvent(event);
-          });
-        });
-      }
-      return origSetRemoteDescription.apply(pc, arguments);
-    };
-  }
-}
-
-function shimCallbacksAPI(window) {
-  if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) !== 'object' || !window.RTCPeerConnection) {
-    return;
-  }
-  var prototype = window.RTCPeerConnection.prototype;
-  var origCreateOffer = prototype.createOffer;
-  var origCreateAnswer = prototype.createAnswer;
-  var setLocalDescription = prototype.setLocalDescription;
-  var setRemoteDescription = prototype.setRemoteDescription;
-  var addIceCandidate = prototype.addIceCandidate;
-
-  prototype.createOffer = function createOffer(successCallback, failureCallback) {
-    var options = arguments.length >= 2 ? arguments[2] : arguments[0];
-    var promise = origCreateOffer.apply(this, [options]);
-    if (!failureCallback) {
-      return promise;
-    }
-    promise.then(successCallback, failureCallback);
-    return Promise.resolve();
-  };
-
-  prototype.createAnswer = function createAnswer(successCallback, failureCallback) {
-    var options = arguments.length >= 2 ? arguments[2] : arguments[0];
-    var promise = origCreateAnswer.apply(this, [options]);
-    if (!failureCallback) {
-      return promise;
-    }
-    promise.then(successCallback, failureCallback);
-    return Promise.resolve();
-  };
-
-  var withCallback = function withCallback(description, successCallback, failureCallback) {
-    var promise = setLocalDescription.apply(this, [description]);
-    if (!failureCallback) {
-      return promise;
-    }
-    promise.then(successCallback, failureCallback);
-    return Promise.resolve();
-  };
-  prototype.setLocalDescription = withCallback;
-
-  withCallback = function withCallback(description, successCallback, failureCallback) {
-    var promise = setRemoteDescription.apply(this, [description]);
-    if (!failureCallback) {
-      return promise;
-    }
-    promise.then(successCallback, failureCallback);
-    return Promise.resolve();
-  };
-  prototype.setRemoteDescription = withCallback;
-
-  withCallback = function withCallback(candidate, successCallback, failureCallback) {
-    var promise = addIceCandidate.apply(this, [candidate]);
-    if (!failureCallback) {
-      return promise;
-    }
-    promise.then(successCallback, failureCallback);
-    return Promise.resolve();
-  };
-  prototype.addIceCandidate = withCallback;
-}
-
-function shimGetUserMedia(window) {
-  var navigator = window && window.navigator;
-
-  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-    // shim not needed in Safari 12.1
-    var mediaDevices = navigator.mediaDevices;
-    var _getUserMedia = mediaDevices.getUserMedia.bind(mediaDevices);
-    navigator.mediaDevices.getUserMedia = function (constraints) {
-      return _getUserMedia(shimConstraints(constraints));
-    };
-  }
-
-  if (!navigator.getUserMedia && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-    navigator.getUserMedia = function getUserMedia(constraints, cb, errcb) {
-      navigator.mediaDevices.getUserMedia(constraints).then(cb, errcb);
-    }.bind(navigator);
-  }
-}
-
-function shimConstraints(constraints) {
-  if (constraints && constraints.video !== undefined) {
-    return Object.assign({}, constraints, { video: utils.compactObject(constraints.video) });
-  }
-
-  return constraints;
-}
-
-function shimRTCIceServerUrls(window) {
-  if (!window.RTCPeerConnection) {
-    return;
-  }
-  // migrate from non-spec RTCIceServer.url to RTCIceServer.urls
-  var OrigPeerConnection = window.RTCPeerConnection;
-  window.RTCPeerConnection = function RTCPeerConnection(pcConfig, pcConstraints) {
-    if (pcConfig && pcConfig.iceServers) {
-      var newIceServers = [];
-      for (var i = 0; i < pcConfig.iceServers.length; i++) {
-        var server = pcConfig.iceServers[i];
-        if (!server.hasOwnProperty('urls') && server.hasOwnProperty('url')) {
-          utils.deprecated('RTCIceServer.url', 'RTCIceServer.urls');
-          server = JSON.parse(JSON.stringify(server));
-          server.urls = server.url;
-          delete server.url;
-          newIceServers.push(server);
-        } else {
-          newIceServers.push(pcConfig.iceServers[i]);
-        }
-      }
-      pcConfig.iceServers = newIceServers;
-    }
-    return new OrigPeerConnection(pcConfig, pcConstraints);
-  };
-  window.RTCPeerConnection.prototype = OrigPeerConnection.prototype;
-  // wrap static methods. Currently just generateCertificate.
-  if ('generateCertificate' in OrigPeerConnection) {
-    Object.defineProperty(window.RTCPeerConnection, 'generateCertificate', {
-      get: function get() {
-        return OrigPeerConnection.generateCertificate;
-      }
-    });
-  }
-}
-
-function shimTrackEventTransceiver(window) {
-  // Add event.transceiver member over deprecated event.receiver
-  if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) === 'object' && window.RTCTrackEvent && 'receiver' in window.RTCTrackEvent.prototype && !('transceiver' in window.RTCTrackEvent.prototype)) {
-    Object.defineProperty(window.RTCTrackEvent.prototype, 'transceiver', {
-      get: function get() {
-        return { receiver: this.receiver };
-      }
-    });
-  }
-}
-
-function shimCreateOfferLegacy(window) {
-  var origCreateOffer = window.RTCPeerConnection.prototype.createOffer;
-  window.RTCPeerConnection.prototype.createOffer = function createOffer(offerOptions) {
-    if (offerOptions) {
-      if (typeof offerOptions.offerToReceiveAudio !== 'undefined') {
-        // support bit values
-        offerOptions.offerToReceiveAudio = !!offerOptions.offerToReceiveAudio;
-      }
-      var audioTransceiver = this.getTransceivers().find(function (transceiver) {
-        return transceiver.receiver.track.kind === 'audio';
-      });
-      if (offerOptions.offerToReceiveAudio === false && audioTransceiver) {
-        if (audioTransceiver.direction === 'sendrecv') {
-          if (audioTransceiver.setDirection) {
-            audioTransceiver.setDirection('sendonly');
-          } else {
-            audioTransceiver.direction = 'sendonly';
-          }
-        } else if (audioTransceiver.direction === 'recvonly') {
-          if (audioTransceiver.setDirection) {
-            audioTransceiver.setDirection('inactive');
-          } else {
-            audioTransceiver.direction = 'inactive';
-          }
-        }
-      } else if (offerOptions.offerToReceiveAudio === true && !audioTransceiver) {
-        this.addTransceiver('audio');
-      }
-
-      if (typeof offerOptions.offerToReceiveVideo !== 'undefined') {
-        // support bit values
-        offerOptions.offerToReceiveVideo = !!offerOptions.offerToReceiveVideo;
-      }
-      var videoTransceiver = this.getTransceivers().find(function (transceiver) {
-        return transceiver.receiver.track.kind === 'video';
-      });
-      if (offerOptions.offerToReceiveVideo === false && videoTransceiver) {
-        if (videoTransceiver.direction === 'sendrecv') {
-          if (videoTransceiver.setDirection) {
-            videoTransceiver.setDirection('sendonly');
-          } else {
-            videoTransceiver.direction = 'sendonly';
-          }
-        } else if (videoTransceiver.direction === 'recvonly') {
-          if (videoTransceiver.setDirection) {
-            videoTransceiver.setDirection('inactive');
-          } else {
-            videoTransceiver.direction = 'inactive';
-          }
-        }
-      } else if (offerOptions.offerToReceiveVideo === true && !videoTransceiver) {
-        this.addTransceiver('video');
-      }
-    }
-    return origCreateOffer.apply(this, arguments);
-  };
-}
-
-function shimAudioContext(window) {
-  if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) !== 'object' || window.AudioContext) {
-    return;
-  }
-  window.AudioContext = window.webkitAudioContext;
-}
-
-},{"../utils":332}],332:[function(require,module,exports){
-/*
- *  Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
- *
- *  Use of this source code is governed by a BSD-style license
- *  that can be found in the LICENSE file in the root of the source
- *  tree.
- */
-/* eslint-env node */
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-exports.extractVersion = extractVersion;
-exports.wrapPeerConnectionEvent = wrapPeerConnectionEvent;
-exports.disableLog = disableLog;
-exports.disableWarnings = disableWarnings;
-exports.log = log;
-exports.deprecated = deprecated;
-exports.detectBrowser = detectBrowser;
-exports.compactObject = compactObject;
-exports.walkStats = walkStats;
-exports.filterStats = filterStats;
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-var logDisabled_ = true;
-var deprecationWarnings_ = true;
-
-/**
- * Extract browser version out of the provided user agent string.
- *
- * @param {!string} uastring userAgent string.
- * @param {!string} expr Regular expression used as match criteria.
- * @param {!number} pos position in the version string to be returned.
- * @return {!number} browser version.
- */
-function extractVersion(uastring, expr, pos) {
-  var match = uastring.match(expr);
-  return match && match.length >= pos && parseInt(match[pos], 10);
-}
-
-// Wraps the peerconnection event eventNameToWrap in a function
-// which returns the modified event object (or false to prevent
-// the event).
-function wrapPeerConnectionEvent(window, eventNameToWrap, wrapper) {
-  if (!window.RTCPeerConnection) {
-    return;
-  }
-  var proto = window.RTCPeerConnection.prototype;
-  var nativeAddEventListener = proto.addEventListener;
-  proto.addEventListener = function (nativeEventName, cb) {
-    if (nativeEventName !== eventNameToWrap) {
-      return nativeAddEventListener.apply(this, arguments);
-    }
-    var wrappedCallback = function wrappedCallback(e) {
-      var modifiedEvent = wrapper(e);
-      if (modifiedEvent) {
-        if (cb.handleEvent) {
-          cb.handleEvent(modifiedEvent);
-        } else {
-          cb(modifiedEvent);
-        }
-      }
-    };
-    this._eventMap = this._eventMap || {};
-    if (!this._eventMap[eventNameToWrap]) {
-      this._eventMap[eventNameToWrap] = new Map();
-    }
-    this._eventMap[eventNameToWrap].set(cb, wrappedCallback);
-    return nativeAddEventListener.apply(this, [nativeEventName, wrappedCallback]);
-  };
-
-  var nativeRemoveEventListener = proto.removeEventListener;
-  proto.removeEventListener = function (nativeEventName, cb) {
-    if (nativeEventName !== eventNameToWrap || !this._eventMap || !this._eventMap[eventNameToWrap]) {
-      return nativeRemoveEventListener.apply(this, arguments);
-    }
-    if (!this._eventMap[eventNameToWrap].has(cb)) {
-      return nativeRemoveEventListener.apply(this, arguments);
-    }
-    var unwrappedCb = this._eventMap[eventNameToWrap].get(cb);
-    this._eventMap[eventNameToWrap].delete(cb);
-    if (this._eventMap[eventNameToWrap].size === 0) {
-      delete this._eventMap[eventNameToWrap];
-    }
-    if (Object.keys(this._eventMap).length === 0) {
-      delete this._eventMap;
-    }
-    return nativeRemoveEventListener.apply(this, [nativeEventName, unwrappedCb]);
-  };
-
-  Object.defineProperty(proto, 'on' + eventNameToWrap, {
-    get: function get() {
-      return this['_on' + eventNameToWrap];
-    },
-    set: function set(cb) {
-      if (this['_on' + eventNameToWrap]) {
-        this.removeEventListener(eventNameToWrap, this['_on' + eventNameToWrap]);
-        delete this['_on' + eventNameToWrap];
-      }
-      if (cb) {
-        this.addEventListener(eventNameToWrap, this['_on' + eventNameToWrap] = cb);
-      }
-    },
-
-    enumerable: true,
-    configurable: true
-  });
-}
-
-function disableLog(bool) {
-  if (typeof bool !== 'boolean') {
-    return new Error('Argument type: ' + (typeof bool === 'undefined' ? 'undefined' : _typeof(bool)) + '. Please use a boolean.');
-  }
-  logDisabled_ = bool;
-  return bool ? 'adapter.js logging disabled' : 'adapter.js logging enabled';
-}
-
-/**
- * Disable or enable deprecation warnings
- * @param {!boolean} bool set to true to disable warnings.
- */
-function disableWarnings(bool) {
-  if (typeof bool !== 'boolean') {
-    return new Error('Argument type: ' + (typeof bool === 'undefined' ? 'undefined' : _typeof(bool)) + '. Please use a boolean.');
-  }
-  deprecationWarnings_ = !bool;
-  return 'adapter.js deprecation warnings ' + (bool ? 'disabled' : 'enabled');
-}
-
-function log() {
-  if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) === 'object') {
-    if (logDisabled_) {
-      return;
-    }
-    if (typeof console !== 'undefined' && typeof console.log === 'function') {
-      console.log.apply(console, arguments);
-    }
-  }
-}
-
-/**
- * Shows a deprecation warning suggesting the modern and spec-compatible API.
- */
-function deprecated(oldMethod, newMethod) {
-  if (!deprecationWarnings_) {
-    return;
-  }
-  console.warn(oldMethod + ' is deprecated, please use ' + newMethod + ' instead.');
-}
-
-/**
- * Browser detector.
- *
- * @return {object} result containing browser and version
- *     properties.
- */
-function detectBrowser(window) {
-  // Returned result object.
-  var result = { browser: null, version: null };
-
-  // Fail early if it's not a browser
-  if (typeof window === 'undefined' || !window.navigator) {
-    result.browser = 'Not a browser.';
-    return result;
-  }
-
-  var navigator = window.navigator;
-
-
-  if (navigator.mozGetUserMedia) {
-    // Firefox.
-    result.browser = 'firefox';
-    result.version = extractVersion(navigator.userAgent, /Firefox\/(\d+)\./, 1);
-  } else if (navigator.webkitGetUserMedia || window.isSecureContext === false && window.webkitRTCPeerConnection && !window.RTCIceGatherer) {
-    // Chrome, Chromium, Webview, Opera.
-    // Version matches Chrome/WebRTC version.
-    // Chrome 74 removed webkitGetUserMedia on http as well so we need the
-    // more complicated fallback to webkitRTCPeerConnection.
-    result.browser = 'chrome';
-    result.version = extractVersion(navigator.userAgent, /Chrom(e|ium)\/(\d+)\./, 2);
-  } else if (window.RTCPeerConnection && navigator.userAgent.match(/AppleWebKit\/(\d+)\./)) {
-    // Safari.
-    result.browser = 'safari';
-    result.version = extractVersion(navigator.userAgent, /AppleWebKit\/(\d+)\./, 1);
-    result.supportsUnifiedPlan = window.RTCRtpTransceiver && 'currentDirection' in window.RTCRtpTransceiver.prototype;
-  } else {
-    // Default fallthrough: not supported.
-    result.browser = 'Not a supported browser.';
-    return result;
-  }
-
-  return result;
-}
-
-/**
- * Checks if something is an object.
- *
- * @param {*} val The something you want to check.
- * @return true if val is an object, false otherwise.
- */
-function isObject(val) {
-  return Object.prototype.toString.call(val) === '[object Object]';
-}
-
-/**
- * Remove all empty objects and undefined values
- * from a nested object -- an enhanced and vanilla version
- * of Lodash's `compact`.
- */
-function compactObject(data) {
-  if (!isObject(data)) {
-    return data;
-  }
-
-  return Object.keys(data).reduce(function (accumulator, key) {
-    var isObj = isObject(data[key]);
-    var value = isObj ? compactObject(data[key]) : data[key];
-    var isEmptyObject = isObj && !Object.keys(value).length;
-    if (value === undefined || isEmptyObject) {
-      return accumulator;
-    }
-    return Object.assign(accumulator, _defineProperty({}, key, value));
-  }, {});
-}
-
-/* iterates the stats graph recursively. */
-function walkStats(stats, base, resultSet) {
-  if (!base || resultSet.has(base.id)) {
-    return;
-  }
-  resultSet.set(base.id, base);
-  Object.keys(base).forEach(function (name) {
-    if (name.endsWith('Id')) {
-      walkStats(stats, stats.get(base[name]), resultSet);
-    } else if (name.endsWith('Ids')) {
-      base[name].forEach(function (id) {
-        walkStats(stats, stats.get(id), resultSet);
-      });
-    }
-  });
-}
-
-/* filter getStats for a sender/receiver track. */
-function filterStats(result, track, outbound) {
-  var streamStatsType = outbound ? 'outbound-rtp' : 'inbound-rtp';
-  var filteredResult = new Map();
-  if (track === null) {
-    return filteredResult;
-  }
-  var trackStats = [];
-  result.forEach(function (value) {
-    if (value.type === 'track' && value.trackIdentifier === track.id) {
-      trackStats.push(value);
-    }
-  });
-  trackStats.forEach(function (trackStat) {
-    result.forEach(function (stats) {
-      if (stats.type === streamStatsType && stats.trackId === trackStat.id) {
-        walkStats(result, stats, filteredResult);
-      }
-    });
-  });
-  return filteredResult;
-}
-
-},{}],333:[function(require,module,exports){
+},{"./lib/bytesToUuid":318,"./lib/rng":319}],321:[function(require,module,exports){
 /*
 WildEmitter.js is a slim little event emitter by @henrikjoreteg largely based
 on @visionmedia's Emitter from UI Kit.
@@ -56325,11 +52894,11 @@ WildEmitter.mixin = function (constructor) {
 
 WildEmitter.mixin(WildEmitter);
 
-},{}],334:[function(require,module,exports){
-"use strict";var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _constants=require("./lib/constants");// (function () {
-/**
- * Global Variables
- */var KurentoUtils,WebrtcAdapter;function ChatCall(params){if(typeof require!=='undefined'&&typeof module!=='undefined'){KurentoUtils=require('kurento-utils');WebrtcAdapter=require('webrtc-adapter');}else{KurentoUtils=window.kurentoUtils;WebrtcAdapter=window.adapter;}var Utility=params.Utility,currentModuleInstance=this,asyncClient=params.asyncClient,chatEvents=params.chatEvents,chatMessaging=params.chatMessaging,token=params.token,asyncRequestTimeouts={},inviteeVOidTypes={TO_BE_USER_SSO_ID:1,TO_BE_USER_CONTACT_ID:2,TO_BE_USER_CELLPHONE_NUMBER:3,TO_BE_USER_USERNAME:4,TO_BE_USER_ID:5,TO_BE_CORE_USER_ID:6},callTypes={'VOICE':0x0,'VIDEO':0x1},generalTypeCode=params.typeCode,callOptions=params.callOptions,useInternalTurnAddress=!!(params.callOptions&&params.callOptions.useInternalTurnAddress),callTurnIp=params.callOptions&&params.callOptions.hasOwnProperty('callTurnIp')&&typeof params.callOptions.callTurnIp==='string'?params.callOptions.callTurnIp:'46.32.6.188',callDivId=params.callOptions&&params.callOptions.hasOwnProperty('callDivId')&&typeof params.callOptions.callDivId==='string'?params.callOptions.callDivId:'call-div',callAudioTagClassName=params.callOptions&&params.callOptions.hasOwnProperty('callAudioTagClassName')&&typeof params.callOptions.callAudioTagClassName==='string'?params.callOptions.callAudioTagClassName:'',callVideoTagClassName=params.callOptions&&params.callOptions.hasOwnProperty('callVideoTagClassName')&&typeof params.callOptions.callVideoTagClassName==='string'?params.callOptions.callVideoTagClassName:'',callVideoMinWidth=params.callOptions&&params.callOptions.hasOwnProperty('callVideo')&&(0,_typeof2["default"])(params.callOptions.callVideo)==='object'&&params.callOptions.callVideo.hasOwnProperty('minWidth')?params.callOptions.callVideo.minWidth:320,callVideoMinHeight=params.callOptions&&params.callOptions.hasOwnProperty('callVideo')&&(0,_typeof2["default"])(params.callOptions.callVideo)==='object'&&params.callOptions.callVideo.hasOwnProperty('minHeight')?params.callOptions.callVideo.minHeight:180,currentCallParams={},currentCallId=null,newCallId=null,//shouldReconnectCallTimeout = null,
+},{}],322:[function(require,module,exports){
+"use strict";var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _constants=require("./lib/constants");var _kurentoUtils=_interopRequireDefault(require("kurento-utils"));var _utility=_interopRequireDefault(require("./utility/utility"));// import WebrtcAdapter from 'webrtc-adapter'
+// (function () {
+function ChatCall(params){var//Utility = params.Utility,
+currentModuleInstance=this,asyncClient=params.asyncClient,chatEvents=params.chatEvents,chatMessaging=params.chatMessaging,token=params.token,asyncRequestTimeouts={},inviteeVOidTypes={TO_BE_USER_SSO_ID:1,TO_BE_USER_CONTACT_ID:2,TO_BE_USER_CELLPHONE_NUMBER:3,TO_BE_USER_USERNAME:4,TO_BE_USER_ID:5,TO_BE_CORE_USER_ID:6},callTypes={'VOICE':0x0,'VIDEO':0x1},generalTypeCode=params.typeCode,callOptions=params.callOptions,useInternalTurnAddress=!!(params.callOptions&&params.callOptions.useInternalTurnAddress),callTurnIp=params.callOptions&&params.callOptions.hasOwnProperty('callTurnIp')&&typeof params.callOptions.callTurnIp==='string'?params.callOptions.callTurnIp:'46.32.6.188',callDivId=params.callOptions&&params.callOptions.hasOwnProperty('callDivId')&&typeof params.callOptions.callDivId==='string'?params.callOptions.callDivId:'call-div',callAudioTagClassName=params.callOptions&&params.callOptions.hasOwnProperty('callAudioTagClassName')&&typeof params.callOptions.callAudioTagClassName==='string'?params.callOptions.callAudioTagClassName:'',callVideoTagClassName=params.callOptions&&params.callOptions.hasOwnProperty('callVideoTagClassName')&&typeof params.callOptions.callVideoTagClassName==='string'?params.callOptions.callVideoTagClassName:'',callVideoMinWidth=params.callOptions&&params.callOptions.hasOwnProperty('callVideo')&&(0,_typeof2["default"])(params.callOptions.callVideo)==='object'&&params.callOptions.callVideo.hasOwnProperty('minWidth')?params.callOptions.callVideo.minWidth:320,callVideoMinHeight=params.callOptions&&params.callOptions.hasOwnProperty('callVideo')&&(0,_typeof2["default"])(params.callOptions.callVideo)==='object'&&params.callOptions.callVideo.hasOwnProperty('minHeight')?params.callOptions.callVideo.minHeight:180,currentCallParams={},currentCallId=null,newCallId=null,//shouldReconnectCallTimeout = null,
 callMetaDataTypes={POORCONNECTION:1,POORCONNECTIONRESOLVED:2,CUSTOMUSERMETADATA:3,SCREENSHAREMETADATA:4},screenShareState={started:false,imOwner:false},screenShareInfo=new screenShareStateManager(),callClientType={WEB:1,ANDROID:2,DESKTOP:3},callUsers={},callRequestController={callRequestReceived:false,callEstablishedInMySide:false,iCanAcceptTheCall:function iCanAcceptTheCall(){return callRequestController.callRequestReceived&&callRequestController.callEstablishedInMySide;},cameraPaused:true},callStopQueue={callStarted:false},callServerController=new callServerManager(),messageTtl=params.messageTtl||10000,config={getHistoryCount:50},callRequestTimeout=typeof params.callRequestTimeout==='number'&&params.callRequestTimeout>=0?params.callRequestTimeout:10000,consoleLogging=params.asyncLogging.consoleLogging&&typeof params.asyncLogging.consoleLogging==='boolean'?params.asyncLogging.consoleLogging:false,callNoAnswerTimeout=params.callOptions.callNoAnswerTimeout||0,callStreamCloseTimeout=params.callOptions.streamCloseTimeout||10000;function screenShareStateManager(){var config={ownerId:0,imOwner:false,isStarted:false,width:callVideoMinWidth,hight:callVideoMinHeight};return{setOwner:function setOwner(ownerId){config.ownerId=+ownerId;},setIsStarted:function setIsStarted(isStarted){config.isStarted=isStarted;},isStarted:function isStarted(){return config.isStarted;},iAmOwner:function iAmOwner(){return config.ownerId===chatMessaging.userInfo.id;},setWidth:function setWidth(width){config.width=width;},setHeight:function setHeight(height){config.height=height;},getWidth:function getWidth(width){return config.width;},getHeight:function getHeight(height){return config.height;},getOwner:function getOwner(){return config.ownerId;},setDimension:function setDimension(dimension){if(dimension&&dimension.width&&+dimension.width>0&&dimension.height&&+dimension.height>0){screenShareInfo.setHeight(dimension.height);screenShareInfo.setWidth(dimension.width);}else{screenShareInfo.setHeight(callVideoMinHeight);screenShareInfo.setWidth(callVideoMinWidth);}}};}function callServerManager(){var config={servers:[],currentServerIndex:0};return{setServers:function setServers(serversList){config.servers=serversList;},setCurrentServer:function setCurrentServer(query){for(var i in config.servers){if(config.servers[i].indexOf(query)!==-1){config.currentServerIndex=i;break;}}},getCurrentServer:function getCurrentServer(){return config.servers[config.currentServerIndex];},isJanus:function isJanus(){return config.servers[config.currentServerIndex].toLowerCase().substr(0,1)==='j';},canChangeServer:function canChangeServer(){return config.currentServerIndex<config.servers.length-1;},changeServer:function changeServer(){if(this.canChangeServer()){config.currentServerIndex++;}}};}function devicePauseStopManager(params){var config={userId:params.userId,mediaType:params.mediaType,// 'video' || 'audio'
 paused:false,stopped:false,timeoutHandler:null,timeout:params.timeout};var privateFunctions={setTimeout:function setTimeout(){if(config.timeoutHandler){this.removeTimeout();}/**
          * Temporarily disable timeout feature
@@ -56342,7 +52911,7 @@ if(callUsers['screenShare']&&config.peer){currentModuleInstance.endScreenShare({
 });}else{resolve(options);}consoleLogging&&console.log("[SDK][getSdpOfferOptions] ","topic: ",config.topic,"mediaType: ",config.mediaType,"direction: ",config.direction,"options: ",options);});},watchForIceCandidates:function watchForIceCandidates(candidate){var manager=this;if(metadataInstance.isIceCandidateIntervalSet()){return;}//callUsers[config.userId].topicMetaData[config.topic].interval
 metadataInstance.setIceCandidateInterval(setInterval(function(){if(callUsers[config.userId].topicMetaData[config.topic].sdpAnswerReceived===true){callUsers[config.userId].topicMetaData[config.topic].sdpAnswerReceived=false;// manager.removeTopicIceCandidateInterval();
 metadataInstance.clearIceCandidateInterval();sendCallMessage({id:'ADD_ICE_CANDIDATE',topic:config.topic,candidateDto:candidate});}},500,{candidate:candidate}));},establishPeerConnection:function establishPeerConnection(options){var WebRtcFunction=config.direction==='send'?'WebRtcPeerSendonly':'WebRtcPeerRecvonly',manager=this,user=callUsers[config.userId],topicElement=user.htmlElements[config.topic];//topicMetaData = user.topicMetaData[config.topic];
-config.state=peerStates.CONNECTING;config.peer=new KurentoUtils.WebRtcPeer[WebRtcFunction](options,function(err){if(err){var errorString="[SDK][start/webRtc "+config.direction+"  "+config.mediaType+" Peer] Error: "+explainUserMediaError(err,config.mediaType);console.error(errorString);chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:errorString,environmentDetails:getSDKCallDetails()});return;}manager.watchRTCPeerConnection();if(config.direction==='send'){startMedia(topicElement);if(callRequestController.cameraPaused){currentModuleInstance.pauseCamera();}}if(callServerController.isJanus()&&config.direction==='receive'){sendCallMessage({id:'REGISTER_RECV_NOTIFICATION',topic:config.topic,mediaType:config.mediaType==='video'?2:1});}else{config.peer.generateOffer(function(err,sdpOffer){if(err){var _errorString="[SDK][start/WebRc "+config.direction+"  "+config.mediaType+" Peer/generateOffer] "+err;console.error(_errorString);chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:_errorString,environmentDetails:getSDKCallDetails()});return;}manager.sendSDPOfferRequestMessage(sdpOffer,1);});}});},sendSDPOfferRequestMessage:function sendSDPOfferRequestMessage(sdpOffer,retries){var manager=this;sendCallMessage({id:config.direction==='send'?'SEND_SDP_OFFER':'RECIVE_SDP_OFFER',sdpOffer:sdpOffer,useComedia:true,useSrtp:false,topic:config.topic,mediaType:config.mediaType==='video'?2:1},function(result){if(result.done==='FALSE'&&retries>0){retries-=1;manager.sendSDPOfferRequestMessage(sdpOffer);}});},watchRTCPeerConnection:function watchRTCPeerConnection(){consoleLogging&&console.log("[SDK][watchRTCPeerConnection] called with: ",config.userId,config.topic,config.mediaType,config.direction);var manager=this,user=callUsers[config.userId];consoleLogging&&console.log("[SDK][watchRTCPeerConnection] called with: ",callUsers,user);config.peer.peerConnection.onconnectionstatechange=function(){if(!user||!config.peer){return;//avoid log errors
+config.state=peerStates.CONNECTING;config.peer=new _kurentoUtils["default"].WebRtcPeer[WebRtcFunction](options,function(err){if(err){var errorString="[SDK][start/webRtc "+config.direction+"  "+config.mediaType+" Peer] Error: "+explainUserMediaError(err,config.mediaType);console.error(errorString);chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:errorString,environmentDetails:getSDKCallDetails()});return;}manager.watchRTCPeerConnection();if(config.direction==='send'){startMedia(topicElement);if(callRequestController.cameraPaused){currentModuleInstance.pauseCamera();}}if(callServerController.isJanus()&&config.direction==='receive'){sendCallMessage({id:'REGISTER_RECV_NOTIFICATION',topic:config.topic,mediaType:config.mediaType==='video'?2:1});}else{config.peer.generateOffer(function(err,sdpOffer){if(err){var _errorString="[SDK][start/WebRc "+config.direction+"  "+config.mediaType+" Peer/generateOffer] "+err;console.error(_errorString);chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:_errorString,environmentDetails:getSDKCallDetails()});return;}manager.sendSDPOfferRequestMessage(sdpOffer,1);});}});},sendSDPOfferRequestMessage:function sendSDPOfferRequestMessage(sdpOffer,retries){var manager=this;sendCallMessage({id:config.direction==='send'?'SEND_SDP_OFFER':'RECIVE_SDP_OFFER',sdpOffer:sdpOffer,useComedia:true,useSrtp:false,topic:config.topic,mediaType:config.mediaType==='video'?2:1},function(result){if(result.done==='FALSE'&&retries>0){retries-=1;manager.sendSDPOfferRequestMessage(sdpOffer);}});},watchRTCPeerConnection:function watchRTCPeerConnection(){consoleLogging&&console.log("[SDK][watchRTCPeerConnection] called with: ",config.userId,config.topic,config.mediaType,config.direction);var manager=this,user=callUsers[config.userId];consoleLogging&&console.log("[SDK][watchRTCPeerConnection] called with: ",callUsers,user);config.peer.peerConnection.onconnectionstatechange=function(){if(!user||!config.peer){return;//avoid log errors
 }consoleLogging&&console.log("[SDK][peerConnection.onconnectionstatechange] ","peer: ",config.topic," peerConnection.connectionState: ",config.peer.peerConnection.connectionState);if(config.peer.peerConnection.connectionState==='disconnected'){manager.removeConnectionQualityInterval();}if(config.peer.peerConnection.connectionState==="failed"){chatEvents.fireEvent('callEvents',{type:'CALL_STATUS',errorCode:7000,errorMessage:"Call Peer (".concat(config.topic,") has failed!"),errorInfo:config.peer});if(chatMessaging.chatState){manager.shouldReconnectTopic();}}if(config.peer.peerConnection.connectionState==='connected'){if(config.mediaType==='video'){if(config.direction==='send'){user.topicMetaData[config.topic].connectionQualityInterval=setInterval(function(){manager.checkConnectionQuality();},1000);}if(config.direction==='receive'){chatEvents.fireEvent("callEvents",{type:"RECEIVE_VIDEO_CONNECTION_ESTABLISHED",userId:config.userId});}}}};config.peer.peerConnection.oniceconnectionstatechange=function(){if(!user||!config.peer){return;//avoid log errors
 }consoleLogging&&console.log("[SDK][oniceconnectionstatechange] ","peer: ",config.topic," peerConnection.connectionState: ",config.peer.peerConnection.iceConnectionState);if(config.peer.peerConnection.iceConnectionState==='disconnected'){config.state=peerStates.DISCONNECTED;chatEvents.fireEvent('callEvents',{type:'CALL_STATUS',errorCode:7000,errorMessage:"Call Peer (".concat(config.topic,") is disconnected!"),errorInfo:config.peer});consoleLogging&&console.log('[SDK][oniceconnectionstatechange]:[disconnected] Internet connection failed, Reconnect your call, topic:',config.topic);}if(config.peer.peerConnection.iceConnectionState==="failed"){config.state=peerStates.FAILED;chatEvents.fireEvent('callEvents',{type:'CALL_STATUS',errorCode:7000,errorMessage:"Call Peer (".concat(config.topic,") has failed!"),errorInfo:config.peer});if(chatMessaging.chatState){manager.shouldReconnectTopic();}}if(config.peer.peerConnection.iceConnectionState==="connected"){if(config.direction==='receive'&&config.mediaType==='audio'){manager.watchAudioLevel();}config.state=peerStates.CONNECTED;callRequestController.callEstablishedInMySide=true;chatEvents.fireEvent('callEvents',{type:'CALL_STATUS',errorCode:7000,errorMessage:"Call Peer (".concat(config.topic,") has connected!"),errorInfo:config.peer});}};},watchAudioLevel:function watchAudioLevel(){var manager=this,audioCtx=new AudioContext(),stream=config.peer.getRemoteStream();if(config.peer&&!stream){setTimeout(function(){manager.watchAudioLevel();},500);return;}var audioSourceNode=audioCtx.createMediaStreamSource(stream),analyserNode=audioCtx.createScriptProcessor(2048,1,1);var instant=0.0,counter=0;analyserNode.onaudioprocess=function(event){if(!config.peer){analyserNode.removeEventListener('audioprocess');analyserNode.onaudioprocess=null;}counter++;if(counter%20!==0){return;}else{counter=0;}var input=event.inputBuffer.getChannelData(0);var i;var sum=0.0;var clipcount=0;for(i=0;i<input.length;++i){sum+=input[i]*input[i];if(Math.abs(input[i])>0.99){clipcount+=1;}}instant=Math.floor(Math.sqrt(sum/input.length)*10000);chatEvents.fireEvent('callStreamEvents',{type:'USER_SPEAKING',userId:config.userId,audioLevel:convertToAudioLevel(instant)});};analyserNode.fftSize=256;var bufferLength=analyserNode.frequencyBinCount;var dataArray=new Uint8Array(bufferLength);audioSourceNode.connect(analyserNode);analyserNode.connect(audioCtx.destination);function convertToAudioLevel(soundPower){if(soundPower<10){return 0;}else if(soundPower>=10&&soundPower<100){return 1;}else if(soundPower>=100&&soundPower<200){return 2;}else if(soundPower>=200&&soundPower<300){return 3;}else if(soundPower>=300){return 4;}}},checkConnectionQuality:function checkConnectionQuality(){if(!callUsers[config.userId]||!config.peer||!config.peer.peerConnection){this.removeConnectionQualityInterval();return;}config.peer.peerConnection.getStats(null).then(function(stats){//console.log(' watchRTCPeerConnection:: window.setInterval then(stats:', stats)
 //let statsOutput = "";
@@ -56356,7 +52925,7 @@ consoleLogging&&console.log('[SDK][checkConnectionQuality] Poor connection detec
                   }
               });*/}});//document.querySelector(".stats-box").innerHTML = statsOutput;
 });},removeConnectionQualityInterval:function removeConnectionQualityInterval(){if(callUsers[config.userId]&&callUsers[config.userId].topicMetaData[config.topic]){callUsers[config.userId].topicMetaData[config.topic]['poorConnectionCount']=0;clearInterval(callUsers[config.userId].topicMetaData[config.topic]['connectionQualityInterval']);}},shouldReconnectTopic:function shouldReconnectTopic(){var manager=this,iceConnectionState=config.peer.peerConnection.iceConnectionState;if(currentCallParams&&Object.keys(currentCallParams).length){if(callUsers[config.userId]&&config.peer&&iceConnectionState!='connected'){chatEvents.fireEvent('callEvents',{type:'CALL_STATUS',errorCode:7000,errorMessage:"Call Peer (".concat(config.topic,") is not in connected state, Restarting call in progress ...!"),errorInfo:config.peer});sendCallMessage({id:'STOP',topic:config.topic},function(result){if(result.done==='TRUE'){manager.reconnectTopic();}else if(result.done==='SKIP'){manager.reconnectTopic();}else{consoleLogging&&console.log('STOP topic faced a problem',result);endCall({callId:currentCallId});callStop();}});}}},reconnectTopic:function reconnectTopic(){var manager=this;manager.removeTopic().then(function(){if(config.isScreenShare&&screenShareInfo.isStarted()){callStateController.addScreenShareToCall(config.direction,config.direction==='send');}else{callStateController.appendUserToCallDiv(config.userId,callStateController.generateHTMLElements(config.userId));manager.createTopic();}});},createTopic:function createTopic(){var manager=this;if(callUsers[config.userId]&&config.peer){return;}this.generateSdpOfferOptions().then(function(options){manager.establishPeerConnection(options);});},removeTopic:function removeTopic(){var manager=this;return new Promise(function(resolve,reject){if(config.peer){// this.removeTopicIceCandidateInterval();
-metadataInstance.clearIceCandidateInterval();manager.removeConnectionQualityInterval();if(config.direction==='send'&&!config.isScreenShare){var constraint={audio:config.mediaType==='audio',video:config.mediaType==='video'?{width:640,framerate:15}:false};callStateController.removeStreamHTML(config.userId,config.topic);config.peer.dispose();config.peer=null;config.state=peerStates.DISCONNECTED;navigator.mediaDevices.getUserMedia(constraint).then(function(stream){stream.getTracks().forEach(function(track){if(!!track){track.stop();}});})["catch"](function(error){console.error("Could not free up some resources",error);resolve(true);});resolve(true);}else{callStateController.removeStreamHTML(config.userId,config.topic);config.peer.dispose();config.peer=null;config.state=peerStates.DISCONNECTED;resolve(true);}}});}};}function topicMetaDataManager(params){var config={userId:params.userId,topic:params.topic,interval:null,receivedSdpAnswer:false,connectionQualityInterval:null,poorConnectionCount:0,poorConnectionResolvedCount:0,isConnectionPoor:false};return{setIsConnectionPoor:function setIsConnectionPoor(state){config.isConnectionPoor=state;},setReceivedSdpAnswer:function setReceivedSdpAnswer(state){config.receivedSdpAnswer=state;},setIceCandidateInterval:function setIceCandidateInterval(id){config.interval=id;},isConnectionPoor:function isConnectionPoor(){return config.isConnectionPoor;},isReceivedSdpAnswer:function isReceivedSdpAnswer(){return config.receivedSdpAnswer;},isIceCandidateIntervalSet:function isIceCandidateIntervalSet(){return config.interval!==null;},clearIceCandidateInterval:function clearIceCandidateInterval(){clearInterval(config.interval);}};}var init=function init(){},sendCallMessage=function sendCallMessage(message,callback){message.token=token;var uniqueId;if(typeof params.uniqueId!='undefined'){uniqueId=params.uniqueId;}else{uniqueId=Utility.generateUUID();}message.uniqueId=uniqueId;var data={type:3,content:{peerName:callServerController.getCurrentServer(),// callServerName,
+metadataInstance.clearIceCandidateInterval();manager.removeConnectionQualityInterval();if(config.direction==='send'&&!config.isScreenShare){var constraint={audio:config.mediaType==='audio',video:config.mediaType==='video'?{width:640,framerate:15}:false};callStateController.removeStreamHTML(config.userId,config.topic);config.peer.dispose();config.peer=null;config.state=peerStates.DISCONNECTED;navigator.mediaDevices.getUserMedia(constraint).then(function(stream){stream.getTracks().forEach(function(track){if(!!track){track.stop();}});})["catch"](function(error){console.error("Could not free up some resources",error);resolve(true);});resolve(true);}else{callStateController.removeStreamHTML(config.userId,config.topic);config.peer.dispose();config.peer=null;config.state=peerStates.DISCONNECTED;resolve(true);}}});}};}function topicMetaDataManager(params){var config={userId:params.userId,topic:params.topic,interval:null,receivedSdpAnswer:false,connectionQualityInterval:null,poorConnectionCount:0,poorConnectionResolvedCount:0,isConnectionPoor:false};return{setIsConnectionPoor:function setIsConnectionPoor(state){config.isConnectionPoor=state;},setReceivedSdpAnswer:function setReceivedSdpAnswer(state){config.receivedSdpAnswer=state;},setIceCandidateInterval:function setIceCandidateInterval(id){config.interval=id;},isConnectionPoor:function isConnectionPoor(){return config.isConnectionPoor;},isReceivedSdpAnswer:function isReceivedSdpAnswer(){return config.receivedSdpAnswer;},isIceCandidateIntervalSet:function isIceCandidateIntervalSet(){return config.interval!==null;},clearIceCandidateInterval:function clearIceCandidateInterval(){clearInterval(config.interval);}};}var init=function init(){},sendCallMessage=function sendCallMessage(message,callback){message.token=token;var uniqueId;if(typeof params.uniqueId!='undefined'){uniqueId=params.uniqueId;}else{uniqueId=_utility["default"].generateUUID();}message.uniqueId=uniqueId;var data={type:3,content:{peerName:callServerController.getCurrentServer(),// callServerName,
 priority:1,content:JSON.stringify(message),ttl:messageTtl}};if(typeof callback=='function'){chatMessaging.messagesCallbacks[uniqueId]=callback;}asyncClient.send(data,function(res){if(!res.hasError&&callback){if(typeof callback=='function'){callback(res);}if(chatMessaging.messagesCallbacks[uniqueId]){delete chatMessaging.messagesCallbacks[uniqueId];}}});if(callRequestTimeout>0){asyncRequestTimeouts[uniqueId]&&clearTimeout(asyncRequestTimeouts[uniqueId]);asyncRequestTimeouts[uniqueId]=setTimeout(function(){if(chatMessaging.messagesCallbacks[uniqueId]){delete chatMessaging.messagesCallbacks[uniqueId];}if(callServerController.canChangeServer()&&message.id==='CREATE_SESSION'){// 'CREATE_SESSION',
 callServerController.changeServer();sendCallMessage(message,callback);return;}if(typeof callback=='function'){callback({done:'SKIP'});}},callRequestTimeout);}},/**
    * Format Data To Make Call Participant
@@ -56461,7 +53030,7 @@ sendCallMessage({id:'SUBSCRIBE',useComedia:true,useSrtp:false,topic:jsonMessage.
 if(jsonMessage.topic.indexOf('Vi-')!==-1||jsonMessage.topic.indexOf('screen-Share')!==-1){topicManager=callUsers[userId].videoTopicManager;peer=callUsers[userId].videoTopicManager.getPeer();}else if(jsonMessage.topic.indexOf('Vo-')!==-1){topicManager=callUsers[userId].audioTopicManager;peer=callUsers[userId].audioTopicManager.getPeer();}if(peer==null){console.warn("[handleProcessSdpAnswer] Skip, no WebRTC Peer");return;}peer.processOffer(jsonMessage.sdpOffer,function(err,sdpAnswer){if(err){console.error("[SDK][handleProcessSdpOffer] Error: "+err);stop();return;}sendCallMessage({id:'RECIVE_SDP_ANSWER',sdpAnswer:sdpAnswer,useComedia:true,useSrtp:false,topic:jsonMessage.topic,mediaType:jsonMessage.topic.indexOf('screen-Share')!==-1||jsonMessage.topic.indexOf('Vi-')!==-1?2:1});callUsers[userId].topicMetaData[jsonMessage.topic].sdpAnswerReceived=true;startMedia(callUsers[userId].htmlElements[jsonMessage.topic]);if(userId=='screenShare'||userId==chatMessaging.userInfo.id){restartMediaOnKeyFrame(userId,[2000,4000,8000,12000]);}});},handleProcessSdpAnswer=function handleProcessSdpAnswer(jsonMessage){var userId=callStateController.findUserIdByTopic(jsonMessage.topic),topicManager,peer;// = callUsers[userId].peers[jsonMessage.topic];
 if(userId&&callUsers[userId]){if(jsonMessage.topic.indexOf('Vi-')!==-1||jsonMessage.topic.indexOf('screen-Share')!==-1){topicManager=callUsers[userId].videoTopicManager;peer=callUsers[userId].videoTopicManager.getPeer();}else if(jsonMessage.topic.indexOf('Vo-')!==-1){topicManager=callUsers[userId].audioTopicManager;peer=callUsers[userId].audioTopicManager.getPeer();}}if(peer==null){chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"[handleProcessSdpAnswer] Skip, no WebRTC Peer",error:peer,environmentDetails:getSDKCallDetails()});return;}peer.processAnswer(jsonMessage.sdpAnswer,function(err){if(err){sendCallSocketError("[handleProcessSdpAnswer] Error: "+err);chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"[handleProcessSdpAnswer] Error: "+err,environmentDetails:getSDKCallDetails()});return;}consoleLogging&&console.log("[SDK][handleProcessSdpAnswer]",jsonMessage,jsonMessage.topic);if(topicManager.metadata().isIceCandidateIntervalSet()){callUsers[userId].topicMetaData[jsonMessage.topic].sdpAnswerReceived=true;startMedia(callUsers[userId].htmlElements[jsonMessage.topic]);if(userId=='screenShare'||userId==chatMessaging.userInfo.id){restartMediaOnKeyFrame(userId,[2000,4000,8000,12000,20000]);}}});},handleAddIceCandidate=function handleAddIceCandidate(jsonMessage){var userId=callStateController.findUserIdByTopic(jsonMessage.topic);var peer;//= callUsers[userId].peers[jsonMessage.topic];
 if(jsonMessage.topic.indexOf('Vi-')>-1||jsonMessage.topic.indexOf('screen-Share')!==-1){peer=callUsers[userId].videoTopicManager.getPeer();}else if(jsonMessage.topic.indexOf('Vo-')>-1){peer=callUsers[userId].audioTopicManager.getPeer();}if(peer==null){chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"[handleAddIceCandidate] Skip, no WebRTC Peer",error:JSON.stringify(peer),environmentDetails:getSDKCallDetails()});return;}peer.addIceCandidate(jsonMessage.candidate,function(err){if(err){console.error("[handleAddIceCandidate] "+err);chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"[handleAddIceCandidate] "+err,error:JSON.stringify(jsonMessage.candidate),environmentDetails:getSDKCallDetails()});return;}});},handlePartnerFreeze=function handlePartnerFreeze(jsonMessage){if(!!jsonMessage&&!!jsonMessage.topic&&jsonMessage.topic.substring(0,2)==='Vi'){restartMedia(jsonMessage.topic);setTimeout(function(){restartMedia(jsonMessage.topic);},4000);setTimeout(function(){restartMedia(jsonMessage.topic);},8000);}},handleError=function handleError(jsonMessage,sendingTopic,receiveTopic){var errMessage=jsonMessage.message;chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"Kurento error: "+errMessage,environmentDetails:getSDKCallDetails()});},releaseResource=function releaseResource(mediaType){var constraint={audio:mediaType==='audio',video:mediaType==='video'?{width:640,framerate:15}:false};navigator.mediaDevices.getUserMedia(constraint).then(function(stream){stream.getTracks().forEach(function(track){if(!!track){track.stop();}});})["catch"](function(error){consoleLogging&&console.error(error);});},callStop=function callStop(){if(callUsers){var me=callUsers[chatMessaging.userInfo.id];if(me){if(me.video)releaseResource('video');if(!me.mute)releaseResource('audio');}}callStateController.removeAllCallParticipants();if(callStopQueue.callStarted){sendCallMessage({id:'CLOSE'});callStopQueue.callStarted=false;}callRequestController.cameraPaused=false;callRequestController.callEstablishedInMySide=false;callRequestController.callRequestReceived=false;currentCallParams={};currentCallId=null;},restartMediaOnKeyFrame=function restartMediaOnKeyFrame(userId,timeouts){if(callServerController.isJanus())return;for(var i=0;i<timeouts.length;i++){setTimeout(function(){if(typeof callUsers[userId]!=="undefined"&&callUsers[userId]&&callUsers[userId].videoTopicManager.getPeer())//callUsers[userId].peers[callUsers[userId].videoTopicName]
-restartMedia(callUsers[userId].videoTopicName);},timeouts[i]);}},sendCallMetaData=function sendCallMetaData(params){var message={id:params.id,userid:params.userid,content:params.content||undefined};sendCallMessage({id:'SENDMETADATA',message:JSON.stringify(message),chatId:currentCallId});},handleReceivedMetaData=function handleReceivedMetaData(jsonMessage,uniqueId){var jMessage=JSON.parse(jsonMessage.message);var id=jMessage.id;if(!id||typeof id==="undefined"||jsonMessage.userid==chatMessaging.userInfo.id){return;}switch(id){case callMetaDataTypes.POORCONNECTION:chatEvents.fireEvent("callEvents",{type:'POOR_VIDEO_CONNECTION',subType:'SHORT_TIME',message:'Poor connection detected',metadata:{elementId:"uiRemoteVideo-"+jMessage.content.description,topic:jMessage.content.description,userId:jMessage.userid}});break;case callMetaDataTypes.POORCONNECTIONRESOLVED:chatEvents.fireEvent('callEvents',{type:'POOR_VIDEO_CONNECTION_RESOLVED',message:'Poor connection resolved',metadata:{elementId:"uiRemoteVideo-"+jMessage.content.description,topic:jMessage.content.description,userId:jMessage.userid}});break;case callMetaDataTypes.CUSTOMUSERMETADATA:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](jsonMessage);}chatEvents.fireEvent('callEvents',{type:'CUSTOM_USER_METADATA',userId:jMessage.userid,content:jMessage.content});break;case callMetaDataTypes.SCREENSHAREMETADATA:screenShareInfo.setWidth(jMessage.content.dimension.width);screenShareInfo.setHeight(jMessage.content.dimension.height);applyScreenShareSizeToElement();chatEvents.fireEvent("callEvents",{type:'SCREENSHARE_METADATA',userId:jMessage.userid,content:jMessage.content});break;}},applyScreenShareSizeToElement=function applyScreenShareSizeToElement(){var videoElement=callUsers['screenShare'].htmlElements[callUsers['screenShare'].videoTopicName];var videoTrack=videoElement.srcObject&&videoElement.srcObject.getTracks()&&videoElement.srcObject.getTracks().length?videoElement.srcObject.getTracks()[0]:null;if(videoTrack){if(navigator&&!!navigator.userAgent.match(/firefox/gi)){videoTrack.enable=false;var newWidth=callVideoMinWidth-(Math.ceil(Math.random()*50)+20);var newHeight=callVideoMinHeight-(Math.ceil(Math.random()*50)+20);videoTrack.applyConstraints({advanced:[{width:screenShareInfo.getWidth(),height:screenShareInfo.getHeight()},{aspectRatio:1.333}]}).then(function(res){videoTrack.enabled=true;setTimeout(function(){videoTrack.applyConstraints({"width":screenShareInfo.getWidth(),"height":screenShareInfo.getHeight()});},500);})["catch"](function(e){return consoleLogging&&console.log(e);});}else{videoTrack.applyConstraints({"width":screenShareInfo.getWidth()-(Math.ceil(Math.random()*5)+5)}).then(function(res){setTimeout(function(){videoTrack.applyConstraints({"width":screenShareInfo.getWidth()});},500);})["catch"](function(e){return consoleLogging&&console.log(e);});}}},getSDKCallDetails=function getSDKCallDetails(customData){return{currentUser:chatMessaging.userInfo,currentServers:{callTurnIp:callTurnIp},isJanus:currentCallId&&callServerController.isJanus(),screenShareInfo:{isStarted:screenShareInfo.isStarted(),iAmOwner:screenShareInfo.iAmOwner()},callId:currentCallId,startCallInfo:currentCallParams,customData:customData};};this.updateToken=function(newToken){token=newToken;};this.callMessageHandler=function(callMessage){var jsonMessage=typeof callMessage.content==='string'&&Utility.isValidJson(callMessage.content)?JSON.parse(callMessage.content):callMessage.content,uniqueId=jsonMessage.uniqueId;asyncRequestTimeouts[uniqueId]&&clearTimeout(asyncRequestTimeouts[uniqueId]);if(jsonMessage.done==='FALSE'){chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"Kurento error: "+(jsonMessage.desc?jsonMessage.desc:jsonMessage.message),environmentDetails:getSDKCallDetails()});}switch(jsonMessage.id){case'PROCESS_SDP_ANSWER':handleProcessSdpAnswer(jsonMessage);break;case'RECEIVING_MEDIA':// Only for receiving topics from janus, first we subscribe
+restartMedia(callUsers[userId].videoTopicName);},timeouts[i]);}},sendCallMetaData=function sendCallMetaData(params){var message={id:params.id,userid:params.userid,content:params.content||undefined};sendCallMessage({id:'SENDMETADATA',message:JSON.stringify(message),chatId:currentCallId});},handleReceivedMetaData=function handleReceivedMetaData(jsonMessage,uniqueId){var jMessage=JSON.parse(jsonMessage.message);var id=jMessage.id;if(!id||typeof id==="undefined"||jsonMessage.userid==chatMessaging.userInfo.id){return;}switch(id){case callMetaDataTypes.POORCONNECTION:chatEvents.fireEvent("callEvents",{type:'POOR_VIDEO_CONNECTION',subType:'SHORT_TIME',message:'Poor connection detected',metadata:{elementId:"uiRemoteVideo-"+jMessage.content.description,topic:jMessage.content.description,userId:jMessage.userid}});break;case callMetaDataTypes.POORCONNECTIONRESOLVED:chatEvents.fireEvent('callEvents',{type:'POOR_VIDEO_CONNECTION_RESOLVED',message:'Poor connection resolved',metadata:{elementId:"uiRemoteVideo-"+jMessage.content.description,topic:jMessage.content.description,userId:jMessage.userid}});break;case callMetaDataTypes.CUSTOMUSERMETADATA:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](jsonMessage);}chatEvents.fireEvent('callEvents',{type:'CUSTOM_USER_METADATA',userId:jMessage.userid,content:jMessage.content});break;case callMetaDataTypes.SCREENSHAREMETADATA:screenShareInfo.setWidth(jMessage.content.dimension.width);screenShareInfo.setHeight(jMessage.content.dimension.height);applyScreenShareSizeToElement();chatEvents.fireEvent("callEvents",{type:'SCREENSHARE_METADATA',userId:jMessage.userid,content:jMessage.content});break;}},applyScreenShareSizeToElement=function applyScreenShareSizeToElement(){var videoElement=callUsers['screenShare'].htmlElements[callUsers['screenShare'].videoTopicName];var videoTrack=videoElement.srcObject&&videoElement.srcObject.getTracks()&&videoElement.srcObject.getTracks().length?videoElement.srcObject.getTracks()[0]:null;if(videoTrack){if(navigator&&!!navigator.userAgent.match(/firefox/gi)){videoTrack.enable=false;var newWidth=callVideoMinWidth-(Math.ceil(Math.random()*50)+20);var newHeight=callVideoMinHeight-(Math.ceil(Math.random()*50)+20);videoTrack.applyConstraints({advanced:[{width:screenShareInfo.getWidth(),height:screenShareInfo.getHeight()},{aspectRatio:1.333}]}).then(function(res){videoTrack.enabled=true;setTimeout(function(){videoTrack.applyConstraints({"width":screenShareInfo.getWidth(),"height":screenShareInfo.getHeight()});},500);})["catch"](function(e){return consoleLogging&&console.log(e);});}else{videoTrack.applyConstraints({"width":screenShareInfo.getWidth()-(Math.ceil(Math.random()*5)+5)}).then(function(res){setTimeout(function(){videoTrack.applyConstraints({"width":screenShareInfo.getWidth()});},500);})["catch"](function(e){return consoleLogging&&console.log(e);});}}},getSDKCallDetails=function getSDKCallDetails(customData){return{currentUser:chatMessaging.userInfo,currentServers:{callTurnIp:callTurnIp},isJanus:currentCallId&&callServerController.isJanus(),screenShareInfo:{isStarted:screenShareInfo.isStarted(),iAmOwner:screenShareInfo.iAmOwner()},callId:currentCallId,startCallInfo:currentCallParams,customData:customData};};this.updateToken=function(newToken){token=newToken;};this.callMessageHandler=function(callMessage){var jsonMessage=typeof callMessage.content==='string'&&_utility["default"].isValidJson(callMessage.content)?JSON.parse(callMessage.content):callMessage.content,uniqueId=jsonMessage.uniqueId;asyncRequestTimeouts[uniqueId]&&clearTimeout(asyncRequestTimeouts[uniqueId]);if(jsonMessage.done==='FALSE'){chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"Kurento error: "+(jsonMessage.desc?jsonMessage.desc:jsonMessage.message),environmentDetails:getSDKCallDetails()});}switch(jsonMessage.id){case'PROCESS_SDP_ANSWER':handleProcessSdpAnswer(jsonMessage);break;case'RECEIVING_MEDIA':// Only for receiving topics from janus, first we subscribe
 subscribeToReceiveOffers(jsonMessage);break;case'PROCESS_SDP_OFFER'://Then janus sends offers
 handleProcessSdpOffer(jsonMessage);break;case'ADD_ICE_CANDIDATE':handleAddIceCandidate(jsonMessage);break;case'GET_KEY_FRAME':if(callUsers&&callUsers[chatMessaging.userInfo.id]&&callUsers[chatMessaging.userInfo.id].video){restartMediaOnKeyFrame(chatMessaging.userInfo.id,[2000,4000,8000,12000]);}if(callUsers&&callUsers['screenShare']&&callUsers['screenShare'].video&&screenShareInfo.isStarted()&&screenShareInfo.iAmOwner()){restartMediaOnKeyFrame('screenShare',[2000,4000,8000,12000]);}break;case'FREEZED':handlePartnerFreeze(jsonMessage);break;/*case 'STOPALL':
           if (chatMessaging.messagesCallbacks[uniqueId]) {
@@ -56470,32 +53039,32 @@ handleProcessSdpOffer(jsonMessage);break;case'ADD_ICE_CANDIDATE':handleAddIceCan
           break;*/case'STOP':if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](jsonMessage);}break;case'CLOSE':if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](jsonMessage);}break;case'SESSION_NEW_CREATED':if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](jsonMessage);}break;case'SESSION_REFRESH':if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](jsonMessage);}break;case'RECEIVEMETADATA':handleReceivedMetaData(jsonMessage,uniqueId);break;case'ERROR':handleError(jsonMessage,params.sendingTopic,params.receiveTopic);break;default:console.warn("[SDK][onmessage] Invalid message, id: "+jsonMessage.id,jsonMessage);if(jsonMessage.match(/NOT CREATE SESSION/g)){if(currentCallParams&&Object.keys(currentCallParams)){//handleCallSocketOpen(currentCallParams);
 callStateController.createSessionInChat(currentCallParams);}}break;}};this.asyncInitialized=function(async){asyncClient=async;asyncClient.on('asyncReady',function(){callStateController.maybeReconnectAllTopics();});};this.handleChatMessages=function(type,chatMessageVOTypes,messageContent,contentCount,threadId,uniqueId){switch(type){/**
        * Type 70    Send Call Request
-       */case chatMessageVOTypes.CALL_REQUEST:callRequestController.callRequestReceived=true;callReceived({callId:messageContent.callId},function(r){});if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('callEvents',{type:'RECEIVE_CALL',result:messageContent});if(messageContent.callId>0){if(!currentCallId){currentCallId=messageContent.callId;}else newCallId=messageContent.callId;}else{chatEvents.fireEvent('callEvents',{type:'PARTNER_RECEIVED_YOUR_CALL',result:messageContent});}break;/**
+       */case chatMessageVOTypes.CALL_REQUEST:callRequestController.callRequestReceived=true;callReceived({callId:messageContent.callId},function(r){});if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('callEvents',{type:'RECEIVE_CALL',result:messageContent});if(messageContent.callId>0){if(!currentCallId){currentCallId=messageContent.callId;}else newCallId=messageContent.callId;}else{chatEvents.fireEvent('callEvents',{type:'PARTNER_RECEIVED_YOUR_CALL',result:messageContent});}break;/**
        * Type 71    Accept Call Request
-       */case chatMessageVOTypes.ACCEPT_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('callEvents',{type:'ACCEPT_CALL',result:messageContent});break;/**
+       */case chatMessageVOTypes.ACCEPT_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('callEvents',{type:'ACCEPT_CALL',result:messageContent});break;/**
        * Type 72    Reject Call Request
-       */case chatMessageVOTypes.REJECT_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('callEvents',{type:'REJECT_CALL',result:messageContent});break;/**
+       */case chatMessageVOTypes.REJECT_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('callEvents',{type:'REJECT_CALL',result:messageContent});break;/**
        * Type 73    Receive Call Request
-       */case chatMessageVOTypes.RECEIVE_CALL_REQUEST:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}if(messageContent.callId>0){chatEvents.fireEvent('callEvents',{type:'RECEIVE_CALL',result:messageContent});if(!currentCallId){currentCallId=messageContent.callId;}else newCallId=messageContent.callId;}else{chatEvents.fireEvent('callEvents',{type:'PARTNER_RECEIVED_YOUR_CALL',result:messageContent});}break;/**
+       */case chatMessageVOTypes.RECEIVE_CALL_REQUEST:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(messageContent.callId>0){chatEvents.fireEvent('callEvents',{type:'RECEIVE_CALL',result:messageContent});if(!currentCallId){currentCallId=messageContent.callId;}else newCallId=messageContent.callId;}else{chatEvents.fireEvent('callEvents',{type:'PARTNER_RECEIVED_YOUR_CALL',result:messageContent});}break;/**
        * Type 74    Start Call Request
-       */case chatMessageVOTypes.START_CALL:if(!callRequestController.iCanAcceptTheCall()){chatEvents.fireEvent('callEvents',{type:'CALL_STARTED_ELSEWHERE',message:'Call already started somewhere else..., aborting...'});return;}if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('callEvents',{type:'CALL_STARTED',result:messageContent});if((0,_typeof2["default"])(messageContent)==='object'&&messageContent.hasOwnProperty('chatDataDto')&&!!messageContent.chatDataDto.kurentoAddress){callServerController.setServers(messageContent.chatDataDto.kurentoAddress.split(','));startCallWebRTCFunctions({video:messageContent.clientDTO.video,mute:messageContent.clientDTO.mute,sendingTopic:messageContent.clientDTO.topicSend,receiveTopic:messageContent.clientDTO.topicReceive,screenShare:messageContent.chatDataDto.screenShare,brokerAddress:messageContent.chatDataDto.brokerAddressWeb,turnAddress:messageContent.chatDataDto.turnAddress,internalTurnAddress:messageContent.chatDataDto.internalTurnAddress,selfData:messageContent.clientDTO,clientsList:messageContent.otherClientDtoList,screenShareOwner:+messageContent.chatDataDto.screenShareUser,recordingOwner:+messageContent.chatDataDto.recordingUser},function(callDivs){chatEvents.fireEvent('callEvents',{type:'CALL_DIVS',result:callDivs});});}else{chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',message:'Chat Data DTO is not present!',environmentDetails:getSDKCallDetails()});}break;/**
+       */case chatMessageVOTypes.START_CALL:if(!callRequestController.iCanAcceptTheCall()){chatEvents.fireEvent('callEvents',{type:'CALL_STARTED_ELSEWHERE',message:'Call already started somewhere else..., aborting...'});return;}if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('callEvents',{type:'CALL_STARTED',result:messageContent});if((0,_typeof2["default"])(messageContent)==='object'&&messageContent.hasOwnProperty('chatDataDto')&&!!messageContent.chatDataDto.kurentoAddress){callServerController.setServers(messageContent.chatDataDto.kurentoAddress.split(','));startCallWebRTCFunctions({video:messageContent.clientDTO.video,mute:messageContent.clientDTO.mute,sendingTopic:messageContent.clientDTO.topicSend,receiveTopic:messageContent.clientDTO.topicReceive,screenShare:messageContent.chatDataDto.screenShare,brokerAddress:messageContent.chatDataDto.brokerAddressWeb,turnAddress:messageContent.chatDataDto.turnAddress,internalTurnAddress:messageContent.chatDataDto.internalTurnAddress,selfData:messageContent.clientDTO,clientsList:messageContent.otherClientDtoList,screenShareOwner:+messageContent.chatDataDto.screenShareUser,recordingOwner:+messageContent.chatDataDto.recordingUser},function(callDivs){chatEvents.fireEvent('callEvents',{type:'CALL_DIVS',result:callDivs});});}else{chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',message:'Chat Data DTO is not present!',environmentDetails:getSDKCallDetails()});}break;/**
        * Type 75    End Call Request
-       */case chatMessageVOTypes.END_CALL_REQUEST:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('callEvents',{type:'END_CALL',result:messageContent});callStop();break;/**
+       */case chatMessageVOTypes.END_CALL_REQUEST:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('callEvents',{type:'END_CALL',result:messageContent});callStop();break;/**
        * Type 76   Call Ended
-       */case chatMessageVOTypes.END_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('callEvents',{type:'CALL_ENDED',callId:threadId});if(threadId===currentCallId)callStop();break;/**
+       */case chatMessageVOTypes.END_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('callEvents',{type:'CALL_ENDED',callId:threadId});if(threadId===currentCallId)callStop();break;/**
        * Type 77    Get Calls History
-       */case chatMessageVOTypes.GET_CALLS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       */case chatMessageVOTypes.GET_CALLS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
        * Type 78    Call Partner Reconnecting
-       */case chatMessageVOTypes.RECONNECT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('callEvents',{type:'CALL_PARTICIPANT_RECONNECTING',result:messageContent});break;/**
+       */case chatMessageVOTypes.RECONNECT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('callEvents',{type:'CALL_PARTICIPANT_RECONNECTING',result:messageContent});break;/**
        * Type 79    Call Partner Connects
-       */case chatMessageVOTypes.CONNECT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('callEvents',{type:'CALL_PARTICIPANT_CONNECTED',result:messageContent});if(callUsers&&callUsers[chatMessaging.userInfo.id]&&callUsers[chatMessaging.userInfo.id].video){restartMediaOnKeyFrame(chatMessaging.userInfo.id,[2000,4000,8000,12000]);}if(callUsers&&callUsers['screenShare']&&screenShareInfo.isStarted()&&screenShareInfo.iAmOwner()){restartMediaOnKeyFrame('screenShare',[2000,4000,8000,12000]);}break;/**
+       */case chatMessageVOTypes.CONNECT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('callEvents',{type:'CALL_PARTICIPANT_CONNECTED',result:messageContent});if(callUsers&&callUsers[chatMessaging.userInfo.id]&&callUsers[chatMessaging.userInfo.id].video){restartMediaOnKeyFrame(chatMessaging.userInfo.id,[2000,4000,8000,12000]);}if(callUsers&&callUsers['screenShare']&&screenShareInfo.isStarted()&&screenShareInfo.iAmOwner()){restartMediaOnKeyFrame('screenShare',[2000,4000,8000,12000]);}break;/**
        * Type 90    Contacts Synced
        */case chatMessageVOTypes.CONTACT_SYNCED:chatEvents.fireEvent('contactEvents',{type:'CONTACTS_SYNCED',result:messageContent});break;/**
        * Type 91    Send Group Call Request
-       */case chatMessageVOTypes.GROUP_CALL_REQUEST:callRequestController.callRequestReceived=true;callReceived({callId:messageContent.callId},function(r){});if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}if(messageContent.callId>0){if(!currentCallId){currentCallId=messageContent.callId;}else newCallId=messageContent.callId;}chatEvents.fireEvent('callEvents',{type:'RECEIVE_CALL',result:messageContent});//currentCallId = messageContent.callId;
+       */case chatMessageVOTypes.GROUP_CALL_REQUEST:callRequestController.callRequestReceived=true;callReceived({callId:messageContent.callId},function(r){});if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(messageContent.callId>0){if(!currentCallId){currentCallId=messageContent.callId;}else newCallId=messageContent.callId;}chatEvents.fireEvent('callEvents',{type:'RECEIVE_CALL',result:messageContent});//currentCallId = messageContent.callId;
 break;/**
        * Type 92    Call Partner Leave
-       */case chatMessageVOTypes.LEAVE_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('callEvents',{type:'CALL_PARTICIPANT_LEFT',result:messageContent});if(!!messageContent[0].userId){callStateController.removeParticipant(messageContent[0].userId);if(screenShareInfo.isStarted()&&screenShareInfo.getOwner()===messageContent[0].userId)callStateController.removeScreenShareFromCall();/*                        if(messageContent[0].userId === chatMessaging.userInfo.id) {
+       */case chatMessageVOTypes.LEAVE_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('callEvents',{type:'CALL_PARTICIPANT_LEFT',result:messageContent});if(!!messageContent[0].userId){callStateController.removeParticipant(messageContent[0].userId);if(screenShareInfo.isStarted()&&screenShareInfo.getOwner()===messageContent[0].userId)callStateController.removeScreenShareFromCall();/*                        if(messageContent[0].userId === chatMessaging.userInfo.id) {
                                       chatEvents.fireEvent('callEvents', {
                                           type: 'CALL_ENDED',
                                           callId: threadId
@@ -56503,15 +53072,15 @@ break;/**
                                   }*/}//If I'm the only call participant, stop the call
 if(callUsers){if(Object.values(callUsers).length<2){callStop();}}break;/**
        * Type 93    Add Call Participant
-       */case chatMessageVOTypes.ADD_CALL_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       */case chatMessageVOTypes.ADD_CALL_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
        * Type 94    Call Participant Joined
-       */case chatMessageVOTypes.CALL_PARTICIPANT_JOINED:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}if(Array.isArray(messageContent)){for(var i in messageContent){var correctedData={video:messageContent[i].video,mute:messageContent[i].mute,userId:messageContent[i].userId,topicSend:messageContent[i].sendTopic};callStateController.setupCallParticipant(correctedData);if(correctedData.video){callStateController.startParticipantVideo(correctedData.userId);}if(!correctedData.mute){callStateController.startParticipantAudio(correctedData.userId);}}}chatEvents.fireEvent('callEvents',{type:'CALL_DIVS',result:generateCallUIList()});chatEvents.fireEvent('callEvents',{type:'CALL_PARTICIPANT_JOINED',result:messageContent});if(callUsers&&callUsers[chatMessaging.userInfo.id]&&callUsers[chatMessaging.userInfo.id].video){restartMediaOnKeyFrame(chatMessaging.userInfo.id,[2000,4000,8000,12000,16000,24000]);}if(callUsers&&callUsers['screenShare']&&callUsers['screenShare'].video&&screenShareInfo.isStarted()&&screenShareInfo.iAmOwner()){sendCallMetaData({id:callMetaDataTypes.SCREENSHAREMETADATA,userid:chatMessaging.userInfo.id,content:{dimension:{width:screenShareInfo.getWidth(),height:screenShareInfo.getHeight()}}});restartMediaOnKeyFrame('screenShare',[2000,4000,8000,12000,16000,24000]);}break;/**
+       */case chatMessageVOTypes.CALL_PARTICIPANT_JOINED:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(Array.isArray(messageContent)){for(var i in messageContent){var correctedData={video:messageContent[i].video,mute:messageContent[i].mute,userId:messageContent[i].userId,topicSend:messageContent[i].sendTopic};callStateController.setupCallParticipant(correctedData);if(correctedData.video){callStateController.startParticipantVideo(correctedData.userId);}if(!correctedData.mute){callStateController.startParticipantAudio(correctedData.userId);}}}chatEvents.fireEvent('callEvents',{type:'CALL_DIVS',result:generateCallUIList()});chatEvents.fireEvent('callEvents',{type:'CALL_PARTICIPANT_JOINED',result:messageContent});if(callUsers&&callUsers[chatMessaging.userInfo.id]&&callUsers[chatMessaging.userInfo.id].video){restartMediaOnKeyFrame(chatMessaging.userInfo.id,[2000,4000,8000,12000,16000,24000]);}if(callUsers&&callUsers['screenShare']&&callUsers['screenShare'].video&&screenShareInfo.isStarted()&&screenShareInfo.iAmOwner()){sendCallMetaData({id:callMetaDataTypes.SCREENSHAREMETADATA,userid:chatMessaging.userInfo.id,content:{dimension:{width:screenShareInfo.getWidth(),height:screenShareInfo.getHeight()}}});restartMediaOnKeyFrame('screenShare',[2000,4000,8000,12000,16000,24000]);}break;/**
        * Type 95    Remove Call Participant
-       */case chatMessageVOTypes.REMOVE_CALL_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('callEvents',{type:'CALL_PARTICIPANT_REMOVED',result:messageContent});break;/**
+       */case chatMessageVOTypes.REMOVE_CALL_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('callEvents',{type:'CALL_PARTICIPANT_REMOVED',result:messageContent});break;/**
        * Type 96    Terminate Call
-       */case chatMessageVOTypes.TERMINATE_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('callEvents',{type:'TERMINATE_CALL',result:messageContent});callStop();break;/**
+       */case chatMessageVOTypes.TERMINATE_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('callEvents',{type:'TERMINATE_CALL',result:messageContent});callStop();break;/**
        * Type 97    Mute Call Participant
-       */case chatMessageVOTypes.MUTE_CALL_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}if(Array.isArray(messageContent)){var pause;for(var i in messageContent){// pause = messageContent[i].userId == chatMessaging.userInfo.id;
+       */case chatMessageVOTypes.MUTE_CALL_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(Array.isArray(messageContent)){var pause;for(var i in messageContent){// pause = messageContent[i].userId == chatMessaging.userInfo.id;
 callUsers[messageContent[i].userId].audioStopManager.disableStream();// callStateController.deactivateParticipantStream(
 //     messageContent[i].userId,
 //     'audio',
@@ -56519,7 +53088,7 @@ callUsers[messageContent[i].userId].audioStopManager.disableStream();// callStat
 // )
 }}chatEvents.fireEvent('callEvents',{type:'CALL_DIVS',result:generateCallUIList()});chatEvents.fireEvent('callEvents',{type:'CALL_PARTICIPANT_MUTE',result:messageContent});break;/**
        * Type 98    UnMute Call Participant
-       */case chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}var myId=chatMessaging.userInfo.id;if(Array.isArray(messageContent)){for(var _i in messageContent){var cUserId=messageContent[_i].userId;if(callUsers[cUserId].audioStopManager.isStreamPaused()){if(callUsers[cUserId].audioStopManager.isStreamStopped()){callStateController.activateParticipantStream(cUserId,'audio',myId===cUserId?'send':'receive','audioTopicName',callUsers[cUserId].topicSend,'mute');}else if(myId===cUserId){currentModuleInstance.resumeMice({});}callUsers[cUserId].audioStopManager.reset();}/*                            callStateController.activateParticipantStream(
+       */case chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}var myId=chatMessaging.userInfo.id;if(Array.isArray(messageContent)){for(var _i in messageContent){var cUserId=messageContent[_i].userId;if(callUsers[cUserId].audioStopManager.isStreamPaused()){if(callUsers[cUserId].audioStopManager.isStreamStopped()){callStateController.activateParticipantStream(cUserId,'audio',myId===cUserId?'send':'receive','audioTopicName',callUsers[cUserId].topicSend,'mute');}else if(myId===cUserId){currentModuleInstance.resumeMice({});}callUsers[cUserId].audioStopManager.reset();}/*                            callStateController.activateParticipantStream(
                                             messageContent[i].userId,
                                             'audio',
                                             //TODO: Should send in here when chat server fixes the bug
@@ -56529,31 +53098,31 @@ callUsers[messageContent[i].userId].audioStopManager.disableStream();// callStat
                                             'mute'
                                         );*/}}chatEvents.fireEvent('callEvents',{type:'CALL_DIVS',result:generateCallUIList()});chatEvents.fireEvent('callEvents',{type:'CALL_PARTICIPANT_UNMUTE',result:messageContent});break;/**
        * Type 99   Partner rejected call
-       */case chatMessageVOTypes.CANCEL_GROUP_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('callEvents',{type:'REJECT_GROUP_CALL',result:messageContent});break;/**
+       */case chatMessageVOTypes.CANCEL_GROUP_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('callEvents',{type:'REJECT_GROUP_CALL',result:messageContent});break;/**
        * Type 110    Active Call Participants List
-       */case chatMessageVOTypes.ACTIVE_CALL_PARTICIPANTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       */case chatMessageVOTypes.ACTIVE_CALL_PARTICIPANTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
        * Type 111    Kafka Call Session Created
        */case chatMessageVOTypes.CALL_SESSION_CREATED:if(!callRequestController.callEstablishedInMySide)return;chatEvents.fireEvent('callEvents',{type:'CALL_SESSION_CREATED',result:messageContent});if(!currentCallId)currentCallId=messageContent.callId;else newCallId=messageContent.callId;//currentCallId = messageContent.callId;
 break;/**
        * Type 113    Turn On Video Call
-       */case chatMessageVOTypes.TURN_ON_VIDEO_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}if(Array.isArray(messageContent)){for(var i in messageContent){callStateController.activateParticipantStream(messageContent[i].userId,'video',messageContent[i].userId===chatMessaging.userInfo.id?'send':'receive','videoTopicName',messageContent[i].sendTopic,'video');}}setTimeout(function(){chatEvents.fireEvent('callEvents',{type:'CALL_DIVS',result:generateCallUIList()});});chatEvents.fireEvent('callEvents',{type:'TURN_ON_VIDEO_CALL',result:messageContent});break;/**
+       */case chatMessageVOTypes.TURN_ON_VIDEO_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(Array.isArray(messageContent)){for(var i in messageContent){callStateController.activateParticipantStream(messageContent[i].userId,'video',messageContent[i].userId===chatMessaging.userInfo.id?'send':'receive','videoTopicName',messageContent[i].sendTopic,'video');}}setTimeout(function(){chatEvents.fireEvent('callEvents',{type:'CALL_DIVS',result:generateCallUIList()});});chatEvents.fireEvent('callEvents',{type:'TURN_ON_VIDEO_CALL',result:messageContent});break;/**
        * Type 114    Turn Off Video Call
-       */case chatMessageVOTypes.TURN_OFF_VIDEO_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}if(Array.isArray(messageContent)){for(var i in messageContent){callStateController.deactivateParticipantStream(messageContent[i].userId,'video','video');}}setTimeout(function(){chatEvents.fireEvent('callEvents',{type:'CALL_DIVS',result:generateCallUIList()});});chatEvents.fireEvent('callEvents',{type:'TURN_OFF_VIDEO_CALL',result:messageContent});break;/**
+       */case chatMessageVOTypes.TURN_OFF_VIDEO_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(Array.isArray(messageContent)){for(var i in messageContent){callStateController.deactivateParticipantStream(messageContent[i].userId,'video','video');}}setTimeout(function(){chatEvents.fireEvent('callEvents',{type:'CALL_DIVS',result:generateCallUIList()});});chatEvents.fireEvent('callEvents',{type:'TURN_OFF_VIDEO_CALL',result:messageContent});break;/**
        * Type 121    Record Call Request
-       */case chatMessageVOTypes.RECORD_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('callEvents',{type:'START_RECORDING_CALL',result:messageContent});restartMediaOnKeyFrame(chatMessaging.userInfo.id,[4000,8000,12000,25000]);restartMediaOnKeyFrame("screenShare",[4000,8000,12000,25000]);break;/**
+       */case chatMessageVOTypes.RECORD_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('callEvents',{type:'START_RECORDING_CALL',result:messageContent});restartMediaOnKeyFrame(chatMessaging.userInfo.id,[4000,8000,12000,25000]);restartMediaOnKeyFrame("screenShare",[4000,8000,12000,25000]);break;/**
        * Type 122   End Record Call Request
-       */case chatMessageVOTypes.END_RECORD_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('callEvents',{type:'STOP_RECORDING_CALL',result:messageContent});break;/**
+       */case chatMessageVOTypes.END_RECORD_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('callEvents',{type:'STOP_RECORDING_CALL',result:messageContent});break;/**
        * Type 123   Start Screen Share
-       */case chatMessageVOTypes.START_SCREEN_SHARE:if(!callRequestController.callEstablishedInMySide)return;screenShareInfo.setIsStarted(true);screenShareInfo.setOwner(messageContent.screenOwner.id);if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}else if(!screenShareInfo.iAmOwner()){callStateController.addScreenShareToCall("receive",false);}chatEvents.fireEvent('callEvents',{type:'START_SCREEN_SHARE',result:messageContent});break;/**
+       */case chatMessageVOTypes.START_SCREEN_SHARE:if(!callRequestController.callEstablishedInMySide)return;screenShareInfo.setIsStarted(true);screenShareInfo.setOwner(messageContent.screenOwner.id);if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}else if(!screenShareInfo.iAmOwner()){callStateController.addScreenShareToCall("receive",false);}chatEvents.fireEvent('callEvents',{type:'START_SCREEN_SHARE',result:messageContent});break;/**
        * Type 124   End Screen Share
        */case chatMessageVOTypes.END_SCREEN_SHARE:// screenShareInfo.setIAmOwner(false);
-if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}else if(!screenShareInfo.iAmOwner()){consoleLogging&&console.log("[SDK][END_SCREEN_SHARE], im not owner of screen");callStateController.removeScreenShareFromCall();}chatEvents.fireEvent('callEvents',{type:'END_SCREEN_SHARE',result:messageContent});break;/**
+if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}else if(!screenShareInfo.iAmOwner()){consoleLogging&&console.log("[SDK][END_SCREEN_SHARE], im not owner of screen");callStateController.removeScreenShareFromCall();}chatEvents.fireEvent('callEvents',{type:'END_SCREEN_SHARE',result:messageContent});break;/**
        * Type 125   Delete From Call List
-       */case chatMessageVOTypes.DELETE_FROM_CALL_HISTORY:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('callEvents',{type:'DELETE_FROM_CALL_LIST',result:messageContent});break;/**
+       */case chatMessageVOTypes.DELETE_FROM_CALL_HISTORY:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('callEvents',{type:'DELETE_FROM_CALL_LIST',result:messageContent});break;/**
        * Type 126   Destinated Record Call Request
-       */case chatMessageVOTypes.DESTINATED_RECORD_CALL:if(!callRequestController.callEstablishedInMySide)return;if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('callEvents',{type:'START_RECORDING_CALL',result:messageContent});restartMediaOnKeyFrame(chatMessaging.userInfo.id,[4000,8000,12000,25000]);restartMediaOnKeyFrame("screenShare",[4000,8000,12000,25000]);break;/**
+       */case chatMessageVOTypes.DESTINATED_RECORD_CALL:if(!callRequestController.callEstablishedInMySide)return;if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('callEvents',{type:'START_RECORDING_CALL',result:messageContent});restartMediaOnKeyFrame(chatMessaging.userInfo.id,[4000,8000,12000,25000]);restartMediaOnKeyFrame("screenShare",[4000,8000,12000,25000]);break;/**
        * Type 129   Get Calls To Join
-       */case chatMessageVOTypes.GET_CALLS_TO_JOIN:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}break;}};this.startCall=function(params,callback){var startCallData={chatMessageVOType:_constants.chatMessageVOTypes.CALL_REQUEST,typeCode:generalTypeCode,//params.typeCode,
+       */case chatMessageVOTypes.GET_CALLS_TO_JOIN:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;}};this.startCall=function(params,callback){var startCallData={chatMessageVOType:_constants.chatMessageVOTypes.CALL_REQUEST,typeCode:generalTypeCode,//params.typeCode,
 pushMsgType:3,token:token},content={creatorClientDto:{}};if(params){if(typeof params.type==='string'&&callTypes.hasOwnProperty(params.type.toUpperCase())){content.type=callTypes[params.type.toUpperCase()];}else{content.type=0x0;// Defaults to AUDIO Call
 }content.creatorClientDto.mute=params.mute&&typeof params.mute==='boolean'?params.mute:false;content.mute=params.mute&&typeof params.mute==='boolean'?params.mute:false;if(params.clientType&&typeof params.clientType==='string'&&callClientType[params.clientType.toUpperCase()]>0){content.creatorClientDto.clientType=callClientType[params.clientType.toUpperCase()];}else{content.creatorClientDto.clientType=callClientType.WEB;}if(typeof+params.threadId==='number'&&+params.threadId>0){content.threadId=+params.threadId;}else{if(Array.isArray(params.invitees)&&params.invitees.length){content.invitees=[];//params.invitees;
 for(var i=0;i<params.invitees.length;i++){var tempInvitee=params.invitees[i];if(tempInvitee&&typeof tempInvitee.idType==="string"){tempInvitee.idType=inviteeVOidTypes[tempInvitee.idType];content.invitees.push(tempInvitee);}}}else{chatEvents.fireEvent('error',{code:999,message:'Invitees list is empty! Send an array of invitees to start a call with, Or send a Thread Id to start a call with current participants'});return;}}if(params.threadInfo&&(params.threadInfo.metadata||params.threadInfo.uniqueName)){content.createCallThreadRequest=params.threadInfo;}startCallData.content=JSON.stringify(content);}else{chatEvents.fireEvent('error',{code:999,message:'No params have been sent to start call!'});return;}callRequestController.cameraPaused=typeof params.cameraPaused==='boolean'?params.cameraPaused:false;callRequestController.callRequestReceived=true;callRequestController.callEstablishedInMySide=true;if(callNoAnswerTimeout){//TODO: Remove timeout when call ends fast
@@ -56646,11 +53215,12 @@ userObject.videoTopicManager.getPeer().getLocalStream().getTracks()[0].applyCons
 // })();
 var _default=ChatCall;exports["default"]=_default;
 
-},{"./lib/constants":337,"@babel/runtime/helpers/interopRequireDefault":1,"@babel/runtime/helpers/typeof":2,"kurento-utils":245,"webrtc-adapter":322}],335:[function(require,module,exports){
+},{"./lib/constants":325,"./utility/utility":327,"@babel/runtime/helpers/interopRequireDefault":1,"@babel/runtime/helpers/typeof":2,"kurento-utils":245}],323:[function(require,module,exports){
 'use strict';/**
- * POD Chat Browser v12.5.2
+ * POD Chat Browser
  *
- */var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _podasyncWsOnly=_interopRequireDefault(require("podasync-ws-only"));var _utility=_interopRequireDefault(require("./utility/utility"));var _dexie=_interopRequireDefault(require("dexie"));var _browser=_interopRequireDefault(require("@sentry/browser"));var _call=_interopRequireDefault(require("./call.module"));var _events=_interopRequireDefault(require("./events.module"));var _messaging=_interopRequireDefault(require("./messaging.module"));var _constants=require("./lib/constants");var Utility=new _utility["default"]();// (function () {
+ */var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _podasyncWsOnly=_interopRequireDefault(require("podasync-ws-only"));var _utility=_interopRequireDefault(require("./utility/utility"));var _dexie=_interopRequireDefault(require("dexie"));var _browser=_interopRequireDefault(require("@sentry/browser"));var _call=_interopRequireDefault(require("./call.module"));var _events=_interopRequireDefault(require("./events.module"));var _messaging=_interopRequireDefault(require("./messaging.module"));var _constants=require("./lib/constants");// const Utility = new ChatUtility();
+// (function () {
 /*
      * Pod Chat Browser Module
      * @module chat
@@ -56680,11 +53250,14 @@ REVERSE:'/reverse',SEARCH:'/search',ROUTING:'/routing',STATIC_IMAGE:'/static'},i
 6700:'You should Enter a Center Location like {lat: " ", lng: " "}'},getUserInfoRetry=5,getUserInfoRetryCount=0,chatFullStateObject={},httpRequestObject={},connectionCheckTimeout=params.connectionCheckTimeout,connectionCheckTimeoutThreshold=params.connectionCheckTimeoutThreshold,httpRequestTimeout=params.httpRequestTimeout>=0?params.httpRequestTimeout:0,asyncRequestTimeout=typeof params.asyncRequestTimeout==='number'&&params.asyncRequestTimeout>=0?params.asyncRequestTimeout:0,//callRequestTimeout = (typeof params.callRequestTimeout === 'number' && params.callRequestTimeout >= 0) ? params.callRequestTimeout : 10000,
 httpUploadRequestTimeout=params.httpUploadRequestTimeout>=0?params.httpUploadRequestTimeout:0,actualTimingLog=params.asyncLogging.actualTiming&&typeof params.asyncLogging.actualTiming==='boolean'?params.asyncLogging.actualTiming:false,consoleLogging=params.asyncLogging.consoleLogging&&typeof params.asyncLogging.consoleLogging==='boolean'?params.asyncLogging.consoleLogging:false,minIntegerValue=Number.MAX_SAFE_INTEGER*-1,maxIntegerValue=Number.MAX_SAFE_INTEGER,chatSendQueue=[],chatWaitQueue=[],chatUploadQueue=[],fullResponseObject=params.fullResponseObject||false;if(!consoleLogging){/**
              * Disable kurento-utils logs
-             */window.Logger={error:function error(){},log:function log(){},debug:function debug(){}};}var chatEvents=new _events["default"](Object.assign(params,{Sentry:_browser["default"],Utility:Utility,consoleLogging:consoleLogging})),chatMessaging=new _messaging["default"](Object.assign(params,{asyncClient:asyncClient,Sentry:_browser["default"],Utility:Utility,consoleLogging:consoleLogging,generalTypeCode:generalTypeCode,chatPingMessageInterval:chatPingMessageInterval,asyncRequestTimeout:asyncRequestTimeout,serverName:serverName,messageTtl:messageTtl,msgPriority:msgPriority})),callModule=new _call["default"](Object.assign(params,{Sentry:_browser["default"],Utility:Utility,consoleLogging:consoleLogging,chatEvents:chatEvents,asyncClient:asyncClient,chatMessaging:chatMessaging}));/*******************************************************
+             */window.Logger={error:function error(){},log:function log(){},debug:function debug(){}};}var chatEvents=new _events["default"](Object.assign(params,{Sentry:_browser["default"],//Utility: Utility,
+consoleLogging:consoleLogging})),chatMessaging=new _messaging["default"](Object.assign(params,{asyncClient:asyncClient,Sentry:_browser["default"],//Utility: Utility,
+consoleLogging:consoleLogging,generalTypeCode:generalTypeCode,chatPingMessageInterval:chatPingMessageInterval,asyncRequestTimeout:asyncRequestTimeout,serverName:serverName,messageTtl:messageTtl,msgPriority:msgPriority})),callModule=new _call["default"](Object.assign(params,{Sentry:_browser["default"],//Utility: Utility,
+consoleLogging:consoleLogging,chatEvents:chatEvents,asyncClient:asyncClient,chatMessaging:chatMessaging}));/*******************************************************
          *            P R I V A T E   M E T H O D S            *
          *******************************************************/var init=function init(){/**
                  * Initialize Cache Databases
-                 */startCacheDatabases(function(){if(grantDeviceIdFromSSO){var getDeviceIdWithTokenTime=new Date().getTime();getDeviceIdWithToken(function(retrievedDeviceId){if(actualTimingLog){Utility.chatStepLogger('Get Device ID ',new Date().getTime()-getDeviceIdWithTokenTime);}deviceId=retrievedDeviceId;initAsync();});}else{initAsync();}});},/**
+                 */startCacheDatabases(function(){if(grantDeviceIdFromSSO){var getDeviceIdWithTokenTime=new Date().getTime();getDeviceIdWithToken(function(retrievedDeviceId){if(actualTimingLog){_utility["default"].chatStepLogger('Get Device ID ',new Date().getTime()-getDeviceIdWithTokenTime);}deviceId=retrievedDeviceId;initAsync();});}else{initAsync();}});},/**
              * Initialize Async
              *
              * Initializes Async module and sets proper callbacks
@@ -56693,7 +53266,7 @@ httpUploadRequestTimeout=params.httpUploadRequestTimeout>=0?params.httpUploadReq
              *
              * @return {undefined}
              * @return {undefined}
-             */initAsync=function initAsync(){var asyncGetReadyTime=new Date().getTime();asyncClient=new _podasyncWsOnly["default"]({protocol:protocol,queueHost:queueHost,queuePort:queuePort,queueUsername:queueUsername,queuePassword:queuePassword,queueReceive:queueReceive,queueSend:queueSend,queueConnectionTimeout:queueConnectionTimeout,socketAddress:socketAddress,serverName:serverName,deviceId:deviceId,wsConnectionWaitTime:wsConnectionWaitTime,connectionRetryInterval:connectionRetryInterval,connectionCheckTimeout:connectionCheckTimeout,connectionCheckTimeoutThreshold:connectionCheckTimeoutThreshold,messageTtl:messageTtl,reconnectOnClose:reconnectOnClose,asyncLogging:asyncLogging,logLevel:consoleLogging?3:1});callModule.asyncInitialized(asyncClient);chatMessaging.asyncInitialized(asyncClient);asyncClient.on('asyncReady',function(){if(actualTimingLog){Utility.chatStepLogger('Async Connection ',new Date().getTime()-asyncGetReadyTime);}peerId=asyncClient.getPeerId();if(!chatMessaging.userInfo){var getUserInfoTime=new Date().getTime();getUserInfo(function(userInfoResult){if(actualTimingLog){Utility.chatStepLogger('Get User Info ',new Date().getTime()-getUserInfoTime);}if(!userInfoResult.hasError){chatMessaging.userInfo=userInfoResult.result.user;!!_browser["default"]&&_browser["default"].setUser(chatMessaging.userInfo);getAllThreads({summary:true,cache:false});/**
+             */initAsync=function initAsync(){var asyncGetReadyTime=new Date().getTime();asyncClient=new _podasyncWsOnly["default"]({protocol:protocol,queueHost:queueHost,queuePort:queuePort,queueUsername:queueUsername,queuePassword:queuePassword,queueReceive:queueReceive,queueSend:queueSend,queueConnectionTimeout:queueConnectionTimeout,socketAddress:socketAddress,serverName:serverName,deviceId:deviceId,wsConnectionWaitTime:wsConnectionWaitTime,connectionRetryInterval:connectionRetryInterval,connectionCheckTimeout:connectionCheckTimeout,connectionCheckTimeoutThreshold:connectionCheckTimeoutThreshold,messageTtl:messageTtl,reconnectOnClose:reconnectOnClose,asyncLogging:asyncLogging,logLevel:consoleLogging?3:1});callModule.asyncInitialized(asyncClient);chatMessaging.asyncInitialized(asyncClient);asyncClient.on('asyncReady',function(){if(actualTimingLog){_utility["default"].chatStepLogger('Async Connection ',new Date().getTime()-asyncGetReadyTime);}peerId=asyncClient.getPeerId();if(!chatMessaging.userInfo){var getUserInfoTime=new Date().getTime();getUserInfo(function(userInfoResult){if(actualTimingLog){_utility["default"].chatStepLogger('Get User Info ',new Date().getTime()-getUserInfoTime);}if(!userInfoResult.hasError){chatMessaging.userInfo=userInfoResult.result.user;!!_browser["default"]&&_browser["default"].setUser(chatMessaging.userInfo);getAllThreads({summary:true,cache:false});/**
                                  * Check if user has KeyId stored in their cache or not?
                                  */if(canUseCache){if(db){db.users.where('id').equals(parseInt(chatMessaging.userInfo.id)).toArray().then(function(users){if(users.length>0&&typeof users[0].keyId!='undefined'){var user=users[0];getEncryptionKey({keyId:user.keyId},function(result){if(!result.hasError){cacheSecret=result.secretKey;chatMessaging.chatState=true;chatEvents.fireEvent('chatReady');chatSendQueueHandler();}else{if(result.message!==''){try{var response=JSON.parse(result.message);if(response.error==='invalid_param'){generateEncryptionKey({keyAlgorithm:'AES',keySize:256},function(){chatMessaging.chatState=true;chatEvents.fireEvent('chatReady');chatSendQueueHandler();});}}catch(e){consoleLogging&&console.log(e);}}}});}else{generateEncryptionKey({keyAlgorithm:'AES',keySize:256},function(){chatMessaging.chatState=true;chatEvents.fireEvent('chatReady');chatSendQueueHandler();});}})["catch"](function(error){chatEvents.fireEvent('error',{code:error.errorCode,message:error.errorMessage,error:error});});}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}else{chatMessaging.chatState=true;chatEvents.fireEvent('chatReady');chatSendQueueHandler();}}});}else if(chatMessaging.userInfo.id>0){chatMessaging.chatState=true;chatEvents.fireEvent('chatReady');chatSendQueueHandler();}deliveryInterval&&clearInterval(deliveryInterval);deliveryInterval=setInterval(function(){if(Object.keys(messagesDelivery).length){messagesDeliveryQueueHandler();}},deliveryIntervalPitch);seenInterval&&clearInterval(seenInterval);seenInterval=setInterval(function(){if(Object.keys(messagesSeen).length){messagesSeenQueueHandler();}},seenIntervalPitch);//shouldReconnectCall();
 });asyncClient.on('stateChange',function(state){chatEvents.fireEvent('chatState',state);chatFullStateObject=state;switch(state.socketState){case 1:// CONNECTED
@@ -56856,9 +53429,9 @@ renew:false,keyAlgorithm:'aes',keySize:256};if(params){if(params.keyAlgorithm!==
              * @param {object}    chatMessage     Content of Async Message which is considered as Chat Message
              *
              * @return {undefined}
-             */chatMessageHandler=function chatMessageHandler(chatMessage){if(chatMessage.typeCode&&chatMessage.typeCode!==generalTypeCode){return;}var threadId=chatMessage.subjectId,type=chatMessage.type,messageContent=typeof chatMessage.content==='string'&&Utility.isValidJson(chatMessage.content)?JSON.parse(chatMessage.content):chatMessage.content,contentCount=chatMessage.contentCount,uniqueId=chatMessage.uniqueId,time=chatMessage.time;chatMessaging.asyncRequestTimeouts[uniqueId]&&clearTimeout(chatMessaging.asyncRequestTimeouts[uniqueId]);switch(type){/**
+             */chatMessageHandler=function chatMessageHandler(chatMessage){if(chatMessage.typeCode&&chatMessage.typeCode!==generalTypeCode){return;}var threadId=chatMessage.subjectId,type=chatMessage.type,messageContent=typeof chatMessage.content==='string'&&_utility["default"].isValidJson(chatMessage.content)?JSON.parse(chatMessage.content):chatMessage.content,contentCount=chatMessage.contentCount,uniqueId=chatMessage.uniqueId,time=chatMessage.time;chatMessaging.asyncRequestTimeouts[uniqueId]&&clearTimeout(chatMessaging.asyncRequestTimeouts[uniqueId]);switch(type){/**
                      * Type 1    Get Threads
-                     */case _constants.chatMessageVOTypes.CREATE_THREAD:messageContent.uniqueId=uniqueId;if(chatMessaging.messagesCallbacks[uniqueId]){createThread(messageContent,true,true);chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}else{createThread(messageContent,true,false);}break;/**
+                     */case _constants.chatMessageVOTypes.CREATE_THREAD:messageContent.uniqueId=uniqueId;if(chatMessaging.messagesCallbacks[uniqueId]){createThread(messageContent,true,true);chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}else{createThread(messageContent,true,false);}break;/**
                      * Type 2    Message
                      */case _constants.chatMessageVOTypes.MESSAGE:newMessageHandler(threadId,messageContent);break;/**
                      * Type 3    Message Sent
@@ -56898,11 +53471,11 @@ sendMessageCallbacksHandler(_constants.chatMessageVOTypes.DELIVERY,threadId,uniq
                      * Type 6    Chat Ping
                      */case _constants.chatMessageVOTypes.PING:break;/**
                      * Type 7    Block Contact
-                     */case _constants.chatMessageVOTypes.BLOCK:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}break;/**
+                     */case _constants.chatMessageVOTypes.BLOCK:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
                      * Type 8    Unblock Blocked User
-                     */case _constants.chatMessageVOTypes.UNBLOCK:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}break;/**
+                     */case _constants.chatMessageVOTypes.UNBLOCK:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
                      * Type 9   Leave Thread
-                     */case _constants.chatMessageVOTypes.LEAVE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}/**
+                     */case _constants.chatMessageVOTypes.LEAVE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}/**
                          * Remove the participant from cache
                          */if(canUseCache){if(db){/**
                                  * Remove the participant from participants
@@ -56918,15 +53491,15 @@ sendMessageCallbacksHandler(_constants.chatMessageVOTypes.DELIVERY,threadId,uniq
                                      * this user left
                                      */db.messages.where('threadId').equals(parseInt(threadId)).and(function(message){return message.owner===chatMessaging.userInfo.id;})["delete"]()["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}if(fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){if(!threadsResult.cache){var threads=threadsResult.result.threads;if(threads.length>0){chatEvents.fireEvent('threadEvents',{type:'THREAD_LEAVE_PARTICIPANT',result:{thread:threads[0],participant:formatDataToMakeParticipant(messageContent,threadId)}});chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0]}});}else{chatEvents.fireEvent('threadEvents',{type:'THREAD_LEAVE_PARTICIPANT',result:{threadId:threadId,participant:formatDataToMakeParticipant(messageContent,threadId)}});}}});}else{chatEvents.fireEvent('threadEvents',{type:'THREAD_LEAVE_PARTICIPANT',result:{thread:threadId,participant:formatDataToMakeParticipant(messageContent,threadId)}});chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId}});}break;/**
                      * Type 11    Add Participant to Thread
-                     */case _constants.chatMessageVOTypes.ADD_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}/**
+                     */case _constants.chatMessageVOTypes.ADD_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}/**
                          * Add participants into cache
-                         */if(canUseCache&&cacheSecret.length>0){if(db){var cacheData=[];for(var i=0;i<messageContent.participants.length;i++){try{var tempData={},salt=Utility.generateUUID();tempData.id=messageContent.participants[i].id;tempData.owner=chatMessaging.userInfo.id;tempData.threadId=messageContent.id;tempData.notSeenDuration=messageContent.participants[i].notSeenDuration;tempData.admin=messageContent.participants[i].admin;tempData.auditor=messageContent.participants[i].auditor;tempData.name=Utility.crypt(messageContent.participants[i].name,cacheSecret,salt);tempData.contactName=Utility.crypt(messageContent.participants[i].contactName,cacheSecret,salt);tempData.email=Utility.crypt(messageContent.participants[i].email,cacheSecret,salt);tempData.expireTime=new Date().getTime()+cacheExpireTime;tempData.data=Utility.crypt(JSON.stringify(unsetNotSeenDuration(messageContent.participants[i])),cacheSecret,salt);tempData.salt=salt;cacheData.push(tempData);}catch(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}db.participants.bulkPut(cacheData)["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}if(fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){chatEvents.fireEvent('threadEvents',{type:'THREAD_ADD_PARTICIPANTS',result:{thread:threads[0]}});chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0]}});}});}else{chatEvents.fireEvent('threadEvents',{type:'THREAD_ADD_PARTICIPANTS',result:{thread:messageContent}});chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:messageContent}});}break;/**
+                         */if(canUseCache&&cacheSecret.length>0){if(db){var cacheData=[];for(var i=0;i<messageContent.participants.length;i++){try{var tempData={},salt=_utility["default"].generateUUID();tempData.id=messageContent.participants[i].id;tempData.owner=chatMessaging.userInfo.id;tempData.threadId=messageContent.id;tempData.notSeenDuration=messageContent.participants[i].notSeenDuration;tempData.admin=messageContent.participants[i].admin;tempData.auditor=messageContent.participants[i].auditor;tempData.name=_utility["default"].crypt(messageContent.participants[i].name,cacheSecret,salt);tempData.contactName=_utility["default"].crypt(messageContent.participants[i].contactName,cacheSecret,salt);tempData.email=_utility["default"].crypt(messageContent.participants[i].email,cacheSecret,salt);tempData.expireTime=new Date().getTime()+cacheExpireTime;tempData.data=_utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(messageContent.participants[i])),cacheSecret,salt);tempData.salt=salt;cacheData.push(tempData);}catch(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}db.participants.bulkPut(cacheData)["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}if(fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){chatEvents.fireEvent('threadEvents',{type:'THREAD_ADD_PARTICIPANTS',result:{thread:threads[0]}});chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0]}});}});}else{chatEvents.fireEvent('threadEvents',{type:'THREAD_ADD_PARTICIPANTS',result:{thread:messageContent}});chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:messageContent}});}break;/**
                      * Type 13    Get Contacts List
-                     */case _constants.chatMessageVOTypes.GET_CONTACTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}break;/**
+                     */case _constants.chatMessageVOTypes.GET_CONTACTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
                      * Type 14    Get Threads List
-                     */case _constants.chatMessageVOTypes.GET_THREADS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+                     */case _constants.chatMessageVOTypes.GET_THREADS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
                      * Type 15    Get Message History of an Thread
-                     */case _constants.chatMessageVOTypes.GET_HISTORY:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}break;/**
+                     */case _constants.chatMessageVOTypes.GET_HISTORY:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
                      * Type 17    Remove sb from thread
                      */case _constants.chatMessageVOTypes.REMOVED_FROM_THREAD:chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVED_FROM',result:{thread:threadId}});/**
                          * This user has been removed from a thread
@@ -56942,29 +53515,29 @@ sendMessageCallbacksHandler(_constants.chatMessageVOTypes.DELIVERY,threadId,uniq
                                  * this user left
                                  */db.participants.where('threadId').equals(parseInt(threadId)).and(function(participant){return participant.owner===chatMessaging.userInfo.id;})["delete"]()["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}break;/**
                      * Type 18    Remove a participant from Thread
-                     */case _constants.chatMessageVOTypes.REMOVE_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}/**
+                     */case _constants.chatMessageVOTypes.REMOVE_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}/**
                          * Remove the participant from cache
                          */if(canUseCache){if(db){for(var i=0;i<messageContent.length;i++){db.participants.where('id').equals(parseInt(messageContent[i].id)).and(function(participants){return participants.threadId===threadId;})["delete"]()["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}if(fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVE_PARTICIPANTS',result:{thread:threads[0]}});chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0]}});}});}else{chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVE_PARTICIPANTS',result:{thread:threadId}});chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId}});}break;/**
                      * Type 19    Mute Thread
-                     */case _constants.chatMessageVOTypes.MUTE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}if(fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var thread=threadsResult.result.threads[0];thread.mute=true;chatEvents.fireEvent('threadEvents',{type:'THREAD_MUTE',result:{thread:thread}});});}else{chatEvents.fireEvent('threadEvents',{type:'THREAD_MUTE',result:{thread:threadId}});}break;/**
+                     */case _constants.chatMessageVOTypes.MUTE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var thread=threadsResult.result.threads[0];thread.mute=true;chatEvents.fireEvent('threadEvents',{type:'THREAD_MUTE',result:{thread:thread}});});}else{chatEvents.fireEvent('threadEvents',{type:'THREAD_MUTE',result:{thread:threadId}});}break;/**
                      * Type 20    Unmute muted Thread
-                     */case _constants.chatMessageVOTypes.UNMUTE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}if(fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var thread=threadsResult.result.threads[0];thread.mute=false;chatEvents.fireEvent('threadEvents',{type:'THREAD_UNMUTE',result:{thread:thread}});});}else{chatEvents.fireEvent('threadEvents',{type:'THREAD_UNMUTE',result:{thread:threadId}});}break;/**
+                     */case _constants.chatMessageVOTypes.UNMUTE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var thread=threadsResult.result.threads[0];thread.mute=false;chatEvents.fireEvent('threadEvents',{type:'THREAD_UNMUTE',result:{thread:thread}});});}else{chatEvents.fireEvent('threadEvents',{type:'THREAD_UNMUTE',result:{thread:threadId}});}break;/**
                      * Type 21    Update Thread Info
-                     */case _constants.chatMessageVOTypes.UPDATE_THREAD_INFO:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}if(fullResponseObject){getThreads({threadIds:[messageContent.id],cache:false},function(threadsResult){var thread=formatDataToMakeConversation(threadsResult.result.threads[0]);/**
+                     */case _constants.chatMessageVOTypes.UPDATE_THREAD_INFO:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(fullResponseObject){getThreads({threadIds:[messageContent.id],cache:false},function(threadsResult){var thread=formatDataToMakeConversation(threadsResult.result.threads[0]);/**
                                  * Add Updated Thread into cache database #cache
-                                 */if(canUseCache&&cacheSecret.length>0){if(db){var tempData={};try{var salt=Utility.generateUUID();tempData.id=thread.id;tempData.owner=chatMessaging.userInfo.id;tempData.title=Utility.crypt(thread.title,cacheSecret,salt);tempData.time=thread.time;tempData.data=Utility.crypt(JSON.stringify(unsetNotSeenDuration(thread)),cacheSecret,salt);tempData.salt=salt;}catch(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}db.threads.put(tempData)["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:thread}});});}else{chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:messageContent}});}break;/**
+                                 */if(canUseCache&&cacheSecret.length>0){if(db){var tempData={};try{var salt=_utility["default"].generateUUID();tempData.id=thread.id;tempData.owner=chatMessaging.userInfo.id;tempData.title=_utility["default"].crypt(thread.title,cacheSecret,salt);tempData.time=thread.time;tempData.data=_utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(thread)),cacheSecret,salt);tempData.salt=salt;}catch(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}db.threads.put(tempData)["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:thread}});});}else{chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:messageContent}});}break;/**
                      * Type 22    Forward Multiple Messages
                      */case _constants.chatMessageVOTypes.FORWARD_MESSAGE:newMessageHandler(threadId,messageContent);break;/**
                      * Type 23    User Info
-                     */case _constants.chatMessageVOTypes.USER_INFO:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('systemEvents',{type:'SERVER_TIME',result:{time:time}});break;/**
+                     */case _constants.chatMessageVOTypes.USER_INFO:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('systemEvents',{type:'SERVER_TIME',result:{time:time}});break;/**
                      * Type 25    Get Blocked List
-                     */case _constants.chatMessageVOTypes.GET_BLOCKED:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}break;/**
+                     */case _constants.chatMessageVOTypes.GET_BLOCKED:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
                      * Type 27    Thread Participants List
-                     */case _constants.chatMessageVOTypes.THREAD_PARTICIPANTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}break;/**
+                     */case _constants.chatMessageVOTypes.THREAD_PARTICIPANTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
                      * Type 28    Edit Message
-                     */case _constants.chatMessageVOTypes.EDIT_MESSAGE:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}chatEditMessageHandler(threadId,messageContent);break;/**
+                     */case _constants.chatMessageVOTypes.EDIT_MESSAGE:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}chatEditMessageHandler(threadId,messageContent);break;/**
                      * Type 29    Delete Message
-                     */case _constants.chatMessageVOTypes.DELETE_MESSAGE:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}if(messageContent.pinned){unPinMessage({messageId:messageContent.id,notifyAll:true});}/**
+                     */case _constants.chatMessageVOTypes.DELETE_MESSAGE:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(messageContent.pinned){unPinMessage({messageId:messageContent.id,notifyAll:true});}/**
                          * Remove Message from cache
                          */if(canUseCache&&cacheSecret.length>0){if(db){db.messages.where('id').equals(messageContent).and(function(message){return message.owner===chatMessaging.userInfo.id;})["delete"]()["catch"](function(error){chatEvents.fireEvent('error',{code:6602,message:CHAT_ERRORS[6602],error:error});});}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}if(fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){chatEvents.fireEvent('messageEvents',{type:'MESSAGE_DELETE',result:{message:{id:messageContent.id,pinned:messageContent.pinned,threadId:threadId}}});if(messageContent.pinned){chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0]}});}}});}else{chatEvents.fireEvent('messageEvents',{type:'MESSAGE_DELETE',result:{message:{id:messageContent.id,pinned:messageContent.pinned,threadId:threadId}}});if(messageContent.pinned){chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId}});}}break;/**
                      * Type 30    Thread Info Updated
@@ -57058,107 +53631,107 @@ chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:t
 // }
 break;/**
                      * Type 32    Get Message Delivered List
-                     */case _constants.chatMessageVOTypes.GET_MESSAGE_DELIVERY_PARTICIPANTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}break;/**
+                     */case _constants.chatMessageVOTypes.GET_MESSAGE_DELIVERY_PARTICIPANTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
                      * Type 33    Get Message Seen List
-                     */case _constants.chatMessageVOTypes.GET_MESSAGE_SEEN_PARTICIPANTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}break;/**
+                     */case _constants.chatMessageVOTypes.GET_MESSAGE_SEEN_PARTICIPANTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
                      * Type 34    Is Public Group Name Available?
-                     */case _constants.chatMessageVOTypes.IS_NAME_AVAILABLE:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}break;/**
+                     */case _constants.chatMessageVOTypes.IS_NAME_AVAILABLE:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
                      * Type 39    Join Public Group or Channel
-                     */case _constants.chatMessageVOTypes.JOIN_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}break;/**
+                     */case _constants.chatMessageVOTypes.JOIN_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
                      * Type 40    Bot Messages
                      */case _constants.chatMessageVOTypes.BOT_MESSAGE:chatEvents.fireEvent('botEvents',{type:'BOT_MESSAGE',result:{bot:messageContent}});break;/**
                      * Type 41    Spam P2P Thread
-                     */case _constants.chatMessageVOTypes.SPAM_PV_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}break;/**
+                     */case _constants.chatMessageVOTypes.SPAM_PV_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
                      * Type 42    Set Role To User
-                     */case _constants.chatMessageVOTypes.SET_ROLE_TO_USER:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}if(fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){chatEvents.fireEvent('threadEvents',{type:'THREAD_ADD_ADMIN',result:{thread:threads[0],admin:messageContent}});chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0],admin:messageContent}});}});}else{chatEvents.fireEvent('threadEvents',{type:'THREAD_ADD_ADMIN',result:{thread:threadId,admin:messageContent}});chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId,admin:messageContent}});}break;/**
+                     */case _constants.chatMessageVOTypes.SET_ROLE_TO_USER:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){chatEvents.fireEvent('threadEvents',{type:'THREAD_ADD_ADMIN',result:{thread:threads[0],admin:messageContent}});chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0],admin:messageContent}});}});}else{chatEvents.fireEvent('threadEvents',{type:'THREAD_ADD_ADMIN',result:{thread:threadId,admin:messageContent}});chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId,admin:messageContent}});}break;/**
                      * Type 43    Remove Role From User
-                     */case _constants.chatMessageVOTypes.REMOVE_ROLE_FROM_USER:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}if(fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVE_ADMIN',result:{thread:threads[0],admin:messageContent}});chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0],admin:messageContent}});}});}else{chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVE_ADMIN',result:{thread:threadId,admin:messageContent}});chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId,admin:messageContent}});}break;/**
+                     */case _constants.chatMessageVOTypes.REMOVE_ROLE_FROM_USER:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVE_ADMIN',result:{thread:threads[0],admin:messageContent}});chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0],admin:messageContent}});}});}else{chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVE_ADMIN',result:{thread:threadId,admin:messageContent}});chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId,admin:messageContent}});}break;/**
                      * Type 44    Clear History
-                     */case _constants.chatMessageVOTypes.CLEAR_HISTORY:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}break;/**
+                     */case _constants.chatMessageVOTypes.CLEAR_HISTORY:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
                      * Type 46    System Messages
                      */case _constants.chatMessageVOTypes.SYSTEM_MESSAGE:chatEvents.fireEvent('systemEvents',{type:'IS_TYPING',result:{thread:threadId,user:messageContent}});break;/**
                      * Type 47    Get Not Seen Duration
-                     */case _constants.chatMessageVOTypes.GET_NOT_SEEN_DURATION:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}break;/**
+                     */case _constants.chatMessageVOTypes.GET_NOT_SEEN_DURATION:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
                      * Type 48    Pin Thread
-                     */case _constants.chatMessageVOTypes.PIN_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}if(fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var thread=threadsResult.result.threads[0];chatEvents.fireEvent('threadEvents',{type:'THREAD_PIN',result:{thread:thread}});});}else{chatEvents.fireEvent('threadEvents',{type:'THREAD_PIN',result:{thread:threadId}});}break;/**
+                     */case _constants.chatMessageVOTypes.PIN_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var thread=threadsResult.result.threads[0];chatEvents.fireEvent('threadEvents',{type:'THREAD_PIN',result:{thread:thread}});});}else{chatEvents.fireEvent('threadEvents',{type:'THREAD_PIN',result:{thread:threadId}});}break;/**
                      * Type 49    UnPin Thread
-                     */case _constants.chatMessageVOTypes.UNPIN_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}if(fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var thread=threadsResult.result.threads[0];chatEvents.fireEvent('threadEvents',{type:'THREAD_UNPIN',result:{thread:thread}});});}else{chatEvents.fireEvent('threadEvents',{type:'THREAD_UNPIN',result:{thread:threadId}});}break;/**
+                     */case _constants.chatMessageVOTypes.UNPIN_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var thread=threadsResult.result.threads[0];chatEvents.fireEvent('threadEvents',{type:'THREAD_UNPIN',result:{thread:thread}});});}else{chatEvents.fireEvent('threadEvents',{type:'THREAD_UNPIN',result:{thread:threadId}});}break;/**
                      * Type 50    Pin Message
-                     */case _constants.chatMessageVOTypes.PIN_MESSAGE:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('threadEvents',{type:'MESSAGE_PIN',result:{thread:threadId,pinMessage:formatDataToMakePinMessage(threadId,messageContent)}});break;/**
+                     */case _constants.chatMessageVOTypes.PIN_MESSAGE:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('threadEvents',{type:'MESSAGE_PIN',result:{thread:threadId,pinMessage:formatDataToMakePinMessage(threadId,messageContent)}});break;/**
                      * Type 51    UnPin Message
-                     */case _constants.chatMessageVOTypes.UNPIN_MESSAGE:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('threadEvents',{type:'MESSAGE_UNPIN',result:{thread:threadId,pinMessage:formatDataToMakePinMessage(threadId,messageContent)}});break;/**
+                     */case _constants.chatMessageVOTypes.UNPIN_MESSAGE:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('threadEvents',{type:'MESSAGE_UNPIN',result:{thread:threadId,pinMessage:formatDataToMakePinMessage(threadId,messageContent)}});break;/**
                      * Type 52    Update Chat Profile
-                     */case _constants.chatMessageVOTypes.UPDATE_CHAT_PROFILE:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('userEvents',{type:'CHAT_PROFILE_UPDATED',result:{user:messageContent}});break;/**
+                     */case _constants.chatMessageVOTypes.UPDATE_CHAT_PROFILE:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('userEvents',{type:'CHAT_PROFILE_UPDATED',result:{user:messageContent}});break;/**
                      * Type 53    Change Thread Privacy
-                     */case _constants.chatMessageVOTypes.CHANGE_THREAD_PRIVACY:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('threadEvents',{type:'THREAD_PRIVACY_CHANGED',result:{thread:messageContent}});break;/**
+                     */case _constants.chatMessageVOTypes.CHANGE_THREAD_PRIVACY:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('threadEvents',{type:'THREAD_PRIVACY_CHANGED',result:{thread:messageContent}});break;/**
                      * Type 54    Get Participant Roles
-                     */case _constants.chatMessageVOTypes.GET_PARTICIPANT_ROLES:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('userEvents',{type:'GET_PARTICIPANT_ROLES',result:{roles:messageContent}});break;/**
+                     */case _constants.chatMessageVOTypes.GET_PARTICIPANT_ROLES:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('userEvents',{type:'GET_PARTICIPANT_ROLES',result:{roles:messageContent}});break;/**
                      * Type 60    Get Contact Not Seen Duration
                      */case _constants.chatMessageVOTypes.GET_CONTACT_NOT_SEEN_DURATION:chatEvents.fireEvent('contactEvents',{type:'CONTACTS_LAST_SEEN',result:messageContent});break;/**
                      * Type 61      Get All Unread Message Count
-                     */case _constants.chatMessageVOTypes.ALL_UNREAD_MESSAGE_COUNT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('systemEvents',{type:'ALL_UNREAD_MESSAGES_COUNT',result:messageContent});break;/**
+                     */case _constants.chatMessageVOTypes.ALL_UNREAD_MESSAGE_COUNT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('systemEvents',{type:'ALL_UNREAD_MESSAGES_COUNT',result:messageContent});break;/**
                      * Type 62    Create Bot
-                     */case _constants.chatMessageVOTypes.CREATE_BOT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}break;/**
+                     */case _constants.chatMessageVOTypes.CREATE_BOT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
                      * Type 63    Define Bot Commands
-                     */case _constants.chatMessageVOTypes.DEFINE_BOT_COMMAND:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}break;/**
+                     */case _constants.chatMessageVOTypes.DEFINE_BOT_COMMAND:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
                      * Type 64    Start Bot
-                     */case _constants.chatMessageVOTypes.START_BOT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}break;/**
+                     */case _constants.chatMessageVOTypes.START_BOT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
                      * Type 65    Stop Bot
-                     */case _constants.chatMessageVOTypes.STOP_BOT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}break;/**
+                     */case _constants.chatMessageVOTypes.STOP_BOT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
                      * Type 66    Last Message Deleted
                      */case _constants.chatMessageVOTypes.LAST_MESSAGE_DELETED:if(fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:threads[0]}});}});}else{var thread=formatDataToMakeConversation(messageContent);chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:thread}});}break;/**
                      * Type 67    Last Message Edited
                      */case _constants.chatMessageVOTypes.LAST_MESSAGE_EDITED:if(fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:threads[0]}});}});}else{var thread=formatDataToMakeConversation(messageContent);chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:thread}});}break;/**
                      * Type 68    Get Bot Commands List
-                     */case _constants.chatMessageVOTypes.BOT_COMMANDS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}break;/**
+                     */case _constants.chatMessageVOTypes.BOT_COMMANDS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
                      * Type 69    Get Thread All Bots
-                     */case _constants.chatMessageVOTypes.THREAD_ALL_BOTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}break;/**
+                     */case _constants.chatMessageVOTypes.THREAD_ALL_BOTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
                      * Type 70    Send Call Request
                      */case _constants.chatMessageVOTypes.CALL_REQUEST:case _constants.chatMessageVOTypes.ACCEPT_CALL:case _constants.chatMessageVOTypes.REJECT_CALL:case _constants.chatMessageVOTypes.RECEIVE_CALL_REQUEST:case _constants.chatMessageVOTypes.START_CALL:case _constants.chatMessageVOTypes.END_CALL_REQUEST:case _constants.chatMessageVOTypes.END_CALL:case _constants.chatMessageVOTypes.GET_CALLS:case _constants.chatMessageVOTypes.RECONNECT:case _constants.chatMessageVOTypes.CONNECT:case _constants.chatMessageVOTypes.GROUP_CALL_REQUEST:case _constants.chatMessageVOTypes.LEAVE_CALL:case _constants.chatMessageVOTypes.ADD_CALL_PARTICIPANT:case _constants.chatMessageVOTypes.CALL_PARTICIPANT_JOINED:case _constants.chatMessageVOTypes.REMOVE_CALL_PARTICIPANT:case _constants.chatMessageVOTypes.TERMINATE_CALL:case _constants.chatMessageVOTypes.MUTE_CALL_PARTICIPANT:case _constants.chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT:case _constants.chatMessageVOTypes.RECORD_CALL:case _constants.chatMessageVOTypes.END_RECORD_CALL:case _constants.chatMessageVOTypes.START_SCREEN_SHARE:case _constants.chatMessageVOTypes.END_SCREEN_SHARE:case _constants.chatMessageVOTypes.DELETE_FROM_CALL_HISTORY:case _constants.chatMessageVOTypes.TURN_ON_VIDEO_CALL:case _constants.chatMessageVOTypes.TURN_OFF_VIDEO_CALL:case _constants.chatMessageVOTypes.ACTIVE_CALL_PARTICIPANTS:case _constants.chatMessageVOTypes.CALL_SESSION_CREATED:case _constants.chatMessageVOTypes.CANCEL_GROUP_CALL:case _constants.chatMessageVOTypes.DESTINATED_RECORD_CALL:case _constants.chatMessageVOTypes.GET_CALLS_TO_JOIN:callModule.handleChatMessages(type,_constants.chatMessageVOTypes,messageContent,contentCount,threadId,uniqueId);break;/**
                      * Type 90    Contacts Synced
                      */case _constants.chatMessageVOTypes.CONTACT_SYNCED:chatEvents.fireEvent('contactEvents',{type:'CONTACTS_SYNCED',result:messageContent});break;/**
                      * Type 101    Location Ping
-                     */case _constants.chatMessageVOTypes.LOCATION_PING:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('systemEvents',{type:'LOCATION_PING',result:messageContent});break;/**
+                     */case _constants.chatMessageVOTypes.LOCATION_PING:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('systemEvents',{type:'LOCATION_PING',result:messageContent});break;/**
                      * Type 102    Close Thread
-                     */case _constants.chatMessageVOTypes.CLOSE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}if(fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var thread=threadsResult.result.threads[0];thread.mute=true;chatEvents.fireEvent('threadEvents',{type:'THREAD_CLOSE',result:{thread:thread}});});}else{chatEvents.fireEvent('threadEvents',{type:'THREAD_CLOSE',result:{thread:threadId}});}break;/**
+                     */case _constants.chatMessageVOTypes.CLOSE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var thread=threadsResult.result.threads[0];thread.mute=true;chatEvents.fireEvent('threadEvents',{type:'THREAD_CLOSE',result:{thread:thread}});});}else{chatEvents.fireEvent('threadEvents',{type:'THREAD_CLOSE',result:{thread:threadId}});}break;/**
                      * Type 104    Remove Bot Commands
-                     */case _constants.chatMessageVOTypes.REMOVE_BOT_COMMANDS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}break;/**
+                     */case _constants.chatMessageVOTypes.REMOVE_BOT_COMMANDS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
                      * Type 107    Register Assistant
-                     */case _constants.chatMessageVOTypes.REGISTER_ASSISTANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('assistantEvents',{type:'ASSISTANT_REGISTER',result:messageContent});break;/**
+                     */case _constants.chatMessageVOTypes.REGISTER_ASSISTANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('assistantEvents',{type:'ASSISTANT_REGISTER',result:messageContent});break;/**
                      * Type 108    Deactivate Assistant
-                     */case _constants.chatMessageVOTypes.DEACTIVATE_ASSISTANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('assistantEvents',{type:'ASSISTANT_DEACTIVATE',result:messageContent});break;/**
+                     */case _constants.chatMessageVOTypes.DEACTIVATE_ASSISTANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('assistantEvents',{type:'ASSISTANT_DEACTIVATE',result:messageContent});break;/**
                      * Type 109    Get Assistants List
-                     */case _constants.chatMessageVOTypes.GET_ASSISTANTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('assistantEvents',{type:'ASSISTANTS_LIST',result:messageContent});break;/**
+                     */case _constants.chatMessageVOTypes.GET_ASSISTANTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('assistantEvents',{type:'ASSISTANTS_LIST',result:messageContent});break;/**
                      * Type 115    Get Assistants History
-                     */case _constants.chatMessageVOTypes.ASSISTANT_HISTORY:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('assistantEvents',{type:'ASSISTANTS_HSITORY',result:messageContent});break;/**
+                     */case _constants.chatMessageVOTypes.ASSISTANT_HISTORY:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('assistantEvents',{type:'ASSISTANTS_HSITORY',result:messageContent});break;/**
                      * Type 116    Block Assistants
-                     */case _constants.chatMessageVOTypes.BLOCK_ASSISTANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('assistantEvents',{type:'ASSISTANT_BLOCK',result:messageContent});break;/**
+                     */case _constants.chatMessageVOTypes.BLOCK_ASSISTANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('assistantEvents',{type:'ASSISTANT_BLOCK',result:messageContent});break;/**
                      * Type 117    UnBlock Assistant
-                     */case _constants.chatMessageVOTypes.UNBLOCK_ASSISTANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('assistantEvents',{type:'ASSISTANT_UNBLOCK',result:messageContent});break;/**
+                     */case _constants.chatMessageVOTypes.UNBLOCK_ASSISTANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('assistantEvents',{type:'ASSISTANT_UNBLOCK',result:messageContent});break;/**
                      * Type 118    Blocked Assistants List
-                     */case _constants.chatMessageVOTypes.BLOCKED_ASSISTANTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('assistantEvents',{type:'ASSISTANTS_BLOCKED_LIST',result:messageContent});break;/**
+                     */case _constants.chatMessageVOTypes.BLOCKED_ASSISTANTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('assistantEvents',{type:'ASSISTANTS_BLOCKED_LIST',result:messageContent});break;/**
                      * Type 130    Mutual Groups
-                     */case _constants.chatMessageVOTypes.MUTUAL_GROUPS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('threadEvents',{type:'MUTUAL_GROUPS',result:messageContent});break;/**
+                     */case _constants.chatMessageVOTypes.MUTUAL_GROUPS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}chatEvents.fireEvent('threadEvents',{type:'MUTUAL_GROUPS',result:messageContent});break;/**
                      * Type 140    Create Tag
-                     */case _constants.chatMessageVOTypes.CREATE_TAG:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('threadEvents',{type:'NEW_TAG',result:messageContent});break;/**
+                     */case _constants.chatMessageVOTypes.CREATE_TAG:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('threadEvents',{type:'NEW_TAG',result:messageContent});break;/**
                      * Type 141    Edit Tag
-                     */case _constants.chatMessageVOTypes.EDIT_TAG:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('threadEvents',{type:'EDIT_TAG',result:messageContent});break;/**
+                     */case _constants.chatMessageVOTypes.EDIT_TAG:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('threadEvents',{type:'EDIT_TAG',result:messageContent});break;/**
                      * Type 142    Delete Tag
-                     */case _constants.chatMessageVOTypes.DELETE_TAG:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('threadEvents',{type:'DELETE_TAG',result:messageContent});break;/**
+                     */case _constants.chatMessageVOTypes.DELETE_TAG:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('threadEvents',{type:'DELETE_TAG',result:messageContent});break;/**
                      * Type 143    Delete Tag
-                     */case _constants.chatMessageVOTypes.ADD_TAG_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('threadEvents',{type:'ADD_TAG_PARTICIPANT',result:messageContent});break;/**
+                     */case _constants.chatMessageVOTypes.ADD_TAG_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('threadEvents',{type:'ADD_TAG_PARTICIPANT',result:messageContent});break;/**
                      * Type 144    Delete Tag
-                     */case _constants.chatMessageVOTypes.REMOVE_TAG_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('threadEvents',{type:'REMOVE_TAG_PARTICIPANT',result:messageContent});break;/**
+                     */case _constants.chatMessageVOTypes.REMOVE_TAG_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('threadEvents',{type:'REMOVE_TAG_PARTICIPANT',result:messageContent});break;/**
                      * Type 145    Delete Tag
-                     */case _constants.chatMessageVOTypes.GET_TAG_LIST:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('threadEvents',{type:'TAG_LIST',result:messageContent});break;/**
+                     */case _constants.chatMessageVOTypes.GET_TAG_LIST:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('threadEvents',{type:'TAG_LIST',result:messageContent});break;/**
                      * Type 151    Delete Message Thread
-                     */case _constants.chatMessageVOTypes.DELETE_MESSAGE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('threadEvents',{type:'DELETE_THREAD',result:messageContent});break;/**
+                     */case _constants.chatMessageVOTypes.DELETE_MESSAGE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}chatEvents.fireEvent('threadEvents',{type:'DELETE_THREAD',result:messageContent});break;/**
                      * Type 152    Gives us a json to export for user
-                     */case _constants.chatMessageVOTypes.EXPORT_CHAT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+                     */case _constants.chatMessageVOTypes.EXPORT_CHAT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
                      * Type 200    Adding a user to contacts list
-                     */case _constants.chatMessageVOTypes.ADD_CONTACTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+                     */case _constants.chatMessageVOTypes.ADD_CONTACTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
                      * Type 999   All unknown errors
-                     */case _constants.chatMessageVOTypes.ERROR:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(true,messageContent.message,messageContent.code,messageContent,0));}/**
+                     */case _constants.chatMessageVOTypes.ERROR:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(true,messageContent.message,messageContent.code,messageContent,0));}/**
                          * If error code is 21, Token is invalid &
                          * user should logged out
                          */if(messageContent.code===21){// TODO: Temporarily removed due to unknown side-effects
@@ -57202,7 +53775,7 @@ break;/**
                  */if(canUseCache&&cacheSecret.length>0){if(db){/**
                          * Insert new messages into cache database
                          * after deleting old messages from cache
-                         */var tempData={};try{var salt=Utility.generateUUID();tempData.id=parseInt(message.id);tempData.owner=parseInt(chatMessaging.userInfo.id);tempData.threadId=parseInt(message.threadId);tempData.time=message.time;tempData.message=Utility.crypt(message.message,cacheSecret,salt);tempData.data=Utility.crypt(JSON.stringify(unsetNotSeenDuration(message)),cacheSecret,salt);tempData.salt=salt;tempData.sendStatus='sent';}catch(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}db.messages.put(tempData)["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}chatEvents.fireEvent('messageEvents',{type:'MESSAGE_NEW',cache:false,result:{message:message}});var threadObject=message.conversation;var lastMessageVoCopy=Object.assign({},message);lastMessageVoCopy.conversation&&delete lastMessageVoCopy.conversation;threadObject.lastParticipantImage=!!message.participant&&message.participant.hasOwnProperty('image')?message.participant.image:'';threadObject.lastMessageVO=lastMessageVoCopy;threadObject.lastParticipantName=!!message.participant&&message.participant.hasOwnProperty('name')?message.participant.name:'';threadObject.lastMessage=message.hasOwnProperty('message')?message.message:'';chatEvents.fireEvent('threadEvents',{type:'THREAD_UNREAD_COUNT_UPDATED',result:{thread:threadObject,unreadCount:threadObject.unreadCount?threadObject.unreadCount:0}});chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadObject}});// if (fullResponseObject) {
+                         */var tempData={};try{var salt=_utility["default"].generateUUID();tempData.id=parseInt(message.id);tempData.owner=parseInt(chatMessaging.userInfo.id);tempData.threadId=parseInt(message.threadId);tempData.time=message.time;tempData.message=_utility["default"].crypt(message.message,cacheSecret,salt);tempData.data=_utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(message)),cacheSecret,salt);tempData.salt=salt;tempData.sendStatus='sent';}catch(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}db.messages.put(tempData)["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}chatEvents.fireEvent('messageEvents',{type:'MESSAGE_NEW',cache:false,result:{message:message}});var threadObject=message.conversation;var lastMessageVoCopy=Object.assign({},message);lastMessageVoCopy.conversation&&delete lastMessageVoCopy.conversation;threadObject.lastParticipantImage=!!message.participant&&message.participant.hasOwnProperty('image')?message.participant.image:'';threadObject.lastMessageVO=lastMessageVoCopy;threadObject.lastParticipantName=!!message.participant&&message.participant.hasOwnProperty('name')?message.participant.name:'';threadObject.lastMessage=message.hasOwnProperty('message')?message.message:'';chatEvents.fireEvent('threadEvents',{type:'THREAD_UNREAD_COUNT_UPDATED',result:{thread:threadObject,unreadCount:threadObject.unreadCount?threadObject.unreadCount:0}});chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadObject}});// if (fullResponseObject) {
 //     getThreads({
 //         threadIds: [threadId]
 //     }, function (threadsResult) {
@@ -57255,7 +53828,7 @@ break;/**
              * @return {undefined}
              */chatEditMessageHandler=function chatEditMessageHandler(threadId,messageContent){var message=formatDataToMakeMessage(threadId,messageContent);/**
                  * Update Message on cache
-                 */if(canUseCache&&cacheSecret.length>0){if(db){try{var tempData={},salt=Utility.generateUUID();tempData.id=parseInt(message.id);tempData.owner=parseInt(chatMessaging.userInfo.id);tempData.threadId=parseInt(message.threadId);tempData.time=message.time;tempData.message=Utility.crypt(message.message,cacheSecret,salt);tempData.data=Utility.crypt(JSON.stringify(unsetNotSeenDuration(message)),cacheSecret,salt);tempData.salt=salt;/**
+                 */if(canUseCache&&cacheSecret.length>0){if(db){try{var tempData={},salt=_utility["default"].generateUUID();tempData.id=parseInt(message.id);tempData.owner=parseInt(chatMessaging.userInfo.id);tempData.threadId=parseInt(message.threadId);tempData.time=message.time;tempData.message=_utility["default"].crypt(message.message,cacheSecret,salt);tempData.data=_utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(message)),cacheSecret,salt);tempData.salt=salt;/**
                              * Insert Message into cache database
                              */db.messages.put(tempData)["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}catch(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}if(fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){chatEvents.fireEvent('messageEvents',{type:'MESSAGE_EDIT',result:{message:message}});if(message.pinned){chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0]}});}}});}else{chatEvents.fireEvent('messageEvents',{type:'MESSAGE_EDIT',result:{message:message}});if(message.pinned){chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId}});}}},/**
              * Create Thread
@@ -57273,7 +53846,7 @@ break;/**
              * @return {object} Formatted Thread Object
              */createThread=function createThread(messageContent,addFromService,showThread){var threadData=formatDataToMakeConversation(messageContent);var redirectToThread=showThread===true?showThread:false;if(addFromService){chatEvents.fireEvent('threadEvents',{type:'THREAD_NEW',redirectToThread:redirectToThread,result:{thread:threadData}});/**
                      * Add New Thread into cache database #cache
-                     */if(canUseCache&&cacheSecret.length>0){if(db){var tempData={};try{var salt=Utility.generateUUID();tempData.id=threadData.id;tempData.owner=chatMessaging.userInfo.id;tempData.title=Utility.crypt(threadData.title,cacheSecret,salt);tempData.time=threadData.time;tempData.data=Utility.crypt(JSON.stringify(unsetNotSeenDuration(threadData)),cacheSecret,salt);tempData.salt=salt;}catch(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}db.threads.put(tempData)["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}return threadData;},/**
+                     */if(canUseCache&&cacheSecret.length>0){if(db){var tempData={};try{var salt=_utility["default"].generateUUID();tempData.id=threadData.id;tempData.owner=chatMessaging.userInfo.id;tempData.title=_utility["default"].crypt(threadData.title,cacheSecret,salt);tempData.time=threadData.time;tempData.data=_utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(threadData)),cacheSecret,salt);tempData.salt=salt;}catch(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}db.threads.put(tempData)["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}return threadData;},/**
              * Format Data To Make Linked User
              *
              * This functions re-formats given JSON to proper Object
@@ -57647,7 +54220,7 @@ content:content};/**
                                      * So we multiply thread time by pin
                                      * order to have them ordered on cache
                                      * by the same order of server
-                                     */var pinnedThreadsOrderTime=5;for(var i=0;i<resultData.threads.length;i++){try{var tempData={},salt=Utility.generateUUID();tempData.id=resultData.threads[i].id;tempData.owner=chatMessaging.userInfo.id;tempData.title=Utility.crypt(resultData.threads[i].title,cacheSecret,salt);tempData.pin=resultData.threads[i].pin;tempData.time=resultData.threads[i].pin?resultData.threads[i].time*pinnedThreadsOrderTime:resultData.threads[i].time;tempData.data=Utility.crypt(JSON.stringify(unsetNotSeenDuration(resultData.threads[i])),cacheSecret,salt);tempData.salt=salt;cacheData.push(tempData);pinnedThreadsOrderTime--;}catch(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}db.threads.bulkPut(cacheData)["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}callback&&callback(returnData);/**
+                                     */var pinnedThreadsOrderTime=5;for(var i=0;i<resultData.threads.length;i++){try{var tempData={},salt=_utility["default"].generateUUID();tempData.id=resultData.threads[i].id;tempData.owner=chatMessaging.userInfo.id;tempData.title=_utility["default"].crypt(resultData.threads[i].title,cacheSecret,salt);tempData.pin=resultData.threads[i].pin;tempData.time=resultData.threads[i].pin?resultData.threads[i].time*pinnedThreadsOrderTime:resultData.threads[i].time;tempData.data=_utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(resultData.threads[i])),cacheSecret,salt);tempData.salt=salt;cacheData.push(tempData);pinnedThreadsOrderTime--;}catch(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}db.threads.bulkPut(cacheData)["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}callback&&callback(returnData);/**
                          * Delete callback so if server pushes response before
                          * cache, cache won't send data again
                          */callback=undefined;if(!returnData.hasError&&returnCache){chatEvents.fireEvent('threadEvents',{type:'THREADS_LIST_CHANGE',result:returnData.result});}}});},getAllThreads=function getAllThreads(params,callback){var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.GET_THREADS,typeCode:generalTypeCode,//params.typeCode,
@@ -57677,14 +54250,14 @@ content:{}};sendMessageParams.content.summary=params.summary;return chatMessagin
              *
              * @return {object} Instant result of sendMessage
              */getHistory=function getHistory(params,callback){if(parseInt(params.threadId)>0){var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.GET_HISTORY,typeCode:generalTypeCode,//params.typeCode,
-content:{},subjectId:params.threadId},whereClause={},offset=parseInt(params.offset)>0?parseInt(params.offset):0,count=parseInt(params.count)>0?parseInt(params.count):config.getHistoryCount,order=typeof params.order!='undefined'?params.order.toLowerCase():'desc',functionLevelCache=typeof params.cache=='boolean'?params.cache:true,cacheResult={},serverResult={},cacheFirstMessage,cacheLastMessage,messages,returnCache,cacheReady=false,dynamicHistoryCount=params.dynamicHistoryCount&&typeof params.dynamicHistoryCount==='boolean'?params.dynamicHistoryCount:false,sendingQueue=params.queues&&typeof params.queues.sending==='boolean'?params.queues.sending:true,failedQueue=params.queues&&typeof params.queues.failed==='boolean'?params.queues.failed:true,uploadingQueue=params.queues&&typeof params.queues.uploading==='boolean'?params.queues.uploading:true,sendingQueueMessages=[],failedQueueMessages=[],uploadingQueueMessages=[];if(sendingQueue){getChatSendQueue(parseInt(params.threadId),function(sendQueueMessages){for(var i=0;i<sendQueueMessages.length;i++){var time=new Date().getTime();sendingQueueMessages.push(formatDataToMakeMessage(sendQueueMessages[i].threadId,{uniqueId:sendQueueMessages[i].uniqueId,ownerId:chatMessaging.userInfo.id,message:sendQueueMessages[i].content,metadata:sendQueueMessages[i].metadata,systemMetadata:sendQueueMessages[i].systemMetadata,replyInfo:sendQueueMessages[i].replyInfo,forwardInfo:sendQueueMessages[i].forwardInfo,time:time,timeNanos:time%1000*1000000}));}});}if(uploadingQueue){getChatUploadQueue(parseInt(params.threadId),function(uploadQueueMessages){for(var i=0;i<uploadQueueMessages.length;i++){uploadQueueMessages[i].message.participant=chatMessaging.userInfo;var time=new Date().getTime();uploadQueueMessages[i].message.time=time;uploadQueueMessages[i].message.timeNanos=time%1000*1000000;uploadingQueueMessages.push(formatDataToMakeMessage(params.threadId,uploadQueueMessages[i].message,false));}});}getChatWaitQueue(parseInt(params.threadId),failedQueue,function(waitQueueMessages){if(cacheSecret.length>0){for(var i=0;i<waitQueueMessages.length;i++){var decryptedEnqueuedMessage={};if(cacheInMemory){decryptedEnqueuedMessage=waitQueueMessages[i];}else{decryptedEnqueuedMessage=Utility.jsonParser(chatDecrypt(waitQueueMessages[i].message,cacheSecret));}var time=new Date().getTime();failedQueueMessages[i]=formatDataToMakeMessage(waitQueueMessages[i].threadId,{uniqueId:decryptedEnqueuedMessage.uniqueId,ownerId:chatMessaging.userInfo.id,message:decryptedEnqueuedMessage.content,metadata:decryptedEnqueuedMessage.metadata,systemMetadata:decryptedEnqueuedMessage.systemMetadata,replyInfo:decryptedEnqueuedMessage.replyInfo,forwardInfo:decryptedEnqueuedMessage.forwardInfo,participant:chatMessaging.userInfo,time:time,timeNanos:time%1000*1000000});}}else{failedQueueMessages=[];}if(dynamicHistoryCount){var tempCount=count-(sendingQueueMessages.length+failedQueueMessages.length+uploadingQueueMessages.length);sendMessageParams.content.count=tempCount>0?tempCount:0;}else{sendMessageParams.content.count=count;}sendMessageParams.content.offset=offset;sendMessageParams.content.order=order;if(parseInt(params.messageId)>0){sendMessageParams.content.id=whereClause.id=params.messageId;}if(Array.isArray(params.uniqueIds)){sendMessageParams.content.uniqueIds=params.uniqueIds;}if(parseInt(params.fromTimeFull)>0&&params.fromTimeFull.toString().length===19){sendMessageParams.content.fromTime=whereClause.fromTime=parseInt(params.fromTimeFull.toString().substring(0,13));sendMessageParams.content.fromTimeNanos=whereClause.fromTimeNanos=parseInt(params.fromTimeFull.toString().substring(10,19));}else{if(parseInt(params.fromTime)>0&&parseInt(params.fromTime)<9999999999999){sendMessageParams.content.fromTime=whereClause.fromTime=parseInt(params.fromTime);}if(parseInt(params.fromTimeNanos)>0&&parseInt(params.fromTimeNanos)<999999999){sendMessageParams.content.fromTimeNanos=whereClause.fromTimeNanos=parseInt(params.fromTimeNanos);}}if(parseInt(params.toTimeFull)>0&&params.toTimeFull.toString().length===19){sendMessageParams.content.toTime=whereClause.toTime=parseInt(params.toTimeFull.toString().substring(0,13));sendMessageParams.content.toTimeNanos=whereClause.toTimeNanos=parseInt(params.toTimeFull.toString().substring(10,19));}else{if(parseInt(params.toTime)>0&&parseInt(params.toTime)<9999999999999){sendMessageParams.content.toTime=whereClause.toTime=parseInt(params.toTime);}if(parseInt(params.toTimeNanos)>0&&parseInt(params.toTimeNanos)<999999999){sendMessageParams.content.toTimeNanos=whereClause.toTimeNanos=parseInt(params.toTimeNanos);}}if(typeof params.query!='undefined'){sendMessageParams.content.query=whereClause.query=params.query;}if(params.allMentioned&&typeof params.allMentioned=='boolean'){sendMessageParams.content.allMentioned=whereClause.allMentioned=params.allMentioned;}if(params.unreadMentioned&&typeof params.unreadMentioned=='boolean'){sendMessageParams.content.unreadMentioned=whereClause.unreadMentioned=params.unreadMentioned;}if(params.messageType&&typeof params.messageType.toUpperCase()!=='undefined'&&chatMessageTypes[params.messageType.toUpperCase()]>0){sendMessageParams.content.messageType=whereClause.messageType=chatMessageTypes[params.messageType.toUpperCase()];}if((0,_typeof2["default"])(params.metadataCriteria)=='object'&&params.metadataCriteria.hasOwnProperty('field')){sendMessageParams.content.metadataCriteria=whereClause.metadataCriteria=params.metadataCriteria;}/**
+content:{},subjectId:params.threadId},whereClause={},offset=parseInt(params.offset)>0?parseInt(params.offset):0,count=parseInt(params.count)>0?parseInt(params.count):config.getHistoryCount,order=typeof params.order!='undefined'?params.order.toLowerCase():'desc',functionLevelCache=typeof params.cache=='boolean'?params.cache:true,cacheResult={},serverResult={},cacheFirstMessage,cacheLastMessage,messages,returnCache,cacheReady=false,dynamicHistoryCount=params.dynamicHistoryCount&&typeof params.dynamicHistoryCount==='boolean'?params.dynamicHistoryCount:false,sendingQueue=params.queues&&typeof params.queues.sending==='boolean'?params.queues.sending:true,failedQueue=params.queues&&typeof params.queues.failed==='boolean'?params.queues.failed:true,uploadingQueue=params.queues&&typeof params.queues.uploading==='boolean'?params.queues.uploading:true,sendingQueueMessages=[],failedQueueMessages=[],uploadingQueueMessages=[];if(sendingQueue){getChatSendQueue(parseInt(params.threadId),function(sendQueueMessages){for(var i=0;i<sendQueueMessages.length;i++){var time=new Date().getTime();sendingQueueMessages.push(formatDataToMakeMessage(sendQueueMessages[i].threadId,{uniqueId:sendQueueMessages[i].uniqueId,ownerId:chatMessaging.userInfo.id,message:sendQueueMessages[i].content,metadata:sendQueueMessages[i].metadata,systemMetadata:sendQueueMessages[i].systemMetadata,replyInfo:sendQueueMessages[i].replyInfo,forwardInfo:sendQueueMessages[i].forwardInfo,time:time,timeNanos:time%1000*1000000}));}});}if(uploadingQueue){getChatUploadQueue(parseInt(params.threadId),function(uploadQueueMessages){for(var i=0;i<uploadQueueMessages.length;i++){uploadQueueMessages[i].message.participant=chatMessaging.userInfo;var time=new Date().getTime();uploadQueueMessages[i].message.time=time;uploadQueueMessages[i].message.timeNanos=time%1000*1000000;uploadingQueueMessages.push(formatDataToMakeMessage(params.threadId,uploadQueueMessages[i].message,false));}});}getChatWaitQueue(parseInt(params.threadId),failedQueue,function(waitQueueMessages){if(cacheSecret.length>0){for(var i=0;i<waitQueueMessages.length;i++){var decryptedEnqueuedMessage={};if(cacheInMemory){decryptedEnqueuedMessage=waitQueueMessages[i];}else{decryptedEnqueuedMessage=_utility["default"].jsonParser(chatDecrypt(waitQueueMessages[i].message,cacheSecret));}var time=new Date().getTime();failedQueueMessages[i]=formatDataToMakeMessage(waitQueueMessages[i].threadId,{uniqueId:decryptedEnqueuedMessage.uniqueId,ownerId:chatMessaging.userInfo.id,message:decryptedEnqueuedMessage.content,metadata:decryptedEnqueuedMessage.metadata,systemMetadata:decryptedEnqueuedMessage.systemMetadata,replyInfo:decryptedEnqueuedMessage.replyInfo,forwardInfo:decryptedEnqueuedMessage.forwardInfo,participant:chatMessaging.userInfo,time:time,timeNanos:time%1000*1000000});}}else{failedQueueMessages=[];}if(dynamicHistoryCount){var tempCount=count-(sendingQueueMessages.length+failedQueueMessages.length+uploadingQueueMessages.length);sendMessageParams.content.count=tempCount>0?tempCount:0;}else{sendMessageParams.content.count=count;}sendMessageParams.content.offset=offset;sendMessageParams.content.order=order;if(parseInt(params.messageId)>0){sendMessageParams.content.id=whereClause.id=params.messageId;}if(Array.isArray(params.uniqueIds)){sendMessageParams.content.uniqueIds=params.uniqueIds;}if(parseInt(params.fromTimeFull)>0&&params.fromTimeFull.toString().length===19){sendMessageParams.content.fromTime=whereClause.fromTime=parseInt(params.fromTimeFull.toString().substring(0,13));sendMessageParams.content.fromTimeNanos=whereClause.fromTimeNanos=parseInt(params.fromTimeFull.toString().substring(10,19));}else{if(parseInt(params.fromTime)>0&&parseInt(params.fromTime)<9999999999999){sendMessageParams.content.fromTime=whereClause.fromTime=parseInt(params.fromTime);}if(parseInt(params.fromTimeNanos)>0&&parseInt(params.fromTimeNanos)<999999999){sendMessageParams.content.fromTimeNanos=whereClause.fromTimeNanos=parseInt(params.fromTimeNanos);}}if(parseInt(params.toTimeFull)>0&&params.toTimeFull.toString().length===19){sendMessageParams.content.toTime=whereClause.toTime=parseInt(params.toTimeFull.toString().substring(0,13));sendMessageParams.content.toTimeNanos=whereClause.toTimeNanos=parseInt(params.toTimeFull.toString().substring(10,19));}else{if(parseInt(params.toTime)>0&&parseInt(params.toTime)<9999999999999){sendMessageParams.content.toTime=whereClause.toTime=parseInt(params.toTime);}if(parseInt(params.toTimeNanos)>0&&parseInt(params.toTimeNanos)<999999999){sendMessageParams.content.toTimeNanos=whereClause.toTimeNanos=parseInt(params.toTimeNanos);}}if(typeof params.query!='undefined'){sendMessageParams.content.query=whereClause.query=params.query;}if(params.allMentioned&&typeof params.allMentioned=='boolean'){sendMessageParams.content.allMentioned=whereClause.allMentioned=params.allMentioned;}if(params.unreadMentioned&&typeof params.unreadMentioned=='boolean'){sendMessageParams.content.unreadMentioned=whereClause.unreadMentioned=params.unreadMentioned;}if(params.messageType&&typeof params.messageType.toUpperCase()!=='undefined'&&chatMessageTypes[params.messageType.toUpperCase()]>0){sendMessageParams.content.messageType=whereClause.messageType=chatMessageTypes[params.messageType.toUpperCase()];}if((0,_typeof2["default"])(params.metadataCriteria)=='object'&&params.metadataCriteria.hasOwnProperty('field')){sendMessageParams.content.metadataCriteria=whereClause.metadataCriteria=params.metadataCriteria;}/**
                          * Get Thread Messages from cache
                          *
                          * Because we are not applying metadataCriteria search
                          * on cached data, if this attribute has been set, we
                          * should not return any results from cache
                          */ // TODO ASC order?!
-if(functionLevelCache&&canUseCache&&cacheSecret.length>0&&!whereClause.hasOwnProperty('metadataCriteria')&&order.toLowerCase()!=="asc"){if(db){var table=db.messages,collection;returnCache=true;if(whereClause.hasOwnProperty('id')&&whereClause.id>0){collection=table.where('id').equals(parseInt(params.id)).and(function(message){return message.owner===chatMessaging.userInfo.id;}).reverse();}else{collection=table.where('[threadId+owner+time]').between([parseInt(params.threadId),parseInt(chatMessaging.userInfo.id),minIntegerValue],[parseInt(params.threadId),parseInt(chatMessaging.userInfo.id),maxIntegerValue*1000]).reverse();}collection.toArray().then(function(resultMessages){messages=resultMessages.sort(Utility.dynamicSort('time',!(order==='asc')));if(whereClause.hasOwnProperty('fromTime')){var fromTime=whereClause.hasOwnProperty('fromTimeNanos')?Math.floor(whereClause.fromTime/1000)*1000000000+whereClause.fromTimeNanos:whereClause.fromTime*1000000;messages=messages.filter(function(message){return message.time>=fromTime;});}if(whereClause.hasOwnProperty('toTime')){var toTime=whereClause.hasOwnProperty('toTimeNanos')?Math.floor(whereClause.toTime/1000)*1000000000+whereClause.toTimeNanos:whereClause.toTime*1000000;messages=messages.filter(function(message){return message.time<=toTime;});}if(whereClause.hasOwnProperty('query')&&typeof whereClause.query=='string'){messages=messages.filter(function(message){var reg=new RegExp(whereClause.query);return reg.test(chatDecrypt(message.message,cacheSecret,message.salt));});}/**
+if(functionLevelCache&&canUseCache&&cacheSecret.length>0&&!whereClause.hasOwnProperty('metadataCriteria')&&order.toLowerCase()!=="asc"){if(db){var table=db.messages,collection;returnCache=true;if(whereClause.hasOwnProperty('id')&&whereClause.id>0){collection=table.where('id').equals(parseInt(params.id)).and(function(message){return message.owner===chatMessaging.userInfo.id;}).reverse();}else{collection=table.where('[threadId+owner+time]').between([parseInt(params.threadId),parseInt(chatMessaging.userInfo.id),minIntegerValue],[parseInt(params.threadId),parseInt(chatMessaging.userInfo.id),maxIntegerValue*1000]).reverse();}collection.toArray().then(function(resultMessages){messages=resultMessages.sort(_utility["default"].dynamicSort('time',!(order==='asc')));if(whereClause.hasOwnProperty('fromTime')){var fromTime=whereClause.hasOwnProperty('fromTimeNanos')?Math.floor(whereClause.fromTime/1000)*1000000000+whereClause.fromTimeNanos:whereClause.fromTime*1000000;messages=messages.filter(function(message){return message.time>=fromTime;});}if(whereClause.hasOwnProperty('toTime')){var toTime=whereClause.hasOwnProperty('toTimeNanos')?Math.floor(whereClause.toTime/1000)*1000000000+whereClause.toTimeNanos:whereClause.toTime*1000000;messages=messages.filter(function(message){return message.time<=toTime;});}if(whereClause.hasOwnProperty('query')&&typeof whereClause.query=='string'){messages=messages.filter(function(message){var reg=new RegExp(whereClause.query);return reg.test(chatDecrypt(message.message,cacheSecret,message.salt));});}/**
                                          * We should check to see if message[offset-1] has
                                          * GAP on cache or not? if yes, we should not return
                                          * any value from cache, because there is a gap between
@@ -57704,7 +54277,7 @@ if(gaps.length>0){returnCache=false;}})["catch"](function(error){chatEvents.fire
                                                              * If any of messages between first and last message of cache response
                                                              * has a GAP before them, we shouldn't return cache's result and
                                                              * wait for server's response to hit in
-                                                             */if(i!==0&&i!==messages.length-1&&messages[i].hasGap){returnCache=false;break;}try{var tempMessage=formatDataToMakeMessage(messages[i].threadId,JSON.parse(chatDecrypt(messages[i].data,cacheSecret,messages[i].salt)),true);cacheData.push(tempMessage);cacheResult[tempMessage.id]={index:i,messageId:tempMessage.id,threadId:tempMessage.threadId,data:Utility.MD5(JSON.stringify([tempMessage.id,tempMessage.message,tempMessage.metadata,tempMessage.systemMetadata]))};}catch(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}/**
+                                                             */if(i!==0&&i!==messages.length-1&&messages[i].hasGap){returnCache=false;break;}try{var tempMessage=formatDataToMakeMessage(messages[i].threadId,JSON.parse(chatDecrypt(messages[i].data,cacheSecret,messages[i].salt)),true);cacheData.push(tempMessage);cacheResult[tempMessage.id]={index:i,messageId:tempMessage.id,threadId:tempMessage.threadId,data:_utility["default"].MD5(JSON.stringify([tempMessage.id,tempMessage.message,tempMessage.metadata,tempMessage.systemMetadata]))};}catch(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}/**
                                                          * If there is a GAP between messages of cache result
                                                          * WE should not return data from cache, cause it is not valid!
                                                          * Therefore we wait for server's response and edit cache afterwards
@@ -57861,7 +54434,7 @@ if(gaps.length>0){returnCache=false;}})["catch"](function(error){chatEvents.fire
                                                              */var boundryStartMessageTime=firstMessage.time<lastMessage.time?firstMessage.time:lastMessage.time,boundryEndMessageTime=firstMessage.time>lastMessage.time?firstMessage.time:lastMessage.time;db.messages.where('[threadId+owner+time]').between([parseInt(params.threadId),parseInt(chatMessaging.userInfo.id),boundryStartMessageTime],[parseInt(params.threadId),parseInt(chatMessaging.userInfo.id),boundryEndMessageTime],true,true)["delete"]()["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}}}}/**
                                              * Insert new messages into cache database
                                              * after deleting old messages from cache
-                                             */var cacheData=[];for(var i=0;i<history.length;i++){serverResult[history[i].id]={index:i,data:Utility.MD5(JSON.stringify([history[i].id,history[i].message,history[i].metadata,history[i].systemMetadata]))};try{var tempData={},salt=Utility.generateUUID();tempData.id=parseInt(history[i].id);tempData.owner=parseInt(chatMessaging.userInfo.id);tempData.threadId=parseInt(history[i].threadId);tempData.time=history[i].time;tempData.message=Utility.crypt(history[i].message,cacheSecret,salt);tempData.data=Utility.crypt(JSON.stringify(unsetNotSeenDuration(history[i])),cacheSecret,salt);tempData.salt=salt;tempData.sendStatus='sent';tempData.hasGap=false;cacheData.push(tempData);resultMessagesId.push(history[i].id);}catch(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}db.messages.bulkPut(cacheData).then(function(){if((0,_typeof2["default"])(lastMessage)=='object'&&lastMessage!=null&&lastMessage.id>0&&lastMessage.previousId>0){/**
+                                             */var cacheData=[];for(var i=0;i<history.length;i++){serverResult[history[i].id]={index:i,data:_utility["default"].MD5(JSON.stringify([history[i].id,history[i].message,history[i].metadata,history[i].systemMetadata]))};try{var tempData={},salt=_utility["default"].generateUUID();tempData.id=parseInt(history[i].id);tempData.owner=parseInt(chatMessaging.userInfo.id);tempData.threadId=parseInt(history[i].threadId);tempData.time=history[i].time;tempData.message=_utility["default"].crypt(history[i].message,cacheSecret,salt);tempData.data=_utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(history[i])),cacheSecret,salt);tempData.salt=salt;tempData.sendStatus='sent';tempData.hasGap=false;cacheData.push(tempData);resultMessagesId.push(history[i].id);}catch(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}db.messages.bulkPut(cacheData).then(function(){if((0,_typeof2["default"])(lastMessage)=='object'&&lastMessage!=null&&lastMessage.id>0&&lastMessage.previousId>0){/**
                                                          * Check to see if there is a Gap in cache before
                                                          * lastMessage or not?
                                                          * To do this, we should check existence of message
@@ -57942,7 +54515,7 @@ if(gaps.length>0){returnCache=false;}})["catch"](function(error){chatEvents.fire
              *
              * @return {object} Instant sendMessage result
              */updateThreadInfo=function updateThreadInfo(params,callback){var updateThreadInfoData={chatMessageVOType:_constants.chatMessageVOTypes.UPDATE_THREAD_INFO,typeCode:generalTypeCode,//params.typeCode,
-content:{},pushMsgType:3,token:token},threadInfoContent={},fileUploadParams={},metadata={file:{}},threadId,fileUniqueId=Utility.generateUUID();if(params){if(!params.userGroupHash||params.userGroupHash.length===0||typeof params.userGroupHash!=='string'){chatEvents.fireEvent('error',{code:6304,message:CHAT_ERRORS[6304]});return;}else{fileUploadParams.userGroupHash=params.userGroupHash;}if(parseInt(params.threadId)>0){threadId=parseInt(params.threadId);updateThreadInfoData.subjectId=threadId;}else{chatEvents.fireEvent('error',{code:999,message:'Thread ID is required for Updating thread info!'});}if(typeof params.description=='string'){threadInfoContent.description=params.description;}if(typeof params.title=='string'){threadInfoContent.name=params.title;}if((0,_typeof2["default"])(params.metadata)=='object'){threadInfoContent.metadata=JSON.parse(JSON.stringify(params.metadata));}else if(typeof params.metadata=='string'){try{threadInfoContent.metadata=JSON.parse(params.metadata);}catch(e){threadInfoContent.metadata={};}}else{threadInfoContent.metadata={};}updateThreadInfoData.content=threadInfoContent;if((0,_typeof2["default"])(params.image)=='object'&&params.image.size>0){return chatUploadHandler({threadId:threadId,file:params.image,fileUniqueId:fileUniqueId},function(uploadHandlerResult,uploadHandlerMetadata,fileType,fileExtension){fileUploadParams=Object.assign(fileUploadParams,uploadHandlerResult);threadInfoContent.metadata=JSON.stringify(Object.assign(threadInfoContent.metadata,uploadHandlerMetadata));putInChatUploadQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.UPDATE_THREAD_INFO,typeCode:generalTypeCode,//params.typeCode,
+content:{},pushMsgType:3,token:token},threadInfoContent={},fileUploadParams={},metadata={file:{}},threadId,fileUniqueId=_utility["default"].generateUUID();if(params){if(!params.userGroupHash||params.userGroupHash.length===0||typeof params.userGroupHash!=='string'){chatEvents.fireEvent('error',{code:6304,message:CHAT_ERRORS[6304]});return;}else{fileUploadParams.userGroupHash=params.userGroupHash;}if(parseInt(params.threadId)>0){threadId=parseInt(params.threadId);updateThreadInfoData.subjectId=threadId;}else{chatEvents.fireEvent('error',{code:999,message:'Thread ID is required for Updating thread info!'});}if(typeof params.description=='string'){threadInfoContent.description=params.description;}if(typeof params.title=='string'){threadInfoContent.name=params.title;}if((0,_typeof2["default"])(params.metadata)=='object'){threadInfoContent.metadata=JSON.parse(JSON.stringify(params.metadata));}else if(typeof params.metadata=='string'){try{threadInfoContent.metadata=JSON.parse(params.metadata);}catch(e){threadInfoContent.metadata={};}}else{threadInfoContent.metadata={};}updateThreadInfoData.content=threadInfoContent;if((0,_typeof2["default"])(params.image)=='object'&&params.image.size>0){return chatUploadHandler({threadId:threadId,file:params.image,fileUniqueId:fileUniqueId},function(uploadHandlerResult,uploadHandlerMetadata,fileType,fileExtension){fileUploadParams=Object.assign(fileUploadParams,uploadHandlerResult);threadInfoContent.metadata=JSON.stringify(Object.assign(threadInfoContent.metadata,uploadHandlerMetadata));putInChatUploadQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.UPDATE_THREAD_INFO,typeCode:generalTypeCode,//params.typeCode,
 subjectId:threadId,content:threadInfoContent,metadata:threadInfoContent.metadata,uniqueId:fileUniqueId,pushMsgType:3,token:token},callbacks:callback},function(){if(imageMimeTypes.indexOf(fileType)>=0||imageExtentions.indexOf(fileExtension)>=0){uploadImageToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){metadata['name']=result.result.name;metadata['fileHash']=result.result.hash;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;metadata['file']['actualHeight']=result.result.actualHeight;metadata['file']['actualWidth']=result.result.actualWidth;metadata['file']['link']="".concat(SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS,"/api/images/").concat(result.result.hash,"?checkUserGroupAccess=true");transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}else{chatEvents.fireEvent('error',{code:999,message:'Thread picture can be a image type only!'});}});});}else if(typeof params.image=='string'&&params.image.length>5){threadInfoContent.metadata=JSON.stringify(Object.assign(threadInfoContent.metadata,{fileHash:params.image}));getImageDownloadLinkFromPodspaceNew({hashCode:params.image},function(result){if(!result.hasError){threadInfoContent.image=result.downloadUrl;}});return chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.UPDATE_THREAD_INFO,typeCode:generalTypeCode,//params.typeCode,
 subjectId:threadId,content:threadInfoContent,metadata:threadInfoContent.metadata,uniqueId:fileUniqueId,pushMsgType:3,token:token},{onResult:function onResult(result){callback&&callback(result);}});}else{if(Object.keys(threadInfoContent.metadata).length===0){delete threadInfoContent.metadata;}return chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.UPDATE_THREAD_INFO,typeCode:generalTypeCode,//params.typeCode,
 subjectId:threadId,content:threadInfoContent,metadata:threadInfoContent.metadata,uniqueId:fileUniqueId,pushMsgType:3,token:token},{onResult:function onResult(result){callback&&callback(result);}});}}},/**
@@ -57990,7 +54563,7 @@ content:{},subjectId:params.threadId},whereClause={},returnCache=false;var offse
                  * Retrieve thread participants from cache
                  */if(functionLevelCache&&canUseCache&&cacheSecret.length>0){if(db){db.participants.where('expireTime').below(new Date().getTime())["delete"]().then(function(){var thenAble;if(Object.keys(whereClause).length===0){thenAble=db.participants.where('threadId').equals(parseInt(params.threadId)).and(function(participant){return participant.owner===chatMessaging.userInfo.id;});}else{if(whereClause.hasOwnProperty('name')){thenAble=db.participants.where('threadId').equals(parseInt(params.threadId)).and(function(participant){return participant.owner===chatMessaging.userInfo.id;}).filter(function(contact){var reg=new RegExp(whereClause.name);return reg.test(chatDecrypt(contact.contactName,cacheSecret,contact.salt)+' '+chatDecrypt(contact.name,cacheSecret,contact.salt)+' '+chatDecrypt(contact.email,cacheSecret,contact.salt));});}}thenAble.offset(offset).limit(count).reverse().toArray().then(function(participants){db.participants.where('threadId').equals(parseInt(params.threadId)).and(function(participant){return participant.owner===chatMessaging.userInfo.id;}).count().then(function(participantsCount){var cacheData=[];for(var i=0;i<participants.length;i++){try{cacheData.push(formatDataToMakeParticipant(JSON.parse(chatDecrypt(participants[i].data,cacheSecret,participants[i].salt)),participants[i].threadId));}catch(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}var returnData={hasError:false,cache:true,errorCode:0,errorMessage:'',result:{participants:cacheData,contentCount:participantsCount,hasNext:!(participants.length<count),nextOffset:offset*1+participants.length}};if(cacheData.length>0){callback&&callback(returnData);callback=undefined;returnCache=true;}});})["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});})["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={participants:reformatThreadParticipants(messageContent,params.threadId),contentCount:result.contentCount,hasNext:sendMessageParams.content.offset+sendMessageParams.content.count<result.contentCount&&messageLength>0,nextOffset:sendMessageParams.content.offset*1+messageLength*1};returnData.result=resultData;/**
                              * Add thread participants into cache database #cache
-                             */if(canUseCache&&cacheSecret.length>0){if(db){var cacheData=[];for(var i=0;i<resultData.participants.length;i++){try{var tempData={},salt=Utility.generateUUID();tempData.id=parseInt(resultData.participants[i].id);tempData.owner=parseInt(chatMessaging.userInfo.id);tempData.threadId=parseInt(resultData.participants[i].threadId);tempData.notSeenDuration=resultData.participants[i].notSeenDuration;tempData.admin=resultData.participants[i].admin;tempData.auditor=resultData.participants[i].auditor;tempData.name=Utility.crypt(resultData.participants[i].name,cacheSecret,salt);tempData.contactName=Utility.crypt(resultData.participants[i].contactName,cacheSecret,salt);tempData.email=Utility.crypt(resultData.participants[i].email,cacheSecret,salt);tempData.expireTime=new Date().getTime()+cacheExpireTime;tempData.data=Utility.crypt(JSON.stringify(unsetNotSeenDuration(resultData.participants[i])),cacheSecret,salt);tempData.salt=salt;cacheData.push(tempData);}catch(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}db.participants.bulkPut(cacheData)["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}callback&&callback(returnData);/**
+                             */if(canUseCache&&cacheSecret.length>0){if(db){var cacheData=[];for(var i=0;i<resultData.participants.length;i++){try{var tempData={},salt=_utility["default"].generateUUID();tempData.id=parseInt(resultData.participants[i].id);tempData.owner=parseInt(chatMessaging.userInfo.id);tempData.threadId=parseInt(resultData.participants[i].threadId);tempData.notSeenDuration=resultData.participants[i].notSeenDuration;tempData.admin=resultData.participants[i].admin;tempData.auditor=resultData.participants[i].auditor;tempData.name=_utility["default"].crypt(resultData.participants[i].name,cacheSecret,salt);tempData.contactName=_utility["default"].crypt(resultData.participants[i].contactName,cacheSecret,salt);tempData.email=_utility["default"].crypt(resultData.participants[i].email,cacheSecret,salt);tempData.expireTime=new Date().getTime()+cacheExpireTime;tempData.data=_utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(resultData.participants[i])),cacheSecret,salt);tempData.salt=salt;cacheData.push(tempData);}catch(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}db.participants.bulkPut(cacheData)["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}callback&&callback(returnData);/**
                          * Delete callback so if server pushes response before
                          * cache, cache won't send data again
                          */callback=undefined;if(!returnData.hasError&&returnCache){chatEvents.fireEvent('threadEvents',{type:'THREAD_PARTICIPANTS_LIST_CHANGE',threadId:params.threadId,result:returnData.result});}}});},/**
@@ -58057,7 +54630,7 @@ content:params.messageId,pushMsgType:3});},/**
              * @param {string}  hashCode        HashCode of uploaded file
              *
              * @return {object} File Object
-             */getFileFromPodspace=function getFileFromPodspace(params,callback){var downloadUniqueId=Utility.generateUUID(),getFileData={};if(params){if(params.hashCode&&typeof params.hashCode=='string'){getFileData.hash=params.hashCode;}else{callback({hasError:true,error:'Enter a file hash to get'});return;}}if(params.responseType==='link'){var returnLink=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE+"?hash=".concat(params.hashCode,"&_token_=").concat(token,"&_token_issuer_=1");callback({hasError:false,type:'link',result:returnLink});}else{httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE,method:'GET',responseType:'blob',uniqueId:downloadUniqueId,headers:{'_token_':token,'_token_issuer_':1// 'Range': 'bytes=100-200'
+             */getFileFromPodspace=function getFileFromPodspace(params,callback){var downloadUniqueId=_utility["default"].generateUUID(),getFileData={};if(params){if(params.hashCode&&typeof params.hashCode=='string'){getFileData.hash=params.hashCode;}else{callback({hasError:true,error:'Enter a file hash to get'});return;}}if(params.responseType==='link'){var returnLink=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE+"?hash=".concat(params.hashCode,"&_token_=").concat(token,"&_token_issuer_=1");callback({hasError:false,type:'link',result:returnLink});}else{httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE,method:'GET',responseType:'blob',uniqueId:downloadUniqueId,headers:{'_token_':token,'_token_issuer_':1// 'Range': 'bytes=100-200'
 },data:getFileData},function(result){if(!result.hasError){callback({hasError:result.hasError,result:result.result.response,type:'blob'});}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - File download has been canceled!"));});}};}},/**
              * Get File From PodSpace New
              *
@@ -58069,7 +54642,7 @@ content:params.messageId,pushMsgType:3});},/**
              * @param {string}  hashCode        HashCode of uploaded file
              *
              * @return {object} File Object
-             */getFileFromPodspaceNew=function getFileFromPodspaceNew(params,callback){var downloadUniqueId=Utility.generateUUID(),getFileData={};if(params){if(params.hashCode&&typeof params.hashCode=='string'){getFileData.hash=params.hashCode;}else{callback({hasError:true,error:'Enter a file hash to get'});return;}if(params.checkUserGroupAccess){getFileData.checkUserGroupAccess=true;}}if(params.responseType==='link'){var returnLink=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true";callback({hasError:false,type:'link',result:returnLink});}else{httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true",method:'GET',responseType:'blob',uniqueId:downloadUniqueId,headers:{'Authorization':'Bearer '+token},enableDownloadProgressEvents:params.enableDownloadProgressEvents,hashCode:params.hashCode//data: getFileData
+             */getFileFromPodspaceNew=function getFileFromPodspaceNew(params,callback){var downloadUniqueId=_utility["default"].generateUUID(),getFileData={};if(params){if(params.hashCode&&typeof params.hashCode=='string'){getFileData.hash=params.hashCode;}else{callback({hasError:true,error:'Enter a file hash to get'});return;}if(params.checkUserGroupAccess){getFileData.checkUserGroupAccess=true;}}if(params.responseType==='link'){var returnLink=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true";callback({hasError:false,type:'link',result:returnLink});}else{httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true",method:'GET',responseType:'blob',uniqueId:downloadUniqueId,headers:{'Authorization':'Bearer '+token},enableDownloadProgressEvents:params.enableDownloadProgressEvents,hashCode:params.hashCode//data: getFileData
 },function(result){if(!result.hasError){callback({hasError:result.hasError,result:result.result.response,type:'blob'});}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - File download has been canceled!"));});}};}},/**
              * Deprecated
              *
@@ -58085,7 +54658,7 @@ content:params.messageId,pushMsgType:3});},/**
              * @param {string}  quality         Image quality betwenn 0.0 anf 1.0
              *
              * @return {object} File Object
-             */getImageFromPodspace=function getImageFromPodspace(params,callback){var downloadUniqueId=Utility.generateUUID(),getImageData={size:params.size,quality:params.quality,crop:params.crop};if(params){if(params.hashCode&&typeof params.hashCode=='string'){getImageData.hash=params.hashCode;}else{callback({hasError:true,error:'Enter a file hash to get'});return;}if(params.responseType==='link'){var returnLink=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE+"?hash=".concat(params.hashCode,"&_token_=").concat(token,"&_token_issuer_=1&size=").concat(params.size,"&quality=").concat(params.quality,"&crop=").concat(params.crop);callback({hasError:false,type:'link',result:returnLink});}else if(params.responseType==='base64'){httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE,method:'GET',uniqueId:downloadUniqueId,responseType:'blob',headers:{'_token_':token,'_token_issuer_':1},data:getImageData},function(result){if(!result.hasError){var fr=new FileReader();fr.onloadend=function(){callback({hasError:result.hasError,type:'base64',result:fr.result});};fr.readAsDataURL(result.result.response);}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - Image download has been canceled!"));});}};}else{httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE,method:'GET',responseType:'blob',uniqueId:downloadUniqueId,headers:{'_token_':token,'_token_issuer_':1},data:getImageData},function(result){if(!result.hasError){callback({hasError:result.hasError,type:'blob',result:result.result.response});}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - Image download has been canceled!"));});}};}}},/**
+             */getImageFromPodspace=function getImageFromPodspace(params,callback){var downloadUniqueId=_utility["default"].generateUUID(),getImageData={size:params.size,quality:params.quality,crop:params.crop};if(params){if(params.hashCode&&typeof params.hashCode=='string'){getImageData.hash=params.hashCode;}else{callback({hasError:true,error:'Enter a file hash to get'});return;}if(params.responseType==='link'){var returnLink=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE+"?hash=".concat(params.hashCode,"&_token_=").concat(token,"&_token_issuer_=1&size=").concat(params.size,"&quality=").concat(params.quality,"&crop=").concat(params.crop);callback({hasError:false,type:'link',result:returnLink});}else if(params.responseType==='base64'){httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE,method:'GET',uniqueId:downloadUniqueId,responseType:'blob',headers:{'_token_':token,'_token_issuer_':1},data:getImageData},function(result){if(!result.hasError){var fr=new FileReader();fr.onloadend=function(){callback({hasError:result.hasError,type:'base64',result:fr.result});};fr.readAsDataURL(result.result.response);}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - Image download has been canceled!"));});}};}else{httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE,method:'GET',responseType:'blob',uniqueId:downloadUniqueId,headers:{'_token_':token,'_token_issuer_':1},data:getImageData},function(result){if(!result.hasError){callback({hasError:result.hasError,type:'blob',result:result.result.response});}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - Image download has been canceled!"));});}};}}},/**
              * Get Image From PodSpace New
              *
              * This functions gets an uploaded image from Pod Space File Server.
@@ -58098,7 +54671,7 @@ content:params.messageId,pushMsgType:3});},/**
              * @param {string}  quality         Image quality betwenn 0.0 anf 1.0
              *
              * @return {object} File Object
-             */getImageFromPodspaceNew=function getImageFromPodspaceNew(params,callback){var downloadUniqueId=Utility.generateUUID(),getImageData={size:params.size,quality:params.quality,crop:params.crop};if(params){if(params.hashCode&&typeof params.hashCode=='string'){getImageData.hash=params.hashCode;}else{callback({hasError:true,error:'Enter a file hash to get'});return;}if(params.responseType==='link'){var returnLink=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true&size=".concat(params.size,"&quality=").concat(params.quality,"&crop=").concat(params.crop);//+ SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE + `?hash=${params.hashCode}&_token_=${token}&_token_issuer_=1&size=${params.size}&quality=${params.quality}&crop=${params.crop}`;
+             */getImageFromPodspaceNew=function getImageFromPodspaceNew(params,callback){var downloadUniqueId=_utility["default"].generateUUID(),getImageData={size:params.size,quality:params.quality,crop:params.crop};if(params){if(params.hashCode&&typeof params.hashCode=='string'){getImageData.hash=params.hashCode;}else{callback({hasError:true,error:'Enter a file hash to get'});return;}if(params.responseType==='link'){var returnLink=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true&size=".concat(params.size,"&quality=").concat(params.quality,"&crop=").concat(params.crop);//+ SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE + `?hash=${params.hashCode}&_token_=${token}&_token_issuer_=1&size=${params.size}&quality=${params.quality}&crop=${params.crop}`;
 callback({hasError:false,type:'link',result:returnLink});}else if(params.responseType==='base64'){httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true&size=".concat(params.size,"&quality=").concat(params.quality,"&crop=").concat(params.crop),method:'GET',uniqueId:downloadUniqueId,responseType:'blob',headers:{'Authorization':'Bearer '+token},enableDownloadProgressEvents:params.enableDownloadProgressEvents,hashCode:params.hashCode//data: getImageData
 },function(result){if(!result.hasError){var fr=new FileReader();fr.onloadend=function(){callback({hasError:result.hasError,type:'base64',result:fr.result});};fr.readAsDataURL(result.result.response);}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - Image download has been canceled!"));});}};}else{httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true&size=".concat(params.size,"&quality=").concat(params.quality,"&crop=").concat(params.crop),method:'GET',responseType:'blob',uniqueId:downloadUniqueId,headers:{'Authorization':'Bearer '+token},enableDownloadProgressEvents:params.enableDownloadProgressEvents,hashCode:params.hashCode//data: getImageData
 },function(result){if(!result.hasError){callback({hasError:result.hasError,type:'blob',result:result.result.response});}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - Image download has been canceled!"));});}};}}},/**
@@ -58151,7 +54724,7 @@ callback&&callback({hasError:false,downloadUrl:downloadUrl});return downloadUrl;
              * @link http://docs.pod.land/v1.0.8.0/Developer/CustomPost/605/File
              *
              * @return {object} Uploaded File Object
-             */uploadFile=function uploadFile(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.file.name;fileType=params.file.type;fileSize=params.file.size;fileExtension=params.file.name.split('.').pop();var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFileData.file=params.file;}if(params.randomFileName){uploadFileData.fileName=Utility.generateUUID()+'.'+fileExtension;}else{uploadFileData.fileName=fileName;}uploadFileData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadFileData.threadId=params.threadId;}else{uploadThreadId=0;uploadFileData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadFileData.uniqueId=params.uniqueId;}else{uploadUniqueId=Utility.generateUUID();uploadFileData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadFileData.originalFileName=params.originalFileName;}else{uploadFileData.originalFileName=fileName;}}httpRequest({url:SERVICE_ADDRESSES.FILESERVER_ADDRESS+SERVICES_PATH.UPLOAD_FILE,method:'POST',headers:{'_token_':token,'_token_issuer_':1},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result'});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:chatMessaging.userInfo,content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},/**
+             */uploadFile=function uploadFile(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.file.name;fileType=params.file.type;fileSize=params.file.size;fileExtension=params.file.name.split('.').pop();var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFileData.file=params.file;}if(params.randomFileName){uploadFileData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadFileData.fileName=fileName;}uploadFileData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadFileData.threadId=params.threadId;}else{uploadThreadId=0;uploadFileData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadFileData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadFileData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadFileData.originalFileName=params.originalFileName;}else{uploadFileData.originalFileName=fileName;}}httpRequest({url:SERVICE_ADDRESSES.FILESERVER_ADDRESS+SERVICES_PATH.UPLOAD_FILE,method:'POST',headers:{'_token_':token,'_token_issuer_':1},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result'});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:chatMessaging.userInfo,content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},/**
              * Upload File To Pod Space
              *
              * Upload files to Pod Space Server
@@ -58168,8 +54741,8 @@ callback&&callback({hasError:false,downloadUrl:downloadUrl});return downloadUrl;
              * @link
                 *
                 * @return {object} Uploaded File Object
-             */uploadFileToPodspace=function uploadFileToPodspace(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.file.name;fileType=params.file.type;fileSize=params.file.size;fileExtension=params.file.name.split('.').pop();var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFileData.file=params.file;}if(params.randomFileName){uploadFileData.filename=Utility.generateUUID()+'.'+fileExtension;}else{uploadFileData.filename=fileName;}uploadFileData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadFileData.threadId=params.threadId;}else{uploadThreadId=0;uploadFileData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadFileData.uniqueId=params.uniqueId;}else{uploadUniqueId=Utility.generateUUID();uploadFileData.uniqueId=uploadUniqueId;}if(typeof params.userGroupHash=='string'){//userGroupHash = params.userGroupHash;
-uploadFileData.userGroupHash=params.userGroupHash;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to enter a userGroupHash to be able to upload on PodSpace!'});return;}if(typeof params.originalFileName=='string'){uploadFileData.originalFileName=params.originalFileName;}else{uploadFileData.originalFileName=fileName;}}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_FILE_TO_USERGROUP,method:'POST',headers:{'_token_':token,'_token_issuer_':1},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result'});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:chatMessaging.userInfo,content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},uploadFileToPodspaceNew=function uploadFileToPodspaceNew(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.file.name;fileType=params.file.type;fileSize=params.file.size;fileExtension=params.file.name.split('.').pop();var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFileData.file=params.file;}if(params.randomFileName){uploadFileData.fileName=Utility.generateUUID()+'.'+fileExtension;}else{uploadFileData.fileName=fileName;}uploadFileData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadFileData.threadId=params.threadId;}else{uploadThreadId=0;uploadFileData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadFileData.uniqueId=params.uniqueId;}else{uploadUniqueId=Utility.generateUUID();uploadFileData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadFileData.originalFileName=params.originalFileName;}else{uploadFileData.originalFileName=fileName;}}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_FILE_NEW,method:'POST',headers:{'Authorization':'Bearer '+token},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result'});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:userInfo,content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},/**
+             */uploadFileToPodspace=function uploadFileToPodspace(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.file.name;fileType=params.file.type;fileSize=params.file.size;fileExtension=params.file.name.split('.').pop();var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFileData.file=params.file;}if(params.randomFileName){uploadFileData.filename=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadFileData.filename=fileName;}uploadFileData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadFileData.threadId=params.threadId;}else{uploadThreadId=0;uploadFileData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadFileData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadFileData.uniqueId=uploadUniqueId;}if(typeof params.userGroupHash=='string'){//userGroupHash = params.userGroupHash;
+uploadFileData.userGroupHash=params.userGroupHash;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to enter a userGroupHash to be able to upload on PodSpace!'});return;}if(typeof params.originalFileName=='string'){uploadFileData.originalFileName=params.originalFileName;}else{uploadFileData.originalFileName=fileName;}}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_FILE_TO_USERGROUP,method:'POST',headers:{'_token_':token,'_token_issuer_':1},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result'});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:chatMessaging.userInfo,content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},uploadFileToPodspaceNew=function uploadFileToPodspaceNew(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.file.name;fileType=params.file.type;fileSize=params.file.size;fileExtension=params.file.name.split('.').pop();var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFileData.file=params.file;}if(params.randomFileName){uploadFileData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadFileData.fileName=fileName;}uploadFileData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadFileData.threadId=params.threadId;}else{uploadThreadId=0;uploadFileData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadFileData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadFileData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadFileData.originalFileName=params.originalFileName;}else{uploadFileData.originalFileName=fileName;}}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_FILE_NEW,method:'POST',headers:{'Authorization':'Bearer '+token},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result'});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:userInfo,content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},/**
              * Upload File To Pod Space
              *
              * Upload files to Pod Space Server
@@ -58188,7 +54761,7 @@ uploadFileData.userGroupHash=params.userGroupHash;}else{callback({hasError:true,
 fileSize,//fileExtension,
 uploadUniqueId,uploadThreadId;fileName=params.file.name;//fileType = params.file.type;
 fileSize=params.file.size;//fileExtension = params.file.name.split('.').pop();
-var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFileData.file=params.file;}if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadFileData.threadId=params.threadId;}else{uploadThreadId=0;uploadFileData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadFileData.uniqueId=params.uniqueId;}else{uploadUniqueId=Utility.generateUUID();uploadFileData.uniqueId=uploadUniqueId;}if(typeof params.userGroupHash=='string'){uploadFileData.userGroupHash=params.userGroupHash;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to enter a userGroupHash to be able to upload on PodSpace!'});return;}if(typeof params.originalFileName=='string'){uploadFileData.originalFileName=params.originalFileName;}else{uploadFileData.originalFileName=fileName;}}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_FILE_TO_USERGROUP_NEW.replace('{userGroupHash}',uploadFileData.userGroupHash),method:'POST',headers:{'Authorization':'Bearer '+token},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result'});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:userInfo,content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},/**
+var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFileData.file=params.file;}if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadFileData.threadId=params.threadId;}else{uploadThreadId=0;uploadFileData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadFileData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadFileData.uniqueId=uploadUniqueId;}if(typeof params.userGroupHash=='string'){uploadFileData.userGroupHash=params.userGroupHash;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to enter a userGroupHash to be able to upload on PodSpace!'});return;}if(typeof params.originalFileName=='string'){uploadFileData.originalFileName=params.originalFileName;}else{uploadFileData.originalFileName=fileName;}}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_FILE_TO_USERGROUP_NEW.replace('{userGroupHash}',uploadFileData.userGroupHash),method:'POST',headers:{'Authorization':'Bearer '+token},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result'});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:userInfo,content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},/**
              * Upload File
              *
              * Upload files to File Server
@@ -58202,7 +54775,7 @@ var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFile
              * @link http://docs.pod.land/v1.0.8.0/Developer/CustomPost/605/File
              *
              * @return {object} Uploaded File Object
-             */uploadFileFromUrl=function uploadFileFromUrl(params,callback){var uploadUniqueId,uploadThreadId;var uploadFileData={},fileExtension;if(params){if(typeof params.fileUrl!=='undefined'){uploadFileData.url=params.fileUrl;}if(typeof params.fileExtension!=='undefined'){fileExtension=params.fileExtension;}else{fileExtension='png';}if(typeof params.fileName=='string'){uploadFileData.filename=params.fileName;}else{uploadFileData.filename=Utility.generateUUID()+'.'+fileExtension;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;}else{uploadUniqueId=Utility.generateUUID();}if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;}else{uploadThreadId=0;}uploadFileData.isPublic=true;}httpRequest({url:SERVICE_ADDRESSES.POD_DRIVE_ADDRESS+SERVICES_PATH.DRIVE_UPLOAD_FILE_FROM_URL,method:'POST',headers:{'_token_':token,'_token_issuer_':1},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result',error:e});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:chatMessaging.userInfo,content:{file:{uniqueId:uploadUniqueId,fileUrl:params.fileUrl}}};},/**
+             */uploadFileFromUrl=function uploadFileFromUrl(params,callback){var uploadUniqueId,uploadThreadId;var uploadFileData={},fileExtension;if(params){if(typeof params.fileUrl!=='undefined'){uploadFileData.url=params.fileUrl;}if(typeof params.fileExtension!=='undefined'){fileExtension=params.fileExtension;}else{fileExtension='png';}if(typeof params.fileName=='string'){uploadFileData.filename=params.fileName;}else{uploadFileData.filename=_utility["default"].generateUUID()+'.'+fileExtension;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();}if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;}else{uploadThreadId=0;}uploadFileData.isPublic=true;}httpRequest({url:SERVICE_ADDRESSES.POD_DRIVE_ADDRESS+SERVICES_PATH.DRIVE_UPLOAD_FILE_FROM_URL,method:'POST',headers:{'_token_':token,'_token_issuer_':1},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result',error:e});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:chatMessaging.userInfo,content:{file:{uniqueId:uploadUniqueId,fileUrl:params.fileUrl}}};},/**
              * Upload Image
              *
              * Upload images to Image Server
@@ -58220,7 +54793,7 @@ var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFile
              * @link http://docs.pod.land/v1.0.8.0/Developer/CustomPost/215/UploadImage
              *
              * @return {object} Uploaded Image Object
-             */uploadImage=function uploadImage(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();if(imageMimeTypes.indexOf(fileType)>=0||imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.image=params.image;uploadImageData.file=params.image;}if(params.randomFileName){uploadImageData.fileName=Utility.generateUUID()+'.'+fileExtension;}else{uploadImageData.fileName=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=Utility.generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}if(parseInt(params.xC)>0){uploadImageData.xC=params.xC;}if(parseInt(params.yC)>0){uploadImageData.yC=params.yC;}if(parseInt(params.hC)>0){uploadImageData.hC=params.hC;}if(parseInt(params.wC)>0){uploadImageData.wC=params.wC;}}httpRequest({url:SERVICE_ADDRESSES.FILESERVER_ADDRESS+SERVICES_PATH.UPLOAD_IMAGE,method:'POST',headers:{'_token_':token,'_token_issuer_':1},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(typeof response.hasError!=='undefined'&&!response.hasError){callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:chatMessaging.userInfo,content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}},/**
+             */uploadImage=function uploadImage(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();if(imageMimeTypes.indexOf(fileType)>=0||imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.image=params.image;uploadImageData.file=params.image;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.fileName=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}if(parseInt(params.xC)>0){uploadImageData.xC=params.xC;}if(parseInt(params.yC)>0){uploadImageData.yC=params.yC;}if(parseInt(params.hC)>0){uploadImageData.hC=params.hC;}if(parseInt(params.wC)>0){uploadImageData.wC=params.wC;}}httpRequest({url:SERVICE_ADDRESSES.FILESERVER_ADDRESS+SERVICES_PATH.UPLOAD_IMAGE,method:'POST',headers:{'_token_':token,'_token_issuer_':1},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(typeof response.hasError!=='undefined'&&!response.hasError){callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:chatMessaging.userInfo,content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}},/**
              * Upload Image To Pod Space Publically
              *
              * Upload images to Pod Space Image Server
@@ -58240,7 +54813,7 @@ var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFile
              * @link https://podspace.pod.ir/apidocs/?srv=/nzh/drive/uploadImage
              *
              * @return {object} Uploaded Image Object
-             */uploadImageToPodspace=function uploadImageToPodspace(params,callback){var fileName,fileType,fileSize,fileWidth=0,fileHeight=0,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();var reader=new FileReader();reader.onload=function(e){var image=new Image();image.onload=function(){fileWidth=this.width;fileHeight=this.height;continueImageUpload(params);};image.src=e.target.result;};reader.readAsDataURL(params.image);var continueImageUpload=function continueImageUpload(params){if(imageMimeTypes.indexOf(fileType)>=0||imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.file=params.image;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to send a image file!'});return;}if(params.randomFileName){uploadImageData.fileName=Utility.generateUUID()+'.'+fileExtension;}else{uploadImageData.filename=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=Utility.generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}uploadImageData.xC=parseInt(params.xC)||0;uploadImageData.yC=parseInt(params.yC)||0;uploadImageData.hC=parseInt(params.hC)||fileHeight;uploadImageData.wC=parseInt(params.wC)||fileWidth;}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_IMAGE,method:'POST',headers:{'_token_':token,'_token_issuer_':1},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(typeof response.hasError!=='undefined'&&!response.hasError){callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){consoleLogging&&console.log(e);callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:chatMessaging.userInfo,content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}};},uploadImageToPodspaceNew=function uploadImageToPodspaceNew(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();if(imageMimeTypes.indexOf(fileType)>=0||imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.image=params.image;uploadImageData.file=params.image;}if(params.randomFileName){uploadImageData.fileName=Utility.generateUUID()+'.'+fileExtension;}else{uploadImageData.fileName=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=Utility.generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}if(parseInt(params.xC)>0){uploadImageData.xC=params.xC;}if(parseInt(params.yC)>0){uploadImageData.yC=params.yC;}if(parseInt(params.hC)>0){uploadImageData.hC=params.hC;}if(parseInt(params.wC)>0){uploadImageData.wC=params.wC;}}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_IMAGE_NEW,method:'POST',headers:{'Authorization':'Bearer '+token},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(!response.hasError){callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:userInfo,content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}},/**
+             */uploadImageToPodspace=function uploadImageToPodspace(params,callback){var fileName,fileType,fileSize,fileWidth=0,fileHeight=0,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();var reader=new FileReader();reader.onload=function(e){var image=new Image();image.onload=function(){fileWidth=this.width;fileHeight=this.height;continueImageUpload(params);};image.src=e.target.result;};reader.readAsDataURL(params.image);var continueImageUpload=function continueImageUpload(params){if(imageMimeTypes.indexOf(fileType)>=0||imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.file=params.image;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to send a image file!'});return;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.filename=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}uploadImageData.xC=parseInt(params.xC)||0;uploadImageData.yC=parseInt(params.yC)||0;uploadImageData.hC=parseInt(params.hC)||fileHeight;uploadImageData.wC=parseInt(params.wC)||fileWidth;}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_IMAGE,method:'POST',headers:{'_token_':token,'_token_issuer_':1},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(typeof response.hasError!=='undefined'&&!response.hasError){callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){consoleLogging&&console.log(e);callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:chatMessaging.userInfo,content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}};},uploadImageToPodspaceNew=function uploadImageToPodspaceNew(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();if(imageMimeTypes.indexOf(fileType)>=0||imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.image=params.image;uploadImageData.file=params.image;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.fileName=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}if(parseInt(params.xC)>0){uploadImageData.xC=params.xC;}if(parseInt(params.yC)>0){uploadImageData.yC=params.yC;}if(parseInt(params.hC)>0){uploadImageData.hC=params.hC;}if(parseInt(params.wC)>0){uploadImageData.wC=params.wC;}}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_IMAGE_NEW,method:'POST',headers:{'Authorization':'Bearer '+token},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(!response.hasError){callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:userInfo,content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}},/**
              * Deprecated
              *
              * Upload Image To Pod Space
@@ -58264,7 +54837,7 @@ var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFile
              *
              * @return {object} Uploaded Image Object
              */uploadImageToPodspaceUserGroup=function uploadImageToPodspaceUserGroup(params,callback){var fileName,fileType,fileSize,fileWidth=0,fileHeight=0,fileExtension,uploadUniqueId,uploadThreadId;var continueImageUpload=function continueImageUpload(params){if(imageMimeTypes.indexOf(fileType)>=0||imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.file=params.image;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to send a image file!'});return;}if(typeof params.userGroupHash=='string'){// userGroupHash = params.userGroupHash;
-uploadImageData.userGroupHash=params.userGroupHash;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to enter a userGroupHash to be able to upload on PodSpace!'});return;}if(params.randomFileName){uploadImageData.fileName=Utility.generateUUID()+'.'+fileExtension;}else{uploadImageData.filename=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=Utility.generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}uploadImageData.xC=parseInt(params.xC)||0;uploadImageData.yC=parseInt(params.yC)||0;uploadImageData.hC=parseInt(params.hC)||fileHeight;uploadImageData.wC=parseInt(params.wC)||fileWidth;}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_IMAGE_TO_USERGROUP,method:'POST',headers:{'_token_':token,'_token_issuer_':1},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(typeof response.hasError!=='undefined'&&!response.hasError){response.result.actualHeight=fileHeight;response.result.actualWidth=fileWidth;callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){consoleLogging&&console.log(e);callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:chatMessaging.userInfo,content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}};fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();var reader=new FileReader();reader.onload=function(e){var image=new Image();image.onload=function(){fileWidth=this.width;fileHeight=this.height;continueImageUpload(params);};image.src=e.target.result;};reader.readAsDataURL(params.image);},/**
+uploadImageData.userGroupHash=params.userGroupHash;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to enter a userGroupHash to be able to upload on PodSpace!'});return;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.filename=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}uploadImageData.xC=parseInt(params.xC)||0;uploadImageData.yC=parseInt(params.yC)||0;uploadImageData.hC=parseInt(params.hC)||fileHeight;uploadImageData.wC=parseInt(params.wC)||fileWidth;}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_IMAGE_TO_USERGROUP,method:'POST',headers:{'_token_':token,'_token_issuer_':1},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(typeof response.hasError!=='undefined'&&!response.hasError){response.result.actualHeight=fileHeight;response.result.actualWidth=fileWidth;callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){consoleLogging&&console.log(e);callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:chatMessaging.userInfo,content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}};fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();var reader=new FileReader();reader.onload=function(e){var image=new Image();image.onload=function(){fileWidth=this.width;fileHeight=this.height;continueImageUpload(params);};image.src=e.target.result;};reader.readAsDataURL(params.image);},/**
              * Upload Image To Podspace User Group
              *
              * Upload images to Pod Space Image Server
@@ -58285,7 +54858,7 @@ uploadImageData.userGroupHash=params.userGroupHash;}else{callback({hasError:true
              * @link https://podspace.pod.ir/apidocs/?srv=/userGroup/uploadImage/
              *
              * @return {object} Uploaded Image Object
-             */uploadImageToPodspaceUserGroupNew=function uploadImageToPodspaceUserGroupNew(params,callback){var fileName,fileType,fileSize,fileWidth=0,fileHeight=0,fileExtension,uploadUniqueId,uploadThreadId;var continueImageUpload=function continueImageUpload(params){if(imageMimeTypes.indexOf(fileType)>=0||imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.file=params.image;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to send a image file!'});return;}if(typeof params.userGroupHash=='string'){uploadImageData.userGroupHash=params.userGroupHash;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to enter a userGroupHash to be able to upload on PodSpace!'});return;}if(params.randomFileName){uploadImageData.fileName=Utility.generateUUID()+'.'+fileExtension;}else{uploadImageData.filename=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=Utility.generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}uploadImageData.x=parseInt(params.xC)||0;uploadImageData.y=parseInt(params.yC)||0;uploadImageData.height=parseInt(params.hC)||fileHeight;uploadImageData.weight=parseInt(params.wC)||fileWidth;}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_IMAGE_TO_USERGROUP_NEW.replace('{userGroupHash}',uploadImageData.userGroupHash),method:'POST',headers:{'Authorization':'Bearer '+token},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(response.status<400){response.result.actualHeight=fileHeight;response.result.actualWidth=fileWidth;callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){consoleLogging&&console.log(e);callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:userInfo,content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}};fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();var reader=new FileReader();reader.onload=function(e){var image=new Image();image.onload=function(){fileWidth=this.width;fileHeight=this.height;continueImageUpload(params);};image.src=e.target.result;};reader.readAsDataURL(params.image);},sendFileMessage=function sendFileMessage(params,callbacks){var metadata={file:{}},fileUploadParams={},fileUniqueId=typeof params.fileUniqueId=='string'&&params.fileUniqueId.length>0?params.fileUniqueId:Utility.generateUUID();if(params){if(!params.userGroupHash||params.userGroupHash.length===0||typeof params.userGroupHash!=='string'){chatEvents.fireEvent('error',{code:6304,message:CHAT_ERRORS[6304]});return;}else{fileUploadParams.userGroupHash=params.userGroupHash;}return chatUploadHandler({threadId:params.threadId,file:params.file,fileUniqueId:fileUniqueId},function(uploadHandlerResult,uploadHandlerMetadata,fileType,fileExtension){fileUploadParams=Object.assign(fileUploadParams,uploadHandlerResult);putInChatUploadQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.MESSAGE,typeCode:generalTypeCode,//params.typeCode,
+             */uploadImageToPodspaceUserGroupNew=function uploadImageToPodspaceUserGroupNew(params,callback){var fileName,fileType,fileSize,fileWidth=0,fileHeight=0,fileExtension,uploadUniqueId,uploadThreadId;var continueImageUpload=function continueImageUpload(params){if(imageMimeTypes.indexOf(fileType)>=0||imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.file=params.image;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to send a image file!'});return;}if(typeof params.userGroupHash=='string'){uploadImageData.userGroupHash=params.userGroupHash;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to enter a userGroupHash to be able to upload on PodSpace!'});return;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.filename=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}uploadImageData.x=parseInt(params.xC)||0;uploadImageData.y=parseInt(params.yC)||0;uploadImageData.height=parseInt(params.hC)||fileHeight;uploadImageData.weight=parseInt(params.wC)||fileWidth;}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_IMAGE_TO_USERGROUP_NEW.replace('{userGroupHash}',uploadImageData.userGroupHash),method:'POST',headers:{'Authorization':'Bearer '+token},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(response.status<400){response.result.actualHeight=fileHeight;response.result.actualWidth=fileWidth;callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){consoleLogging&&console.log(e);callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:userInfo,content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}};fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();var reader=new FileReader();reader.onload=function(e){var image=new Image();image.onload=function(){fileWidth=this.width;fileHeight=this.height;continueImageUpload(params);};image.src=e.target.result;};reader.readAsDataURL(params.image);},sendFileMessage=function sendFileMessage(params,callbacks){var metadata={file:{}},fileUploadParams={},fileUniqueId=typeof params.fileUniqueId=='string'&&params.fileUniqueId.length>0?params.fileUniqueId:_utility["default"].generateUUID();if(params){if(!params.userGroupHash||params.userGroupHash.length===0||typeof params.userGroupHash!=='string'){chatEvents.fireEvent('error',{code:6304,message:CHAT_ERRORS[6304]});return;}else{fileUploadParams.userGroupHash=params.userGroupHash;}return chatUploadHandler({threadId:params.threadId,file:params.file,fileUniqueId:fileUniqueId},function(uploadHandlerResult,uploadHandlerMetadata,fileType,fileExtension){fileUploadParams=Object.assign(fileUploadParams,uploadHandlerResult);putInChatUploadQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.MESSAGE,typeCode:generalTypeCode,//params.typeCode,
 messageType:params.messageType&&typeof params.messageType.toUpperCase()!=='undefined'&&chatMessageTypes[params.messageType.toUpperCase()]>0?chatMessageTypes[params.messageType.toUpperCase()]:1,subjectId:params.threadId,repliedTo:params.repliedTo,content:params.content,metadata:JSON.stringify(objectDeepMerger(uploadHandlerMetadata,params.metadata)),systemMetadata:JSON.stringify(params.systemMetadata),uniqueId:fileUniqueId,pushMsgType:3},callbacks:callbacks},function(){if(imageMimeTypes.indexOf(fileType)>=0||imageExtentions.indexOf(fileExtension)>=0){uploadImageToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){// Send onFileUpload callback result
 if((0,_typeof2["default"])(callbacks)==='object'&&callbacks.hasOwnProperty('onFileUpload')){callbacks.onFileUpload&&callbacks.onFileUpload({name:result.result.name,hashCode:result.result.hash,parentHash:result.result.parentHash,size:result.result.size,actualHeight:result.result.actualHeight,actualWidth:result.result.actualWidth,link:"".concat(SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS,"/api/images/").concat(result.result.hash,"?checkUserGroupAccess=true")});}metadata['name']=result.result.name;metadata['fileHash']=result.result.hash;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;metadata['file']['actualHeight']=result.result.actualHeight;metadata['file']['actualWidth']=result.result.actualWidth;metadata['file']['link']="".concat(SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS,"/api/images/").concat(result.result.hash,"?checkUserGroupAccess=true");transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}else{uploadFileToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){metadata['fileHash']=result.result.hash;metadata['name']=result.result.name;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}});});}},/**
              * Delete Cache Database
@@ -58402,7 +54975,7 @@ if((0,_typeof2["default"])(callbacks)==='object'&&callbacks.hasOwnProperty('onFi
              * @access private
              *
              * @return {undefined}
-             */putInChatWaitQueue=function putInChatWaitQueue(item,callback){if(item.uniqueId!==''){var waitQueueUniqueId=typeof item.uniqueId=='string'?item.uniqueId:Array.isArray(item.uniqueId)?item.uniqueId[0]:null;if(waitQueueUniqueId!=null){if(hasCache&&(0,_typeof2["default"])(queueDb)=='object'&&!forceWaitQueueInMemory){queueDb.waitQ.put({threadId:parseInt(item.subjectId),uniqueId:waitQueueUniqueId,owner:parseInt(chatMessaging.userInfo.id),message:Utility.crypt(item,cacheSecret)}).then(function(){callback&&callback();})["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{consoleLogging&&console.log('Forced to use in memory cache');item.uniqueId=waitQueueUniqueId;chatWaitQueue.push(item);callback&&callback();}}}},getItemFromChatWaitQueue=function getItemFromChatWaitQueue(uniqueId,callback){if(hasCache&&(0,_typeof2["default"])(queueDb)=='object'&&!forceWaitQueueInMemory){queueDb.waitQ.where('uniqueId').equals(uniqueId).and(function(item){return item.owner===parseInt(chatMessaging.userInfo.id);}).toArray().then(function(messages){var decryptedEnqueuedMessage=Utility.jsonParser(chatDecrypt(messages[0].message,cacheSecret));if(decryptedEnqueuedMessage.uniqueId===uniqueId){var message=formatDataToMakeMessage(messages[0].threadId,{uniqueId:decryptedEnqueuedMessage.uniqueId,ownerId:chatMessaging.userInfo.id,message:decryptedEnqueuedMessage.content,metadata:decryptedEnqueuedMessage.metadata,systemMetadata:decryptedEnqueuedMessage.systemMetadata,replyInfo:decryptedEnqueuedMessage.replyInfo,forwardInfo:decryptedEnqueuedMessage.forwardInfo,participant:chatMessaging.userInfo,time:decryptedEnqueuedMessage.time,timeNanos:decryptedEnqueuedMessage.timeNanos});callback&&callback(message);}})["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{for(var i=0;i<chatWaitQueue.length;i++){if(chatWaitQueue[i].uniqueId===uniqueId){var decryptedEnqueuedMessage=chatWaitQueue[i];var time=new Date().getTime();var message=formatDataToMakeMessage(decryptedEnqueuedMessage.threadId,{uniqueId:decryptedEnqueuedMessage.uniqueId,ownerId:chatMessaging.userInfo.id,message:decryptedEnqueuedMessage.content,metadata:decryptedEnqueuedMessage.metadata,systemMetadata:decryptedEnqueuedMessage.systemMetadata,replyInfo:decryptedEnqueuedMessage.replyInfo,forwardInfo:decryptedEnqueuedMessage.forwardInfo,participant:chatMessaging.userInfo,time:time,timeNanos:time%1000*1000000});callback&&callback(message);break;}}}},/**
+             */putInChatWaitQueue=function putInChatWaitQueue(item,callback){if(item.uniqueId!==''){var waitQueueUniqueId=typeof item.uniqueId=='string'?item.uniqueId:Array.isArray(item.uniqueId)?item.uniqueId[0]:null;if(waitQueueUniqueId!=null){if(hasCache&&(0,_typeof2["default"])(queueDb)=='object'&&!forceWaitQueueInMemory){queueDb.waitQ.put({threadId:parseInt(item.subjectId),uniqueId:waitQueueUniqueId,owner:parseInt(chatMessaging.userInfo.id),message:_utility["default"].crypt(item,cacheSecret)}).then(function(){callback&&callback();})["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{consoleLogging&&console.log('Forced to use in memory cache');item.uniqueId=waitQueueUniqueId;chatWaitQueue.push(item);callback&&callback();}}}},getItemFromChatWaitQueue=function getItemFromChatWaitQueue(uniqueId,callback){if(hasCache&&(0,_typeof2["default"])(queueDb)=='object'&&!forceWaitQueueInMemory){queueDb.waitQ.where('uniqueId').equals(uniqueId).and(function(item){return item.owner===parseInt(chatMessaging.userInfo.id);}).toArray().then(function(messages){var decryptedEnqueuedMessage=_utility["default"].jsonParser(chatDecrypt(messages[0].message,cacheSecret));if(decryptedEnqueuedMessage.uniqueId===uniqueId){var message=formatDataToMakeMessage(messages[0].threadId,{uniqueId:decryptedEnqueuedMessage.uniqueId,ownerId:chatMessaging.userInfo.id,message:decryptedEnqueuedMessage.content,metadata:decryptedEnqueuedMessage.metadata,systemMetadata:decryptedEnqueuedMessage.systemMetadata,replyInfo:decryptedEnqueuedMessage.replyInfo,forwardInfo:decryptedEnqueuedMessage.forwardInfo,participant:chatMessaging.userInfo,time:decryptedEnqueuedMessage.time,timeNanos:decryptedEnqueuedMessage.timeNanos});callback&&callback(message);}})["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{for(var i=0;i<chatWaitQueue.length;i++){if(chatWaitQueue[i].uniqueId===uniqueId){var decryptedEnqueuedMessage=chatWaitQueue[i];var time=new Date().getTime();var message=formatDataToMakeMessage(decryptedEnqueuedMessage.threadId,{uniqueId:decryptedEnqueuedMessage.uniqueId,ownerId:chatMessaging.userInfo.id,message:decryptedEnqueuedMessage.content,metadata:decryptedEnqueuedMessage.metadata,systemMetadata:decryptedEnqueuedMessage.systemMetadata,replyInfo:decryptedEnqueuedMessage.replyInfo,forwardInfo:decryptedEnqueuedMessage.forwardInfo,participant:chatMessaging.userInfo,time:time,timeNanos:time%1000*1000000});callback&&callback(message);break;}}}},/**
              * Put an Item inside Chat Upload Queue
              *
              * This function takes an item and puts it
@@ -58430,7 +55003,7 @@ if((0,_typeof2["default"])(callbacks)==='object'&&callbacks.hasOwnProperty('onFi
              * @param salt      Salt used while string was getting encrypted
              *
              * @return  string  Decrypted string
-             */chatDecrypt=function chatDecrypt(string,secret,salt){var decryptedString=Utility.decrypt(string,secret,salt);if(!decryptedString.hasError){return decryptedString.result;}else{/**
+             */chatDecrypt=function chatDecrypt(string,secret,salt){var decryptedString=_utility["default"].decrypt(string,secret,salt);if(!decryptedString.hasError){return decryptedString.result;}else{/**
                      * If there is a problem with decrypting cache
                      * Some body is trying to decrypt cache with wrong key
                      * or cacheSecret has been expired, so we should truncate
@@ -58447,7 +55020,7 @@ content:[],pushMsgType:3,token:token};if(params){if(parseInt(params.threadId)>0)
 subjectId:params.messageId,content:JSON.stringify({'notifyAll':typeof params.notifyAll==='boolean'?params.notifyAll:false}),pushMsgType:3,token:token},{onResult:function onResult(result){callback&&callback(result);}});},chatUploadHandler=function chatUploadHandler(params,callbacks){if(typeof params.file!=='undefined'){var fileName,fileType,fileSize,fileExtension,chatUploadHandlerResult={},metadata={file:{}},fileUniqueId=params.fileUniqueId;fileName=params.file.name;fileType=params.file.type;fileSize=params.file.size;fileExtension=params.file.name.split('.').pop();chatEvents.fireEvent('fileUploadEvents',{threadId:params.threadId,uniqueId:fileUniqueId,state:'NOT_STARTED',progress:0,fileInfo:{fileName:fileName,fileSize:fileSize},fileObject:params.file});/**
                      * File is a valid Image
                      * Should upload to image server
-                     */if(imageMimeTypes.indexOf(fileType)>=0||imageExtentions.indexOf(fileExtension)>=0){chatUploadHandlerResult.image=params.file;if(params.xC>=0){fileUploadParams.xC=params.xC;}if(params.yC>=0){fileUploadParams.yC=params.yC;}if(params.hC>0){fileUploadParams.hC=params.hC;}if(params.wC>0){fileUploadParams.wC=params.wC;}}else{chatUploadHandlerResult.file=params.file;}metadata['file']['originalName']=fileName;metadata['file']['mimeType']=fileType;metadata['file']['size']=fileSize;chatUploadHandlerResult.threadId=params.threadId;chatUploadHandlerResult.uniqueId=fileUniqueId;chatUploadHandlerResult.fileObject=params.file;chatUploadHandlerResult.originalFileName=fileName;callbacks&&callbacks(chatUploadHandlerResult,metadata,fileType,fileExtension);}else{chatEvents.fireEvent('error',{code:6302,message:CHAT_ERRORS[6302]});}return{uniqueId:fileUniqueId,threadId:params.threadId,participant:chatMessaging.userInfo,content:{caption:params.content,file:{uniqueId:fileUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},cancelFileDownload=function cancelFileDownload(params,callback){if(params){if(typeof params.uniqueId=='string'){var uniqueId=params.uniqueId;httpRequestObject[eval('uniqueId')]&&httpRequestObject[eval('uniqueId')].abort();httpRequestObject[eval('uniqueId')]&&delete httpRequestObject[eval('uniqueId')];callback&&callback(uniqueId);}}},cancelFileUpload=function cancelFileUpload(params,callback){if(params){if(typeof params.uniqueId=='string'){var uniqueId=params.uniqueId;httpRequestObject[eval('uniqueId')]&&httpRequestObject[eval('uniqueId')].abort();httpRequestObject[eval('uniqueId')]&&delete httpRequestObject[eval('uniqueId')];deleteFromChatUploadQueue({message:{uniqueId:uniqueId}},callback);}}},cancelMessage=function cancelMessage(uniqueId,callback){deleteFromChatSentQueue({message:{uniqueId:uniqueId}},function(){deleteFromChatWaitQueue({uniqueId:uniqueId},callback);});},mapReverse=function mapReverse(params,callback){var data={};if(params){if(parseFloat(params.lat)>0){data.lat=params.lat;}if(parseFloat(params.lng)>0){data.lng=params.lng;}data.uniqueId=Utility.generateUUID();}var requestParams={url:SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.REVERSE,method:'GET',data:data,headers:{'Api-Key':mapApiKey}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:result.hasError,cache:result.cache,errorMessage:result.message,errorCode:result.errorCode,result:responseData};callback&&callback(returnData);}else{chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});},mapSearch=function mapSearch(params,callback){var data={};if(params){if(typeof params.term==='string'){data.term=params.term;}if(parseFloat(params.lat)>0){data.lat=params.lat;}if(parseFloat(params.lng)>0){data.lng=params.lng;}data.uniqueId=Utility.generateUUID();}var requestParams={url:SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.SEARCH,method:'GET',data:data,headers:{'Api-Key':mapApiKey}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:result.hasError,cache:result.cache,errorMessage:result.message,errorCode:result.errorCode,result:responseData};callback&&callback(returnData);}else{chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});},mapRouting=function mapRouting(params,callback){var data={};if(params){if(typeof params.alternative==='boolean'){data.alternative=params.alternative;}else{data.alternative=true;}if((0,_typeof2["default"])(params.origin)==='object'){if(parseFloat(params.origin.lat)>0&&parseFloat(params.origin.lng)){data.origin=params.origin.lat+','+parseFloat(params.origin.lng);}else{consoleLogging&&console.log('No origin has been selected!');}}if((0,_typeof2["default"])(params.destination)==='object'){if(parseFloat(params.destination.lat)>0&&parseFloat(params.destination.lng)){data.destination=params.destination.lat+','+parseFloat(params.destination.lng);}else{consoleLogging&&console.log('No destination has been selected!');}}data.uniqueId=Utility.generateUUID();}var requestParams={url:SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.ROUTING,method:'GET',data:data,headers:{'Api-Key':mapApiKey}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:result.hasError,cache:result.cache,errorMessage:result.message,errorCode:result.errorCode,result:responseData};callback&&callback(returnData);}else{chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});},mapStaticImage=function mapStaticImage(params,callback){var data={},url=SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.STATIC_IMAGE,hasError=false;if(params){if(typeof params.type==='string'){data.type=params.type;}else{data.type='standard-night';}if(parseInt(params.zoom)>0){data.zoom=params.zoom;}else{data.zoom=15;}if(parseInt(params.width)>0){data.width=params.width;}else{data.width=800;}if(parseInt(params.height)>0){data.height=params.height;}else{data.height=600;}if((0,_typeof2["default"])(params.center)==='object'){if(parseFloat(params.center.lat)>0&&parseFloat(params.center.lng)){data.center=params.center.lat+','+parseFloat(params.center.lng);}else{hasError=true;chatEvents.fireEvent('error',{code:6700,message:CHAT_ERRORS[6700],error:undefined});}}else{hasError=true;chatEvents.fireEvent('error',{code:6700,message:CHAT_ERRORS[6700],error:undefined});}data.key=mapApiKey;}var keys=Object.keys(data);if(keys.length>0){url+='?';for(var i=0;i<keys.length;i++){var key=keys[i];url+=key+'='+data[key];if(i<keys.length-1){url+='&';}}}var returnData={hasError:hasError,cache:false,errorMessage:hasError?CHAT_ERRORS[6700]:'',errorCode:hasError?6700:undefined,result:{link:!hasError?url:''}};callback&&callback(returnData);},//TODO Change Node Version
+                     */if(imageMimeTypes.indexOf(fileType)>=0||imageExtentions.indexOf(fileExtension)>=0){chatUploadHandlerResult.image=params.file;if(params.xC>=0){fileUploadParams.xC=params.xC;}if(params.yC>=0){fileUploadParams.yC=params.yC;}if(params.hC>0){fileUploadParams.hC=params.hC;}if(params.wC>0){fileUploadParams.wC=params.wC;}}else{chatUploadHandlerResult.file=params.file;}metadata['file']['originalName']=fileName;metadata['file']['mimeType']=fileType;metadata['file']['size']=fileSize;chatUploadHandlerResult.threadId=params.threadId;chatUploadHandlerResult.uniqueId=fileUniqueId;chatUploadHandlerResult.fileObject=params.file;chatUploadHandlerResult.originalFileName=fileName;callbacks&&callbacks(chatUploadHandlerResult,metadata,fileType,fileExtension);}else{chatEvents.fireEvent('error',{code:6302,message:CHAT_ERRORS[6302]});}return{uniqueId:fileUniqueId,threadId:params.threadId,participant:chatMessaging.userInfo,content:{caption:params.content,file:{uniqueId:fileUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},cancelFileDownload=function cancelFileDownload(params,callback){if(params){if(typeof params.uniqueId=='string'){var uniqueId=params.uniqueId;httpRequestObject[eval('uniqueId')]&&httpRequestObject[eval('uniqueId')].abort();httpRequestObject[eval('uniqueId')]&&delete httpRequestObject[eval('uniqueId')];callback&&callback(uniqueId);}}},cancelFileUpload=function cancelFileUpload(params,callback){if(params){if(typeof params.uniqueId=='string'){var uniqueId=params.uniqueId;httpRequestObject[eval('uniqueId')]&&httpRequestObject[eval('uniqueId')].abort();httpRequestObject[eval('uniqueId')]&&delete httpRequestObject[eval('uniqueId')];deleteFromChatUploadQueue({message:{uniqueId:uniqueId}},callback);}}},cancelMessage=function cancelMessage(uniqueId,callback){deleteFromChatSentQueue({message:{uniqueId:uniqueId}},function(){deleteFromChatWaitQueue({uniqueId:uniqueId},callback);});},mapReverse=function mapReverse(params,callback){var data={};if(params){if(parseFloat(params.lat)>0){data.lat=params.lat;}if(parseFloat(params.lng)>0){data.lng=params.lng;}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.REVERSE,method:'GET',data:data,headers:{'Api-Key':mapApiKey}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:result.hasError,cache:result.cache,errorMessage:result.message,errorCode:result.errorCode,result:responseData};callback&&callback(returnData);}else{chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});},mapSearch=function mapSearch(params,callback){var data={};if(params){if(typeof params.term==='string'){data.term=params.term;}if(parseFloat(params.lat)>0){data.lat=params.lat;}if(parseFloat(params.lng)>0){data.lng=params.lng;}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.SEARCH,method:'GET',data:data,headers:{'Api-Key':mapApiKey}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:result.hasError,cache:result.cache,errorMessage:result.message,errorCode:result.errorCode,result:responseData};callback&&callback(returnData);}else{chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});},mapRouting=function mapRouting(params,callback){var data={};if(params){if(typeof params.alternative==='boolean'){data.alternative=params.alternative;}else{data.alternative=true;}if((0,_typeof2["default"])(params.origin)==='object'){if(parseFloat(params.origin.lat)>0&&parseFloat(params.origin.lng)){data.origin=params.origin.lat+','+parseFloat(params.origin.lng);}else{consoleLogging&&console.log('No origin has been selected!');}}if((0,_typeof2["default"])(params.destination)==='object'){if(parseFloat(params.destination.lat)>0&&parseFloat(params.destination.lng)){data.destination=params.destination.lat+','+parseFloat(params.destination.lng);}else{consoleLogging&&console.log('No destination has been selected!');}}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.ROUTING,method:'GET',data:data,headers:{'Api-Key':mapApiKey}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:result.hasError,cache:result.cache,errorMessage:result.message,errorCode:result.errorCode,result:responseData};callback&&callback(returnData);}else{chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});},mapStaticImage=function mapStaticImage(params,callback){var data={},url=SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.STATIC_IMAGE,hasError=false;if(params){if(typeof params.type==='string'){data.type=params.type;}else{data.type='standard-night';}if(parseInt(params.zoom)>0){data.zoom=params.zoom;}else{data.zoom=15;}if(parseInt(params.width)>0){data.width=params.width;}else{data.width=800;}if(parseInt(params.height)>0){data.height=params.height;}else{data.height=600;}if((0,_typeof2["default"])(params.center)==='object'){if(parseFloat(params.center.lat)>0&&parseFloat(params.center.lng)){data.center=params.center.lat+','+parseFloat(params.center.lng);}else{hasError=true;chatEvents.fireEvent('error',{code:6700,message:CHAT_ERRORS[6700],error:undefined});}}else{hasError=true;chatEvents.fireEvent('error',{code:6700,message:CHAT_ERRORS[6700],error:undefined});}data.key=mapApiKey;}var keys=Object.keys(data);if(keys.length>0){url+='?';for(var i=0;i<keys.length;i++){var key=keys[i];url+=key+'='+data[key];if(i<keys.length-1){url+='&';}}}var returnData={hasError:hasError,cache:false,errorMessage:hasError?CHAT_ERRORS[6700]:'',errorCode:hasError?6700:undefined,result:{link:!hasError?url:''}};callback&&callback(returnData);},//TODO Change Node Version
 getImageFormUrl=function getImageFormUrl(url,uniqueId,callback){getImageFromLinkObjects[uniqueId]=new Image();getImageFromLinkObjects[uniqueId].setAttribute('crossOrigin','anonymous');getImageFromLinkObjects[uniqueId].onload=function(){var canvas=document.createElement("canvas");canvas.width=this.width;canvas.height=this.height;var ctx=canvas.getContext("2d");ctx.drawImage(this,0,0);var dataURI=canvas.toDataURL("image/jpg");var byteString;if(dataURI.split(',')[0].indexOf('base64')>=0)byteString=atob(dataURI.split(',')[1]);else byteString=unescape(dataURI.split(',')[1]);var mimeString=dataURI.split(',')[0].split(':')[1].split(';')[0];var ia=new Uint8Array(byteString.length);for(var i=0;i<byteString.length;i++){ia[i]=byteString.charCodeAt(i);}delete getImageFromLinkObjects[uniqueId];return callback(new Blob([ia],{type:mimeString}));};getImageFromLinkObjects[uniqueId].src=url;};/******************************************************
          *             P U B L I C   M E T H O D S            *
          ******************************************************/this.on=chatEvents.on;this.off=chatEvents.off;this.getPeerId=function(){return peerId;};this.getCurrentUser=function(){return chatMessaging.userInfo;};this.getUserInfo=function(callback){return chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.USER_INFO,typeCode:generalTypeCode},{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;var currentUser=formatDataToMakeUser(messageContent);returnData.result={user:currentUser};callback&&callback(returnData);}}});};this.getThreads=getThreads;this.getAllThreads=getAllThreads;this.getHistory=getHistory;this.getAllMentionedMessages=function(params,callback){return getHistory({threadId:params.threadId,allMentioned:true,typeCode:generalTypeCode,//params.typeCode,
@@ -58479,7 +55052,7 @@ content:content};/**
              * Retrieve Contacts from server
              */return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={contacts:[],contentCount:result.contentCount,hasNext:offset+count<result.contentCount&&messageLength>0,nextOffset:offset*1+messageLength*1},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;/**
                          * Add Contacts into cache database #cache
-                         */if(canUseCache&&cacheSecret.length>0){if(db){var cacheData=[];for(var i=0;i<resultData.contacts.length;i++){try{var tempData={},salt=Utility.generateUUID();tempData.id=resultData.contacts[i].id;tempData.owner=chatMessaging.userInfo.id;tempData.uniqueId=resultData.contacts[i].uniqueId;tempData.userId=Utility.crypt(resultData.contacts[i].userId,cacheSecret,salt);tempData.cellphoneNumber=Utility.crypt(resultData.contacts[i].cellphoneNumber,cacheSecret,salt);tempData.email=Utility.crypt(resultData.contacts[i].email,cacheSecret,salt);tempData.firstName=Utility.crypt(resultData.contacts[i].firstName,cacheSecret,salt);tempData.lastName=Utility.crypt(resultData.contacts[i].lastName,cacheSecret,salt);tempData.expireTime=new Date().getTime()+cacheExpireTime;tempData.data=Utility.crypt(JSON.stringify(unsetNotSeenDuration(resultData.contacts[i])),cacheSecret,salt);tempData.salt=salt;cacheData.push(tempData);}catch(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}db.contacts.bulkPut(cacheData)["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}callback&&callback(returnData);/**
+                         */if(canUseCache&&cacheSecret.length>0){if(db){var cacheData=[];for(var i=0;i<resultData.contacts.length;i++){try{var tempData={},salt=_utility["default"].generateUUID();tempData.id=resultData.contacts[i].id;tempData.owner=chatMessaging.userInfo.id;tempData.uniqueId=resultData.contacts[i].uniqueId;tempData.userId=_utility["default"].crypt(resultData.contacts[i].userId,cacheSecret,salt);tempData.cellphoneNumber=_utility["default"].crypt(resultData.contacts[i].cellphoneNumber,cacheSecret,salt);tempData.email=_utility["default"].crypt(resultData.contacts[i].email,cacheSecret,salt);tempData.firstName=_utility["default"].crypt(resultData.contacts[i].firstName,cacheSecret,salt);tempData.lastName=_utility["default"].crypt(resultData.contacts[i].lastName,cacheSecret,salt);tempData.expireTime=new Date().getTime()+cacheExpireTime;tempData.data=_utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(resultData.contacts[i])),cacheSecret,salt);tempData.salt=salt;cacheData.push(tempData);}catch(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}db.contacts.bulkPut(cacheData)["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}callback&&callback(returnData);/**
                      * Delete callback so if server pushes response before
                      * cache, cache won't send data again
                      */callback=undefined;if(!returnData.hasError&&returnCache){chatEvents.fireEvent('contactEvents',{type:'CONTACTS_LIST_CHANGE',result:returnData.result});}}});};this.getThreadParticipants=getThreadParticipants;/**
@@ -58530,9 +55103,9 @@ content:[]};if(params){if(parseInt(params.threadId)>0){sendMessageParams.subject
              *       -systemMetadata      {string}
              *       -forwardedMessageIds {string}
              *       -forwardedUniqueIds  {string}
-             */var content={};if(params){if(typeof params.title==='string'){content.title=params.title;}if(typeof params.type==='string'){var threadType=params.type;content.type=createThreadTypes[threadType];}if(typeof params.uniqueName==='string'){content.uniqueName=params.uniqueName;}if(Array.isArray(params.invitees)){content.invitees=[];for(var i=0;i<params.invitees.length;i++){var tempInvitee=formatDataToMakeInvitee(params.invitees[i]);if(tempInvitee){content.invitees.push(tempInvitee);}}}if(typeof params.image==='string'){content.image=params.image;}if(typeof params.description==='string'){content.description=params.description;}if(typeof params.metadata==='string'){content.metadata=params.metadata;}else if((0,_typeof2["default"])(params.metadata)==='object'){try{content.metadata=JSON.stringify(params.metadata);}catch(e){consoleLogging&&console.log(e);}}if((0,_typeof2["default"])(params.message)=='object'){content.message={};if(typeof params.message.text==='string'){content.message.text=params.message.text;}if(typeof params.message.uniqueId==='string'){content.message.uniqueId=params.message.uniqueId;}if(params.message.type>0){content.message.messageType=params.message.type;}if(params.message.repliedTo>0){content.message.repliedTo=params.message.repliedTo;}if(typeof params.message.metadata==='string'){content.message.metadata=params.message.metadata;}else if((0,_typeof2["default"])(params.message.metadata)==='object'){content.message.metadata=JSON.stringify(params.message.metadata);}if(typeof params.message.systemMetadata==='string'){content.message.systemMetadata=params.message.systemMetadata;}else if((0,_typeof2["default"])(params.message.systemMetadata)==='object'){content.message.systemMetadata=JSON.stringify(params.message.systemMetadata);}if(Array.isArray(params.message.forwardedMessageIds)){content.message.forwardedMessageIds=params.message.forwardedMessageIds;content.message.forwardedUniqueIds=[];for(var i=0;i<params.message.forwardedMessageIds.length;i++){content.message.forwardedUniqueIds.push(Utility.generateUUID());}}}}var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.CREATE_THREAD,typeCode:generalTypeCode,//params.typeCode,
-content:content};return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}callback&&callback(returnData);}});};this.createSelfThread=function(params,callback){var content={type:createThreadTypes['SELF']};if(params){if(typeof params.description==='string'){content.description=params.description;}if(typeof params.metadata==='string'){content.metadata=params.metadata;}else if((0,_typeof2["default"])(params.metadata)==='object'){try{content.metadata=JSON.stringify(params.metadata);}catch(e){consoleLogging&&console.log(e);}}if((0,_typeof2["default"])(params.message)=='object'){content.message={};if(typeof params.message.text==='string'){content.message.text=params.message.text;}if(typeof params.message.uniqueId==='string'){content.message.uniqueId=params.message.uniqueId;}if(params.message.type>0){content.message.messageType=params.message.type;}if(params.message.repliedTo>0){content.message.repliedTo=params.message.repliedTo;}if(typeof params.message.metadata==='string'){content.message.metadata=params.message.metadata;}else if((0,_typeof2["default"])(params.message.metadata)==='object'){content.message.metadata=JSON.stringify(params.message.metadata);}if(typeof params.message.systemMetadata==='string'){content.message.systemMetadata=params.message.systemMetadata;}else if((0,_typeof2["default"])(params.message.systemMetadata)==='object'){content.message.systemMetadata=JSON.stringify(params.message.systemMetadata);}if(Array.isArray(params.message.forwardedMessageIds)){content.message.forwardedMessageIds=params.message.forwardedMessageIds;content.message.forwardedUniqueIds=[];for(var i=0;i<params.message.forwardedMessageIds.length;i++){content.message.forwardedUniqueIds.push(Utility.generateUUID());}}}}var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.CREATE_THREAD,typeCode:generalTypeCode,//params.typeCode,
-content:content};return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}callback&&callback(returnData);}});};this.sendTextMessage=function(params,callbacks){var metadata={},uniqueId;if(typeof params.uniqueId!=='undefined'){uniqueId=params.uniqueId;}else{uniqueId=Utility.generateUUID();}putInChatSendQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.MESSAGE,typeCode:generalTypeCode,//params.typeCode,
+             */var content={};if(params){if(typeof params.title==='string'){content.title=params.title;}if(typeof params.type==='string'){var threadType=params.type;content.type=createThreadTypes[threadType];}if(typeof params.uniqueName==='string'){content.uniqueName=params.uniqueName;}if(Array.isArray(params.invitees)){content.invitees=[];for(var i=0;i<params.invitees.length;i++){var tempInvitee=formatDataToMakeInvitee(params.invitees[i]);if(tempInvitee){content.invitees.push(tempInvitee);}}}if(typeof params.image==='string'){content.image=params.image;}if(typeof params.description==='string'){content.description=params.description;}if(typeof params.metadata==='string'){content.metadata=params.metadata;}else if((0,_typeof2["default"])(params.metadata)==='object'){try{content.metadata=JSON.stringify(params.metadata);}catch(e){consoleLogging&&console.log(e);}}if((0,_typeof2["default"])(params.message)=='object'){content.message={};if(typeof params.message.text==='string'){content.message.text=params.message.text;}if(typeof params.message.uniqueId==='string'){content.message.uniqueId=params.message.uniqueId;}if(params.message.type>0){content.message.messageType=params.message.type;}if(params.message.repliedTo>0){content.message.repliedTo=params.message.repliedTo;}if(typeof params.message.metadata==='string'){content.message.metadata=params.message.metadata;}else if((0,_typeof2["default"])(params.message.metadata)==='object'){content.message.metadata=JSON.stringify(params.message.metadata);}if(typeof params.message.systemMetadata==='string'){content.message.systemMetadata=params.message.systemMetadata;}else if((0,_typeof2["default"])(params.message.systemMetadata)==='object'){content.message.systemMetadata=JSON.stringify(params.message.systemMetadata);}if(Array.isArray(params.message.forwardedMessageIds)){content.message.forwardedMessageIds=params.message.forwardedMessageIds;content.message.forwardedUniqueIds=[];for(var i=0;i<params.message.forwardedMessageIds.length;i++){content.message.forwardedUniqueIds.push(_utility["default"].generateUUID());}}}}var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.CREATE_THREAD,typeCode:generalTypeCode,//params.typeCode,
+content:content};return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}callback&&callback(returnData);}});};this.createSelfThread=function(params,callback){var content={type:createThreadTypes['SELF']};if(params){if(typeof params.description==='string'){content.description=params.description;}if(typeof params.metadata==='string'){content.metadata=params.metadata;}else if((0,_typeof2["default"])(params.metadata)==='object'){try{content.metadata=JSON.stringify(params.metadata);}catch(e){consoleLogging&&console.log(e);}}if((0,_typeof2["default"])(params.message)=='object'){content.message={};if(typeof params.message.text==='string'){content.message.text=params.message.text;}if(typeof params.message.uniqueId==='string'){content.message.uniqueId=params.message.uniqueId;}if(params.message.type>0){content.message.messageType=params.message.type;}if(params.message.repliedTo>0){content.message.repliedTo=params.message.repliedTo;}if(typeof params.message.metadata==='string'){content.message.metadata=params.message.metadata;}else if((0,_typeof2["default"])(params.message.metadata)==='object'){content.message.metadata=JSON.stringify(params.message.metadata);}if(typeof params.message.systemMetadata==='string'){content.message.systemMetadata=params.message.systemMetadata;}else if((0,_typeof2["default"])(params.message.systemMetadata)==='object'){content.message.systemMetadata=JSON.stringify(params.message.systemMetadata);}if(Array.isArray(params.message.forwardedMessageIds)){content.message.forwardedMessageIds=params.message.forwardedMessageIds;content.message.forwardedUniqueIds=[];for(var i=0;i<params.message.forwardedMessageIds.length;i++){content.message.forwardedUniqueIds.push(_utility["default"].generateUUID());}}}}var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.CREATE_THREAD,typeCode:generalTypeCode,//params.typeCode,
+content:content};return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}callback&&callback(returnData);}});};this.sendTextMessage=function(params,callbacks){var metadata={},uniqueId;if(typeof params.uniqueId!=='undefined'){uniqueId=params.uniqueId;}else{uniqueId=_utility["default"].generateUUID();}putInChatSendQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.MESSAGE,typeCode:generalTypeCode,//params.typeCode,
 messageType:params.messageType&&typeof params.messageType.toUpperCase()!=='undefined'&&chatMessageTypes[params.messageType.toUpperCase()]>0?chatMessageTypes[params.messageType.toUpperCase()]:chatMessageTypes.TEXT,subjectId:params.threadId,repliedTo:params.repliedTo,content:params.textMessage,uniqueId:uniqueId,systemMetadata:JSON.stringify(params.systemMetadata),metadata:JSON.stringify(metadata),pushMsgType:3},callbacks:callbacks},function(){chatSendQueueHandler();});return{uniqueId:uniqueId,threadId:params.threadId,participant:chatMessaging.userInfo,content:params.content};};this.sendBotMessage=function(params,callbacks){var metadata={};return chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.BOT_MESSAGE,typeCode:generalTypeCode,//params.typeCode,
 subjectId:params.messageId,content:params.content,uniqueId:params.uniqueId,metadata:metadata,pushMsgType:3},callbacks);};this.sendFileMessage=sendFileMessage;this.createThreadWithFileMessage=function(params,createThreadCallback,sendFileMessageCallback){/**
              * + CreateThreadRequest      {object}
@@ -58555,7 +55128,7 @@ subjectId:params.messageId,content:params.content,uniqueId:params.uniqueId,metad
              *       -forwardedMessageIds {string}
              *       -forwardedUniqueIds  {string}
              */var content={};if(params){if(typeof params.title==='string'){content.title=params.title;}if(typeof params.type==='string'){var threadType=params.type;content.type=createThreadTypes[threadType];}if(Array.isArray(params.invitees)){content.invitees=[];for(var i=0;i<params.invitees.length;i++){var tempInvitee=formatDataToMakeInvitee(params.invitees[i]);if(tempInvitee){content.invitees.push(tempInvitee);}}}if(typeof params.description==='string'){content.description=params.description;}if(typeof params.content==='string'){content.content=params.content;}if(typeof params.metadata==='string'){content.metadata=params.metadata;}else if((0,_typeof2["default"])(params.metadata)==='object'){try{content.metadata=JSON.stringify(params.metadata);}catch(e){consoleLogging&&console.log(e);}}}var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.CREATE_THREAD,typeCode:generalTypeCode,//params.typeCode,
-content:content};return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}createThreadCallback&&createThreadCallback(returnData);sendFileMessage({threadId:returnData.result.thread.id,file:params.file,content:params.caption,messageType:params.messageType,userGroupHash:returnData.result.thread.userGroupHash},sendFileMessageCallback);}});};this.sendLocationMessage=function(params,callbacks){var data={},url=SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.STATIC_IMAGE,hasError=false,fileUniqueId=Utility.generateUUID();if(params){if(typeof params.mapType==='string'){data.type=params.mapType;}else{data.type='standard-night';}if(parseInt(params.mapZoom)>0){data.zoom=params.mapZoom;}else{data.zoom=15;}if(parseInt(params.mapWidth)>0){data.width=params.mapWidth;}else{data.width=800;}if(parseInt(params.mapHeight)>0){data.height=params.mapHeight;}else{data.height=600;}if((0,_typeof2["default"])(params.mapCenter)==='object'){if(parseFloat(params.mapCenter.lat)>0&&parseFloat(params.mapCenter.lng)){data.center=params.mapCenter.lat+','+parseFloat(params.mapCenter.lng);}else{hasError=true;chatEvents.fireEvent('error',{code:6700,message:CHAT_ERRORS[6700],error:undefined});}}else{hasError=true;chatEvents.fireEvent('error',{code:6700,message:CHAT_ERRORS[6700],error:undefined});}data.key=mapApiKey;data.marker='red';}var keys=Object.keys(data);if(keys.length>0){url+='?';for(var i=0;i<keys.length;i++){var key=keys[i];url+=key+'='+data[key];if(i<keys.length-1){url+='&';}}}if(!hasError){mapReverse({lng:parseFloat(params.mapCenter.lng),lat:parseFloat(params.mapCenter.lat)},function(address){getImageFormUrl(url,fileUniqueId,function(blobImage){sendFileMessage({threadId:params.threadId,fileUniqueId:fileUniqueId,file:new File([blobImage],"location.png",{type:"image/png",lastModified:new Date()}),content:address.result.formatted_address,messageType:'POD_SPACE_PICTURE',userGroupHash:params.userGroupHash,metadata:{mapLink:"https://maps.neshan.org/@".concat(data.center,",").concat(data.zoom,"z"),address:address}},callbacks);});});}return{uniqueId:fileUniqueId,threadId:params.threadId,participant:chatMessaging.userInfo,cancel:function cancel(){if(typeof getImageFromLinkObjects!=='undefined'&&getImageFromLinkObjects.hasOwnProperty(fileUniqueId)){getImageFromLinkObjects[fileUniqueId].onload=function(){};delete getImageFromLinkObjects[fileUniqueId];consoleLogging&&console.log("\"".concat(fileUniqueId,"\" - Downloading Location Map has been canceled!"));}cancelFileUpload({uniqueId:fileUniqueId},function(){consoleLogging&&console.log("\"".concat(fileUniqueId,"\" - Sending Location Message has been canceled!"));});}};};this.resendMessage=function(uniqueId,callbacks){if(hasCache&&(0,_typeof2["default"])(queueDb)=='object'&&!forceWaitQueueInMemory){queueDb.waitQ.where('uniqueId').equals(uniqueId).and(function(item){return item.owner===parseInt(chatMessaging.userInfo.id);}).toArray().then(function(messages){if(messages.length){putInChatSendQueue({message:Utility.jsonParser(chatDecrypt(messages[0].message,cacheSecret)),callbacks:callbacks},function(){chatSendQueueHandler();});}})["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{for(var i=0;i<chatWaitQueue.length;i++){if(chatWaitQueue[i].uniqueId===uniqueId){putInChatSendQueue({message:chatWaitQueue[i],callbacks:callbacks},function(){chatSendQueueHandler();},true);// break;
+content:content};return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}createThreadCallback&&createThreadCallback(returnData);sendFileMessage({threadId:returnData.result.thread.id,file:params.file,content:params.caption,messageType:params.messageType,userGroupHash:returnData.result.thread.userGroupHash},sendFileMessageCallback);}});};this.sendLocationMessage=function(params,callbacks){var data={},url=SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.STATIC_IMAGE,hasError=false,fileUniqueId=_utility["default"].generateUUID();if(params){if(typeof params.mapType==='string'){data.type=params.mapType;}else{data.type='standard-night';}if(parseInt(params.mapZoom)>0){data.zoom=params.mapZoom;}else{data.zoom=15;}if(parseInt(params.mapWidth)>0){data.width=params.mapWidth;}else{data.width=800;}if(parseInt(params.mapHeight)>0){data.height=params.mapHeight;}else{data.height=600;}if((0,_typeof2["default"])(params.mapCenter)==='object'){if(parseFloat(params.mapCenter.lat)>0&&parseFloat(params.mapCenter.lng)){data.center=params.mapCenter.lat+','+parseFloat(params.mapCenter.lng);}else{hasError=true;chatEvents.fireEvent('error',{code:6700,message:CHAT_ERRORS[6700],error:undefined});}}else{hasError=true;chatEvents.fireEvent('error',{code:6700,message:CHAT_ERRORS[6700],error:undefined});}data.key=mapApiKey;data.marker='red';}var keys=Object.keys(data);if(keys.length>0){url+='?';for(var i=0;i<keys.length;i++){var key=keys[i];url+=key+'='+data[key];if(i<keys.length-1){url+='&';}}}if(!hasError){mapReverse({lng:parseFloat(params.mapCenter.lng),lat:parseFloat(params.mapCenter.lat)},function(address){getImageFormUrl(url,fileUniqueId,function(blobImage){sendFileMessage({threadId:params.threadId,fileUniqueId:fileUniqueId,file:new File([blobImage],"location.png",{type:"image/png",lastModified:new Date()}),content:address.result.formatted_address,messageType:'POD_SPACE_PICTURE',userGroupHash:params.userGroupHash,metadata:{mapLink:"https://maps.neshan.org/@".concat(data.center,",").concat(data.zoom,"z"),address:address}},callbacks);});});}return{uniqueId:fileUniqueId,threadId:params.threadId,participant:chatMessaging.userInfo,cancel:function cancel(){if(typeof getImageFromLinkObjects!=='undefined'&&getImageFromLinkObjects.hasOwnProperty(fileUniqueId)){getImageFromLinkObjects[fileUniqueId].onload=function(){};delete getImageFromLinkObjects[fileUniqueId];consoleLogging&&console.log("\"".concat(fileUniqueId,"\" - Downloading Location Map has been canceled!"));}cancelFileUpload({uniqueId:fileUniqueId},function(){consoleLogging&&console.log("\"".concat(fileUniqueId,"\" - Sending Location Message has been canceled!"));});}};};this.resendMessage=function(uniqueId,callbacks){if(hasCache&&(0,_typeof2["default"])(queueDb)=='object'&&!forceWaitQueueInMemory){queueDb.waitQ.where('uniqueId').equals(uniqueId).and(function(item){return item.owner===parseInt(chatMessaging.userInfo.id);}).toArray().then(function(messages){if(messages.length){putInChatSendQueue({message:_utility["default"].jsonParser(chatDecrypt(messages[0].message,cacheSecret)),callbacks:callbacks},function(){chatSendQueueHandler();});}})["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{for(var i=0;i<chatWaitQueue.length;i++){if(chatWaitQueue[i].uniqueId===uniqueId){putInChatSendQueue({message:chatWaitQueue[i],callbacks:callbacks},function(){chatSendQueueHandler();},true);// break;
 }}}};this.cancelMessage=cancelMessage;this.clearHistory=function(params,callback){/**
              * + Clear History Request Object    {object}
              *    - subjectId                    {int}
@@ -58567,18 +55140,18 @@ this.getImageFromPodspace=getImageFromPodspaceNew;//getImageFromPodspace;
 this.uploadFile=uploadFile;this.uploadImage=uploadImage;this.uploadFileToPodspace=uploadFileToPodspaceNew;this.uploadImageToPodspace=uploadImageToPodspaceNew;this.cancelFileUpload=cancelFileUpload;this.cancelFileDownload=cancelFileDownload;this.editMessage=function(params,callback){return chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.EDIT_MESSAGE,typeCode:generalTypeCode,//params.typeCode,
 messageType:params.messageType,subjectId:params.messageId,repliedTo:params.repliedTo,content:params.content,uniqueId:params.uniqueId,metadata:params.metadata,systemMetadata:params.systemMetadata,pushMsgType:3},{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result,resultData={editedMessage:formatDataToMakeMessage(undefined,messageContent)};returnData.result=resultData;/**
                          * Update Message on cache
-                         */if(canUseCache&&cacheSecret.length>0){if(db){try{var tempData={},salt=Utility.generateUUID();tempData.id=parseInt(resultData.editedMessage.id);tempData.owner=parseInt(chatMessaging.userInfo.id);tempData.threadId=parseInt(resultData.editedMessage.threadId);tempData.time=resultData.editedMessage.time;tempData.message=Utility.crypt(resultData.editedMessage.message,cacheSecret,salt);tempData.data=Utility.crypt(JSON.stringify(unsetNotSeenDuration(resultData.editedMessage)),cacheSecret,salt);tempData.salt=salt;/**
+                         */if(canUseCache&&cacheSecret.length>0){if(db){try{var tempData={},salt=_utility["default"].generateUUID();tempData.id=parseInt(resultData.editedMessage.id);tempData.owner=parseInt(chatMessaging.userInfo.id);tempData.threadId=parseInt(resultData.editedMessage.threadId);tempData.time=resultData.editedMessage.time;tempData.message=_utility["default"].crypt(resultData.editedMessage.message,cacheSecret,salt);tempData.data=_utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(resultData.editedMessage)),cacheSecret,salt);tempData.salt=salt;/**
                                      * Insert Message into cache database
                                      */db.messages.put(tempData)["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}catch(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}callback&&callback(returnData);}});};this.deleteMessage=function(params,callback){return chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.DELETE_MESSAGE,typeCode:generalTypeCode,//params.typeCode,
 subjectId:params.messageId,uniqueId:params.uniqueId,content:JSON.stringify({'deleteForAll':typeof params.deleteForAll==='boolean'?params.deleteForAll:false}),pushMsgType:3},{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){returnData.result={deletedMessage:{id:result.result.id,pinned:result.result.pinned,mentioned:result.result.mentioned,messageType:result.result.messageType,edited:result.result.edited,editable:result.result.editable,deletable:result.result.deletable}};/**
                          * Remove Message from cache
-                         */if(canUseCache){if(db){db.messages.where('id').equals(parseInt(result.result))["delete"]()["catch"](function(error){chatEvents.fireEvent('error',{code:6602,message:CHAT_ERRORS[6602],error:error});});}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}callback&&callback(returnData);}});};this.deleteMultipleMessages=function(params,callback){var messageIdsList=params.messageIds,uniqueIdsList=[];for(var i in messageIdsList){var uniqueId=Utility.generateUUID();uniqueIdsList.push(uniqueId);chatMessaging.messagesCallbacks[uniqueId]=function(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){returnData.result={deletedMessage:{id:result.result.id,pinned:result.result.pinned,mentioned:result.result.mentioned,messageType:result.result.messageType,edited:result.result.edited,editable:result.result.editable,deletable:result.result.deletable}};/**
+                         */if(canUseCache){if(db){db.messages.where('id').equals(parseInt(result.result))["delete"]()["catch"](function(error){chatEvents.fireEvent('error',{code:6602,message:CHAT_ERRORS[6602],error:error});});}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}callback&&callback(returnData);}});};this.deleteMultipleMessages=function(params,callback){var messageIdsList=params.messageIds,uniqueIdsList=[];for(var i in messageIdsList){var uniqueId=_utility["default"].generateUUID();uniqueIdsList.push(uniqueId);chatMessaging.messagesCallbacks[uniqueId]=function(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){returnData.result={deletedMessage:{id:result.result.id,pinned:result.result.pinned,mentioned:result.result.mentioned,messageType:result.result.messageType,edited:result.result.edited,editable:result.result.editable,deletable:result.result.deletable}};/**
                          * Remove Message from cache
                          */if(canUseCache){if(db){db.messages.where('id').equals(parseInt(result.result))["delete"]()["catch"](function(error){chatEvents.fireEvent('error',{code:6602,message:CHAT_ERRORS[6602],error:error});});}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}callback&&callback(returnData);};}return chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.DELETE_MESSAGE,typeCode:generalTypeCode,//params.typeCode,
-content:{uniqueIds:uniqueIdsList,ids:messageIdsList,deleteForAll:typeof params.deleteForAll==='boolean'?params.deleteForAll:false},pushMsgType:3});};this.replyTextMessage=function(params,callbacks){var uniqueId;if(typeof params.uniqueId!=='undefined'){uniqueId=params.uniqueId;}else{uniqueId=Utility.generateUUID();}putInChatSendQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.MESSAGE,typeCode:generalTypeCode,//params.typeCode,
-messageType:1,subjectId:params.threadId,repliedTo:params.repliedTo,content:params.textMessage,uniqueId:uniqueId,systemMetadata:JSON.stringify(params.systemMetadata),metadata:JSON.stringify(params.metadata),pushMsgType:3},callbacks:callbacks},function(){chatSendQueueHandler();});return{uniqueId:uniqueId,threadId:params.threadId,participant:chatMessaging.userInfo,content:params.content};};this.replyFileMessage=function(params,callbacks){var metadata={file:{}},fileUploadParams={},fileUniqueId=Utility.generateUUID();if(!params.userGroupHash||params.userGroupHash.length===0||typeof params.userGroupHash!=='string'){chatEvents.fireEvent('error',{code:6304,message:CHAT_ERRORS[6304]});return;}else{fileUploadParams.userGroupHash=params.userGroupHash;}return chatUploadHandler({threadId:params.threadId,file:params.file,fileUniqueId:fileUniqueId},function(uploadHandlerResult,uploadHandlerMetadata,fileType,fileExtension){fileUploadParams=Object.assign(fileUploadParams,uploadHandlerResult);putInChatUploadQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.MESSAGE,typeCode:generalTypeCode,//params.typeCode,
-messageType:params.messageType&&typeof params.messageType.toUpperCase()!=='undefined'&&chatMessageTypes[params.messageType.toUpperCase()]>0?chatMessageTypes[params.messageType.toUpperCase()]:1,subjectId:params.threadId,repliedTo:params.repliedTo,content:params.content,metadata:JSON.stringify(uploadHandlerMetadata),systemMetadata:JSON.stringify(params.systemMetadata),uniqueId:fileUniqueId,pushMsgType:3},callbacks:callbacks},function(){if(imageMimeTypes.indexOf(fileType)>=0||imageExtentions.indexOf(fileExtension)>=0){uploadImageToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){metadata['name']=result.result.name;metadata['fileHash']=result.result.hash;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['actualHeight']=result.result.actualHeight;metadata['file']['actualWidth']=result.result.actualWidth;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;metadata['file']['link']="".concat(SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS,"/api/images/").concat(result.result.hash,"?checkUserGroupAccess=true");transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}else{uploadFileToPodspaceNew(fileUploadParams,function(result){if(!result.hasError){metadata['fileHash']=result.result.hash;metadata['name']=result.result.name;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}});});};this.forwardMessage=function(params,callbacks){var threadId=params.threadId,messageIdsList=params.messageIds,uniqueIdsList=[];for(var i in messageIdsList){if(!chatMessaging.threadCallbacks[threadId]){chatMessaging.threadCallbacks[threadId]={};}var uniqueId=Utility.generateUUID();uniqueIdsList.push(uniqueId);chatMessaging.threadCallbacks[threadId][uniqueId]={};chatMessaging.sendMessageCallbacks[uniqueId]={};if(callbacks.onSent){chatMessaging.sendMessageCallbacks[uniqueId].onSent=callbacks.onSent;chatMessaging.threadCallbacks[threadId][uniqueId].onSent=false;chatMessaging.threadCallbacks[threadId][uniqueId].uniqueId=uniqueId;}if(callbacks.onSeen){chatMessaging.sendMessageCallbacks[uniqueId].onSeen=callbacks.onSeen;chatMessaging.threadCallbacks[threadId][uniqueId].onSeen=false;}if(callbacks.onDeliver){chatMessaging.sendMessageCallbacks[uniqueId].onDeliver=callbacks.onDeliver;chatMessaging.threadCallbacks[threadId][uniqueId].onDeliver=false;}}putInChatSendQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.FORWARD_MESSAGE,typeCode:generalTypeCode,//params.typeCode,
-subjectId:params.threadId,repliedTo:params.repliedTo,content:messageIdsList,uniqueId:uniqueIdsList,metadata:JSON.stringify(params.metadata),pushMsgType:3},callbacks:callbacks},function(){chatSendQueueHandler();},true);};this.deliver=function(params){return putInMessagesDeliveryQueue(params.threadId,params.messageId);};this.seen=function(params){return putInMessagesSeenQueue(params.threadId,params.messageId);};this.startTyping=function(params){var uniqueId=Utility.generateUUID();if(parseInt(params.threadId)>0){var threadId=params.threadId;}isTypingInterval&&clearInterval(isTypingInterval);isTypingInterval=setInterval(function(){sendSystemMessage({content:JSON.stringify({type:systemMessageTypes.IS_TYPING}),threadId:threadId,uniqueId:uniqueId});},systemMessageIntervalPitch);};this.stopTyping=function(){isTypingInterval&&clearInterval(isTypingInterval);};this.getMessageDeliveredList=function(params,callback){var deliveryListData={chatMessageVOType:_constants.chatMessageVOTypes.GET_MESSAGE_DELIVERY_PARTICIPANTS,typeCode:generalTypeCode,//params.typeCode,
+content:{uniqueIds:uniqueIdsList,ids:messageIdsList,deleteForAll:typeof params.deleteForAll==='boolean'?params.deleteForAll:false},pushMsgType:3});};this.replyTextMessage=function(params,callbacks){var uniqueId;if(typeof params.uniqueId!=='undefined'){uniqueId=params.uniqueId;}else{uniqueId=_utility["default"].generateUUID();}putInChatSendQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.MESSAGE,typeCode:generalTypeCode,//params.typeCode,
+messageType:1,subjectId:params.threadId,repliedTo:params.repliedTo,content:params.textMessage,uniqueId:uniqueId,systemMetadata:JSON.stringify(params.systemMetadata),metadata:JSON.stringify(params.metadata),pushMsgType:3},callbacks:callbacks},function(){chatSendQueueHandler();});return{uniqueId:uniqueId,threadId:params.threadId,participant:chatMessaging.userInfo,content:params.content};};this.replyFileMessage=function(params,callbacks){var metadata={file:{}},fileUploadParams={},fileUniqueId=_utility["default"].generateUUID();if(!params.userGroupHash||params.userGroupHash.length===0||typeof params.userGroupHash!=='string'){chatEvents.fireEvent('error',{code:6304,message:CHAT_ERRORS[6304]});return;}else{fileUploadParams.userGroupHash=params.userGroupHash;}return chatUploadHandler({threadId:params.threadId,file:params.file,fileUniqueId:fileUniqueId},function(uploadHandlerResult,uploadHandlerMetadata,fileType,fileExtension){fileUploadParams=Object.assign(fileUploadParams,uploadHandlerResult);putInChatUploadQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.MESSAGE,typeCode:generalTypeCode,//params.typeCode,
+messageType:params.messageType&&typeof params.messageType.toUpperCase()!=='undefined'&&chatMessageTypes[params.messageType.toUpperCase()]>0?chatMessageTypes[params.messageType.toUpperCase()]:1,subjectId:params.threadId,repliedTo:params.repliedTo,content:params.content,metadata:JSON.stringify(uploadHandlerMetadata),systemMetadata:JSON.stringify(params.systemMetadata),uniqueId:fileUniqueId,pushMsgType:3},callbacks:callbacks},function(){if(imageMimeTypes.indexOf(fileType)>=0||imageExtentions.indexOf(fileExtension)>=0){uploadImageToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){metadata['name']=result.result.name;metadata['fileHash']=result.result.hash;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['actualHeight']=result.result.actualHeight;metadata['file']['actualWidth']=result.result.actualWidth;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;metadata['file']['link']="".concat(SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS,"/api/images/").concat(result.result.hash,"?checkUserGroupAccess=true");transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}else{uploadFileToPodspaceNew(fileUploadParams,function(result){if(!result.hasError){metadata['fileHash']=result.result.hash;metadata['name']=result.result.name;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}});});};this.forwardMessage=function(params,callbacks){var threadId=params.threadId,messageIdsList=params.messageIds,uniqueIdsList=[];for(var i in messageIdsList){if(!chatMessaging.threadCallbacks[threadId]){chatMessaging.threadCallbacks[threadId]={};}var uniqueId=_utility["default"].generateUUID();uniqueIdsList.push(uniqueId);chatMessaging.threadCallbacks[threadId][uniqueId]={};chatMessaging.sendMessageCallbacks[uniqueId]={};if(callbacks.onSent){chatMessaging.sendMessageCallbacks[uniqueId].onSent=callbacks.onSent;chatMessaging.threadCallbacks[threadId][uniqueId].onSent=false;chatMessaging.threadCallbacks[threadId][uniqueId].uniqueId=uniqueId;}if(callbacks.onSeen){chatMessaging.sendMessageCallbacks[uniqueId].onSeen=callbacks.onSeen;chatMessaging.threadCallbacks[threadId][uniqueId].onSeen=false;}if(callbacks.onDeliver){chatMessaging.sendMessageCallbacks[uniqueId].onDeliver=callbacks.onDeliver;chatMessaging.threadCallbacks[threadId][uniqueId].onDeliver=false;}}putInChatSendQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.FORWARD_MESSAGE,typeCode:generalTypeCode,//params.typeCode,
+subjectId:params.threadId,repliedTo:params.repliedTo,content:messageIdsList,uniqueId:uniqueIdsList,metadata:JSON.stringify(params.metadata),pushMsgType:3},callbacks:callbacks},function(){chatSendQueueHandler();},true);};this.deliver=function(params){return putInMessagesDeliveryQueue(params.threadId,params.messageId);};this.seen=function(params){return putInMessagesSeenQueue(params.threadId,params.messageId);};this.startTyping=function(params){var uniqueId=_utility["default"].generateUUID();if(parseInt(params.threadId)>0){var threadId=params.threadId;}isTypingInterval&&clearInterval(isTypingInterval);isTypingInterval=setInterval(function(){sendSystemMessage({content:JSON.stringify({type:systemMessageTypes.IS_TYPING}),threadId:threadId,uniqueId:uniqueId});},systemMessageIntervalPitch);};this.stopTyping=function(){isTypingInterval&&clearInterval(isTypingInterval);};this.getMessageDeliveredList=function(params,callback){var deliveryListData={chatMessageVOType:_constants.chatMessageVOTypes.GET_MESSAGE_DELIVERY_PARTICIPANTS,typeCode:generalTypeCode,//params.typeCode,
 content:{},pushMsgType:3,token:token,timeout:params.timeout};if(params){if(parseInt(params.messageId)>0){deliveryListData.content.messageId=params.messageId;}}return chatMessaging.sendMessage(deliveryListData,{onResult:function onResult(result){if((0,_typeof2["default"])(result.result)=='object'){for(var i=0;i<result.result.length;i++){result.result[i]=formatDataToMakeUser(result.result[i]);}}callback&&callback(result);}});};this.getMessageSeenList=function(params,callback){var seenListData={chatMessageVOType:_constants.chatMessageVOTypes.GET_MESSAGE_SEEN_PARTICIPANTS,typeCode:generalTypeCode,//params.typeCode,
 content:{},pushMsgType:3,token:token,timeout:params.timeout};if(params){if(parseInt(params.messageId)>0){seenListData.content.messageId=params.messageId;}}return chatMessaging.sendMessage(seenListData,{onResult:function onResult(result){if((0,_typeof2["default"])(result.result)=='object'){for(var i=0;i<result.result.length;i++){result.result[i]=formatDataToMakeUser(result.result[i]);}}callback&&callback(result);}});};this.updateThreadInfo=updateThreadInfo;this.updateChatProfile=updateChatProfile;this.muteThread=function(params,callback){return chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.MUTE_THREAD,typeCode:generalTypeCode,//params.typeCode,
 subjectId:params.threadId,content:{},pushMsgType:3,token:token},{onResult:function onResult(result){callback&&callback(result);}});};this.unMuteThread=function(params,callback){return chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.UNMUTE_THREAD,typeCode:generalTypeCode,//params.typeCode,
@@ -58595,17 +55168,17 @@ pushMsgType:3,token:token,timeout:params.timeout};if(params){if(parseInt(params.
 content:{},pushMsgType:3,token:token,timeout:params.timeout};if(params){if(parseInt(params.contactId)>0){blockData.content.contactId=params.contactId;}if(parseInt(params.threadId)>0){blockData.content.threadId=params.threadId;}if(parseInt(params.userId)>0){blockData.content.userId=params.userId;}}return chatMessaging.sendMessage(blockData,{onResult:function onResult(result){if((0,_typeof2["default"])(result.result)=='object'){result.result=formatDataToMakeBlockedUser(result.result);}callback&&callback(result);}});};this.unblock=function(params,callback){var unblockData={chatMessageVOType:_constants.chatMessageVOTypes.UNBLOCK,typeCode:generalTypeCode,//params.typeCode,
 pushMsgType:3,token:token,content:{},timeout:params.timeout};if(params){if(parseInt(params.blockId)>0){unblockData.subjectId=params.blockId;}if(parseInt(params.contactId)>0){unblockData.content.contactId=params.contactId;}if(parseInt(params.threadId)>0){unblockData.content.threadId=params.threadId;}if(parseInt(params.userId)>0){unblockData.content.userId=params.userId;}}return chatMessaging.sendMessage(unblockData,{onResult:function onResult(result){if((0,_typeof2["default"])(result.result)=='object'){result.result=formatDataToMakeBlockedUser(result.result);}callback&&callback(result);}});};this.getBlockedList=function(params,callback){var count=50,offset=0,content={};if(params){if(parseInt(params.count)>0){count=params.count;}if(parseInt(params.offset)>0){offset=params.offset;}}content.count=count;content.offset=offset;var getBlockedData={chatMessageVOType:_constants.chatMessageVOTypes.GET_BLOCKED,typeCode:generalTypeCode,//params.typeCode,
 content:content,pushMsgType:3,token:token,timeout:params.timeout};return chatMessaging.sendMessage(getBlockedData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={blockedUsers:[],contentCount:result.contentCount,hasNext:offset+count<result.contentCount&&messageLength>0,nextOffset:offset*1+messageLength*1},blockedUser;for(var i=0;i<messageLength;i++){blockedUser=formatDataToMakeBlockedUser(messageContent[i]);if(blockedUser){resultData.blockedUsers.push(blockedUser);}}returnData.result=resultData;}callback&&callback(returnData);}});};this.getUserNotSeenDuration=function(params,callback){var content={};if(params){if(Array.isArray(params.userIds)){content.userIds=params.userIds;}}var getNotSeenDurationData={chatMessageVOType:_constants.chatMessageVOTypes.GET_NOT_SEEN_DURATION,typeCode:generalTypeCode,//params.typeCode,
-content:content,pushMsgType:3,token:token,timeout:params.timeout};return chatMessaging.sendMessage(getNotSeenDurationData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){returnData.result=result.result;}callback&&callback(returnData);}});};this.addContacts=function(params,callback){var data={};if(params){if(typeof params.firstName==='string'){data.firstName=params.firstName;}else{data.firstName='';}if(typeof params.lastName==='string'){data.lastName=params.lastName;}else{data.lastName='';}if(typeof params.typeCode==='string'){data.typeCode=params.typeCode;}else if(generalTypeCode){data.typeCode=generalTypeCode;}if(typeof params.cellphoneNumber==='string'){data.cellphoneNumber=params.cellphoneNumber;}else{data.cellphoneNumber='';}if(typeof params.email==='string'){data.email=params.email;}else{data.email='';}if(typeof params.username==='string'){data.username=params.username;}data.uniqueId=Utility.generateUUID();}var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.ADD_CONTACTS,method:'POST',data:data,headers:{'_token_':token,'_token_issuer_':1}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if(!responseData.hasError){var messageContent=responseData.result,messageLength=responseData.result.length,resultData={contacts:[],contentCount:messageLength},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;/**
+content:content,pushMsgType:3,token:token,timeout:params.timeout};return chatMessaging.sendMessage(getNotSeenDurationData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){returnData.result=result.result;}callback&&callback(returnData);}});};this.addContacts=function(params,callback){var data={};if(params){if(typeof params.firstName==='string'){data.firstName=params.firstName;}else{data.firstName='';}if(typeof params.lastName==='string'){data.lastName=params.lastName;}else{data.lastName='';}if(typeof params.typeCode==='string'){data.typeCode=params.typeCode;}else if(generalTypeCode){data.typeCode=generalTypeCode;}if(typeof params.cellphoneNumber==='string'){data.cellphoneNumber=params.cellphoneNumber;}else{data.cellphoneNumber='';}if(typeof params.email==='string'){data.email=params.email;}else{data.email='';}if(typeof params.username==='string'){data.username=params.username;}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.ADD_CONTACTS,method:'POST',data:data,headers:{'_token_':token,'_token_issuer_':1}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if(!responseData.hasError){var messageContent=responseData.result,messageLength=responseData.result.length,resultData={contacts:[],contentCount:messageLength},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;/**
                          * Add Contacts into cache database #cache
-                         */if(canUseCache&&cacheSecret.length>0){if(db){var cacheData=[];for(var i=0;i<resultData.contacts.length;i++){try{var tempData={},salt=Utility.generateUUID();tempData.id=resultData.contacts[i].id;tempData.owner=chatMessaging.userInfo.id;tempData.uniqueId=resultData.contacts[i].uniqueId;tempData.userId=Utility.crypt(resultData.contacts[i].userId,cacheSecret,salt);tempData.cellphoneNumber=Utility.crypt(resultData.contacts[i].cellphoneNumber,cacheSecret,salt);tempData.email=Utility.crypt(resultData.contacts[i].email,cacheSecret,salt);tempData.firstName=Utility.crypt(resultData.contacts[i].firstName,cacheSecret,salt);tempData.lastName=Utility.crypt(resultData.contacts[i].lastName,cacheSecret,salt);tempData.expireTime=new Date().getTime()+cacheExpireTime;tempData.data=Utility.crypt(JSON.stringify(unsetNotSeenDuration(resultData.contacts[i])),cacheSecret,salt);tempData.salt=salt;cacheData.push(tempData);}catch(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}db.contacts.bulkPut(cacheData)["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}callback&&callback(returnData);}else{chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});};this.newAddContacts=function(params,callback){var addContactsData={chatMessageVOType:_constants.chatMessageVOTypes.ADD_CONTACTS,content:{},pushMsgType:3,token:token,typeCode:generalTypeCode},AddContactVO={},firstNameList=[],lastNameList=[],cellPhoneNumberList=[],emailList=[],usernameList=[],uniqueIdList=[];if(params){for(var item in params.contacts){if(typeof params.contacts[item].firstName==='string'){firstNameList.push(params.contacts[item].firstName);}else{firstNameList.push('');}if(typeof params.contacts[item].lastName==='string'){lastNameList.push(params.contacts[item].lastName);}else{lastNameList.push('');}if(typeof params.contacts[item].cellphoneNumber==='string'){cellPhoneNumberList.push(params.contacts[item].cellphoneNumber);// data.cellphoneNumber = params.cellphoneNumber;
+                         */if(canUseCache&&cacheSecret.length>0){if(db){var cacheData=[];for(var i=0;i<resultData.contacts.length;i++){try{var tempData={},salt=_utility["default"].generateUUID();tempData.id=resultData.contacts[i].id;tempData.owner=chatMessaging.userInfo.id;tempData.uniqueId=resultData.contacts[i].uniqueId;tempData.userId=_utility["default"].crypt(resultData.contacts[i].userId,cacheSecret,salt);tempData.cellphoneNumber=_utility["default"].crypt(resultData.contacts[i].cellphoneNumber,cacheSecret,salt);tempData.email=_utility["default"].crypt(resultData.contacts[i].email,cacheSecret,salt);tempData.firstName=_utility["default"].crypt(resultData.contacts[i].firstName,cacheSecret,salt);tempData.lastName=_utility["default"].crypt(resultData.contacts[i].lastName,cacheSecret,salt);tempData.expireTime=new Date().getTime()+cacheExpireTime;tempData.data=_utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(resultData.contacts[i])),cacheSecret,salt);tempData.salt=salt;cacheData.push(tempData);}catch(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}db.contacts.bulkPut(cacheData)["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}callback&&callback(returnData);}else{chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});};this.newAddContacts=function(params,callback){var addContactsData={chatMessageVOType:_constants.chatMessageVOTypes.ADD_CONTACTS,content:{},pushMsgType:3,token:token,typeCode:generalTypeCode},AddContactVO={},firstNameList=[],lastNameList=[],cellPhoneNumberList=[],emailList=[],usernameList=[],uniqueIdList=[];if(params){for(var item in params.contacts){if(typeof params.contacts[item].firstName==='string'){firstNameList.push(params.contacts[item].firstName);}else{firstNameList.push('');}if(typeof params.contacts[item].lastName==='string'){lastNameList.push(params.contacts[item].lastName);}else{lastNameList.push('');}if(typeof params.contacts[item].cellphoneNumber==='string'){cellPhoneNumberList.push(params.contacts[item].cellphoneNumber);// data.cellphoneNumber = params.cellphoneNumber;
 }else{cellPhoneNumberList.push('');// data.cellphoneNumber = '';
 }if(typeof params.contacts[item].email==='string'){emailList.push(params.contacts[item].email);// data.email = params.email;
 }else{emailList.push('');// data.email = '';
 }if(typeof params.contacts[item].username==='string'){usernameList.push(params.contacts[item].username);// data.username = params.username;
-}uniqueIdList.push(Utility.generateUUID());// data.uniqueId = Utility.generateUUID();
+}uniqueIdList.push(_utility["default"].generateUUID());// data.uniqueId = Utility.generateUUID();
 }AddContactVO={uniqueIdList:uniqueIdList,emailList:emailList,usernameList:usernameList,firstNameList:firstNameList,lastNameList:lastNameList,cellphoneNumberList:cellPhoneNumberList};}addContactsData.content=AddContactVO;return chatMessaging.sendMessage(addContactsData,{onResult:function onResult(result){console.log(result);var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if((0,_typeof2["default"])(result.result)=='object'){var messageContent=responseData.result,messageLength=responseData.result.length,resultData={contacts:[],contentCount:messageLength},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;/**
                          * Add Contacts into cache database #cache
-                         */if(canUseCache&&cacheSecret.length>0){if(db){var cacheData=[];for(var i=0;i<resultData.contacts.length;i++){try{var tempData={},salt=Utility.generateUUID();tempData.id=resultData.contacts[i].id;tempData.owner=chatMessaging.userInfo.id;tempData.uniqueId=resultData.contacts[i].uniqueId;tempData.userId=Utility.crypt(resultData.contacts[i].userId,cacheSecret,salt);tempData.cellphoneNumber=Utility.crypt(resultData.contacts[i].cellphoneNumber,cacheSecret,salt);tempData.email=Utility.crypt(resultData.contacts[i].email,cacheSecret,salt);tempData.firstName=Utility.crypt(resultData.contacts[i].firstName,cacheSecret,salt);tempData.lastName=Utility.crypt(resultData.contacts[i].lastName,cacheSecret,salt);tempData.expireTime=new Date().getTime()+cacheExpireTime;tempData.data=Utility.crypt(JSON.stringify(unsetNotSeenDuration(resultData.contacts[i])),cacheSecret,salt);tempData.salt=salt;cacheData.push(tempData);}catch(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}db.contacts.bulkPut(cacheData)["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}// }
+                         */if(canUseCache&&cacheSecret.length>0){if(db){var cacheData=[];for(var i=0;i<resultData.contacts.length;i++){try{var tempData={},salt=_utility["default"].generateUUID();tempData.id=resultData.contacts[i].id;tempData.owner=chatMessaging.userInfo.id;tempData.uniqueId=resultData.contacts[i].uniqueId;tempData.userId=_utility["default"].crypt(resultData.contacts[i].userId,cacheSecret,salt);tempData.cellphoneNumber=_utility["default"].crypt(resultData.contacts[i].cellphoneNumber,cacheSecret,salt);tempData.email=_utility["default"].crypt(resultData.contacts[i].email,cacheSecret,salt);tempData.firstName=_utility["default"].crypt(resultData.contacts[i].firstName,cacheSecret,salt);tempData.lastName=_utility["default"].crypt(resultData.contacts[i].lastName,cacheSecret,salt);tempData.expireTime=new Date().getTime()+cacheExpireTime;tempData.data=_utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(resultData.contacts[i])),cacheSecret,salt);tempData.salt=salt;cacheData.push(tempData);}catch(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}db.contacts.bulkPut(cacheData)["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}// }
 callback&&callback(returnData);}//callback && callback(result);
 }});/* var requestParams = {
                 url: SERVICE_ADDRESSES.PLATFORM_ADDRESS + SERVICES_PATH.ADD_CONTACTS,
@@ -58634,9 +55207,9 @@ callback&&callback(returnData);}//callback && callback(result);
                     });
                     */ //}
 //});
-};this.updateContacts=function(params,callback){var data={};if(params){if(parseInt(params.id)>0){data.id=parseInt(params.id);}else{chatEvents.fireEvent('error',{code:999,message:'ID is required for Updating Contact!',error:undefined});}if(typeof params.firstName==='string'){data.firstName=params.firstName;}else{chatEvents.fireEvent('error',{code:999,message:'firstName is required for Updating Contact!'});}if(typeof params.lastName==='string'){data.lastName=params.lastName;}else{chatEvents.fireEvent('error',{code:999,message:'lastName is required for Updating Contact!'});}if(typeof params.cellphoneNumber==='string'){data.cellphoneNumber=params.cellphoneNumber;}else{chatEvents.fireEvent('error',{code:999,message:'cellphoneNumber is required for Updating Contact!'});}if(typeof params.email==='string'){data.email=params.email;}else{chatEvents.fireEvent('error',{code:999,message:'email is required for Updating Contact!'});}data.uniqueId=Utility.generateUUID();}var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.UPDATE_CONTACTS,method:'GET',data:data,headers:{'_token_':token,'_token_issuer_':1}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if(!responseData.hasError){var messageContent=responseData.result,messageLength=responseData.result.length,resultData={contacts:[],contentCount:messageLength},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;/**
+};this.updateContacts=function(params,callback){var data={};if(params){if(parseInt(params.id)>0){data.id=parseInt(params.id);}else{chatEvents.fireEvent('error',{code:999,message:'ID is required for Updating Contact!',error:undefined});}if(typeof params.firstName==='string'){data.firstName=params.firstName;}else{chatEvents.fireEvent('error',{code:999,message:'firstName is required for Updating Contact!'});}if(typeof params.lastName==='string'){data.lastName=params.lastName;}else{chatEvents.fireEvent('error',{code:999,message:'lastName is required for Updating Contact!'});}if(typeof params.cellphoneNumber==='string'){data.cellphoneNumber=params.cellphoneNumber;}else{chatEvents.fireEvent('error',{code:999,message:'cellphoneNumber is required for Updating Contact!'});}if(typeof params.email==='string'){data.email=params.email;}else{chatEvents.fireEvent('error',{code:999,message:'email is required for Updating Contact!'});}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.UPDATE_CONTACTS,method:'GET',data:data,headers:{'_token_':token,'_token_issuer_':1}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if(!responseData.hasError){var messageContent=responseData.result,messageLength=responseData.result.length,resultData={contacts:[],contentCount:messageLength},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;/**
                          * Add Contacts into cache database #cache
-                         */if(canUseCache&&cacheSecret.length>0){if(db){var cacheData=[];for(var i=0;i<resultData.contacts.length;i++){try{var tempData={},salt=Utility.generateUUID();tempData.id=resultData.contacts[i].id;tempData.owner=chatMessaging.userInfo.id;tempData.uniqueId=resultData.contacts[i].uniqueId;tempData.userId=Utility.crypt(resultData.contacts[i].userId,cacheSecret,salt);tempData.cellphoneNumber=Utility.crypt(resultData.contacts[i].cellphoneNumber,cacheSecret,salt);tempData.email=Utility.crypt(resultData.contacts[i].email,cacheSecret,salt);tempData.firstName=Utility.crypt(resultData.contacts[i].firstName,cacheSecret,salt);tempData.lastName=Utility.crypt(resultData.contacts[i].lastName,cacheSecret,salt);tempData.expireTime=new Date().getTime()+cacheExpireTime;tempData.data=Utility.crypt(JSON.stringify(unsetNotSeenDuration(resultData.contacts[i])),cacheSecret,salt);tempData.salt=salt;cacheData.push(tempData);}catch(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}db.contacts.bulkPut(cacheData)["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}callback&&callback(returnData);}else{chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});};this.removeContacts=function(params,callback){var data={};if(params){if(parseInt(params.id)>0){data.id=parseInt(params.id);}else{chatEvents.fireEvent('error',{code:999,message:'ID is required for Deleting Contact!',error:undefined});}}var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.REMOVE_CONTACTS,method:'POST',data:data,headers:{'_token_':token,'_token_issuer_':1}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if(!responseData.hasError){returnData.result=responseData.result;}/**
+                         */if(canUseCache&&cacheSecret.length>0){if(db){var cacheData=[];for(var i=0;i<resultData.contacts.length;i++){try{var tempData={},salt=_utility["default"].generateUUID();tempData.id=resultData.contacts[i].id;tempData.owner=chatMessaging.userInfo.id;tempData.uniqueId=resultData.contacts[i].uniqueId;tempData.userId=_utility["default"].crypt(resultData.contacts[i].userId,cacheSecret,salt);tempData.cellphoneNumber=_utility["default"].crypt(resultData.contacts[i].cellphoneNumber,cacheSecret,salt);tempData.email=_utility["default"].crypt(resultData.contacts[i].email,cacheSecret,salt);tempData.firstName=_utility["default"].crypt(resultData.contacts[i].firstName,cacheSecret,salt);tempData.lastName=_utility["default"].crypt(resultData.contacts[i].lastName,cacheSecret,salt);tempData.expireTime=new Date().getTime()+cacheExpireTime;tempData.data=_utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(resultData.contacts[i])),cacheSecret,salt);tempData.salt=salt;cacheData.push(tempData);}catch(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}db.contacts.bulkPut(cacheData)["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}callback&&callback(returnData);}else{chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});};this.removeContacts=function(params,callback){var data={};if(params){if(parseInt(params.id)>0){data.id=parseInt(params.id);}else{chatEvents.fireEvent('error',{code:999,message:'ID is required for Deleting Contact!',error:undefined});}}var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.REMOVE_CONTACTS,method:'POST',data:data,headers:{'_token_':token,'_token_issuer_':1}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if(!responseData.hasError){returnData.result=responseData.result;}/**
                      * Remove the contact from cache
                      */if(canUseCache){if(db){db.contacts.where('id').equals(parseInt(params.id))["delete"]()["catch"](function(error){chatEvents.fireEvent('error',{code:6602,message:CHAT_ERRORS[6602],error:error});});}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}callback&&callback(returnData);}else{chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});};this.searchContacts=function(params,callback){var data={size:50,offset:0},whereClause={},returnCache=false;if(params){if(typeof params.firstName==='string'){data.firstName=whereClause.firstName=params.firstName;}if(typeof params.lastName==='string'){data.lastName=whereClause.lastName=params.lastName;}if(parseInt(params.cellphoneNumber)>0){data.cellphoneNumber=whereClause.cellphoneNumber=params.cellphoneNumber;}if(typeof params.email==='string'){data.email=whereClause.email=params.email;}if(typeof params.query==='string'){data.q=whereClause.q=params.query;}if(typeof params.uniqueId==='string'){data.uniqueId=whereClause.uniqueId=params.uniqueId;}if(parseInt(params.id)>0){data.id=whereClause.id=params.id;}if(parseInt(params.typeCode)>0){data.typeCode=whereClause.typeCode=params.typeCode;}// data.typeCode = whereClause.typeCode = generalTypeCode;//params.typeCode;
 if(parseInt(params.size)>0){data.size=params.size;}if(parseInt(params.offset)>0){data.offset=params.offset;}var functionLevelCache=typeof params.cache=='boolean'?params.cache:true;}var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.SEARCH_CONTACTS,method:'POST',data:data,headers:{'_token_':token,'_token_issuer_':1}};/**
@@ -58652,7 +55225,7 @@ if(parseInt(params.size)>0){data.size=params.size;}if(parseInt(params.offset)>0)
              * Get Search Contacts Result From Server
              */httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if(!responseData.hasError){var messageContent=responseData.result,messageLength=responseData.result.length,resultData={contacts:[],contentCount:messageLength},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;/**
                          * Add Contacts into cache database #cache
-                         */if(canUseCache&&cacheSecret.length>0){if(db){var cacheData=[];for(var i=0;i<resultData.contacts.length;i++){try{var tempData={},salt=Utility.generateUUID();tempData.id=resultData.contacts[i].id;tempData.owner=chatMessaging.userInfo.id;tempData.uniqueId=resultData.contacts[i].uniqueId;tempData.userId=Utility.crypt(resultData.contacts[i].userId,cacheSecret,salt);tempData.cellphoneNumber=Utility.crypt(resultData.contacts[i].cellphoneNumber,cacheSecret,salt);tempData.email=Utility.crypt(resultData.contacts[i].email,cacheSecret,salt);tempData.firstName=Utility.crypt(resultData.contacts[i].firstName,cacheSecret,salt);tempData.lastName=Utility.crypt(resultData.contacts[i].lastName,cacheSecret,salt);tempData.expireTime=new Date().getTime()+cacheExpireTime;tempData.data=crypt(JSON.stringify(unsetNotSeenDuration(resultData.contacts[i])),cacheSecret,salt);tempData.salt=salt;cacheData.push(tempData);}catch(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}db.contacts.bulkPut(cacheData)["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}callback&&callback(returnData);/**
+                         */if(canUseCache&&cacheSecret.length>0){if(db){var cacheData=[];for(var i=0;i<resultData.contacts.length;i++){try{var tempData={},salt=_utility["default"].generateUUID();tempData.id=resultData.contacts[i].id;tempData.owner=chatMessaging.userInfo.id;tempData.uniqueId=resultData.contacts[i].uniqueId;tempData.userId=_utility["default"].crypt(resultData.contacts[i].userId,cacheSecret,salt);tempData.cellphoneNumber=_utility["default"].crypt(resultData.contacts[i].cellphoneNumber,cacheSecret,salt);tempData.email=_utility["default"].crypt(resultData.contacts[i].email,cacheSecret,salt);tempData.firstName=_utility["default"].crypt(resultData.contacts[i].firstName,cacheSecret,salt);tempData.lastName=_utility["default"].crypt(resultData.contacts[i].lastName,cacheSecret,salt);tempData.expireTime=new Date().getTime()+cacheExpireTime;tempData.data=crypt(JSON.stringify(unsetNotSeenDuration(resultData.contacts[i])),cacheSecret,salt);tempData.salt=salt;cacheData.push(tempData);}catch(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}db.contacts.bulkPut(cacheData)["catch"](function(error){chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}callback&&callback(returnData);/**
                      * Delete callback so if server pushes response before
                      * cache, cache won't send data again
                      */callback=undefined;if(!returnData.hasError&&returnCache){chatEvents.fireEvent('contactEvents',{type:'CONTACTS_SEARCH_RESULT_CHANGE',result:returnData.result});}}else{chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});};this.createBot=function(params,callback){var createBotData={chatMessageVOType:_constants.chatMessageVOTypes.CREATE_BOT,typeCode:generalTypeCode,//params.typeCode,
@@ -58710,7 +55283,7 @@ content:{count:count,offset:offset}};if(params){if((0,_typeof2["default"])(param
              * + locationPingRequest     {object}
              *    + content              {list} A map of { location: string, locationId: int }
              */var locationPingData={chatMessageVOType:_constants.chatMessageVOTypes.LOCATION_PING,typeCode:generalTypeCode,//params.typeCode,
-pushMsgType:3,token:token},content={};if(params){if(typeof params.location==='string'&&locationPingTypes.hasOwnProperty(params.location.toUpperCase())){content.location=locationPingTypes[params.location.toUpperCase()];if(params.location.toUpperCase()==='THREAD'){if(typeof params.threadId==='number'&&params.threadId>0){content.locationId=+params.threadId;}else{chatEvents.fireEvent('error',{code:999,message:'You set the location to be a thread, you have to send a valid ThreadId'});return;}}}else{chatEvents.fireEvent('error',{code:999,message:'Send a valid location type (CHAT / THREAD / CONTACTS)'});return;}locationPingData.content=JSON.stringify(content);}else{chatEvents.fireEvent('error',{code:999,message:'No params have been sent to LocationPing!'});return;}return chatMessaging.sendMessage(locationPingData,{onResult:function onResult(result){callback&&callback(result);}});};this.clearChatServerCaches=clearChatServerCaches;this.deleteCacheDatabases=deleteCacheDatabases;this.clearCacheDatabasesOfUser=clearCacheDatabasesOfUser;this.getChatState=function(){return chatFullStateObject;};this.reconnect=function(){asyncClient.reconnectSocket();};this.setToken=function(newToken){if(typeof newToken!=='undefined'){token=newToken;callModule.updateToken(token);chatMessaging.updateToken(token);chatEvents.updateToken(token);}};this.generateUUID=Utility.generateUUID;this.logout=function(){clearChatServerCaches();chatEvents.clearEventCallbacks();chatMessaging.messagesCallbacks={};chatMessaging.sendMessageCallbacks={};chatMessaging.threadCallbacks={};asyncClient.logout();};/**
+pushMsgType:3,token:token},content={};if(params){if(typeof params.location==='string'&&locationPingTypes.hasOwnProperty(params.location.toUpperCase())){content.location=locationPingTypes[params.location.toUpperCase()];if(params.location.toUpperCase()==='THREAD'){if(typeof params.threadId==='number'&&params.threadId>0){content.locationId=+params.threadId;}else{chatEvents.fireEvent('error',{code:999,message:'You set the location to be a thread, you have to send a valid ThreadId'});return;}}}else{chatEvents.fireEvent('error',{code:999,message:'Send a valid location type (CHAT / THREAD / CONTACTS)'});return;}locationPingData.content=JSON.stringify(content);}else{chatEvents.fireEvent('error',{code:999,message:'No params have been sent to LocationPing!'});return;}return chatMessaging.sendMessage(locationPingData,{onResult:function onResult(result){callback&&callback(result);}});};this.clearChatServerCaches=clearChatServerCaches;this.deleteCacheDatabases=deleteCacheDatabases;this.clearCacheDatabasesOfUser=clearCacheDatabasesOfUser;this.getChatState=function(){return chatFullStateObject;};this.reconnect=function(){asyncClient.reconnectSocket();};this.setToken=function(newToken){if(typeof newToken!=='undefined'){token=newToken;callModule.updateToken(token);chatMessaging.updateToken(token);chatEvents.updateToken(token);}};this.generateUUID=_utility["default"].generateUUID;this.logout=function(){clearChatServerCaches();chatEvents.clearEventCallbacks();chatMessaging.messagesCallbacks={};chatMessaging.sendMessageCallbacks={};chatMessaging.threadCallbacks={};asyncClient.logout();};/**
          * Check a turn server availability
          *
          * @param turnIp
@@ -58731,24 +55304,23 @@ if(promiseResolved||!ice||!ice.candidate||!ice.candidate.candidate||!(ice.candid
 window.PodChat=Chat;}var _default=Chat;// })();
 exports["default"]=_default;
 
-},{"./call.module":334,"./events.module":336,"./lib/constants":337,"./messaging.module":338,"./utility/utility":339,"@babel/runtime/helpers/interopRequireDefault":1,"@babel/runtime/helpers/typeof":2,"@sentry/browser":8,"dexie":180,"podasync-ws-only":264}],336:[function(require,module,exports){
+},{"./call.module":322,"./events.module":324,"./lib/constants":325,"./messaging.module":326,"./utility/utility":327,"@babel/runtime/helpers/interopRequireDefault":1,"@babel/runtime/helpers/typeof":2,"@sentry/browser":8,"dexie":180,"podasync-ws-only":264}],324:[function(require,module,exports){
 "use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports["default"] = void 0; // (function () {
+exports["default"] = void 0;
 
-/**
- * Global Variables
- */
+var _utility = _interopRequireDefault(require("./utility/utility"));
 
 function ChatEvents(params) {
-  //if (typeof (require) !== 'undefined' && typeof (exports) !== 'undefined') {} else {}
   var Sentry = params.Sentry,
       currentModuleInstance = this,
-      Utility = params.Utility,
-      consoleLogging = params.consoleLogging,
+      //Utility = params.Utility,
+  consoleLogging = params.consoleLogging,
       token = params.token,
       eventCallbacks = {
     connect: {},
@@ -58841,7 +55413,8 @@ function ChatEvents(params) {
 
   this.on = function (eventName, callback) {
     if (eventCallbacks[eventName]) {
-      var id = Utility.generateUUID();
+      var id = _utility["default"].generateUUID();
+
       eventCallbacks[eventName][id] = callback;
       return id;
     }
@@ -58863,21 +55436,11 @@ function ChatEvents(params) {
     }
   };
 }
-/*    if (typeof module !== 'undefined' && typeof module.exports != 'undefined') {
-        module.exports = ChatEvents;
-    } else {*/
-// if (!window.POD) {
-//     window.POD = {};
-// }
-// window.POD.ChatEvents = ChatEvents;
-// }
-// })();
-
 
 var _default = ChatEvents;
 exports["default"] = _default;
 
-},{}],337:[function(require,module,exports){
+},{"./utility/utility":327,"@babel/runtime/helpers/interopRequireDefault":1}],325:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -59006,7 +55569,7 @@ var chatMessageVOTypes = {
 };
 exports.chatMessageVOTypes = chatMessageVOTypes;
 
-},{}],338:[function(require,module,exports){
+},{}],326:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -59020,7 +55583,9 @@ var _typeof2 = _interopRequireDefault(require("@babel/runtime/helpers/typeof"));
 
 var _constants = require("./lib/constants");
 
-var _dompurify = _interopRequireDefault(require("dompurify")); // (function () {
+var _dompurify = _interopRequireDefault(require("dompurify"));
+
+var _utility = _interopRequireDefault(require("./utility/utility")); // (function () {
 
 /**
  * Communicates with chat server
@@ -59033,8 +55598,8 @@ function ChatMessaging(params) {
   var currentModuleInstance = this,
       asyncClient = params.asyncClient,
       Sentry = params.Sentry,
-      Utility = params.Utility,
-      consoleLogging = params.consoleLogging,
+      //Utility = params.Utility,
+  consoleLogging = params.consoleLogging,
       generalTypeCode = params.generalTypeCode,
       chatPingMessageInterval = params.chatPingMessageInterval,
       asyncRequestTimeout = params.asyncRequestTimeout,
@@ -59152,7 +55717,7 @@ function ChatMessaging(params) {
     if (typeof params.uniqueId != 'undefined') {
       uniqueId = params.uniqueId;
     } else if (params.chatMessageVOType !== _constants.chatMessageVOTypes.PING) {
-      uniqueId = Utility.generateUUID();
+      uniqueId = _utility["default"].generateUUID();
     }
 
     if (Array.isArray(uniqueId)) {
@@ -59315,7 +55880,7 @@ function ChatMessaging(params) {
 var _default = ChatMessaging;
 exports["default"] = _default;
 
-},{"./lib/constants":337,"@babel/runtime/helpers/interopRequireDefault":1,"@babel/runtime/helpers/typeof":2,"dompurify":186}],339:[function(require,module,exports){
+},{"./lib/constants":325,"./utility/utility":327,"@babel/runtime/helpers/interopRequireDefault":1,"@babel/runtime/helpers/typeof":2,"dompurify":186}],327:[function(require,module,exports){
 (function (global){(function (){
 "use strict";
 
@@ -59908,8 +56473,9 @@ if (!window.POD) {
 
 window.POD.ChatUtility = ChatUtility; // }
 
-var _default = ChatUtility;
+var _default = new ChatUtility();
+
 exports["default"] = _default;
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"@babel/runtime/helpers/interopRequireDefault":1,"@babel/runtime/helpers/typeof":2,"crypto-js":148}]},{},[335]);
+},{"@babel/runtime/helpers/interopRequireDefault":1,"@babel/runtime/helpers/typeof":2,"crypto-js":148}]},{},[323]);

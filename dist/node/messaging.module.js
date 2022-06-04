@@ -13,6 +13,8 @@ var _constants = require("./lib/constants");
 
 var _dompurify = _interopRequireDefault(require("dompurify"));
 
+var _utility = _interopRequireDefault(require("./utility/utility"));
+
 // (function () {
 
 /**
@@ -24,8 +26,8 @@ function ChatMessaging(params) {
   var currentModuleInstance = this,
       asyncClient = params.asyncClient,
       Sentry = params.Sentry,
-      Utility = params.Utility,
-      consoleLogging = params.consoleLogging,
+      //Utility = params.Utility,
+  consoleLogging = params.consoleLogging,
       generalTypeCode = params.generalTypeCode,
       chatPingMessageInterval = params.chatPingMessageInterval,
       asyncRequestTimeout = params.asyncRequestTimeout,
@@ -143,7 +145,7 @@ function ChatMessaging(params) {
     if (typeof params.uniqueId != 'undefined') {
       uniqueId = params.uniqueId;
     } else if (params.chatMessageVOType !== _constants.chatMessageVOTypes.PING) {
-      uniqueId = Utility.generateUUID();
+      uniqueId = _utility["default"].generateUUID();
     }
 
     if (Array.isArray(uniqueId)) {
