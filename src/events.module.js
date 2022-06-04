@@ -1,8 +1,8 @@
 import Utility from "./utility/utility"
+import Sentry from "./lib/sentry.js"
 
 function ChatEvents(params) {
-    var Sentry = params.Sentry,
-        currentModuleInstance = this,
+    var currentModuleInstance = this,
         //Utility = params.Utility,
         consoleLogging = params.consoleLogging,
         token = params.token,

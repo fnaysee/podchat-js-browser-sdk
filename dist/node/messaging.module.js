@@ -25,7 +25,6 @@ var _utility = _interopRequireDefault(require("./utility/utility"));
 function ChatMessaging(params) {
   var currentModuleInstance = this,
       asyncClient = params.asyncClient,
-      Sentry = params.Sentry,
       //Utility = params.Utility,
   consoleLogging = params.consoleLogging,
       generalTypeCode = params.generalTypeCode,

@@ -16,7 +16,6 @@ var _kurentoUtils = _interopRequireDefault(require("kurento-utils"));
 var _utility = _interopRequireDefault(require("./utility/utility"));
 
 // import WebrtcAdapter from 'webrtc-adapter'
-// (function () {
 function ChatCall(params) {
   var //Utility = params.Utility,
   currentModuleInstance = this,
@@ -2467,11 +2466,11 @@ function ChatCall(params) {
           callStateController.removeParticipant(messageContent[0].userId);
           if (screenShareInfo.isStarted() && screenShareInfo.getOwner() === messageContent[0].userId) callStateController.removeScreenShareFromCall();
           /*                        if(messageContent[0].userId === chatMessaging.userInfo.id) {
-                                      chatEvents.fireEvent('callEvents', {
-                                          type: 'CALL_ENDED',
-                                          callId: threadId
-                                      });
-                                  }*/
+                                  chatEvents.fireEvent('callEvents', {
+                                      type: 'CALL_ENDED',
+                                      callId: threadId
+                                  });
+                              }*/
         } //If I'm the only call participant, stop the call
 
 
@@ -2640,14 +2639,14 @@ function ChatCall(params) {
               callUsers[cUserId].audioStopManager.reset();
             }
             /*                            callStateController.activateParticipantStream(
-                                            messageContent[i].userId,
-                                            'audio',
-                                            //TODO: Should send in here when chat server fixes the bug
-                                            'receive',   //(messageContent[i].userId === chatMessaging.userInfo.id ? 'send' : 'receive'),
-                                            'audioTopicName',
-                                            messageContent[i].sendTopic,
-                                            'mute'
-                                        );*/
+                                        messageContent[i].userId,
+                                        'audio',
+                                        //TODO: Should send in here when chat server fixes the bug
+                                        'receive',   //(messageContent[i].userId === chatMessaging.userInfo.id ? 'send' : 'receive'),
+                                        'audioTopicName',
+                                        messageContent[i].sendTopic,
+                                        'mute'
+                                    );*/
 
           }
         }
@@ -3836,20 +3835,20 @@ function ChatCall(params) {
     //, myUser = callUsers[myId];
 
     /*            if(myUser.audioStopManager.isStreamPaused()) {
-                    if (myUser.audioStopManager.isStreamStopped()){
-                        callStateController.activateParticipantStream(
-                            myId,
-                            'audio',
-                            'send',
-                            'audioTopicName',
-                            myUser.topicSend,
-                            'mute'
-                        );
-                    } else {
-                        currentModuleInstance.resumeMice({});
-                    }
-                    myUser.audioStopManager.reset();
-                }*/
+                if (myUser.audioStopManager.isStreamStopped()){
+                    callStateController.activateParticipantStream(
+                        myId,
+                        'audio',
+                        'send',
+                        'audioTopicName',
+                        myUser.topicSend,
+                        'mute'
+                    );
+                } else {
+                    currentModuleInstance.resumeMice({});
+                }
+                myUser.audioStopManager.reset();
+            }*/
 
 
     return chatMessaging.sendMessage(sendMessageParams, {
@@ -4087,16 +4086,7 @@ function ChatCall(params) {
 
   this.callStop = callStop;
   this.restartMedia = restartMedia;
-} // if (typeof module !== 'undefined' && typeof module.exports != 'undefined') {
-// module.exports = ChatCall;
-// } else {
-//     if (!window.POD) {
-//         window.POD = {};
-//     }
-//     window.POD.ChatCall = ChatCall;
-// }
-// })();
-
+}
 
 var _default = ChatCall;
 exports["default"] = _default;

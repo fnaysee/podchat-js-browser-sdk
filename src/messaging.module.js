@@ -11,7 +11,6 @@ import Utility from "./utility/utility"
 
         var currentModuleInstance = this,
             asyncClient = params.asyncClient,
-            Sentry = params.Sentry,
             //Utility = params.Utility,
             consoleLogging = params.consoleLogging,
             generalTypeCode = params.generalTypeCode,
