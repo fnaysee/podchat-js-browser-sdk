@@ -1,7 +1,6 @@
 'use strict';
 /**
  * POD Chat Browser
- *
  */
 import Async from "podasync-ws-only"
 import Utility from "./utility/utility"
@@ -12,7 +11,16 @@ import ChatCall from "./call.module"
 import ChatEvents from "./events.module"
 import ChatMessaging from "./messaging.module"
 
-import { chatMessageVOTypes, inviteeVOidTypes } from "./lib/constants"
+import {
+    chatMessageVOTypes,
+    inviteeVOidTypes,
+    createThreadTypes,
+    chatMessageTypes,
+    assistantActionTypes,
+    systemMessageTypes,
+    imageMimeTypes,
+    imageExtentions
+} from "./lib/constants"
 
 /***
  * Pod Chat Browser Module
@@ -67,62 +75,10 @@ function Chat(params) {
         seenInterval,
         seenIntervalPitch = params.seenIntervalPitch || 2000,
         getImageFromLinkObjects = {},
-        createThreadTypes = {
-            NORMAL: 0x0,
-            OWNER_GROUP: 0x1,
-            PUBLIC_GROUP: 0x2,
-            CHANNEL_GROUP: 0x4,
-            CHANNEL: 0x8,
-            NOTIFICATION_CHANNEL: 0x10,
-            PUBLIC_THREAD: 0x20,
-            PUBLIC_CHANNEL: 0x40,
-            SELF: 0x80
-        },
-        chatMessageTypes = {
-            TEXT: '1',
-            VOICE: '2',
-            PICTURE: '3',
-            VIDEO: '4',
-            SOUND: '5',
-            FILE: '6',
-            POD_SPACE_PICTURE: '7',
-            POD_SPACE_VIDEO: '8',
-            POD_SPACE_SOUND: '9',
-            POD_SPACE_VOICE: '10',
-            POD_SPACE_FILE: '11',
-            LINK: '12',
-            END_CALL: '13',
-            START_CALL: '14',
-            STICKER: '15'
-        },
-        assistantActionTypes = {
-            REGISTER: 1,
-            ACTIVATE: 2,
-            DEACTIVATE: 3,
-            BLOCK: 4
-        },
-        systemMessageTypes = {
-            IS_TYPING: '1',
-            RECORD_VOICE: '2',
-            UPLOAD_PICTURE: '3',
-            UPLOAD_VIDEO: '4',
-            UPLOAD_SOUND: '5',
-            UPLOAD_FILE: '6'
-        },
         locationPingTypes = {
             'CHAT': 1,
             'THREAD': 2,
             'CONTACTS': 3
-        },
-        callRequestController = {
-            callRequestReceived: false,
-            callEstablishedInMySide: false,
-            iCanAcceptTheCall: function () {
-                if(callRequestController.callRequestReceived && callRequestController.callEstablishedInMySide) {
-                    return true;
-                }
-                return false;
-            }
         },
         systemMessageIntervalPitch = params.systemMessageIntervalPitch || 1000,
         isTypingInterval,
@@ -191,24 +147,6 @@ function Chat(params) {
             ROUTING: '/routing',
             STATIC_IMAGE: '/static'
         },
-        imageMimeTypes = [
-            'image/bmp',
-            'image/png',
-            'image/tiff',
-            'image/x-icon',
-            'image/jpeg',
-            'image/webp'
-        ],
-        imageExtentions = [
-            'bmp',
-            'png',
-            'tiff',
-            'tiff2',
-            'ico',
-            'jpg',
-            'jpeg',
-            'webp'
-        ],
         CHAT_ERRORS = {
             // Socket Errors
             6000: 'No Active Device found for this Token!',

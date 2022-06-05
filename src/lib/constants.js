@@ -128,7 +128,78 @@ const inviteeVOidTypes = {
     TO_BE_CORE_USER_ID: 6
 };
 
+const createThreadTypes = {
+    NORMAL: 0x0,
+    OWNER_GROUP: 0x1,
+    PUBLIC_GROUP: 0x2,
+    CHANNEL_GROUP: 0x4,
+    CHANNEL: 0x8,
+    NOTIFICATION_CHANNEL: 0x10,
+    PUBLIC_THREAD: 0x20,
+    PUBLIC_CHANNEL: 0x40,
+    SELF: 0x80
+};
+
+const chatMessageTypes = {
+    TEXT: '1',
+    VOICE: '2',
+    PICTURE: '3',
+    VIDEO: '4',
+    SOUND: '5',
+    FILE: '6',
+    POD_SPACE_PICTURE: '7',
+    POD_SPACE_VIDEO: '8',
+    POD_SPACE_SOUND: '9',
+    POD_SPACE_VOICE: '10',
+    POD_SPACE_FILE: '11',
+    LINK: '12',
+    END_CALL: '13',
+    START_CALL: '14',
+    STICKER: '15'
+};
+
+const assistantActionTypes = {
+    REGISTER: 1,
+    ACTIVATE: 2,
+    DEACTIVATE: 3,
+    BLOCK: 4
+};
+
+const systemMessageTypes = {
+        IS_TYPING: '1',
+        RECORD_VOICE: '2',
+        UPLOAD_PICTURE: '3',
+        UPLOAD_VIDEO: '4',
+        UPLOAD_SOUND: '5',
+        UPLOAD_FILE: '6'
+};
+
+const imageMimeTypes = [
+    'image/bmp',
+    'image/png',
+    'image/tiff',
+    'image/x-icon',
+    'image/jpeg',
+    'image/webp'
+];
+const imageExtentions = [
+    'bmp',
+    'png',
+    'tiff',
+    'tiff2',
+    'ico',
+    'jpg',
+    'jpeg',
+    'webp'
+];
+
 export {
-    chatMessageVOTypes
-    , inviteeVOidTypes
+    chatMessageVOTypes,
+    inviteeVOidTypes,
+    createThreadTypes,
+    chatMessageTypes,
+    assistantActionTypes,
+    systemMessageTypes,
+    imageMimeTypes,
+    imageExtentions
 }
