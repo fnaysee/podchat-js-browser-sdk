@@ -104,7 +104,7 @@ const chatMessageVOTypes = {
     START_SCREEN_SHARE: 123,
     END_SCREEN_SHARE: 124,
     DELETE_FROM_CALL_HISTORY: 125,
-    DESTINATED_RECORD_CALL: 126,
+    DESTINED_RECORD_CALL: 126,
     GET_CALLS_TO_JOIN: 129,
     MUTUAL_GROUPS: 130,
     CREATE_TAG: 140,
@@ -117,6 +117,18 @@ const chatMessageVOTypes = {
     EXPORT_CHAT: 152,
     ADD_CONTACTS: 200,
     ERROR: 999
-}
+};
 
-export {chatMessageVOTypes}
+const inviteeVOidTypes = {
+    TO_BE_USER_SSO_ID: 1,
+    TO_BE_USER_CONTACT_ID: 2,
+    TO_BE_USER_CELLPHONE_NUMBER: 3,
+    TO_BE_USER_USERNAME: 4,
+    TO_BE_USER_ID: 5,
+    TO_BE_CORE_USER_ID: 6
+};
+
+export {
+    chatMessageVOTypes
+    , inviteeVOidTypes
+}

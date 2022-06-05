@@ -1,4 +1,4 @@
-import { chatMessageVOTypes } from "./lib/constants"
+import { chatMessageVOTypes, inviteeVOidTypes } from "./lib/constants"
 import KurentoUtils from 'kurento-utils'
 // import WebrtcAdapter from 'webrtc-adapter'
 import Utility from "./utility/utility"
@@ -12,14 +12,6 @@ function ChatCall(params) {
         chatMessaging = params.chatMessaging,
         token = params.token,
         asyncRequestTimeouts = {},
-        inviteeVOidTypes = {
-            TO_BE_USER_SSO_ID: 1,
-            TO_BE_USER_CONTACT_ID: 2,
-            TO_BE_USER_CELLPHONE_NUMBER: 3,
-            TO_BE_USER_USERNAME: 4,
-            TO_BE_USER_ID: 5,
-            TO_BE_CORE_USER_ID: 6
-        },
         callTypes = {
             'VOICE': 0x0,
             'VIDEO': 0x1
@@ -2958,7 +2950,7 @@ function ChatCall(params) {
             /**
              * Type 126   Destinated Record Call Request
              */
-            case chatMessageVOTypes.DESTINATED_RECORD_CALL:
+            case chatMessageVOTypes.DESTINED_RECORD_CALL:
                 if(!callRequestController.callEstablishedInMySide)
                     return;
 
@@ -3314,7 +3306,7 @@ function ChatCall(params) {
             }
 
             if(params.destinated === true) {
-                recordCallData.chatMessageVOType = chatMessageVOTypes.DESTINATED_RECORD_CALL;
+                recordCallData.chatMessageVOType = chatMessageVOTypes.DESTINED_RECORD_CALL;
                 recordCallData.content.recordType = typeof +params.recordType === 'number' ? params.recordType : 1;
                 recordCallData.content.tags = Array.isArray(params.tags) ? params.tags : null;
                 recordCallData.content.threadId = typeof +params.threadId === 'number' ? params.threadId : null;

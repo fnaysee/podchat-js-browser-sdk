@@ -12,7 +12,7 @@ import ChatCall from "./call.module"
 import ChatEvents from "./events.module"
 import ChatMessaging from "./messaging.module"
 
-import { chatMessageVOTypes } from "./lib/constants"
+import { chatMessageVOTypes, inviteeVOidTypes } from "./lib/constants"
 
 /***
  * Pod Chat Browser Module
@@ -67,14 +67,6 @@ function Chat(params) {
         seenInterval,
         seenIntervalPitch = params.seenIntervalPitch || 2000,
         getImageFromLinkObjects = {},
-        inviteeVOidTypes = {
-            TO_BE_USER_SSO_ID: 1,
-            TO_BE_USER_CONTACT_ID: 2,
-            TO_BE_USER_CELLPHONE_NUMBER: 3,
-            TO_BE_USER_USERNAME: 4,
-            TO_BE_USER_ID: 5,
-            TO_BE_CORE_USER_ID: 6
-        },
         createThreadTypes = {
             NORMAL: 0x0,
             OWNER_GROUP: 0x1,
@@ -2851,7 +2843,7 @@ function Chat(params) {
                 case chatMessageVOTypes.ACTIVE_CALL_PARTICIPANTS:
                 case chatMessageVOTypes.CALL_SESSION_CREATED:
                 case chatMessageVOTypes.CANCEL_GROUP_CALL:
-                case chatMessageVOTypes.DESTINATED_RECORD_CALL:
+                case chatMessageVOTypes.DESTINED_RECORD_CALL:
                 case chatMessageVOTypes.GET_CALLS_TO_JOIN:
                     callModule.handleChatMessages(type, chatMessageVOTypes, messageContent, contentCount, threadId, uniqueId);
                     break;
@@ -9797,19 +9789,20 @@ function Chat(params) {
     /******************************************************
      *             P U B L I C   M E T H O D S            *
      ******************************************************/
+    let publicMethods = {};
 
-    this.on = chatEvents.on;
-    this.off = chatEvents.off;
+    publicMethods.on = chatEvents.on;
+    publicMethods.off = chatEvents.off;
 
-    this.getPeerId = function () {
+    publicMethods.getPeerId = function () {
         return peerId;
     };
 
-    this.getCurrentUser = function () {
+    publicMethods.getCurrentUser = function () {
         return chatMessaging.userInfo;
     };
 
-    this.getUserInfo = function (callback) {
+    publicMethods.getUserInfo = function (callback) {
         return chatMessaging.sendMessage({
             chatMessageVOType: chatMessageVOTypes.USER_INFO,
             typeCode: generalTypeCode
@@ -9837,13 +9830,13 @@ function Chat(params) {
         });
     };
 
-    this.getThreads = getThreads;
+    publicMethods.getThreads = getThreads;
 
-    this.getAllThreads = getAllThreads;
+    publicMethods.getAllThreads = getAllThreads;
 
-    this.getHistory = getHistory;
+    publicMethods.getHistory = getHistory;
 
-    this.getAllMentionedMessages = function (params, callback) {
+    publicMethods.getAllMentionedMessages = function (params, callback) {
         return getHistory({
             threadId: params.threadId,
             allMentioned: true,
@@ -9858,7 +9851,7 @@ function Chat(params) {
         }, callback);
     };
 
-    this.getUnreadMentionedMessages = function (params, callback) {
+    publicMethods.getUnreadMentionedMessages = function (params, callback) {
         return getHistory({
             threadId: params.threadId,
             unreadMentioned: true,
@@ -9873,7 +9866,7 @@ function Chat(params) {
         }, callback);
     };
 
-    this.getAllUnreadMessagesCount = function (params, callback) {
+    publicMethods.getAllUnreadMessagesCount = function (params, callback) {
         return chatMessaging.sendMessage({
             chatMessageVOType: chatMessageVOTypes.ALL_UNREAD_MESSAGE_COUNT,
             typeCode: generalTypeCode,//params.typeCode,
@@ -9902,7 +9895,7 @@ function Chat(params) {
      *
      * @return {object} Instant Response
      */
-    this.getContacts = function (params, callback) {
+    publicMethods.getContacts = function (params, callback) {
         var count = 50,
             offset = 0,
             content = {},
@@ -10153,7 +10146,7 @@ function Chat(params) {
         });
     };
 
-    this.getThreadParticipants = getThreadParticipants;
+    publicMethods.getThreadParticipants = getThreadParticipants;
 
     /**
      * Get Thread Admins
@@ -10166,7 +10159,7 @@ function Chat(params) {
      *
      * @return {object} Instant Response
      */
-    this.getThreadAdmins = function (params, callback) {
+    publicMethods.getThreadAdmins = function (params, callback) {
         getThreadParticipants({
             threadId: params.threadId,
             admin: true,
@@ -10174,7 +10167,7 @@ function Chat(params) {
         }, callback);
     };
 
-    this.addParticipants = function (params, callback) {
+    publicMethods.addParticipants = function (params, callback) {
         /**
          * + AddParticipantsRequest   {object}
          *    - subjectId             {int}
@@ -10235,7 +10228,7 @@ function Chat(params) {
         });
     };
 
-    this.removeParticipants = function (params, callback) {
+    publicMethods.removeParticipants = function (params, callback) {
 
         /**
          * + RemoveParticipantsRequest    {object}
@@ -10282,9 +10275,9 @@ function Chat(params) {
         });
     };
 
-    this.getCurrentUserRoles = getCurrentUserRoles;
+    publicMethods.getCurrentUserRoles = getCurrentUserRoles;
 
-    this.leaveThread = function (params, callback) {
+    publicMethods.leaveThread = function (params, callback) {
 
         /**
          * + LeaveThreadRequest    {object}
@@ -10335,7 +10328,7 @@ function Chat(params) {
         });
     };
 
-    this.createThread = function (params, callback) {
+    publicMethods.createThread = function (params, callback) {
 
         /**
          * + CreateThreadRequest      {object}
@@ -10474,7 +10467,7 @@ function Chat(params) {
 
     };
 
-    this.createSelfThread = function (params, callback) {
+    publicMethods.createSelfThread = function (params, callback) {
         var content = {
             type: createThreadTypes['SELF']
         };
@@ -10564,7 +10557,7 @@ function Chat(params) {
         });
     };
 
-    this.sendTextMessage = function (params, callbacks) {
+    publicMethods.sendTextMessage = function (params, callbacks) {
         var metadata = {},
             uniqueId;
 
@@ -10600,7 +10593,7 @@ function Chat(params) {
         };
     };
 
-    this.sendBotMessage = function (params, callbacks) {
+    publicMethods.sendBotMessage = function (params, callbacks) {
         var metadata = {};
 
         return chatMessaging.sendMessage({
@@ -10614,9 +10607,9 @@ function Chat(params) {
         }, callbacks);
     };
 
-    this.sendFileMessage = sendFileMessage;
+    publicMethods.sendFileMessage = sendFileMessage;
 
-    this.createThreadWithFileMessage = function (params, createThreadCallback, sendFileMessageCallback) {
+    publicMethods.createThreadWithFileMessage = function (params, createThreadCallback, sendFileMessageCallback) {
         /**
          * + CreateThreadRequest      {object}
          *    + invitees              {object}
@@ -10703,7 +10696,7 @@ function Chat(params) {
         });
     };
 
-    this.sendLocationMessage = function (params, callbacks) {
+    publicMethods.sendLocationMessage = function (params, callbacks) {
         var data = {},
             url = SERVICE_ADDRESSES.MAP_ADDRESS + SERVICES_PATH.STATIC_IMAGE,
             hasError = false,
@@ -10804,7 +10797,7 @@ function Chat(params) {
         };
     };
 
-    this.resendMessage = function (uniqueId, callbacks) {
+    publicMethods.resendMessage = function (uniqueId, callbacks) {
         if (hasCache && typeof queueDb == 'object' && !forceWaitQueueInMemory) {
             queueDb.waitQ.where('uniqueId')
                 .equals(uniqueId)
@@ -10844,9 +10837,9 @@ function Chat(params) {
         }
     };
 
-    this.cancelMessage = cancelMessage;
+    publicMethods.cancelMessage = cancelMessage;
 
-    this.clearHistory = function (params, callback) {
+    publicMethods.clearHistory = function (params, callback) {
 
         /**
          * + Clear History Request Object    {object}
@@ -10911,27 +10904,27 @@ function Chat(params) {
         });
     };
 
-    this.getImage = getImage;
+    publicMethods.getImage = getImage;
 
-    this.getFile = getFile;
+    publicMethods.getFile = getFile;
 
-    this.getFileFromPodspace = getFileFromPodspaceNew;//getFileFromPodspace;
+    publicMethods.getFileFromPodspace = getFileFromPodspaceNew;//getFileFromPodspace;
 
-    this.getImageFromPodspace = getImageFromPodspaceNew;//getImageFromPodspace;
+    publicMethods.getImageFromPodspace = getImageFromPodspaceNew;//getImageFromPodspace;
 
-    this.uploadFile = uploadFile;
+    publicMethods.uploadFile = uploadFile;
 
-    this.uploadImage = uploadImage;
+    publicMethods.uploadImage = uploadImage;
 
-    this.uploadFileToPodspace = uploadFileToPodspaceNew;
+    publicMethods.uploadFileToPodspace = uploadFileToPodspaceNew;
 
-    this.uploadImageToPodspace = uploadImageToPodspaceNew;
+    publicMethods.uploadImageToPodspace = uploadImageToPodspaceNew;
 
-    this.cancelFileUpload = cancelFileUpload;
+    publicMethods.cancelFileUpload = cancelFileUpload;
 
-    this.cancelFileDownload = cancelFileDownload;
+    publicMethods.cancelFileDownload = cancelFileDownload;
 
-    this.editMessage = function (params, callback) {
+    publicMethods.editMessage = function (params, callback) {
         return chatMessaging.sendMessage({
             chatMessageVOType: chatMessageVOTypes.EDIT_MESSAGE,
             typeCode: generalTypeCode, //params.typeCode,
@@ -11009,7 +11002,7 @@ function Chat(params) {
         });
     };
 
-    this.deleteMessage = function (params, callback) {
+    publicMethods.deleteMessage = function (params, callback) {
         return chatMessaging.sendMessage({
             chatMessageVOType: chatMessageVOTypes.DELETE_MESSAGE,
             typeCode: generalTypeCode, //params.typeCode,
@@ -11072,7 +11065,7 @@ function Chat(params) {
         });
     };
 
-    this.deleteMultipleMessages = function (params, callback) {
+    publicMethods.deleteMultipleMessages = function (params, callback) {
         var messageIdsList = params.messageIds,
             uniqueIdsList = [];
 
@@ -11143,7 +11136,7 @@ function Chat(params) {
         });
     };
 
-    this.replyTextMessage = function (params, callbacks) {
+    publicMethods.replyTextMessage = function (params, callbacks) {
         var uniqueId;
 
         if (typeof params.uniqueId !== 'undefined') {
@@ -11178,7 +11171,7 @@ function Chat(params) {
         };
     };
 
-    this.replyFileMessage = function (params, callbacks) {
+    publicMethods.replyFileMessage = function (params, callbacks) {
         var metadata = {file: {}},
             fileUploadParams = {},
             fileUniqueId = Utility.generateUUID();
@@ -11254,7 +11247,7 @@ function Chat(params) {
         });
     };
 
-    this.forwardMessage = function (params, callbacks) {
+    publicMethods.forwardMessage = function (params, callbacks) {
         var threadId = params.threadId,
             messageIdsList = params.messageIds,
             uniqueIdsList = [];
@@ -11305,15 +11298,15 @@ function Chat(params) {
         }, true);
     };
 
-    this.deliver = function (params) {
+    publicMethods.deliver = function (params) {
         return putInMessagesDeliveryQueue(params.threadId, params.messageId);
     };
 
-    this.seen = function (params) {
+    publicMethods.seen = function (params) {
         return putInMessagesSeenQueue(params.threadId, params.messageId);
     };
 
-    this.startTyping = function (params) {
+    publicMethods.startTyping = function (params) {
         var uniqueId = Utility.generateUUID();
 
         if (parseInt(params.threadId) > 0) {
@@ -11332,11 +11325,11 @@ function Chat(params) {
         }, systemMessageIntervalPitch);
     };
 
-    this.stopTyping = function () {
+    publicMethods.stopTyping = function () {
         isTypingInterval && clearInterval(isTypingInterval);
     };
 
-    this.getMessageDeliveredList = function (params, callback) {
+    publicMethods.getMessageDeliveredList = function (params, callback) {
 
         var deliveryListData = {
             chatMessageVOType: chatMessageVOTypes.GET_MESSAGE_DELIVERY_PARTICIPANTS,
@@ -11365,7 +11358,7 @@ function Chat(params) {
         });
     };
 
-    this.getMessageSeenList = function (params, callback) {
+    publicMethods.getMessageSeenList = function (params, callback) {
         var seenListData = {
             chatMessageVOType: chatMessageVOTypes.GET_MESSAGE_SEEN_PARTICIPANTS,
             typeCode: generalTypeCode, //params.typeCode,
@@ -11393,11 +11386,11 @@ function Chat(params) {
         });
     };
 
-    this.updateThreadInfo = updateThreadInfo;
+    publicMethods.updateThreadInfo = updateThreadInfo;
 
-    this.updateChatProfile = updateChatProfile;
+    publicMethods.updateChatProfile = updateChatProfile;
 
-    this.muteThread = function (params, callback) {
+    publicMethods.muteThread = function (params, callback) {
         return chatMessaging.sendMessage({
             chatMessageVOType: chatMessageVOTypes.MUTE_THREAD,
             typeCode: generalTypeCode, //params.typeCode,
@@ -11412,7 +11405,7 @@ function Chat(params) {
         });
     };
 
-    this.unMuteThread = function (params, callback) {
+    publicMethods.unMuteThread = function (params, callback) {
         return chatMessaging.sendMessage({
             chatMessageVOType: chatMessageVOTypes.UNMUTE_THREAD,
             typeCode: generalTypeCode, //params.typeCode,
@@ -11427,7 +11420,7 @@ function Chat(params) {
         });
     };
 
-    this.closeThread = function (params, callback) {
+    publicMethods.closeThread = function (params, callback) {
         return chatMessaging.sendMessage({
             chatMessageVOType: chatMessageVOTypes.CLOSE_THREAD,
             typeCode: generalTypeCode, //params.typeCode,
@@ -11442,7 +11435,7 @@ function Chat(params) {
         });
     };
 
-    this.joinPublicThread = function (params, callback) {
+    publicMethods.joinPublicThread = function (params, callback) {
         var joinThreadData = {
             chatMessageVOType: chatMessageVOTypes.JOIN_THREAD,
             typeCode: generalTypeCode, //params.typeCode,
@@ -11462,7 +11455,7 @@ function Chat(params) {
         });
     };
 
-    this.isPublicThreadNameAvailable = function (params, callback) {
+    publicMethods.isPublicThreadNameAvailable = function (params, callback) {
         var isNameAvailableData = {
             chatMessageVOType: chatMessageVOTypes.IS_NAME_AVAILABLE,
             typeCode: generalTypeCode, //params.typeCode,
@@ -11482,7 +11475,7 @@ function Chat(params) {
         });
     };
 
-    this.changeThreadPrivacy = function (params, callback) {
+    publicMethods.changeThreadPrivacy = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.CHANGE_THREAD_PRIVACY,
             typeCode: generalTypeCode, //params.typeCode,
@@ -11540,7 +11533,7 @@ function Chat(params) {
         });
     };
 
-    this.pinThread = function (params, callback) {
+    publicMethods.pinThread = function (params, callback) {
         return chatMessaging.sendMessage({
             chatMessageVOType: chatMessageVOTypes.PIN_THREAD,
             typeCode: generalTypeCode, //params.typeCode,
@@ -11555,7 +11548,7 @@ function Chat(params) {
         });
     };
 
-    this.unPinThread = function (params, callback) {
+    publicMethods.unPinThread = function (params, callback) {
         return chatMessaging.sendMessage({
             chatMessageVOType: chatMessageVOTypes.UNPIN_THREAD,
             typeCode: generalTypeCode, //params.typeCode,
@@ -11570,7 +11563,7 @@ function Chat(params) {
         });
     };
 
-    this.deleteThread = function (params, callback) {
+    publicMethods.deleteThread = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.DELETE_MESSAGE_THREAD,
             typeCode: generalTypeCode//params.typeCode
@@ -11605,7 +11598,7 @@ function Chat(params) {
         });
     };
 
-    this.pinMessage = function (params, callback) {
+    publicMethods.pinMessage = function (params, callback) {
         return chatMessaging.sendMessage({
             chatMessageVOType: chatMessageVOTypes.PIN_MESSAGE,
             typeCode: generalTypeCode,//params.typeCode,
@@ -11622,9 +11615,9 @@ function Chat(params) {
         });
     };
 
-    this.unPinMessage = unPinMessage;
+    publicMethods.unPinMessage = unPinMessage;
 
-    this.spamPrivateThread = function (params, callback) {
+    publicMethods.spamPrivateThread = function (params, callback) {
         var spamData = {
             chatMessageVOType: chatMessageVOTypes.SPAM_PV_THREAD,
             typeCode: generalTypeCode, //params.typeCode,
@@ -11646,7 +11639,7 @@ function Chat(params) {
         });
     };
 
-    this.block = function (params, callback) {
+    publicMethods.block = function (params, callback) {
 
         var blockData = {
             chatMessageVOType: chatMessageVOTypes.BLOCK,
@@ -11681,7 +11674,7 @@ function Chat(params) {
         });
     };
 
-    this.unblock = function (params, callback) {
+    publicMethods.unblock = function (params, callback) {
         var unblockData = {
             chatMessageVOType: chatMessageVOTypes.UNBLOCK,
             typeCode: generalTypeCode, //params.typeCode,
@@ -11720,7 +11713,7 @@ function Chat(params) {
         });
     };
 
-    this.getBlockedList = function (params, callback) {
+    publicMethods.getBlockedList = function (params, callback) {
         var count = 50,
             offset = 0,
             content = {};
@@ -11782,7 +11775,7 @@ function Chat(params) {
         });
     };
 
-    this.getUserNotSeenDuration = function (params, callback) {
+    publicMethods.getUserNotSeenDuration = function (params, callback) {
         var content = {};
 
         if (params) {
@@ -11818,7 +11811,7 @@ function Chat(params) {
         });
     };
 
-    this.addContacts = function (params, callback) {
+    publicMethods.addContacts = function (params, callback) {
         var data = {};
 
         if (params) {
@@ -11962,7 +11955,7 @@ function Chat(params) {
         });
     };
 
-    this.newAddContacts  = function (params, callback) {
+    publicMethods.newAddContacts  = function (params, callback) {
         var addContactsData = {
             chatMessageVOType: chatMessageVOTypes.ADD_CONTACTS,
             content: {},
@@ -12153,7 +12146,7 @@ function Chat(params) {
         //});
     };
 
-    this.updateContacts = function (params, callback) {
+    publicMethods.updateContacts = function (params, callback) {
         var data = {};
 
         if (params) {
@@ -12310,7 +12303,7 @@ function Chat(params) {
         });
     };
 
-    this.removeContacts = function (params, callback) {
+    publicMethods.removeContacts = function (params, callback) {
         var data = {};
 
         if (params) {
@@ -12386,7 +12379,7 @@ function Chat(params) {
         });
     };
 
-    this.searchContacts = function (params, callback) {
+    publicMethods.searchContacts = function (params, callback) {
         var data = {
                 size: 50,
                 offset: 0
@@ -12709,7 +12702,7 @@ function Chat(params) {
         });
     };
 
-    this.createBot = function (params, callback) {
+    publicMethods.createBot = function (params, callback) {
         var createBotData = {
             chatMessageVOType: chatMessageVOTypes.CREATE_BOT,
             typeCode: generalTypeCode,//params.typeCode,
@@ -12749,7 +12742,7 @@ function Chat(params) {
         });
     };
 
-    this.defineBotCommand = function (params, callback) {
+    publicMethods.defineBotCommand = function (params, callback) {
         var defineBotCommandData = {
             chatMessageVOType: chatMessageVOTypes.DEFINE_BOT_COMMAND,
             typeCode: generalTypeCode, //params.typeCode,
@@ -12794,7 +12787,7 @@ function Chat(params) {
         });
     };
 
-    this.removeBotCommand = function (params, callback) {
+    publicMethods.removeBotCommand = function (params, callback) {
         var defineBotCommandData = {
             chatMessageVOType: chatMessageVOTypes.REMOVE_BOT_COMMANDS,
             typeCode: generalTypeCode, //params.typeCode,
@@ -12844,7 +12837,7 @@ function Chat(params) {
         });
     };
 
-    this.startBot = function (params, callback) {
+    publicMethods.startBot = function (params, callback) {
         var startBotData = {
             chatMessageVOType: chatMessageVOTypes.START_BOT,
             typeCode: generalTypeCode, //params.typeCode,
@@ -12885,7 +12878,7 @@ function Chat(params) {
         });
     };
 
-    this.stopBot = function (params, callback) {
+    publicMethods.stopBot = function (params, callback) {
         var stopBotData = {
             chatMessageVOType: chatMessageVOTypes.STOP_BOT,
             typeCode: generalTypeCode, //params.typeCode,
@@ -12926,7 +12919,7 @@ function Chat(params) {
         });
     };
 
-    this.getBotCommandsList = function (params, callback) {
+    publicMethods.getBotCommandsList = function (params, callback) {
         var getBotCommandsListData = {
             chatMessageVOType: chatMessageVOTypes.BOT_COMMANDS,
             typeCode: generalTypeCode, //params.typeCode,
@@ -12963,7 +12956,7 @@ function Chat(params) {
         });
     };
 
-    this.getThreadAllBots = function (params, callback) {
+    publicMethods.getThreadAllBots = function (params, callback) {
         var getThreadBotsData = {
             chatMessageVOType: chatMessageVOTypes.THREAD_ALL_BOTS,
             typeCode: generalTypeCode, //params.typeCode,
@@ -12998,7 +12991,7 @@ function Chat(params) {
         });
     };
 
-    this.createTag = function (params, callback) {
+    publicMethods.createTag = function (params, callback) {
         var createTagData = {
             chatMessageVOType: chatMessageVOTypes.CREATE_TAG,
             typeCode: generalTypeCode, //params.typeCode,
@@ -13032,7 +13025,7 @@ function Chat(params) {
         });
     };
 
-    this.editTag = function (params, callback) {
+    publicMethods.editTag = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.EDIT_TAG,
             typeCode: generalTypeCode, //params.typeCode,
@@ -13076,7 +13069,7 @@ function Chat(params) {
         });
     };
 
-    this.deleteTag = function (params, callback) {
+    publicMethods.deleteTag = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.DELETE_TAG,
             typeCode: generalTypeCode, //params.typeCode,
@@ -13110,7 +13103,7 @@ function Chat(params) {
         });
     };
 
-    this.getTagList = function (params, callback) {
+    publicMethods.getTagList = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.GET_TAG_LIST,
             typeCode: generalTypeCode, //params.typeCode,
@@ -13126,7 +13119,7 @@ function Chat(params) {
         });
     };
 
-    this.addTagParticipants = function (params, callback) {
+    publicMethods.addTagParticipants = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.ADD_TAG_PARTICIPANT,
             typeCode: generalTypeCode, //params.typeCode,
@@ -13166,7 +13159,7 @@ function Chat(params) {
         });
     };
 
-    this.removeTagParticipants = function (params, callback) {
+    publicMethods.removeTagParticipants = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.REMOVE_TAG_PARTICIPANT,
             typeCode: generalTypeCode, //params.typeCode,
@@ -13206,7 +13199,7 @@ function Chat(params) {
         });
     };
 
-    this.registerAssistant = function (params, callback) {
+    publicMethods.registerAssistant = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.REGISTER_ASSISTANT,
             typeCode: generalTypeCode, //params.typeCode,
@@ -13275,7 +13268,7 @@ function Chat(params) {
         });
     };
 
-    this.deactivateAssistant = function (params, callback) {
+    publicMethods.deactivateAssistant = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.DEACTIVATE_ASSISTANT,
             typeCode: generalTypeCode, //params.typeCode,
@@ -13337,7 +13330,7 @@ function Chat(params) {
         });
     };
 
-    this.blockAssistant = function (params, callback) {
+    publicMethods.blockAssistant = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.BLOCK_ASSISTANT,
             typeCode: generalTypeCode, //params.typeCode,
@@ -13399,7 +13392,7 @@ function Chat(params) {
         });
     };
 
-    this.unblockAssistant = function (params, callback) {
+    publicMethods.unblockAssistant = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.UNBLOCK_ASSISTANT,
             typeCode: generalTypeCode, //params.typeCode,
@@ -13461,7 +13454,7 @@ function Chat(params) {
         });
     };
 
-    this.getAssistantsList = function (params, callback) {
+    publicMethods.getAssistantsList = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.GET_ASSISTANTS,
             typeCode: generalTypeCode, //params.typeCode,
@@ -13498,7 +13491,7 @@ function Chat(params) {
         });
     };
 
-    this.getBlockedAssistantsList = function (params, callback) {
+    publicMethods.getBlockedAssistantsList = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.BLOCKED_ASSISTANTS,
             typeCode: generalTypeCode, //params.typeCode,
@@ -13535,7 +13528,7 @@ function Chat(params) {
         });
     };
 
-    this.getAssistantsHistory = function (params, callback) {
+    publicMethods.getAssistantsHistory = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.ASSISTANT_HISTORY,
             typeCode: generalTypeCode, //params.typeCode,
@@ -13585,27 +13578,27 @@ function Chat(params) {
         });
     };
 
-    this.mapReverse = mapReverse;
+    publicMethods.mapReverse = mapReverse;
 
-    this.mapSearch = mapSearch;
+    publicMethods.mapSearch = mapSearch;
 
-    this.mapRouting = mapRouting;
+    publicMethods.mapRouting = mapRouting;
 
-    this.mapStaticImage = mapStaticImage;
+    publicMethods.mapStaticImage = mapStaticImage;
 
-    this.setAdmin = function (params, callback) {
+    publicMethods.setAdmin = function (params, callback) {
         setRoleToUser(params, callback);
     };
 
-    this.removeAdmin = function (params, callback) {
+    publicMethods.removeAdmin = function (params, callback) {
         removeRoleFromUser(params, callback);
     };
 
-    this.setAuditor = function (params, callback) {
+    publicMethods.setAuditor = function (params, callback) {
         setRoleToUser(params, callback);
     };
 
-    this.removeAuditor = function (params, callback) {
+    publicMethods.removeAuditor = function (params, callback) {
         removeRoleFromUser(params, callback);
     };
 
@@ -13661,7 +13654,7 @@ function Chat(params) {
         })
     }
 
-    this.exportChat = function (params, callback) {
+    publicMethods.exportChat = function (params, callback) {
         var stackArr = [], wantedCount = 10000, stepCount = 500, offset = 0;
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.EXPORT_CHAT,
@@ -13799,71 +13792,71 @@ function Chat(params) {
         });*/
     }
 
-    this.startCall = callModule.startCall;
+    publicMethods.startCall = callModule.startCall;
 
-    this.startGroupCall = callModule.startGroupCall;
+    publicMethods.startGroupCall = callModule.startGroupCall;
 
-    this.callReceived = callModule.callReceived;
+    publicMethods.callReceived = callModule.callReceived;
 
-    this.terminateCall = callModule.terminateCall;
+    publicMethods.terminateCall = callModule.terminateCall;
 
-    this.acceptCall = callModule.acceptCall;
+    publicMethods.acceptCall = callModule.acceptCall;
 
-    this.rejectCall = this.cancelCall = callModule.rejectCall
+    publicMethods.rejectCall = publicMethods.cancelCall = callModule.rejectCall
 
-    this.endCall = callModule.endCall;
+    publicMethods.endCall = callModule.endCall;
 
-    this.startRecordingCall = callModule.startRecordingCall;
+    publicMethods.startRecordingCall = callModule.startRecordingCall;
 
-    this.stopRecordingCall = callModule.stopRecordingCall;
+    publicMethods.stopRecordingCall = callModule.stopRecordingCall;
 
-    this.startScreenShare = callModule.startScreenShare;
+    publicMethods.startScreenShare = callModule.startScreenShare;
 
-    this.resizeScreenShare = callModule.resizeScreenShare
+    publicMethods.resizeScreenShare = callModule.resizeScreenShare
 
-    this.endScreenShare = callModule.endScreenShare;
+    publicMethods.endScreenShare = callModule.endScreenShare;
 
-    this.getCallsList = callModule.getCallsList;
+    publicMethods.getCallsList = callModule.getCallsList;
 
-    this.getCallsToJoin = callModule.getCallsToJoin;
+    publicMethods.getCallsToJoin = callModule.getCallsToJoin;
 
-    this.deleteFromCallList = callModule.deleteFromCallList;
+    publicMethods.deleteFromCallList = callModule.deleteFromCallList;
 
-    this.getCallParticipants = callModule.getCallParticipants;
+    publicMethods.getCallParticipants = callModule.getCallParticipants;
 
-    this.addCallParticipants = callModule.addCallParticipants;
+    publicMethods.addCallParticipants = callModule.addCallParticipants;
 
-    this.removeCallParticipants = callModule.removeCallParticipants;
+    publicMethods.removeCallParticipants = callModule.removeCallParticipants;
 
-    this.muteCallParticipants = callModule.muteCallParticipants;
+    publicMethods.muteCallParticipants = callModule.muteCallParticipants;
 
-    this.unMuteCallParticipants = callModule.unMuteCallParticipants;
+    publicMethods.unMuteCallParticipants = callModule.unMuteCallParticipants;
 
-    this.turnOnVideoCall = callModule.turnOnVideoCall;
+    publicMethods.turnOnVideoCall = callModule.turnOnVideoCall;
 
-    this.turnOffVideoCall = callModule.turnOffVideoCall;
+    publicMethods.turnOffVideoCall = callModule.turnOffVideoCall;
 
-    this.disableParticipantsVideoReceive = callModule.disableParticipantsVideoReceive;
+    publicMethods.disableParticipantsVideoReceive = callModule.disableParticipantsVideoReceive;
 
-    this.enableParticipantsVideoReceive = callModule.enableParticipantsVideoReceive;
+    publicMethods.enableParticipantsVideoReceive = callModule.enableParticipantsVideoReceive;
 
-    this.pauseCamera = callModule.pauseCamera;
+    publicMethods.pauseCamera = callModule.pauseCamera;
 
-    this.resumeCamera = callModule.resumeCamera;
+    publicMethods.resumeCamera = callModule.resumeCamera;
 
-    this.pauseMice = callModule.pauseMice;
+    publicMethods.pauseMice = callModule.pauseMice;
 
-    this.resumeMice = callModule.resumeMice;
+    publicMethods.resumeMice = callModule.resumeMice;
 
-    this.resizeCallVideo = callModule.resizeCallVideo;
+    publicMethods.resizeCallVideo = callModule.resizeCallVideo;
 
-    this.restartMedia = callModule.restartMedia;
+    publicMethods.restartMedia = callModule.restartMedia;
 
-    this.callStop = callModule.callStop;
+    publicMethods.callStop = callModule.callStop;
 
-    this.sendCallMetaData = callModule.sendCallMetaData;
+    publicMethods.sendCallMetaData = callModule.sendCallMetaData;
 
-    this.getMutualGroups = function (params, callback) {
+    publicMethods.getMutualGroups = function (params, callback) {
         var count = +params.count ? +params.count : 50,
             offset = +params.offset ? +params.offset : 0;
 
@@ -13943,7 +13936,7 @@ function Chat(params) {
         });
     };
 
-    this.sendLocationPing = function (params, callback) {
+    publicMethods.sendLocationPing = function (params, callback) {
         /**
          * + locationPingRequest     {object}
          *    + content              {list} A map of { location: string, locationId: int }
@@ -13995,21 +13988,21 @@ function Chat(params) {
         });
     };
 
-    this.clearChatServerCaches = clearChatServerCaches;
+    publicMethods.clearChatServerCaches = clearChatServerCaches;
 
-    this.deleteCacheDatabases = deleteCacheDatabases;
+    publicMethods.deleteCacheDatabases = deleteCacheDatabases;
 
-    this.clearCacheDatabasesOfUser = clearCacheDatabasesOfUser;
+    publicMethods.clearCacheDatabasesOfUser = clearCacheDatabasesOfUser;
 
-    this.getChatState = function () {
+    publicMethods.getChatState = function () {
         return chatFullStateObject;
     };
 
-    this.reconnect = function () {
+    publicMethods.reconnect = function () {
         asyncClient.reconnectSocket();
     };
 
-    this.setToken = function (newToken) {
+    publicMethods.setToken = function (newToken) {
         if (typeof newToken !== 'undefined') {
             token = newToken;
             callModule.updateToken(token);
@@ -14018,9 +14011,9 @@ function Chat(params) {
         }
     };
 
-    this.generateUUID = Utility.generateUUID;
+    publicMethods.generateUUID = Utility.generateUUID;
 
-    this.logout = function () {
+    publicMethods.logout = function () {
         clearChatServerCaches();
 
         chatEvents.clearEventCallbacks();
@@ -14031,6 +14024,8 @@ function Chat(params) {
 
         asyncClient.logout();
     };
+
+    publicMethods.inviteeIdTypes = inviteeVOidTypes;
 
     /**
      * Check a turn server availability
@@ -14043,7 +14038,7 @@ function Chat(params) {
      * @param timeout
      * @return {Promise<boolean>}
      */
-    this.checkTURNServer =  function (turnIp, port, useUDP = false, username = 'mkhorrami', password = 'mkh_123456', timeout) {
+    publicMethods.checkTURNServer =  function (turnIp, port, useUDP = false, username = 'mkhorrami', password = 'mkh_123456', timeout) {
         let url = 'turn:' + turnIp + ':' + port + '?transport=' + (useUDP ? 'udp' : 'tcp');
         const turnConfig = {
             urls: url,
@@ -14087,6 +14082,8 @@ function Chat(params) {
     }
 
     init();
+
+    return publicMethods;
 }
 
 if(window) {
