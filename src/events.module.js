@@ -78,7 +78,8 @@ function ChatEvents(params) {
                         callRequestTimeout: params.callRequestTimeout,
                         asyncRequestTimeout: params.asyncRequestTimeout,
                         httpUploadRequestTimeout: params.httpUploadRequestTimeout,
-                        callOptions: params.callOptions
+                        callOptions: params.callOptions,
+                        enableCache: params.enableCache
                     });
 
                     Sentry.setTag('Error code:', (err.code ? err.code : ''))
