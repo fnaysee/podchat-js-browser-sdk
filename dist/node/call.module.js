@@ -85,7 +85,7 @@ function ChatCall(params) {
       imOwner: false,
       isStarted: false,
       width: callVideoMinWidth,
-      hight: callVideoMinHeight
+      height: callVideoMinHeight
     };
     return {
       setOwner: function setOwner(ownerId) {
