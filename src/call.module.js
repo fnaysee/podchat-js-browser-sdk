@@ -96,7 +96,7 @@ function ChatCall(params) {
         callStreamCloseTimeout = params.callOptions.streamCloseTimeout || 10000
 
     function screenShareStateManager() {
-        var config = {
+        let config = {
             ownerId: 0,
             imOwner: false,
             isStarted: false,
@@ -148,7 +148,7 @@ function ChatCall(params) {
     }
 
     function callServerManager() {
-        var config = {
+        let config = {
             servers: [],
             currentServerIndex: 0,
         };
@@ -295,9 +295,9 @@ function ChatCall(params) {
                 return config.state === peerStates.DISCONNECTED;
             },
             generateSdpOfferOptions: function () {
-                var topicManager = this;
+                let topicManager = this;
                 return new Promise(function (resolve, reject) {
-                    var mediaConstraints = {audio: (config.mediaType === 'audio'), video: (config.mediaType === 'video')};
+                    let mediaConstraints = {audio: (config.mediaType === 'audio'), video: (config.mediaType === 'video')};
 
                     if(config.direction === 'send' && config.mediaType === 'video') {
                         mediaConstraints.video = {
@@ -307,7 +307,7 @@ function ChatCall(params) {
                         }
                     }
 
-                    var options = {
+                    let options = {
                         mediaConstraints: mediaConstraints,
                         iceTransportPolicy: 'relay',
                         onicecandidate: (candidate) => {
@@ -351,7 +351,7 @@ function ChatCall(params) {
                 });
             },
             watchForIceCandidates: function (candidate) {
-                var manager = this;
+                let manager = this;
 
                 if (metadataInstance.isIceCandidateIntervalSet()) {
                     return;
@@ -371,7 +371,7 @@ function ChatCall(params) {
                 }, 500, {candidate: candidate}));
             },
             establishPeerConnection: function (options) {
-                var WebRtcFunction = config.direction === 'send' ? 'WebRtcPeerSendonly' : 'WebRtcPeerRecvonly',
+                let WebRtcFunction = config.direction === 'send' ? 'WebRtcPeerSendonly' : 'WebRtcPeerRecvonly',
                     manager = this,
                     user = callUsers[config.userId],
                     topicElement = user.htmlElements[config.topic];
@@ -425,7 +425,7 @@ function ChatCall(params) {
                 });
             },
             sendSDPOfferRequestMessage: function (sdpOffer, retries) {
-                var manager = this;
+                let manager = this;
                 sendCallMessage({
                     id: (config.direction === 'send' ? 'SEND_SDP_OFFER' : 'RECIVE_SDP_OFFER'),
                     sdpOffer: sdpOffer,
@@ -442,7 +442,7 @@ function ChatCall(params) {
             },
             watchRTCPeerConnection: function () {
                 consoleLogging && console.log("[SDK][watchRTCPeerConnection] called with: ", config.userId, config.topic, config.mediaType, config.direction);
-                var manager = this,
+                let manager = this,
                     user = callUsers[config.userId];
 
                 consoleLogging && console.log("[SDK][watchRTCPeerConnection] called with: ", callUsers, user);
@@ -547,7 +547,7 @@ function ChatCall(params) {
                 }
                 const audioSourceNode = audioCtx.createMediaStreamSource(stream)
                     , analyserNode = audioCtx.createScriptProcessor(2048, 1, 1);
-                var instant = 0.0, counter = 0;
+                let instant = 0.0, counter = 0;
                 analyserNode.onaudioprocess = function(event) {
                     if(!config.peer) {
                         analyserNode.removeEventListener('audioprocess');
@@ -608,7 +608,7 @@ function ChatCall(params) {
                 config.peer.peerConnection.getStats(null).then(stats => {
                     //console.log(' watchRTCPeerConnection:: window.setInterval then(stats:', stats)
                     //let statsOutput = "";
-                    var user = callUsers[config.userId],
+                    let user = callUsers[config.userId],
                         topicMetadata = user.topicMetaData[config.topic]
 
                     stats.forEach(report => {
@@ -705,7 +705,7 @@ function ChatCall(params) {
                 }
             },
             shouldReconnectTopic: function () {
-                var manager = this,
+                let manager = this,
                     iceConnectionState = config.peer.peerConnection.iceConnectionState;
                 if (currentCallParams && Object.keys(currentCallParams).length) {
                     if (callUsers[config.userId]
@@ -750,7 +750,7 @@ function ChatCall(params) {
                 });
             },
             createTopic: function () {
-                var manager = this;
+                let manager = this;
                 if(callUsers[config.userId] && config.peer) {
                     return;
                 }
@@ -767,7 +767,7 @@ function ChatCall(params) {
                         metadataInstance.clearIceCandidateInterval();
                         manager.removeConnectionQualityInterval();
                         if(config.direction === 'send' && !config.isScreenShare) {
-                            var constraint = {
+                            let constraint = {
                                 audio: config.mediaType === 'audio',
                                 video: (config.mediaType === 'video' ? {
                                     width: 640,
@@ -843,14 +843,14 @@ function ChatCall(params) {
         }
     }
 
-    var init = function () {
+    let init = function () {
 
         },
 
         sendCallMessage = function (message, callback) {
             message.token = token;
 
-            var uniqueId;
+            let uniqueId;
 
             if (typeof params.uniqueId != 'undefined') {
                 uniqueId = params.uniqueId;
@@ -860,7 +860,7 @@ function ChatCall(params) {
 
             message.uniqueId = uniqueId;
 
-            var data = {
+            let data = {
                 type: 3,
                 content: {
                     peerName: callServerController.getCurrentServer(),// callServerName,
@@ -939,7 +939,7 @@ function ChatCall(params) {
              *    - mute                         {boolean}
              */
 
-            var participant = {
+            let participant = {
                 id: messageContent.id,
                 joinTime: messageContent.joinTime,
                 leaveTime: messageContent.leaveTime,
@@ -994,7 +994,7 @@ function ChatCall(params) {
              *    - partnerParticipantVO  {object}
              *    - conversationVO        {object}
              */
-            var callMessage = {
+            let callMessage = {
                 id: pushMessageVO.id,
                 creatorId: pushMessageVO.creatorId,
                 type: pushMessageVO.type,
@@ -1026,9 +1026,9 @@ function ChatCall(params) {
          * @return {object} Formatted Call Participant Array
          */
         reformatCallParticipants = function (participantsContent) {
-            var returnData = [];
+            let returnData = [];
 
-            for (var i = 0; i < participantsContent.length; i++) {
+            for (let i = 0; i < participantsContent.length; i++) {
                 returnData.push(formatDataToMakeCallParticipant(participantsContent[i]));
             }
 
@@ -1036,7 +1036,7 @@ function ChatCall(params) {
         },
 
         callReceived = function (params, callback) {
-            var receiveCallData = {
+            let receiveCallData = {
                 chatMessageVOType: chatMessageVOTypes.RECEIVE_CALL_REQUEST,
                 typeCode: generalTypeCode, //params.typeCode,
                 pushMsgType: 3,
@@ -1071,7 +1071,7 @@ function ChatCall(params) {
         endCall = function (params, callback) {
             consoleLogging && console.log('[SDK][endCall] called...');
 
-            var endCallData = {
+            let endCallData = {
                 chatMessageVOType: chatMessageVOTypes.END_CALL_REQUEST,
                 typeCode: generalTypeCode, //params.typeCode,
                 pushMsgType: 3,
@@ -1111,7 +1111,7 @@ function ChatCall(params) {
 
         startCallWebRTCFunctions = function (params, callback) {
             if (callDivId) {
-                var callVideo = (typeof params.video === 'boolean') ? params.video : true,
+                let callVideo = (typeof params.video === 'boolean') ? params.video : true,
                     callMute = (typeof params.mute === 'boolean') ? params.mute : false;
 
                 if(params.selfData) {
@@ -1152,9 +1152,9 @@ function ChatCall(params) {
         },
 
         generateCallUIList = function () {
-            var me = chatMessaging.userInfo.Id;
-            var callUIElements = {};
-            for(var i in callUsers) {
+            let me = chatMessaging.userInfo.Id;
+            let callUIElements = {};
+            for(let i in callUsers) {
                 let tags = {};
                 if(callUsers[i] && callUsers[i].htmlElements){
                     tags.container = callUsers[i].htmlElements.container;
@@ -1174,7 +1174,7 @@ function ChatCall(params) {
         callStateController = {
             createSessionInChat: function (params) {
                 currentCallParams = params;
-                var callController = this;
+                let callController = this;
                 sendCallMessage({
                     id: 'CREATE_SESSION',
                     brokerAddress: params.brokerAddress,
@@ -1195,8 +1195,8 @@ function ChatCall(params) {
                 });
             },
             startCall: function (params) {
-                var callController = this;
-                for(var i in callUsers) {
+                let callController = this;
+                for(let i in callUsers) {
                     if(i === "screenShare") {
                         if(screenShareInfo.isStarted())
                             callStateController.addScreenShareToCall('receive', false);
@@ -1214,7 +1214,7 @@ function ChatCall(params) {
                 }
             },
             setupCallParticipant: function (participant) {
-                var user = participant;
+                let user = participant;
                 user.topicMetaData = {};
                 // user.peers = {};
 
@@ -1279,7 +1279,7 @@ function ChatCall(params) {
                 this.appendUserToCallDiv(user.userId, this.generateHTMLElements(user.userId));
             },
             setupScreenSharingObject: function (topic) {
-                var obj = {
+                let obj = {
                     video: true,
                 };
                 obj.topicMetaData = {};
@@ -1312,8 +1312,8 @@ function ChatCall(params) {
                     consoleLogging && console.log('No Call DIV has been declared!');
                     return;
                 }
-                var user = callUsers[userId]
-                var callParentDiv = document.getElementById(callDivId);
+                let user = callUsers[userId]
+                let callParentDiv = document.getElementById(callDivId);
                 if(user.video) {
                     if(!document.getElementById("callParticipantWrapper-" + userId)) {
                         if (!document.getElementById("uiRemoteVideo-" + user.videoTopicName)) {
@@ -1338,12 +1338,12 @@ function ChatCall(params) {
                     callParentDiv.appendChild(user.htmlElements.container);
             },
             generateHTMLElements: function (userId) {
-                var user = callUsers[userId]
+                let user = callUsers[userId]
                 if(!user.htmlElements) {
                     user.htmlElements = {
                         container: document.createElement('div')
                     };
-                    var el = user.htmlElements.container;
+                    let el = user.htmlElements.container;
                     el.setAttribute('id', 'callParticipantWrapper-' + userId);
                     el.classList.add('participant');
                     el.classList.add('wrapper');
@@ -1353,7 +1353,7 @@ function ChatCall(params) {
 
                 if (user.video && !user.htmlElements[user.videoTopicName]) {
                     user.htmlElements[user.videoTopicName] = document.createElement('video');
-                    var el = user.htmlElements[user.videoTopicName];
+                    let el = user.htmlElements[user.videoTopicName];
                     el.setAttribute('id', 'uiRemoteVideo-' + user.videoTopicName);
                     el.setAttribute('class', callVideoTagClassName);
                     el.setAttribute('playsinline', '');
@@ -1364,7 +1364,7 @@ function ChatCall(params) {
 
                 if (typeof user.mute !== 'undefined' && !user.mute && !user.htmlElements[user.audioTopicName]) {
                     user.htmlElements[user.audioTopicName] = document.createElement('audio');
-                    var el = user.htmlElements[user.audioTopicName];
+                    let el = user.htmlElements[user.audioTopicName];
                     el.setAttribute('id', 'uiRemoteAudio-' + user.audioTopicName);
                     el.setAttribute('class', callAudioTagClassName);
                     el.setAttribute('autoplay', '');
@@ -1376,7 +1376,7 @@ function ChatCall(params) {
                 return user.htmlElements;
             },
             removeParticipant: function (userId) {
-                var user = callUsers[userId];
+                let user = callUsers[userId];
                 if(!user)
                     return;
 
@@ -1407,10 +1407,10 @@ function ChatCall(params) {
                 if (!!params.turnAddress && params.turnAddress.length > 0
                     || (useInternalTurnAddress && !!params.internalTurnAddress && params.turnAddress.length > 0 )) {
 
-                    var serversTemp = useInternalTurnAddress ? params.internalTurnAddress.split(',') : params.turnAddress.split(','),
+                    let serversTemp = useInternalTurnAddress ? params.internalTurnAddress.split(',') : params.turnAddress.split(','),
                         turnsList = [];
 
-                    for(var i in serversTemp) {
+                    for(let i in serversTemp) {
                         turnsList.push({
                             "urls": "turn:" + serversTemp[i],
                             "username": "mkhorrami",
@@ -1433,8 +1433,8 @@ function ChatCall(params) {
                 if(!callUsers || !Object.keys(callUsers).length || !callRequestController.callEstablishedInMySide)
                     return;
 
-                for(var i in callUsers) {
-                    // var videoTopic = callUsers[i].videoTopicName, audioTopic = callUsers[i].audioTopicName;
+                for(let i in callUsers) {
+                    // let videoTopic = callUsers[i].videoTopicName, audioTopic = callUsers[i].audioTopicName;
                     if(callUsers[i]) {
                         if(callUsers[i].videoTopicManager
                             && callUsers[i].videoTopicManager.getPeer()
@@ -1477,7 +1477,7 @@ function ChatCall(params) {
                 }
                 callUsers['screenShare'].videoTopicManager.setIsScreenShare(shareScreen);
 
-                var callController = this,
+                let callController = this,
                     screenShare = callUsers["screenShare"];
                 if(!screenShare.videoTopicManager.getPeer()) {
                     if(!screenShare.htmlElements[screenShare.videoTopicName]) {
@@ -1502,7 +1502,7 @@ function ChatCall(params) {
                 }
             },
             removeScreenShareFromCall: function () {
-                var screenShare = callUsers["screenShare"];
+                let screenShare = callUsers["screenShare"];
                 if(screenShare && screenShareInfo.isStarted()) {
                     screenShareInfo.setIsStarted(false);
                     screenShare.videoTopicManager.removeTopic();
@@ -1513,11 +1513,11 @@ function ChatCall(params) {
                 }
             },
             removeAllCallParticipants: function () {
-                var removeAllUsersPromise = new Promise(function (resolve, reject) {
-                    var index = 0;
-                    for (var i in callUsers) {
+                let removeAllUsersPromise = new Promise(function (resolve, reject) {
+                    let index = 0;
+                    for (let i in callUsers) {
                         index++;
-                        var user = callUsers[i];
+                        let user = callUsers[i];
                         if (user) {
                             if(user.videoTopicManager && user.videoTopicManager.getPeer()) {
                                 user.videoTopicManager.removeTopic();
@@ -1546,7 +1546,7 @@ function ChatCall(params) {
                 });
             },
             findUserIdByTopic: function (topic) {
-                for(var i in callUsers) {
+                for(let i in callUsers) {
                     if (callUsers[i] && (callUsers[i].videoTopicName === topic || callUsers[i].audioTopicName === topic)) {
                         //peer = callUsers[i].peers[jsonMessage.topic];
                         return i;
@@ -1558,7 +1558,7 @@ function ChatCall(params) {
                     callUsers[userId][mediaKey] = (mediaKey !== 'mute');
                     callUsers[userId][topicNameKey] = (mediaType === 'audio'?  'Vo-':  'Vi-') + sendTopic;
 
-                    var user = callUsers[userId];
+                    let user = callUsers[userId];
                     callStateController.appendUserToCallDiv(userId, callStateController.generateHTMLElements(userId));
                     setTimeout(function () {
                         callUsers[userId][mediaType + 'TopicManager'].createTopic();
@@ -1578,9 +1578,9 @@ function ChatCall(params) {
                 return this.setMediaBitrate(this.setMediaBitrate(sdp, "video", 400), "audio", 50);
             },
             setMediaBitrate: function (sdp, media, bitrate) {
-                var lines = sdp.split("\n");
-                var line = -1;
-                for (var i = 0; i < lines.length; i++) {
+                let lines = sdp.split("\n");
+                let line = -1;
+                for (let i = 0; i < lines.length; i++) {
                     if (lines[i].indexOf("m=" + media) === 0) {
                         line = i;
                         break;
@@ -1609,7 +1609,7 @@ function ChatCall(params) {
 
                 // Add a new b line
                 consoleLogging && console.debug("[SDK][setMediaBitrate] Adding new b line before line", line);
-                var newLines = lines.slice(0, line);
+                let newLines = lines.slice(0, line);
                 newLines.push("b=AS:" + bitrate + "\r");
                 newLines = newLines.concat(lines.slice(line, lines.length));
                 consoleLogging && console.debug("[SDK][setMediaBitrate] output: ", newLines.join("\n"));
@@ -1721,7 +1721,7 @@ function ChatCall(params) {
             if (currentCallParams && Object.keys(currentCallParams).length) {
                 consoleLogging && console.log('[SDK] Sending Key Frame ...');
 
-                var videoTopic = !!videoTopicParam ? videoTopicParam : callUsers[chatMessaging.userInfo.id].videoTopicName;
+                let videoTopic = !!videoTopicParam ? videoTopicParam : callUsers[chatMessaging.userInfo.id].videoTopicName;
                 let videoElement = document.getElementById(`uiRemoteVideo-${videoTopic}`);
 
                 if (videoElement) {
@@ -1788,7 +1788,7 @@ function ChatCall(params) {
         },
 
         handleProcessSdpOffer = function (jsonMessage) {
-            var userId = callStateController.findUserIdByTopic(jsonMessage.topic),
+            let userId = callStateController.findUserIdByTopic(jsonMessage.topic),
                 topicManager,
                 peer; //callUsers[userId].peers[jsonMessage.topic];
 
@@ -1830,7 +1830,7 @@ function ChatCall(params) {
         },
 
         handleProcessSdpAnswer = function (jsonMessage) {
-            var userId = callStateController.findUserIdByTopic(jsonMessage.topic),
+            let userId = callStateController.findUserIdByTopic(jsonMessage.topic),
                 topicManager,
                 peer; // = callUsers[userId].peers[jsonMessage.topic];
 
@@ -1883,7 +1883,7 @@ function ChatCall(params) {
         },
 
         handleAddIceCandidate = function (jsonMessage) {
-            var userId = callStateController.findUserIdByTopic(jsonMessage.topic);
+            let userId = callStateController.findUserIdByTopic(jsonMessage.topic);
 
             let peer; //= callUsers[userId].peers[jsonMessage.topic];
 
@@ -1945,7 +1945,7 @@ function ChatCall(params) {
         },
 
         releaseResource = function (mediaType) {
-            var constraint = {
+            let constraint = {
                 audio: mediaType === 'audio',
                 video: (mediaType === 'video' ? {
                     width: 640,
@@ -1995,7 +1995,7 @@ function ChatCall(params) {
             if(callServerController.isJanus())
                 return;
 
-            for (var i = 0; i < timeouts.length; i++) {
+            for (let i = 0; i < timeouts.length; i++) {
                 setTimeout(function () {
                     if(typeof callUsers[userId] !== "undefined" && callUsers[userId] && callUsers[userId].videoTopicManager.getPeer()) //callUsers[userId].peers[callUsers[userId].videoTopicName]
                         restartMedia(callUsers[userId].videoTopicName);
@@ -2004,7 +2004,7 @@ function ChatCall(params) {
         },
 
         sendCallMetaData = function (params) {
-            var message =  {
+            let message =  {
                 id: params.id,
                 userid: params.userid,
                 content: params.content || undefined
@@ -2018,8 +2018,8 @@ function ChatCall(params) {
         },
 
         handleReceivedMetaData = function (jsonMessage, uniqueId) {
-            var jMessage = JSON.parse(jsonMessage.message);
-            var id = jMessage.id;
+            let jMessage = JSON.parse(jsonMessage.message);
+            let id = jMessage.id;
             if(!id || typeof id === "undefined" || jsonMessage.userid == chatMessaging.userInfo.id) {
                 return;
             }
@@ -2073,7 +2073,7 @@ function ChatCall(params) {
         },
 
         applyScreenShareSizeToElement = function () {
-            var videoElement = callUsers['screenShare'].htmlElements[callUsers['screenShare'].videoTopicName];
+            let videoElement = callUsers['screenShare'].htmlElements[callUsers['screenShare'].videoTopicName];
             let videoTrack = (videoElement.srcObject
                 && videoElement.srcObject.getTracks()
                 && videoElement.srcObject.getTracks().length ? videoElement.srcObject.getTracks()[0] : null);
@@ -2140,7 +2140,7 @@ function ChatCall(params) {
     }
 
     this.callMessageHandler = function (callMessage) {
-        var jsonMessage = (typeof callMessage.content === 'string' && Utility.isValidJson(callMessage.content))
+        let jsonMessage = (typeof callMessage.content === 'string' && Utility.isValidJson(callMessage.content))
             ? JSON.parse(callMessage.content)
             : callMessage.content,
             uniqueId = jsonMessage.uniqueId;
@@ -2573,8 +2573,8 @@ function ChatCall(params) {
                     chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                 }
                 if(Array.isArray(messageContent)) {
-                    for (var i in messageContent) {
-                        var correctedData = {
+                    for (let i in messageContent) {
+                        let correctedData = {
                             video: messageContent[i].video,
                             mute: messageContent[i].mute,
                             userId: messageContent[i].userId,
@@ -2666,7 +2666,7 @@ function ChatCall(params) {
                 }
                 if(Array.isArray(messageContent)){
                     let pause;
-                    for(var i in messageContent) {
+                    for(let i in messageContent) {
                         // pause = messageContent[i].userId == chatMessaging.userInfo.id;
                         callUsers[messageContent[i].userId].audioStopManager.disableStream();
                         // callStateController.deactivateParticipantStream(
@@ -2697,7 +2697,7 @@ function ChatCall(params) {
                     chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                 }
 
-                var myId = chatMessaging.userInfo.id;
+                let myId = chatMessaging.userInfo.id;
 
                 if(Array.isArray(messageContent)) {
                     for(let i in messageContent) {
@@ -2800,7 +2800,7 @@ function ChatCall(params) {
                 }
 
                 if(Array.isArray(messageContent)) {
-                    for(var i in messageContent) {
+                    for(let i in messageContent) {
                         callStateController.activateParticipantStream(
                             messageContent[i].userId,
                             'video',
@@ -2835,7 +2835,7 @@ function ChatCall(params) {
                 }
 
                 if(Array.isArray(messageContent)) {
-                    for(var i in messageContent) {
+                    for(let i in messageContent) {
                         callStateController.deactivateParticipantStream(
                             messageContent[i].userId,
                             'video',
@@ -2982,7 +2982,7 @@ function ChatCall(params) {
     }
 
     this.startCall = function (params, callback) {
-        var startCallData = {
+        let startCallData = {
             chatMessageVOType: chatMessageVOTypes.CALL_REQUEST,
             typeCode: generalTypeCode, //params.typeCode,
             pushMsgType: 3,
@@ -3014,8 +3014,8 @@ function ChatCall(params) {
             } else {
                 if (Array.isArray(params.invitees) && params.invitees.length) {
                     content.invitees = [];//params.invitees;
-                    for (var i = 0; i < params.invitees.length; i++) {
-                        var tempInvitee = params.invitees[i];
+                    for (let i = 0; i < params.invitees.length; i++) {
+                        let tempInvitee = params.invitees[i];
 
                         if (tempInvitee && typeof tempInvitee.idType === "string") {
                             tempInvitee.idType = inviteeVOidTypes[tempInvitee.idType];
@@ -3076,7 +3076,7 @@ function ChatCall(params) {
     };
 
     this.startGroupCall = function (params, callback) {
-        var startCallData = {
+        let startCallData = {
             chatMessageVOType: chatMessageVOTypes.GROUP_CALL_REQUEST,
             typeCode: generalTypeCode, //params.typeCode,
             pushMsgType: 3,
@@ -3106,8 +3106,8 @@ function ChatCall(params) {
                 if (Array.isArray(params.invitees)) {
                     content.invitees = [];
 
-                    for (var i = 0; i < params.invitees.length; i++) {
-                        var tempInvitee = params.invitees[i];
+                    for (let i = 0; i < params.invitees.length; i++) {
+                        let tempInvitee = params.invitees[i];
 
                         if (tempInvitee && typeof tempInvitee.idType === "string") {
                             tempInvitee.idType = inviteeVOidTypes[tempInvitee.idType];
@@ -3163,7 +3163,7 @@ function ChatCall(params) {
     this.callReceived = callReceived;
 
     this.terminateCall = function (params, callback) {
-        var terminateCallData = {
+        let terminateCallData = {
             chatMessageVOType: chatMessageVOTypes.TERMINATE_CALL,
             typeCode: generalTypeCode, //params.typeCode,
             pushMsgType: 3,
@@ -3198,7 +3198,7 @@ function ChatCall(params) {
     };
 
     this.acceptCall = function (params, callback) {
-        var acceptCallData = {
+        let acceptCallData = {
             chatMessageVOType: chatMessageVOTypes.ACCEPT_CALL,
             typeCode: generalTypeCode, //params.typeCode,
             pushMsgType: 3,
@@ -3252,7 +3252,7 @@ function ChatCall(params) {
     };
 
     this.rejectCall = this.cancelCall = function (params, callback) {
-        var rejectCallData = {
+        let rejectCallData = {
             chatMessageVOType: chatMessageVOTypes.REJECT_CALL,
             typeCode: generalTypeCode, //params.typeCode,
             pushMsgType: 3,
@@ -3287,7 +3287,7 @@ function ChatCall(params) {
     this.endCall = endCall;
 
     this.startRecordingCall = function (params, callback) {
-        var recordCallData = {
+        let recordCallData = {
             chatMessageVOType: chatMessageVOTypes.RECORD_CALL,
             typeCode: generalTypeCode, //params.typeCode,
             pushMsgType: 3,
@@ -3330,7 +3330,7 @@ function ChatCall(params) {
     };
 
     this.stopRecordingCall = function (params, callback) {
-        var stopRecordingCallData = {
+        let stopRecordingCallData = {
             chatMessageVOType: chatMessageVOTypes.END_RECORD_CALL,
             typeCode: generalTypeCode, //params.typeCode,
             pushMsgType: 3,
@@ -3363,7 +3363,7 @@ function ChatCall(params) {
     };
 
     this.startScreenShare = function (params, callback) {
-        var sendData = {
+        let sendData = {
             chatMessageVOType: chatMessageVOTypes.START_SCREEN_SHARE,
             typeCode: generalTypeCode, //params.typeCode,
             pushMsgType: 3,
@@ -3392,7 +3392,7 @@ function ChatCall(params) {
             onResult: function (result) {
                 consoleLogging && console.log("[sdk][startScreenShare][onResult]: ", result);
                 if(!result.hasError) {
-                    var direction = 'send', shareScreen = true;
+                    let direction = 'send', shareScreen = true;
 
                     if(screenShareInfo.isStarted() && !screenShareInfo.iAmOwner()){
                         direction = 'receive';
@@ -3422,7 +3422,7 @@ function ChatCall(params) {
     };
 
     this.endScreenShare = function (params, callback) {
-        var sendData = {
+        let sendData = {
             chatMessageVOType: chatMessageVOTypes.END_SCREEN_SHARE,
             typeCode: generalTypeCode, //params.typeCode,
             pushMsgType: 3,
@@ -3469,9 +3469,9 @@ function ChatCall(params) {
     };
 
     this.resizeScreenShare = function (params, callback) {
-        var result = {}
+        let result = {}
         if(screenShareInfo.isStarted() && screenShareInfo.iAmOwner()) {
-            var screenSize = window.screen
+            let screenSize = window.screen
                 , qualities = [
                     {
                         width: Math.round(screenSize.width / 3),
@@ -3519,7 +3519,7 @@ function ChatCall(params) {
     };
 
     this.getCallsList = function (params, callback) {
-        var getCallListData = {
+        let getCallListData = {
             chatMessageVOType: chatMessageVOTypes.GET_CALLS,
             typeCode: generalTypeCode, //params.typeCode,
             pushMsgType: 3,
@@ -3588,7 +3588,7 @@ function ChatCall(params) {
     };
 
     this.getCallsToJoin = function (params, callback) {
-        var getCallListData = {
+        let getCallListData = {
             chatMessageVOType: chatMessageVOTypes.GET_CALLS_TO_JOIN,
             pushMsgType: 3,
             token: token
@@ -3644,7 +3644,7 @@ function ChatCall(params) {
     };
 
     this.deleteFromCallList = function (params, callback) {
-        var sendData = {
+        let sendData = {
             chatMessageVOType: chatMessageVOTypes.DELETE_FROM_CALL_HISTORY,
             typeCode: generalTypeCode, //params.typeCode,
             content: []
@@ -3674,14 +3674,14 @@ function ChatCall(params) {
 
         return chatMessaging.sendMessage(sendData, {
             onResult: function (result) {
-                var returnData = {
+                let returnData = {
                     hasError: result.hasError,
                     cache: false,
                     errorMessage: result.errorMessage,
                     errorCode: result.errorCode
                 };
                 if (!returnData.hasError) {
-                    var messageContent = result.result;
+                    let messageContent = result.result;
                     returnData.result = messageContent;
                 }
                 callback && callback(returnData);
@@ -3690,7 +3690,7 @@ function ChatCall(params) {
     };
 
     this.getCallParticipants = function (params, callback) {
-        var sendMessageParams = {
+        let sendMessageParams = {
             chatMessageVOType: chatMessageVOTypes.ACTIVE_CALL_PARTICIPANTS,
             typeCode: generalTypeCode,//params.typeCode,
             content: {}
@@ -3704,10 +3704,10 @@ function ChatCall(params) {
                 });
                 return;
             } else {
-                var callId = +params.callId;
+                let callId = +params.callId;
                 sendMessageParams.subjectId = callId;
 
-                var offset = (parseInt(params.offset) > 0)
+                let offset = (parseInt(params.offset) > 0)
                     ? parseInt(params.offset)
                     : 0,
                     count = (parseInt(params.count) > 0)
@@ -3719,7 +3719,7 @@ function ChatCall(params) {
 
                 return chatMessaging.sendMessage(sendMessageParams, {
                     onResult: function (result) {
-                        var returnData = {
+                        let returnData = {
                             hasError: result.hasError,
                             cache: false,
                             errorMessage: result.errorMessage,
@@ -3727,7 +3727,7 @@ function ChatCall(params) {
                         };
 
                         if (!returnData.hasError) {
-                            var messageContent = result.result,
+                            let messageContent = result.result,
                                 messageLength = messageContent.length,
                                 resultData = {
                                     participants: reformatCallParticipants(messageContent),
@@ -3773,7 +3773,7 @@ function ChatCall(params) {
          *    - uniqueId                    {string}
          */
 
-        var sendMessageParams = {
+        let sendMessageParams = {
             chatMessageVOType: chatMessageVOTypes.ADD_CALL_PARTICIPANT,
             typeCode: generalTypeCode,//params.typeCode,
             content: []
@@ -3790,7 +3790,7 @@ function ChatCall(params) {
 
             if (Array.isArray(params.usernames)) {
                 sendMessageParams.content = [];
-                for (var i = 0; i < params.usernames.length; i++) {
+                for (let i = 0; i < params.usernames.length; i++) {
                     sendMessageParams.content.push({
                         id: params.usernames[i],
                         idType: inviteeVOidTypes.TO_BE_USER_USERNAME
@@ -3800,7 +3800,7 @@ function ChatCall(params) {
 
             if (Array.isArray(params.coreUserids)) {
                 sendMessageParams.content = [];
-                for (var i = 0; i < params.coreUserids.length; i++) {
+                for (let i = 0; i < params.coreUserids.length; i++) {
                     sendMessageParams.content.push({
                         id: params.coreUserids[i],
                         idType: inviteeVOidTypes.TO_BE_CORE_USER_ID
@@ -3811,14 +3811,14 @@ function ChatCall(params) {
 
         return chatMessaging.sendMessage(sendMessageParams, {
             onResult: function (result) {
-                var returnData = {
+                let returnData = {
                     hasError: result.hasError,
                     cache: false,
                     errorMessage: result.errorMessage,
                     errorCode: result.errorCode
                 };
                 if (!returnData.hasError) {
-                    var messageContent = result.result;
+                    let messageContent = result.result;
                     returnData.result = messageContent;
                 }
                 callback && callback(returnData);
@@ -3833,7 +3833,7 @@ function ChatCall(params) {
          *    + content                     {list} List of Participants UserIds
          */
 
-        var sendMessageParams = {
+        let sendMessageParams = {
             chatMessageVOType: chatMessageVOTypes.REMOVE_CALL_PARTICIPANT,
             typeCode: generalTypeCode, //params.typeCode,
             content: []
@@ -3851,14 +3851,14 @@ function ChatCall(params) {
 
         return chatMessaging.sendMessage(sendMessageParams, {
             onResult: function (result) {
-                var returnData = {
+                let returnData = {
                     hasError: result.hasError,
                     cache: false,
                     errorMessage: result.errorMessage,
                     errorCode: result.errorCode
                 };
                 if (!returnData.hasError) {
-                    var messageContent = result.result;
+                    let messageContent = result.result;
                     returnData.result = messageContent;
                 }
                 callback && callback(returnData);
@@ -3873,7 +3873,7 @@ function ChatCall(params) {
          *    + content                     {list} List of Participants UserIds
          */
 
-        var sendMessageParams = {
+        let sendMessageParams = {
             chatMessageVOType: chatMessageVOTypes.MUTE_CALL_PARTICIPANT,
             typeCode: generalTypeCode, //params.typeCode,
             content: []
@@ -3896,14 +3896,14 @@ function ChatCall(params) {
 
         return chatMessaging.sendMessage(sendMessageParams, {
             onResult: function (result) {
-                var returnData = {
+                let returnData = {
                     hasError: result.hasError,
                     cache: false,
                     errorMessage: result.errorMessage,
                     errorCode: result.errorCode
                 };
                 if (!returnData.hasError) {
-                    var messageContent = result.result;
+                    let messageContent = result.result;
                     returnData.result = messageContent;
                 }
                 callback && callback(returnData);
@@ -3918,7 +3918,7 @@ function ChatCall(params) {
          *    + content                     {list} List of Participants UserIds
          */
 
-        var sendMessageParams = {
+        let sendMessageParams = {
             chatMessageVOType: chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT,
             typeCode: generalTypeCode, //params.typeCode,
             content: []
@@ -3935,7 +3935,7 @@ function ChatCall(params) {
         }
 
         //TODO: Should be moved to event from chat server (when chat server fixes the bug)
-        //var myId = chatMessaging.userInfo.id
+        //let myId = chatMessaging.userInfo.id
             //, myUser = callUsers[myId];
 
 /*            if(myUser.audioStopManager.isStreamPaused()) {
@@ -3956,14 +3956,14 @@ function ChatCall(params) {
 
         return chatMessaging.sendMessage(sendMessageParams, {
             onResult: function (result) {
-                var returnData = {
+                let returnData = {
                     hasError: result.hasError,
                     cache: false,
                     errorMessage: result.errorMessage,
                     errorCode: result.errorCode
                 };
                 if (!returnData.hasError) {
-                    var messageContent = result.result;
+                    let messageContent = result.result;
                     returnData.result = messageContent;
 
                 }
@@ -3973,7 +3973,7 @@ function ChatCall(params) {
     };
 
     this.turnOnVideoCall = function (params, callback) {
-        var turnOnVideoData = {
+        let turnOnVideoData = {
             chatMessageVOType: chatMessageVOTypes.TURN_ON_VIDEO_CALL,
             typeCode: generalTypeCode,//params.typeCode,
             pushMsgType: 3,
@@ -3998,7 +3998,7 @@ function ChatCall(params) {
             return;
         }
 
-        var user = callUsers[chatMessaging.userInfo.id];
+        let user = callUsers[chatMessaging.userInfo.id];
 
         if(user
             && user.videoTopicManager
@@ -4022,7 +4022,7 @@ function ChatCall(params) {
     };
 
     this.turnOffVideoCall = function (params, callback) {
-        var turnOffVideoData = {
+        let turnOffVideoData = {
             chatMessageVOType: chatMessageVOTypes.TURN_OFF_VIDEO_CALL,
             typeCode: generalTypeCode,//params.typeCode,
             pushMsgType: 3,
@@ -4047,7 +4047,7 @@ function ChatCall(params) {
             return;
         }
 
-        var user = callUsers[chatMessaging.userInfo.id];
+        let user = callUsers[chatMessaging.userInfo.id];
         if(user
             && user.videoTopicManager
             && user.videoTopicManager.getPeer()
@@ -4075,7 +4075,7 @@ function ChatCall(params) {
     this.disableParticipantsVideoReceive = function (params, callback) {
         if (params) {
             if (Array.isArray(params.userIds) && params.userIds.length) {
-                for( var i in params.userIds) {
+                for( let i in params.userIds) {
                     callStateController.deactivateParticipantStream(
                         params.userIds[i],
                         'video',
@@ -4096,7 +4096,7 @@ function ChatCall(params) {
     this.enableParticipantsVideoReceive = function (params, callback) {
         if (params) {
             if (Array.isArray(params.userIds) && params.userIds.length) {
-                for( var i in params.userIds) {
+                for( let i in params.userIds) {
                     callStateController.activateParticipantStream(
                         params.userIds[i],
                         'video',
@@ -4122,7 +4122,7 @@ function ChatCall(params) {
      * @param callback
      */
     this.pauseCamera = function (params, callback) {
-        var me = callUsers[chatMessaging.userInfo.id];
+        let me = callUsers[chatMessaging.userInfo.id];
 
         if(!Object.keys(callUsers).length || !me.videoTopicName || !me.videoTopicManager.getPeer())//!me.peers[me.videoTopicName]
             return;
@@ -4133,7 +4133,7 @@ function ChatCall(params) {
     };
 
     this.resumeCamera = function (params, callback) {
-        var me = callUsers[chatMessaging.userInfo.id]
+        let me = callUsers[chatMessaging.userInfo.id]
         if(!Object.keys(callUsers).length || !me.videoTopicName || !me.videoTopicManager.getPeer())//!me.peers[me.videoTopicName]
             return;
 
@@ -4148,7 +4148,7 @@ function ChatCall(params) {
      * @param callback
      */
     this.pauseMice = function (params, callback) {
-        var me = callUsers[chatMessaging.userInfo.id];
+        let me = callUsers[chatMessaging.userInfo.id];
         if(!Object.keys(callUsers).length || !me.audioTopicName || !me.audioTopicManager.getPeer())//me.peers[me.audioTopicName]
             return;
 
@@ -4158,7 +4158,7 @@ function ChatCall(params) {
     };
 
     this.resumeMice = function (params, callback) {
-        var me = callUsers[chatMessaging.userInfo.id];
+        let me = callUsers[chatMessaging.userInfo.id];
         if(!Object.keys(callUsers).length || !me.audioTopicName || !me.audioTopicManager.getPeer())//me.peers[me.audioTopicName]
             return;
 
@@ -4182,7 +4182,7 @@ function ChatCall(params) {
                 return;
             }
 
-            var userObject = callUsers[chatMessaging.userInfo.id]
+            let userObject = callUsers[chatMessaging.userInfo.id]
             //userObject.peers[userObject.videoTopicName]
             userObject.videoTopicManager.getPeer()
                 .getLocalStream()
