@@ -1567,10 +1567,12 @@ function ChatCall(params) {
                 }
             },
             deactivateParticipantStream: function (userId, mediaType, mediaKey) {
-                callUsers[userId][mediaKey] = (mediaKey === 'mute' ? true : false);
-                var user = callUsers[userId];
-                var topicNameKey = mediaType === 'audio' ? 'audioTopicName' : 'videoTopicName';
-                callUsers[userId][mediaType + 'TopicManager'].removeTopic();
+                if(callUsers[userId]) {
+                    callUsers[userId][mediaKey] = (mediaKey === 'mute' ? true : false);
+                    // var user = callUsers[userId];
+                    // var topicNameKey = mediaType === 'audio' ? 'audioTopicName' : 'videoTopicName';
+                    callUsers[userId][mediaType + 'TopicManager'].removeTopic();
+                }
             },
             setMediaBitrates: function (sdp) {
                 return this.setMediaBitrate(this.setMediaBitrate(sdp, "video", 400), "audio", 50);
