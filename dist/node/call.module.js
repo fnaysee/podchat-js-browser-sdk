@@ -1318,23 +1318,34 @@ function ChatCall(params) {
 
       if (user.video && !user.htmlElements[user.videoTopicName]) {
         user.htmlElements[user.videoTopicName] = document.createElement('video');
-        var el = user.htmlElements[user.videoTopicName];
-        el.setAttribute('id', 'uiRemoteVideo-' + user.videoTopicName);
-        el.setAttribute('class', callVideoTagClassName);
-        el.setAttribute('playsinline', '');
-        el.setAttribute('muted', '');
-        el.setAttribute('width', callVideoMinWidth + 'px');
-        el.setAttribute('height', callVideoMinHeight + 'px');
+        var _el = user.htmlElements[user.videoTopicName];
+
+        _el.setAttribute('id', 'uiRemoteVideo-' + user.videoTopicName);
+
+        _el.setAttribute('class', callVideoTagClassName);
+
+        _el.setAttribute('playsinline', '');
+
+        _el.setAttribute('muted', '');
+
+        _el.setAttribute('width', callVideoMinWidth + 'px');
+
+        _el.setAttribute('height', callVideoMinHeight + 'px');
       }
 
       if (typeof user.mute !== 'undefined' && !user.mute && !user.htmlElements[user.audioTopicName]) {
         user.htmlElements[user.audioTopicName] = document.createElement('audio');
-        var el = user.htmlElements[user.audioTopicName];
-        el.setAttribute('id', 'uiRemoteAudio-' + user.audioTopicName);
-        el.setAttribute('class', callAudioTagClassName);
-        el.setAttribute('autoplay', '');
-        if (user.direction === 'send') el.setAttribute('muted', '');
-        el.setAttribute('controls', '');
+        var _el2 = user.htmlElements[user.audioTopicName];
+
+        _el2.setAttribute('id', 'uiRemoteAudio-' + user.audioTopicName);
+
+        _el2.setAttribute('class', callAudioTagClassName);
+
+        _el2.setAttribute('autoplay', '');
+
+        if (user.direction === 'send') _el2.setAttribute('muted', '');
+
+        _el2.setAttribute('controls', '');
       }
 
       return user.htmlElements;
@@ -1390,7 +1401,7 @@ function ChatCall(params) {
       if (!callUsers || !Object.keys(callUsers).length || !callRequestController.callEstablishedInMySide) return;
 
       for (var i in callUsers) {
-        // var videoTopic = callUsers[i].videoTopicName, audioTopic = callUsers[i].audioTopicName;
+        // let videoTopic = callUsers[i].videoTopicName, audioTopic = callUsers[i].audioTopicName;
         if (callUsers[i]) {
           if (callUsers[i].videoTopicManager && callUsers[i].videoTopicManager.getPeer() && callUsers[i].videoTopicManager.getPeer().peerConnection.connectionState === 'failed') {
             callUsers[i].videoTopicManager.shouldReconnectTopic();
@@ -1473,7 +1484,7 @@ function ChatCall(params) {
       var removeAllUsersPromise = new Promise(function (resolve, reject) {
         var index = 0;
 
-        for (var i in callUsers) {
+        var _loop = function _loop(i) {
           index++;
           var user = callUsers[i];
 
@@ -1497,6 +1508,10 @@ function ChatCall(params) {
               if (index === Object.keys(callUsers).length) resolve();
             }, 200);
           }
+        };
+
+        for (var i in callUsers) {
+          _loop(i);
         }
       });
       removeAllUsersPromise.then(function () {
@@ -1523,10 +1538,12 @@ function ChatCall(params) {
       }
     },
     deactivateParticipantStream: function deactivateParticipantStream(userId, mediaType, mediaKey) {
-      callUsers[userId][mediaKey] = mediaKey === 'mute' ? true : false;
-      var user = callUsers[userId];
-      var topicNameKey = mediaType === 'audio' ? 'audioTopicName' : 'videoTopicName';
-      callUsers[userId][mediaType + 'TopicManager'].removeTopic();
+      if (callUsers[userId]) {
+        callUsers[userId][mediaKey] = mediaKey === 'mute' ? true : false; // var user = callUsers[userId];
+        // var topicNameKey = mediaType === 'audio' ? 'audioTopicName' : 'videoTopicName';
+
+        callUsers[userId][mediaType + 'TopicManager'].removeTopic();
+      }
     },
     setMediaBitrates: function setMediaBitrates(sdp) {
       return this.setMediaBitrate(this.setMediaBitrate(sdp, "video", 400), "audio", 50);
@@ -2586,13 +2603,14 @@ function ChatCall(params) {
         if (Array.isArray(messageContent)) {
           var pause;
 
-          for (var i in messageContent) {
+          for (var _i in messageContent) {
             // pause = messageContent[i].userId == chatMessaging.userInfo.id;
-            callUsers[messageContent[i].userId].audioStopManager.disableStream(); // callStateController.deactivateParticipantStream(
+            callUsers[messageContent[_i].userId].audioStopManager.disableStream(); // callStateController.deactivateParticipantStream(
             //     messageContent[i].userId,
             //     'audio',
             //     'mute'
             // )
+
           }
         }
 
@@ -2618,8 +2636,8 @@ function ChatCall(params) {
         var myId = chatMessaging.userInfo.id;
 
         if (Array.isArray(messageContent)) {
-          for (var _i in messageContent) {
-            var cUserId = messageContent[_i].userId;
+          for (var _i2 in messageContent) {
+            var cUserId = messageContent[_i2].userId;
 
             if (callUsers[cUserId].audioStopManager.isStreamPaused()) {
               if (callUsers[cUserId].audioStopManager.isStreamStopped()) {
@@ -2703,8 +2721,8 @@ function ChatCall(params) {
         }
 
         if (Array.isArray(messageContent)) {
-          for (var i in messageContent) {
-            callStateController.activateParticipantStream(messageContent[i].userId, 'video', messageContent[i].userId === chatMessaging.userInfo.id ? 'send' : 'receive', 'videoTopicName', messageContent[i].sendTopic, 'video');
+          for (var _i3 in messageContent) {
+            callStateController.activateParticipantStream(messageContent[_i3].userId, 'video', messageContent[_i3].userId === chatMessaging.userInfo.id ? 'send' : 'receive', 'videoTopicName', messageContent[_i3].sendTopic, 'video');
           }
         }
 
@@ -2730,8 +2748,8 @@ function ChatCall(params) {
         }
 
         if (Array.isArray(messageContent)) {
-          for (var i in messageContent) {
-            callStateController.deactivateParticipantStream(messageContent[i].userId, 'video', 'video');
+          for (var _i4 in messageContent) {
+            callStateController.deactivateParticipantStream(messageContent[_i4].userId, 'video', 'video');
           }
         }
 
@@ -3289,8 +3307,11 @@ function ChatCall(params) {
           }
 
           if (screenShareInfo.isStarted() && screenShareInfo.iAmOwner()) {
-            screenShareInfo.setWidth(callVideoMinWidth);
-            screenShareInfo.setHeight(callVideoMinHeight);
+            var qualityObject = calculateScreenSize({
+              quality: params.quality
+            });
+            screenShareInfo.setWidth(qualityObject.width);
+            screenShareInfo.setHeight(qualityObject.height);
             sendCallMetaData({
               id: callMetaDataTypes.SCREENSHAREMETADATA,
               userid: chatMessaging.userInfo.id,
@@ -3360,26 +3381,33 @@ function ChatCall(params) {
     });
   };
 
+  function calculateScreenSize(_ref) {
+    var _ref$quality = _ref.quality,
+        quality = _ref$quality === void 0 ? 3 : _ref$quality;
+    var screenSize = window.screen,
+        qualities = [{
+      width: Math.round(screenSize.width / 3),
+      height: Math.round(window.screen.height / 3)
+    }, {
+      width: Math.round(screenSize.width / 2),
+      height: Math.round(screenSize.height / 2)
+    }, {
+      width: screenSize.width,
+      height: screenSize.height
+    }, {
+      width: Math.round(screenSize.width * 1.6),
+      height: Math.round(screenSize.height * 1.6)
+    }],
+        selectedQuality = quality ? +quality - 1 : 3,
+        qualityObj = qualities[selectedQuality];
+    return qualityObj;
+  }
+
   this.resizeScreenShare = function (params, callback) {
     var result = {};
 
     if (screenShareInfo.isStarted() && screenShareInfo.iAmOwner()) {
-      var screenSize = window.screen,
-          qualities = [{
-        width: Math.round(screenSize.width / 3),
-        height: Math.round(window.screen.height / 3)
-      }, {
-        width: Math.round(screenSize.width / 2),
-        height: Math.round(screenSize.height / 2)
-      }, {
-        width: screenSize.width,
-        height: screenSize.height
-      }, {
-        width: Math.round(screenSize.width * 1.6),
-        height: Math.round(screenSize.height * 1.6)
-      }],
-          selectedQuality = params.quality ? +params.quality - 1 : 3,
-          qualityObj = qualities[selectedQuality];
+      var qualityObj = calculateScreenSize(params.quality);
       screenShareInfo.setWidth(qualityObj.width);
       screenShareInfo.setHeight(qualityObj.height);
       applyScreenShareSizeToElement();
@@ -3686,9 +3714,9 @@ function ChatCall(params) {
       if (Array.isArray(params.coreUserids)) {
         sendMessageParams.content = [];
 
-        for (var i = 0; i < params.coreUserids.length; i++) {
+        for (var _i5 = 0; _i5 < params.coreUserids.length; _i5++) {
           sendMessageParams.content.push({
-            id: params.coreUserids[i],
+            id: params.coreUserids[_i5],
             idType: _constants.inviteeVOidTypes.TO_BE_CORE_USER_ID
           });
         }
@@ -3823,7 +3851,7 @@ function ChatCall(params) {
         sendMessageParams.content = params.userIds;
       }
     } //TODO: Should be moved to event from chat server (when chat server fixes the bug)
-    //var myId = chatMessaging.userInfo.id
+    //let myId = chatMessaging.userInfo.id
     //, myUser = callUsers[myId];
 
     /*            if(myUser.audioStopManager.isStreamPaused()) {

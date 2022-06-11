@@ -3400,8 +3400,9 @@ function ChatCall(params) {
                     }
 
                     if(screenShareInfo.isStarted() && screenShareInfo.iAmOwner()) {
-                        screenShareInfo.setWidth(callVideoMinWidth);
-                        screenShareInfo.setHeight(callVideoMinHeight);
+                        let qualityObject = calculateScreenSize({quality: params.quality});
+                        screenShareInfo.setWidth(qualityObject.width);
+                        screenShareInfo.setHeight(qualityObject.height);
                         sendCallMetaData({
                             id: callMetaDataTypes.SCREENSHAREMETADATA,
                             userid: chatMessaging.userInfo.id,
@@ -3468,31 +3469,36 @@ function ChatCall(params) {
         });
     };
 
+    function calculateScreenSize({quality = 3 }) {
+        let screenSize = window.screen
+            , qualities = [
+            {
+                width: Math.round(screenSize.width / 3),
+                height: Math.round(window.screen.height / 3)
+            },
+            {
+                width: Math.round(screenSize.width / 2),
+                height: Math.round(screenSize.height / 2)
+            },
+            {
+                width: screenSize.width,
+                height: screenSize.height
+            },
+            {
+                width: Math.round(screenSize.width * 1.6),
+                height: Math.round(screenSize.height * 1.6)
+            },
+        ]
+            , selectedQuality = quality ? +quality - 1 : 3
+            , qualityObj = qualities[selectedQuality];
+
+        return qualityObj;
+    }
+
     this.resizeScreenShare = function (params, callback) {
         let result = {}
         if(screenShareInfo.isStarted() && screenShareInfo.iAmOwner()) {
-            let screenSize = window.screen
-                , qualities = [
-                    {
-                        width: Math.round(screenSize.width / 3),
-                        height: Math.round(window.screen.height / 3)
-                    },
-                    {
-                        width: Math.round(screenSize.width / 2),
-                        height: Math.round(screenSize.height / 2)
-                    },
-                    {
-                        width: screenSize.width,
-                        height: screenSize.height
-                    },
-                    {
-                        width: Math.round(screenSize.width * 1.6),
-                        height: Math.round(screenSize.height * 1.6)
-                    },
-                ]
-                , selectedQuality = params.quality ? +params.quality - 1 : 3
-                , qualityObj = qualities[selectedQuality];
-
+            let qualityObj = calculateScreenSize(params.quality);
             screenShareInfo.setWidth(qualityObj.width);
             screenShareInfo.setHeight(qualityObj.height);
 
