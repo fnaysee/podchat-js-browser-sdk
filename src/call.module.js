@@ -3528,7 +3528,7 @@ function ChatCall(params) {
     this.resizeScreenShare = function (params, callback) {
         let result = {}
         if(screenShareInfo.isStarted() && screenShareInfo.iAmOwner()) {
-            let qualityObj = calculateScreenSize(params.quality);
+            let qualityObj = calculateScreenSize({quality: params.quality});
             screenShareInfo.setWidth(qualityObj.width);
             screenShareInfo.setHeight(qualityObj.height);
 
