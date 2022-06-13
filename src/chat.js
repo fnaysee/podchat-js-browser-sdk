@@ -2783,7 +2783,7 @@ function Chat(params) {
                 case chatMessageVOTypes.CANCEL_GROUP_CALL:
                 case chatMessageVOTypes.DESTINED_RECORD_CALL:
                 case chatMessageVOTypes.GET_CALLS_TO_JOIN:
-                    callModule.handleChatMessages(type, chatMessageVOTypes, messageContent, contentCount, threadId, uniqueId);
+                    callModule.handleChatMessages(type, messageContent, contentCount, threadId, uniqueId);
                     break;
 
                 /**

@@ -2247,7 +2247,44 @@ function ChatCall(params) {
         })
     };
 
-    this.handleChatMessages = function(type, chatMessageVOTypes, messageContent, contentCount, threadId, uniqueId) {
+    /**
+     * Do not process the message if is not for current call
+     *
+     * @param type
+     * @param threadId
+     * @return {boolean}
+     */
+    function shouldNotProcessChatMessage(type, threadId) {
+        let restrictedMessageTypes = [
+            chatMessageVOTypes.MUTE_CALL_PARTICIPANT,
+            chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT,
+            chatMessageVOTypes.CALL_PARTICIPANT_JOINED,
+            chatMessageVOTypes.REMOVE_CALL_PARTICIPANT,
+            chatMessageVOTypes.RECONNECT,
+            chatMessageVOTypes.LEAVE_CALL,
+            chatMessageVOTypes.TURN_OFF_VIDEO_CALL,
+            chatMessageVOTypes.TURN_ON_VIDEO_CALL,
+            chatMessageVOTypes.DESTINED_RECORD_CALL,
+            chatMessageVOTypes.RECORD_CALL,
+            chatMessageVOTypes.END_RECORD_CALL,
+            chatMessageVOTypes.TERMINATE_CALL,
+            chatMessageVOTypes.END_CALL
+        ];
+
+        if((!currentCallId || currentCallId && threadId !== currentCallId) && restrictedMessageTypes.includes(type)){
+        // if(!currentCallId && threadId !== currentCallId && restrictedMessageTypes.includes(type)){
+            return true;
+        } else {
+            return false
+        }
+    }
+
+    this.handleChatMessages = function(type, messageContent, contentCount, threadId, uniqueId) {
+        console.log("shouldNotProccessChatMessage: ", type, threadId, shouldNotProcessChatMessage(type, threadId))
+        if(shouldNotProcessChatMessage(type, threadId)) {
+            return;
+        }
+
         switch (type) {
             /**
              * Type 70    Send Call Request
@@ -2537,13 +2574,6 @@ function ChatCall(params) {
                     callStateController.removeParticipant(messageContent[0].userId);
                     if(screenShareInfo.isStarted() && screenShareInfo.getOwner() === messageContent[0].userId)
                         callStateController.removeScreenShareFromCall()
-
-/*                        if(messageContent[0].userId === chatMessaging.userInfo.id) {
-                        chatEvents.fireEvent('callEvents', {
-                            type: 'CALL_ENDED',
-                            callId: threadId
-                        });
-                    }*/
                 }
 
                 //If I'm the only call participant, stop the call

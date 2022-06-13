@@ -2193,13 +2193,38 @@ function ChatCall(params) {
       callStateController.maybeReconnectAllTopics();
     });
   };
+  /**
+   * Do not process the message if is not for current call
+   *
+   * @param type
+   * @param threadId
+   * @return {boolean}
+   */
 
-  this.handleChatMessages = function (type, chatMessageVOTypes, messageContent, contentCount, threadId, uniqueId) {
+
+  function shouldNotProcessChatMessage(type, threadId) {
+    var restrictedMessageTypes = [_constants.chatMessageVOTypes.MUTE_CALL_PARTICIPANT, _constants.chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT, _constants.chatMessageVOTypes.CALL_PARTICIPANT_JOINED, _constants.chatMessageVOTypes.REMOVE_CALL_PARTICIPANT, _constants.chatMessageVOTypes.RECONNECT, _constants.chatMessageVOTypes.LEAVE_CALL, _constants.chatMessageVOTypes.TURN_OFF_VIDEO_CALL, _constants.chatMessageVOTypes.TURN_ON_VIDEO_CALL, _constants.chatMessageVOTypes.DESTINED_RECORD_CALL, _constants.chatMessageVOTypes.RECORD_CALL, _constants.chatMessageVOTypes.END_RECORD_CALL, _constants.chatMessageVOTypes.TERMINATE_CALL, _constants.chatMessageVOTypes.END_CALL];
+
+    if ((!currentCallId || currentCallId && threadId !== currentCallId) && restrictedMessageTypes.includes(type)) {
+      // if(!currentCallId && threadId !== currentCallId && restrictedMessageTypes.includes(type)){
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  this.handleChatMessages = function (type, messageContent, contentCount, threadId, uniqueId) {
+    console.log("shouldNotProccessChatMessage: ", type, threadId, shouldNotProcessChatMessage(type, threadId));
+
+    if (shouldNotProcessChatMessage(type, threadId)) {
+      return;
+    }
+
     switch (type) {
       /**
        * Type 70    Send Call Request
        */
-      case chatMessageVOTypes.CALL_REQUEST:
+      case _constants.chatMessageVOTypes.CALL_REQUEST:
         callRequestController.callRequestReceived = true;
         callReceived({
           callId: messageContent.callId
@@ -2231,7 +2256,7 @@ function ChatCall(params) {
        * Type 71    Accept Call Request
        */
 
-      case chatMessageVOTypes.ACCEPT_CALL:
+      case _constants.chatMessageVOTypes.ACCEPT_CALL:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
@@ -2246,7 +2271,7 @@ function ChatCall(params) {
        * Type 72    Reject Call Request
        */
 
-      case chatMessageVOTypes.REJECT_CALL:
+      case _constants.chatMessageVOTypes.REJECT_CALL:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
@@ -2261,7 +2286,7 @@ function ChatCall(params) {
        * Type 73    Receive Call Request
        */
 
-      case chatMessageVOTypes.RECEIVE_CALL_REQUEST:
+      case _constants.chatMessageVOTypes.RECEIVE_CALL_REQUEST:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
@@ -2288,7 +2313,7 @@ function ChatCall(params) {
        * Type 74    Start Call Request
        */
 
-      case chatMessageVOTypes.START_CALL:
+      case _constants.chatMessageVOTypes.START_CALL:
         if (!callRequestController.iCanAcceptTheCall()) {
           chatEvents.fireEvent('callEvents', {
             type: 'CALL_STARTED_ELSEWHERE',
@@ -2341,7 +2366,7 @@ function ChatCall(params) {
        * Type 75    End Call Request
        */
 
-      case chatMessageVOTypes.END_CALL_REQUEST:
+      case _constants.chatMessageVOTypes.END_CALL_REQUEST:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
@@ -2357,7 +2382,7 @@ function ChatCall(params) {
        * Type 76   Call Ended
        */
 
-      case chatMessageVOTypes.END_CALL:
+      case _constants.chatMessageVOTypes.END_CALL:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
@@ -2373,7 +2398,7 @@ function ChatCall(params) {
        * Type 77    Get Calls History
        */
 
-      case chatMessageVOTypes.GET_CALLS:
+      case _constants.chatMessageVOTypes.GET_CALLS:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
@@ -2384,7 +2409,7 @@ function ChatCall(params) {
        * Type 78    Call Partner Reconnecting
        */
 
-      case chatMessageVOTypes.RECONNECT:
+      case _constants.chatMessageVOTypes.RECONNECT:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
@@ -2399,7 +2424,7 @@ function ChatCall(params) {
        * Type 79    Call Partner Connects
        */
 
-      case chatMessageVOTypes.CONNECT:
+      case _constants.chatMessageVOTypes.CONNECT:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
@@ -2423,7 +2448,7 @@ function ChatCall(params) {
        * Type 90    Contacts Synced
        */
 
-      case chatMessageVOTypes.CONTACT_SYNCED:
+      case _constants.chatMessageVOTypes.CONTACT_SYNCED:
         chatEvents.fireEvent('contactEvents', {
           type: 'CONTACTS_SYNCED',
           result: messageContent
@@ -2434,7 +2459,7 @@ function ChatCall(params) {
        * Type 91    Send Group Call Request
        */
 
-      case chatMessageVOTypes.GROUP_CALL_REQUEST:
+      case _constants.chatMessageVOTypes.GROUP_CALL_REQUEST:
         callRequestController.callRequestReceived = true;
         callReceived({
           callId: messageContent.callId
@@ -2461,7 +2486,7 @@ function ChatCall(params) {
        * Type 92    Call Partner Leave
        */
 
-      case chatMessageVOTypes.LEAVE_CALL:
+      case _constants.chatMessageVOTypes.LEAVE_CALL:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
@@ -2471,15 +2496,9 @@ function ChatCall(params) {
           result: messageContent
         });
 
-        if (!!messageContent[0].userId) {
+        if (!!messageContent[0].userId && threadId === currentCallId) {
           callStateController.removeParticipant(messageContent[0].userId);
           if (screenShareInfo.isStarted() && screenShareInfo.getOwner() === messageContent[0].userId) callStateController.removeScreenShareFromCall();
-          /*                        if(messageContent[0].userId === chatMessaging.userInfo.id) {
-                                  chatEvents.fireEvent('callEvents', {
-                                      type: 'CALL_ENDED',
-                                      callId: threadId
-                                  });
-                              }*/
         } //If I'm the only call participant, stop the call
 
 
@@ -2495,7 +2514,7 @@ function ChatCall(params) {
        * Type 93    Add Call Participant
        */
 
-      case chatMessageVOTypes.ADD_CALL_PARTICIPANT:
+      case _constants.chatMessageVOTypes.ADD_CALL_PARTICIPANT:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
@@ -2506,7 +2525,7 @@ function ChatCall(params) {
        * Type 94    Call Participant Joined
        */
 
-      case chatMessageVOTypes.CALL_PARTICIPANT_JOINED:
+      case _constants.chatMessageVOTypes.CALL_PARTICIPANT_JOINED:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
@@ -2564,7 +2583,7 @@ function ChatCall(params) {
        * Type 95    Remove Call Participant
        */
 
-      case chatMessageVOTypes.REMOVE_CALL_PARTICIPANT:
+      case _constants.chatMessageVOTypes.REMOVE_CALL_PARTICIPANT:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
@@ -2579,7 +2598,7 @@ function ChatCall(params) {
        * Type 96    Terminate Call
        */
 
-      case chatMessageVOTypes.TERMINATE_CALL:
+      case _constants.chatMessageVOTypes.TERMINATE_CALL:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
@@ -2595,7 +2614,7 @@ function ChatCall(params) {
        * Type 97    Mute Call Participant
        */
 
-      case chatMessageVOTypes.MUTE_CALL_PARTICIPANT:
+      case _constants.chatMessageVOTypes.MUTE_CALL_PARTICIPANT:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
@@ -2628,7 +2647,7 @@ function ChatCall(params) {
        * Type 98    UnMute Call Participant
        */
 
-      case chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT:
+      case _constants.chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
@@ -2675,7 +2694,7 @@ function ChatCall(params) {
        * Type 99   Partner rejected call
        */
 
-      case chatMessageVOTypes.CANCEL_GROUP_CALL:
+      case _constants.chatMessageVOTypes.CANCEL_GROUP_CALL:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
@@ -2690,7 +2709,7 @@ function ChatCall(params) {
        * Type 110    Active Call Participants List
        */
 
-      case chatMessageVOTypes.ACTIVE_CALL_PARTICIPANTS:
+      case _constants.chatMessageVOTypes.ACTIVE_CALL_PARTICIPANTS:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
@@ -2701,7 +2720,7 @@ function ChatCall(params) {
        * Type 111    Kafka Call Session Created
        */
 
-      case chatMessageVOTypes.CALL_SESSION_CREATED:
+      case _constants.chatMessageVOTypes.CALL_SESSION_CREATED:
         if (!callRequestController.callEstablishedInMySide) return;
         chatEvents.fireEvent('callEvents', {
           type: 'CALL_SESSION_CREATED',
@@ -2715,7 +2734,7 @@ function ChatCall(params) {
        * Type 113    Turn On Video Call
        */
 
-      case chatMessageVOTypes.TURN_ON_VIDEO_CALL:
+      case _constants.chatMessageVOTypes.TURN_ON_VIDEO_CALL:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
@@ -2742,7 +2761,7 @@ function ChatCall(params) {
        * Type 114    Turn Off Video Call
        */
 
-      case chatMessageVOTypes.TURN_OFF_VIDEO_CALL:
+      case _constants.chatMessageVOTypes.TURN_OFF_VIDEO_CALL:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
@@ -2769,7 +2788,7 @@ function ChatCall(params) {
        * Type 121    Record Call Request
        */
 
-      case chatMessageVOTypes.RECORD_CALL:
+      case _constants.chatMessageVOTypes.RECORD_CALL:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
@@ -2786,7 +2805,7 @@ function ChatCall(params) {
        * Type 122   End Record Call Request
        */
 
-      case chatMessageVOTypes.END_RECORD_CALL:
+      case _constants.chatMessageVOTypes.END_RECORD_CALL:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
@@ -2801,7 +2820,7 @@ function ChatCall(params) {
        * Type 123   Start Screen Share
        */
 
-      case chatMessageVOTypes.START_SCREEN_SHARE:
+      case _constants.chatMessageVOTypes.START_SCREEN_SHARE:
         if (!callRequestController.callEstablishedInMySide) return;
         screenShareInfo.setIsStarted(true);
         screenShareInfo.setOwner(messageContent.screenOwner.id);
@@ -2822,7 +2841,7 @@ function ChatCall(params) {
        * Type 124   End Screen Share
        */
 
-      case chatMessageVOTypes.END_SCREEN_SHARE:
+      case _constants.chatMessageVOTypes.END_SCREEN_SHARE:
         // screenShareInfo.setIAmOwner(false);
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
@@ -2841,7 +2860,7 @@ function ChatCall(params) {
        * Type 125   Delete From Call List
        */
 
-      case chatMessageVOTypes.DELETE_FROM_CALL_HISTORY:
+      case _constants.chatMessageVOTypes.DELETE_FROM_CALL_HISTORY:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent));
         }
@@ -2856,7 +2875,7 @@ function ChatCall(params) {
        * Type 126   Destinated Record Call Request
        */
 
-      case chatMessageVOTypes.DESTINED_RECORD_CALL:
+      case _constants.chatMessageVOTypes.DESTINED_RECORD_CALL:
         if (!callRequestController.callEstablishedInMySide) return;
 
         if (chatMessaging.messagesCallbacks[uniqueId]) {
@@ -2875,7 +2894,7 @@ function ChatCall(params) {
        * Type 129   Get Calls To Join
        */
 
-      case chatMessageVOTypes.GET_CALLS_TO_JOIN:
+      case _constants.chatMessageVOTypes.GET_CALLS_TO_JOIN:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
@@ -3407,7 +3426,9 @@ function ChatCall(params) {
     var result = {};
 
     if (screenShareInfo.isStarted() && screenShareInfo.iAmOwner()) {
-      var qualityObj = calculateScreenSize(params.quality);
+      var qualityObj = calculateScreenSize({
+        quality: params.quality
+      });
       screenShareInfo.setWidth(qualityObj.width);
       screenShareInfo.setHeight(qualityObj.height);
       applyScreenShareSizeToElement();
