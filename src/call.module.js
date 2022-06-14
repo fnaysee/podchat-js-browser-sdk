@@ -3925,11 +3925,6 @@ function ChatCall(params) {
             }
         }
 
-        //TODO: should be moved to event 113 when server fixes
-
-        // currentModuleInstance.pauseMice({});
-        // callUsers[chatMessaging.userInfo.id].audioStopManager.disableStream();
-
         return chatMessaging.sendMessage(sendMessageParams, {
             onResult: function (result) {
                 let returnData = {
@@ -3969,26 +3964,6 @@ function ChatCall(params) {
                 sendMessageParams.content = params.userIds;
             }
         }
-
-        //TODO: Should be moved to event from chat server (when chat server fixes the bug)
-        //let myId = chatMessaging.userInfo.id
-            //, myUser = callUsers[myId];
-
-/*            if(myUser.audioStopManager.isStreamPaused()) {
-            if (myUser.audioStopManager.isStreamStopped()){
-                callStateController.activateParticipantStream(
-                    myId,
-                    'audio',
-                    'send',
-                    'audioTopicName',
-                    myUser.topicSend,
-                    'mute'
-                );
-            } else {
-                currentModuleInstance.resumeMice({});
-            }
-            myUser.audioStopManager.reset();
-        }*/
 
         return chatMessaging.sendMessage(sendMessageParams, {
             onResult: function (result) {

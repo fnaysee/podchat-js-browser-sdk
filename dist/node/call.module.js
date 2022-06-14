@@ -2496,7 +2496,7 @@ function ChatCall(params) {
           result: messageContent
         });
 
-        if (!!messageContent[0].userId && threadId === currentCallId) {
+        if (!!messageContent[0].userId) {
           callStateController.removeParticipant(messageContent[0].userId);
           if (screenShareInfo.isStarted() && screenShareInfo.getOwner() === messageContent[0].userId) callStateController.removeScreenShareFromCall();
         } //If I'm the only call participant, stop the call
@@ -3826,10 +3826,7 @@ function ChatCall(params) {
       if (Array.isArray(params.userIds)) {
         sendMessageParams.content = params.userIds;
       }
-    } //TODO: should be moved to event 113 when server fixes
-    // currentModuleInstance.pauseMice({});
-    // callUsers[chatMessaging.userInfo.id].audioStopManager.disableStream();
-
+    }
 
     return chatMessaging.sendMessage(sendMessageParams, {
       onResult: function onResult(result) {
@@ -3871,26 +3868,7 @@ function ChatCall(params) {
       if (Array.isArray(params.userIds)) {
         sendMessageParams.content = params.userIds;
       }
-    } //TODO: Should be moved to event from chat server (when chat server fixes the bug)
-    //let myId = chatMessaging.userInfo.id
-    //, myUser = callUsers[myId];
-
-    /*            if(myUser.audioStopManager.isStreamPaused()) {
-                if (myUser.audioStopManager.isStreamStopped()){
-                    callStateController.activateParticipantStream(
-                        myId,
-                        'audio',
-                        'send',
-                        'audioTopicName',
-                        myUser.topicSend,
-                        'mute'
-                    );
-                } else {
-                    currentModuleInstance.resumeMice({});
-                }
-                myUser.audioStopManager.reset();
-            }*/
-
+    }
 
     return chatMessaging.sendMessage(sendMessageParams, {
       onResult: function onResult(result) {
