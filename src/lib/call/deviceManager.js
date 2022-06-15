@@ -96,7 +96,7 @@ const deviceManager = {
             })
         });
     },
-    grantUserMediaDevicesPermissions({video = false, audio = false}, callback = null) {
+    grantUserMediaDevicesPermissions({video = false, audio = false, closeStream = false}, callback = null) {
         return new Promise(async (resolve, reject)=> {
             try {
                 if(audio)
@@ -107,6 +107,13 @@ const deviceManager = {
                             framerate: 15
                     }});
 
+                if(closeStream) {
+                    if(audio)
+                        mediaStreams.stopAudioInput();
+                    if(video)
+                        mediaStreams.stopVideoInput();
+                }
+
                 if(callback)
                     callback({hasError: false});
                 resolve({hasError: false});
@@ -114,8 +121,7 @@ const deviceManager = {
                 let parsedError = {
                     hasError: true,
                     errorCode: error.code,
-                    errorMessage: error.message,
-
+                    errorMessage: error.message
                 }
 
                 if(callback)

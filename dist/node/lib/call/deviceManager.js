@@ -100,7 +100,9 @@ var deviceManager = {
     var _ref$video = _ref.video,
         video = _ref$video === void 0 ? false : _ref$video,
         _ref$audio = _ref.audio,
-        audio = _ref$audio === void 0 ? false : _ref$audio;
+        audio = _ref$audio === void 0 ? false : _ref$audio,
+        _ref$closeStream = _ref.closeStream,
+        closeStream = _ref$closeStream === void 0 ? false : _ref$closeStream;
     var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
     return new Promise( /*#__PURE__*/function () {
       var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(resolve, reject) {
@@ -136,17 +138,22 @@ var deviceManager = {
                 });
 
               case 7:
+                if (closeStream) {
+                  if (audio) _mediaStreams.stopAudioInput();
+                  if (video) _mediaStreams.stopVideoInput();
+                }
+
                 if (callback) callback({
                   hasError: false
                 });
                 resolve({
                   hasError: false
                 });
-                _context.next = 16;
+                _context.next = 17;
                 break;
 
-              case 11:
-                _context.prev = 11;
+              case 12:
+                _context.prev = 12;
                 _context.t0 = _context["catch"](0);
                 parsedError = {
                   hasError: true,
@@ -156,12 +163,12 @@ var deviceManager = {
                 if (callback) callback(parsedError);
                 reject(parsedError);
 
-              case 16:
+              case 17:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, null, [[0, 11]]);
+        }, _callee, null, [[0, 12]]);
       }));
 
       return function (_x, _x2) {
@@ -174,7 +181,6 @@ var deviceManager = {
         audio = _ref3$audio === void 0 ? false : _ref3$audio,
         _ref3$video = _ref3.video,
         video = _ref3$video === void 0 ? false : _ref3$video;
-    console.log("getInputDevicePermission", video);
     return new Promise(function (resolve, reject) {
       if (video && _mediaStreams.getVideoInput()) {
         resolve(_mediaStreams.getVideoInput());
@@ -190,7 +196,6 @@ var deviceManager = {
         audio: audio,
         video: video
       }).then(function (stream) {
-        //console.log(result)
         if (audio) _mediaStreams.setAudioInput(stream);
         if (video) _mediaStreams.setVideoInput(stream);
         resolve(stream);
@@ -202,7 +207,7 @@ var deviceManager = {
 
         });
 
-        reject((0, _errorHandler["default"])(audio ? 12400 : 12401)); //console.log(error)
+        reject((0, _errorHandler["default"])(audio ? 12400 : 12401));
       });
     });
   },
