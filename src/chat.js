@@ -21,6 +21,7 @@ import {
     imageMimeTypes,
     imageExtentions
 } from "./lib/constants"
+import {getAvailableDevices} from "./lib/call/deviceCheck.js";
 
 /***
  * Pod Chat Browser Module
@@ -13793,6 +13794,8 @@ function Chat(params) {
     publicMethods.callStop = callModule.callStop;
 
     publicMethods.sendCallMetaData = callModule.sendCallMetaData;
+
+    publicMethods.getAvailableDevices = callModule.getAvailableDevices
 
     publicMethods.getMutualGroups = function (params, callback) {
         var count = +params.count ? +params.count : 50,

@@ -52895,7 +52895,7 @@ WildEmitter.mixin = function (constructor) {
 WildEmitter.mixin(WildEmitter);
 
 },{}],322:[function(require,module,exports){
-"use strict";var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _constants=require("./lib/constants");var _kurentoUtils=_interopRequireDefault(require("kurento-utils"));var _utility=_interopRequireDefault(require("./utility/utility"));// import WebrtcAdapter from 'webrtc-adapter'
+"use strict";var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _constants=require("./lib/constants");var _kurentoUtils=_interopRequireDefault(require("kurento-utils"));var _deviceCheck=_interopRequireDefault(require("./lib/call/deviceCheck.js"));var _utility=_interopRequireDefault(require("./utility/utility"));// import WebrtcAdapter from 'webrtc-adapter'
 function ChatCall(params){var//Utility = params.Utility,
 currentModuleInstance=this,asyncClient=params.asyncClient,chatEvents=params.chatEvents,chatMessaging=params.chatMessaging,token=params.token,asyncRequestTimeouts={},callTypes={'VOICE':0x0,'VIDEO':0x1},generalTypeCode=params.typeCode,callOptions=params.callOptions,useInternalTurnAddress=!!(params.callOptions&&params.callOptions.useInternalTurnAddress),callTurnIp=params.callOptions&&params.callOptions.hasOwnProperty('callTurnIp')&&typeof params.callOptions.callTurnIp==='string'?params.callOptions.callTurnIp:'46.32.6.188',callDivId=params.callOptions&&params.callOptions.hasOwnProperty('callDivId')&&typeof params.callOptions.callDivId==='string'?params.callOptions.callDivId:'call-div',callAudioTagClassName=params.callOptions&&params.callOptions.hasOwnProperty('callAudioTagClassName')&&typeof params.callOptions.callAudioTagClassName==='string'?params.callOptions.callAudioTagClassName:'',callVideoTagClassName=params.callOptions&&params.callOptions.hasOwnProperty('callVideoTagClassName')&&typeof params.callOptions.callVideoTagClassName==='string'?params.callOptions.callVideoTagClassName:'',callVideoMinWidth=params.callOptions&&params.callOptions.hasOwnProperty('callVideo')&&(0,_typeof2["default"])(params.callOptions.callVideo)==='object'&&params.callOptions.callVideo.hasOwnProperty('minWidth')?params.callOptions.callVideo.minWidth:320,callVideoMinHeight=params.callOptions&&params.callOptions.hasOwnProperty('callVideo')&&(0,_typeof2["default"])(params.callOptions.callVideo)==='object'&&params.callOptions.callVideo.hasOwnProperty('minHeight')?params.callOptions.callVideo.minHeight:180,currentCallParams={},currentCallId=null,newCallId=null,//shouldReconnectCallTimeout = null,
 callMetaDataTypes={POORCONNECTION:1,POORCONNECTIONRESOLVED:2,CUSTOMUSERMETADATA:3,SCREENSHAREMETADATA:4},screenShareState={started:false,imOwner:false},screenShareInfo=new screenShareStateManager(),callClientType={WEB:1,ANDROID:2,DESKTOP:3},callUsers={},callRequestController={callRequestReceived:false,callEstablishedInMySide:false,iCanAcceptTheCall:function iCanAcceptTheCall(){return callRequestController.callRequestReceived&&callRequestController.callEstablishedInMySide;},cameraPaused:true},callStopQueue={callStarted:false},callServerController=new callServerManager(),messageTtl=params.messageTtl||10000,config={getHistoryCount:50},callRequestTimeout=typeof params.callRequestTimeout==='number'&&params.callRequestTimeout>=0?params.callRequestTimeout:10000,consoleLogging=params.asyncLogging.consoleLogging&&typeof params.asyncLogging.consoleLogging==='boolean'?params.asyncLogging.consoleLogging:false,callNoAnswerTimeout=params.callOptions.callNoAnswerTimeout||0,callStreamCloseTimeout=params.callOptions.streamCloseTimeout||10000;function screenShareStateManager(){var config={ownerId:0,imOwner:false,isStarted:false,width:callVideoMinWidth,height:callVideoMinHeight};return{setOwner:function setOwner(ownerId){config.ownerId=+ownerId;},setIsStarted:function setIsStarted(isStarted){config.isStarted=isStarted;},isStarted:function isStarted(){return config.isStarted;},iAmOwner:function iAmOwner(){return config.ownerId===chatMessaging.userInfo.id;},setWidth:function setWidth(width){config.width=width;},setHeight:function setHeight(height){config.height=height;},getWidth:function getWidth(width){return config.width;},getHeight:function getHeight(height){return config.height;},getOwner:function getOwner(){return config.ownerId;},setDimension:function setDimension(dimension){if(dimension&&dimension.width&&+dimension.width>0&&dimension.height&&+dimension.height>0){screenShareInfo.setHeight(dimension.height);screenShareInfo.setWidth(dimension.width);}else{screenShareInfo.setHeight(callVideoMinHeight);screenShareInfo.setWidth(callVideoMinWidth);}}};}function callServerManager(){var config={servers:[],currentServerIndex:0};return{setServers:function setServers(serversList){config.servers=serversList;},setCurrentServer:function setCurrentServer(query){for(var i in config.servers){if(config.servers[i].indexOf(query)!==-1){config.currentServerIndex=i;break;}}},getCurrentServer:function getCurrentServer(){return config.servers[config.currentServerIndex];},isJanus:function isJanus(){return config.servers[config.currentServerIndex].toLowerCase().substr(0,1)==='j';},canChangeServer:function canChangeServer(){return config.currentServerIndex<config.servers.length-1;},changeServer:function changeServer(){if(this.canChangeServer()){config.currentServerIndex++;}}};}function devicePauseStopManager(params){var config={userId:params.userId,mediaType:params.mediaType,// 'video' || 'audio'
@@ -53187,12 +53187,12 @@ return;// me.peers[me.audioTopicName].getLocalStream().getTracks()[0].enabled = 
 me.audioTopicManager.getPeer().getLocalStream().getTracks()[0].enabled=false;callback&&callback();};this.resumeMice=function(params,callback){var me=callUsers[chatMessaging.userInfo.id];if(!Object.keys(callUsers).length||!me.audioTopicName||!me.audioTopicManager.getPeer())//me.peers[me.audioTopicName]
 return;// me.peers[me.audioTopicName].getLocalStream().getTracks()[0].enabled = true;
 me.audioTopicManager.getPeer().getLocalStream().getTracks()[0].enabled=true;callback&&callback();};this.resizeCallVideo=function(params,callback){if(params){if(!!params.width&&+params.width>0){callVideoMinWidth=+params.width;}if(!!params.height&&+params.height>0){callVideoMinHeight=+params.height;}if(!callUsers[chatMessaging.userInfo.id]){consoleLogging&&console.log("Error in resizeCallVideo(), call not started ");return;}var userObject=callUsers[chatMessaging.userInfo.id];//userObject.peers[userObject.videoTopicName]
-userObject.videoTopicManager.getPeer().getLocalStream().getTracks()[0].applyConstraints({"width":callVideoMinWidth,"height":callVideoMinHeight}).then(function(res){userObject.htmlElements[userObject.videoTopicName].style.width=callVideoMinWidth+'px';userObject.htmlElements[userObject.videoTopicName].style.height=callVideoMinHeight+'px';callback&&callback();})["catch"](function(e){chatEvents.fireEvent('error',{code:999,message:e});});}else{chatEvents.fireEvent('error',{code:999,message:'No params have been sent to resize the video call! Send an object like {width: 640, height: 480}'});return;}};this.callStop=callStop;this.restartMedia=restartMedia;}var _default=ChatCall;exports["default"]=_default;
+userObject.videoTopicManager.getPeer().getLocalStream().getTracks()[0].applyConstraints({"width":callVideoMinWidth,"height":callVideoMinHeight}).then(function(res){userObject.htmlElements[userObject.videoTopicName].style.width=callVideoMinWidth+'px';userObject.htmlElements[userObject.videoTopicName].style.height=callVideoMinHeight+'px';callback&&callback();})["catch"](function(e){chatEvents.fireEvent('error',{code:999,message:e});});}else{chatEvents.fireEvent('error',{code:999,message:'No params have been sent to resize the video call! Send an object like {width: 640, height: 480}'});return;}};this.getAvailableDevices=_deviceCheck["default"].getAvailableDevices;this.callStop=callStop;this.restartMedia=restartMedia;}var _default=ChatCall;exports["default"]=_default;
 
-},{"./lib/constants":325,"./utility/utility":328,"@babel/runtime/helpers/interopRequireDefault":1,"@babel/runtime/helpers/typeof":2,"kurento-utils":245}],323:[function(require,module,exports){
+},{"./lib/call/deviceCheck.js":325,"./lib/constants":326,"./utility/utility":329,"@babel/runtime/helpers/interopRequireDefault":1,"@babel/runtime/helpers/typeof":2,"kurento-utils":245}],323:[function(require,module,exports){
 'use strict';/**
  * POD Chat Browser
- */var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");var _typeof3=require("@babel/runtime/helpers/typeof");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _podasyncWsOnly=_interopRequireDefault(require("podasync-ws-only"));var _utility=_interopRequireDefault(require("./utility/utility"));var _dexie=_interopRequireDefault(require("dexie"));var _sentry=_interopRequireWildcard(require("./lib/sentry.js"));var _call=_interopRequireDefault(require("./call.module"));var _events=_interopRequireDefault(require("./events.module"));var _messaging=_interopRequireDefault(require("./messaging.module"));var _constants=require("./lib/constants");function _getRequireWildcardCache(nodeInterop){if(typeof WeakMap!=="function")return null;var cacheBabelInterop=new WeakMap();var cacheNodeInterop=new WeakMap();return(_getRequireWildcardCache=function _getRequireWildcardCache(nodeInterop){return nodeInterop?cacheNodeInterop:cacheBabelInterop;})(nodeInterop);}function _interopRequireWildcard(obj,nodeInterop){if(!nodeInterop&&obj&&obj.__esModule){return obj;}if(obj===null||_typeof3(obj)!=="object"&&typeof obj!=="function"){return{"default":obj};}var cache=_getRequireWildcardCache(nodeInterop);if(cache&&cache.has(obj)){return cache.get(obj);}var newObj={};var hasPropertyDescriptor=Object.defineProperty&&Object.getOwnPropertyDescriptor;for(var key in obj){if(key!=="default"&&Object.prototype.hasOwnProperty.call(obj,key)){var desc=hasPropertyDescriptor?Object.getOwnPropertyDescriptor(obj,key):null;if(desc&&(desc.get||desc.set)){Object.defineProperty(newObj,key,desc);}else{newObj[key]=obj[key];}}}newObj["default"]=obj;if(cache){cache.set(obj,newObj);}return newObj;}// import Sentry from "@sentry/browser"
+ */var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");var _typeof3=require("@babel/runtime/helpers/typeof");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _podasyncWsOnly=_interopRequireDefault(require("podasync-ws-only"));var _utility=_interopRequireDefault(require("./utility/utility"));var _dexie=_interopRequireDefault(require("dexie"));var _sentry=_interopRequireWildcard(require("./lib/sentry.js"));var _call=_interopRequireDefault(require("./call.module"));var _events=_interopRequireDefault(require("./events.module"));var _messaging=_interopRequireDefault(require("./messaging.module"));var _constants=require("./lib/constants");var _deviceCheck=require("./lib/call/deviceCheck.js");function _getRequireWildcardCache(nodeInterop){if(typeof WeakMap!=="function")return null;var cacheBabelInterop=new WeakMap();var cacheNodeInterop=new WeakMap();return(_getRequireWildcardCache=function _getRequireWildcardCache(nodeInterop){return nodeInterop?cacheNodeInterop:cacheBabelInterop;})(nodeInterop);}function _interopRequireWildcard(obj,nodeInterop){if(!nodeInterop&&obj&&obj.__esModule){return obj;}if(obj===null||_typeof3(obj)!=="object"&&typeof obj!=="function"){return{"default":obj};}var cache=_getRequireWildcardCache(nodeInterop);if(cache&&cache.has(obj)){return cache.get(obj);}var newObj={};var hasPropertyDescriptor=Object.defineProperty&&Object.getOwnPropertyDescriptor;for(var key in obj){if(key!=="default"&&Object.prototype.hasOwnProperty.call(obj,key)){var desc=hasPropertyDescriptor?Object.getOwnPropertyDescriptor(obj,key):null;if(desc&&(desc.get||desc.set)){Object.defineProperty(newObj,key,desc);}else{newObj[key]=obj[key];}}}newObj["default"]=obj;if(cache){cache.set(obj,newObj);}return newObj;}// import Sentry from "@sentry/browser"
 /***
  * Pod Chat Browser Module
  *
@@ -55256,7 +55256,7 @@ link.setAttribute("href",'data:text/csv; charset=utf-8,'+encodeURIComponent(univ
 callback&&callback({hasError:false,type:'link',result:link});}else{callback&&callback({hasError:false,type:'blob',result:blob});}//}
 callback=undefined;});/*.catch(function (result) {
             consoleLogging && console.log(result);
-        });*/};publicMethods.startCall=callModule.startCall;publicMethods.startGroupCall=callModule.startGroupCall;publicMethods.callReceived=callModule.callReceived;publicMethods.terminateCall=callModule.terminateCall;publicMethods.acceptCall=callModule.acceptCall;publicMethods.rejectCall=publicMethods.cancelCall=callModule.rejectCall;publicMethods.endCall=callModule.endCall;publicMethods.startRecordingCall=callModule.startRecordingCall;publicMethods.stopRecordingCall=callModule.stopRecordingCall;publicMethods.startScreenShare=callModule.startScreenShare;publicMethods.resizeScreenShare=callModule.resizeScreenShare;publicMethods.endScreenShare=callModule.endScreenShare;publicMethods.getCallsList=callModule.getCallsList;publicMethods.getCallsToJoin=callModule.getCallsToJoin;publicMethods.deleteFromCallList=callModule.deleteFromCallList;publicMethods.getCallParticipants=callModule.getCallParticipants;publicMethods.addCallParticipants=callModule.addCallParticipants;publicMethods.removeCallParticipants=callModule.removeCallParticipants;publicMethods.muteCallParticipants=callModule.muteCallParticipants;publicMethods.unMuteCallParticipants=callModule.unMuteCallParticipants;publicMethods.turnOnVideoCall=callModule.turnOnVideoCall;publicMethods.turnOffVideoCall=callModule.turnOffVideoCall;publicMethods.disableParticipantsVideoReceive=callModule.disableParticipantsVideoReceive;publicMethods.enableParticipantsVideoReceive=callModule.enableParticipantsVideoReceive;publicMethods.pauseCamera=callModule.pauseCamera;publicMethods.resumeCamera=callModule.resumeCamera;publicMethods.pauseMice=callModule.pauseMice;publicMethods.resumeMice=callModule.resumeMice;publicMethods.resizeCallVideo=callModule.resizeCallVideo;publicMethods.restartMedia=callModule.restartMedia;publicMethods.callStop=callModule.callStop;publicMethods.sendCallMetaData=callModule.sendCallMetaData;publicMethods.getMutualGroups=function(params,callback){var count=+params.count?+params.count:50,offset=+params.offset?+params.offset:0;var sendData={chatMessageVOType:_constants.chatMessageVOTypes.MUTUAL_GROUPS,typeCode:generalTypeCode,//params.typeCode,
+        });*/};publicMethods.startCall=callModule.startCall;publicMethods.startGroupCall=callModule.startGroupCall;publicMethods.callReceived=callModule.callReceived;publicMethods.terminateCall=callModule.terminateCall;publicMethods.acceptCall=callModule.acceptCall;publicMethods.rejectCall=publicMethods.cancelCall=callModule.rejectCall;publicMethods.endCall=callModule.endCall;publicMethods.startRecordingCall=callModule.startRecordingCall;publicMethods.stopRecordingCall=callModule.stopRecordingCall;publicMethods.startScreenShare=callModule.startScreenShare;publicMethods.resizeScreenShare=callModule.resizeScreenShare;publicMethods.endScreenShare=callModule.endScreenShare;publicMethods.getCallsList=callModule.getCallsList;publicMethods.getCallsToJoin=callModule.getCallsToJoin;publicMethods.deleteFromCallList=callModule.deleteFromCallList;publicMethods.getCallParticipants=callModule.getCallParticipants;publicMethods.addCallParticipants=callModule.addCallParticipants;publicMethods.removeCallParticipants=callModule.removeCallParticipants;publicMethods.muteCallParticipants=callModule.muteCallParticipants;publicMethods.unMuteCallParticipants=callModule.unMuteCallParticipants;publicMethods.turnOnVideoCall=callModule.turnOnVideoCall;publicMethods.turnOffVideoCall=callModule.turnOffVideoCall;publicMethods.disableParticipantsVideoReceive=callModule.disableParticipantsVideoReceive;publicMethods.enableParticipantsVideoReceive=callModule.enableParticipantsVideoReceive;publicMethods.pauseCamera=callModule.pauseCamera;publicMethods.resumeCamera=callModule.resumeCamera;publicMethods.pauseMice=callModule.pauseMice;publicMethods.resumeMice=callModule.resumeMice;publicMethods.resizeCallVideo=callModule.resizeCallVideo;publicMethods.restartMedia=callModule.restartMedia;publicMethods.callStop=callModule.callStop;publicMethods.sendCallMetaData=callModule.sendCallMetaData;publicMethods.getAvailableDevices=callModule.getAvailableDevices;publicMethods.getMutualGroups=function(params,callback){var count=+params.count?+params.count:50,offset=+params.offset?+params.offset:0;var sendData={chatMessageVOType:_constants.chatMessageVOTypes.MUTUAL_GROUPS,typeCode:generalTypeCode,//params.typeCode,
 content:{count:count,offset:offset}};if(params){if((0,_typeof2["default"])(params.user)==='object'&&params.user.hasOwnProperty('id')&&params.user.hasOwnProperty('idType')&&params.user.id.length&&_constants.inviteeVOidTypes[params.user.idType]>0){sendData.content.toBeUserVO={id:params.user.id,idType:+_constants.inviteeVOidTypes[params.user.idType]};}else{chatEvents.fireEvent('error',{code:999,message:'You should send an user object like {id: 92, idType: "TO_BE_USER_CONTACT_ID"}'});return;}}else{chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Get Mutual Groups!'});return;}return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode,uniqueId:result.uniqueId};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={threads:[],contentCount:result.contentCount,hasNext:offset+count<result.contentCount&&messageLength>0,nextOffset:offset*1+messageLength*1},threadData;for(var i=0;i<messageLength;i++){threadData=createThread(messageContent[i],false);if(threadData){resultData.threads.push(threadData);}}returnData.result=resultData;}callback&&callback(returnData);/**
                  * Delete callback so if server pushes response before
                  * cache, cache won't send data again
@@ -55283,7 +55283,7 @@ if(promiseResolved||!ice||!ice.candidate||!ice.candidate.candidate||!(ice.candid
 window.PodChat=Chat;}var _default=Chat;// })();
 exports["default"]=_default;
 
-},{"./call.module":322,"./events.module":324,"./lib/constants":325,"./lib/sentry.js":326,"./messaging.module":327,"./utility/utility":328,"@babel/runtime/helpers/interopRequireDefault":1,"@babel/runtime/helpers/typeof":2,"dexie":180,"podasync-ws-only":264}],324:[function(require,module,exports){
+},{"./call.module":322,"./events.module":324,"./lib/call/deviceCheck.js":325,"./lib/constants":326,"./lib/sentry.js":327,"./messaging.module":328,"./utility/utility":329,"@babel/runtime/helpers/interopRequireDefault":1,"@babel/runtime/helpers/typeof":2,"dexie":180,"podasync-ws-only":264}],324:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -55428,7 +55428,78 @@ function ChatEvents(params) {
 var _default = ChatEvents;
 exports["default"] = _default;
 
-},{"./lib/sentry.js":326,"./utility/utility":328,"@babel/runtime/helpers/interopRequireDefault":1}],325:[function(require,module,exports){
+},{"./lib/sentry.js":327,"./utility/utility":329,"@babel/runtime/helpers/interopRequireDefault":1}],325:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+
+require("../constants.js");
+
+var deviceList = {
+  audioIn: [],
+  audioOut: [],
+  videoIn: []
+};
+var deviceManager = {
+  getAvailableDevices: function getAvailableDevices() {
+    deviceManager.getInputDevicesPermissions().then(function () {
+      // deviceManager.changeAudioOutputDevice();
+      navigator.mediaDevices.enumerateDevices().then(function (devices) {
+        devices.forEach(function (device) {
+          console.log(device);
+          console.log(device.kind + ": " + device.label + " id = " + device.deviceId);
+        });
+      })["catch"](function (err) {
+        console.log(err.name + ": " + err.message);
+      });
+    });
+  },
+  getInputDevices: function getInputDevices() {},
+  changeAudioOutputDevice: function changeAudioOutputDevice() {
+    if (!navigator.mediaDevices.selectAudioOutput) {
+      console.warn("selectAudioOutput() not supported.");
+      return;
+    } //Display prompt and log selected device or error
+
+
+    navigator.mediaDevices.selectAudioOutput().then(function (device) {
+      console.log(device.kind + ": " + device.label + " id = " + device.deviceId);
+    })["catch"](function (err) {
+      console.log(err.name + ": " + err.message);
+    });
+  },
+  getScreenSharePermission: function getScreenSharePermission() {
+    return new Promise(function (resolve) {
+      navigator.mediaDevices.getDisplayMedia({
+        audio: true,
+        video: true
+      }).then(function (result) {
+        console.log(result);
+        resolve(result);
+      });
+    });
+  },
+  getInputDevicesPermissions: function getInputDevicesPermissions() {
+    return new Promise(function (resolve) {
+      navigator.mediaDevices.getUserMedia({
+        audio: false,
+        video: true
+      }).then(function (result) {
+        console.log(result);
+        resolve(result);
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    });
+  }
+};
+var _default = deviceManager;
+exports["default"] = _default;
+
+},{"../constants.js":326}],326:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -55616,7 +55687,7 @@ exports.imageMimeTypes = imageMimeTypes;
 var imageExtentions = ['bmp', 'png', 'tiff', 'tiff2', 'ico', 'jpg', 'jpeg', 'webp'];
 exports.imageExtentions = imageExtentions;
 
-},{}],326:[function(require,module,exports){
+},{}],327:[function(require,module,exports){
 "use strict";
 
 var _typeof = require("@babel/runtime/helpers/typeof");
@@ -55692,7 +55763,7 @@ function initSentry(SDKParams) {
 var _default = Sentry;
 exports["default"] = _default;
 
-},{"@babel/runtime/helpers/typeof":2,"@sentry/browser":8}],327:[function(require,module,exports){
+},{"@babel/runtime/helpers/typeof":2,"@sentry/browser":8}],328:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -56002,7 +56073,7 @@ function ChatMessaging(params) {
 var _default = ChatMessaging;
 exports["default"] = _default;
 
-},{"./lib/constants":325,"./utility/utility":328,"@babel/runtime/helpers/interopRequireDefault":1,"@babel/runtime/helpers/typeof":2,"dompurify":186}],328:[function(require,module,exports){
+},{"./lib/constants":326,"./utility/utility":329,"@babel/runtime/helpers/interopRequireDefault":1,"@babel/runtime/helpers/typeof":2,"dompurify":186}],329:[function(require,module,exports){
 (function (global){(function (){
 "use strict";
 

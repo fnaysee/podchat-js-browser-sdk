@@ -1,5 +1,6 @@
 import { chatMessageVOTypes, inviteeVOidTypes } from "./lib/constants"
 import KurentoUtils from 'kurento-utils'
+import deviceManager from "./lib/call/deviceCheck.js";
 // import WebrtcAdapter from 'webrtc-adapter'
 import Utility from "./utility/utility"
 
@@ -4221,6 +4222,8 @@ function ChatCall(params) {
             return;
         }
     };
+
+    this.getAvailableDevices = deviceManager.getAvailableDevices
 
     this.callStop = callStop;
 

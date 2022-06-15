@@ -13,6 +13,8 @@ var _constants = require("./lib/constants");
 
 var _kurentoUtils = _interopRequireDefault(require("kurento-utils"));
 
+var _deviceCheck = _interopRequireDefault(require("./lib/call/deviceCheck.js"));
+
 var _utility = _interopRequireDefault(require("./utility/utility"));
 
 // import WebrtcAdapter from 'webrtc-adapter'
@@ -4103,6 +4105,7 @@ function ChatCall(params) {
     }
   };
 
+  this.getAvailableDevices = _deviceCheck["default"].getAvailableDevices;
   this.callStop = callStop;
   this.restartMedia = restartMedia;
 }
