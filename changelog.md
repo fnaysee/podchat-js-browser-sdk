@@ -3,6 +3,19 @@
 All notable changes to this project will be documented here.
 to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.ir/pod/pod-basic-sdk/chat-js-browser-sdk/-/blob/master/changelog.md)
 
+## [12.6.0] - 2022-06-16
+### Fixed
+- User being muted when muting others
+- Mute audio send only not all audio tags (Causes problems in Apple devices)
+
+### Changed
+- Improved call error logs in Sentry
+- Update sentry url
+- Update async package
+- TypeCode handling functionality
+- Updated sentry server URL
+- Removed CALL_ENDED from LEAVE_CALL event in GroupCall
+
 ## [12.5.2-snapshot.7] - 2022-06-1
 ### Changed
 - Removed CALL_ENDED from LEAVE_CALL event in GroupCall

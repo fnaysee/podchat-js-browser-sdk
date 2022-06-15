@@ -5,12 +5,12 @@
   "main": "./src/chat.js",
   "scripts": {
     "test": "mocha --reporter spec --exit",
-    "bundle": "browserify browser-bundling.js -o ./dist/podchat-12.5.2.js",
+    "bundle": "browserify browser-bundling.js -o ./dist/podchat-12.6.0.js",
     "bundle:test": "browserify browser-bundling.js -o ./examples/bundle-test.js",
     "publish:snapshot": "npm run version:snapshot && npm publish --tag snapshot",
     "version:snapshot": "npm version prerelease --preid snapshot",
     "publish:release": "npm run version:release && npm publish",
-    "version:release": "npm version 12.5.2"
+    "version:release": "npm version 12.6.0"
   },
   "repository": {
     "type": "git",
