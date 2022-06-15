@@ -3,7 +3,8 @@
 All notable changes to this project will be documented here.
 to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.ir/pod/pod-basic-sdk/chat-js-browser-sdk/-/blob/master/changelog.md)
 
-## [12.5.2-snapshot.10] - 2022-06-2
+## [12.5.2-snapshot.11] - 2022-06-15
+## [12.5.2-snapshot.10] - 2022-06-15
 ### Added
 - Do not process some chat messages when subjectId is not equal to current callId
 
