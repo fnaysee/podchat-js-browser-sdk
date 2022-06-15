@@ -8,6 +8,7 @@ to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.i
 ### Added
 - Do not process some chat messages when subjectId is not equal to current callId
 
+## [12.5.2-snapshot.9] - 2022-06-2
 ## [12.5.2-snapshot.8] - 2022-06-2
 ### Changed
 - Building process
