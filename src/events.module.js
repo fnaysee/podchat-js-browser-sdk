@@ -1,138 +1,126 @@
-(function () {
+import Utility from "./utility/utility"
+import Sentry from "./lib/sentry.js"
+
+function ChatEvents(params) {
+    var currentModuleInstance = this,
+        //Utility = params.Utility,
+        consoleLogging = params.consoleLogging,
+        token = params.token,
+        eventCallbacks = {
+            connect: {},
+            disconnect: {},
+            reconnect: {},
+            messageEvents: {},
+            threadEvents: {},
+            contactEvents: {},
+            botEvents: {},
+            userEvents: {},
+            callEvents: {},
+            callStreamEvents: {},
+            fileUploadEvents: {},
+            fileDownloadEvents: {},
+            systemEvents: {},
+            chatReady: {},
+            error: {},
+            chatState: {}
+        };
+
+    var PodChatErrorException = function (error) {
+        this.code = error.error ? error.error.code : error.code;
+        this.message = error.error ? error.error.message : error.message;
+        this.uniqueId = error.uniqueId ? error.uniqueId : '';
+        this.token = token;
+        this.error =  JSON.stringify((error.error ? error.error : error));
+        this.environmentDetails = error.environmentDetails
+    };
+
+    this.updateToken = function (newToken) {
+        token = newToken;
+    }
+
     /**
-     * Global Variables
+     * Fire Event
+     *
+     * Fires given Event with given parameters
+     *
+     * @access private
+     *
+     * @param {string}  eventName       name of event to be fired
+     * @param {object}  param           params to be sent to the event function
+     *
+     * @return {undefined}
      */
-
-    function ChatEvents(params) {
-        //if (typeof (require) !== 'undefined' && typeof (exports) !== 'undefined') {} else {}
-
-        var Sentry = params.Sentry,
-            currentModuleInstance = this,
-            Utility = params.Utility,
-            consoleLogging = params.consoleLogging,
-            token = params.token,
-            eventCallbacks = {
-                connect: {},
-                disconnect: {},
-                reconnect: {},
-                messageEvents: {},
-                threadEvents: {},
-                contactEvents: {},
-                botEvents: {},
-                userEvents: {},
-                callEvents: {},
-                callStreamEvents: {},
-                fileUploadEvents: {},
-                fileDownloadEvents: {},
-                systemEvents: {},
-                chatReady: {},
-                error: {},
-                chatState: {}
-            };
-
-        var PodChatErrorException = function (error) {
-            this.code = error.error ? error.error.code : error.code;
-            this.message = error.error ? error.error.message : error.message;
-            this.uniqueId = error.uniqueId ? error.uniqueId : '';
-            this.token = token;
-            this.error =  JSON.stringify((error.error ? error.error : error));
-            this.environmentDetails = error.environmentDetails
-        };
-
-        this.updateToken = function (newToken) {
-            token = newToken;
+    this.fireEvent = function (eventName, param) {
+        if (eventName === "chatReady") {
+            if (typeof navigator === "undefined") {
+                consoleLogging && console.log("\x1b[90m    ☰ \x1b[0m\x1b[90m%s\x1b[0m", "Chat is Ready 😉");
+            } else {
+                consoleLogging && console.log("%c   Chat is Ready 😉", 'border-left: solid #666 10px; color: #666;');
+            }
         }
 
-        /**
-         * Fire Event
-         *
-         * Fires given Event with given parameters
-         *
-         * @access private
-         *
-         * @param {string}  eventName       name of event to be fired
-         * @param {object}  param           params to be sent to the event function
-         *
-         * @return {undefined}
-         */
-        this.fireEvent = function (eventName, param) {
-            if (eventName === "chatReady") {
-                if (typeof navigator === "undefined") {
-                    consoleLogging && console.log("\x1b[90m    ☰ \x1b[0m\x1b[90m%s\x1b[0m", "Chat is Ready 😉");
-                } else {
-                    consoleLogging && console.log("%c   Chat is Ready 😉", 'border-left: solid #666 10px; color: #666;');
-                }
-            }
+        if (eventName === "error" || (eventName === "callEvents" && param.type === "CALL_ERROR")) {
+            try {
+                throw new PodChatErrorException(param);
+            } catch (err) {
+                if (!!Sentry) {
+                    Sentry.setExtra('errorMessage', err.message);
+                    Sentry.setExtra('errorCode', err.code);
+                    Sentry.setExtra('uniqueId', err.uniqueId);
+                    Sentry.setExtra('token', err.token);
+                    Sentry.setExtra('SDKParams', {
+                        platformHost: params.platformHost,
+                        podSpaceFileServer: params.podSpaceFileServer,
+                        socketAddress: params.socketAddress,
+                        ssoHost: params.ssoHost,
+                        typeCode: params.typeCode,
+                        serverName: params.serverName,
+                        callRequestTimeout: params.callRequestTimeout,
+                        asyncRequestTimeout: params.asyncRequestTimeout,
+                        httpUploadRequestTimeout: params.httpUploadRequestTimeout,
+                        callOptions: params.callOptions,
+                        enableCache: params.enableCache
+                    });
 
-            if (eventName === "error" || (eventName === "callEvents" && param.type === "CALL_ERROR")) {
-                try {
-                    throw new PodChatErrorException(param);
-                } catch (err) {
-                    if (!!Sentry) {
-                        Sentry.setExtra('errorMessage', err.message);
-                        Sentry.setExtra('errorCode', err.code);
-                        Sentry.setExtra('uniqueId', err.uniqueId);
-                        Sentry.setExtra('token', err.token);
-                        Sentry.setExtra('SDKParams', {
-                            platformHost: params.platformHost,
-                            podSpaceFileServer: params.podSpaceFileServer,
-                            socketAddress: params.socketAddress,
-                            ssoHost: params.ssoHost,
-                            typeCode: params.typeCode,
-                            serverName: params.serverName,
-                            callRequestTimeout: params.callRequestTimeout,
-                            asyncRequestTimeout: params.asyncRequestTimeout,
-                            httpUploadRequestTimeout: params.httpUploadRequestTimeout,
-                            callOptions: params.callOptions
-                        });
-
-                        Sentry.setTag('Error code:', (err.code ? err.code : ''))
-                        if(err.environmentDetails)
-                            Sentry.setExtra("environmentDetails", err.environmentDetails)
-                        Sentry.captureException(err.error, {
-                            logger: eventName
-                        });
-                    }
-                }
-            }
-
-            for (var id in eventCallbacks[eventName]) {
-                if(eventCallbacks[eventName] && eventCallbacks[eventName][id])
-                    eventCallbacks[eventName][id](param);
-            }
-        };
-
-        this.on = function (eventName, callback) {
-            if (eventCallbacks[eventName]) {
-                var id = Utility.generateUUID();
-                eventCallbacks[eventName][id] = callback;
-                return id;
-            }
-        };
-
-        this.off = function (eventName, eventId) {
-            if (eventCallbacks[eventName]) {
-                if (eventCallbacks[eventName].hasOwnProperty(eventId)) {
-                    delete eventCallbacks[eventName][eventId];
-                    return eventId;
+                    Sentry.setTag('Error code:', (err.code ? err.code : ''))
+                    if(err.environmentDetails)
+                        Sentry.setExtra("environmentDetails", err.environmentDetails)
+                    Sentry.captureException(err.error, {
+                        logger: eventName
+                    });
                 }
             }
         }
 
-        this.clearEventCallbacks = function () {
-            // Delete all event callbacks
-            for (var i in eventCallbacks) {
-                delete eventCallbacks[i];
+        for (var id in eventCallbacks[eventName]) {
+            if(eventCallbacks[eventName] && eventCallbacks[eventName][id])
+                eventCallbacks[eventName][id](param);
+        }
+    };
+
+    this.on = function (eventName, callback) {
+        if (eventCallbacks[eventName]) {
+            var id = Utility.generateUUID();
+            eventCallbacks[eventName][id] = callback;
+            return id;
+        }
+    };
+
+    this.off = function (eventName, eventId) {
+        if (eventCallbacks[eventName]) {
+            if (eventCallbacks[eventName].hasOwnProperty(eventId)) {
+                delete eventCallbacks[eventName][eventId];
+                return eventId;
             }
         }
     }
 
-    if (typeof module !== 'undefined' && typeof module.exports != 'undefined') {
-        module.exports = ChatEvents;
-    } else {
-        if (!window.POD) {
-            window.POD = {};
+    this.clearEventCallbacks = function () {
+        // Delete all event callbacks
+        for (var i in eventCallbacks) {
+            delete eventCallbacks[i];
         }
-        window.POD.ChatEvents = ChatEvents;
     }
-})();
+}
+
+export default ChatEvents;
