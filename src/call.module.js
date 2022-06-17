@@ -1,15 +1,16 @@
 import { chatMessageVOTypes, inviteeVOidTypes } from "./lib/constants"
 import KurentoUtils from 'kurento-utils'
-import deviceManager from "./lib/call/deviceCheck.js";
 // import WebrtcAdapter from 'webrtc-adapter'
 import Utility from "./utility/utility"
+import {chatEvents} from "./events.module.js";
+import deviceManager from "./lib/call/deviceManager.js";
 
 function ChatCall(params) {
 
     var //Utility = params.Utility,
         currentModuleInstance = this,
         asyncClient = params.asyncClient,
-        chatEvents = params.chatEvents,
+        //chatEvents = params.chatEvents,
         chatMessaging = params.chatMessaging,
         token = params.token,
         asyncRequestTimeouts = {},
@@ -321,33 +322,52 @@ function ChatCall(params) {
 
                     options[(config.direction === 'send' ? 'localVideo' : 'remoteVideo')] = callUsers[config.userId].htmlElements[config.topic];
 
-                    if(config.direction === 'send' && config.mediaType === 'video' && config.isScreenShare) {
-                        navigator.mediaDevices.getDisplayMedia().then(function (stream) {
-                            stream.getVideoTracks()[0].addEventListener("ended", function (event) { // Click on browser UI stop sharing button
-                                if(callUsers['screenShare'] && config.peer){
-                                    currentModuleInstance.endScreenShare({
-                                        callId: currentCallId
+                    if(config.direction === 'send') {
+                        if(config.mediaType === 'video') {
+                            if(config.isScreenShare) {
+                                navigator.mediaDevices.getDisplayMedia().then(function (stream) {
+                                    stream.getVideoTracks()[0].addEventListener("ended", function (event) { // Click on browser UI stop sharing button
+                                        if(callUsers['screenShare'] && config.peer){
+                                            currentModuleInstance.endScreenShare({
+                                                callId: currentCallId
+                                            });
+                                        }
+                                    })
+                                    options.videoStream = stream;
+                                    options.sendSource = 'screen';
+                                    resolve(options);
+                                }).catch(function (error) {
+                                    let errorString = "[SDK][navigator.mediaDevices.getDisplayMedia]" + JSON.stringify(error)
+                                    console.error(errorString);
+                                    chatEvents.fireEvent('callEvents', {
+                                        type: 'CALL_ERROR',
+                                        code: 7000,
+                                        message: errorString,
+                                        environmentDetails: getSDKCallDetails()
                                     });
-                                }
+                                    explainUserMediaError(error, 'video', 'screen');
+                                    //resolve(options);
+                                });
+                            } else {
+                                deviceManager.grantUserMediaDevicesPermissions({video: true}).then(() => {
+                                    options.videoStream = deviceManager.mediaStreams().getVideoInput();
+                                    resolve(options);
+                                }).catch(error => {
+                                    reject(error)
+                                })
+                            }
+                        } else if(config.mediaType === 'audio') {
+                            deviceManager.grantUserMediaDevicesPermissions({audio: true}).then(() => {
+                                options.audioStream = deviceManager.mediaStreams().getAudioInput()
+                                resolve(options);
+                            }).catch(error => {
+                                reject(error)
                             })
-                            options.videoStream = stream;
-                            options.sendSource = 'screen';
-                            resolve(options);
-                        }).catch(function (error) {
-                            let errorString = "[SDK][navigator.mediaDevices.getDisplayMedia]" + JSON.stringify(error)
-                            console.error(errorString);
-                            chatEvents.fireEvent('callEvents', {
-                                type: 'CALL_ERROR',
-                                code: 7000,
-                                message: errorString,
-                                environmentDetails: getSDKCallDetails()
-                            });
-                            explainUserMediaError(error, 'video', 'screen');
-                            //resolve(options);
-                        });
+                        }
                     } else {
-                        resolve(options);
+                        resolve(options)
                     }
+
                     consoleLogging && console.log("[SDK][getSdpOfferOptions] ", "topic: ", config.topic, "mediaType: ", config.mediaType, "direction: ", config.direction, "options: ", options);
                 });
             },
@@ -758,6 +778,8 @@ function ChatCall(params) {
 
                 this.generateSdpOfferOptions().then(function (options) {
                     manager.establishPeerConnection(options);
+                }).catch(error => {
+                    console.error(error)
                 });
             },
             removeTopic: function () {
@@ -768,20 +790,26 @@ function ChatCall(params) {
                         metadataInstance.clearIceCandidateInterval();
                         manager.removeConnectionQualityInterval();
                         if(config.direction === 'send' && !config.isScreenShare) {
-                            let constraint = {
+                            /*let constraint = {
                                 audio: config.mediaType === 'audio',
                                 video: (config.mediaType === 'video' ? {
                                     width: 640,
                                     framerate: 15
                                 } : false)
-                            }
+                            }*/
 
                             callStateController.removeStreamHTML(config.userId, config.topic);
                             config.peer.dispose();
                             config.peer = null;
                             config.state = peerStates.DISCONNECTED;
 
-                            navigator.mediaDevices.getUserMedia(constraint).then(function (stream) {
+                            if(config.mediaType === 'audio')
+                                deviceManager.mediaStreams().stopAudioInput();
+                            if(config.mediaType === 'video')
+                                deviceManager.mediaStreams().stopVideoInput();
+
+
+                            /*navigator.mediaDevices.getUserMedia(constraint).then(function (stream) {
                                 stream.getTracks().forEach(function (track) {
                                     if(!!track) {
                                         track.stop();
@@ -790,7 +818,7 @@ function ChatCall(params) {
                             }).catch(error => {
                                 console.error("Could not free up some resources", error);
                                 resolve(true);
-                            });
+                            });*/
 
                             resolve(true);
                         } else {
@@ -1101,7 +1129,7 @@ function ChatCall(params) {
                 return;
             }
 
-            callStop();
+             // callStop();
 
             return chatMessaging.sendMessage(endCallData, {
                 onResult: function (result) {
@@ -1970,9 +1998,11 @@ function ChatCall(params) {
                 let me = callUsers[chatMessaging.userInfo.id];
                 if(me) {
                     if(me.video)
-                        releaseResource('video');
+                        deviceManager.mediaStreams().stopVideoInput();
+                        //releaseResource('video');
                     if(!me.mute)
-                        releaseResource('audio');
+                        deviceManager.mediaStreams().stopAudioInput();
+                        // releaseResource('audio');
                 }
             }
 
@@ -2281,7 +2311,7 @@ function ChatCall(params) {
     }
 
     this.handleChatMessages = function(type, messageContent, contentCount, threadId, uniqueId) {
-        console.log("shouldNotProccessChatMessage: ", type, threadId, shouldNotProcessChatMessage(type, threadId))
+        consoleLogging && console.debug("[SDK][CALL_MODULE][handleChatMessages]", "type:", type, "threadId:", threadId, "currentCallId:", currentCallId,  "shouldNotProcessChatMessage:", shouldNotProcessChatMessage(type, threadId))
         if(shouldNotProcessChatMessage(type, threadId)) {
             return;
         }
@@ -3308,6 +3338,9 @@ function ChatCall(params) {
             return;
         }
 
+        deviceManager.mediaStreams().stopAudioInput();
+        deviceManager.mediaStreams().stopVideoInput();
+
         return chatMessaging.sendMessage(rejectCallData, {
             onResult: function (result) {
                 callback && callback(result);
@@ -4223,7 +4256,7 @@ function ChatCall(params) {
         }
     };
 
-    this.getAvailableDevices = deviceManager.getAvailableDevices
+    this.deviceManager = deviceManager
 
     this.callStop = callStop;
 

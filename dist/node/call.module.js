@@ -13,17 +13,19 @@ var _constants = require("./lib/constants");
 
 var _kurentoUtils = _interopRequireDefault(require("kurento-utils"));
 
-var _deviceCheck = _interopRequireDefault(require("./lib/call/deviceCheck.js"));
-
 var _utility = _interopRequireDefault(require("./utility/utility"));
+
+var _eventsModule = require("./events.module.js");
+
+var _deviceManager = _interopRequireDefault(require("./lib/call/deviceManager.js"));
 
 // import WebrtcAdapter from 'webrtc-adapter'
 function ChatCall(params) {
   var //Utility = params.Utility,
   currentModuleInstance = this,
       asyncClient = params.asyncClient,
-      chatEvents = params.chatEvents,
-      chatMessaging = params.chatMessaging,
+      //chatEvents = params.chatEvents,
+  chatMessaging = params.chatMessaging,
       token = params.token,
       asyncRequestTimeouts = {},
       callTypes = {
@@ -297,30 +299,54 @@ function ChatCall(params) {
           };
           options[config.direction === 'send' ? 'localVideo' : 'remoteVideo'] = callUsers[config.userId].htmlElements[config.topic];
 
-          if (config.direction === 'send' && config.mediaType === 'video' && config.isScreenShare) {
-            navigator.mediaDevices.getDisplayMedia().then(function (stream) {
-              stream.getVideoTracks()[0].addEventListener("ended", function (event) {
-                // Click on browser UI stop sharing button
-                if (callUsers['screenShare'] && config.peer) {
-                  currentModuleInstance.endScreenShare({
-                    callId: currentCallId
+          if (config.direction === 'send') {
+            if (config.mediaType === 'video') {
+              if (config.isScreenShare) {
+                navigator.mediaDevices.getDisplayMedia().then(function (stream) {
+                  stream.getVideoTracks()[0].addEventListener("ended", function (event) {
+                    // Click on browser UI stop sharing button
+                    if (callUsers['screenShare'] && config.peer) {
+                      currentModuleInstance.endScreenShare({
+                        callId: currentCallId
+                      });
+                    }
                   });
-                }
+                  options.videoStream = stream;
+                  options.sendSource = 'screen';
+                  resolve(options);
+                })["catch"](function (error) {
+                  var errorString = "[SDK][navigator.mediaDevices.getDisplayMedia]" + JSON.stringify(error);
+                  console.error(errorString);
+
+                  _eventsModule.chatEvents.fireEvent('callEvents', {
+                    type: 'CALL_ERROR',
+                    code: 7000,
+                    message: errorString,
+                    environmentDetails: getSDKCallDetails()
+                  });
+
+                  explainUserMediaError(error, 'video', 'screen'); //resolve(options);
+                });
+              } else {
+                _deviceManager["default"].grantUserMediaDevicesPermissions({
+                  video: true
+                }).then(function () {
+                  options.videoStream = _deviceManager["default"].mediaStreams().getVideoInput();
+                  resolve(options);
+                })["catch"](function (error) {
+                  reject(error);
+                });
+              }
+            } else if (config.mediaType === 'audio') {
+              _deviceManager["default"].grantUserMediaDevicesPermissions({
+                audio: true
+              }).then(function () {
+                options.audioStream = _deviceManager["default"].mediaStreams().getAudioInput();
+                resolve(options);
+              })["catch"](function (error) {
+                reject(error);
               });
-              options.videoStream = stream;
-              options.sendSource = 'screen';
-              resolve(options);
-            })["catch"](function (error) {
-              var errorString = "[SDK][navigator.mediaDevices.getDisplayMedia]" + JSON.stringify(error);
-              console.error(errorString);
-              chatEvents.fireEvent('callEvents', {
-                type: 'CALL_ERROR',
-                code: 7000,
-                message: errorString,
-                environmentDetails: getSDKCallDetails()
-              });
-              explainUserMediaError(error, 'video', 'screen'); //resolve(options);
-            });
+            }
           } else {
             resolve(options);
           }
@@ -362,12 +388,14 @@ function ChatCall(params) {
           if (err) {
             var errorString = "[SDK][start/webRtc " + config.direction + "  " + config.mediaType + " Peer] Error: " + explainUserMediaError(err, config.mediaType);
             console.error(errorString);
-            chatEvents.fireEvent('callEvents', {
+
+            _eventsModule.chatEvents.fireEvent('callEvents', {
               type: 'CALL_ERROR',
               code: 7000,
               message: errorString,
               environmentDetails: getSDKCallDetails()
             });
+
             return;
           }
 
@@ -393,12 +421,14 @@ function ChatCall(params) {
                 var _errorString = "[SDK][start/WebRc " + config.direction + "  " + config.mediaType + " Peer/generateOffer] " + err;
 
                 console.error(_errorString);
-                chatEvents.fireEvent('callEvents', {
+
+                _eventsModule.chatEvents.fireEvent('callEvents', {
                   type: 'CALL_ERROR',
                   code: 7000,
                   message: _errorString,
                   environmentDetails: getSDKCallDetails()
                 });
+
                 return;
               }
 
@@ -441,7 +471,7 @@ function ChatCall(params) {
           }
 
           if (config.peer.peerConnection.connectionState === "failed") {
-            chatEvents.fireEvent('callEvents', {
+            _eventsModule.chatEvents.fireEvent('callEvents', {
               type: 'CALL_STATUS',
               errorCode: 7000,
               errorMessage: "Call Peer (".concat(config.topic, ") has failed!"),
@@ -462,7 +492,7 @@ function ChatCall(params) {
               }
 
               if (config.direction === 'receive') {
-                chatEvents.fireEvent("callEvents", {
+                _eventsModule.chatEvents.fireEvent("callEvents", {
                   type: "RECEIVE_VIDEO_CONNECTION_ESTABLISHED",
                   userId: config.userId
                 });
@@ -480,18 +510,21 @@ function ChatCall(params) {
 
           if (config.peer.peerConnection.iceConnectionState === 'disconnected') {
             config.state = peerStates.DISCONNECTED;
-            chatEvents.fireEvent('callEvents', {
+
+            _eventsModule.chatEvents.fireEvent('callEvents', {
               type: 'CALL_STATUS',
               errorCode: 7000,
               errorMessage: "Call Peer (".concat(config.topic, ") is disconnected!"),
               errorInfo: config.peer
             });
+
             consoleLogging && console.log('[SDK][oniceconnectionstatechange]:[disconnected] Internet connection failed, Reconnect your call, topic:', config.topic);
           }
 
           if (config.peer.peerConnection.iceConnectionState === "failed") {
             config.state = peerStates.FAILED;
-            chatEvents.fireEvent('callEvents', {
+
+            _eventsModule.chatEvents.fireEvent('callEvents', {
               type: 'CALL_STATUS',
               errorCode: 7000,
               errorMessage: "Call Peer (".concat(config.topic, ") has failed!"),
@@ -510,7 +543,8 @@ function ChatCall(params) {
 
             config.state = peerStates.CONNECTED;
             callRequestController.callEstablishedInMySide = true;
-            chatEvents.fireEvent('callEvents', {
+
+            _eventsModule.chatEvents.fireEvent('callEvents', {
               type: 'CALL_STATUS',
               errorCode: 7000,
               errorMessage: "Call Peer (".concat(config.topic, ") has connected!"),
@@ -564,7 +598,8 @@ function ChatCall(params) {
           }
 
           instant = Math.floor(Math.sqrt(sum / input.length) * 10000);
-          chatEvents.fireEvent('callStreamEvents', {
+
+          _eventsModule.chatEvents.fireEvent('callStreamEvents', {
             type: 'USER_SPEAKING',
             userId: config.userId,
             audioLevel: convertToAudioLevel(instant)
@@ -610,7 +645,7 @@ function ChatCall(params) {
               // sorted to the top above
               if (!report['roundTripTime'] || report['roundTripTime'] > 1) {
                 if (topicMetadata.poorConnectionCount === 10) {
-                  chatEvents.fireEvent('callEvents', {
+                  _eventsModule.chatEvents.fireEvent('callEvents', {
                     type: 'POOR_VIDEO_CONNECTION',
                     subType: 'LONG_TIME',
                     message: 'Poor connection for a long time',
@@ -625,7 +660,8 @@ function ChatCall(params) {
                 if (topicMetadata.poorConnectionCount > 3 && !topicMetadata.isConnectionPoor) {
                   //alert('Poor connection detected...');
                   consoleLogging && console.log('[SDK][checkConnectionQuality] Poor connection detected...');
-                  chatEvents.fireEvent('callEvents', {
+
+                  _eventsModule.chatEvents.fireEvent('callEvents', {
                     type: 'POOR_VIDEO_CONNECTION',
                     subType: 'SHORT_TIME',
                     message: 'Poor connection detected',
@@ -635,6 +671,7 @@ function ChatCall(params) {
                       userId: config.userId
                     }
                   });
+
                   topicMetadata.isConnectionPoor = true;
                   topicMetadata.poorConnectionCount = 0;
                   topicMetadata.poorConnectionResolvedCount = 0;
@@ -654,7 +691,8 @@ function ChatCall(params) {
                   topicMetadata.poorConnectionResolvedCount = 0;
                   topicMetadata.poorConnectionCount = 0;
                   topicMetadata.isConnectionPoor = false;
-                  chatEvents.fireEvent('callEvents', {
+
+                  _eventsModule.chatEvents.fireEvent('callEvents', {
                     type: 'POOR_VIDEO_CONNECTION_RESOLVED',
                     message: 'Poor connection resolved',
                     metadata: {
@@ -663,6 +701,7 @@ function ChatCall(params) {
                       userId: config.userId
                     }
                   });
+
                   sendCallMetaData({
                     id: callMetaDataTypes.POORCONNECTIONRESOLVED,
                     userid: config.userId,
@@ -697,12 +736,13 @@ function ChatCall(params) {
 
         if (currentCallParams && Object.keys(currentCallParams).length) {
           if (callUsers[config.userId] && config.peer && iceConnectionState != 'connected') {
-            chatEvents.fireEvent('callEvents', {
+            _eventsModule.chatEvents.fireEvent('callEvents', {
               type: 'CALL_STATUS',
               errorCode: 7000,
               errorMessage: "Call Peer (".concat(config.topic, ") is not in connected state, Restarting call in progress ...!"),
               errorInfo: config.peer
             });
+
             sendCallMessage({
               id: 'STOP',
               topic: config.topic
@@ -742,6 +782,8 @@ function ChatCall(params) {
 
         this.generateSdpOfferOptions().then(function (options) {
           manager.establishPeerConnection(options);
+        })["catch"](function (error) {
+          console.error(error);
         });
       },
       removeTopic: function removeTopic() {
@@ -753,27 +795,30 @@ function ChatCall(params) {
             manager.removeConnectionQualityInterval();
 
             if (config.direction === 'send' && !config.isScreenShare) {
-              var constraint = {
-                audio: config.mediaType === 'audio',
-                video: config.mediaType === 'video' ? {
-                  width: 640,
-                  framerate: 15
-                } : false
-              };
+              /*let constraint = {
+                  audio: config.mediaType === 'audio',
+                  video: (config.mediaType === 'video' ? {
+                      width: 640,
+                      framerate: 15
+                  } : false)
+              }*/
               callStateController.removeStreamHTML(config.userId, config.topic);
               config.peer.dispose();
               config.peer = null;
               config.state = peerStates.DISCONNECTED;
-              navigator.mediaDevices.getUserMedia(constraint).then(function (stream) {
-                stream.getTracks().forEach(function (track) {
-                  if (!!track) {
-                    track.stop();
-                  }
-                });
-              })["catch"](function (error) {
-                console.error("Could not free up some resources", error);
-                resolve(true);
-              });
+              if (config.mediaType === 'audio') _deviceManager["default"].mediaStreams().stopAudioInput();
+              if (config.mediaType === 'video') _deviceManager["default"].mediaStreams().stopVideoInput();
+              /*navigator.mediaDevices.getUserMedia(constraint).then(function (stream) {
+                  stream.getTracks().forEach(function (track) {
+                      if(!!track) {
+                          track.stop();
+                      }
+                  });
+              }).catch(error => {
+                  console.error("Could not free up some resources", error);
+                  resolve(true);
+              });*/
+
               resolve(true);
             } else {
               callStateController.removeStreamHTML(config.userId, config.topic);
@@ -1021,17 +1066,19 @@ function ChatCall(params) {
       if (typeof +params.callId === 'number' && params.callId > 0) {
         receiveCallData.subjectId = +params.callId;
       } else {
-        chatEvents.fireEvent('error', {
+        _eventsModule.chatEvents.fireEvent('error', {
           code: 999,
           message: 'Invalid call id!'
         });
+
         return;
       }
     } else {
-      chatEvents.fireEvent('error', {
+      _eventsModule.chatEvents.fireEvent('error', {
         code: 999,
         message: 'No params have been sent to ReceiveCall()'
       });
+
       return;
     }
 
@@ -1059,21 +1106,23 @@ function ChatCall(params) {
       if (typeof +params.callId === 'number' && params.callId > 0) {
         endCallData.subjectId = +params.callId;
       } else {
-        chatEvents.fireEvent('error', {
+        _eventsModule.chatEvents.fireEvent('error', {
           code: 999,
           message: 'Invalid call id!'
         });
+
         return;
       }
     } else {
-      chatEvents.fireEvent('error', {
+      _eventsModule.chatEvents.fireEvent('error', {
         code: 999,
         message: 'No params have been sent to End the call!'
       });
-      return;
-    }
 
-    callStop();
+      return;
+    } // callStop();
+
+
     return chatMessaging.sendMessage(endCallData, {
       onResult: function onResult(result) {
         callback && callback(result);
@@ -1093,7 +1142,7 @@ function ChatCall(params) {
       screenShareInfo.setIsStarted(!!params.screenShareOwner);
 
       if (params.recordingOwner) {
-        chatEvents.fireEvent('callEvents', {
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'START_RECORDING_CALL',
           result: {
             id: params.recordingOwner
@@ -1454,7 +1503,8 @@ function ChatCall(params) {
           callStateController.appendUserToCallDiv('screenShare');
           screenShare.videoTopicManager.createTopic();
         });
-        chatEvents.fireEvent('callEvents', {
+
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'CALL_DIVS',
           result: generateCallUIList()
         });
@@ -1476,7 +1526,8 @@ function ChatCall(params) {
       if (screenShare && screenShareInfo.isStarted()) {
         screenShareInfo.setIsStarted(false);
         screenShare.videoTopicManager.removeTopic();
-        chatEvents.fireEvent('callEvents', {
+
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'CALL_DIVS',
           result: generateCallUIList()
         });
@@ -1591,12 +1642,13 @@ function ChatCall(params) {
     }
   },
       sendCallSocketError = function sendCallSocketError(message) {
-    chatEvents.fireEvent('callEvents', {
+    _eventsModule.chatEvents.fireEvent('callEvents', {
       type: 'CALL_ERROR',
       code: 7000,
       message: message,
       environmentDetails: getSDKCallDetails()
     });
+
     sendCallMessage({
       id: 'ERROR',
       message: message
@@ -1612,56 +1664,62 @@ function ChatCall(params) {
     var n = err.name;
 
     if (n === 'NotFoundError' || n === 'DevicesNotFoundError') {
-      chatEvents.fireEvent('callEvents', {
+      _eventsModule.chatEvents.fireEvent('callEvents', {
         type: 'CALL_ERROR',
         code: 7000,
         message: "Missing " + (deviceType === 'video' ? 'webcam' : 'mice') + " for required tracks",
         environmentDetails: getSDKCallDetails()
       });
+
       alert("Missing " + (deviceType === 'video' ? 'webcam' : 'mice') + " for required tracks");
       return "Missing " + (deviceType === 'video' ? 'webcam' : 'mice') + " for required tracks";
     } else if (n === 'NotReadableError' || n === 'TrackStartError') {
-      chatEvents.fireEvent('callEvents', {
+      _eventsModule.chatEvents.fireEvent('callEvents', {
         type: 'CALL_ERROR',
         code: 7000,
         message: (deviceType === 'video' ? 'Webcam' : 'Mice') + " is already in use",
         environmentDetails: getSDKCallDetails()
       });
+
       alert((deviceType === 'video' ? 'Webcam' : 'Mice') + " is already in use");
       return (deviceType === 'video' ? 'Webcam' : 'Mice') + " is already in use";
     } else if (n === 'OverconstrainedError' || n === 'ConstraintNotSatisfiedError') {
-      chatEvents.fireEvent('callEvents', {
+      _eventsModule.chatEvents.fireEvent('callEvents', {
         type: 'CALL_ERROR',
         code: 7000,
         message: (deviceType === 'video' ? 'Webcam' : 'Mice') + " doesn't provide required tracks",
         environmentDetails: getSDKCallDetails()
       });
+
       alert((deviceType === 'video' ? 'Webcam' : 'Mice') + " doesn't provide required tracks");
       return (deviceType === 'video' ? 'Webcam' : 'Mice') + " doesn't provide required tracks";
     } else if (n === 'NotAllowedError' || n === 'PermissionDeniedError') {
-      chatEvents.fireEvent('callEvents', {
+      _eventsModule.chatEvents.fireEvent('callEvents', {
         type: 'CALL_ERROR',
         code: 7000,
         message: (deviceType === 'video' ? deviceSource === 'screen' ? 'ScreenShare' : 'Webcam' : 'Mice') + " permission has been denied by the user",
         environmentDetails: getSDKCallDetails()
       });
+
       alert((deviceType === 'video' ? deviceSource === 'screen' ? 'ScreenShare' : 'Webcam' : 'Mice') + " permission has been denied by the user");
       return (deviceType === 'video' ? deviceSource === 'screen' ? 'ScreenShare' : 'Webcam' : 'Mice') + " permission has been denied by the user";
     } else if (n === 'TypeError') {
-      chatEvents.fireEvent('callEvents', {
+      _eventsModule.chatEvents.fireEvent('callEvents', {
         type: 'CALL_ERROR',
         code: 7000,
         message: "No media tracks have been requested",
         environmentDetails: getSDKCallDetails()
       });
+
       return "No media tracks have been requested";
     } else {
-      chatEvents.fireEvent('callEvents', {
+      _eventsModule.chatEvents.fireEvent('callEvents', {
         type: 'CALL_ERROR',
         code: 7000,
         message: "Unknown error: " + err,
         environmentDetails: getSDKCallDetails()
       });
+
       return "Unknown error: " + err;
     }
   },
@@ -1669,14 +1727,14 @@ function ChatCall(params) {
     consoleLogging && console.log("[SDK][startMedia] called with: ", media);
     media.play()["catch"](function (err) {
       if (err.name === 'NotAllowedError') {
-        chatEvents.fireEvent('callEvents', {
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'CALL_ERROR',
           code: 7000,
           message: "[startMedia] Browser doesn't allow playing media: " + err,
           environmentDetails: getSDKCallDetails()
         });
       } else {
-        chatEvents.fireEvent('callEvents', {
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'CALL_ERROR',
           code: 7000,
           message: "[startMedia] Error in media.play(): " + err,
@@ -1810,25 +1868,28 @@ function ChatCall(params) {
     }
 
     if (peer == null) {
-      chatEvents.fireEvent('callEvents', {
+      _eventsModule.chatEvents.fireEvent('callEvents', {
         type: 'CALL_ERROR',
         code: 7000,
         message: "[handleProcessSdpAnswer] Skip, no WebRTC Peer",
         error: peer,
         environmentDetails: getSDKCallDetails()
       });
+
       return;
     }
 
     peer.processAnswer(jsonMessage.sdpAnswer, function (err) {
       if (err) {
         sendCallSocketError("[handleProcessSdpAnswer] Error: " + err);
-        chatEvents.fireEvent('callEvents', {
+
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'CALL_ERROR',
           code: 7000,
           message: "[handleProcessSdpAnswer] Error: " + err,
           environmentDetails: getSDKCallDetails()
         });
+
         return;
       }
 
@@ -1855,26 +1916,29 @@ function ChatCall(params) {
     }
 
     if (peer == null) {
-      chatEvents.fireEvent('callEvents', {
+      _eventsModule.chatEvents.fireEvent('callEvents', {
         type: 'CALL_ERROR',
         code: 7000,
         message: "[handleAddIceCandidate] Skip, no WebRTC Peer",
         error: JSON.stringify(peer),
         environmentDetails: getSDKCallDetails()
       });
+
       return;
     }
 
     peer.addIceCandidate(jsonMessage.candidate, function (err) {
       if (err) {
         console.error("[handleAddIceCandidate] " + err);
-        chatEvents.fireEvent('callEvents', {
+
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'CALL_ERROR',
           code: 7000,
           message: "[handleAddIceCandidate] " + err,
           error: JSON.stringify(jsonMessage.candidate),
           environmentDetails: getSDKCallDetails()
         });
+
         return;
       }
     });
@@ -1892,7 +1956,8 @@ function ChatCall(params) {
   },
       handleError = function handleError(jsonMessage, sendingTopic, receiveTopic) {
     var errMessage = jsonMessage.message;
-    chatEvents.fireEvent('callEvents', {
+
+    _eventsModule.chatEvents.fireEvent('callEvents', {
       type: 'CALL_ERROR',
       code: 7000,
       message: "Kurento error: " + errMessage,
@@ -1922,8 +1987,9 @@ function ChatCall(params) {
       var me = callUsers[chatMessaging.userInfo.id];
 
       if (me) {
-        if (me.video) releaseResource('video');
-        if (!me.mute) releaseResource('audio');
+        if (me.video) _deviceManager["default"].mediaStreams().stopVideoInput(); //releaseResource('video');
+
+        if (!me.mute) _deviceManager["default"].mediaStreams().stopAudioInput(); // releaseResource('audio');
       }
     }
 
@@ -1974,7 +2040,7 @@ function ChatCall(params) {
 
     switch (id) {
       case callMetaDataTypes.POORCONNECTION:
-        chatEvents.fireEvent("callEvents", {
+        _eventsModule.chatEvents.fireEvent("callEvents", {
           type: 'POOR_VIDEO_CONNECTION',
           subType: 'SHORT_TIME',
           message: 'Poor connection detected',
@@ -1984,10 +2050,11 @@ function ChatCall(params) {
             userId: jMessage.userid
           }
         });
+
         break;
 
       case callMetaDataTypes.POORCONNECTIONRESOLVED:
-        chatEvents.fireEvent('callEvents', {
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'POOR_VIDEO_CONNECTION_RESOLVED',
           message: 'Poor connection resolved',
           metadata: {
@@ -1996,6 +2063,7 @@ function ChatCall(params) {
             userId: jMessage.userid
           }
         });
+
         break;
 
       case callMetaDataTypes.CUSTOMUSERMETADATA:
@@ -2003,22 +2071,25 @@ function ChatCall(params) {
           chatMessaging.messagesCallbacks[uniqueId](jsonMessage);
         }
 
-        chatEvents.fireEvent('callEvents', {
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'CUSTOM_USER_METADATA',
           userId: jMessage.userid,
           content: jMessage.content
         });
+
         break;
 
       case callMetaDataTypes.SCREENSHAREMETADATA:
         screenShareInfo.setWidth(jMessage.content.dimension.width);
         screenShareInfo.setHeight(jMessage.content.dimension.height);
         applyScreenShareSizeToElement();
-        chatEvents.fireEvent("callEvents", {
+
+        _eventsModule.chatEvents.fireEvent("callEvents", {
           type: 'SCREENSHARE_METADATA',
           userId: jMessage.userid,
           content: jMessage.content
         });
+
         break;
     }
   },
@@ -2091,7 +2162,7 @@ function ChatCall(params) {
     asyncRequestTimeouts[uniqueId] && clearTimeout(asyncRequestTimeouts[uniqueId]);
 
     if (jsonMessage.done === 'FALSE') {
-      chatEvents.fireEvent('callEvents', {
+      _eventsModule.chatEvents.fireEvent('callEvents', {
         type: 'CALL_ERROR',
         code: 7000,
         message: "Kurento error: " + (jsonMessage.desc ? jsonMessage.desc : jsonMessage.message),
@@ -2216,7 +2287,7 @@ function ChatCall(params) {
   }
 
   this.handleChatMessages = function (type, messageContent, contentCount, threadId, uniqueId) {
-    console.log("shouldNotProccessChatMessage: ", type, threadId, shouldNotProcessChatMessage(type, threadId));
+    consoleLogging && console.debug("[SDK][CALL_MODULE][handleChatMessages]", "type:", type, "threadId:", threadId, "currentCallId:", currentCallId, "shouldNotProcessChatMessage:", shouldNotProcessChatMessage(type, threadId));
 
     if (shouldNotProcessChatMessage(type, threadId)) {
       return;
@@ -2236,7 +2307,7 @@ function ChatCall(params) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
-        chatEvents.fireEvent('callEvents', {
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'RECEIVE_CALL',
           result: messageContent
         });
@@ -2246,7 +2317,7 @@ function ChatCall(params) {
             currentCallId = messageContent.callId;
           } else newCallId = messageContent.callId;
         } else {
-          chatEvents.fireEvent('callEvents', {
+          _eventsModule.chatEvents.fireEvent('callEvents', {
             type: 'PARTNER_RECEIVED_YOUR_CALL',
             result: messageContent
           });
@@ -2263,10 +2334,11 @@ function ChatCall(params) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
-        chatEvents.fireEvent('callEvents', {
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'ACCEPT_CALL',
           result: messageContent
         });
+
         break;
 
       /**
@@ -2278,10 +2350,11 @@ function ChatCall(params) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
-        chatEvents.fireEvent('callEvents', {
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'REJECT_CALL',
           result: messageContent
         });
+
         break;
 
       /**
@@ -2294,7 +2367,7 @@ function ChatCall(params) {
         }
 
         if (messageContent.callId > 0) {
-          chatEvents.fireEvent('callEvents', {
+          _eventsModule.chatEvents.fireEvent('callEvents', {
             type: 'RECEIVE_CALL',
             result: messageContent
           });
@@ -2303,7 +2376,7 @@ function ChatCall(params) {
             currentCallId = messageContent.callId;
           } else newCallId = messageContent.callId;
         } else {
-          chatEvents.fireEvent('callEvents', {
+          _eventsModule.chatEvents.fireEvent('callEvents', {
             type: 'PARTNER_RECEIVED_YOUR_CALL',
             result: messageContent
           });
@@ -2317,10 +2390,11 @@ function ChatCall(params) {
 
       case _constants.chatMessageVOTypes.START_CALL:
         if (!callRequestController.iCanAcceptTheCall()) {
-          chatEvents.fireEvent('callEvents', {
+          _eventsModule.chatEvents.fireEvent('callEvents', {
             type: 'CALL_STARTED_ELSEWHERE',
             message: 'Call already started somewhere else..., aborting...'
           });
+
           return;
         }
 
@@ -2328,7 +2402,7 @@ function ChatCall(params) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
-        chatEvents.fireEvent('callEvents', {
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'CALL_STARTED',
           result: messageContent
         });
@@ -2349,13 +2423,13 @@ function ChatCall(params) {
             screenShareOwner: +messageContent.chatDataDto.screenShareUser,
             recordingOwner: +messageContent.chatDataDto.recordingUser
           }, function (callDivs) {
-            chatEvents.fireEvent('callEvents', {
+            _eventsModule.chatEvents.fireEvent('callEvents', {
               type: 'CALL_DIVS',
               result: callDivs
             });
           });
         } else {
-          chatEvents.fireEvent('callEvents', {
+          _eventsModule.chatEvents.fireEvent('callEvents', {
             type: 'CALL_ERROR',
             message: 'Chat Data DTO is not present!',
             environmentDetails: getSDKCallDetails()
@@ -2373,10 +2447,11 @@ function ChatCall(params) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
-        chatEvents.fireEvent('callEvents', {
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'END_CALL',
           result: messageContent
         });
+
         callStop();
         break;
 
@@ -2389,10 +2464,11 @@ function ChatCall(params) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
-        chatEvents.fireEvent('callEvents', {
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'CALL_ENDED',
           callId: threadId
         });
+
         if (threadId === currentCallId) callStop();
         break;
 
@@ -2416,10 +2492,11 @@ function ChatCall(params) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
-        chatEvents.fireEvent('callEvents', {
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'CALL_PARTICIPANT_RECONNECTING',
           result: messageContent
         });
+
         break;
 
       /**
@@ -2431,7 +2508,7 @@ function ChatCall(params) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
-        chatEvents.fireEvent('callEvents', {
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'CALL_PARTICIPANT_CONNECTED',
           result: messageContent
         });
@@ -2451,10 +2528,11 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.CONTACT_SYNCED:
-        chatEvents.fireEvent('contactEvents', {
+        _eventsModule.chatEvents.fireEvent('contactEvents', {
           type: 'CONTACTS_SYNCED',
           result: messageContent
         });
+
         break;
 
       /**
@@ -2477,10 +2555,11 @@ function ChatCall(params) {
           } else newCallId = messageContent.callId;
         }
 
-        chatEvents.fireEvent('callEvents', {
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'RECEIVE_CALL',
           result: messageContent
         }); //currentCallId = messageContent.callId;
+
 
         break;
 
@@ -2493,7 +2572,7 @@ function ChatCall(params) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
-        chatEvents.fireEvent('callEvents', {
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'CALL_PARTICIPANT_LEFT',
           result: messageContent
         });
@@ -2552,11 +2631,12 @@ function ChatCall(params) {
           }
         }
 
-        chatEvents.fireEvent('callEvents', {
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'CALL_DIVS',
           result: generateCallUIList()
         });
-        chatEvents.fireEvent('callEvents', {
+
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'CALL_PARTICIPANT_JOINED',
           result: messageContent
         });
@@ -2590,10 +2670,11 @@ function ChatCall(params) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
-        chatEvents.fireEvent('callEvents', {
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'CALL_PARTICIPANT_REMOVED',
           result: messageContent
         });
+
         break;
 
       /**
@@ -2605,10 +2686,11 @@ function ChatCall(params) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
-        chatEvents.fireEvent('callEvents', {
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'TERMINATE_CALL',
           result: messageContent
         });
+
         callStop();
         break;
 
@@ -2635,14 +2717,16 @@ function ChatCall(params) {
           }
         }
 
-        chatEvents.fireEvent('callEvents', {
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'CALL_DIVS',
           result: generateCallUIList()
         });
-        chatEvents.fireEvent('callEvents', {
+
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'CALL_PARTICIPANT_MUTE',
           result: messageContent
         });
+
         break;
 
       /**
@@ -2682,14 +2766,16 @@ function ChatCall(params) {
           }
         }
 
-        chatEvents.fireEvent('callEvents', {
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'CALL_DIVS',
           result: generateCallUIList()
         });
-        chatEvents.fireEvent('callEvents', {
+
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'CALL_PARTICIPANT_UNMUTE',
           result: messageContent
         });
+
         break;
 
       /**
@@ -2701,10 +2787,11 @@ function ChatCall(params) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
-        chatEvents.fireEvent('callEvents', {
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'REJECT_GROUP_CALL',
           result: messageContent
         });
+
         break;
 
       /**
@@ -2724,10 +2811,12 @@ function ChatCall(params) {
 
       case _constants.chatMessageVOTypes.CALL_SESSION_CREATED:
         if (!callRequestController.callEstablishedInMySide) return;
-        chatEvents.fireEvent('callEvents', {
+
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'CALL_SESSION_CREATED',
           result: messageContent
         });
+
         if (!currentCallId) currentCallId = messageContent.callId;else newCallId = messageContent.callId; //currentCallId = messageContent.callId;
 
         break;
@@ -2748,15 +2837,17 @@ function ChatCall(params) {
         }
 
         setTimeout(function () {
-          chatEvents.fireEvent('callEvents', {
+          _eventsModule.chatEvents.fireEvent('callEvents', {
             type: 'CALL_DIVS',
             result: generateCallUIList()
           });
         });
-        chatEvents.fireEvent('callEvents', {
+
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'TURN_ON_VIDEO_CALL',
           result: messageContent
         });
+
         break;
 
       /**
@@ -2775,15 +2866,17 @@ function ChatCall(params) {
         }
 
         setTimeout(function () {
-          chatEvents.fireEvent('callEvents', {
+          _eventsModule.chatEvents.fireEvent('callEvents', {
             type: 'CALL_DIVS',
             result: generateCallUIList()
           });
         });
-        chatEvents.fireEvent('callEvents', {
+
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'TURN_OFF_VIDEO_CALL',
           result: messageContent
         });
+
         break;
 
       /**
@@ -2795,10 +2888,11 @@ function ChatCall(params) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
-        chatEvents.fireEvent('callEvents', {
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'START_RECORDING_CALL',
           result: messageContent
         });
+
         restartMediaOnKeyFrame(chatMessaging.userInfo.id, [4000, 8000, 12000, 25000]);
         restartMediaOnKeyFrame("screenShare", [4000, 8000, 12000, 25000]);
         break;
@@ -2812,10 +2906,11 @@ function ChatCall(params) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
-        chatEvents.fireEvent('callEvents', {
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'STOP_RECORDING_CALL',
           result: messageContent
         });
+
         break;
 
       /**
@@ -2833,10 +2928,11 @@ function ChatCall(params) {
           callStateController.addScreenShareToCall("receive", false);
         }
 
-        chatEvents.fireEvent('callEvents', {
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'START_SCREEN_SHARE',
           result: messageContent
         });
+
         break;
 
       /**
@@ -2852,10 +2948,11 @@ function ChatCall(params) {
           callStateController.removeScreenShareFromCall();
         }
 
-        chatEvents.fireEvent('callEvents', {
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'END_SCREEN_SHARE',
           result: messageContent
         });
+
         break;
 
       /**
@@ -2867,10 +2964,11 @@ function ChatCall(params) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent));
         }
 
-        chatEvents.fireEvent('callEvents', {
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'DELETE_FROM_CALL_LIST',
           result: messageContent
         });
+
         break;
 
       /**
@@ -2884,10 +2982,11 @@ function ChatCall(params) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
-        chatEvents.fireEvent('callEvents', {
+        _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'START_RECORDING_CALL',
           result: messageContent
         });
+
         restartMediaOnKeyFrame(chatMessaging.userInfo.id, [4000, 8000, 12000, 25000]);
         restartMediaOnKeyFrame("screenShare", [4000, 8000, 12000, 25000]);
         break;
@@ -2948,10 +3047,11 @@ function ChatCall(params) {
             }
           }
         } else {
-          chatEvents.fireEvent('error', {
+          _eventsModule.chatEvents.fireEvent('error', {
             code: 999,
             message: 'Invitees list is empty! Send an array of invitees to start a call with, Or send a Thread Id to start a call with current participants'
           });
+
           return;
         }
       }
@@ -2962,10 +3062,11 @@ function ChatCall(params) {
 
       startCallData.content = JSON.stringify(content);
     } else {
-      chatEvents.fireEvent('error', {
+      _eventsModule.chatEvents.fireEvent('error', {
         code: 999,
         message: 'No params have been sent to start call!'
       });
+
       return;
     }
 
@@ -2978,10 +3079,11 @@ function ChatCall(params) {
       setTimeout(function (metaData) {
         //Reject the call if participant didn't answer
         if (!callStopQueue.callStarted) {
-          chatEvents.fireEvent("callEvents", {
+          _eventsModule.chatEvents.fireEvent("callEvents", {
             type: "CALL_NO_ANSWER_TIMEOUT",
             message: "[CALL_SESSION_CREATED] Call request timed out, No answer"
           });
+
           metaData.callInstance.rejectCall({
             callId: metaData.currentCallId
           });
@@ -3041,10 +3143,11 @@ function ChatCall(params) {
             }
           }
         } else {
-          chatEvents.fireEvent('error', {
+          _eventsModule.chatEvents.fireEvent('error', {
             code: 999,
             message: 'Invitees list is empty! Send an array of invitees to start a call with, Or send a Thread Id to start a call with current participants'
           });
+
           return;
         }
       }
@@ -3055,10 +3158,11 @@ function ChatCall(params) {
 
       startCallData.content = JSON.stringify(content);
     } else {
-      chatEvents.fireEvent('error', {
+      _eventsModule.chatEvents.fireEvent('error', {
         code: 999,
         message: 'No params have been sent to start call!'
       });
+
       return;
     }
 
@@ -3096,19 +3200,21 @@ function ChatCall(params) {
       if (typeof +params.callId === 'number' && params.callId > 0) {
         terminateCallData.subjectId = +params.callId;
       } else {
-        chatEvents.fireEvent('error', {
+        _eventsModule.chatEvents.fireEvent('error', {
           code: 999,
           message: 'Invalid call id!'
         });
+
         return;
       }
 
       terminateCallData.content = JSON.stringify(content);
     } else {
-      chatEvents.fireEvent('error', {
+      _eventsModule.chatEvents.fireEvent('error', {
         code: 999,
         message: 'No params have been sent to terminate the call!'
       });
+
       return;
     }
 
@@ -3133,10 +3239,11 @@ function ChatCall(params) {
       if (typeof +params.callId === 'number' && params.callId > 0) {
         acceptCallData.subjectId = +params.callId;
       } else {
-        chatEvents.fireEvent('error', {
+        _eventsModule.chatEvents.fireEvent('error', {
           code: 999,
           message: 'Invalid call id!'
         });
+
         return;
       }
 
@@ -3158,10 +3265,11 @@ function ChatCall(params) {
         currentCallId = params.callId;
       }
     } else {
-      chatEvents.fireEvent('error', {
+      _eventsModule.chatEvents.fireEvent('error', {
         code: 999,
         message: 'No params have been sent to accept the call!'
       });
+
       return;
     }
 
@@ -3186,19 +3294,25 @@ function ChatCall(params) {
       if (typeof +params.callId === 'number' && params.callId > 0) {
         rejectCallData.subjectId = +params.callId;
       } else {
-        chatEvents.fireEvent('error', {
+        _eventsModule.chatEvents.fireEvent('error', {
           code: 999,
           message: 'Invalid call id!'
         });
+
         return;
       }
     } else {
-      chatEvents.fireEvent('error', {
+      _eventsModule.chatEvents.fireEvent('error', {
         code: 999,
         message: 'No params have been sent to reject the call!'
       });
+
       return;
     }
+
+    _deviceManager["default"].mediaStreams().stopAudioInput();
+
+    _deviceManager["default"].mediaStreams().stopVideoInput();
 
     return chatMessaging.sendMessage(rejectCallData, {
       onResult: function onResult(result) {
@@ -3223,10 +3337,11 @@ function ChatCall(params) {
       if (typeof +params.callId === 'number' && params.callId > 0) {
         recordCallData.subjectId = +params.callId;
       } else {
-        chatEvents.fireEvent('error', {
+        _eventsModule.chatEvents.fireEvent('error', {
           code: 999,
           message: 'Invalid Call id!'
         });
+
         return;
       }
 
@@ -3237,10 +3352,11 @@ function ChatCall(params) {
         recordCallData.content.threadId = typeof +params.threadId === 'number' ? params.threadId : null;
       }
     } else {
-      chatEvents.fireEvent('error', {
+      _eventsModule.chatEvents.fireEvent('error', {
         code: 999,
         message: 'No params have been sent to Record call!'
       });
+
       return;
     }
 
@@ -3266,17 +3382,19 @@ function ChatCall(params) {
       if (typeof +params.callId === 'number' && params.callId > 0) {
         stopRecordingCallData.subjectId = +params.callId;
       } else {
-        chatEvents.fireEvent('error', {
+        _eventsModule.chatEvents.fireEvent('error', {
           code: 999,
           message: 'Invalid Call id!'
         });
+
         return;
       }
     } else {
-      chatEvents.fireEvent('error', {
+      _eventsModule.chatEvents.fireEvent('error', {
         code: 999,
         message: 'No params have been sent to Stop Recording the call!'
       });
+
       return;
     }
 
@@ -3300,17 +3418,19 @@ function ChatCall(params) {
       if (typeof +params.callId === 'number' && params.callId > 0) {
         sendData.subjectId = +params.callId;
       } else {
-        chatEvents.fireEvent('error', {
+        _eventsModule.chatEvents.fireEvent('error', {
           code: 999,
           message: 'Invalid Call id!'
         });
+
         return;
       }
     } else {
-      chatEvents.fireEvent('error', {
+      _eventsModule.chatEvents.fireEvent('error', {
         code: 999,
         message: 'No params have been sent to Share Screen!'
       });
+
       return;
     }
 
@@ -3366,25 +3486,28 @@ function ChatCall(params) {
       if (typeof +params.callId === 'number' && params.callId > 0) {
         sendData.subjectId = +params.callId;
       } else {
-        chatEvents.fireEvent('error', {
+        _eventsModule.chatEvents.fireEvent('error', {
           code: 999,
           message: 'Invalid Call id!'
         });
+
         return;
       }
     } else {
-      chatEvents.fireEvent('error', {
+      _eventsModule.chatEvents.fireEvent('error', {
         code: 999,
         message: 'No params have been sent to End Screen Sharing!'
       });
+
       return;
     }
 
     if (!screenShareInfo.iAmOwner()) {
-      chatEvents.fireEvent('error', {
+      _eventsModule.chatEvents.fireEvent('error', {
         code: 999,
         message: 'You can not end others screen sharing!'
       });
+
       return;
     }
 
@@ -3510,10 +3633,11 @@ function ChatCall(params) {
 
       getCallListData.content = JSON.stringify(content);
     } else {
-      chatEvents.fireEvent('error', {
+      _eventsModule.chatEvents.fireEvent('error', {
         code: 999,
         message: 'No params have been sent to End the call!'
       });
+
       return;
     }
 
@@ -3567,10 +3691,11 @@ function ChatCall(params) {
 
       getCallListData.content = JSON.stringify(content);
     } else {
-      chatEvents.fireEvent('error', {
+      _eventsModule.chatEvents.fireEvent('error', {
         code: 999,
         message: 'Invalid params'
       });
+
       return;
     }
 
@@ -3593,10 +3718,11 @@ function ChatCall(params) {
       if (typeof params.contactType === 'string' && params.contactType.length) {
         sendData.content.contactType = params.contactType;
       } else {
-        chatEvents.fireEvent('error', {
+        _eventsModule.chatEvents.fireEvent('error', {
           code: 999,
           message: 'You should enter a contactType!'
         });
+
         return;
       }
 
@@ -3604,10 +3730,11 @@ function ChatCall(params) {
         sendData.content = params.callIds;
       }
     } else {
-      chatEvents.fireEvent('error', {
+      _eventsModule.chatEvents.fireEvent('error', {
         code: 999,
         message: 'No params have been sent to Delete a call from Call History!'
       });
+
       return;
     }
 
@@ -3640,10 +3767,11 @@ function ChatCall(params) {
 
     if (params) {
       if (isNaN(params.callId)) {
-        chatEvents.fireEvent('error', {
+        _eventsModule.chatEvents.fireEvent('error', {
           code: 999,
           message: 'Call Id should be a valid number!'
         });
+
         return;
       } else {
         var callId = +params.callId;
@@ -3682,7 +3810,7 @@ function ChatCall(params) {
             callback = undefined;
 
             if (!returnData.hasError) {
-              chatEvents.fireEvent('callEvents', {
+              _eventsModule.chatEvents.fireEvent('callEvents', {
                 type: 'CALL_PARTICIPANTS_LIST_CHANGE',
                 threadId: callId,
                 result: returnData.result
@@ -3692,10 +3820,11 @@ function ChatCall(params) {
         });
       }
     } else {
-      chatEvents.fireEvent('error', {
+      _eventsModule.chatEvents.fireEvent('error', {
         code: 999,
         message: 'No params have been sent to Get Call Participants!'
       });
+
       return;
     }
   };
@@ -3904,27 +4033,30 @@ function ChatCall(params) {
       if (typeof +params.callId === 'number' && params.callId > 0) {
         turnOnVideoData.subjectId = +params.callId;
       } else {
-        chatEvents.fireEvent('error', {
+        _eventsModule.chatEvents.fireEvent('error', {
           code: 999,
           message: 'Invalid call id!'
         });
+
         return;
       }
     } else {
-      chatEvents.fireEvent('error', {
+      _eventsModule.chatEvents.fireEvent('error', {
         code: 999,
         message: 'No params have been sent to turn on the video call!'
       });
+
       return;
     }
 
     var user = callUsers[chatMessaging.userInfo.id];
 
     if (user && user.videoTopicManager && user.videoTopicManager.getPeer() && (user.videoTopicManager.isPeerConnecting() || user.videoTopicManager.isPeerConnected())) {
-      chatEvents.fireEvent('error', {
+      _eventsModule.chatEvents.fireEvent('error', {
         code: 999,
         message: 'Video stream is already open!'
       });
+
       return;
     }
 
@@ -3948,27 +4080,30 @@ function ChatCall(params) {
       if (typeof +params.callId === 'number' && params.callId > 0) {
         turnOffVideoData.subjectId = +params.callId;
       } else {
-        chatEvents.fireEvent('error', {
+        _eventsModule.chatEvents.fireEvent('error', {
           code: 999,
           message: 'Invalid call id!'
         });
+
         return;
       }
     } else {
-      chatEvents.fireEvent('error', {
+      _eventsModule.chatEvents.fireEvent('error', {
         code: 999,
         message: 'No params have been sent to turn off the video call!'
       });
+
       return;
     }
 
     var user = callUsers[chatMessaging.userInfo.id];
 
     if (user && user.videoTopicManager && user.videoTopicManager.getPeer() && (user.videoTopicManager.isPeerConnecting() || user.videoTopicManager.isPeerFailed() || user.videoTopicManager.isPeerDisconnected())) {
-      chatEvents.fireEvent('error', {
+      _eventsModule.chatEvents.fireEvent('error', {
         code: 999,
         message: 'Can not stop stream in current state'
       });
+
       return;
     }
 
@@ -3991,10 +4126,11 @@ function ChatCall(params) {
         });
       }
     } else {
-      chatEvents.fireEvent('error', {
+      _eventsModule.chatEvents.fireEvent('error', {
         code: 999,
         message: 'No params have been sent to closeOthersVideoReceive'
       });
+
       return;
     }
   };
@@ -4011,7 +4147,7 @@ function ChatCall(params) {
         });
       }
     } else {
-      chatEvents.fireEvent('error', {
+      _eventsModule.chatEvents.fireEvent('error', {
         code: 999,
         message: 'No params have been sent to closeOthersVideoReceive'
       });
@@ -4091,21 +4227,22 @@ function ChatCall(params) {
         userObject.htmlElements[userObject.videoTopicName].style.height = callVideoMinHeight + 'px';
         callback && callback();
       })["catch"](function (e) {
-        chatEvents.fireEvent('error', {
+        _eventsModule.chatEvents.fireEvent('error', {
           code: 999,
           message: e
         });
       });
     } else {
-      chatEvents.fireEvent('error', {
+      _eventsModule.chatEvents.fireEvent('error', {
         code: 999,
         message: 'No params have been sent to resize the video call! Send an object like {width: 640, height: 480}'
       });
+
       return;
     }
   };
 
-  this.getAvailableDevices = _deviceCheck["default"].getAvailableDevices;
+  this.deviceManager = _deviceManager["default"];
   this.callStop = callStop;
   this.restartMedia = restartMedia;
 }
