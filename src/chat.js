@@ -8,7 +8,7 @@ import Dexie from "dexie"
 import Sentry, {initSentry} from "./lib/sentry.js"
 // import Sentry from "@sentry/browser"
 import ChatCall from "./call.module"
-import ChatEvents from "./events.module"
+import ChatEvents, { initEventHandler, chatEvents } from "./events.module"
 import ChatMessaging from "./messaging.module"
 
 import {
@@ -21,6 +21,7 @@ import {
     imageMimeTypes,
     imageExtentions
 } from "./lib/constants"
+import deviceManager from "./lib/call/deviceManager.js";
 
 /***
  * Pod Chat Browser Module
@@ -205,11 +206,15 @@ function Chat(params) {
         };
     }
 
-    var chatEvents = new ChatEvents(Object.assign(params, {
+    initEventHandler(Object.assign(params, {
+        consoleLogging,
+    }));
+
+    var /*chatEvents = new ChatEvents(Object.assign(params, {
 
             //Utility: Utility,
-            consoleLogging: consoleLogging,
-        })),
+            consoleLogging,
+        })),*/
         chatMessaging = new ChatMessaging(Object.assign(params, {
             asyncClient: asyncClient,
             //Utility: Utility,
@@ -224,7 +229,7 @@ function Chat(params) {
         callModule = new ChatCall(Object.assign(params, {
             //Utility: Utility,
             consoleLogging: consoleLogging,
-            chatEvents: chatEvents,
+            chatEvents,
             asyncClient: asyncClient,
             chatMessaging: chatMessaging
         }));
@@ -13793,6 +13798,8 @@ function Chat(params) {
     publicMethods.callStop = callModule.callStop;
 
     publicMethods.sendCallMetaData = callModule.sendCallMetaData;
+
+    publicMethods.deviceManager = callModule.deviceManager
 
     publicMethods.getMutualGroups = function (params, callback) {
         var count = +params.count ? +params.count : 50,

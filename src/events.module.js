@@ -1,6 +1,8 @@
 import Utility from "./utility/utility"
 import Sentry from "./lib/sentry.js"
 
+let chatEvents = null;
+
 function ChatEvents(params) {
     var currentModuleInstance = this,
         //Utility = params.Utility,
@@ -123,4 +125,13 @@ function ChatEvents(params) {
     }
 }
 
+function initEventHandler(params) {
+    if(!chatEvents) {
+        chatEvents = new ChatEvents(params)
+    }
+
+    return chatEvents;
+}
+
 export default ChatEvents;
+export { initEventHandler, chatEvents }

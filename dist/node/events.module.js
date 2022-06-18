@@ -5,11 +5,15 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports["default"] = void 0;
+exports["default"] = exports.chatEvents = void 0;
+exports.initEventHandler = initEventHandler;
 
 var _utility = _interopRequireDefault(require("./utility/utility"));
 
 var _sentry = _interopRequireDefault(require("./lib/sentry.js"));
+
+var chatEvents = null;
+exports.chatEvents = chatEvents;
 
 function ChatEvents(params) {
   var currentModuleInstance = this,
@@ -137,6 +141,14 @@ function ChatEvents(params) {
       delete eventCallbacks[i];
     }
   };
+}
+
+function initEventHandler(params) {
+  if (!chatEvents) {
+    exports.chatEvents = chatEvents = new ChatEvents(params);
+  }
+
+  return chatEvents;
 }
 
 var _default = ChatEvents;
