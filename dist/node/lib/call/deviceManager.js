@@ -52,9 +52,7 @@ var _mediaStreams = {
   stopVideoInput: function stopVideoInput() {
     if (!deviceStreams.videoIn) return;
     deviceStreams.videoIn.getTracks().forEach(function (track) {
-      if (!!track) {
-        track.stop();
-      }
+      track.stop();
     });
     deviceStreams.videoIn = null;
   }
@@ -131,7 +129,10 @@ var deviceManager = {
 
                 _context.next = 7;
                 return deviceManager.getInputDevicePermission({
-                  video: true
+                  video: {
+                    width: 640,
+                    framerate: 15
+                  }
                 });
 
               case 7:
@@ -173,17 +174,26 @@ var deviceManager = {
         audio = _ref3$audio === void 0 ? false : _ref3$audio,
         _ref3$video = _ref3.video,
         video = _ref3$video === void 0 ? false : _ref3$video;
+    console.log("getInputDevicePermission", video);
     return new Promise(function (resolve, reject) {
+      if (video && _mediaStreams.getVideoInput()) {
+        resolve(_mediaStreams.getVideoInput());
+        return;
+      }
+
+      if (audio && _mediaStreams.getAudioInput()) {
+        resolve(_mediaStreams.getAudioInput());
+        return;
+      }
+
       navigator.mediaDevices.getUserMedia({
         audio: audio,
         video: video
-      }).then(function (result) {
+      }).then(function (stream) {
         //console.log(result)
-        if (audio) _mediaStreams.setAudioInput(result); //= result;
-
-        if (video) _mediaStreams.setVideoInput(result); //= result;
-
-        resolve(result);
+        if (audio) _mediaStreams.setAudioInput(stream);
+        if (video) _mediaStreams.setVideoInput(stream);
+        resolve(stream);
       })["catch"](function (error) {
         _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'CALL_ERROR',

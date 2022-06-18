@@ -805,8 +805,9 @@ function ChatCall(params) {
 
                             if(config.mediaType === 'audio')
                                 deviceManager.mediaStreams().stopAudioInput();
-                            if(config.mediaType === 'video')
-                                deviceManager.mediaStreams().stopVideoInput();
+                            if(config.mediaType === 'video'){
+                               deviceManager.mediaStreams().stopVideoInput();
+                            }
 
 
                             /*navigator.mediaDevices.getUserMedia(constraint).then(function (stream) {
@@ -1129,7 +1130,7 @@ function ChatCall(params) {
                 return;
             }
 
-             // callStop();
+            //callStop();
 
             return chatMessaging.sendMessage(endCallData, {
                 onResult: function (result) {
@@ -1973,6 +1974,7 @@ function ChatCall(params) {
             });
         },
 
+/*
         releaseResource = function (mediaType) {
             let constraint = {
                 audio: mediaType === 'audio',
@@ -1992,19 +1994,24 @@ function ChatCall(params) {
                 consoleLogging && console.error(error)
             })
         },
+*/
 
         callStop = function () {
-            if(callUsers) {
-                let me = callUsers[chatMessaging.userInfo.id];
-                if(me) {
-                    if(me.video)
-                        deviceManager.mediaStreams().stopVideoInput();
+            // if(callUsers) {
+                // let me = callUsers[chatMessaging.userInfo.id];
+                // if(me) {
+                //     if(me.video)
+
+            deviceManager.mediaStreams().stopVideoInput();
+            deviceManager.mediaStreams().stopAudioInput();
+
+            // deviceManager.mediaStreams().stopVideoInput();
                         //releaseResource('video');
-                    if(!me.mute)
-                        deviceManager.mediaStreams().stopAudioInput();
+                    // if(!me.mute)
+            // deviceManager.mediaStreams().stopAudioInput();
                         // releaseResource('audio');
-                }
-            }
+                // }
+            // }
 
             callStateController.removeAllCallParticipants();
 

@@ -16,10 +16,10 @@ const deviceStreams = {
 };
 
 const mediaStreams = {
-    setAudioInput(stream){
+    setAudioInput(stream) {
         deviceStreams.audioIn = stream;
     },
-    setVideoInput(stream){
+    setVideoInput(stream) {
         deviceStreams.videoIn = stream;
     },
     getVideoInput() {
@@ -37,17 +37,17 @@ const mediaStreams = {
                 track.stop();
             }
         });
+
         deviceStreams.audioIn = null;
     },
     stopVideoInput() {
         if(!deviceStreams.videoIn)
-            return;
+           return;
 
-        deviceStreams.videoIn.getTracks().forEach(track =>{
-            if(!!track) {
-                track.stop();
-            }
-        });
+        deviceStreams.videoIn.getTracks().forEach(track => {
+            track.stop();
+        })
+
         deviceStreams.videoIn = null;
     },
 }
@@ -102,7 +102,10 @@ const deviceManager = {
                 if(audio)
                     await deviceManager.getInputDevicePermission({audio: true});
                 if(video)
-                    await deviceManager.getInputDevicePermission({video: true});
+                    await deviceManager.getInputDevicePermission({video: {
+                            width: 640,
+                            framerate: 15
+                    }});
 
                 if(callback)
                     callback({hasError: false});
@@ -127,14 +130,22 @@ const deviceManager = {
         video = false,
     }) {
         return new Promise((resolve, reject) => {
-            navigator.mediaDevices.getUserMedia({audio, video}).then(result => {
-                //console.log(result)
-                if(audio)
-                    mediaStreams.setAudioInput(result); //= result;
-                if(video)
-                    mediaStreams.setVideoInput(result); //= result;
+            if(video && mediaStreams.getVideoInput()) {
+                resolve(mediaStreams.getVideoInput());
+                return;
+            }
+            if(audio && mediaStreams.getAudioInput()) {
+                resolve(mediaStreams.getAudioInput());
+                return;
+            }
 
-                resolve(result);
+            navigator.mediaDevices.getUserMedia({audio, video}).then(stream => {
+                if(audio)
+                    mediaStreams.setAudioInput(stream);
+                if(video)
+                    mediaStreams.setVideoInput(stream);
+
+                resolve(stream);
             }).catch(error => {
                 chatEvents.fireEvent('callEvents', {
                     type: 'CALL_ERROR',
@@ -143,7 +154,6 @@ const deviceManager = {
                     // environmentDetails: getSDKCallDetails()
                 });
                 reject(handleError((audio ? 12400 : 12401)))
-                //console.log(error)
             });
         });
     },

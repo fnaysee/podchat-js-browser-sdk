@@ -807,7 +807,10 @@ function ChatCall(params) {
               config.peer = null;
               config.state = peerStates.DISCONNECTED;
               if (config.mediaType === 'audio') _deviceManager["default"].mediaStreams().stopAudioInput();
-              if (config.mediaType === 'video') _deviceManager["default"].mediaStreams().stopVideoInput();
+
+              if (config.mediaType === 'video') {
+                _deviceManager["default"].mediaStreams().stopVideoInput();
+              }
               /*navigator.mediaDevices.getUserMedia(constraint).then(function (stream) {
                   stream.getTracks().forEach(function (track) {
                       if(!!track) {
@@ -818,6 +821,7 @@ function ChatCall(params) {
                   console.error("Could not free up some resources", error);
                   resolve(true);
               });*/
+
 
               resolve(true);
             } else {
@@ -1120,7 +1124,7 @@ function ChatCall(params) {
       });
 
       return;
-    } // callStop();
+    } //callStop();
 
 
     return chatMessaging.sendMessage(endCallData, {
@@ -1964,34 +1968,43 @@ function ChatCall(params) {
       environmentDetails: getSDKCallDetails()
     });
   },
-      releaseResource = function releaseResource(mediaType) {
-    var constraint = {
-      audio: mediaType === 'audio',
-      video: mediaType === 'video' ? {
-        width: 640,
-        framerate: 15
-      } : false
-    };
-    navigator.mediaDevices.getUserMedia(constraint).then(function (stream) {
-      stream.getTracks().forEach(function (track) {
-        if (!!track) {
-          track.stop();
-        }
-      });
-    })["catch"](function (error) {
-      consoleLogging && console.error(error);
-    });
-  },
-      callStop = function callStop() {
-    if (callUsers) {
-      var me = callUsers[chatMessaging.userInfo.id];
 
-      if (me) {
-        if (me.video) _deviceManager["default"].mediaStreams().stopVideoInput(); //releaseResource('video');
+  /*
+          releaseResource = function (mediaType) {
+              let constraint = {
+                  audio: mediaType === 'audio',
+                  video: (mediaType === 'video' ? {
+                      width: 640,
+                      framerate: 15
+                  } : false)
+              }
+              navigator.mediaDevices.getUserMedia(constraint).then(function (stream) {
+                  stream.getTracks().forEach(function (track) {
+                      if(!!track) {
+                          track.stop();
+                      }
+                  });
+  
+              }).catch(error => {
+                  consoleLogging && console.error(error)
+              })
+          },
+  */
+  callStop = function callStop() {
+    // if(callUsers) {
+    // let me = callUsers[chatMessaging.userInfo.id];
+    // if(me) {
+    //     if(me.video)
+    _deviceManager["default"].mediaStreams().stopVideoInput();
 
-        if (!me.mute) _deviceManager["default"].mediaStreams().stopAudioInput(); // releaseResource('audio');
-      }
-    }
+    _deviceManager["default"].mediaStreams().stopAudioInput(); // deviceManager.mediaStreams().stopVideoInput();
+    //releaseResource('video');
+    // if(!me.mute)
+    // deviceManager.mediaStreams().stopAudioInput();
+    // releaseResource('audio');
+    // }
+    // }
+
 
     callStateController.removeAllCallParticipants();
 
