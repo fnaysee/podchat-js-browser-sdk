@@ -837,6 +837,63 @@ function ChatCall(params) {
         }
     }
 
+    function peersHealthChecker() {
+        const config = {
+            healthCheckerInterval: null
+        };
+
+        function checkHealth() {
+            let foundProblem = false;
+            if(!callUsers || !callUsers.length)
+                return
+
+            callUsers.forEach(user => {
+                if(user.video) {
+                    if(user.videoTopicManager
+                        && !user.videoTopicManager.isPeerConnecting()
+                        && (user.videoTopicManager.isPeerFailed() || user.videoTopicManager.isPeerDisconnected())) {
+
+                        user.videoTopicManager.removeTopic().then(()=>{
+                            user.videoTopicManager.createTopic()
+                        })
+                        foundProblem = true;
+                        consoleLogging && console.debug("[SDK][HealthChecker] userId:", user.id, "topic:", user.videoTopicName);
+                    }
+                }
+
+                if(!user.mute) {
+                    if(user.audioTopicManager
+                        && (user.audioTopicManager.isPeerFailed() || user.audioTopicManager.isPeerDisconnected())) {
+                        user.audioTopicManager.removeTopic().then(()=>{
+                            user.audioTopicManager.createTopic()
+                        });
+                        foundProblem = true;
+                        consoleLogging && console.debug("[SDK][HealthChecker] userId:", user.id, "topic:", user.audioTopicName);
+                    }
+                }
+            });
+
+
+            if(foundProblem) {
+                chatEvents.fireEvent('callEvents', {
+                    type: 'CALL_DIVS',
+                    result: generateCallUIList()
+                });
+            }
+        }
+
+        return {
+            startTopicsHealthCheck() {
+                config.healthCheckerInterval = setInterval(() => {
+                    checkHealth()
+                }, 20000);
+            },
+            stopTopicsHealthCheck() {
+                clearInterval(config.healthCheckerInterval);
+            }
+        }
+    }
+
     function topicMetaDataManager(params) {
         const config = {
             userId: params.userId,
@@ -1243,6 +1300,10 @@ function ChatCall(params) {
                         callController.startParticipantAudio(i);
                     }
                 }
+
+                // setTimeout(()=>{
+                //     callTopicHealthChecker.startTopicsHealthCheck();
+                // }, 20000);
             },
             setupCallParticipant: function (participant) {
                 let user = participant;
@@ -1993,21 +2054,11 @@ function ChatCall(params) {
 */
 
         callStop = function () {
-            // if(callUsers) {
-                // let me = callUsers[chatMessaging.userInfo.id];
-                // if(me) {
-                //     if(me.video)
+
+            // callTopicHealthChecker.stopTopicsHealthCheck();
 
             deviceManager.mediaStreams().stopVideoInput();
             deviceManager.mediaStreams().stopAudioInput();
-
-            // deviceManager.mediaStreams().stopVideoInput();
-                        //releaseResource('video');
-                    // if(!me.mute)
-            // deviceManager.mediaStreams().stopAudioInput();
-                        // releaseResource('audio');
-                // }
-            // }
 
             callStateController.removeAllCallParticipants();
 
