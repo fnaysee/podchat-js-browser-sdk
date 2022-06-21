@@ -140,15 +140,16 @@ function ChatCall(params) {
     return {
       setServers: function setServers(serversList) {
         config.servers = serversList;
+        config.currentServerIndex = 0;
       },
-      setCurrentServer: function setCurrentServer(query) {
-        for (var i in config.servers) {
-          if (config.servers[i].indexOf(query) !== -1) {
-            config.currentServerIndex = i;
-            break;
-          }
-        }
-      },
+      // setCurrentServer: function (query) {
+      //     for(let i in config.servers) {
+      //         if(config.servers[i].indexOf(query) !== -1) {
+      //             config.currentServerIndex = i;
+      //             break;
+      //         }
+      //     }
+      // },
       getCurrentServer: function getCurrentServer() {
         return config.servers[config.currentServerIndex];
       },
