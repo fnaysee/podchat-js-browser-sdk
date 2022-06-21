@@ -2475,6 +2475,9 @@ function ChatCall(params) {
                     return;
                 }
 
+                callStop();
+                currentCallId = threadId;
+
                 if (chatMessaging.messagesCallbacks[uniqueId]) {
                     chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                 }
