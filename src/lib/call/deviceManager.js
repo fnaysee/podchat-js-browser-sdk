@@ -103,8 +103,8 @@ const deviceManager = {
                     await deviceManager.getInputDevicePermission({audio: true});
                 if(video)
                     await deviceManager.getInputDevicePermission({video: {
-                            width: 640,
-                            framerate: 15
+                            width: 320,
+                            framerate: 10
                     }});
 
                 if(closeStream) {

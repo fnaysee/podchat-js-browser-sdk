@@ -122,6 +122,7 @@ var chatMessageVOTypes = {
   DELETE_MESSAGE_THREAD: 151,
   EXPORT_CHAT: 152,
   ADD_CONTACTS: 200,
+  SWITCH_TO_GROUP_CALL_REQUEST: 221,
   ERROR: 999
 };
 exports.chatMessageVOTypes = chatMessageVOTypes;

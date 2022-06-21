@@ -74,6 +74,7 @@ function ChatCall(params) {
     callStarted: false
   },
       callServerController = new callServerManager(),
+      callTopicHealthChecker = new peersHealthChecker(),
       messageTtl = params.messageTtl || 10000,
       config = {
     getHistoryCount: 50
@@ -837,6 +838,56 @@ function ChatCall(params) {
     };
   }
 
+  function peersHealthChecker() {
+    var config = {
+      healthCheckerInterval: null
+    };
+
+    function checkHealth() {
+      var foundProblem = false;
+      if (!callUsers || !callUsers.length) return;
+      callUsers.forEach(function (user) {
+        if (user.video) {
+          if (user.videoTopicManager && !user.videoTopicManager.isPeerConnecting() && (user.videoTopicManager.isPeerFailed() || user.videoTopicManager.isPeerDisconnected())) {
+            user.videoTopicManager.removeTopic().then(function () {
+              user.videoTopicManager.createTopic();
+            });
+            foundProblem = true;
+            consoleLogging && console.debug("[SDK][HealthChecker] userId:", user.id, "topic:", user.videoTopicName);
+          }
+        }
+
+        if (!user.mute) {
+          if (user.audioTopicManager && (user.audioTopicManager.isPeerFailed() || user.audioTopicManager.isPeerDisconnected())) {
+            user.audioTopicManager.removeTopic().then(function () {
+              user.audioTopicManager.createTopic();
+            });
+            foundProblem = true;
+            consoleLogging && console.debug("[SDK][HealthChecker] userId:", user.id, "topic:", user.audioTopicName);
+          }
+        }
+      });
+
+      if (foundProblem) {
+        _eventsModule.chatEvents.fireEvent('callEvents', {
+          type: 'CALL_DIVS',
+          result: generateCallUIList()
+        });
+      }
+    }
+
+    return {
+      startTopicsHealthCheck: function startTopicsHealthCheck() {
+        config.healthCheckerInterval = setInterval(function () {
+          checkHealth();
+        }, 20000);
+      },
+      stopTopicsHealthCheck: function stopTopicsHealthCheck() {
+        clearInterval(config.healthCheckerInterval);
+      }
+    };
+  }
+
   function topicMetaDataManager(params) {
     var config = {
       userId: params.userId,
@@ -1229,7 +1280,10 @@ function ChatCall(params) {
         if (callUsers[i].mute !== undefined && !callUsers[i].mute) {
           callController.startParticipantAudio(i);
         }
-      }
+      } // setTimeout(()=>{
+      //     callTopicHealthChecker.startTopicsHealthCheck();
+      // }, 20000);
+
     },
     setupCallParticipant: function setupCallParticipant(participant) {
       var user = participant;
@@ -1587,10 +1641,9 @@ function ChatCall(params) {
       if (callUsers[userId]) {
         callUsers[userId][mediaKey] = mediaKey !== 'mute';
         callUsers[userId][topicNameKey] = (mediaType === 'audio' ? 'Vo-' : 'Vi-') + sendTopic;
-        var user = callUsers[userId];
         callStateController.appendUserToCallDiv(userId, callStateController.generateHTMLElements(userId));
         setTimeout(function () {
-          callUsers[userId][mediaType + 'TopicManager'].createTopic(); // callStateController.createTopic(userId, user[topicNameKey], mediaType, direction);
+          callUsers[userId][mediaType + 'TopicManager'].createTopic();
         });
       }
     },
@@ -1991,20 +2044,10 @@ function ChatCall(params) {
           },
   */
   callStop = function callStop() {
-    // if(callUsers) {
-    // let me = callUsers[chatMessaging.userInfo.id];
-    // if(me) {
-    //     if(me.video)
+    // callTopicHealthChecker.stopTopicsHealthCheck();
     _deviceManager["default"].mediaStreams().stopVideoInput();
 
-    _deviceManager["default"].mediaStreams().stopAudioInput(); // deviceManager.mediaStreams().stopVideoInput();
-    //releaseResource('video');
-    // if(!me.mute)
-    // deviceManager.mediaStreams().stopAudioInput();
-    // releaseResource('audio');
-    // }
-    // }
-
+    _deviceManager["default"].mediaStreams().stopAudioInput();
 
     callStateController.removeAllCallParticipants();
 
@@ -2410,6 +2453,9 @@ function ChatCall(params) {
 
           return;
         }
+
+        callStop();
+        currentCallId = threadId;
 
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
@@ -3012,6 +3058,19 @@ function ChatCall(params) {
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
+
+        break;
+
+      /**
+      * Type 221  Event to tell us p2p call converted to a group call
+      */
+
+      case _constants.chatMessageVOTypes.SWITCH_TO_GROUP_CALL_REQUEST:
+        _eventsModule.chatEvents.fireEvent('callEvents', {
+          type: 'SWITCH_TO_GROUP_CALL',
+          result: messageContent //contains: isGroup, callId, threadId
+
+        });
 
         break;
     }

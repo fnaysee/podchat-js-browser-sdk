@@ -86,6 +86,7 @@ function ChatCall(params) {
             callStarted: false,
         },
         callServerController = new callServerManager(),
+        callTopicHealthChecker = new peersHealthChecker(),
         messageTtl = params.messageTtl || 10000,
         config = {
             getHistoryCount: 50
@@ -1234,10 +1235,10 @@ function ChatCall(params) {
                         continue;
                     }
 
-
                     if(callUsers[i].video) {
                         callController.startParticipantVideo(i);
                     }
+
                     if(callUsers[i].mute !== undefined && !callUsers[i].mute) {
                         callController.startParticipantAudio(i);
                     }
@@ -1247,7 +1248,6 @@ function ChatCall(params) {
                 let user = participant;
                 user.topicMetaData = {};
                 // user.peers = {};
-
 
                 user.videoTopicManager = new callTopicManager({
                     userId: user.userId,
@@ -1261,8 +1261,6 @@ function ChatCall(params) {
                     mediaType: 'audio',
                     direction: (user.userId === chatMessaging.userInfo.id ? 'send': 'receive')
                 });
-
-
 
                 if(user.userId === chatMessaging.userInfo.id) {
                     user.direction = 'send';
@@ -1588,11 +1586,9 @@ function ChatCall(params) {
                     callUsers[userId][mediaKey] = (mediaKey !== 'mute');
                     callUsers[userId][topicNameKey] = (mediaType === 'audio'?  'Vo-':  'Vi-') + sendTopic;
 
-                    let user = callUsers[userId];
                     callStateController.appendUserToCallDiv(userId, callStateController.generateHTMLElements(userId));
                     setTimeout(function () {
                         callUsers[userId][mediaType + 'TopicManager'].createTopic();
-                        // callStateController.createTopic(userId, user[topicNameKey], mediaType, direction);
                     })
                 }
             },
@@ -3046,6 +3042,18 @@ function ChatCall(params) {
                     chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                 }
                 break;
+
+             /**
+             * Type 221  Event to tell us p2p call converted to a group call
+             */
+            case chatMessageVOTypes.SWITCH_TO_GROUP_CALL_REQUEST:
+                chatEvents.fireEvent('callEvents', {
+                    type: 'SWITCH_TO_GROUP_CALL',
+                    result: messageContent //contains: isGroup, callId, threadId
+                });
+
+                break;
+
         }
     }
 

@@ -2788,6 +2788,7 @@ function Chat(params) {
                 case chatMessageVOTypes.CANCEL_GROUP_CALL:
                 case chatMessageVOTypes.DESTINED_RECORD_CALL:
                 case chatMessageVOTypes.GET_CALLS_TO_JOIN:
+                case chatMessageVOTypes.SWITCH_TO_GROUP_CALL_REQUEST:
                     callModule.handleChatMessages(type, messageContent, contentCount, threadId, uniqueId);
                     break;
 

@@ -132,8 +132,8 @@ var deviceManager = {
                 _context.next = 7;
                 return deviceManager.getInputDevicePermission({
                   video: {
-                    width: 640,
-                    framerate: 15
+                    width: 320,
+                    framerate: 10
                   }
                 });
 
