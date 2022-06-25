@@ -43,7 +43,6 @@ function ChatCall(params) {
       callVideoMinHeight = params.callOptions && params.callOptions.hasOwnProperty('callVideo') && (0, _typeof2["default"])(params.callOptions.callVideo) === 'object' && params.callOptions.callVideo.hasOwnProperty('minHeight') ? params.callOptions.callVideo.minHeight : 180,
       currentCallParams = {},
       currentCallId = null,
-      newCallId = null,
       //shouldReconnectCallTimeout = null,
   callMetaDataTypes = {
     POORCONNECTION: 1,
@@ -63,6 +62,7 @@ function ChatCall(params) {
   },
       callUsers = {},
       callRequestController = {
+    imCallOwner: false,
     callRequestReceived: false,
     callEstablishedInMySide: false,
     iCanAcceptTheCall: function iCanAcceptTheCall() {
@@ -151,7 +151,7 @@ function ChatCall(params) {
       //     }
       // },
       getCurrentServer: function getCurrentServer() {
-        return config.servers[config.currentServerIndex];
+        return config.servers[0]; //config.currentServerIndex];
       },
       isJanus: function isJanus() {
         return config.servers[config.currentServerIndex].toLowerCase().substr(0, 1) === 'j';
@@ -161,6 +161,7 @@ function ChatCall(params) {
       },
       changeServer: function changeServer() {
         if (this.canChangeServer()) {
+          consoleLogging && console.debug('[SDK][changeServer] Changing kurento server...');
           config.currentServerIndex++;
         }
       }
@@ -927,6 +928,8 @@ function ChatCall(params) {
 
   var init = function init() {},
       sendCallMessage = function sendCallMessage(message, callback) {
+    var timeoutRetriesCount = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+    var timeoutCallback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
     message.token = token;
     var uniqueId;
 
@@ -971,11 +974,8 @@ function ChatCall(params) {
           delete chatMessaging.messagesCallbacks[uniqueId];
         }
 
-        if (callServerController.canChangeServer() && message.id === 'CREATE_SESSION') {
-          // 'CREATE_SESSION',
-          callServerController.changeServer();
-          sendCallMessage(message, callback);
-          return;
+        if (timeoutRetriesCount) {
+          timeoutCallback();
         }
 
         if (typeof callback == 'function') {
@@ -1245,12 +1245,15 @@ function ChatCall(params) {
       callStateController = {
     createSessionInChat: function createSessionInChat(params) {
       currentCallParams = params;
-      var callController = this;
-      sendCallMessage({
+
+      var callController = this,
+          totalRetries = 1,
+          message = {
         id: 'CREATE_SESSION',
         brokerAddress: params.brokerAddress,
         turnAddress: params.turnAddress.split(',')[0]
-      }, function (res) {
+      },
+          onResultCallback = function onResultCallback(res) {
         if (res.done === 'TRUE') {
           callStopQueue.callStarted = true;
           callController.startCall(params);
@@ -1263,7 +1266,17 @@ function ChatCall(params) {
             callId: currentCallId
           });
         }
-      });
+      },
+          onTimeoutCallback = function onTimeoutCallback() {
+        --totalRetries;
+
+        if (callRequestController.imCallOwner || !totalRetries) {//callServerController.changeServer();
+        }
+
+        sendCallMessage(message, onResultCallback, onTimeoutCallback);
+      };
+
+      sendCallMessage(message, onResultCallback, onTimeoutCallback, totalRetries);
     },
     startCall: function startCall(params) {
       var callController = this;
@@ -1281,10 +1294,11 @@ function ChatCall(params) {
         if (callUsers[i].mute !== undefined && !callUsers[i].mute) {
           callController.startParticipantAudio(i);
         }
-      } // setTimeout(()=>{
-      //     callTopicHealthChecker.startTopicsHealthCheck();
-      // }, 20000);
+      }
 
+      setTimeout(function () {
+        callTopicHealthChecker.startTopicsHealthCheck();
+      }, 20000);
     },
     setupCallParticipant: function setupCallParticipant(participant) {
       var user = participant;
@@ -2045,7 +2059,10 @@ function ChatCall(params) {
           },
   */
   callStop = function callStop() {
-    // callTopicHealthChecker.stopTopicsHealthCheck();
+    var resetCallOwner = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+    var resetCurrentCallId = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+    callTopicHealthChecker.stopTopicsHealthCheck();
+
     _deviceManager["default"].mediaStreams().stopVideoInput();
 
     _deviceManager["default"].mediaStreams().stopAudioInput();
@@ -2062,8 +2079,9 @@ function ChatCall(params) {
     callRequestController.cameraPaused = false;
     callRequestController.callEstablishedInMySide = false;
     callRequestController.callRequestReceived = false;
+    if (resetCallOwner) callRequestController.imCallOwner = false;
     currentCallParams = {};
-    currentCallId = null;
+    if (resetCurrentCallId) currentCallId = null;
   },
       restartMediaOnKeyFrame = function restartMediaOnKeyFrame(userId, timeouts) {
     if (callServerController.isJanus()) return;
@@ -2372,7 +2390,7 @@ function ChatCall(params) {
         if (messageContent.callId > 0) {
           if (!currentCallId) {
             currentCallId = messageContent.callId;
-          } else newCallId = messageContent.callId;
+          }
         } else {
           _eventsModule.chatEvents.fireEvent('callEvents', {
             type: 'PARTNER_RECEIVED_YOUR_CALL',
@@ -2431,7 +2449,7 @@ function ChatCall(params) {
 
           if (!currentCallId) {
             currentCallId = messageContent.callId;
-          } else newCallId = messageContent.callId;
+          }
         } else {
           _eventsModule.chatEvents.fireEvent('callEvents', {
             type: 'PARTNER_RECEIVED_YOUR_CALL',
@@ -2442,7 +2460,7 @@ function ChatCall(params) {
         break;
 
       /**
-       * Type 74    Start Call Request
+       * Type 74    Start Call (Start sender and receivers)
        */
 
       case _constants.chatMessageVOTypes.START_CALL:
@@ -2455,8 +2473,7 @@ function ChatCall(params) {
           return;
         }
 
-        callStop();
-        currentCallId = threadId;
+        callStop(false, false);
 
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
@@ -2612,7 +2629,7 @@ function ChatCall(params) {
         if (messageContent.callId > 0) {
           if (!currentCallId) {
             currentCallId = messageContent.callId;
-          } else newCallId = messageContent.callId;
+          }
         }
 
         _eventsModule.chatEvents.fireEvent('callEvents', {
@@ -2877,7 +2894,7 @@ function ChatCall(params) {
           result: messageContent
         });
 
-        if (!currentCallId) currentCallId = messageContent.callId;else newCallId = messageContent.callId; //currentCallId = messageContent.callId;
+        if (!currentCallId) currentCallId = messageContent.callId; //currentCallId = messageContent.callId;
 
         break;
 
@@ -3146,6 +3163,7 @@ function ChatCall(params) {
     callRequestController.cameraPaused = typeof params.cameraPaused === 'boolean' ? params.cameraPaused : false;
     callRequestController.callRequestReceived = true;
     callRequestController.callEstablishedInMySide = true;
+    callRequestController.imCallOwner = true;
 
     if (callNoAnswerTimeout) {
       //TODO: Remove timeout when call ends fast
@@ -3242,6 +3260,7 @@ function ChatCall(params) {
     callRequestController.cameraPaused = typeof params.cameraPaused === 'boolean' ? params.cameraPaused : false;
     callRequestController.callRequestReceived = true;
     callRequestController.callEstablishedInMySide = true;
+    callRequestController.imCallOwner = true;
     return chatMessaging.sendMessage(startCallData, {
       onResult: function onResult(result) {
         callback && callback(result);
@@ -3346,6 +3365,7 @@ function ChatCall(params) {
       return;
     }
 
+    callRequestController.imCallOwner = false;
     callRequestController.callEstablishedInMySide = true;
     return chatMessaging.sendMessage(acceptCallData, {
       onResult: function onResult(result) {

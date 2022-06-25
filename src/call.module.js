@@ -55,7 +55,6 @@ function ChatCall(params) {
             : 180,
         currentCallParams = {},
         currentCallId = null,
-        newCallId = null,
         //shouldReconnectCallTimeout = null,
         callMetaDataTypes = {
             POORCONNECTION: 1,
@@ -75,6 +74,7 @@ function ChatCall(params) {
         },
         callUsers = {},
         callRequestController = {
+            imCallOwner: false,
             callRequestReceived: false,
             callEstablishedInMySide: false,
             iCanAcceptTheCall: function () {
@@ -170,7 +170,7 @@ function ChatCall(params) {
             //     }
             // },
             getCurrentServer: function () {
-                return config.servers[config.currentServerIndex];
+                return config.servers[0]//config.currentServerIndex];
             },
             isJanus: function () {
                 return config.servers[config.currentServerIndex].toLowerCase().substr(0, 1) === 'j';
@@ -180,6 +180,7 @@ function ChatCall(params) {
             },
             changeServer: function () {
                 if(this.canChangeServer()) {
+                    consoleLogging && console.debug('[SDK][changeServer] Changing kurento server...');
                     config.currentServerIndex++;
                 }
             }
@@ -257,6 +258,7 @@ function ChatCall(params) {
             mediaType: params.mediaType,
             direction: params.direction,
             isScreenShare: false,
+            sdpOfferRequestSent: false
         };
 
         const metadataInstance = new topicMetaDataManager({
@@ -431,6 +433,7 @@ function ChatCall(params) {
                         });
                     } else {
                         config.peer.generateOffer((err, sdpOffer) => {
+                            consoleLogging && console.log("[SDK][establishPeerConnection][generateOffer] GenerateOffer:: ", " sdpOffer: ", sdpOffer, " err: ", err);
                             if (err) {
                                 let errorString = "[SDK][start/WebRc " + config.direction + "  " + config.mediaType + " Peer/generateOffer] " + err
                                 console.error(errorString);
@@ -442,7 +445,10 @@ function ChatCall(params) {
                                 });
                                 return;
                             }
-                            manager.sendSDPOfferRequestMessage(sdpOffer, 1);
+                            if(!config.sdpOfferRequestSent) {
+                                config.sdpOfferRequestSent = true;
+                                manager.sendSDPOfferRequestMessage(sdpOffer, 1);
+                            }
                         });
                     }
                 });
@@ -788,6 +794,7 @@ function ChatCall(params) {
                 let manager = this;
                 return new Promise(function (resolve, reject) {
                     if(config.peer) {
+                        config.sdpOfferRequestSent = false;
                         // this.removeTopicIceCandidateInterval();
                         metadataInstance.clearIceCandidateInterval();
                         manager.removeConnectionQualityInterval();
@@ -936,7 +943,7 @@ function ChatCall(params) {
 
         },
 
-        sendCallMessage = function (message, callback) {
+        sendCallMessage = function (message, callback, timeoutRetriesCount = 0, timeoutCallback = null) {
             message.token = token;
 
             let uniqueId;
@@ -982,11 +989,8 @@ function ChatCall(params) {
                         delete chatMessaging.messagesCallbacks[uniqueId];
                     }
 
-                    if(callServerController.canChangeServer() && message.id === 'CREATE_SESSION') {
-                        // 'CREATE_SESSION',
-                        callServerController.changeServer();
-                        sendCallMessage(message, callback);
-                        return;
+                    if(timeoutRetriesCount) {
+                        timeoutCallback();
                     }
 
                     if (typeof callback == 'function') {
@@ -1263,25 +1267,37 @@ function ChatCall(params) {
         callStateController = {
             createSessionInChat: function (params) {
                 currentCallParams = params;
-                let callController = this;
-                sendCallMessage({
-                    id: 'CREATE_SESSION',
-                    brokerAddress: params.brokerAddress,
-                    turnAddress: params.turnAddress.split(',')[0]
-                }, function (res) {
-                    if (res.done === 'TRUE') {
-                        callStopQueue.callStarted = true;
-                        callController.startCall(params);
-                    } else if (res.done === 'SKIP') {
-                        callStopQueue.callStarted = true;
-                        callController.startCall(params);
-                    } else {
-                        consoleLogging && console.log('CREATE_SESSION faced a problem', res);
-                        endCall({
-                            callId: currentCallId
-                        });
-                    }
-                });
+                let callController = this,
+                    totalRetries = 1,
+                    message = {
+                        id: 'CREATE_SESSION',
+                        brokerAddress: params.brokerAddress,
+                        turnAddress: params.turnAddress.split(',')[0]
+                    },
+                    onResultCallback = function (res) {
+                        if (res.done === 'TRUE') {
+                            callStopQueue.callStarted = true;
+                            callController.startCall(params);
+                        } else if (res.done === 'SKIP') {
+                            callStopQueue.callStarted = true;
+                            callController.startCall(params);
+                        } else {
+                            consoleLogging && console.log('CREATE_SESSION faced a problem', res);
+                            endCall({
+                                callId: currentCallId
+                            });
+                        }
+                    },
+                    onTimeoutCallback = () => {
+                        --totalRetries;
+                        if(callRequestController.imCallOwner || !totalRetries) {
+                            //callServerController.changeServer();
+                        }
+
+                        sendCallMessage(message, onResultCallback, onTimeoutCallback);
+                    };
+
+                sendCallMessage(message, onResultCallback, onTimeoutCallback, totalRetries);
             },
             startCall: function (params) {
                 let callController = this;
@@ -1302,9 +1318,9 @@ function ChatCall(params) {
                     }
                 }
 
-                // setTimeout(()=>{
-                //     callTopicHealthChecker.startTopicsHealthCheck();
-                // }, 20000);
+                setTimeout(()=>{
+                    callTopicHealthChecker.startTopicsHealthCheck();
+                }, 20000);
             },
             setupCallParticipant: function (participant) {
                 let user = participant;
@@ -2054,9 +2070,9 @@ function ChatCall(params) {
         },
 */
 
-        callStop = function () {
+        callStop = function (resetCallOwner = true, resetCurrentCallId = true) {
 
-            // callTopicHealthChecker.stopTopicsHealthCheck();
+            callTopicHealthChecker.stopTopicsHealthCheck();
 
             deviceManager.mediaStreams().stopVideoInput();
             deviceManager.mediaStreams().stopAudioInput();
@@ -2073,8 +2089,11 @@ function ChatCall(params) {
             callRequestController.cameraPaused = false;
             callRequestController.callEstablishedInMySide = false;
             callRequestController.callRequestReceived = false;
+            if(resetCallOwner)
+                callRequestController.imCallOwner = false;
             currentCallParams = {};
-            currentCallId = null;
+            if(resetCurrentCallId)
+                currentCallId = null;
         },
 
         restartMediaOnKeyFrame = function (userId, timeouts) {
@@ -2396,8 +2415,7 @@ function ChatCall(params) {
                     if(!currentCallId ) {
                         currentCallId = messageContent.callId;
                     }
-                    else
-                        newCallId = messageContent.callId;
+
                 } else {
                     chatEvents.fireEvent('callEvents', {
                         type: 'PARTNER_RECEIVED_YOUR_CALL',
@@ -2453,8 +2471,6 @@ function ChatCall(params) {
                     if(!currentCallId ) {
                         currentCallId = messageContent.callId;
                     }
-                    else
-                        newCallId = messageContent.callId;
                 } else {
                     chatEvents.fireEvent('callEvents', {
                         type: 'PARTNER_RECEIVED_YOUR_CALL',
@@ -2465,7 +2481,7 @@ function ChatCall(params) {
                 break;
 
             /**
-             * Type 74    Start Call Request
+             * Type 74    Start Call (Start sender and receivers)
              */
             case chatMessageVOTypes.START_CALL:
                 if(!callRequestController.iCanAcceptTheCall()) {
@@ -2476,8 +2492,7 @@ function ChatCall(params) {
                     return;
                 }
 
-                callStop();
-                currentCallId = threadId;
+                callStop(false, false);
 
                 if (chatMessaging.messagesCallbacks[uniqueId]) {
                     chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
@@ -2633,8 +2648,7 @@ function ChatCall(params) {
                     if(!currentCallId ) {
                         currentCallId = messageContent.callId;
                     }
-                    else
-                        newCallId = messageContent.callId;
+
                 }
 
                 chatEvents.fireEvent('callEvents', {
@@ -2903,8 +2917,7 @@ function ChatCall(params) {
 
                 if(!currentCallId)
                     currentCallId = messageContent.callId;
-                else
-                    newCallId = messageContent.callId;
+
 
                 //currentCallId = messageContent.callId;
 
@@ -3181,6 +3194,7 @@ function ChatCall(params) {
         callRequestController.cameraPaused = (typeof params.cameraPaused === 'boolean') ? params.cameraPaused : false;
         callRequestController.callRequestReceived = true;
         callRequestController.callEstablishedInMySide = true;
+        callRequestController.imCallOwner = true;
 
         if(callNoAnswerTimeout) {
             //TODO: Remove timeout when call ends fast
@@ -3275,6 +3289,7 @@ function ChatCall(params) {
         callRequestController.cameraPaused = (typeof params.cameraPaused === 'boolean') ? params.cameraPaused : false;
         callRequestController.callRequestReceived = true;
         callRequestController.callEstablishedInMySide = true;
+        callRequestController.imCallOwner = true;
 
         return chatMessaging.sendMessage(startCallData, {
             onResult: function (result) {
@@ -3374,6 +3389,8 @@ function ChatCall(params) {
             });
             return;
         }
+
+        callRequestController.imCallOwner = false;
         callRequestController.callEstablishedInMySide = true;
         return chatMessaging.sendMessage(acceptCallData, {
             onResult: function (result) {
