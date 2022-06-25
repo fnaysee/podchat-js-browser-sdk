@@ -433,7 +433,7 @@ function ChatCall(params) {
                         });
                     } else {
                         config.peer.generateOffer((err, sdpOffer) => {
-                            consoleLogging && console.log("[SDK][establishPeerConnection][generateOffer] GenerateOffer:: ", " sdpOffer: ", sdpOffer, " err: ", err);
+                            consoleLogging && console.debug("[SDK][establishPeerConnection][generateOffer] GenerateOffer:: ", " sdpOffer: ", sdpOffer, " err: ", err);
                             if (err) {
                                 let errorString = "[SDK][start/WebRc " + config.direction + "  " + config.mediaType + " Peer/generateOffer] " + err
                                 console.error(errorString);

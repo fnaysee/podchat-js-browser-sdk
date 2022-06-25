@@ -234,7 +234,8 @@ function ChatCall(params) {
       topic: params.topic,
       mediaType: params.mediaType,
       direction: params.direction,
-      isScreenShare: false
+      isScreenShare: false,
+      sdpOfferRequestSent: false
     };
     var metadataInstance = new topicMetaDataManager({
       userId: params.userId,
@@ -420,6 +421,8 @@ function ChatCall(params) {
             });
           } else {
             config.peer.generateOffer(function (err, sdpOffer) {
+              consoleLogging && console.debug("[SDK][establishPeerConnection][generateOffer] GenerateOffer:: ", " sdpOffer: ", sdpOffer, " err: ", err);
+
               if (err) {
                 var _errorString = "[SDK][start/WebRc " + config.direction + "  " + config.mediaType + " Peer/generateOffer] " + err;
 
@@ -435,7 +438,10 @@ function ChatCall(params) {
                 return;
               }
 
-              manager.sendSDPOfferRequestMessage(sdpOffer, 1);
+              if (!config.sdpOfferRequestSent) {
+                config.sdpOfferRequestSent = true;
+                manager.sendSDPOfferRequestMessage(sdpOffer, 1);
+              }
             });
           }
         });
@@ -793,7 +799,8 @@ function ChatCall(params) {
         var manager = this;
         return new Promise(function (resolve, reject) {
           if (config.peer) {
-            // this.removeTopicIceCandidateInterval();
+            config.sdpOfferRequestSent = false; // this.removeTopicIceCandidateInterval();
+
             metadataInstance.clearIceCandidateInterval();
             manager.removeConnectionQualityInterval();
 
