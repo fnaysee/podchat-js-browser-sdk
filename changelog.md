@@ -4,7 +4,21 @@ All notable changes to this project will be documented here.
 to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.ir/pod/pod-basic-sdk/chat-js-browser-sdk/-/blob/master/changelog.md)
 
 ##[Unreleased]
+
+## [12.7.1-snapshot.1] - 2022-06-26
+### Added
+- SDK parameter: typeCodeOwnerId
+- object: deviceManager
+- method: deviceManager.grantUserMediaDevicesPermissions
+- event type: SWITCH_TO_GROUP_CALL
+- healthCehck for peer connections
+- Possibility to know if we are the call starter
+- Reset SDK internal data when starting a new call
+
+### Changed
 - Do not process some chat messages when subjectId is not equal to current callId
+- Do not change kurento retry the request instead
+
 
 ## [12.6.0] - 2022-06-16
 ### Fixed
