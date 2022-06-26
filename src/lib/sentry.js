@@ -8,7 +8,8 @@ function initSentry(SDKParams) {
     Sentry.setContext("Chat Params", SDKParams);
     Sentry.setTag("sdk.details", "js browser");
     Sentry.setTag("client.name", SDKParams.clientName);
-
+    Sentry.setTag("client.typeCode", SDKParams.typeCode);
+    Sentry.setTag("client.typeCodeOwnerId", SDKParams.typeCodeOwnerId);
 }
 export {initSentry}
 export default Sentry;

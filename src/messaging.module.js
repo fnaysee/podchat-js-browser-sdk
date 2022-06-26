@@ -19,6 +19,7 @@ import Utility from "./utility/utility"
             messageTtl = params.messageTtl,
             serverName = params.serverName,
             msgPriority = params.msgPriority,
+            typeCodeOwnerId = params.typeCodeOwnerId || null,
             token = params.token;
 
         this.threadCallbacks = {};
@@ -88,10 +89,18 @@ import Utility from "./utility/utility"
                 tokenIssuer: 1
             };
 
-            if (params.typeCode) {
+            if (params.typeCode || generalTypeCode) {
+                messageVO.typeCode = generalTypeCode;//params.typeCode;
+            }
+
+            /*if (params.typeCode) {
                 messageVO.typeCode = params.typeCode;
             } else if (generalTypeCode) {
                 messageVO.typeCode = generalTypeCode;
+            }*/
+
+            if(typeCodeOwnerId) {
+                messageVO.ownerId = typeCodeOwnerId;
             }
 
             if (params.messageType) {
