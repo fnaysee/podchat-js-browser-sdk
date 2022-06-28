@@ -404,6 +404,8 @@ function ChatCall(params) {
 
                 config.state = peerStates.CONNECTING;
                 config.peer = new KurentoUtils.WebRtcPeer[WebRtcFunction](options, function (err) {
+                    consoleLogging && console.debug("[SDK][establishPeerConnection][KurentoUtils.WebRtcPeer][WebRtcFunction]: ", {options}, "userId: ", config.userId, "topic: ", config.topic, "direction: ", config.direction);
+
                     if (err) {
                         let errorString = "[SDK][start/webRtc " + config.direction + "  " + config.mediaType + " Peer] Error: " + explainUserMediaError(err, config.mediaType);
                         console.error(errorString);
@@ -470,12 +472,11 @@ function ChatCall(params) {
                 });
             },
             watchRTCPeerConnection: function () {
-                consoleLogging && console.log("[SDK][watchRTCPeerConnection] called with: ", config.userId, config.topic, config.mediaType, config.direction);
+                consoleLogging && console.log("[SDK][watchRTCPeerConnection] called with: ", "userId: ", config.userId, "topic: ", config.topic, "mediaType: ", config.mediaType, "direction: ", config.direction);
                 let manager = this,
                     user = callUsers[config.userId];
 
-                consoleLogging && console.log("[SDK][watchRTCPeerConnection] called with: ", callUsers, user);
-
+                // consoleLogging && console.log("[SDK][watchRTCPeerConnection] called with: ", callUsers, user);
                 config.peer.peerConnection.onconnectionstatechange = function () {
                     if(!user || !config.peer) {
                         return; //avoid log errors
@@ -785,6 +786,7 @@ function ChatCall(params) {
                 }
 
                 this.generateSdpOfferOptions().then(function (options) {
+                    consoleLogging && console.debug("[SDK][generateSdpOfferOptions] Options for this request have been resolved: ", {options}, "userId: ", config.userId, "topic: ", config.topic, "direction: ", config.direction);
                     manager.establishPeerConnection(options);
                 }).catch(error => {
                     console.error(error)

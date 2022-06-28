@@ -389,6 +389,10 @@ function ChatCall(params) {
 
         config.state = peerStates.CONNECTING;
         config.peer = new _kurentoUtils["default"].WebRtcPeer[WebRtcFunction](options, function (err) {
+          consoleLogging && console.debug("[SDK][establishPeerConnection][KurentoUtils.WebRtcPeer][WebRtcFunction]: ", {
+            options: options
+          }, "userId: ", config.userId, "topic: ", config.topic, "direction: ", config.direction);
+
           if (err) {
             var errorString = "[SDK][start/webRtc " + config.direction + "  " + config.mediaType + " Peer] Error: " + explainUserMediaError(err, config.mediaType);
             console.error(errorString);
@@ -463,10 +467,9 @@ function ChatCall(params) {
         });
       },
       watchRTCPeerConnection: function watchRTCPeerConnection() {
-        consoleLogging && console.log("[SDK][watchRTCPeerConnection] called with: ", config.userId, config.topic, config.mediaType, config.direction);
+        consoleLogging && console.log("[SDK][watchRTCPeerConnection] called with: ", "userId: ", config.userId, "topic: ", config.topic, "mediaType: ", config.mediaType, "direction: ", config.direction);
         var manager = this,
-            user = callUsers[config.userId];
-        consoleLogging && console.log("[SDK][watchRTCPeerConnection] called with: ", callUsers, user);
+            user = callUsers[config.userId]; // consoleLogging && console.log("[SDK][watchRTCPeerConnection] called with: ", callUsers, user);
 
         config.peer.peerConnection.onconnectionstatechange = function () {
           if (!user || !config.peer) {
@@ -790,6 +793,9 @@ function ChatCall(params) {
         }
 
         this.generateSdpOfferOptions().then(function (options) {
+          consoleLogging && console.debug("[SDK][generateSdpOfferOptions] Options for this request have been resolved: ", {
+            options: options
+          }, "userId: ", config.userId, "topic: ", config.topic, "direction: ", config.direction);
           manager.establishPeerConnection(options);
         })["catch"](function (error) {
           console.error(error);
