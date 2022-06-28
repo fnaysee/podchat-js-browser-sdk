@@ -5,6 +5,10 @@ to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.i
 
 ##[Unreleased]
 
+## [12.7.1-snapshot.2] - 2022-06-26
+### Fixed
+- bug in shouldNotProcessChatMessage
+
 ## [12.7.1-snapshot.1] - 2022-06-26
 ### Added
 - SDK parameter: typeCodeOwnerId

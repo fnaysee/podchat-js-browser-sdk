@@ -2366,7 +2366,7 @@ function ChatCall(params) {
   function shouldNotProcessChatMessage(type, threadId) {
     var restrictedMessageTypes = [_constants.chatMessageVOTypes.MUTE_CALL_PARTICIPANT, _constants.chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT, _constants.chatMessageVOTypes.CALL_PARTICIPANT_JOINED, _constants.chatMessageVOTypes.REMOVE_CALL_PARTICIPANT, _constants.chatMessageVOTypes.RECONNECT, _constants.chatMessageVOTypes.LEAVE_CALL, _constants.chatMessageVOTypes.TURN_OFF_VIDEO_CALL, _constants.chatMessageVOTypes.TURN_ON_VIDEO_CALL, _constants.chatMessageVOTypes.DESTINED_RECORD_CALL, _constants.chatMessageVOTypes.RECORD_CALL, _constants.chatMessageVOTypes.END_RECORD_CALL, _constants.chatMessageVOTypes.TERMINATE_CALL, _constants.chatMessageVOTypes.END_CALL];
 
-    if ((!currentCallId || currentCallId && threadId !== currentCallId) && restrictedMessageTypes.includes(type)) {
+    if ((!currentCallId || currentCallId && threadId != currentCallId) && restrictedMessageTypes.includes(type)) {
       // if(!currentCallId && threadId !== currentCallId && restrictedMessageTypes.includes(type)){
       return true;
     } else {

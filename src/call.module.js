@@ -2378,7 +2378,7 @@ function ChatCall(params) {
             chatMessageVOTypes.END_CALL
         ];
 
-        if((!currentCallId || currentCallId && threadId !== currentCallId) && restrictedMessageTypes.includes(type)){
+        if((!currentCallId || currentCallId && threadId != currentCallId) && restrictedMessageTypes.includes(type)){
         // if(!currentCallId && threadId !== currentCallId && restrictedMessageTypes.includes(type)){
             return true;
         } else {
