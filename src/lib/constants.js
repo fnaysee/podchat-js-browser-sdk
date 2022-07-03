@@ -117,6 +117,7 @@ const chatMessageVOTypes = {
     EXPORT_CHAT: 152,
     ADD_CONTACTS: 200,
     SWITCH_TO_GROUP_CALL_REQUEST: 221,
+    RECORD_CALL_STARTED: 222,
     ERROR: 999
 };
 

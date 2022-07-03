@@ -1212,7 +1212,7 @@ function ChatCall(params) {
 
       if (params.recordingOwner) {
         _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'START_RECORDING_CALL',
+          type: 'CALL_RECORDING_STARTED',
           result: {
             id: params.recordingOwner
           }
@@ -3101,6 +3101,22 @@ function ChatCall(params) {
           type: 'SWITCH_TO_GROUP_CALL',
           result: messageContent //contains: isGroup, callId, threadId
 
+        });
+
+        break;
+
+      /**
+       * Type 222    Call Recording Started
+       */
+
+      case _constants.chatMessageVOTypes.RECORD_CALL_STARTED:
+        if (chatMessaging.messagesCallbacks[uniqueId]) {
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+        }
+
+        _eventsModule.chatEvents.fireEvent('callEvents', {
+          type: 'CALL_RECORDING_STARTED',
+          result: messageContent
         });
 
         break;
