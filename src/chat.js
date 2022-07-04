@@ -2777,6 +2777,7 @@ function Chat(params) {
                 case chatMessageVOTypes.MUTE_CALL_PARTICIPANT:
                 case chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT:
                 case chatMessageVOTypes.RECORD_CALL:
+                case chatMessageVOTypes.RECORD_CALL_STARTED:
                 case chatMessageVOTypes.END_RECORD_CALL:
                 case chatMessageVOTypes.START_SCREEN_SHARE:
                 case chatMessageVOTypes.END_SCREEN_SHARE:

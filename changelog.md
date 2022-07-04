@@ -5,6 +5,10 @@ to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.i
 
 ##[Unreleased]
 
+## [12.7.1-snapshot.3] - 2022-06-26
+### Added
+- event type: CALL_RECORDING_STARTED
+
 ## [12.7.1-snapshot.2] - 2022-06-26
 ### Fixed
 - bug in shouldNotProcessChatMessage

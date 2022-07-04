@@ -2373,6 +2373,7 @@ function ChatCall(params) {
             chatMessageVOTypes.TURN_ON_VIDEO_CALL,
             chatMessageVOTypes.DESTINED_RECORD_CALL,
             chatMessageVOTypes.RECORD_CALL,
+            chatMessageVOTypes.RECORD_CALL_STARTED,
             chatMessageVOTypes.END_RECORD_CALL,
             chatMessageVOTypes.TERMINATE_CALL,
             chatMessageVOTypes.END_CALL
