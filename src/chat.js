@@ -1,12 +1,9 @@
 'use strict';
-/**
- * POD Chat Browser
- */
+
 import Async from "podasync-ws-only"
 import Utility from "./utility/utility"
 import Dexie from "dexie"
 import Sentry, {initSentry} from "./lib/sentry.js"
-// import Sentry from "@sentry/browser"
 import ChatCall from "./call.module"
 import ChatEvents, { initEventHandler, chatEvents } from "./events.module"
 import ChatMessaging from "./messaging.module"
@@ -20,16 +17,10 @@ import {
     systemMessageTypes,
     imageMimeTypes,
     imageExtentions
-} from "./lib/constants"
+} from "./lib/constants";
+
 import deviceManager from "./lib/call/deviceManager.js";
 
-/***
- * Pod Chat Browser Module
- *
- * @module chat
- *
- * @param {Object} params
- */
 function Chat(params) {
     initSentry(params);
     /*******************************************************
