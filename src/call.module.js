@@ -2501,6 +2501,7 @@ function ChatCall(params) {
                     chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                 }
 
+                messageContent.callId = threadId;
                 chatEvents.fireEvent('callEvents', {
                     type: 'CALL_STARTED',
                     result: messageContent
