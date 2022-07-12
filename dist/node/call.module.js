@@ -3196,30 +3196,45 @@ function ChatCall(params) {
     callRequestController.callEstablishedInMySide = true;
     callRequestController.imCallOwner = true;
 
-    if (callNoAnswerTimeout) {
-      //TODO: Remove timeout when call ends fast
-      setTimeout(function (metaData) {
-        //Reject the call if participant didn't answer
-        if (!callStopQueue.callStarted) {
-          _eventsModule.chatEvents.fireEvent("callEvents", {
-            type: "CALL_NO_ANSWER_TIMEOUT",
-            message: "[CALL_SESSION_CREATED] Call request timed out, No answer"
-          });
-
-          metaData.callInstance.rejectCall({
-            callId: metaData.currentCallId
-          });
-        }
-      }, callNoAnswerTimeout, {
-        callInstance: currentModuleInstance,
-        currentCallId: currentCallId
-      });
-    }
-
-    return chatMessaging.sendMessage(startCallData, {
-      onResult: function onResult(result) {
-        callback && callback(result);
+    _deviceManager["default"].grantUserMediaDevicesPermissions({
+      video: params.type == 'video',
+      audio: !params.mute,
+      closeStream: true
+    }, function (result) {
+      if (result.hasError) {
+        callback && callback({
+          hasError: true,
+          errorCode: null,
+          errorMessage: error
+        });
+        return;
       }
+
+      if (callNoAnswerTimeout) {
+        //TODO: Remove timeout when call ends fast
+        setTimeout(function (metaData) {
+          //Reject the call if participant didn't answer
+          if (!callStopQueue.callStarted) {
+            _eventsModule.chatEvents.fireEvent("callEvents", {
+              type: "CALL_NO_ANSWER_TIMEOUT",
+              message: "[CALL_SESSION_CREATED] Call request timed out, No answer"
+            });
+
+            metaData.callInstance.rejectCall({
+              callId: metaData.currentCallId
+            });
+          }
+        }, callNoAnswerTimeout, {
+          callInstance: currentModuleInstance,
+          currentCallId: currentCallId
+        });
+      }
+
+      chatMessaging.sendMessage(startCallData, {
+        onResult: function onResult(result) {
+          callback && callback(result);
+        }
+      });
     });
   };
 
@@ -3292,10 +3307,46 @@ function ChatCall(params) {
     callRequestController.callRequestReceived = true;
     callRequestController.callEstablishedInMySide = true;
     callRequestController.imCallOwner = true;
-    return chatMessaging.sendMessage(startCallData, {
-      onResult: function onResult(result) {
-        callback && callback(result);
+
+    _deviceManager["default"].grantUserMediaDevicesPermissions({
+      video: params.type == 'video',
+      audio: !params.mute,
+      closeStream: true
+    }, function (result) {
+      if (result.hasError) {
+        callback && callback({
+          hasError: true,
+          errorCode: null,
+          errorMessage: error
+        });
+        return;
       }
+
+      if (callNoAnswerTimeout) {
+        //TODO: Remove timeout when call ends fast
+        setTimeout(function (metaData) {
+          //Reject the call if participant didn't answer
+          if (!callStopQueue.callStarted) {
+            _eventsModule.chatEvents.fireEvent("callEvents", {
+              type: "CALL_NO_ANSWER_TIMEOUT",
+              message: "[CALL_SESSION_CREATED] Call request timed out, No answer"
+            });
+
+            metaData.callInstance.rejectCall({
+              callId: metaData.currentCallId
+            });
+          }
+        }, callNoAnswerTimeout, {
+          callInstance: currentModuleInstance,
+          currentCallId: currentCallId
+        });
+      }
+
+      chatMessaging.sendMessage(startCallData, {
+        onResult: function onResult(result) {
+          callback && callback(result);
+        }
+      });
     });
   };
 
@@ -3398,10 +3449,26 @@ function ChatCall(params) {
 
     callRequestController.imCallOwner = false;
     callRequestController.callEstablishedInMySide = true;
-    return chatMessaging.sendMessage(acceptCallData, {
-      onResult: function onResult(result) {
-        callback && callback(result);
+
+    _deviceManager["default"].grantUserMediaDevicesPermissions({
+      video: params.video,
+      audio: !params.mute,
+      closeStream: true
+    }, function (result) {
+      if (result.hasError) {
+        callback && callback({
+          hasError: true,
+          errorCode: null,
+          errorMessage: error
+        });
+        return;
       }
+
+      chatMessaging.sendMessage(acceptCallData, {
+        onResult: function onResult(result) {
+          callback && callback(result);
+        }
+      });
     });
   };
 
