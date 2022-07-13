@@ -5,6 +5,21 @@ to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.i
 
 ##[Unreleased]
 
+## [12.7.1-snapshot.5] - 2022-07-13
+### Added
+- Property: callId to event type: CALL_PARTICIPANT_LEFT
+- Grant permissions internally in methods startCall, startGroupCall, acceptCall
+
+### Changed
+- Improved LEAVE_CALL handling
+
+## [12.7.1-snapshot.4] - 2022-07-04
+### Added
+- Property: callId to event type: CALL_STARTED
+
+### Changed
+- Removed contentCount from hasNext calculation in getThreads and getHistory
+
 ## [12.7.1-snapshot.3] - 2022-07-04
 ### Added
 - event type: CALL_RECORDING_STARTED
