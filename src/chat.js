@@ -4396,6 +4396,14 @@ function Chat(params) {
                     content.partnerCoreContactId = whereClause.partnerCoreContactId = params.partnerCoreContactId;
                 }
 
+                if (parseInt(params.fromTime) > 0 && parseInt(params.fromTime) < 9999999999999) {
+                    content.fromTime = parseInt(params.fromTime);
+                }
+
+                if (parseInt(params.toTime) > 0 && parseInt(params.toTime) < 9999999999999) {
+                    content.toTime = parseInt(params.toTime);
+                }
+
                 var functionLevelCache = (typeof params.cache == 'boolean') ? params.cache : true;
             }
 
