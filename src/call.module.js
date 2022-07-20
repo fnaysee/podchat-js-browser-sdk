@@ -1825,11 +1825,12 @@ function ChatCall(params) {
             });
         },
 
-        restartMedia = function (videoTopicParam) {
-            if (currentCallParams && Object.keys(currentCallParams).length) {
+        restartMedia = function (videoTopicName) {
+            if (currentCallParams && Object.keys(currentCallParams).length && !callRequestController.cameraPaused) {
+
                 consoleLogging && console.log('[SDK] Sending Key Frame ...');
 
-                let videoTopic = !!videoTopicParam ? videoTopicParam : callUsers[chatMessaging.userInfo.id].videoTopicName;
+                let videoTopic = !!videoTopicName ? videoTopicName : callUsers[chatMessaging.userInfo.id].videoTopicName;
                 let videoElement = document.getElementById(`uiRemoteVideo-${videoTopic}`);
 
                 if (videoElement) {
@@ -2074,7 +2075,7 @@ function ChatCall(params) {
         },
 */
 
-        callStop = function (resetCallOwner = true, resetCurrentCallId = true) {
+        callStop = function (resetCallOwner = true, resetCurrentCallId = true, resetCameraPaused = true) {
 
             callTopicHealthChecker.stopTopicsHealthCheck();
 
@@ -2090,7 +2091,8 @@ function ChatCall(params) {
                 callStopQueue.callStarted = false;
             }
 
-            callRequestController.cameraPaused = false;
+            if(resetCameraPaused)
+                callRequestController.cameraPaused = false;
             callRequestController.callEstablishedInMySide = false;
             callRequestController.callRequestReceived = false;
             if(resetCallOwner)
@@ -2497,7 +2499,7 @@ function ChatCall(params) {
                     return;
                 }
 
-                callStop(false, false);
+                callStop(false, false, false);
 
                 if (chatMessaging.messagesCallbacks[uniqueId]) {
                     chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));

@@ -1831,58 +1831,60 @@ function ChatCall(params) {
       }
     });
   },
-      restartMedia = function restartMedia(videoTopicParam) {
-    if (currentCallParams && Object.keys(currentCallParams).length) {
-      consoleLogging && console.log('[SDK] Sending Key Frame ...');
-      var videoTopic = !!videoTopicParam ? videoTopicParam : callUsers[chatMessaging.userInfo.id].videoTopicName;
-      var videoElement = document.getElementById("uiRemoteVideo-".concat(videoTopic));
+      restartMedia = function restartMedia(videoTopicName) {
+    if (!currentCallParams || !Object.keys(currentCallParams).length || callRequestController.cameraPaused) {
+      return;
+    }
 
-      if (videoElement) {
-        var videoTrack = videoElement.srcObject.getTracks()[0];
+    consoleLogging && console.log('[SDK] Sending Key Frame ...');
+    var videoTopic = !!videoTopicName ? videoTopicName : callUsers[chatMessaging.userInfo.id].videoTopicName;
+    var videoElement = document.getElementById("uiRemoteVideo-".concat(videoTopic));
 
-        if (navigator && !!navigator.userAgent.match(/firefox/gi)) {
-          videoTrack.enable = false;
-          var newWidth = callVideoMinWidth - (Math.ceil(Math.random() * 50) + 20);
-          var newHeight = callVideoMinHeight - (Math.ceil(Math.random() * 50) + 20);
-          videoTrack.applyConstraints({
-            // width: {
-            //     min: newWidth,
-            //     ideal: 1280
-            // },
-            // height: {
-            //     min: newHeight,
-            //     ideal: 720
-            // },
-            advanced: [{
-              width: newWidth,
-              height: newHeight
-            }, {
-              aspectRatio: 1.333
-            }]
-          }).then(function (res) {
-            videoTrack.enabled = true;
-            setTimeout(function () {
-              videoTrack.applyConstraints({
-                "width": callVideoMinWidth,
-                "height": callVideoMinHeight
-              });
-            }, 500);
-          })["catch"](function (e) {
-            return consoleLogging && console.log(e);
-          });
-        } else {
-          videoTrack.applyConstraints({
-            "width": callVideoMinWidth - (Math.ceil(Math.random() * 5) + 5)
-          }).then(function (res) {
-            setTimeout(function () {
-              videoTrack.applyConstraints({
-                "width": callVideoMinWidth
-              });
-            }, 500);
-          })["catch"](function (e) {
-            return consoleLogging && console.log(e);
-          });
-        }
+    if (videoElement) {
+      var videoTrack = videoElement.srcObject.getTracks()[0];
+
+      if (navigator && !!navigator.userAgent.match(/firefox/gi)) {
+        videoTrack.enable = false;
+        var newWidth = callVideoMinWidth - (Math.ceil(Math.random() * 50) + 20);
+        var newHeight = callVideoMinHeight - (Math.ceil(Math.random() * 50) + 20);
+        videoTrack.applyConstraints({
+          // width: {
+          //     min: newWidth,
+          //     ideal: 1280
+          // },
+          // height: {
+          //     min: newHeight,
+          //     ideal: 720
+          // },
+          advanced: [{
+            width: newWidth,
+            height: newHeight
+          }, {
+            aspectRatio: 1.333
+          }]
+        }).then(function (res) {
+          videoTrack.enabled = true;
+          setTimeout(function () {
+            videoTrack.applyConstraints({
+              "width": callVideoMinWidth,
+              "height": callVideoMinHeight
+            });
+          }, 500);
+        })["catch"](function (e) {
+          return consoleLogging && console.log(e);
+        });
+      } else {
+        videoTrack.applyConstraints({
+          "width": callVideoMinWidth - (Math.ceil(Math.random() * 5) + 5)
+        }).then(function (res) {
+          setTimeout(function () {
+            videoTrack.applyConstraints({
+              "width": callVideoMinWidth
+            });
+          }, 500);
+        })["catch"](function (e) {
+          return consoleLogging && console.log(e);
+        });
       }
     }
   },
@@ -2077,6 +2079,7 @@ function ChatCall(params) {
   callStop = function callStop() {
     var resetCallOwner = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
     var resetCurrentCallId = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+    var resetCameraPaused = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
     callTopicHealthChecker.stopTopicsHealthCheck();
 
     _deviceManager["default"].mediaStreams().stopVideoInput();
@@ -2092,7 +2095,7 @@ function ChatCall(params) {
       callStopQueue.callStarted = false;
     }
 
-    callRequestController.cameraPaused = false;
+    if (resetCameraPaused) callRequestController.cameraPaused = false;
     callRequestController.callEstablishedInMySide = false;
     callRequestController.callRequestReceived = false;
     if (resetCallOwner) callRequestController.imCallOwner = false;
@@ -2489,7 +2492,7 @@ function ChatCall(params) {
           return;
         }
 
-        callStop(false, false);
+        callStop(false, false, false);
 
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
