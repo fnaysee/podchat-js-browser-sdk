@@ -13679,7 +13679,7 @@ function Chat(params) {
                 line += new Date(result[i].time).toLocaleTimeString('fa-IR') + ',';
                 line += sender;
                 line += result[i].participant.username + ',';
-                line += '"' + result[i].message + '",';
+                line += '"' + result[i].message.replaceAll(",", "،").replaceAll('"', '”') + '",';
                 // line += result[i].message.replaceAll(",", ".").replace(/(\r\n|\n|\r)/gm, " ") + ',';
                 str += line + '\r\n';
                 radif++;
