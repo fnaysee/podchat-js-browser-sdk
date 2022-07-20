@@ -5,6 +5,17 @@ to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.i
 
 ##[Unreleased]
 
+## [12.7.1-snapshot.6] - 2022-07-20
+### Added
+- Parameters: fromTime, toTime in method: getThreads
+
+### Changed
+- exportChat supports multiline texts and enhanced its exports for special chars
+
+### Fixed
+- Bug in method acceptCall parameter cameraPaused didn't work after new changes
+- Resolved userInfo exception in method uploadFileToPodspaceUserGroupNew
+
 ## [12.7.1-snapshot.5] - 2022-07-13
 ### Added
 - Property: callId to event type: CALL_PARTICIPANT_LEFT
