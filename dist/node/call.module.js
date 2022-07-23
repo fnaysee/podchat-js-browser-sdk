@@ -74,8 +74,8 @@ function ChatCall(params) {
     callStarted: false
   },
       callServerController = new callServerManager(),
-      callTopicHealthChecker = new peersHealthChecker(),
-      messageTtl = params.messageTtl || 10000,
+      //callTopicHealthChecker = new peersHealthChecker(),
+  messageTtl = params.messageTtl || 10000,
       config = {
     getHistoryCount: 50
   },
@@ -759,11 +759,13 @@ function ChatCall(params) {
               id: 'STOP',
               topic: config.topic
             }, function (result) {
-              if (result.done === 'TRUE') {
+              if (result.done === 'TRUE' || result.done === 'SKIP') {
                 manager.reconnectTopic();
-              } else if (result.done === 'SKIP') {
-                manager.reconnectTopic();
-              } else {
+              }
+              /* else if (result.done === 'SKIP') {
+               manager.reconnectTopic();
+              } */
+              else {
                 consoleLogging && console.log('STOP topic faced a problem', result);
                 endCall({
                   callId: currentCallId
@@ -863,7 +865,7 @@ function ChatCall(params) {
       if (!callUsers || !callUsers.length) return;
       callUsers.forEach(function (user) {
         if (user.video) {
-          if (user.videoTopicManager && !user.videoTopicManager.isPeerConnecting() && (user.videoTopicManager.isPeerFailed() || user.videoTopicManager.isPeerDisconnected())) {
+          if (user.videoTopicManager && (user.videoTopicManager.isPeerFailed() || user.videoTopicManager.isPeerDisconnected())) {
             user.videoTopicManager.removeTopic().then(function () {
               user.videoTopicManager.createTopic();
             });
@@ -1310,11 +1312,10 @@ function ChatCall(params) {
         if (callUsers[i].mute !== undefined && !callUsers[i].mute) {
           callController.startParticipantAudio(i);
         }
-      }
+      } // setTimeout(()=>{
+      //     callTopicHealthChecker.startTopicsHealthCheck();
+      // }, 20000);
 
-      setTimeout(function () {
-        callTopicHealthChecker.startTopicsHealthCheck();
-      }, 20000);
     },
     setupCallParticipant: function setupCallParticipant(participant) {
       var user = participant;
@@ -1832,59 +1833,57 @@ function ChatCall(params) {
     });
   },
       restartMedia = function restartMedia(videoTopicName) {
-    if (!currentCallParams || !Object.keys(currentCallParams).length || callRequestController.cameraPaused) {
-      return;
-    }
+    if (currentCallParams && Object.keys(currentCallParams).length && !callRequestController.cameraPaused) {
+      consoleLogging && console.log('[SDK] Sending Key Frame ...');
+      var videoTopic = !!videoTopicName ? videoTopicName : callUsers[chatMessaging.userInfo.id].videoTopicName;
+      var videoElement = document.getElementById("uiRemoteVideo-".concat(videoTopic));
 
-    consoleLogging && console.log('[SDK] Sending Key Frame ...');
-    var videoTopic = !!videoTopicName ? videoTopicName : callUsers[chatMessaging.userInfo.id].videoTopicName;
-    var videoElement = document.getElementById("uiRemoteVideo-".concat(videoTopic));
+      if (videoElement) {
+        var videoTrack = videoElement.srcObject.getTracks()[0];
 
-    if (videoElement) {
-      var videoTrack = videoElement.srcObject.getTracks()[0];
-
-      if (navigator && !!navigator.userAgent.match(/firefox/gi)) {
-        videoTrack.enable = false;
-        var newWidth = callVideoMinWidth - (Math.ceil(Math.random() * 50) + 20);
-        var newHeight = callVideoMinHeight - (Math.ceil(Math.random() * 50) + 20);
-        videoTrack.applyConstraints({
-          // width: {
-          //     min: newWidth,
-          //     ideal: 1280
-          // },
-          // height: {
-          //     min: newHeight,
-          //     ideal: 720
-          // },
-          advanced: [{
-            width: newWidth,
-            height: newHeight
-          }, {
-            aspectRatio: 1.333
-          }]
-        }).then(function (res) {
-          videoTrack.enabled = true;
-          setTimeout(function () {
-            videoTrack.applyConstraints({
-              "width": callVideoMinWidth,
-              "height": callVideoMinHeight
-            });
-          }, 500);
-        })["catch"](function (e) {
-          return consoleLogging && console.log(e);
-        });
-      } else {
-        videoTrack.applyConstraints({
-          "width": callVideoMinWidth - (Math.ceil(Math.random() * 5) + 5)
-        }).then(function (res) {
-          setTimeout(function () {
-            videoTrack.applyConstraints({
-              "width": callVideoMinWidth
-            });
-          }, 500);
-        })["catch"](function (e) {
-          return consoleLogging && console.log(e);
-        });
+        if (navigator && !!navigator.userAgent.match(/firefox/gi)) {
+          videoTrack.enable = false;
+          var newWidth = callVideoMinWidth - (Math.ceil(Math.random() * 50) + 20);
+          var newHeight = callVideoMinHeight - (Math.ceil(Math.random() * 50) + 20);
+          videoTrack.applyConstraints({
+            // width: {
+            //     min: newWidth,
+            //     ideal: 1280
+            // },
+            // height: {
+            //     min: newHeight,
+            //     ideal: 720
+            // },
+            advanced: [{
+              width: newWidth,
+              height: newHeight
+            }, {
+              aspectRatio: 1.333
+            }]
+          }).then(function (res) {
+            videoTrack.enabled = true;
+            setTimeout(function () {
+              videoTrack.applyConstraints({
+                "width": callVideoMinWidth,
+                "height": callVideoMinHeight
+              });
+            }, 500);
+          })["catch"](function (e) {
+            return consoleLogging && console.log(e);
+          });
+        } else {
+          videoTrack.applyConstraints({
+            "width": callVideoMinWidth - (Math.ceil(Math.random() * 5) + 5)
+          }).then(function (res) {
+            setTimeout(function () {
+              videoTrack.applyConstraints({
+                "width": callVideoMinWidth
+              });
+            }, 500);
+          })["catch"](function (e) {
+            return consoleLogging && console.log(e);
+          });
+        }
       }
     }
   },
@@ -2080,8 +2079,8 @@ function ChatCall(params) {
     var resetCallOwner = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
     var resetCurrentCallId = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
     var resetCameraPaused = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
-    callTopicHealthChecker.stopTopicsHealthCheck();
 
+    // callTopicHealthChecker.stopTopicsHealthCheck();
     _deviceManager["default"].mediaStreams().stopVideoInput();
 
     _deviceManager["default"].mediaStreams().stopAudioInput();
@@ -2724,22 +2723,29 @@ function ChatCall(params) {
         }
 
         if (Array.isArray(messageContent)) {
-          for (var i in messageContent) {
+          var _loop2 = function _loop2(i) {
             var correctedData = {
               video: messageContent[i].video,
               mute: messageContent[i].mute,
               userId: messageContent[i].userId,
               topicSend: messageContent[i].sendTopic
             };
-            callStateController.setupCallParticipant(correctedData);
+            callStateController.removeParticipant(correctedData.userId);
+            setTimeout(function () {
+              callStateController.setupCallParticipant(correctedData);
 
-            if (correctedData.video) {
-              callStateController.startParticipantVideo(correctedData.userId);
-            }
+              if (correctedData.video) {
+                callStateController.startParticipantVideo(correctedData.userId);
+              }
 
-            if (!correctedData.mute) {
-              callStateController.startParticipantAudio(correctedData.userId);
-            }
+              if (!correctedData.mute) {
+                callStateController.startParticipantAudio(correctedData.userId);
+              }
+            }, 500);
+          };
+
+          for (var i in messageContent) {
+            _loop2(i);
           }
         }
 

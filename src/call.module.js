@@ -86,7 +86,7 @@ function ChatCall(params) {
             callStarted: false,
         },
         callServerController = new callServerManager(),
-        callTopicHealthChecker = new peersHealthChecker(),
+        //callTopicHealthChecker = new peersHealthChecker(),
         messageTtl = params.messageTtl || 10000,
         config = {
             getHistoryCount: 50
@@ -457,6 +457,7 @@ function ChatCall(params) {
             },
             sendSDPOfferRequestMessage: function (sdpOffer, retries) {
                 let manager = this;
+
                 sendCallMessage({
                     id: (config.direction === 'send' ? 'SEND_SDP_OFFER' : 'RECIVE_SDP_OFFER'),
                     sdpOffer: sdpOffer,
@@ -752,11 +753,11 @@ function ChatCall(params) {
                             id: 'STOP',
                             topic: config.topic
                         }, function (result) {
-                            if (result.done === 'TRUE') {
+                            if (result.done === 'TRUE' || result.done === 'SKIP') {
                                 manager.reconnectTopic();
-                            } else if (result.done === 'SKIP') {
+                            } /* else if (result.done === 'SKIP') {
                                manager.reconnectTopic();
-                            } else {
+                            } */ else {
                                 consoleLogging && console.log('STOP topic faced a problem', result);
                                 endCall({
                                     callId: currentCallId
@@ -860,7 +861,6 @@ function ChatCall(params) {
             callUsers.forEach(user => {
                 if(user.video) {
                     if(user.videoTopicManager
-                        && !user.videoTopicManager.isPeerConnecting()
                         && (user.videoTopicManager.isPeerFailed() || user.videoTopicManager.isPeerDisconnected())) {
 
                         user.videoTopicManager.removeTopic().then(()=>{
@@ -941,9 +941,7 @@ function ChatCall(params) {
         }
     }
 
-    let init = function () {
-
-        },
+    let init = function () {},
 
         sendCallMessage = function (message, callback, timeoutRetriesCount = 0, timeoutCallback = null) {
             message.token = token;
@@ -1322,9 +1320,9 @@ function ChatCall(params) {
                     }
                 }
 
-                setTimeout(()=>{
-                    callTopicHealthChecker.startTopicsHealthCheck();
-                }, 20000);
+                // setTimeout(()=>{
+                //     callTopicHealthChecker.startTopicsHealthCheck();
+                // }, 20000);
             },
             setupCallParticipant: function (participant) {
                 let user = participant;
@@ -2077,7 +2075,7 @@ function ChatCall(params) {
 
         callStop = function (resetCallOwner = true, resetCurrentCallId = true, resetCameraPaused = true) {
 
-            callTopicHealthChecker.stopTopicsHealthCheck();
+            // callTopicHealthChecker.stopTopicsHealthCheck();
 
             deviceManager.mediaStreams().stopVideoInput();
             deviceManager.mediaStreams().stopAudioInput();
@@ -2733,14 +2731,17 @@ function ChatCall(params) {
                             mute: messageContent[i].mute,
                             userId: messageContent[i].userId,
                             topicSend: messageContent[i].sendTopic
-                        }
-                        callStateController.setupCallParticipant(correctedData);
-                        if(correctedData.video) {
-                            callStateController.startParticipantVideo(correctedData.userId);
-                        }
-                        if(!correctedData.mute) {
-                            callStateController.startParticipantAudio(correctedData.userId);
-                        }
+                        };
+                        callStateController.removeParticipant(correctedData.userId);
+                        setTimeout(function (){
+                            callStateController.setupCallParticipant(correctedData);
+                            if(correctedData.video) {
+                                callStateController.startParticipantVideo(correctedData.userId);
+                            }
+                            if(!correctedData.mute) {
+                                callStateController.startParticipantAudio(correctedData.userId);
+                            }
+                        }, 500)
                     }
                 }
 
