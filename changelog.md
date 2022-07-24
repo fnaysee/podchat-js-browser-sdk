@@ -5,6 +5,16 @@ to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.i
 
 ##[Unreleased]
 
+## [12.7.1-snapshot.8] - 2022-07-24
+### Fixed
+- Fixed bug on permission check error in call methods
+
+## [12.7.1-snapshot.7] - 2022-07-23
+### Changed
+- Disabled healthCheck
+- Prevent duplicate call user in SDK on chat event CALL_PARTICIPANT_JOINED
+- Minor improvement 
+
 ## [12.7.1-snapshot.6] - 2022-07-20
 ### Added
 - Parameters: fromTime, toTime in method: getThreads
