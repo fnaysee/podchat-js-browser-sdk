@@ -3241,8 +3241,8 @@ function ChatCall(params) {
             if(result.hasError) {
                 callback && callback({
                     hasError: true,
-                    errorCode: null,
-                    errorMessage: error,
+                    errorCode: result.errorCode,
+                    errorMessage: result.errorMessage,
                 });
                 return;
             }
@@ -3351,8 +3351,8 @@ function ChatCall(params) {
             if (result.hasError) {
                 callback && callback({
                     hasError: true,
-                    errorCode: null,
-                    errorMessage: error,
+                    errorCode: result.errorCode,
+                    errorMessage: result.errorMessage,
                 });
                 return;
             }
@@ -3485,8 +3485,8 @@ function ChatCall(params) {
             if (result.hasError) {
                 callback && callback({
                     hasError: true,
-                    errorCode: null,
-                    errorMessage: error,
+                    errorCode: result.errorCode,
+                    errorMessage: result.errorMessage,
                 });
                 return;
             }
