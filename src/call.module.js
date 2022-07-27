@@ -1,9 +1,12 @@
-import { chatMessageVOTypes, inviteeVOidTypes } from "./lib/constants"
+import { chatMessageVOTypes, inviteeVOidTypes, callStickerTypes } from "./lib/constants"
 import KurentoUtils from 'kurento-utils'
 // import WebrtcAdapter from 'webrtc-adapter'
 import Utility from "./utility/utility"
 import {chatEvents} from "./events.module.js";
 import deviceManager from "./lib/call/deviceManager.js";
+// import {constants} from "mocha/lib/errors";
+import errorHandler, {raiseError} from "./lib/errorHandler";
+// import handleError from "./lib/errorHandler";
 
 function ChatCall(params) {
 
@@ -942,6 +945,10 @@ function ChatCall(params) {
     }
 
     let init = function () {},
+
+        raiseCallError = function (errorObject, callBack, fireEvent){
+            raiseError(errorObject, callBack, fireEvent, {eventName: 'callEvents', eventType: 'CALL_ERROR'});
+        },
 
         sendCallMessage = function (message, callback, timeoutRetriesCount = 0, timeoutCallback = null) {
             message.token = token;
@@ -2242,7 +2249,7 @@ function ChatCall(params) {
                 startCallInfo: currentCallParams,
                 customData
             }
-        }
+        };
 
     this.updateToken = function (newToken) {
         token = newToken;
@@ -2378,6 +2385,7 @@ function ChatCall(params) {
             chatMessageVOTypes.RECORD_CALL_STARTED,
             chatMessageVOTypes.END_RECORD_CALL,
             chatMessageVOTypes.TERMINATE_CALL,
+            chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE,
             chatMessageVOTypes.END_CALL
         ];
 
@@ -3154,6 +3162,21 @@ function ChatCall(params) {
 
                 chatEvents.fireEvent('callEvents', {
                     type: 'CALL_RECORDING_STARTED',
+                    result: messageContent
+                });
+
+                break;
+
+            /**
+             * Type 222    Call Recording Started
+             */
+            case chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE:
+                if (chatMessaging.messagesCallbacks[uniqueId]) {
+                    chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+                }
+
+                chatEvents.fireEvent('callEvents', {
+                    type: 'CALL_STICKER',
                     result: messageContent
                 });
 
@@ -4442,6 +4465,44 @@ function ChatCall(params) {
             return;
         }
     };
+
+    this.sendCallSticker = function ({
+        sticker = callStickerTypes.RAISE_HAND
+    }, callback) {
+        let sendMessageParams = {
+            chatMessageVOType: chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE,
+            typeCode: generalTypeCode, //params.typeCode,
+            content: [
+                sticker
+            ],
+            subjectId: currentCallId
+        };
+
+        if(!sendMessageParams.subjectId) {
+            raiseError(errorHandler(12000), callback, true, {});
+            return;
+        }
+
+        if(!sticker || !Object.values(callStickerTypes).includes(sticker)) {
+            raiseCallError(errorHandler(12700), callback, true);
+        }
+
+        return chatMessaging.sendMessage(sendMessageParams, {
+            onResult: function (result) {
+                let returnData = {
+                    hasError: result.hasError,
+                    errorMessage: result.errorMessage,
+                    errorCode: result.errorCode
+                };
+                if (!returnData.hasError) {
+                    let messageContent = result.result;
+                    returnData.result = messageContent;
+
+                }
+                callback && callback(returnData);
+            }
+        });
+    }
 
     this.deviceManager = deviceManager
 

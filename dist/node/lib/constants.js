@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.systemMessageTypes = exports.inviteeVOidTypes = exports.imageMimeTypes = exports.imageExtentions = exports.createThreadTypes = exports.chatMessageVOTypes = exports.chatMessageTypes = exports.assistantActionTypes = void 0;
+exports.systemMessageTypes = exports.inviteeVOidTypes = exports.imageMimeTypes = exports.imageExtentions = exports.createThreadTypes = exports.chatMessageVOTypes = exports.chatMessageTypes = exports.callStickerTypes = exports.assistantActionTypes = void 0;
 var chatMessageVOTypes = {
   CREATE_THREAD: 1,
   MESSAGE: 2,
@@ -124,6 +124,7 @@ var chatMessageVOTypes = {
   ADD_CONTACTS: 200,
   SWITCH_TO_GROUP_CALL_REQUEST: 221,
   RECORD_CALL_STARTED: 222,
+  CALL_STICKER_SYSTEM_MESSAGE: 225,
   ERROR: 999
 };
 exports.chatMessageVOTypes = chatMessageVOTypes;
@@ -186,3 +187,16 @@ var imageMimeTypes = ['image/bmp', 'image/png', 'image/tiff', 'image/x-icon', 'i
 exports.imageMimeTypes = imageMimeTypes;
 var imageExtentions = ['bmp', 'png', 'tiff', 'tiff2', 'ico', 'jpg', 'jpeg', 'webp'];
 exports.imageExtentions = imageExtentions;
+var callStickerTypes = {
+  RAISE_HAND: 'raise_hand',
+  LIKE: 'like',
+  DISLIKE: 'dislike',
+  CLAP: 'clap',
+  HEART: 'heart',
+  HAPPY: 'happy',
+  ANGRY: 'angry',
+  CRY: 'cry',
+  POWER: 'power',
+  BORED: 'bored'
+};
+exports.callStickerTypes = callStickerTypes;

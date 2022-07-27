@@ -118,6 +118,7 @@ const chatMessageVOTypes = {
     ADD_CONTACTS: 200,
     SWITCH_TO_GROUP_CALL_REQUEST: 221,
     RECORD_CALL_STARTED: 222,
+    CALL_STICKER_SYSTEM_MESSAGE: 225,
     ERROR: 999
 };
 
@@ -195,6 +196,19 @@ const imageExtentions = [
     'webp'
 ];
 
+const callStickerTypes = {
+    RAISE_HAND: 'raise_hand',
+    LIKE: 'like',
+    DISLIKE: 'dislike',
+    CLAP: 'clap',
+    HEART: 'heart',
+    HAPPY: 'happy',
+    ANGRY: 'angry',
+    CRY: 'cry',
+    POWER: 'power',
+    BORED: 'bored'
+};
+
 export {
     chatMessageVOTypes,
     inviteeVOidTypes,
@@ -203,5 +217,6 @@ export {
     assistantActionTypes,
     systemMessageTypes,
     imageMimeTypes,
-    imageExtentions
+    imageExtentions,
+    callStickerTypes
 }

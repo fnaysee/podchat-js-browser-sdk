@@ -2,6 +2,8 @@
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 
+var _typeof3 = require("@babel/runtime/helpers/typeof");
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -19,7 +21,15 @@ var _eventsModule = require("./events.module.js");
 
 var _deviceManager = _interopRequireDefault(require("./lib/call/deviceManager.js"));
 
+var _errorHandler = _interopRequireWildcard(require("./lib/errorHandler"));
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof3(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
 // import WebrtcAdapter from 'webrtc-adapter'
+// import {constants} from "mocha/lib/errors";
+// import handleError from "./lib/errorHandler";
 function ChatCall(params) {
   var //Utility = params.Utility,
   currentModuleInstance = this,
@@ -942,6 +952,12 @@ function ChatCall(params) {
   }
 
   var init = function init() {},
+      raiseCallError = function raiseCallError(errorObject, callBack, fireEvent) {
+    (0, _errorHandler.raiseError)(errorObject, callBack, fireEvent, {
+      eventName: 'callEvents',
+      eventType: 'CALL_ERROR'
+    });
+  },
       sendCallMessage = function sendCallMessage(message, callback) {
     var timeoutRetriesCount = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
     var timeoutCallback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
@@ -2369,7 +2385,7 @@ function ChatCall(params) {
 
 
   function shouldNotProcessChatMessage(type, threadId) {
-    var restrictedMessageTypes = [_constants.chatMessageVOTypes.MUTE_CALL_PARTICIPANT, _constants.chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT, _constants.chatMessageVOTypes.CALL_PARTICIPANT_JOINED, _constants.chatMessageVOTypes.REMOVE_CALL_PARTICIPANT, _constants.chatMessageVOTypes.RECONNECT, _constants.chatMessageVOTypes.LEAVE_CALL, _constants.chatMessageVOTypes.TURN_OFF_VIDEO_CALL, _constants.chatMessageVOTypes.TURN_ON_VIDEO_CALL, _constants.chatMessageVOTypes.DESTINED_RECORD_CALL, _constants.chatMessageVOTypes.RECORD_CALL, _constants.chatMessageVOTypes.RECORD_CALL_STARTED, _constants.chatMessageVOTypes.END_RECORD_CALL, _constants.chatMessageVOTypes.TERMINATE_CALL, _constants.chatMessageVOTypes.END_CALL];
+    var restrictedMessageTypes = [_constants.chatMessageVOTypes.MUTE_CALL_PARTICIPANT, _constants.chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT, _constants.chatMessageVOTypes.CALL_PARTICIPANT_JOINED, _constants.chatMessageVOTypes.REMOVE_CALL_PARTICIPANT, _constants.chatMessageVOTypes.RECONNECT, _constants.chatMessageVOTypes.LEAVE_CALL, _constants.chatMessageVOTypes.TURN_OFF_VIDEO_CALL, _constants.chatMessageVOTypes.TURN_ON_VIDEO_CALL, _constants.chatMessageVOTypes.DESTINED_RECORD_CALL, _constants.chatMessageVOTypes.RECORD_CALL, _constants.chatMessageVOTypes.RECORD_CALL_STARTED, _constants.chatMessageVOTypes.END_RECORD_CALL, _constants.chatMessageVOTypes.TERMINATE_CALL, _constants.chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE, _constants.chatMessageVOTypes.END_CALL];
 
     if ((!currentCallId || currentCallId && threadId != currentCallId) && restrictedMessageTypes.includes(type)) {
       // if(!currentCallId && threadId !== currentCallId && restrictedMessageTypes.includes(type)){
@@ -3144,6 +3160,22 @@ function ChatCall(params) {
 
         _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'CALL_RECORDING_STARTED',
+          result: messageContent
+        });
+
+        break;
+
+      /**
+       * Type 222    Call Recording Started
+       */
+
+      case _constants.chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE:
+        if (chatMessaging.messagesCallbacks[uniqueId]) {
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+        }
+
+        _eventsModule.chatEvents.fireEvent('callEvents', {
+          type: 'CALL_STICKER',
           result: messageContent
         });
 
@@ -4457,6 +4489,44 @@ function ChatCall(params) {
 
       return;
     }
+  };
+
+  this.sendCallSticker = function (_ref2, callback) {
+    var _ref2$sticker = _ref2.sticker,
+        sticker = _ref2$sticker === void 0 ? _constants.callStickerTypes.RAISE_HAND : _ref2$sticker;
+    var sendMessageParams = {
+      chatMessageVOType: _constants.chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE,
+      typeCode: generalTypeCode,
+      //params.typeCode,
+      content: [sticker],
+      subjectId: currentCallId
+    };
+
+    if (!sendMessageParams.subjectId) {
+      (0, _errorHandler.raiseError)((0, _errorHandler["default"])(12000), callback, true, {});
+      return;
+    }
+
+    if (!sticker || !Object.values(_constants.callStickerTypes).includes(sticker)) {
+      raiseCallError((0, _errorHandler["default"])(12700), callback, true);
+    }
+
+    return chatMessaging.sendMessage(sendMessageParams, {
+      onResult: function onResult(result) {
+        var returnData = {
+          hasError: result.hasError,
+          errorMessage: result.errorMessage,
+          errorCode: result.errorCode
+        };
+
+        if (!returnData.hasError) {
+          var messageContent = result.result;
+          returnData.result = messageContent;
+        }
+
+        callback && callback(returnData);
+      }
+    });
   };
 
   this.deviceManager = _deviceManager["default"];
