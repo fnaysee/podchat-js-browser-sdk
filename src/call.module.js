@@ -3548,8 +3548,8 @@ function ChatCall(params) {
             return;
         }
 
-        deviceManager.mediaStreams().stopAudioInput();
-        deviceManager.mediaStreams().stopVideoInput();
+        // deviceManager.mediaStreams().stopAudioInput();
+        // deviceManager.mediaStreams().stopVideoInput();
 
         return chatMessaging.sendMessage(rejectCallData, {
             onResult: function (result) {
