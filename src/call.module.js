@@ -2386,11 +2386,10 @@ function ChatCall(params) {
             chatMessageVOTypes.END_RECORD_CALL,
             chatMessageVOTypes.TERMINATE_CALL,
             chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE,
-            chatMessageVOTypes.END_CALL
+            // chatMessageVOTypes.END_CALL
         ];
 
         if((!currentCallId || currentCallId && threadId != currentCallId) && restrictedMessageTypes.includes(type)){
-        // if(!currentCallId && threadId !== currentCallId && restrictedMessageTypes.includes(type)){
             return true;
         } else {
             return false

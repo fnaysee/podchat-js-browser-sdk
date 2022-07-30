@@ -2385,7 +2385,8 @@ function ChatCall(params) {
 
 
   function shouldNotProcessChatMessage(type, threadId) {
-    var restrictedMessageTypes = [_constants.chatMessageVOTypes.MUTE_CALL_PARTICIPANT, _constants.chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT, _constants.chatMessageVOTypes.CALL_PARTICIPANT_JOINED, _constants.chatMessageVOTypes.REMOVE_CALL_PARTICIPANT, _constants.chatMessageVOTypes.RECONNECT, _constants.chatMessageVOTypes.LEAVE_CALL, _constants.chatMessageVOTypes.TURN_OFF_VIDEO_CALL, _constants.chatMessageVOTypes.TURN_ON_VIDEO_CALL, _constants.chatMessageVOTypes.DESTINED_RECORD_CALL, _constants.chatMessageVOTypes.RECORD_CALL, _constants.chatMessageVOTypes.RECORD_CALL_STARTED, _constants.chatMessageVOTypes.END_RECORD_CALL, _constants.chatMessageVOTypes.TERMINATE_CALL, _constants.chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE, _constants.chatMessageVOTypes.END_CALL];
+    var restrictedMessageTypes = [_constants.chatMessageVOTypes.MUTE_CALL_PARTICIPANT, _constants.chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT, _constants.chatMessageVOTypes.CALL_PARTICIPANT_JOINED, _constants.chatMessageVOTypes.REMOVE_CALL_PARTICIPANT, _constants.chatMessageVOTypes.RECONNECT, _constants.chatMessageVOTypes.LEAVE_CALL, _constants.chatMessageVOTypes.TURN_OFF_VIDEO_CALL, _constants.chatMessageVOTypes.TURN_ON_VIDEO_CALL, _constants.chatMessageVOTypes.DESTINED_RECORD_CALL, _constants.chatMessageVOTypes.RECORD_CALL, _constants.chatMessageVOTypes.RECORD_CALL_STARTED, _constants.chatMessageVOTypes.END_RECORD_CALL, _constants.chatMessageVOTypes.TERMINATE_CALL, _constants.chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE // chatMessageVOTypes.END_CALL
+    ];
 
     if ((!currentCallId || currentCallId && threadId != currentCallId) && restrictedMessageTypes.includes(type)) {
       // if(!currentCallId && threadId !== currentCallId && restrictedMessageTypes.includes(type)){
@@ -3557,11 +3558,9 @@ function ChatCall(params) {
       });
 
       return;
-    }
+    } // deviceManager.mediaStreams().stopAudioInput();
+    // deviceManager.mediaStreams().stopVideoInput();
 
-    _deviceManager["default"].mediaStreams().stopAudioInput();
-
-    _deviceManager["default"].mediaStreams().stopVideoInput();
 
     return chatMessaging.sendMessage(rejectCallData, {
       onResult: function onResult(result) {
@@ -3660,28 +3659,32 @@ function ChatCall(params) {
       typeCode: generalTypeCode,
       //params.typeCode,
       pushMsgType: 3,
+      subjectId: currentCallId,
       token: token
     };
 
-    if (params) {
-      if (typeof +params.callId === 'number' && params.callId > 0) {
-        sendData.subjectId = +params.callId;
-      } else {
-        _eventsModule.chatEvents.fireEvent('error', {
-          code: 999,
-          message: 'Invalid Call id!'
-        });
-
-        return;
-      }
-    } else {
-      _eventsModule.chatEvents.fireEvent('error', {
-        code: 999,
-        message: 'No params have been sent to Share Screen!'
-      });
-
+    if (!sendData.subjectId) {
+      (0, _errorHandler.raiseError)((0, _errorHandler["default"])(12000), callback, true, {});
       return;
     }
+    /* if (params) {
+         if (typeof +params.callId === 'number' && params.callId > 0) {
+             sendData.subjectId = +params.callId;
+         } else {
+             chatEvents.fireEvent('error', {
+                 code: 999,
+                 message: 'Invalid Call id!'
+             });
+             return;
+         }
+     } else {
+         chatEvents.fireEvent('error', {
+             code: 999,
+             message: 'No params have been sent to Share Screen!'
+         });
+         return;
+     }*/
+
 
     return chatMessaging.sendMessage(sendData, {
       onResult: function onResult(result) {
@@ -4509,6 +4512,7 @@ function ChatCall(params) {
 
     if (!sticker || !Object.values(_constants.callStickerTypes).includes(sticker)) {
       raiseCallError((0, _errorHandler["default"])(12700), callback, true);
+      return;
     }
 
     return chatMessaging.sendMessage(sendMessageParams, {
