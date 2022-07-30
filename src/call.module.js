@@ -3641,10 +3641,16 @@ function ChatCall(params) {
             chatMessageVOType: chatMessageVOTypes.START_SCREEN_SHARE,
             typeCode: generalTypeCode, //params.typeCode,
             pushMsgType: 3,
+            subjectId: currentCallId,
             token: token
         };
 
-        if (params) {
+        if(!sendData.subjectId) {
+            raiseError(errorHandler(12000), callback, true, {});
+            return;
+        }
+
+       /* if (params) {
             if (typeof +params.callId === 'number' && params.callId > 0) {
                 sendData.subjectId = +params.callId;
             } else {
@@ -3660,7 +3666,7 @@ function ChatCall(params) {
                 message: 'No params have been sent to Share Screen!'
             });
             return;
-        }
+        }*/
 
         return chatMessaging.sendMessage(sendData, {
             onResult: function (result) {
@@ -4485,6 +4491,7 @@ function ChatCall(params) {
 
         if(!sticker || !Object.values(callStickerTypes).includes(sticker)) {
             raiseCallError(errorHandler(12700), callback, true);
+            return;
         }
 
         return chatMessaging.sendMessage(sendMessageParams, {
