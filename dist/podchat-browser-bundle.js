@@ -53349,8 +53349,14 @@ paused:false,stopped:false,timeoutHandler:null,timeout:params.timeout};var priva
 if(config.paused){config.stopped=true;callStateController.deactivateParticipantStream(config.userId,config.mediaType,config.mediaType==='video'?'video':'mute');}//}, config.timeout);
 },removeTimeout:function removeTimeout(){clearTimeout(config.timeoutHandler);}};return{pauseStream:function pauseStream(){config.paused=true;},stopStream:function stopStream(){config.stopped=true;},isStreamPaused:function isStreamPaused(){return config.paused;},isStreamStopped:function isStreamStopped(){return config.stopped;},disableStream:function disableStream(){//if(pause)
 this.pauseStream();privateFunctions.setTimeout();},reset:function reset(){config.paused=false;config.stopped=false;privateFunctions.removeTimeout();}};}function callTopicManager(params){var config={userId:params.userId,state:0,//0: disconnected, 1: connecting, 2: failed, 3: connected, 4: disconnected
-peer:null,topic:params.topic,mediaType:params.mediaType,direction:params.direction,isScreenShare:false,sdpOfferRequestSent:false};var metadataInstance=new topicMetaDataManager({userId:params.userId,topic:params.topic});var peerStates={DISCONNECTED:0,CONNECTING:1,FAILED:3,CONNECTED:4};return{setPeerState:function setPeerState(state){config.state=state;},setIsScreenShare:function setIsScreenShare(){config.isScreenShare=true;},setDirection:function setDirection(direction){config.direction=direction;},getPeer:function getPeer(){return config.peer;},metadata:function metadata(){return metadataInstance;},isPeerConnecting:function isPeerConnecting(){return config.state===peerStates.CONNECTING;},isPeerFailed:function isPeerFailed(){return config.state===peerStates.FAILED;},isPeerConnected:function isPeerConnected(){return config.state===peerStates.CONNECTED;},isPeerDisconnected:function isPeerDisconnected(){return config.state===peerStates.DISCONNECTED;},generateSdpOfferOptions:function generateSdpOfferOptions(){var topicManager=this;return new Promise(function(resolve,reject){var mediaConstraints={audio:config.mediaType==='audio',video:config.mediaType==='video'};if(config.direction==='send'&&config.mediaType==='video'){mediaConstraints.video={width:callVideoMinWidth,height:callVideoMinHeight,framerate:15};}var options={mediaConstraints:mediaConstraints,iceTransportPolicy:'relay',onicecandidate:function onicecandidate(candidate){topicManager.watchForIceCandidates(candidate);},configuration:{iceServers:callStateController.getTurnServer(currentCallParams)}};options[config.direction==='send'?'localVideo':'remoteVideo']=callUsers[config.userId].htmlElements[config.topic];if(config.direction==='send'){if(config.mediaType==='video'){if(config.isScreenShare){navigator.mediaDevices.getDisplayMedia().then(function(stream){stream.getVideoTracks()[0].addEventListener("ended",function(event){// Click on browser UI stop sharing button
-if(callUsers['screenShare']&&config.peer){currentModuleInstance.endScreenShare({callId:currentCallId});}});options.videoStream=stream;options.sendSource='screen';resolve(options);})["catch"](function(error){var errorString="[SDK][navigator.mediaDevices.getDisplayMedia]"+JSON.stringify(error);console.error(errorString);_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:errorString,environmentDetails:getSDKCallDetails()});explainUserMediaError(error,'video','screen');//resolve(options);
+peer:null,topic:params.topic,mediaType:params.mediaType,direction:params.direction,isScreenShare:false,sdpOfferRequestSent:false};var metadataInstance=new topicMetaDataManager({userId:params.userId,topic:params.topic});var peerStates={DISCONNECTED:0,CONNECTING:1,FAILED:3,CONNECTED:4};return{setPeerState:function setPeerState(state){config.state=state;},setIsScreenShare:function setIsScreenShare(){config.isScreenShare=true;},setDirection:function setDirection(direction){config.direction=direction;},getPeer:function getPeer(){return config.peer;},metadata:function metadata(){return metadataInstance;},isPeerConnecting:function isPeerConnecting(){return config.state===peerStates.CONNECTING;},isPeerFailed:function isPeerFailed(){return config.state===peerStates.FAILED;},isPeerConnected:function isPeerConnected(){return config.state===peerStates.CONNECTED;},isPeerDisconnected:function isPeerDisconnected(){return config.state===peerStates.DISCONNECTED;},generateSdpOfferOptions:function generateSdpOfferOptions(){var topicManager=this;return new Promise(function(resolve,reject){var mediaConstraints={audio:config.mediaType==='audio',video:config.mediaType==='video'};if(config.direction==='send'&&config.mediaType==='video'){mediaConstraints.video={width:callVideoMinWidth,height:callVideoMinHeight,framerate:15};}var options={mediaConstraints:mediaConstraints,iceTransportPolicy:'relay',onicecandidate:function onicecandidate(candidate){topicManager.watchForIceCandidates(candidate);},configuration:{iceServers:callStateController.getTurnServer(currentCallParams)}};options[config.direction==='send'?'localVideo':'remoteVideo']=callUsers[config.userId].htmlElements[config.topic];if(config.direction==='send'){if(config.mediaType==='video'){if(config.isScreenShare){_deviceManager["default"].grantScreenSharePermission({closeStream:false}).then(function(stream){stream.getVideoTracks()[0].addEventListener("ended",function(event){// Click on browser UI stop sharing button
+_deviceManager["default"].mediaStreams().stopScreenShareInput();if(callUsers['screenShare']&&config.peer){currentModuleInstance.endScreenShare({callId:currentCallId});}});options.videoStream=stream;options.sendSource='screen';resolve(options);})["catch"](function(error){var errorString="[SDK][grantScreenSharePermission][catch] "+JSON.stringify(error);console.error(errorString);raiseCallError(_errorHandler.errorList.SCREENSHARE_PERMISSION_ERROR,null,true);// chatEvents.fireEvent('callEvents', {
+//     type: 'CALL_ERROR',
+//     code: 7000,
+//     message: errorString,
+//     environmentDetails: getSDKCallDetails()
+// });
+explainUserMediaError(error,'video','screen');//resolve(options);
 });}else{_deviceManager["default"].grantUserMediaDevicesPermissions({video:true}).then(function(){options.videoStream=_deviceManager["default"].mediaStreams().getVideoInput();resolve(options);})["catch"](function(error){reject(error);});}}else if(config.mediaType==='audio'){_deviceManager["default"].grantUserMediaDevicesPermissions({audio:true}).then(function(){options.audioStream=_deviceManager["default"].mediaStreams().getAudioInput();resolve(options);})["catch"](function(error){reject(error);});}}else{resolve(options);}consoleLogging&&console.log("[SDK][getSdpOfferOptions] ","topic: ",config.topic,"mediaType: ",config.mediaType,"direction: ",config.direction,"options: ",options);});},watchForIceCandidates:function watchForIceCandidates(candidate){var manager=this;if(metadataInstance.isIceCandidateIntervalSet()){return;}//callUsers[config.userId].topicMetaData[config.topic].interval
 metadataInstance.setIceCandidateInterval(setInterval(function(){if(callUsers[config.userId].topicMetaData[config.topic].sdpAnswerReceived===true){callUsers[config.userId].topicMetaData[config.topic].sdpAnswerReceived=false;// manager.removeTopicIceCandidateInterval();
 metadataInstance.clearIceCandidateInterval();sendCallMessage({id:'ADD_ICE_CANDIDATE',topic:config.topic,candidateDto:candidate});}},500,{candidate:candidate}));},establishPeerConnection:function establishPeerConnection(options){var WebRtcFunction=config.direction==='send'?'WebRtcPeerSendonly':'WebRtcPeerRecvonly',manager=this,user=callUsers[config.userId],topicElement=user.htmlElements[config.topic];//topicMetaData = user.topicMetaData[config.topic];
@@ -53386,7 +53392,7 @@ metadataInstance.clearIceCandidateInterval();manager.removeConnectionQualityInte
               }).catch(error => {
                   console.error("Could not free up some resources", error);
                   resolve(true);
-              });*/resolve(true);}else{callStateController.removeStreamHTML(config.userId,config.topic);config.peer.dispose();config.peer=null;config.state=peerStates.DISCONNECTED;resolve(true);}}});}};}function peersHealthChecker(){var config={healthCheckerInterval:null};function checkHealth(){var foundProblem=false;if(!callUsers||!callUsers.length)return;callUsers.forEach(function(user){if(user.video){if(user.videoTopicManager&&(user.videoTopicManager.isPeerFailed()||user.videoTopicManager.isPeerDisconnected())){user.videoTopicManager.removeTopic().then(function(){user.videoTopicManager.createTopic();});foundProblem=true;consoleLogging&&console.debug("[SDK][HealthChecker] userId:",user.id,"topic:",user.videoTopicName);}}if(!user.mute){if(user.audioTopicManager&&(user.audioTopicManager.isPeerFailed()||user.audioTopicManager.isPeerDisconnected())){user.audioTopicManager.removeTopic().then(function(){user.audioTopicManager.createTopic();});foundProblem=true;consoleLogging&&console.debug("[SDK][HealthChecker] userId:",user.id,"topic:",user.audioTopicName);}}});if(foundProblem){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_DIVS',result:generateCallUIList()});}}return{startTopicsHealthCheck:function startTopicsHealthCheck(){config.healthCheckerInterval=setInterval(function(){checkHealth();},20000);},stopTopicsHealthCheck:function stopTopicsHealthCheck(){clearInterval(config.healthCheckerInterval);}};}function topicMetaDataManager(params){var config={userId:params.userId,topic:params.topic,interval:null,receivedSdpAnswer:false,connectionQualityInterval:null,poorConnectionCount:0,poorConnectionResolvedCount:0,isConnectionPoor:false};return{setIsConnectionPoor:function setIsConnectionPoor(state){config.isConnectionPoor=state;},setReceivedSdpAnswer:function setReceivedSdpAnswer(state){config.receivedSdpAnswer=state;},setIceCandidateInterval:function setIceCandidateInterval(id){config.interval=id;},isConnectionPoor:function isConnectionPoor(){return config.isConnectionPoor;},isReceivedSdpAnswer:function isReceivedSdpAnswer(){return config.receivedSdpAnswer;},isIceCandidateIntervalSet:function isIceCandidateIntervalSet(){return config.interval!==null;},clearIceCandidateInterval:function clearIceCandidateInterval(){clearInterval(config.interval);}};}var init=function init(){},raiseCallError=function raiseCallError(errorObject,callBack,fireEvent){(0,_errorHandler.raiseError)(errorObject,callBack,fireEvent,{eventName:'callEvents',eventType:'CALL_ERROR'});},sendCallMessage=function sendCallMessage(message,callback){var timeoutRetriesCount=arguments.length>2&&arguments[2]!==undefined?arguments[2]:0;var timeoutCallback=arguments.length>3&&arguments[3]!==undefined?arguments[3]:null;message.token=token;var uniqueId;if(typeof params.uniqueId!='undefined'){uniqueId=params.uniqueId;}else{uniqueId=_utility["default"].generateUUID();}message.uniqueId=uniqueId;var data={type:3,content:{peerName:callServerController.getCurrentServer(),// callServerName,
+              });*/resolve(true);}else{callStateController.removeStreamHTML(config.userId,config.topic);config.peer.dispose();config.peer=null;config.state=peerStates.DISCONNECTED;resolve(true);}}});}};}function peersHealthChecker(){var config={healthCheckerInterval:null};function checkHealth(){var foundProblem=false;if(!callUsers||!callUsers.length)return;callUsers.forEach(function(user){if(user.video){if(user.videoTopicManager&&(user.videoTopicManager.isPeerFailed()||user.videoTopicManager.isPeerDisconnected())){user.videoTopicManager.removeTopic().then(function(){user.videoTopicManager.createTopic();});foundProblem=true;consoleLogging&&console.debug("[SDK][HealthChecker] userId:",user.id,"topic:",user.videoTopicName);}}if(!user.mute){if(user.audioTopicManager&&(user.audioTopicManager.isPeerFailed()||user.audioTopicManager.isPeerDisconnected())){user.audioTopicManager.removeTopic().then(function(){user.audioTopicManager.createTopic();});foundProblem=true;consoleLogging&&console.debug("[SDK][HealthChecker] userId:",user.id,"topic:",user.audioTopicName);}}});if(foundProblem){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_DIVS',result:generateCallUIList()});}}return{startTopicsHealthCheck:function startTopicsHealthCheck(){config.healthCheckerInterval=setInterval(function(){checkHealth();},20000);},stopTopicsHealthCheck:function stopTopicsHealthCheck(){clearInterval(config.healthCheckerInterval);}};}function topicMetaDataManager(params){var config={userId:params.userId,topic:params.topic,interval:null,receivedSdpAnswer:false,connectionQualityInterval:null,poorConnectionCount:0,poorConnectionResolvedCount:0,isConnectionPoor:false};return{setIsConnectionPoor:function setIsConnectionPoor(state){config.isConnectionPoor=state;},setReceivedSdpAnswer:function setReceivedSdpAnswer(state){config.receivedSdpAnswer=state;},setIceCandidateInterval:function setIceCandidateInterval(id){config.interval=id;},isConnectionPoor:function isConnectionPoor(){return config.isConnectionPoor;},isReceivedSdpAnswer:function isReceivedSdpAnswer(){return config.receivedSdpAnswer;},isIceCandidateIntervalSet:function isIceCandidateIntervalSet(){return config.interval!==null;},clearIceCandidateInterval:function clearIceCandidateInterval(){clearInterval(config.interval);}};}var init=function init(){},raiseCallError=function raiseCallError(errorObject,callBack,fireEvent){(0,_errorHandler.raiseError)(errorObject,callBack,fireEvent,{eventName:'callEvents',eventType:'CALL_ERROR',environmentDetails:getSDKCallDetails()});},sendCallMessage=function sendCallMessage(message,callback){var timeoutRetriesCount=arguments.length>2&&arguments[2]!==undefined?arguments[2]:0;var timeoutCallback=arguments.length>3&&arguments[3]!==undefined?arguments[3]:null;message.token=token;var uniqueId;if(typeof params.uniqueId!='undefined'){uniqueId=params.uniqueId;}else{uniqueId=_utility["default"].generateUUID();}message.uniqueId=uniqueId;var data={type:3,content:{peerName:callServerController.getCurrentServer(),// callServerName,
 priority:1,content:JSON.stringify(message),ttl:messageTtl}};if(typeof callback=='function'){chatMessaging.messagesCallbacks[uniqueId]=callback;}asyncClient.send(data,function(res){if(!res.hasError&&callback){if(typeof callback=='function'){callback(res);}if(chatMessaging.messagesCallbacks[uniqueId]){delete chatMessaging.messagesCallbacks[uniqueId];}}});if(callRequestTimeout>0){asyncRequestTimeouts[uniqueId]&&clearTimeout(asyncRequestTimeouts[uniqueId]);asyncRequestTimeouts[uniqueId]=setTimeout(function(){if(chatMessaging.messagesCallbacks[uniqueId]){delete chatMessaging.messagesCallbacks[uniqueId];}if(timeoutRetriesCount){timeoutCallback();}if(typeof callback=='function'){callback({done:'SKIP'});}},callRequestTimeout);}},/**
    * Format Data To Make Call Participant
    *
@@ -53483,7 +53489,8 @@ consoleLogging&&console.debug("[SDK][setMediaBitrate] Adding new b line before l
         code: 7000,
         message: err,
         environmentDetails: getSDKCallDetails()
-    });*/var n=err.name;if(n==='NotFoundError'||n==='DevicesNotFoundError'){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"Missing "+(deviceType==='video'?'webcam':'mice')+" for required tracks",environmentDetails:getSDKCallDetails()});alert("Missing "+(deviceType==='video'?'webcam':'mice')+" for required tracks");return"Missing "+(deviceType==='video'?'webcam':'mice')+" for required tracks";}else if(n==='NotReadableError'||n==='TrackStartError'){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:(deviceType==='video'?'Webcam':'Mice')+" is already in use",environmentDetails:getSDKCallDetails()});alert((deviceType==='video'?'Webcam':'Mice')+" is already in use");return(deviceType==='video'?'Webcam':'Mice')+" is already in use";}else if(n==='OverconstrainedError'||n==='ConstraintNotSatisfiedError'){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:(deviceType==='video'?'Webcam':'Mice')+" doesn't provide required tracks",environmentDetails:getSDKCallDetails()});alert((deviceType==='video'?'Webcam':'Mice')+" doesn't provide required tracks");return(deviceType==='video'?'Webcam':'Mice')+" doesn't provide required tracks";}else if(n==='NotAllowedError'||n==='PermissionDeniedError'){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:(deviceType==='video'?deviceSource==='screen'?'ScreenShare':'Webcam':'Mice')+" permission has been denied by the user",environmentDetails:getSDKCallDetails()});alert((deviceType==='video'?deviceSource==='screen'?'ScreenShare':'Webcam':'Mice')+" permission has been denied by the user");return(deviceType==='video'?deviceSource==='screen'?'ScreenShare':'Webcam':'Mice')+" permission has been denied by the user";}else if(n==='TypeError'){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"No media tracks have been requested",environmentDetails:getSDKCallDetails()});return"No media tracks have been requested";}else{_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"Unknown error: "+err,environmentDetails:getSDKCallDetails()});return"Unknown error: "+err;}},startMedia=function startMedia(media){consoleLogging&&console.log("[SDK][startMedia] called with: ",media);media.play()["catch"](function(err){if(err.name==='NotAllowedError'){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"[startMedia] Browser doesn't allow playing media: "+err,environmentDetails:getSDKCallDetails()});}else{_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"[startMedia] Error in media.play(): "+err,environmentDetails:getSDKCallDetails()});}});},restartMedia=function restartMedia(videoTopicName){if(currentCallParams&&Object.keys(currentCallParams).length&&!callRequestController.cameraPaused){consoleLogging&&console.log('[SDK] Sending Key Frame ...');var videoTopic=!!videoTopicName?videoTopicName:callUsers[chatMessaging.userInfo.id].videoTopicName;var videoElement=document.getElementById("uiRemoteVideo-".concat(videoTopic));if(videoElement){var videoTrack=videoElement.srcObject.getTracks()[0];if(navigator&&!!navigator.userAgent.match(/firefox/gi)){videoTrack.enable=false;var newWidth=callVideoMinWidth-(Math.ceil(Math.random()*50)+20);var newHeight=callVideoMinHeight-(Math.ceil(Math.random()*50)+20);videoTrack.applyConstraints({// width: {
+    });*/var n=err.name;if(n==='NotFoundError'||n==='DevicesNotFoundError'){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"Missing "+(deviceType==='video'?'webcam':'mice')+" for required tracks",environmentDetails:getSDKCallDetails()});alert("Missing "+(deviceType==='video'?'webcam':'mice')+" for required tracks");return"Missing "+(deviceType==='video'?'webcam':'mice')+" for required tracks";}else if(n==='NotReadableError'||n==='TrackStartError'){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:(deviceType==='video'?'Webcam':'Mice')+" is already in use",environmentDetails:getSDKCallDetails()});alert((deviceType==='video'?'Webcam':'Mice')+" is already in use");return(deviceType==='video'?'Webcam':'Mice')+" is already in use";}else if(n==='OverconstrainedError'||n==='ConstraintNotSatisfiedError'){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:(deviceType==='video'?'Webcam':'Mice')+" doesn't provide required tracks",environmentDetails:getSDKCallDetails()});alert((deviceType==='video'?'Webcam':'Mice')+" doesn't provide required tracks");return(deviceType==='video'?'Webcam':'Mice')+" doesn't provide required tracks";}else if(n==='NotAllowedError'||n==='PermissionDeniedError'){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:(deviceType==='video'?deviceSource==='screen'?'ScreenShare':'Webcam':'Mice')+" permission has been denied by the user",environmentDetails:getSDKCallDetails()});alert((deviceType==='video'?deviceSource==='screen'?'ScreenShare':'Webcam':'Mice')+" permission has been denied by the user");return(deviceType==='video'?deviceSource==='screen'?'ScreenShare':'Webcam':'Mice')+" permission has been denied by the user";}else if(n==='TypeError'){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"No media tracks have been requested",environmentDetails:getSDKCallDetails()});return"No media tracks have been requested";}else{_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"Unknown error: "+err,environmentDetails:getSDKCallDetails()});return"Unknown error: "+err;}},startMedia=function startMedia(media){consoleLogging&&console.log("[SDK][startMedia] called with: ",media);media.play()["catch"](function(err){if(err.name==='NotAllowedError'){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"[startMedia] Browser doesn't allow playing media: "+err,environmentDetails:getSDKCallDetails()});}else{_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"[startMedia] Error in media.play(): "+err,environmentDetails:getSDKCallDetails()});}});},restartMedia=function restartMedia(videoTopicName,userId){if(currentCallParams&&Object.keys(currentCallParams).length&&!callRequestController.cameraPaused){consoleLogging&&console.log('[SDK] Sending Key Frame ...');var videoTopic=!!videoTopicName?videoTopicName:callUsers[chatMessaging.userInfo.id].videoTopicName;var videoElement=document.getElementById("uiRemoteVideo-".concat(videoTopic));var isScreenShare=userId==='screenShare';if(videoElement){var videoTrack=videoElement.srcObject.getTracks()[0];var width=isScreenShare?screenShareInfo.getWidth():callVideoMinWidth,height=isScreenShare?screenShareInfo.getHeight():callVideoMinHeight,rand=Math.random(),newWidth=width-5,newHeight=height-5;if(navigator&&!!navigator.userAgent.match(/firefox/gi)){// videoTrack.enable = false;
+videoTrack.applyConstraints({// width: {
 //     min: newWidth,
 //     ideal: 1280
 // },
@@ -53491,7 +53498,7 @@ consoleLogging&&console.debug("[SDK][setMediaBitrate] Adding new b line before l
 //     min: newHeight,
 //     ideal: 720
 // },
-advanced:[{width:newWidth,height:newHeight},{aspectRatio:1.333}]}).then(function(res){videoTrack.enabled=true;setTimeout(function(){videoTrack.applyConstraints({"width":callVideoMinWidth,"height":callVideoMinHeight});},500);})["catch"](function(e){return consoleLogging&&console.log(e);});}else{videoTrack.applyConstraints({"width":callVideoMinWidth-(Math.ceil(Math.random()*5)+5)}).then(function(res){setTimeout(function(){videoTrack.applyConstraints({"width":callVideoMinWidth});},500);})["catch"](function(e){return consoleLogging&&console.log(e);});}}}},subscribeToReceiveOffers=function subscribeToReceiveOffers(jsonMessage){if(jsonMessage.upOrDown===true){//TRUE if participant is sending data on this topic
+width:newWidth,height:newHeight,advanced:[{aspectRatio:1.77}]}).then(function(res){videoTrack.enabled=true;setTimeout(function(){videoTrack.applyConstraints({width:width,height:height,advanced:[{aspectRatio:1.77}]});},500);})["catch"](function(e){return consoleLogging&&console.log(e);});}else{videoTrack.applyConstraints({width:newWidth,height:newHeight,advanced:[{aspectRatio:1.77}]}).then(function(res){setTimeout(function(){videoTrack.applyConstraints({width:width,height:height,advanced:[{aspectRatio:1.77}]});},500);})["catch"](function(e){return consoleLogging&&console.log(e);});}}}},subscribeToReceiveOffers=function subscribeToReceiveOffers(jsonMessage){if(jsonMessage.upOrDown===true){//TRUE if participant is sending data on this topic
 sendCallMessage({id:'SUBSCRIBE',useComedia:true,useSrtp:false,topic:jsonMessage.topic,mediaType:jsonMessage.topic.indexOf('screen-Share')!==-1||jsonMessage.topic.indexOf('Vi-')!==-1?2:1//brokerAddress:brkrAddr
 });}},handleProcessSdpOffer=function handleProcessSdpOffer(jsonMessage){var userId=callStateController.findUserIdByTopic(jsonMessage.topic),topicManager,peer;//callUsers[userId].peers[jsonMessage.topic];
 if(jsonMessage.topic.indexOf('Vi-')!==-1||jsonMessage.topic.indexOf('screen-Share')!==-1){topicManager=callUsers[userId].videoTopicManager;peer=callUsers[userId].videoTopicManager.getPeer();}else if(jsonMessage.topic.indexOf('Vo-')!==-1){topicManager=callUsers[userId].audioTopicManager;peer=callUsers[userId].audioTopicManager.getPeer();}if(peer==null){console.warn("[handleProcessSdpAnswer] Skip, no WebRTC Peer");return;}peer.processOffer(jsonMessage.sdpOffer,function(err,sdpAnswer){if(err){console.error("[SDK][handleProcessSdpOffer] Error: "+err);stop();return;}sendCallMessage({id:'RECIVE_SDP_ANSWER',sdpAnswer:sdpAnswer,useComedia:true,useSrtp:false,topic:jsonMessage.topic,mediaType:jsonMessage.topic.indexOf('screen-Share')!==-1||jsonMessage.topic.indexOf('Vi-')!==-1?2:1});callUsers[userId].topicMetaData[jsonMessage.topic].sdpAnswerReceived=true;startMedia(callUsers[userId].htmlElements[jsonMessage.topic]);if(userId=='screenShare'||userId==chatMessaging.userInfo.id){restartMediaOnKeyFrame(userId,[2000,4000,8000,12000]);}});},handleProcessSdpAnswer=function handleProcessSdpAnswer(jsonMessage){var userId=callStateController.findUserIdByTopic(jsonMessage.topic),topicManager,peer;// = callUsers[userId].peers[jsonMessage.topic];
@@ -53517,8 +53524,9 @@ if(jsonMessage.topic.indexOf('Vi-')>-1||jsonMessage.topic.indexOf('screen-Share'
               })
           },
   */callStop=function callStop(){var resetCallOwner=arguments.length>0&&arguments[0]!==undefined?arguments[0]:true;var resetCurrentCallId=arguments.length>1&&arguments[1]!==undefined?arguments[1]:true;var resetCameraPaused=arguments.length>2&&arguments[2]!==undefined?arguments[2]:true;// callTopicHealthChecker.stopTopicsHealthCheck();
-_deviceManager["default"].mediaStreams().stopVideoInput();_deviceManager["default"].mediaStreams().stopAudioInput();callStateController.removeAllCallParticipants();if(callStopQueue.callStarted){sendCallMessage({id:'CLOSE'});callStopQueue.callStarted=false;}if(resetCameraPaused)callRequestController.cameraPaused=false;callRequestController.callEstablishedInMySide=false;callRequestController.callRequestReceived=false;if(resetCallOwner)callRequestController.imCallOwner=false;currentCallParams={};if(resetCurrentCallId)currentCallId=null;},restartMediaOnKeyFrame=function restartMediaOnKeyFrame(userId,timeouts){if(callServerController.isJanus())return;for(var i=0;i<timeouts.length;i++){setTimeout(function(){if(typeof callUsers[userId]!=="undefined"&&callUsers[userId]&&callUsers[userId].videoTopicManager.getPeer())//callUsers[userId].peers[callUsers[userId].videoTopicName]
-restartMedia(callUsers[userId].videoTopicName);},timeouts[i]);}},sendCallMetaData=function sendCallMetaData(params){var message={id:params.id,userid:params.userid,content:params.content||undefined};sendCallMessage({id:'SENDMETADATA',message:JSON.stringify(message),chatId:currentCallId});},handleReceivedMetaData=function handleReceivedMetaData(jsonMessage,uniqueId){var jMessage=JSON.parse(jsonMessage.message);var id=jMessage.id;if(!id||typeof id==="undefined"||jsonMessage.userid==chatMessaging.userInfo.id){return;}switch(id){case callMetaDataTypes.POORCONNECTION:_eventsModule.chatEvents.fireEvent("callEvents",{type:'POOR_VIDEO_CONNECTION',subType:'SHORT_TIME',message:'Poor connection detected',metadata:{elementId:"uiRemoteVideo-"+jMessage.content.description,topic:jMessage.content.description,userId:jMessage.userid}});break;case callMetaDataTypes.POORCONNECTIONRESOLVED:_eventsModule.chatEvents.fireEvent('callEvents',{type:'POOR_VIDEO_CONNECTION_RESOLVED',message:'Poor connection resolved',metadata:{elementId:"uiRemoteVideo-"+jMessage.content.description,topic:jMessage.content.description,userId:jMessage.userid}});break;case callMetaDataTypes.CUSTOMUSERMETADATA:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](jsonMessage);}_eventsModule.chatEvents.fireEvent('callEvents',{type:'CUSTOM_USER_METADATA',userId:jMessage.userid,content:jMessage.content});break;case callMetaDataTypes.SCREENSHAREMETADATA:screenShareInfo.setWidth(jMessage.content.dimension.width);screenShareInfo.setHeight(jMessage.content.dimension.height);applyScreenShareSizeToElement();_eventsModule.chatEvents.fireEvent("callEvents",{type:'SCREENSHARE_METADATA',userId:jMessage.userid,content:jMessage.content});break;}},applyScreenShareSizeToElement=function applyScreenShareSizeToElement(){var videoElement=callUsers['screenShare'].htmlElements[callUsers['screenShare'].videoTopicName];var videoTrack=videoElement.srcObject&&videoElement.srcObject.getTracks()&&videoElement.srcObject.getTracks().length?videoElement.srcObject.getTracks()[0]:null;if(videoTrack){if(navigator&&!!navigator.userAgent.match(/firefox/gi)){videoTrack.enable=false;var newWidth=callVideoMinWidth-(Math.ceil(Math.random()*50)+20);var newHeight=callVideoMinHeight-(Math.ceil(Math.random()*50)+20);videoTrack.applyConstraints({advanced:[{width:screenShareInfo.getWidth(),height:screenShareInfo.getHeight()},{aspectRatio:1.333}]}).then(function(res){videoTrack.enabled=true;setTimeout(function(){videoTrack.applyConstraints({"width":screenShareInfo.getWidth(),"height":screenShareInfo.getHeight()});},500);})["catch"](function(e){return consoleLogging&&console.log(e);});}else{videoTrack.applyConstraints({"width":screenShareInfo.getWidth()-(Math.ceil(Math.random()*5)+5)}).then(function(res){setTimeout(function(){videoTrack.applyConstraints({"width":screenShareInfo.getWidth()});},500);})["catch"](function(e){return consoleLogging&&console.log(e);});}}},getSDKCallDetails=function getSDKCallDetails(customData){return{currentUser:chatMessaging.userInfo,currentServers:{callTurnIp:callTurnIp},isJanus:currentCallId&&callServerController.isJanus(),screenShareInfo:{isStarted:screenShareInfo.isStarted(),iAmOwner:screenShareInfo.iAmOwner()},callId:currentCallId,startCallInfo:currentCallParams,customData:customData};};this.updateToken=function(newToken){token=newToken;};this.callMessageHandler=function(callMessage){var jsonMessage=typeof callMessage.content==='string'&&_utility["default"].isValidJson(callMessage.content)?JSON.parse(callMessage.content):callMessage.content,uniqueId=jsonMessage.uniqueId;asyncRequestTimeouts[uniqueId]&&clearTimeout(asyncRequestTimeouts[uniqueId]);if(jsonMessage.done==='FALSE'){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"Kurento error: "+(jsonMessage.desc?jsonMessage.desc:jsonMessage.message),environmentDetails:getSDKCallDetails()});}switch(jsonMessage.id){case'PROCESS_SDP_ANSWER':handleProcessSdpAnswer(jsonMessage);break;case'RECEIVING_MEDIA':// Only for receiving topics from janus, first we subscribe
+_deviceManager["default"].mediaStreams().stopVideoInput();_deviceManager["default"].mediaStreams().stopAudioInput();_deviceManager["default"].mediaStreams().stopScreenShareInput();callStateController.removeAllCallParticipants();if(callStopQueue.callStarted){sendCallMessage({id:'CLOSE'});callStopQueue.callStarted=false;}if(resetCameraPaused)callRequestController.cameraPaused=false;callRequestController.callEstablishedInMySide=false;callRequestController.callRequestReceived=false;if(resetCallOwner)callRequestController.imCallOwner=false;currentCallParams={};if(resetCurrentCallId)currentCallId=null;},restartMediaOnKeyFrame=function restartMediaOnKeyFrame(userId,timeouts){if(callServerController.isJanus())return;for(var i=0;i<timeouts.length;i++){setTimeout(function(){if(typeof callUsers[userId]!=="undefined"&&callUsers[userId]&&callUsers[userId].videoTopicManager.getPeer())//callUsers[userId].peers[callUsers[userId].videoTopicName]
+restartMedia(callUsers[userId].videoTopicName,userId);},timeouts[i]);}},sendCallMetaData=function sendCallMetaData(params){var message={id:params.id,userid:params.userid,content:params.content||undefined};sendCallMessage({id:'SENDMETADATA',message:JSON.stringify(message),chatId:currentCallId});},handleReceivedMetaData=function handleReceivedMetaData(jsonMessage,uniqueId){var jMessage=JSON.parse(jsonMessage.message);var id=jMessage.id;if(!id||typeof id==="undefined"||jsonMessage.userid==chatMessaging.userInfo.id){return;}switch(id){case callMetaDataTypes.POORCONNECTION:_eventsModule.chatEvents.fireEvent("callEvents",{type:'POOR_VIDEO_CONNECTION',subType:'SHORT_TIME',message:'Poor connection detected',metadata:{elementId:"uiRemoteVideo-"+jMessage.content.description,topic:jMessage.content.description,userId:jMessage.userid}});break;case callMetaDataTypes.POORCONNECTIONRESOLVED:_eventsModule.chatEvents.fireEvent('callEvents',{type:'POOR_VIDEO_CONNECTION_RESOLVED',message:'Poor connection resolved',metadata:{elementId:"uiRemoteVideo-"+jMessage.content.description,topic:jMessage.content.description,userId:jMessage.userid}});break;case callMetaDataTypes.CUSTOMUSERMETADATA:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](jsonMessage);}_eventsModule.chatEvents.fireEvent('callEvents',{type:'CUSTOM_USER_METADATA',userId:jMessage.userid,content:jMessage.content});break;case callMetaDataTypes.SCREENSHAREMETADATA:screenShareInfo.setWidth(jMessage.content.dimension.width);screenShareInfo.setHeight(jMessage.content.dimension.height);// applyScreenShareSizeToElement();
+restartMediaOnKeyFrame('screenShare',[10,1000,2000]);_eventsModule.chatEvents.fireEvent("callEvents",{type:'SCREENSHARE_METADATA',userId:jMessage.userid,content:jMessage.content});break;}},applyScreenShareSizeToElement=function applyScreenShareSizeToElement(){var videoElement=callUsers['screenShare'].htmlElements[callUsers['screenShare'].videoTopicName];var videoTrack=videoElement.srcObject&&videoElement.srcObject.getTracks()&&videoElement.srcObject.getTracks().length?videoElement.srcObject.getTracks()[0]:null;if(videoTrack){if(navigator&&!!navigator.userAgent.match(/firefox/gi)){videoTrack.enable=false;var newWidth=callVideoMinWidth-(Math.ceil(Math.random()*50)+20);var newHeight=callVideoMinHeight-(Math.ceil(Math.random()*50)+20);videoTrack.applyConstraints({advanced:[{width:screenShareInfo.getWidth(),height:screenShareInfo.getHeight()},{aspectRatio:1.333}]}).then(function(res){videoTrack.enabled=true;setTimeout(function(){videoTrack.applyConstraints({"width":screenShareInfo.getWidth(),"height":screenShareInfo.getHeight()});},500);})["catch"](function(e){return consoleLogging&&console.log(e);});}else{videoTrack.applyConstraints({"width":screenShareInfo.getWidth()-(Math.ceil(Math.random()*5)+5)}).then(function(res){setTimeout(function(){videoTrack.applyConstraints({"width":screenShareInfo.getWidth()});},500);})["catch"](function(e){return consoleLogging&&console.log(e);});}}},getSDKCallDetails=function getSDKCallDetails(customData){return{currentUser:chatMessaging.userInfo,currentServers:{callTurnIp:callTurnIp},isJanus:currentCallId&&callServerController.isJanus(),screenShareInfo:{isStarted:screenShareInfo.isStarted(),iAmOwner:screenShareInfo.iAmOwner()},callId:currentCallId,startCallInfo:currentCallParams,customData:customData};};this.updateToken=function(newToken){token=newToken;};this.callMessageHandler=function(callMessage){var jsonMessage=typeof callMessage.content==='string'&&_utility["default"].isValidJson(callMessage.content)?JSON.parse(callMessage.content):callMessage.content,uniqueId=jsonMessage.uniqueId;asyncRequestTimeouts[uniqueId]&&clearTimeout(asyncRequestTimeouts[uniqueId]);if(jsonMessage.done==='FALSE'){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"Kurento error: "+(jsonMessage.desc?jsonMessage.desc:jsonMessage.message),environmentDetails:getSDKCallDetails()});}switch(jsonMessage.id){case'PROCESS_SDP_ANSWER':handleProcessSdpAnswer(jsonMessage);break;case'RECEIVING_MEDIA':// Only for receiving topics from janus, first we subscribe
 subscribeToReceiveOffers(jsonMessage);break;case'PROCESS_SDP_OFFER'://Then janus sends offers
 handleProcessSdpOffer(jsonMessage);break;case'ADD_ICE_CANDIDATE':handleAddIceCandidate(jsonMessage);break;case'GET_KEY_FRAME':if(callUsers&&callUsers[chatMessaging.userInfo.id]&&callUsers[chatMessaging.userInfo.id].video){restartMediaOnKeyFrame(chatMessaging.userInfo.id,[2000,4000,8000,12000]);}if(callUsers&&callUsers['screenShare']&&callUsers['screenShare'].video&&screenShareInfo.isStarted()&&screenShareInfo.iAmOwner()){restartMediaOnKeyFrame('screenShare',[2000,4000,8000,12000]);}break;case'FREEZED':handlePartnerFreeze(jsonMessage);break;/*case 'STOPALL':
           if (chatMessaging.messagesCallbacks[uniqueId]) {
@@ -53532,8 +53540,7 @@ callStateController.createSessionInChat(currentCallParams);}}break;}};this.async
    * @param threadId
    * @return {boolean}
    */function shouldNotProcessChatMessage(type,threadId){var restrictedMessageTypes=[_constants.chatMessageVOTypes.MUTE_CALL_PARTICIPANT,_constants.chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT,_constants.chatMessageVOTypes.CALL_PARTICIPANT_JOINED,_constants.chatMessageVOTypes.REMOVE_CALL_PARTICIPANT,_constants.chatMessageVOTypes.RECONNECT,_constants.chatMessageVOTypes.LEAVE_CALL,_constants.chatMessageVOTypes.TURN_OFF_VIDEO_CALL,_constants.chatMessageVOTypes.TURN_ON_VIDEO_CALL,_constants.chatMessageVOTypes.DESTINED_RECORD_CALL,_constants.chatMessageVOTypes.RECORD_CALL,_constants.chatMessageVOTypes.RECORD_CALL_STARTED,_constants.chatMessageVOTypes.END_RECORD_CALL,_constants.chatMessageVOTypes.TERMINATE_CALL,_constants.chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE// chatMessageVOTypes.END_CALL
-];if((!currentCallId||currentCallId&&threadId!=currentCallId)&&restrictedMessageTypes.includes(type)){// if(!currentCallId && threadId !== currentCallId && restrictedMessageTypes.includes(type)){
-return true;}else{return false;}}this.handleChatMessages=function(type,messageContent,contentCount,threadId,uniqueId){consoleLogging&&console.debug("[SDK][CALL_MODULE][handleChatMessages]","type:",type,"threadId:",threadId,"currentCallId:",currentCallId,"shouldNotProcessChatMessage:",shouldNotProcessChatMessage(type,threadId));if(shouldNotProcessChatMessage(type,threadId)){return;}switch(type){/**
+];if((!currentCallId||currentCallId&&threadId!=currentCallId)&&restrictedMessageTypes.includes(type)){return true;}else{return false;}}this.handleChatMessages=function(type,messageContent,contentCount,threadId,uniqueId){consoleLogging&&console.debug("[SDK][CALL_MODULE][handleChatMessages]","type:",type,"threadId:",threadId,"currentCallId:",currentCallId,"shouldNotProcessChatMessage:",shouldNotProcessChatMessage(type,threadId));if(shouldNotProcessChatMessage(type,threadId)){return;}switch(type){/**
        * Type 70    Send Call Request
        */case _constants.chatMessageVOTypes.CALL_REQUEST:callRequestController.callRequestReceived=true;callReceived({callId:messageContent.callId},function(r){});if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}_eventsModule.chatEvents.fireEvent('callEvents',{type:'RECEIVE_CALL',result:messageContent});if(messageContent.callId>0){if(!currentCallId){currentCallId=messageContent.callId;}}else{_eventsModule.chatEvents.fireEvent('callEvents',{type:'PARTNER_RECEIVED_YOUR_CALL',result:messageContent});}break;/**
        * Type 71    Accept Call Request
@@ -53641,7 +53648,7 @@ return chatMessaging.sendMessage(rejectCallData,{onResult:function onResult(resu
 pushMsgType:3,token:token,content:{}};if(params){if(typeof+params.callId==='number'&&params.callId>0){recordCallData.subjectId=+params.callId;}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'Invalid Call id!'});return;}if(params.destinated===true){recordCallData.chatMessageVOType=_constants.chatMessageVOTypes.DESTINED_RECORD_CALL;recordCallData.content.recordType=typeof+params.recordType==='number'?params.recordType:1;recordCallData.content.tags=Array.isArray(params.tags)?params.tags:null;recordCallData.content.threadId=typeof+params.threadId==='number'?params.threadId:null;}}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Record call!'});return;}return chatMessaging.sendMessage(recordCallData,{onResult:function onResult(result){//restartMedia(callTopics['sendVideoTopic']);
 restartMediaOnKeyFrame(chatMessaging.userInfo.id,[100]);callback&&callback(result);}});};this.stopRecordingCall=function(params,callback){var stopRecordingCallData={chatMessageVOType:_constants.chatMessageVOTypes.END_RECORD_CALL,typeCode:generalTypeCode,//params.typeCode,
 pushMsgType:3,token:token};if(params){if(typeof+params.callId==='number'&&params.callId>0){stopRecordingCallData.subjectId=+params.callId;}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'Invalid Call id!'});return;}}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Stop Recording the call!'});return;}return chatMessaging.sendMessage(stopRecordingCallData,{onResult:function onResult(result){callback&&callback(result);}});};this.startScreenShare=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.START_SCREEN_SHARE,typeCode:generalTypeCode,//params.typeCode,
-pushMsgType:3,subjectId:currentCallId,token:token};if(!sendData.subjectId){(0,_errorHandler.raiseError)((0,_errorHandler["default"])(12000),callback,true,{});return;}/* if (params) {
+pushMsgType:3,subjectId:currentCallId,token:token};if(!sendData.subjectId){raiseCallError(_errorHandler.errorList.INVALID_CALLID,callback,true,{});return;}if(screenShareInfo.isStarted()){raiseCallError(_errorHandler.errorList.SCREENSHARE_ALREADY_STARTED,callback,true);return;}/* if (params) {
          if (typeof +params.callId === 'number' && params.callId > 0) {
              sendData.subjectId = +params.callId;
          } else {
@@ -53657,9 +53664,11 @@ pushMsgType:3,subjectId:currentCallId,token:token};if(!sendData.subjectId){(0,_e
              message: 'No params have been sent to Share Screen!'
          });
          return;
-     }*/return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){consoleLogging&&console.log("[sdk][startScreenShare][onResult]: ",result);if(!result.hasError){var direction='send',shareScreen=true;if(screenShareInfo.isStarted()&&!screenShareInfo.iAmOwner()){direction='receive';shareScreen=false;}if(screenShareInfo.isStarted()&&screenShareInfo.iAmOwner()){var qualityObject=calculateScreenSize({quality:params.quality});screenShareInfo.setWidth(qualityObject.width);screenShareInfo.setHeight(qualityObject.height);sendCallMetaData({id:callMetaDataTypes.SCREENSHAREMETADATA,userid:chatMessaging.userInfo.id,content:{dimension:{width:screenShareInfo.getWidth(),height:screenShareInfo.getHeight()}}});}callStateController.addScreenShareToCall(direction,shareScreen);}callback&&callback(result);}});};this.endScreenShare=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.END_SCREEN_SHARE,typeCode:generalTypeCode,//params.typeCode,
-pushMsgType:3,token:token};if(params){if(typeof+params.callId==='number'&&params.callId>0){sendData.subjectId=+params.callId;}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'Invalid Call id!'});return;}}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to End Screen Sharing!'});return;}if(!screenShareInfo.iAmOwner()){_eventsModule.chatEvents.fireEvent('error',{code:999,message:'You can not end others screen sharing!'});return;}if(!callUsers['screenShare'].videoTopicManager.getPeer()){//.peers[callUsers['screenShare'].videoTopicName]
-consoleLogging&&console.log('[SDK][endScreenShare] No screenShare connection available');}else{callStateController.removeScreenShareFromCall();}return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};function calculateScreenSize(_ref){var _ref$quality=_ref.quality,quality=_ref$quality===void 0?3:_ref$quality;var screenSize=window.screen,qualities=[{width:Math.round(screenSize.width/3),height:Math.round(window.screen.height/3)},{width:Math.round(screenSize.width/2),height:Math.round(screenSize.height/2)},{width:screenSize.width,height:screenSize.height},{width:Math.round(screenSize.width*1.6),height:Math.round(screenSize.height*1.6)}],selectedQuality=quality?+quality-1:3,qualityObj=qualities[selectedQuality];return qualityObj;}this.resizeScreenShare=function(params,callback){var result={};if(screenShareInfo.isStarted()&&screenShareInfo.iAmOwner()){var qualityObj=calculateScreenSize({quality:params.quality});screenShareInfo.setWidth(qualityObj.width);screenShareInfo.setHeight(qualityObj.height);applyScreenShareSizeToElement();sendCallMetaData({id:callMetaDataTypes.SCREENSHAREMETADATA,userid:chatMessaging.userInfo.id,content:{dimension:{width:screenShareInfo.getWidth(),height:screenShareInfo.getHeight()}}});result.hasError=false;}else{result.hasError=true;result.errorMessage='You can not apply size to others ScreenShare or ScreenShare is not started';}callback&&callback(result);};this.getCallsList=function(params,callback){var getCallListData={chatMessageVOType:_constants.chatMessageVOTypes.GET_CALLS,typeCode:generalTypeCode,//params.typeCode,
+     }*/_deviceManager["default"].grantScreenSharePermission({closeStream:false},function(result){if(result.hasError){callback&&callback(result);//raiseError({result}, callback, true, {});
+return;}return chatMessaging.sendMessage(sendData,function(result){consoleLogging&&console.log("[sdk][startScreenShare][onResult]: ",result);if(result.hasError){_deviceManager["default"].mediaStreams().stopScreenShareInput();}else{var direction='send',shareScreen=true;if(screenShareInfo.isStarted()&&!screenShareInfo.iAmOwner()){direction='receive';shareScreen=false;}if(screenShareInfo.isStarted()&&screenShareInfo.iAmOwner()){var qualityObject=calculateScreenSize({quality:params.quality});screenShareInfo.setWidth(qualityObject.width);screenShareInfo.setHeight(qualityObject.height);sendCallMetaData({id:callMetaDataTypes.SCREENSHAREMETADATA,userid:chatMessaging.userInfo.id,content:{dimension:{width:screenShareInfo.getWidth(),height:screenShareInfo.getHeight()}}});}callStateController.addScreenShareToCall(direction,shareScreen);}callback&&callback(result);});});};this.endScreenShare=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.END_SCREEN_SHARE,typeCode:generalTypeCode,//params.typeCode,
+pushMsgType:3,token:token,subjectId:currentCallId};if(!sendData.subjectId){raiseCallError(_errorHandler.errorList.INVALID_CALLID,callback,true,{});return;}if(!screenShareInfo.isStarted()){raiseCallError(_errorHandler.errorList.SCREENSHARE_NOT_STARTED,callback,true);return;}if(!screenShareInfo.iAmOwner()){raiseCallError(_errorHandler.errorList.NOT_SCREENSHARE_OWNER,callback,true);return;}if(!callUsers['screenShare'].videoTopicManager.getPeer()){//.peers[callUsers['screenShare'].videoTopicName]
+consoleLogging&&console.log('[SDK][endScreenShare] No screenShare connection available');}else{callStateController.removeScreenShareFromCall();}return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};function calculateScreenSize(_ref){var _ref$quality=_ref.quality,quality=_ref$quality===void 0?3:_ref$quality;var screenSize=window.screen,qualities=[{width:Math.round(screenSize.width/3),height:Math.round(window.screen.height/3)},{width:Math.round(screenSize.width/2),height:Math.round(screenSize.height/2)},{width:screenSize.width,height:screenSize.height},{width:Math.round(screenSize.width*1.6),height:Math.round(screenSize.height*1.6)}],selectedQuality=quality?+quality-1:3,qualityObj=qualities[selectedQuality];return qualityObj;}this.resizeScreenShare=function(params,callback){var result={};if(screenShareInfo.isStarted()&&screenShareInfo.iAmOwner()){var qualityObj=calculateScreenSize({quality:params.quality});screenShareInfo.setWidth(qualityObj.width);screenShareInfo.setHeight(qualityObj.height);// applyScreenShareSizeToElement()
+restartMediaOnKeyFrame('screenShare',[10,1000,2000]);sendCallMetaData({id:callMetaDataTypes.SCREENSHAREMETADATA,userid:chatMessaging.userInfo.id,content:{dimension:{width:screenShareInfo.getWidth(),height:screenShareInfo.getHeight()}}});result.hasError=false;}else{result.hasError=true;result.errorMessage='You can not apply size to others ScreenShare or ScreenShare is not started';}callback&&callback(result);};this.getCallsList=function(params,callback){var getCallListData={chatMessageVOType:_constants.chatMessageVOTypes.GET_CALLS,typeCode:generalTypeCode,//params.typeCode,
 pushMsgType:3,token:token},content={};if(params){if(typeof params.count==='number'&&params.count>=0){content.count=+params.count;}else{content.count=50;}if(typeof params.offset==='number'&&params.offset>=0){content.offset=+params.offset;}else{content.offset=0;}if(typeof params.creatorCoreUserId==='number'&&params.creatorCoreUserId>0){content.creatorCoreUserId=+params.creatorCoreUserId;}if(typeof params.creatorSsoId==='number'&&params.creatorSsoId>0){content.creatorSsoId=+params.creatorSsoId;}if(typeof params.name==='string'){content.name=params.name;}if(typeof params.type==='string'&&callTypes.hasOwnProperty(params.type.toUpperCase())){content.type=callTypes[params.type.toUpperCase()];}if(Array.isArray(params.callIds)){content.callIds=params.callIds;}if(typeof params.threadId==='number'&&+params.threadId>0){content.threadId=+params.threadId;}if(typeof params.contactType==='string'){content.contactType=params.contactType;}if(typeof params.uniqueId==='string'){content.uniqueId=params.uniqueId;}getCallListData.content=JSON.stringify(content);}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to End the call!'});return;}return chatMessaging.sendMessage(getCallListData,{onResult:function onResult(result){callback&&callback(result);}});};this.getCallsToJoin=function(params,callback){var getCallListData={chatMessageVOType:_constants.chatMessageVOTypes.GET_CALLS_TO_JOIN,pushMsgType:3,token:token},content={};if(params){if(typeof params.count==='number'&&params.count>=0){content.count=+params.count;}else{content.count=50;}if(typeof params.offset==='number'&&params.offset>=0){content.offset=+params.offset;}else{content.offset=0;}if(typeof params.creatorSsoId==='number'&&params.creatorSsoId>0){content.creatorSsoId=+params.creatorSsoId;}if(typeof params.name==='string'){content.name=params.name;}if(typeof params.type==='string'&&callTypes.hasOwnProperty(params.type.toUpperCase())){content.type=callTypes[params.type.toUpperCase()];}if(Array.isArray(params.threadIds)){content.threadIds=params.threadIds;}if(typeof params.uniqueId==='string'){content.uniqueId=params.uniqueId;}getCallListData.content=JSON.stringify(content);}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'Invalid params'});return;}return chatMessaging.sendMessage(getCallListData,{onResult:function onResult(result){callback&&callback(result);}});};this.deleteFromCallList=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.DELETE_FROM_CALL_HISTORY,typeCode:generalTypeCode,//params.typeCode,
 content:[]};if(params){if(typeof params.contactType==='string'&&params.contactType.length){sendData.content.contactType=params.contactType;}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'You should enter a contactType!'});return;}if(Array.isArray(params.callIds)){sendData.content=params.callIds;}}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Delete a call from Call History!'});return;}return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result=messageContent;}callback&&callback(returnData);}});};this.getCallParticipants=function(params,callback){var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.ACTIVE_CALL_PARTICIPANTS,typeCode:generalTypeCode,//params.typeCode,
 content:{}};if(params){if(isNaN(params.callId)){_eventsModule.chatEvents.fireEvent('error',{code:999,message:'Call Id should be a valid number!'});return;}else{var callId=+params.callId;sendMessageParams.subjectId=callId;var offset=parseInt(params.offset)>0?parseInt(params.offset):0,count=parseInt(params.count)>0?parseInt(params.count):config.getHistoryCount;sendMessageParams.content.count=count;sendMessageParams.content.offset=offset;return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={participants:reformatCallParticipants(messageContent),contentCount:result.contentCount,hasNext:sendMessageParams.content.offset+sendMessageParams.content.count<result.contentCount&&messageLength>0,nextOffset:sendMessageParams.content.offset*1+messageLength*1};returnData.result=resultData;}callback&&callback(returnData);/**
@@ -53706,7 +53715,7 @@ me.audioTopicManager.getPeer().getLocalStream().getTracks()[0].enabled=false;cal
 return;// me.peers[me.audioTopicName].getLocalStream().getTracks()[0].enabled = true;
 me.audioTopicManager.getPeer().getLocalStream().getTracks()[0].enabled=true;callback&&callback();};this.resizeCallVideo=function(params,callback){if(params){if(!!params.width&&+params.width>0){callVideoMinWidth=+params.width;}if(!!params.height&&+params.height>0){callVideoMinHeight=+params.height;}if(!callUsers[chatMessaging.userInfo.id]){consoleLogging&&console.log("Error in resizeCallVideo(), call not started ");return;}var userObject=callUsers[chatMessaging.userInfo.id];//userObject.peers[userObject.videoTopicName]
 userObject.videoTopicManager.getPeer().getLocalStream().getTracks()[0].applyConstraints({"width":callVideoMinWidth,"height":callVideoMinHeight}).then(function(res){userObject.htmlElements[userObject.videoTopicName].style.width=callVideoMinWidth+'px';userObject.htmlElements[userObject.videoTopicName].style.height=callVideoMinHeight+'px';callback&&callback();})["catch"](function(e){_eventsModule.chatEvents.fireEvent('error',{code:999,message:e});});}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to resize the video call! Send an object like {width: 640, height: 480}'});return;}};this.sendCallSticker=function(_ref2,callback){var _ref2$sticker=_ref2.sticker,sticker=_ref2$sticker===void 0?_constants.callStickerTypes.RAISE_HAND:_ref2$sticker;var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE,typeCode:generalTypeCode,//params.typeCode,
-content:[sticker],subjectId:currentCallId};if(!sendMessageParams.subjectId){(0,_errorHandler.raiseError)((0,_errorHandler["default"])(12000),callback,true,{});return;}if(!sticker||!Object.values(_constants.callStickerTypes).includes(sticker)){raiseCallError((0,_errorHandler["default"])(12700),callback,true);return;}return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result=messageContent;}callback&&callback(returnData);}});};this.deviceManager=_deviceManager["default"];this.callStop=callStop;this.restartMedia=restartMedia;}var _default=ChatCall;exports["default"]=_default;
+content:[sticker],subjectId:currentCallId};if(!sendMessageParams.subjectId){(0,_errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID,callback,true,{});return;}if(!sticker||!Object.values(_constants.callStickerTypes).includes(sticker)){raiseCallError(_errorHandler.errorList.INVALID_STICKER_NAME,callback,true);return;}return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result=messageContent;}callback&&callback(returnData);}});};this.deviceManager=_deviceManager["default"];this.callStop=callStop;this.restartMedia=restartMedia;}var _default=ChatCall;exports["default"]=_default;
 
 },{"./events.module.js":328,"./lib/call/deviceManager.js":329,"./lib/constants":330,"./lib/errorHandler":331,"./utility/utility":334,"@babel/runtime/helpers/interopRequireDefault":3,"@babel/runtime/helpers/typeof":5,"kurento-utils":249}],327:[function(require,module,exports){
 'use strict';var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");var _typeof3=require("@babel/runtime/helpers/typeof");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _podasyncWsOnly=_interopRequireDefault(require("podasync-ws-only"));var _utility=_interopRequireDefault(require("./utility/utility"));var _dexie=_interopRequireDefault(require("dexie"));var _sentry=_interopRequireWildcard(require("./lib/sentry.js"));var _call=_interopRequireDefault(require("./call.module"));var _events=_interopRequireWildcard(require("./events.module"));var _messaging=_interopRequireDefault(require("./messaging.module"));var _constants=require("./lib/constants");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));function _getRequireWildcardCache(nodeInterop){if(typeof WeakMap!=="function")return null;var cacheBabelInterop=new WeakMap();var cacheNodeInterop=new WeakMap();return(_getRequireWildcardCache=function _getRequireWildcardCache(nodeInterop){return nodeInterop?cacheNodeInterop:cacheBabelInterop;})(nodeInterop);}function _interopRequireWildcard(obj,nodeInterop){if(!nodeInterop&&obj&&obj.__esModule){return obj;}if(obj===null||_typeof3(obj)!=="object"&&typeof obj!=="function"){return{"default":obj};}var cache=_getRequireWildcardCache(nodeInterop);if(cache&&cache.has(obj)){return cache.get(obj);}var newObj={};var hasPropertyDescriptor=Object.defineProperty&&Object.getOwnPropertyDescriptor;for(var key in obj){if(key!=="default"&&Object.prototype.hasOwnProperty.call(obj,key)){var desc=hasPropertyDescriptor?Object.getOwnPropertyDescriptor(obj,key):null;if(desc&&(desc.get||desc.set)){Object.defineProperty(newObj,key,desc);}else{newObj[key]=obj[key];}}}newObj["default"]=obj;if(cache){cache.set(obj,newObj);}return newObj;}function Chat(params){(0,_sentry.initSentry)(params);/*******************************************************
@@ -55961,6 +55970,8 @@ exports["default"] = _default;
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 
+var _typeof = require("@babel/runtime/helpers/typeof");
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -55974,7 +55985,57 @@ require("../constants.js");
 
 var _eventsModule = require("../../events.module.js");
 
-var _errorHandler = _interopRequireDefault(require("../errorHandler.js"));
+var _errorHandler = _interopRequireWildcard(require("../errorHandler.js"));
+
+function _getRequireWildcardCache(nodeInterop) {
+  if (typeof WeakMap !== "function") return null;
+  var cacheBabelInterop = new WeakMap();
+  var cacheNodeInterop = new WeakMap();
+  return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) {
+    return nodeInterop ? cacheNodeInterop : cacheBabelInterop;
+  })(nodeInterop);
+}
+
+function _interopRequireWildcard(obj, nodeInterop) {
+  if (!nodeInterop && obj && obj.__esModule) {
+    return obj;
+  }
+
+  if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") {
+    return {
+      "default": obj
+    };
+  }
+
+  var cache = _getRequireWildcardCache(nodeInterop);
+
+  if (cache && cache.has(obj)) {
+    return cache.get(obj);
+  }
+
+  var newObj = {};
+  var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
+
+  for (var key in obj) {
+    if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) {
+      var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
+
+      if (desc && (desc.get || desc.set)) {
+        Object.defineProperty(newObj, key, desc);
+      } else {
+        newObj[key] = obj[key];
+      }
+    }
+  }
+
+  newObj["default"] = obj;
+
+  if (cache) {
+    cache.set(obj, newObj);
+  }
+
+  return newObj;
+}
 
 var deviceList = {
   audioIn: [],
@@ -55984,7 +56045,8 @@ var deviceList = {
 var deviceStreams = {
   videoIn: null,
   audioIn: null,
-  audioOut: null
+  audioOut: null,
+  screenShare: null
 };
 var _mediaStreams = {
   setAudioInput: function setAudioInput(stream) {
@@ -55993,11 +56055,17 @@ var _mediaStreams = {
   setVideoInput: function setVideoInput(stream) {
     deviceStreams.videoIn = stream;
   },
+  setScreenShareInput: function setScreenShareInput(stream) {
+    deviceStreams.screenShare = stream;
+  },
   getVideoInput: function getVideoInput() {
     return deviceStreams.videoIn;
   },
   getAudioInput: function getAudioInput() {
     return deviceStreams.audioIn;
+  },
+  getScreenShareInput: function getScreenShareInput() {
+    return deviceStreams.screenShare;
   },
   stopAudioInput: function stopAudioInput() {
     if (!deviceStreams.audioIn) return;
@@ -56014,22 +56082,32 @@ var _mediaStreams = {
       track.stop();
     });
     deviceStreams.videoIn = null;
+  },
+  stopScreenShareInput: function stopScreenShareInput() {
+    if (!deviceStreams.screenShare) return;
+    deviceStreams.screenShare.getTracks().forEach(function (track) {
+      track.stop();
+    });
+    deviceStreams.screenShare = null;
   }
 };
 var deviceManager = {
-  getAvailableDevices: function getAvailableDevices() {
-    // deviceManager.changeAudioOutputDevice();
-    navigator.mediaDevices.enumerateDevices().then(function (devices) {
-      devices.forEach(function (device) {
-        console.log(device);
-        console.log(device.kind + ": " + device.label + " id = " + device.deviceId);
-      });
-    })["catch"](function (err) {
-      console.log(err.name + ": " + err.message);
-    });
-  },
+  // getAvailableDevices() {
+  //     // deviceManager.changeAudioOutputDevice();
+  //     navigator.mediaDevices.enumerateDevices()
+  //         .then(function(devices) {
+  //             devices.forEach(function(device) {
+  //                 console.log(device)
+  //                 console.log(device.kind + ": " + device.label +
+  //                     " id = " + device.deviceId);
+  //             });
+  //         })
+  //         .catch(function(err) {
+  //             console.log(err.name + ": " + err.message);
+  //         });
+  // },
   canChooseAudioOutputDevice: function canChooseAudioOutputDevice() {
-    return navigator.mediaDevices.selectAudioOutput;
+    return !!navigator.mediaDevices.selectAudioOutput;
   },
   changeAudioOutputDevice: function changeAudioOutputDevice() {
     if (!navigator.mediaDevices.selectAudioOutput) {
@@ -56044,27 +56122,50 @@ var deviceManager = {
       console.log(err.name + ": " + err.message);
     });
   },
-  getScreenSharePermission: function getScreenSharePermission() {
-    return new Promise(function (resolve) {
+  grantScreenSharePermission: function grantScreenSharePermission(_ref) {
+    var _ref$closeStream = _ref.closeStream,
+        closeStream = _ref$closeStream === void 0 ? false : _ref$closeStream;
+    var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+    return new Promise(function (resolve, reject) {
+      if (_mediaStreams.getScreenShareInput()) {
+        // console.log("exists resolving")
+        resolve(_mediaStreams.getScreenShareInput());
+        return;
+      }
+
       navigator.mediaDevices.getDisplayMedia({
-        audio: true,
+        audio: false,
         video: true
-      }).then(function (result) {
-        console.log(result);
-        resolve(result);
+      }).then(function (stream) {
+        _mediaStreams.setScreenShareInput(stream);
+
+        if (closeStream) {
+          _mediaStreams.stopScreenShareInput();
+        }
+
+        callback && callback({
+          hasError: false
+        });
+        resolve(stream);
+      })["catch"](function (e) {
+        var error = (0, _errorHandler.raiseError)(_errorHandler.errorList.SCREENSHARE_PERMISSION_ERROR, callback, true, {
+          eventName: 'callEvents',
+          eventType: 'CALL_ERROR'
+        });
+        reject(error);
       });
     });
   },
-  grantUserMediaDevicesPermissions: function grantUserMediaDevicesPermissions(_ref) {
-    var _ref$video = _ref.video,
-        video = _ref$video === void 0 ? false : _ref$video,
-        _ref$audio = _ref.audio,
-        audio = _ref$audio === void 0 ? false : _ref$audio,
-        _ref$closeStream = _ref.closeStream,
-        closeStream = _ref$closeStream === void 0 ? false : _ref$closeStream;
+  grantUserMediaDevicesPermissions: function grantUserMediaDevicesPermissions(_ref2) {
+    var _ref2$video = _ref2.video,
+        video = _ref2$video === void 0 ? false : _ref2$video,
+        _ref2$audio = _ref2.audio,
+        audio = _ref2$audio === void 0 ? false : _ref2$audio,
+        _ref2$closeStream = _ref2.closeStream,
+        closeStream = _ref2$closeStream === void 0 ? false : _ref2$closeStream;
     var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
     return new Promise( /*#__PURE__*/function () {
-      var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(resolve, reject) {
+      var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(resolve, reject) {
         var parsedError;
         return _regenerator["default"].wrap(function _callee$(_context) {
           while (1) {
@@ -56131,15 +56232,15 @@ var deviceManager = {
       }));
 
       return function (_x, _x2) {
-        return _ref2.apply(this, arguments);
+        return _ref3.apply(this, arguments);
       };
     }());
   },
-  getInputDevicePermission: function getInputDevicePermission(_ref3) {
-    var _ref3$audio = _ref3.audio,
-        audio = _ref3$audio === void 0 ? false : _ref3$audio,
-        _ref3$video = _ref3.video,
-        video = _ref3$video === void 0 ? false : _ref3$video;
+  getInputDevicePermission: function getInputDevicePermission(_ref4) {
+    var _ref4$audio = _ref4.audio,
+        audio = _ref4$audio === void 0 ? false : _ref4$audio,
+        _ref4$video = _ref4.video,
+        video = _ref4$video === void 0 ? false : _ref4$video;
     return new Promise(function (resolve, reject) {
       if (video && _mediaStreams.getVideoInput()) {
         resolve(_mediaStreams.getVideoInput());
@@ -56177,7 +56278,7 @@ var deviceManager = {
 var _default = deviceManager;
 exports["default"] = _default;
 
-},{"../../events.module.js":328,"../constants.js":330,"../errorHandler.js":331,"@babel/runtime/helpers/asyncToGenerator":1,"@babel/runtime/helpers/interopRequireDefault":3,"@babel/runtime/regenerator":6}],330:[function(require,module,exports){
+},{"../../events.module.js":328,"../constants.js":330,"../errorHandler.js":331,"@babel/runtime/helpers/asyncToGenerator":1,"@babel/runtime/helpers/interopRequireDefault":3,"@babel/runtime/helpers/typeof":5,"@babel/runtime/regenerator":6}],330:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -56421,33 +56522,60 @@ function _objectSpread(target) {
   return target;
 }
 
-var errorList = [{
-  code: 12000,
-  message: "[SDK] Call not started or invalid callId"
-},
-/**
- * 12400-12499 Media devices
- */
-{
-  code: 12400,
-  message: "Could not grant video input permission"
-}, {
-  code: 12401,
-  message: "Could not grant audio input permission"
-}, {
-  code: 12402,
-  message: "Could not grant audio out permission"
-}, {
-  code: 12403,
-  message: "Current environment does not supports user media devices"
-},
-/**
- * 12700-12720 Call stickers
- */
-{
-  code: 12700,
-  message: "[SDK] Invalid sticker name. Use SDK.callStickerTypes"
-}];
+var errorList = {
+  INVALID_CALLID: {
+    code: 12000,
+    message: "[SDK] Call not started or invalid callId"
+  },
+
+  /**
+   * 12400-12499 Media devices
+   */
+  VIDEO_PERMISSION_ERROR: {
+    code: 12400,
+    message: "Could not grant video input permission"
+  },
+  AUDIO_PERMISSION_ERROR: {
+    code: 12401,
+    message: "Could not grant audio input permission"
+  },
+  AUDIO_OUT_PERMISSION_ERROR: {
+    code: 12402,
+    message: "Could not grant audio out permission"
+  },
+  MEDIA_DEVICES_NOT_SUPPORTED: {
+    code: 12403,
+    message: "Current environment does not supports user media devices"
+  },
+  SCREENSHARE_PERMISSION_ERROR: {
+    code: 12404,
+    message: "Could not grant screen share permission"
+  },
+
+  /**
+   * 12550-12570 ScreenShare
+   */
+  SCREENSHARE_NOT_STARTED: {
+    code: 12550,
+    message: "ScreenShare not started "
+  },
+  NOT_SCREENSHARE_OWNER: {
+    code: 12551,
+    message: "You are not ScreenShare owner"
+  },
+  SCREENSHARE_ALREADY_STARTED: {
+    code: 12552,
+    message: "ScreenShare already started "
+  },
+
+  /**
+   * 12700-12720 Call stickers
+   */
+  INVALID_STICKER_NAME: {
+    code: 12700,
+    message: "[SDK] Invalid sticker name. Use SDK.callStickerTypes"
+  }
+};
 exports.errorList = errorList;
 var messagingModule;
 
@@ -56458,7 +56586,7 @@ var init = function init(params) {
 exports.init = init;
 
 var handleError = function handleError(error) {
-  var item = errorList.filter(function (item) {
+  var item = Object.values(errorList).filter(function (item) {
     return item.code == error;
   });
   if (!item.length) return {};
@@ -56472,7 +56600,9 @@ var raiseError = function raiseError(errorObject, callback) {
       _ref$eventName = _ref.eventName,
       eventName = _ref$eventName === void 0 ? 'error' : _ref$eventName,
       _ref$eventType = _ref.eventType,
-      eventType = _ref$eventType === void 0 ? null : _ref$eventType;
+      eventType = _ref$eventType === void 0 ? null : _ref$eventType,
+      _ref$environmentDetai = _ref.environmentDetails,
+      environmentDetails = _ref$environmentDetai === void 0 ? null : _ref$environmentDetai;
 
   callback && callback({
     hasError: true,
@@ -56482,7 +56612,8 @@ var raiseError = function raiseError(errorObject, callback) {
   firEvent && _events.chatEvents.fireEvent(eventName, {
     type: eventType,
     code: errorObject.code,
-    message: errorObject.message
+    message: errorObject.message,
+    environmentDetails: environmentDetails
   });
   return _objectSpread({
     hasError: true

@@ -2,6 +2,8 @@
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 
+var _typeof = require("@babel/runtime/helpers/typeof");
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -15,7 +17,11 @@ require("../constants.js");
 
 var _eventsModule = require("../../events.module.js");
 
-var _errorHandler = _interopRequireDefault(require("../errorHandler.js"));
+var _errorHandler = _interopRequireWildcard(require("../errorHandler.js"));
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 var deviceList = {
   audioIn: [],
@@ -25,7 +31,8 @@ var deviceList = {
 var deviceStreams = {
   videoIn: null,
   audioIn: null,
-  audioOut: null
+  audioOut: null,
+  screenShare: null
 };
 var _mediaStreams = {
   setAudioInput: function setAudioInput(stream) {
@@ -34,11 +41,17 @@ var _mediaStreams = {
   setVideoInput: function setVideoInput(stream) {
     deviceStreams.videoIn = stream;
   },
+  setScreenShareInput: function setScreenShareInput(stream) {
+    deviceStreams.screenShare = stream;
+  },
   getVideoInput: function getVideoInput() {
     return deviceStreams.videoIn;
   },
   getAudioInput: function getAudioInput() {
     return deviceStreams.audioIn;
+  },
+  getScreenShareInput: function getScreenShareInput() {
+    return deviceStreams.screenShare;
   },
   stopAudioInput: function stopAudioInput() {
     if (!deviceStreams.audioIn) return;
@@ -55,22 +68,32 @@ var _mediaStreams = {
       track.stop();
     });
     deviceStreams.videoIn = null;
+  },
+  stopScreenShareInput: function stopScreenShareInput() {
+    if (!deviceStreams.screenShare) return;
+    deviceStreams.screenShare.getTracks().forEach(function (track) {
+      track.stop();
+    });
+    deviceStreams.screenShare = null;
   }
 };
 var deviceManager = {
-  getAvailableDevices: function getAvailableDevices() {
-    // deviceManager.changeAudioOutputDevice();
-    navigator.mediaDevices.enumerateDevices().then(function (devices) {
-      devices.forEach(function (device) {
-        console.log(device);
-        console.log(device.kind + ": " + device.label + " id = " + device.deviceId);
-      });
-    })["catch"](function (err) {
-      console.log(err.name + ": " + err.message);
-    });
-  },
+  // getAvailableDevices() {
+  //     // deviceManager.changeAudioOutputDevice();
+  //     navigator.mediaDevices.enumerateDevices()
+  //         .then(function(devices) {
+  //             devices.forEach(function(device) {
+  //                 console.log(device)
+  //                 console.log(device.kind + ": " + device.label +
+  //                     " id = " + device.deviceId);
+  //             });
+  //         })
+  //         .catch(function(err) {
+  //             console.log(err.name + ": " + err.message);
+  //         });
+  // },
   canChooseAudioOutputDevice: function canChooseAudioOutputDevice() {
-    return navigator.mediaDevices.selectAudioOutput;
+    return !!navigator.mediaDevices.selectAudioOutput;
   },
   changeAudioOutputDevice: function changeAudioOutputDevice() {
     if (!navigator.mediaDevices.selectAudioOutput) {
@@ -85,27 +108,50 @@ var deviceManager = {
       console.log(err.name + ": " + err.message);
     });
   },
-  getScreenSharePermission: function getScreenSharePermission() {
-    return new Promise(function (resolve) {
+  grantScreenSharePermission: function grantScreenSharePermission(_ref) {
+    var _ref$closeStream = _ref.closeStream,
+        closeStream = _ref$closeStream === void 0 ? false : _ref$closeStream;
+    var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+    return new Promise(function (resolve, reject) {
+      if (_mediaStreams.getScreenShareInput()) {
+        // console.log("exists resolving")
+        resolve(_mediaStreams.getScreenShareInput());
+        return;
+      }
+
       navigator.mediaDevices.getDisplayMedia({
-        audio: true,
+        audio: false,
         video: true
-      }).then(function (result) {
-        console.log(result);
-        resolve(result);
+      }).then(function (stream) {
+        _mediaStreams.setScreenShareInput(stream);
+
+        if (closeStream) {
+          _mediaStreams.stopScreenShareInput();
+        }
+
+        callback && callback({
+          hasError: false
+        });
+        resolve(stream);
+      })["catch"](function (e) {
+        var error = (0, _errorHandler.raiseError)(_errorHandler.errorList.SCREENSHARE_PERMISSION_ERROR, callback, true, {
+          eventName: 'callEvents',
+          eventType: 'CALL_ERROR'
+        });
+        reject(error);
       });
     });
   },
-  grantUserMediaDevicesPermissions: function grantUserMediaDevicesPermissions(_ref) {
-    var _ref$video = _ref.video,
-        video = _ref$video === void 0 ? false : _ref$video,
-        _ref$audio = _ref.audio,
-        audio = _ref$audio === void 0 ? false : _ref$audio,
-        _ref$closeStream = _ref.closeStream,
-        closeStream = _ref$closeStream === void 0 ? false : _ref$closeStream;
+  grantUserMediaDevicesPermissions: function grantUserMediaDevicesPermissions(_ref2) {
+    var _ref2$video = _ref2.video,
+        video = _ref2$video === void 0 ? false : _ref2$video,
+        _ref2$audio = _ref2.audio,
+        audio = _ref2$audio === void 0 ? false : _ref2$audio,
+        _ref2$closeStream = _ref2.closeStream,
+        closeStream = _ref2$closeStream === void 0 ? false : _ref2$closeStream;
     var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
     return new Promise( /*#__PURE__*/function () {
-      var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(resolve, reject) {
+      var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(resolve, reject) {
         var parsedError;
         return _regenerator["default"].wrap(function _callee$(_context) {
           while (1) {
@@ -172,15 +218,15 @@ var deviceManager = {
       }));
 
       return function (_x, _x2) {
-        return _ref2.apply(this, arguments);
+        return _ref3.apply(this, arguments);
       };
     }());
   },
-  getInputDevicePermission: function getInputDevicePermission(_ref3) {
-    var _ref3$audio = _ref3.audio,
-        audio = _ref3$audio === void 0 ? false : _ref3$audio,
-        _ref3$video = _ref3.video,
-        video = _ref3$video === void 0 ? false : _ref3$video;
+  getInputDevicePermission: function getInputDevicePermission(_ref4) {
+    var _ref4$audio = _ref4.audio,
+        audio = _ref4$audio === void 0 ? false : _ref4$audio,
+        _ref4$video = _ref4.video,
+        video = _ref4$video === void 0 ? false : _ref4$video;
     return new Promise(function (resolve, reject) {
       if (video && _mediaStreams.getVideoInput()) {
         resolve(_mediaStreams.getVideoInput());

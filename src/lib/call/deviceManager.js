@@ -1,6 +1,6 @@
 import '../constants.js'
 import { chatEvents } from "../../events.module.js";
-import handleError from "../errorHandler.js";
+import handleError, {errorList, raiseError} from "../errorHandler.js";
 
 const deviceList = {
     audioIn: [],
@@ -12,7 +12,7 @@ const deviceStreams = {
     videoIn: null,
     audioIn: null,
     audioOut: null,
-
+    screenShare: null
 };
 
 const mediaStreams = {
@@ -22,11 +22,17 @@ const mediaStreams = {
     setVideoInput(stream) {
         deviceStreams.videoIn = stream;
     },
+    setScreenShareInput(stream) {
+        deviceStreams.screenShare = stream;
+    },
     getVideoInput() {
         return deviceStreams.videoIn
     },
     getAudioInput() {
         return deviceStreams.audioIn;
+    },
+    getScreenShareInput() {
+        return deviceStreams.screenShare;
     },
     stopAudioInput() {
         if(!deviceStreams.audioIn)
@@ -50,25 +56,35 @@ const mediaStreams = {
 
         deviceStreams.videoIn = null;
     },
+    stopScreenShareInput() {
+        if(!deviceStreams.screenShare)
+            return;
+
+        deviceStreams.screenShare.getTracks().forEach(track => {
+            track.stop();
+        })
+
+        deviceStreams.screenShare = null;
+    }
 }
 
 const deviceManager = {
-    getAvailableDevices() {
-        // deviceManager.changeAudioOutputDevice();
-        navigator.mediaDevices.enumerateDevices()
-            .then(function(devices) {
-                devices.forEach(function(device) {
-                    console.log(device)
-                    console.log(device.kind + ": " + device.label +
-                        " id = " + device.deviceId);
-                });
-            })
-            .catch(function(err) {
-                console.log(err.name + ": " + err.message);
-            });
-    },
+    // getAvailableDevices() {
+    //     // deviceManager.changeAudioOutputDevice();
+    //     navigator.mediaDevices.enumerateDevices()
+    //         .then(function(devices) {
+    //             devices.forEach(function(device) {
+    //                 console.log(device)
+    //                 console.log(device.kind + ": " + device.label +
+    //                     " id = " + device.deviceId);
+    //             });
+    //         })
+    //         .catch(function(err) {
+    //             console.log(err.name + ": " + err.message);
+    //         });
+    // },
     canChooseAudioOutputDevice() {
-        return navigator.mediaDevices.selectAudioOutput;
+        return !!navigator.mediaDevices.selectAudioOutput;
     },
     changeAudioOutputDevice() {
         if (!navigator.mediaDevices.selectAudioOutput) {
@@ -85,15 +101,32 @@ const deviceManager = {
                 console.log(err.name + ": " + err.message);
             });
     },
-    getScreenSharePermission() {
-        return new Promise(resolve => {
+    grantScreenSharePermission({closeStream = false}, callback = null) {
+        return new Promise((resolve, reject) => {
+            if(mediaStreams.getScreenShareInput()){
+                // console.log("exists resolving")
+                resolve(mediaStreams.getScreenShareInput());
+                return;
+            }
+
             navigator.mediaDevices.getDisplayMedia({
-                audio: true,
+                audio: false,
                 video: true
-            }).then(result => {
-                console.log(result)
-                resolve(result);
-            })
+            }).then(stream => {
+                mediaStreams.setScreenShareInput(stream);
+
+                if(closeStream) {
+                    mediaStreams.stopScreenShareInput();
+                }
+
+                callback && callback({
+                    hasError: false
+                })
+                resolve(stream);
+            }).catch(e => {
+                let error = raiseError(errorList.SCREENSHARE_PERMISSION_ERROR, callback, true, {eventName: 'callEvents', eventType: 'CALL_ERROR'});
+                reject(error);
+            });
         });
     },
     grantUserMediaDevicesPermissions({video = false, audio = false, closeStream = false}, callback = null) {
@@ -116,6 +149,7 @@ const deviceManager = {
 
                 if(callback)
                     callback({hasError: false});
+
                 resolve({hasError: false});
             } catch (error) {
                 let parsedError = {

@@ -5,7 +5,7 @@ import Utility from "./utility/utility"
 import {chatEvents} from "./events.module.js";
 import deviceManager from "./lib/call/deviceManager.js";
 // import {constants} from "mocha/lib/errors";
-import errorHandler, {raiseError} from "./lib/errorHandler";
+import errorHandler, {errorList, raiseError} from "./lib/errorHandler";
 // import handleError from "./lib/errorHandler";
 
 function ChatCall(params) {
@@ -332,8 +332,9 @@ function ChatCall(params) {
                     if(config.direction === 'send') {
                         if(config.mediaType === 'video') {
                             if(config.isScreenShare) {
-                                navigator.mediaDevices.getDisplayMedia().then(function (stream) {
+                                deviceManager.grantScreenSharePermission({closeStream: false}).then(stream => {
                                     stream.getVideoTracks()[0].addEventListener("ended", function (event) { // Click on browser UI stop sharing button
+                                        deviceManager.mediaStreams().stopScreenShareInput();
                                         if(callUsers['screenShare'] && config.peer){
                                             currentModuleInstance.endScreenShare({
                                                 callId: currentCallId
@@ -344,14 +345,15 @@ function ChatCall(params) {
                                     options.sendSource = 'screen';
                                     resolve(options);
                                 }).catch(function (error) {
-                                    let errorString = "[SDK][navigator.mediaDevices.getDisplayMedia]" + JSON.stringify(error)
+                                    let errorString = "[SDK][grantScreenSharePermission][catch] " + JSON.stringify(error)
                                     console.error(errorString);
-                                    chatEvents.fireEvent('callEvents', {
-                                        type: 'CALL_ERROR',
-                                        code: 7000,
-                                        message: errorString,
-                                        environmentDetails: getSDKCallDetails()
-                                    });
+                                    raiseCallError(errorList.SCREENSHARE_PERMISSION_ERROR, null, true);
+                                    // chatEvents.fireEvent('callEvents', {
+                                    //     type: 'CALL_ERROR',
+                                    //     code: 7000,
+                                    //     message: errorString,
+                                    //     environmentDetails: getSDKCallDetails()
+                                    // });
                                     explainUserMediaError(error, 'video', 'screen');
                                     //resolve(options);
                                 });
@@ -947,7 +949,11 @@ function ChatCall(params) {
     let init = function () {},
 
         raiseCallError = function (errorObject, callBack, fireEvent){
-            raiseError(errorObject, callBack, fireEvent, {eventName: 'callEvents', eventType: 'CALL_ERROR'});
+            raiseError(errorObject, callBack, fireEvent, {
+                eventName: 'callEvents',
+                eventType: 'CALL_ERROR',
+                environmentDetails: getSDKCallDetails()
+            });
         },
 
         sendCallMessage = function (message, callback, timeoutRetriesCount = 0, timeoutCallback = null) {
@@ -1830,21 +1836,26 @@ function ChatCall(params) {
             });
         },
 
-        restartMedia = function (videoTopicName) {
+        restartMedia = function (videoTopicName, userId) {
             if (currentCallParams && Object.keys(currentCallParams).length && !callRequestController.cameraPaused) {
 
                 consoleLogging && console.log('[SDK] Sending Key Frame ...');
 
                 let videoTopic = !!videoTopicName ? videoTopicName : callUsers[chatMessaging.userInfo.id].videoTopicName;
                 let videoElement = document.getElementById(`uiRemoteVideo-${videoTopic}`);
+                let isScreenShare = userId === 'screenShare';
 
                 if (videoElement) {
                     let videoTrack = videoElement.srcObject.getTracks()[0];
 
+                    let width = isScreenShare ? screenShareInfo.getWidth() : callVideoMinWidth,
+                        height = isScreenShare ? screenShareInfo.getHeight() : callVideoMinHeight
+                        , rand = Math.random()
+                        , newWidth = width - 5
+                        , newHeight = height - 5;
+
                     if (navigator && !!navigator.userAgent.match(/firefox/gi)) {
-                        videoTrack.enable = false;
-                        let newWidth = callVideoMinWidth - (Math.ceil(Math.random() * 50) + 20);
-                        let newHeight = callVideoMinHeight - (Math.ceil(Math.random() * 50) + 20);
+                        // videoTrack.enable = false;
 
                         videoTrack.applyConstraints({
                             // width: {
@@ -1855,31 +1866,38 @@ function ChatCall(params) {
                             //     min: newHeight,
                             //     ideal: 720
                             // },
+                            width: newWidth,
+                            height: newHeight,
                             advanced: [
-                                {
-                                    width: newWidth,
-                                    height: newHeight
-                                },
-                                {
-                                    aspectRatio: 1.333
-                                }
+                                {aspectRatio: 1.77}
                             ]
                         }).then((res) => {
                             videoTrack.enabled = true;
                             setTimeout(() => {
                                 videoTrack.applyConstraints({
-                                    "width": callVideoMinWidth,
-                                    "height": callVideoMinHeight
+                                    width,
+                                    height,
+                                    advanced: [
+                                        {aspectRatio: 1.77}
+                                    ]
                                 });
                             }, 500);
                         }).catch(e => consoleLogging && console.log(e));
                     } else {
                         videoTrack.applyConstraints({
-                            "width": callVideoMinWidth - (Math.ceil(Math.random() * 5) + 5)
+                            width: newWidth,
+                            height: newHeight,
+                            advanced: [
+                                {aspectRatio: 1.77}
+                            ]
                         }).then((res) => {
                             setTimeout(function () {
                                 videoTrack.applyConstraints({
-                                    "width": callVideoMinWidth
+                                    width: width,
+                                    height: height,
+                                    advanced: [
+                                        {aspectRatio: 1.77}
+                                    ]
                                 });
                             }, 500);
                         }).catch(e => consoleLogging && console.log(e));
@@ -2086,6 +2104,7 @@ function ChatCall(params) {
 
             deviceManager.mediaStreams().stopVideoInput();
             deviceManager.mediaStreams().stopAudioInput();
+            deviceManager.mediaStreams().stopScreenShareInput();
 
             callStateController.removeAllCallParticipants();
 
@@ -2114,7 +2133,7 @@ function ChatCall(params) {
             for (let i = 0; i < timeouts.length; i++) {
                 setTimeout(function () {
                     if(typeof callUsers[userId] !== "undefined" && callUsers[userId] && callUsers[userId].videoTopicManager.getPeer()) //callUsers[userId].peers[callUsers[userId].videoTopicName]
-                        restartMedia(callUsers[userId].videoTopicName);
+                        restartMedia(callUsers[userId].videoTopicName, userId);
                 }, timeouts[i]);
             }
         },
@@ -2177,7 +2196,8 @@ function ChatCall(params) {
                 case callMetaDataTypes.SCREENSHAREMETADATA:
                     screenShareInfo.setWidth(jMessage.content.dimension.width);
                     screenShareInfo.setHeight(jMessage.content.dimension.height);
-                    applyScreenShareSizeToElement();
+                    // applyScreenShareSizeToElement();
+                    restartMediaOnKeyFrame('screenShare', [10, 1000, 2000]);
                     chatEvents.fireEvent("callEvents", {
                         type: 'SCREENSHARE_METADATA',
                         userId: jMessage.userid,
@@ -3645,10 +3665,13 @@ function ChatCall(params) {
         };
 
         if(!sendData.subjectId) {
-            raiseError(errorHandler(12000), callback, true, {});
+            raiseCallError(errorList.INVALID_CALLID, callback, true, {});
             return;
         }
-
+        if(screenShareInfo.isStarted()) {
+            raiseCallError(errorList.SCREENSHARE_ALREADY_STARTED, callback, true);
+            return
+        }
        /* if (params) {
             if (typeof +params.callId === 'number' && params.callId > 0) {
                 sendData.subjectId = +params.callId;
@@ -3667,18 +3690,28 @@ function ChatCall(params) {
             return;
         }*/
 
-        return chatMessaging.sendMessage(sendData, {
-            onResult: function (result) {
+        deviceManager.grantScreenSharePermission({
+            closeStream: false
+        }, function (result) {
+            if (result.hasError) {
+                callback && callback(result)
+                //raiseError({result}, callback, true, {});
+                return;
+            }
+
+            return chatMessaging.sendMessage(sendData, function (result) {
                 consoleLogging && console.log("[sdk][startScreenShare][onResult]: ", result);
-                if(!result.hasError) {
+                if (result.hasError) {
+                    deviceManager.mediaStreams().stopScreenShareInput();
+                } else {
                     let direction = 'send', shareScreen = true;
 
-                    if(screenShareInfo.isStarted() && !screenShareInfo.iAmOwner()){
+                    if (screenShareInfo.isStarted() && !screenShareInfo.iAmOwner()) {
                         direction = 'receive';
                         shareScreen = false;
                     }
 
-                    if(screenShareInfo.isStarted() && screenShareInfo.iAmOwner()) {
+                    if (screenShareInfo.isStarted() && screenShareInfo.iAmOwner()) {
                         let qualityObject = calculateScreenSize({quality: params.quality});
                         screenShareInfo.setWidth(qualityObject.width);
                         screenShareInfo.setHeight(qualityObject.height);
@@ -3697,7 +3730,7 @@ function ChatCall(params) {
                     callStateController.addScreenShareToCall(direction, shareScreen);
                 }
                 callback && callback(result);
-            }
+            });
         });
     };
 
@@ -3706,32 +3739,20 @@ function ChatCall(params) {
             chatMessageVOType: chatMessageVOTypes.END_SCREEN_SHARE,
             typeCode: generalTypeCode, //params.typeCode,
             pushMsgType: 3,
-            token: token
+            token: token,
+            subjectId: currentCallId,
         };
 
-        if (params) {
-            if (typeof +params.callId === 'number' && params.callId > 0) {
-                sendData.subjectId = +params.callId;
-            } else {
-                chatEvents.fireEvent('error', {
-                    code: 999,
-                    message: 'Invalid Call id!'
-                });
-                return;
-            }
-        } else {
-            chatEvents.fireEvent('error', {
-                code: 999,
-                message: 'No params have been sent to End Screen Sharing!'
-            });
+        if(!sendData.subjectId) {
+            raiseCallError(errorList.INVALID_CALLID, callback, true, {});
             return;
         }
-
+        if(!screenShareInfo.isStarted()) {
+            raiseCallError(errorList.SCREENSHARE_NOT_STARTED, callback, true);
+            return
+        }
         if(!screenShareInfo.iAmOwner()) {
-            chatEvents.fireEvent('error', {
-                code: 999,
-                message: 'You can not end others screen sharing!'
-            });
+            raiseCallError(errorList.NOT_SCREENSHARE_OWNER, callback, true);
             return;
         }
 
@@ -3781,7 +3802,8 @@ function ChatCall(params) {
             screenShareInfo.setWidth(qualityObj.width);
             screenShareInfo.setHeight(qualityObj.height);
 
-            applyScreenShareSizeToElement()
+            // applyScreenShareSizeToElement()
+            restartMediaOnKeyFrame('screenShare', [10, 1000, 2000]);
 
             sendCallMetaData({
                 id: callMetaDataTypes.SCREENSHAREMETADATA,
@@ -4484,12 +4506,12 @@ function ChatCall(params) {
         };
 
         if(!sendMessageParams.subjectId) {
-            raiseError(errorHandler(12000), callback, true, {});
+            raiseError(errorList.INVALID_CALLID, callback, true, {});
             return;
         }
 
         if(!sticker || !Object.values(callStickerTypes).includes(sticker)) {
-            raiseCallError(errorHandler(12700), callback, true);
+            raiseCallError(errorList.INVALID_STICKER_NAME, callback, true);
             return;
         }
 
