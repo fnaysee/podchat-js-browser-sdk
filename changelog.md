@@ -4,6 +4,22 @@ All notable changes to this project will be documented here.
 to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.ir/pod/pod-basic-sdk/chat-js-browser-sdk/-/blob/master/changelog.md)
 
 ##[Unreleased]
+## [12.7.1-snapshot.10] - 2022-08-14
+### Added
+- Method: getCustomerInfo
+
+### Changed
+- ScreenShare functionality
+- Modified video aspect ratio
+- Modified method: sendCallSticker
+
+## [12.7.1-snapshot.9] - 2022-07-30
+### Added
+- Method: sendCallSticker
+
+### Fixed
+- Problem on CALL_ENDED didn't get fired for all thread participants
+- Audio and Video problem after rejecting an incoming call
 
 ## [12.7.1-snapshot.8] - 2022-07-24
 ### Fixed
