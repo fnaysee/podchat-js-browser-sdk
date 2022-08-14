@@ -3095,6 +3095,14 @@ function Chat(params) {
                         chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
                     }
                     break;
+              /**
+                * Type 226    CUSTOMER_INFO
+                */
+                case chatMessageVOTypes.CUSTOMER_INFO:
+                    if (chatMessaging.messagesCallbacks[uniqueId]) {
+                        chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+                    }
+                    break;
 
                 /**
                  * Type 999   All unknown errors
@@ -14031,6 +14039,23 @@ function Chat(params) {
             };
         });
     }
+    publicized.getCustomerInfo = function (params, callback) {
+        let userId = params.userId || chatMessaging.userInfo.id
+            , sendData = {
+            chatMessageVOType: chatMessageVOTypes.CUSTOMER_INFO,
+            typeCode: generalTypeCode, //params.typeCode,
+            content: [
+                userId
+            ],
+            token: token
+        };
+
+        return chatMessaging.sendMessage(sendData, {
+            onResult: function (result) {
+                callback && callback(result);
+            }
+        });
+    };
 
     init();
 
