@@ -4540,18 +4540,7 @@ function ChatCall(params) {
 
     return chatMessaging.sendMessage(sendMessageParams, {
       onResult: function onResult(result) {
-        var returnData = {
-          hasError: result.hasError,
-          errorMessage: result.errorMessage,
-          errorCode: result.errorCode
-        };
-
-        if (!returnData.hasError) {
-          var messageContent = result.result;
-          returnData.result = messageContent;
-        }
-
-        callback && callback(returnData);
+        callback && callback(result);
       }
     });
   };

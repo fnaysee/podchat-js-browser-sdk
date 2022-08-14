@@ -4517,17 +4517,7 @@ function ChatCall(params) {
 
         return chatMessaging.sendMessage(sendMessageParams, {
             onResult: function (result) {
-                let returnData = {
-                    hasError: result.hasError,
-                    errorMessage: result.errorMessage,
-                    errorCode: result.errorCode
-                };
-                if (!returnData.hasError) {
-                    let messageContent = result.result;
-                    returnData.result = messageContent;
-
-                }
-                callback && callback(returnData);
+                callback && callback(result);
             }
         });
     }
