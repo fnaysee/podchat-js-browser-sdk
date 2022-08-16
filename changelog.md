@@ -4,7 +4,7 @@ All notable changes to this project will be documented here.
 to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.ir/pod/pod-basic-sdk/chat-js-browser-sdk/-/blob/master/changelog.md)
 
 ##[Unreleased]
-## [12.7.1-snapshot.10] - 2022-08-14
+## [12.7.1-snapshot.11] - 2022-08-16
 ### Added
 - Method: getCustomerInfo
 
