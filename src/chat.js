@@ -3095,6 +3095,28 @@ function Chat(params) {
                         chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
                     }
                     break;
+
+                /**
+                 /**
+                 * Type 223    ARCHIVE_THREAD
+                 */
+                case chatMessageVOTypes.ARCHIVE_THREAD:
+                    if (chatMessaging.messagesCallbacks[uniqueId]) {
+                        chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+                    }
+                    break;
+
+                /**
+                 /**
+                 * Type 224    UNARCHIVE_THREAD
+                 */
+                case chatMessageVOTypes.UNARCHIVE_THREAD:
+                    if (chatMessaging.messagesCallbacks[uniqueId]) {
+                        chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+                    }
+                    break;
+
+
               /**
                 * Type 226    CUSTOMER_INFO
                 */
@@ -3970,6 +3992,7 @@ function Chat(params) {
                     ? (parseInt(parseInt(messageContent.partnerLastDeliveredMessageTime) / 1000) * 1000000000) +
                     parseInt(messageContent.partnerLastDeliveredMessageNanos)
                     : (parseInt(messageContent.partnerLastDeliveredMessageTime)),
+                archiveThread: messageContent.archiveThread,
                 type: messageContent.type,
                 metadata: messageContent.metadata,
                 mute: messageContent.mute,
@@ -14048,6 +14071,35 @@ function Chat(params) {
                 userId
             ],
             token: token
+        };
+
+        return chatMessaging.sendMessage(sendData, {
+            onResult: function (result) {
+                callback && callback(result);
+            }
+        });
+    };
+
+    publicized.archiveThread = function (params, callback) {
+        var sendData = {
+            chatMessageVOType: chatMessageVOTypes.ARCHIVE_THREAD,
+            typeCode: generalTypeCode, //params.typeCode,
+            token: token,
+            subjectId: params.threadId
+        };
+
+        return chatMessaging.sendMessage(sendData, {
+            onResult: function (result) {
+                callback && callback(result);
+            }
+        });
+    };
+    publicized.unArchiveThread = function (params, callback) {
+        var sendData = {
+            chatMessageVOType: chatMessageVOTypes.UNARCHIVE_THREAD,
+            typeCode: generalTypeCode, //params.typeCode,
+            token: token,
+            subjectId: params.threadId
         };
 
         return chatMessaging.sendMessage(sendData, {

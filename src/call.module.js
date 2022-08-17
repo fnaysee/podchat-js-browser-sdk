@@ -389,6 +389,7 @@ function ChatCall(params) {
                 //callUsers[config.userId].topicMetaData[config.topic].interval
                 metadataInstance.setIceCandidateInterval(setInterval(function () {
                     if (callUsers[config.userId].topicMetaData[config.topic].sdpAnswerReceived === true) {
+                        consoleLogging && console.log("[SDK][watchForIceCandidates][setInterval] sdpAnswerReceived, topic:", config.topic)
                         callUsers[config.userId].topicMetaData[config.topic].sdpAnswerReceived = false;
                         // manager.removeTopicIceCandidateInterval();
                         metadataInstance.clearIceCandidateInterval();
@@ -2002,7 +2003,7 @@ function ChatCall(params) {
                     return;
                 }
 
-                consoleLogging && console.log("[SDK][handleProcessSdpAnswer]", jsonMessage, jsonMessage.topic);
+                consoleLogging && console.log("[SDK][handleProcessSdpAnswer]", jsonMessage, jsonMessage.topic, topicManager.metadata().isIceCandidateIntervalSet());
 
                 if (topicManager.metadata().isIceCandidateIntervalSet()){
                     callUsers[userId].topicMetaData[jsonMessage.topic].sdpAnswerReceived = true;
