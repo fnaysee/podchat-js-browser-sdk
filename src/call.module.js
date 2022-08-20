@@ -2003,7 +2003,7 @@ function ChatCall(params) {
                     return;
                 }
 
-                consoleLogging && console.log("[SDK][handleProcessSdpAnswer]", jsonMessage, jsonMessage.topic, topicManager.metadata().isIceCandidateIntervalSet());
+                consoleLogging && console.log("[SDK][handleProcessSdpAnswer]", jsonMessage, jsonMessage.topic, topicManager.metadata().isIceCandidateIntervalSet().toString());
 
                 if (topicManager.metadata().isIceCandidateIntervalSet()){
                     callUsers[userId].topicMetaData[jsonMessage.topic].sdpAnswerReceived = true;
