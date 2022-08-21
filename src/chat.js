@@ -3097,6 +3097,18 @@ function Chat(params) {
                     break;
 
                 /**
+                 * Type 220    Adding a user to contacts list
+                 */
+                case chatMessageVOTypes.CONTACT_THREAD_UPDATE:
+                    messageContent.threadId = threadId;
+                    chatEvents.fireEvent('threadEvents', {
+                        type: 'CONTACT_THREAD_UPDATE',
+                        result: messageContent
+                    });
+
+                    break;
+
+                /**
                  /**
                  * Type 223    ARCHIVE_THREAD
                  */
