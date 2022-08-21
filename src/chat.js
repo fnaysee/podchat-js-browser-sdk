@@ -14092,12 +14092,14 @@ function Chat(params) {
         });
     };
 
-    publicized.archiveThread = function (params, callback) {
+    publicized.archiveThread = function ({
+        threadId
+    }, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.ARCHIVE_THREAD,
             typeCode: generalTypeCode, //params.typeCode,
             token: token,
-            subjectId: params.threadId
+            subjectId: threadId
         };
 
         return chatMessaging.sendMessage(sendData, {
@@ -14106,12 +14108,14 @@ function Chat(params) {
             }
         });
     };
-    publicized.unArchiveThread = function (params, callback) {
+    publicized.unArchiveThread = function ({
+        threadId
+    }, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.UNARCHIVE_THREAD,
             typeCode: generalTypeCode, //params.typeCode,
             token: token,
-            subjectId: params.threadId
+            subjectId: threadId
         };
 
         return chatMessaging.sendMessage(sendData, {

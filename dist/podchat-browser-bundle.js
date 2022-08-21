@@ -54233,6 +54233,8 @@ break;/**
                  */case _constants.chatMessageVOTypes.EXPORT_CHAT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
                  * Type 200    Adding a user to contacts list
                  */case _constants.chatMessageVOTypes.ADD_CONTACTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+                 * Type 220    Adding a user to contacts list
+                 */case _constants.chatMessageVOTypes.CONTACT_THREAD_UPDATE:messageContent.threadId=threadId;_events.chatEvents.fireEvent('threadEvents',{type:'CONTACT_THREAD_UPDATE',result:messageContent});break;/**
                  /**
                  * Type 223    ARCHIVE_THREAD
                  */case _constants.chatMessageVOTypes.ARCHIVE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
@@ -55813,9 +55815,9 @@ pc.createOffer(function(sdp){if(sdp.sdp.indexOf('typ relay')>-1){// sometimes sd
 promiseResolved=true;resolve(true);}pc.setLocalDescription(sdp,noop,noop);},noop);// create offer and set local description
 pc.onicecandidate=function(ice){//listen for candidate events
 if(promiseResolved||!ice||!ice.candidate||!ice.candidate.candidate||!(ice.candidate.candidate.indexOf('typ relay')>-1))return;promiseResolved=true;resolve(true);};});};publicized.getCustomerInfo=function(params,callback){var userId=params.userId||chatMessaging.userInfo.id,sendData={chatMessageVOType:_constants.chatMessageVOTypes.CUSTOMER_INFO,typeCode:generalTypeCode,//params.typeCode,
-content:[userId],token:token};return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.archiveThread=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.ARCHIVE_THREAD,typeCode:generalTypeCode,//params.typeCode,
-token:token,subjectId:params.threadId};return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.unArchiveThread=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.UNARCHIVE_THREAD,typeCode:generalTypeCode,//params.typeCode,
-token:token,subjectId:params.threadId};return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};init();return publicized;}if(window){if(!window.POD){window.POD={};}window.POD.Chat=Chat;//For backward compatibility
+content:[userId],token:token};return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.archiveThread=function(_ref,callback){var threadId=_ref.threadId;var sendData={chatMessageVOType:_constants.chatMessageVOTypes.ARCHIVE_THREAD,typeCode:generalTypeCode,//params.typeCode,
+token:token,subjectId:threadId};return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.unArchiveThread=function(_ref2,callback){var threadId=_ref2.threadId;var sendData={chatMessageVOType:_constants.chatMessageVOTypes.UNARCHIVE_THREAD,typeCode:generalTypeCode,//params.typeCode,
+token:token,subjectId:threadId};return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};init();return publicized;}if(window){if(!window.POD){window.POD={};}window.POD.Chat=Chat;//For backward compatibility
 window.PodChat=Chat;}var _default=Chat;// })();
 exports["default"]=_default;
 
@@ -56414,6 +56416,7 @@ var chatMessageVOTypes = {
   DELETE_MESSAGE_THREAD: 151,
   EXPORT_CHAT: 152,
   ADD_CONTACTS: 200,
+  CONTACT_THREAD_UPDATE: 220,
   SWITCH_TO_GROUP_CALL_REQUEST: 221,
   RECORD_CALL_STARTED: 222,
   ARCHIVE_THREAD: 223,
