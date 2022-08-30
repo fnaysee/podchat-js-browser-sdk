@@ -4420,6 +4420,13 @@ function Chat(params) {
                 if (typeof params.threadName === 'string') {
                     content.name = whereClause.name = params.threadName;
                 }
+                if (typeof params.username === 'string') {
+                     content.username = params.username;
+                }
+
+                if (typeof params.cellphoneNumber === 'string'){
+                    content.cellphoneNumber = params.cellphoneNumber;
+                }
 
                 if (Array.isArray(params.threadIds)) {
                     content.threadIds = whereClause.threadIds = params.threadIds;
