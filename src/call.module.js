@@ -95,11 +95,11 @@ function ChatCall(params) {
             getHistoryCount: 50
         },
         callRequestTimeout = (typeof params.callRequestTimeout === 'number' && params.callRequestTimeout >= 0) ? params.callRequestTimeout : 10000,
-        consoleLogging = (params.asyncLogging.consoleLogging && typeof params.asyncLogging.consoleLogging === 'boolean')
-            ? params.asyncLogging.consoleLogging
+        consoleLogging = (params.asyncLogging?.consoleLogging && typeof params.asyncLogging?.consoleLogging === 'boolean')
+            ? params.asyncLogging?.consoleLogging
             : false,
-        callNoAnswerTimeout = params.callOptions.callNoAnswerTimeout || 0,
-        callStreamCloseTimeout = params.callOptions.streamCloseTimeout || 10000
+        callNoAnswerTimeout = params.callOptions?.callNoAnswerTimeout || 0,
+        callStreamCloseTimeout = params.callOptions?.streamCloseTimeout || 10000;
 
     function screenShareStateManager() {
         let config = {

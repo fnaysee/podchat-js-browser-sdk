@@ -31,6 +31,8 @@ function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && 
 // import {constants} from "mocha/lib/errors";
 // import handleError from "./lib/errorHandler";
 function ChatCall(params) {
+  var _params$asyncLogging, _params$asyncLogging2, _params$asyncLogging3, _params$callOptions, _params$callOptions2;
+
   var //Utility = params.Utility,
   currentModuleInstance = this,
       asyncClient = params.asyncClient,
@@ -90,9 +92,9 @@ function ChatCall(params) {
     getHistoryCount: 50
   },
       callRequestTimeout = typeof params.callRequestTimeout === 'number' && params.callRequestTimeout >= 0 ? params.callRequestTimeout : 10000,
-      consoleLogging = params.asyncLogging.consoleLogging && typeof params.asyncLogging.consoleLogging === 'boolean' ? params.asyncLogging.consoleLogging : false,
-      callNoAnswerTimeout = params.callOptions.callNoAnswerTimeout || 0,
-      callStreamCloseTimeout = params.callOptions.streamCloseTimeout || 10000;
+      consoleLogging = (_params$asyncLogging = params.asyncLogging) !== null && _params$asyncLogging !== void 0 && _params$asyncLogging.consoleLogging && typeof ((_params$asyncLogging2 = params.asyncLogging) === null || _params$asyncLogging2 === void 0 ? void 0 : _params$asyncLogging2.consoleLogging) === 'boolean' ? (_params$asyncLogging3 = params.asyncLogging) === null || _params$asyncLogging3 === void 0 ? void 0 : _params$asyncLogging3.consoleLogging : false,
+      callNoAnswerTimeout = ((_params$callOptions = params.callOptions) === null || _params$callOptions === void 0 ? void 0 : _params$callOptions.callNoAnswerTimeout) || 0,
+      callStreamCloseTimeout = ((_params$callOptions2 = params.callOptions) === null || _params$callOptions2 === void 0 ? void 0 : _params$callOptions2.streamCloseTimeout) || 10000;
 
   function screenShareStateManager() {
     var config = {
