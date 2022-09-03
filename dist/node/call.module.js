@@ -1265,15 +1265,15 @@ function ChatCall(params) {
     }
   },
       generateCallUIList = function generateCallUIList() {
-    var me = chatMessaging.userInfo.Id;
-    var callUIElements = {};
+    var me = chatMessaging.userInfo.Id,
+        callUIElements = {};
 
     for (var i in callUsers) {
       var tags = {};
 
       if (callUsers[i] && callUsers[i].htmlElements) {
         tags.container = callUsers[i].htmlElements.container;
-        if (callUsers[i].video && callUsers[i].htmlElements[callUsers[i].videoTopicName]) tags.video = callUsers[i].htmlElements[callUsers[i].videoTopicName];
+        if (i === 'screenShare' && screenShareInfo.isStarted() || i != 'screenShare' && callUsers[i].video && callUsers[i].htmlElements[callUsers[i].videoTopicName]) tags.video = callUsers[i].htmlElements[callUsers[i].videoTopicName];
         if (!callUsers[i].mute && callUsers[i].htmlElements[callUsers[i].audioTopicName]) tags.audio = callUsers[i].htmlElements[callUsers[i].audioTopicName];
         callUIElements[i] = tags;
       }
