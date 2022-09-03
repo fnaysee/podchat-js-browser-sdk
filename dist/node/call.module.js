@@ -1273,8 +1273,8 @@ function ChatCall(params) {
 
       if (callUsers[i] && callUsers[i].htmlElements) {
         tags.container = callUsers[i].htmlElements.container;
-        if (callUsers[i].htmlElements[callUsers[i].videoTopicName]) tags.video = callUsers[i].htmlElements[callUsers[i].videoTopicName];
-        if (callUsers[i].htmlElements[callUsers[i].audioTopicName]) tags.audio = callUsers[i].htmlElements[callUsers[i].audioTopicName];
+        if (callUsers[i].video && callUsers[i].htmlElements[callUsers[i].videoTopicName]) tags.video = callUsers[i].htmlElements[callUsers[i].videoTopicName];
+        if (!callUsers[i].mute && callUsers[i].htmlElements[callUsers[i].audioTopicName]) tags.audio = callUsers[i].htmlElements[callUsers[i].audioTopicName];
         callUIElements[i] = tags;
       }
     }
