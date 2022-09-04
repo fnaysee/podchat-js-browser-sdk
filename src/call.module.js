@@ -2438,7 +2438,7 @@ function ChatCall(params) {
                 if (chatMessaging.messagesCallbacks[uniqueId]) {
                     chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                 }
-
+                messageContent.threadId = threadId;
                 chatEvents.fireEvent('callEvents', {
                     type: 'RECEIVE_CALL',
                     result: messageContent
