@@ -3,7 +3,6 @@
 import Async from "podasync-ws-only"
 import Utility from "./utility/utility"
 import Dexie from "dexie"
-import Sentry, {initSentry} from "./lib/sentry.js"
 import ChatCall from "./call.module"
 import ChatEvents, { initEventHandler, chatEvents } from "./events.module"
 import ChatMessaging from "./messaging.module"
@@ -23,20 +22,10 @@ import {
 import deviceManager from "./lib/call/deviceManager.js";
 
 function Chat(params) {
-    initSentry(params);
     /*******************************************************
      *          P R I V A T E   V A R I A B L E S          *
      *******************************************************/
 
-/*        if (!!Sentry) {
-        Sentry.init({
-            dsn: 'https://784a14966f6a416b8b58a4b144aef0f5:733b76b6354f4547a7428bb8c7489bf2@talksentry.sakku-khatam.ir/4',
-            attachStacktrace: true
-        });
-        Sentry.setContext("Chat Params", params);
-        Sentry.setTag("sdk.details", "js browser");
-        Sentry.setTag("client.name", params.clientName);
-    }*/
 
     var asyncClient,
         peerId,
@@ -305,8 +294,6 @@ function Chat(params) {
                         }
                         if (!userInfoResult.hasError) {
                             chatMessaging.userInfo = userInfoResult.result.user;
-
-                            !!Sentry && Sentry.setUser(chatMessaging.userInfo);
 
                             getAllThreads({
                                 summary: true,

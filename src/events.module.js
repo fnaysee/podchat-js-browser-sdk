@@ -1,5 +1,5 @@
 import Utility from "./utility/utility"
-import Sentry from "./lib/sentry.js"
+// import Sentry from "./lib/sentry.js"
 
 let chatEvents = null;
 
@@ -65,32 +65,7 @@ function ChatEvents(params) {
             try {
                 throw new PodChatErrorException(param);
             } catch (err) {
-                if (!!Sentry) {
-                    Sentry.setExtra('errorMessage', err.message);
-                    Sentry.setExtra('errorCode', err.code);
-                    Sentry.setExtra('uniqueId', err.uniqueId);
-                    Sentry.setExtra('token', err.token);
-                    Sentry.setExtra('SDKParams', {
-                        platformHost: params.platformHost,
-                        podSpaceFileServer: params.podSpaceFileServer,
-                        socketAddress: params.socketAddress,
-                        ssoHost: params.ssoHost,
-                        typeCode: params.typeCode,
-                        serverName: params.serverName,
-                        callRequestTimeout: params.callRequestTimeout,
-                        asyncRequestTimeout: params.asyncRequestTimeout,
-                        httpUploadRequestTimeout: params.httpUploadRequestTimeout,
-                        callOptions: params.callOptions,
-                        enableCache: params.enableCache
-                    });
-
-                    Sentry.setTag('Error code:', (err.code ? err.code : ''))
-                    if(err.environmentDetails)
-                        Sentry.setExtra("environmentDetails", err.environmentDetails)
-                    Sentry.captureException(err.error, {
-                        logger: eventName
-                    });
-                }
+                console.error(err);
             }
         }
 
