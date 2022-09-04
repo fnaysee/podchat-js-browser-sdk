@@ -2399,7 +2399,6 @@ function ChatCall(params) {
             chatMessageVOTypes.CALL_PARTICIPANT_JOINED,
             chatMessageVOTypes.REMOVE_CALL_PARTICIPANT,
             chatMessageVOTypes.RECONNECT,
-            chatMessageVOTypes.LEAVE_CALL,
             chatMessageVOTypes.TURN_OFF_VIDEO_CALL,
             chatMessageVOTypes.TURN_ON_VIDEO_CALL,
             chatMessageVOTypes.DESTINED_RECORD_CALL,
