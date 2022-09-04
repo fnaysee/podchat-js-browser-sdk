@@ -94,7 +94,7 @@ function ChatCall(params) {
         config = {
             getHistoryCount: 50
         },
-        callRequestTimeout = (typeof params.callRequestTimeout === 'number' && params.callRequestTimeout >= 0) ? params.callRequestTimeout : 10000,
+        globalCallRequestTimeout = (typeof params.callRequestTimeout === 'number' && params.callRequestTimeout >= 0) ? params.callRequestTimeout : 10000,
         consoleLogging = (params.asyncLogging?.consoleLogging && typeof params.asyncLogging?.consoleLogging === 'boolean')
             ? params.asyncLogging?.consoleLogging
             : false,
@@ -957,7 +957,11 @@ function ChatCall(params) {
             });
         },
 
-        sendCallMessage = function (message, callback, timeoutRetriesCount = 0, timeoutCallback = null) {
+        sendCallMessage = function (message, callback, {
+            timeoutTime = 0,
+            timeoutRetriesCount = 0,
+            timeoutCallback = null
+        }) {
             message.token = token;
 
             let uniqueId;
@@ -996,7 +1000,7 @@ function ChatCall(params) {
                 }
             });
 
-            if (callRequestTimeout > 0) {
+            if (timeoutTime || globalCallRequestTimeout > 0) {
                 asyncRequestTimeouts[uniqueId] && clearTimeout(asyncRequestTimeouts[uniqueId]);
                 asyncRequestTimeouts[uniqueId] = setTimeout(function () {
                     if (chatMessaging.messagesCallbacks[uniqueId]) {
@@ -1012,7 +1016,7 @@ function ChatCall(params) {
                             done: 'SKIP'
                         });
                     }
-                }, callRequestTimeout);
+                }, timeoutTime || globalCallRequestTimeout);
             }
         },
 
