@@ -6,6 +6,13 @@ const errorList = {
         message:"[SDK] Call not started or invalid callId"
     },
     /**
+     * 12350-12399
+     */
+    INVITEES_LIST_REQUIRED: {
+        code: 12350,
+        message: "Invitees list is required"
+    },
+    /**
      * 12400-12499 Media devices
      */
     VIDEO_PERMISSION_ERROR: {

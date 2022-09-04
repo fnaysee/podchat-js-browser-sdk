@@ -10,8 +10,7 @@ exports.initEventHandler = initEventHandler;
 
 var _utility = _interopRequireDefault(require("./utility/utility"));
 
-var _sentry = _interopRequireDefault(require("./lib/sentry.js"));
-
+// import Sentry from "./lib/sentry.js"
 var chatEvents = null;
 exports.chatEvents = chatEvents;
 
@@ -78,37 +77,7 @@ function ChatEvents(params) {
       try {
         throw new PodChatErrorException(param);
       } catch (err) {
-        if (!!_sentry["default"]) {
-          _sentry["default"].setExtra('errorMessage', err.message);
-
-          _sentry["default"].setExtra('errorCode', err.code);
-
-          _sentry["default"].setExtra('uniqueId', err.uniqueId);
-
-          _sentry["default"].setExtra('token', err.token);
-
-          _sentry["default"].setExtra('SDKParams', {
-            platformHost: params.platformHost,
-            podSpaceFileServer: params.podSpaceFileServer,
-            socketAddress: params.socketAddress,
-            ssoHost: params.ssoHost,
-            typeCode: params.typeCode,
-            serverName: params.serverName,
-            callRequestTimeout: params.callRequestTimeout,
-            asyncRequestTimeout: params.asyncRequestTimeout,
-            httpUploadRequestTimeout: params.httpUploadRequestTimeout,
-            callOptions: params.callOptions,
-            enableCache: params.enableCache
-          });
-
-          _sentry["default"].setTag('Error code:', err.code ? err.code : '');
-
-          if (err.environmentDetails) _sentry["default"].setExtra("environmentDetails", err.environmentDetails);
-
-          _sentry["default"].captureException(err.error, {
-            logger: eventName
-          });
-        }
+        console.error(err);
       }
     }
 

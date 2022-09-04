@@ -13842,7 +13842,9 @@ function Chat(params) {
 
     publicized.callStickerTypes = callStickerTypes;
 
-    publicized.deviceManager = callModule.deviceManager
+    publicized.recallThreadParticipant = callModule.recallThreadParticipant;
+
+    publicized.deviceManager = callModule.deviceManager;
 
     publicized.getMutualGroups = function (params, callback) {
         var count = +params.count ? +params.count : 50,

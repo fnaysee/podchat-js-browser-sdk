@@ -2409,7 +2409,7 @@ function ChatCall(params) {
 
 
   function shouldNotProcessChatMessage(type, threadId) {
-    var restrictedMessageTypes = [_constants.chatMessageVOTypes.MUTE_CALL_PARTICIPANT, _constants.chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT, _constants.chatMessageVOTypes.CALL_PARTICIPANT_JOINED, _constants.chatMessageVOTypes.REMOVE_CALL_PARTICIPANT, _constants.chatMessageVOTypes.RECONNECT, _constants.chatMessageVOTypes.LEAVE_CALL, _constants.chatMessageVOTypes.TURN_OFF_VIDEO_CALL, _constants.chatMessageVOTypes.TURN_ON_VIDEO_CALL, _constants.chatMessageVOTypes.DESTINED_RECORD_CALL, _constants.chatMessageVOTypes.RECORD_CALL, _constants.chatMessageVOTypes.RECORD_CALL_STARTED, _constants.chatMessageVOTypes.END_RECORD_CALL, _constants.chatMessageVOTypes.TERMINATE_CALL, _constants.chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE // chatMessageVOTypes.END_CALL
+    var restrictedMessageTypes = [_constants.chatMessageVOTypes.MUTE_CALL_PARTICIPANT, _constants.chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT, _constants.chatMessageVOTypes.CALL_PARTICIPANT_JOINED, _constants.chatMessageVOTypes.REMOVE_CALL_PARTICIPANT, _constants.chatMessageVOTypes.RECONNECT, _constants.chatMessageVOTypes.TURN_OFF_VIDEO_CALL, _constants.chatMessageVOTypes.TURN_ON_VIDEO_CALL, _constants.chatMessageVOTypes.DESTINED_RECORD_CALL, _constants.chatMessageVOTypes.RECORD_CALL, _constants.chatMessageVOTypes.RECORD_CALL_STARTED, _constants.chatMessageVOTypes.END_RECORD_CALL, _constants.chatMessageVOTypes.TERMINATE_CALL, _constants.chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE // chatMessageVOTypes.END_CALL
     ];
 
     if ((!currentCallId || currentCallId && threadId != currentCallId) && restrictedMessageTypes.includes(type)) {
@@ -2439,6 +2439,8 @@ function ChatCall(params) {
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
+
+        messageContent.threadId = threadId;
 
         _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'RECEIVE_CALL',
@@ -3190,7 +3192,7 @@ function ChatCall(params) {
         break;
 
       /**
-       * Type 222    Call Recording Started
+       * Type 225    Call Recording Started
        */
 
       case _constants.chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE:
@@ -3202,6 +3204,17 @@ function ChatCall(params) {
           type: 'CALL_STICKER',
           result: messageContent
         });
+
+        break;
+
+      /**
+       * Type 227    RENEWED_CALL_REQUEST
+       */
+
+      case _constants.chatMessageVOTypes.RECALL_THREAD_PARTICIPANT:
+        if (chatMessaging.messagesCallbacks[uniqueId]) {
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+        }
 
         break;
     }
@@ -4542,6 +4555,39 @@ function ChatCall(params) {
     }
 
     return chatMessaging.sendMessage(sendMessageParams, {
+      onResult: function onResult(result) {
+        callback && callback(result);
+      }
+    });
+  };
+
+  this.recallThreadParticipant = function (_ref3, callback) {
+    var invitees = _ref3.invitees;
+    var sendData = {
+      chatMessageVOType: _constants.chatMessageVOTypes.RECALL_THREAD_PARTICIPANT,
+      typeCode: generalTypeCode,
+      //params.typeCode,
+      content: params.content,
+      subjectId: params.threadId
+    };
+
+    if (!invitees || Array.isArray(invitees) || invitees.length) {
+      raiseCallError(_errorHandler.errorList.INVITEES_LIST_REQUIRED, callback, true, {});
+      return;
+    }
+
+    content.invitees = []; //params.invitees;
+
+    for (var i = 0; i < params.invitees.length; i++) {
+      var tempInvitee = params.invitees[i];
+
+      if (tempInvitee && typeof tempInvitee.idType === "string") {
+        tempInvitee.idType = _constants.inviteeVOidTypes[tempInvitee.idType];
+        content.invitees.push(tempInvitee);
+      }
+    }
+
+    return chatMessaging.sendMessage(sendData, {
       onResult: function onResult(result) {
         callback && callback(result);
       }

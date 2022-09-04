@@ -3188,7 +3188,7 @@ function ChatCall(params) {
                 break;
 
             /**
-             * Type 222    Call Recording Started
+             * Type 225    Call Recording Started
              */
             case chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE:
                 if (chatMessaging.messagesCallbacks[uniqueId]) {
@@ -3200,6 +3200,15 @@ function ChatCall(params) {
                     result: messageContent
                 });
 
+                break;
+
+            /**
+             * Type 227    RECALL_THREAD_PARTICIPANT
+             */
+            case chatMessageVOTypes.RECALL_THREAD_PARTICIPANT:
+                if (chatMessaging.messagesCallbacks[uniqueId]) {
+                    chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+                }
                 break;
 
         }
@@ -4522,6 +4531,36 @@ function ChatCall(params) {
             }
         });
     }
+
+    this.recallThreadParticipant = function ({invitees}, callback) {
+        let sendData = {
+            chatMessageVOType: chatMessageVOTypes.RECALL_THREAD_PARTICIPANT,
+            typeCode: generalTypeCode, //params.typeCode,
+            content: params.content,
+            subjectId: params.threadId,
+        };
+
+        if(!invitees || Array.isArray(invitees) || invitees.length) {
+            raiseCallError(errorList.INVITEES_LIST_REQUIRED, callback, true, {});
+            return;
+        }
+
+        content.invitees = [];//params.invitees;
+        for (let i = 0; i < params.invitees.length; i++) {
+            let tempInvitee = params.invitees[i];
+
+            if (tempInvitee && typeof tempInvitee.idType === "string") {
+                tempInvitee.idType = inviteeVOidTypes[tempInvitee.idType];
+                content.invitees.push(tempInvitee);
+            }
+        }
+
+        return chatMessaging.sendMessage(sendData, {
+            onResult: function (result) {
+                callback && callback(result);
+            }
+        });
+    };
 
     this.deviceManager = deviceManager
 
