@@ -397,7 +397,7 @@ function ChatCall(params) {
                             id: 'ADD_ICE_CANDIDATE',
                             topic: config.topic,
                             candidateDto: candidate
-                        })
+                        }, null, {})
                     }
                 }, 500, {candidate: candidate}));
             },
@@ -438,7 +438,7 @@ function ChatCall(params) {
                             id: 'REGISTER_RECV_NOTIFICATION',
                             topic: config.topic,
                             mediaType: (config.mediaType === 'video' ? 2 : 1),
-                        });
+                        }, null, {});
                     } else {
                         config.peer.generateOffer((err, sdpOffer) => {
                             consoleLogging && console.debug("[SDK][establishPeerConnection][generateOffer] GenerateOffer:: ", " sdpOffer: ", sdpOffer, " err: ", err);
@@ -476,7 +476,7 @@ function ChatCall(params) {
                         retries -= 1;
                         manager.sendSDPOfferRequestMessage(sdpOffer);
                     }
-                });
+                }, {});
             },
             watchRTCPeerConnection: function () {
                 consoleLogging && console.log("[SDK][watchRTCPeerConnection] called with: ", "userId: ", config.userId, "topic: ", config.topic, "mediaType: ", config.mediaType, "direction: ", config.direction);
@@ -587,8 +587,8 @@ function ChatCall(params) {
                 let instant = 0.0, counter = 0;
                 analyserNode.onaudioprocess = function(event) {
                     if(!config.peer) {
-                        analyserNode.removeEventListener('audioprocess');
-                        analyserNode.onaudioprocess = null
+                        analyserNode.removeEventListener('audioprocess', null);
+                        analyserNode.onaudioprocess = null;
                     }
 
                     counter++;
@@ -770,7 +770,7 @@ function ChatCall(params) {
                                 });
                                 callStop();
                             }
-                        });
+                        }, {});
                     }
                 }
             },
@@ -1315,10 +1315,10 @@ function ChatCall(params) {
                             //callServerController.changeServer();
                         }
 
-                        sendCallMessage(message, onResultCallback, onTimeoutCallback);
+                        sendCallMessage(message, onResultCallback, {timeoutCallback: onTimeoutCallback});
                     };
 
-                sendCallMessage(message, onResultCallback, onTimeoutCallback, totalRetries);
+                sendCallMessage(message, onResultCallback, {timeoutCallback: onTimeoutCallback, timeoutRetriesCount: totalRetries} );
             },
             startCall: function (params) {
                 let callController = this;
@@ -1753,7 +1753,7 @@ function ChatCall(params) {
             sendCallMessage({
                 id: 'ERROR',
                 message: message,
-            });
+            }, null, {});
         },
 
         explainUserMediaError = function (err, deviceType, deviceSource) {
@@ -1921,7 +1921,7 @@ function ChatCall(params) {
                     topic: jsonMessage.topic,
                     mediaType: (jsonMessage.topic.indexOf('screen-Share') !== -1 || jsonMessage.topic.indexOf('Vi-') !== -1 ? 2  : 1)
                     //brokerAddress:brkrAddr
-                });
+                }, null, {});
             }
         },
 
@@ -1957,7 +1957,7 @@ function ChatCall(params) {
                     useSrtp: false,
                     topic: jsonMessage.topic,
                     mediaType: (jsonMessage.topic.indexOf('screen-Share') !== -1 || jsonMessage.topic.indexOf('Vi-') !== -1 ? 2 : 1)
-                });
+                }, null, {});
 
                 callUsers[userId].topicMetaData[jsonMessage.topic].sdpAnswerReceived = true;
                 startMedia(callUsers[userId].htmlElements[jsonMessage.topic]);
@@ -2117,7 +2117,7 @@ function ChatCall(params) {
             if (callStopQueue.callStarted) {
                 sendCallMessage({
                     id: 'CLOSE'
-                });
+                }, null, {});
                 callStopQueue.callStarted = false;
             }
 
@@ -2155,7 +2155,7 @@ function ChatCall(params) {
                 id: 'SENDMETADATA',
                 message: JSON.stringify(message),
                 chatId: currentCallId
-            });
+            }, null, {});
         },
 
         handleReceivedMetaData = function (jsonMessage, uniqueId) {

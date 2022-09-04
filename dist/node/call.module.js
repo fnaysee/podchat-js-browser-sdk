@@ -91,7 +91,7 @@ function ChatCall(params) {
       config = {
     getHistoryCount: 50
   },
-      callRequestTimeout = typeof params.callRequestTimeout === 'number' && params.callRequestTimeout >= 0 ? params.callRequestTimeout : 10000,
+      globalCallRequestTimeout = typeof params.callRequestTimeout === 'number' && params.callRequestTimeout >= 0 ? params.callRequestTimeout : 10000,
       consoleLogging = (_params$asyncLogging = params.asyncLogging) !== null && _params$asyncLogging !== void 0 && _params$asyncLogging.consoleLogging && typeof ((_params$asyncLogging2 = params.asyncLogging) === null || _params$asyncLogging2 === void 0 ? void 0 : _params$asyncLogging2.consoleLogging) === 'boolean' ? (_params$asyncLogging3 = params.asyncLogging) === null || _params$asyncLogging3 === void 0 ? void 0 : _params$asyncLogging3.consoleLogging : false,
       callNoAnswerTimeout = ((_params$callOptions = params.callOptions) === null || _params$callOptions === void 0 ? void 0 : _params$callOptions.callNoAnswerTimeout) || 0,
       callStreamCloseTimeout = ((_params$callOptions2 = params.callOptions) === null || _params$callOptions2 === void 0 ? void 0 : _params$callOptions2.streamCloseTimeout) || 10000;
@@ -391,7 +391,7 @@ function ChatCall(params) {
               id: 'ADD_ICE_CANDIDATE',
               topic: config.topic,
               candidateDto: candidate
-            });
+            }, null, {});
           }
         }, 500, {
           candidate: candidate
@@ -438,7 +438,7 @@ function ChatCall(params) {
               id: 'REGISTER_RECV_NOTIFICATION',
               topic: config.topic,
               mediaType: config.mediaType === 'video' ? 2 : 1
-            });
+            }, null, {});
           } else {
             config.peer.generateOffer(function (err, sdpOffer) {
               consoleLogging && console.debug("[SDK][establishPeerConnection][generateOffer] GenerateOffer:: ", " sdpOffer: ", sdpOffer, " err: ", err);
@@ -480,7 +480,7 @@ function ChatCall(params) {
             retries -= 1;
             manager.sendSDPOfferRequestMessage(sdpOffer);
           }
-        });
+        }, {});
       },
       watchRTCPeerConnection: function watchRTCPeerConnection() {
         consoleLogging && console.log("[SDK][watchRTCPeerConnection] called with: ", "userId: ", config.userId, "topic: ", config.topic, "mediaType: ", config.mediaType, "direction: ", config.direction);
@@ -600,7 +600,7 @@ function ChatCall(params) {
 
         analyserNode.onaudioprocess = function (event) {
           if (!config.peer) {
-            analyserNode.removeEventListener('audioprocess');
+            analyserNode.removeEventListener('audioprocess', null);
             analyserNode.onaudioprocess = null;
           }
 
@@ -788,7 +788,7 @@ function ChatCall(params) {
                 });
                 callStop();
               }
-            });
+            }, {});
           }
         }
       },
@@ -965,9 +965,13 @@ function ChatCall(params) {
       environmentDetails: getSDKCallDetails()
     });
   },
-      sendCallMessage = function sendCallMessage(message, callback) {
-    var timeoutRetriesCount = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-    var timeoutCallback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+      sendCallMessage = function sendCallMessage(message, callback, _ref) {
+    var _ref$timeoutTime = _ref.timeoutTime,
+        timeoutTime = _ref$timeoutTime === void 0 ? 0 : _ref$timeoutTime,
+        _ref$timeoutRetriesCo = _ref.timeoutRetriesCount,
+        timeoutRetriesCount = _ref$timeoutRetriesCo === void 0 ? 0 : _ref$timeoutRetriesCo,
+        _ref$timeoutCallback = _ref.timeoutCallback,
+        timeoutCallback = _ref$timeoutCallback === void 0 ? null : _ref$timeoutCallback;
     message.token = token;
     var uniqueId;
 
@@ -1005,7 +1009,7 @@ function ChatCall(params) {
       }
     });
 
-    if (callRequestTimeout > 0) {
+    if (timeoutTime || globalCallRequestTimeout > 0) {
       asyncRequestTimeouts[uniqueId] && clearTimeout(asyncRequestTimeouts[uniqueId]);
       asyncRequestTimeouts[uniqueId] = setTimeout(function () {
         if (chatMessaging.messagesCallbacks[uniqueId]) {
@@ -1021,7 +1025,7 @@ function ChatCall(params) {
             done: 'SKIP'
           });
         }
-      }, callRequestTimeout);
+      }, timeoutTime || globalCallRequestTimeout);
     }
   },
 
@@ -1314,10 +1318,15 @@ function ChatCall(params) {
         if (callRequestController.imCallOwner || !totalRetries) {//callServerController.changeServer();
         }
 
-        sendCallMessage(message, onResultCallback, onTimeoutCallback);
+        sendCallMessage(message, onResultCallback, {
+          timeoutCallback: onTimeoutCallback
+        });
       };
 
-      sendCallMessage(message, onResultCallback, onTimeoutCallback, totalRetries);
+      sendCallMessage(message, onResultCallback, {
+        timeoutCallback: onTimeoutCallback,
+        timeoutRetriesCount: totalRetries
+      });
     },
     startCall: function startCall(params) {
       var callController = this;
@@ -1764,7 +1773,7 @@ function ChatCall(params) {
     sendCallMessage({
       id: 'ERROR',
       message: message
-    });
+    }, null, {});
   },
       explainUserMediaError = function explainUserMediaError(err, deviceType, deviceSource) {
     /*chatEvents.fireEvent('callEvents', {
@@ -1934,7 +1943,7 @@ function ChatCall(params) {
         topic: jsonMessage.topic,
         mediaType: jsonMessage.topic.indexOf('screen-Share') !== -1 || jsonMessage.topic.indexOf('Vi-') !== -1 ? 2 : 1 //brokerAddress:brkrAddr
 
-      });
+      }, null, {});
     }
   },
       handleProcessSdpOffer = function handleProcessSdpOffer(jsonMessage) {
@@ -1969,7 +1978,7 @@ function ChatCall(params) {
         useSrtp: false,
         topic: jsonMessage.topic,
         mediaType: jsonMessage.topic.indexOf('screen-Share') !== -1 || jsonMessage.topic.indexOf('Vi-') !== -1 ? 2 : 1
-      });
+      }, null, {});
       callUsers[userId].topicMetaData[jsonMessage.topic].sdpAnswerReceived = true;
       startMedia(callUsers[userId].htmlElements[jsonMessage.topic]);
 
@@ -2129,7 +2138,7 @@ function ChatCall(params) {
     if (callStopQueue.callStarted) {
       sendCallMessage({
         id: 'CLOSE'
-      });
+      }, null, {});
       callStopQueue.callStarted = false;
     }
 
@@ -2160,7 +2169,7 @@ function ChatCall(params) {
       id: 'SENDMETADATA',
       message: JSON.stringify(message),
       chatId: currentCallId
-    });
+    }, null, {});
   },
       handleReceivedMetaData = function handleReceivedMetaData(jsonMessage, uniqueId) {
     var jMessage = JSON.parse(jsonMessage.message);
@@ -3208,7 +3217,7 @@ function ChatCall(params) {
         break;
 
       /**
-       * Type 227    RENEWED_CALL_REQUEST
+       * Type 227    RECALL_THREAD_PARTICIPANT
        */
 
       case _constants.chatMessageVOTypes.RECALL_THREAD_PARTICIPANT:
@@ -3815,9 +3824,9 @@ function ChatCall(params) {
     });
   };
 
-  function calculateScreenSize(_ref) {
-    var _ref$quality = _ref.quality,
-        quality = _ref$quality === void 0 ? 3 : _ref$quality;
+  function calculateScreenSize(_ref2) {
+    var _ref2$quality = _ref2.quality,
+        quality = _ref2$quality === void 0 ? 3 : _ref2$quality;
     var screenSize = window.screen,
         qualities = [{
       width: Math.round(screenSize.width / 3),
@@ -4533,9 +4542,9 @@ function ChatCall(params) {
     }
   };
 
-  this.sendCallSticker = function (_ref2, callback) {
-    var _ref2$sticker = _ref2.sticker,
-        sticker = _ref2$sticker === void 0 ? _constants.callStickerTypes.RAISE_HAND : _ref2$sticker;
+  this.sendCallSticker = function (_ref3, callback) {
+    var _ref3$sticker = _ref3.sticker,
+        sticker = _ref3$sticker === void 0 ? _constants.callStickerTypes.RAISE_HAND : _ref3$sticker;
     var sendMessageParams = {
       chatMessageVOType: _constants.chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE,
       typeCode: generalTypeCode,
@@ -4561,8 +4570,8 @@ function ChatCall(params) {
     });
   };
 
-  this.recallThreadParticipant = function (_ref3, callback) {
-    var invitees = _ref3.invitees;
+  this.recallThreadParticipant = function (_ref4, callback) {
+    var invitees = _ref4.invitees;
     var sendData = {
       chatMessageVOType: _constants.chatMessageVOTypes.RECALL_THREAD_PARTICIPANT,
       typeCode: generalTypeCode,
