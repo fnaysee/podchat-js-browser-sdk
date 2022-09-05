@@ -4,6 +4,18 @@ All notable changes to this project will be documented here.
 to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.ir/pod/pod-basic-sdk/chat-js-browser-sdk/-/blob/master/changelog.md)
 
 ##[Unreleased]
+## [12.7.1-snapshot.14] - 2022-09-5
+### Added
+- Property: threadId to event: RECEIVE_CALL
+- Method: recallThreadParticipant
+### Changed
+- Inform all thread participants of event: CALL_PARTICIPANT_LEFT
+- Removed Sentry from SDK
+- Improved request timeout mechanism in direct call message types requests
+### Fixed
+- Error when callOptions is not received in SDK Params
+- Listing unused tags in CALL_DIVS event
+
 ## [12.7.1-snapshot.12] - 2022-08-21
 ### Added
 - Event: CONTACT_THREAD_UPDATE
