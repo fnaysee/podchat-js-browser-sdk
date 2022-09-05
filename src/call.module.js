@@ -1829,12 +1829,13 @@ function ChatCall(params) {
                         environmentDetails: getSDKCallDetails()
                     });
                 } else {
-                    chatEvents.fireEvent('callEvents', {
-                        type: 'CALL_ERROR',
-                        code: 7000,
-                        message: "[startMedia] Error in media.play(): " + err,
-                        environmentDetails: getSDKCallDetails()
-                    });
+                    if(callStopQueue.callStarted)
+                        chatEvents.fireEvent('callEvents', {
+                            type: 'CALL_ERROR',
+                            code: 7000,
+                            message: "[startMedia] Error in media.play(): " + err,
+                            environmentDetails: getSDKCallDetails()
+                        });
                 }
             });
         },
