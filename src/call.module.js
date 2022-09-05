@@ -1,12 +1,9 @@
 import { chatMessageVOTypes, inviteeVOidTypes, callStickerTypes } from "./lib/constants"
 import KurentoUtils from 'kurento-utils'
-// import WebrtcAdapter from 'webrtc-adapter'
 import Utility from "./utility/utility"
 import {chatEvents} from "./events.module.js";
 import deviceManager from "./lib/call/deviceManager.js";
-// import {constants} from "mocha/lib/errors";
 import errorHandler, {errorList, raiseError} from "./lib/errorHandler";
-// import handleError from "./lib/errorHandler";
 
 function ChatCall(params) {
 
