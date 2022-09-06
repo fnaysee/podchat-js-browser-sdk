@@ -438,11 +438,11 @@ function ChatCall(params) {
                             mediaType: (config.mediaType === 'video' ? 2 : 1),
                         };
                         sendCallMessage(msgParams, null, {
-                            timeoutTime: 2000,
+                            timeoutTime: 4000,
                             timeoutRetriesCount: 1,
-                            timeoutCallback(){
-                                sendCallMessage(msgParams, null, {});
-                            }
+                            // timeoutCallback(){
+                            //     sendCallMessage(msgParams, null, {});
+                            // }
                         });
                     } else {
                         config.peer.generateOffer((err, sdpOffer) => {
@@ -481,7 +481,7 @@ function ChatCall(params) {
                         retries -= 1;
                         manager.sendSDPOfferRequestMessage(sdpOffer);
                     }
-                }, {});
+                }, {timeoutTime: 4000, timeoutRetriesCount: 1});
             },
             watchRTCPeerConnection: function () {
                 consoleLogging && console.log("[SDK][watchRTCPeerConnection] called with: ", "userId: ", config.userId, "topic: ", config.topic, "mediaType: ", config.mediaType, "direction: ", config.direction);
@@ -964,8 +964,8 @@ function ChatCall(params) {
 
         sendCallMessage = function (message, callback, {
             timeoutTime = 0,
-            timeoutRetriesCount = 0,
-            timeoutCallback = null
+            timeoutRetriesCount = 0//,
+            //timeoutCallback = null
         }) {
             message.token = token;
 
@@ -1009,7 +1009,10 @@ function ChatCall(params) {
                 asyncRequestTimeouts[uniqueId] && clearTimeout(asyncRequestTimeouts[uniqueId]);
                 asyncRequestTimeouts[uniqueId] = setTimeout(function () {
                     if(timeoutRetriesCount) {
-                        consoleLogging && console.log("[SDK][sendCallMessage] Retrying request for uniqueId:" + uniqueId)
+                        if (chatMessaging.messagesCallbacks[uniqueId]) {
+                            delete chatMessaging.messagesCallbacks[uniqueId];
+                        }
+                        consoleLogging && console.log("[SDK][sendCallMessage] Retrying call request. uniqueId :" + uniqueId, { message })
                         //timeoutCallback();
                         sendCallMessage(message, callback, {timeoutTime, timeoutRetriesCount: timeoutRetriesCount - 1})
                     } else if (typeof callback == 'function') {
@@ -1322,7 +1325,7 @@ function ChatCall(params) {
                         // sendCallMessage(message, null, {});
                     // };
                 sendCallMessage(message, onResultCallback, {
-                        timeoutTime: 2000,
+                        timeoutTime: 4000,
                         timeoutRetriesCount: 1
                     }
                 )
@@ -1932,7 +1935,10 @@ function ChatCall(params) {
                     topic: jsonMessage.topic,
                     mediaType: (jsonMessage.topic.indexOf('screen-Share') !== -1 || jsonMessage.topic.indexOf('Vi-') !== -1 ? 2  : 1)
                     //brokerAddress:brkrAddr
-                }, null, {});
+                }, null, {
+                    timeoutTime: 4000,
+                    timeoutRetriesCount: 1
+                });
             }
         },
 
@@ -1968,7 +1974,10 @@ function ChatCall(params) {
                     useSrtp: false,
                     topic: jsonMessage.topic,
                     mediaType: (jsonMessage.topic.indexOf('screen-Share') !== -1 || jsonMessage.topic.indexOf('Vi-') !== -1 ? 2 : 1)
-                }, null, {});
+                }, null, {
+                    timeoutTime: 4000,
+                    timeoutRetriesCount: 1
+                });
 
                 callUsers[userId].topicMetaData[jsonMessage.topic].sdpAnswerReceived = true;
                 startMedia(callUsers[userId].htmlElements[jsonMessage.topic]);
