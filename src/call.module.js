@@ -432,11 +432,18 @@ function ChatCall(params) {
                     }
 
                     if(callServerController.isJanus() && config.direction === 'receive') {
-                        sendCallMessage({
+                        let msgParams = {
                             id: 'REGISTER_RECV_NOTIFICATION',
                             topic: config.topic,
                             mediaType: (config.mediaType === 'video' ? 2 : 1),
-                        }, null, {});
+                        };
+                        sendCallMessage(msgParams, null, {
+                            timeoutTime: 2000,
+                            timeoutRetriesCount: 1,
+                            timeoutCallback(){
+                                sendCallMessage(msgParams, null, {});
+                            }
+                        });
                     } else {
                         config.peer.generateOffer((err, sdpOffer) => {
                             consoleLogging && console.debug("[SDK][establishPeerConnection][generateOffer] GenerateOffer:: ", " sdpOffer: ", sdpOffer, " err: ", err);
@@ -768,7 +775,7 @@ function ChatCall(params) {
                                 });
                                 callStop();
                             }
-                        }, {});
+                        }, {timeoutTime: 5000});
                     }
                 }
             },
@@ -1002,10 +1009,7 @@ function ChatCall(params) {
                 asyncRequestTimeouts[uniqueId] && clearTimeout(asyncRequestTimeouts[uniqueId]);
                 asyncRequestTimeouts[uniqueId] = setTimeout(function () {
                     if(timeoutRetriesCount) {
-                        if (chatMessaging.messagesCallbacks[uniqueId]) {
-                            delete chatMessaging.messagesCallbacks[uniqueId];
-                        }
-                        consoleLogging && console.log("[SDK][sendCallMessage] Retrying call request. uniqueId :" + uniqueId, { message })
+                        consoleLogging && console.log("[SDK][sendCallMessage] Retrying request for uniqueId:" + uniqueId)
                         //timeoutCallback();
                         sendCallMessage(message, callback, {timeoutTime, timeoutRetriesCount: timeoutRetriesCount - 1})
                     } else if (typeof callback == 'function') {
@@ -1318,7 +1322,7 @@ function ChatCall(params) {
                         // sendCallMessage(message, null, {});
                     // };
                 sendCallMessage(message, onResultCallback, {
-                        timeoutTime: 4000,
+                        timeoutTime: 2000,
                         timeoutRetriesCount: 1
                     }
                 )
