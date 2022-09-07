@@ -74,6 +74,7 @@ function ChatCall(params) {
     imCallOwner: false,
     callRequestReceived: false,
     callEstablishedInMySide: false,
+    callRequestTimeout: null,
     iCanAcceptTheCall: function iCanAcceptTheCall() {
       return callRequestController.callRequestReceived && callRequestController.callEstablishedInMySide;
     },
@@ -2144,6 +2145,7 @@ function ChatCall(params) {
     if (resetCameraPaused) callRequestController.cameraPaused = false;
     callRequestController.callEstablishedInMySide = false;
     callRequestController.callRequestReceived = false;
+    clearTimeout(callRequestController.callRequestTimeout);
     if (resetCallOwner) callRequestController.imCallOwner = false;
     currentCallParams = {};
     if (resetCurrentCallId) currentCallId = null;
@@ -2298,6 +2300,7 @@ function ChatCall(params) {
   };
 
   this.callMessageHandler = function (callMessage) {
+    if (!currentCallId) return;
     var jsonMessage = typeof callMessage.content === 'string' && _utility["default"].isValidJson(callMessage.content) ? JSON.parse(callMessage.content) : callMessage.content,
         uniqueId = jsonMessage.uniqueId;
     asyncRequestTimeouts[uniqueId] && clearTimeout(asyncRequestTimeouts[uniqueId]);
@@ -2389,6 +2392,7 @@ function ChatCall(params) {
 
       case 'SEND_SDP_OFFER':
       case 'RECIVE_SDP_OFFER':
+      case 'SDP_ANSWER_RECEIVED':
         break;
 
       default:
@@ -3318,8 +3322,7 @@ function ChatCall(params) {
       }
 
       if (callNoAnswerTimeout) {
-        //TODO: Remove timeout when call ends fast
-        setTimeout(function (metaData) {
+        callRequestController.callRequestTimeout = setTimeout(function (metaData) {
           //Reject the call if participant didn't answer
           if (!callStopQueue.callStarted) {
             _eventsModule.chatEvents.fireEvent("callEvents", {
@@ -3430,8 +3433,7 @@ function ChatCall(params) {
       }
 
       if (callNoAnswerTimeout) {
-        //TODO: Remove timeout when call ends fast
-        setTimeout(function (metaData) {
+        callRequestController.callRequestTimeout = setTimeout(function (metaData) {
           //Reject the call if participant didn't answer
           if (!callStopQueue.callStarted) {
             _eventsModule.chatEvents.fireEvent("callEvents", {
