@@ -2367,6 +2367,10 @@ function ChatCall(params) {
                 handleError(jsonMessage, params.sendingTopic, params.receiveTopic);
                 break;
 
+            case 'SEND_SDP_OFFER':
+            case 'RECIVE_SDP_OFFER':
+                break;
+
             default:
                 console.warn("[SDK][onmessage] Invalid message, id: " + jsonMessage.id, jsonMessage);
                 if (jsonMessage.match(/NOT CREATE SESSION/g)) {
