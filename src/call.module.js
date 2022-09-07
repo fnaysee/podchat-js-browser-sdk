@@ -1860,7 +1860,8 @@ function ChatCall(params) {
 
                     if (navigator && !!navigator.userAgent.match(/firefox/gi)) {
                         // videoTrack.enable = false;
-
+                        newWidth = width - 80;
+                        newHeight = height - 80;
                         videoTrack.applyConstraints({
                             // width: {
                             //     min: newWidth,

@@ -27,9 +27,6 @@ function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "functio
 
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof3(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
-// import WebrtcAdapter from 'webrtc-adapter'
-// import {constants} from "mocha/lib/errors";
-// import handleError from "./lib/errorHandler";
 function ChatCall(params) {
   var _params$asyncLogging, _params$asyncLogging2, _params$asyncLogging3, _params$callOptions, _params$callOptions2;
 
@@ -1855,7 +1852,7 @@ function ChatCall(params) {
           environmentDetails: getSDKCallDetails()
         });
       } else {
-        _eventsModule.chatEvents.fireEvent('callEvents', {
+        if (callStopQueue.callStarted) _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'CALL_ERROR',
           code: 7000,
           message: "[startMedia] Error in media.play(): " + err,
@@ -1881,6 +1878,8 @@ function ChatCall(params) {
 
         if (navigator && !!navigator.userAgent.match(/firefox/gi)) {
           // videoTrack.enable = false;
+          newWidth = width - 80;
+          newHeight = height - 80;
           videoTrack.applyConstraints({
             // width: {
             //     min: newWidth,
@@ -2386,6 +2385,10 @@ function ChatCall(params) {
 
       case 'ERROR':
         handleError(jsonMessage, params.sendingTopic, params.receiveTopic);
+        break;
+
+      case 'SEND_SDP_OFFER':
+      case 'RECIVE_SDP_OFFER':
         break;
 
       default:
