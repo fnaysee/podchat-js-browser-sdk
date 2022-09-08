@@ -996,32 +996,42 @@ function ChatCall(params) {
     }
 
     asyncClient.send(data, function (res) {
-      if (!res.hasError && callback) {
-        if (typeof callback == 'function') {
-          callback(res);
-        }
-
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          delete chatMessaging.messagesCallbacks[uniqueId];
-        }
+      if (!res.hasError && callback) {// if (typeof callback == 'function') {
+        //     callback(res);
+        // }
+        // if (chatMessaging.messagesCallbacks[uniqueId]) {
+        //     delete chatMessaging.messagesCallbacks[uniqueId];
+        // }
       }
     });
 
     if (timeoutTime || globalCallRequestTimeout > 0) {
       asyncRequestTimeouts[uniqueId] && clearTimeout(asyncRequestTimeouts[uniqueId]);
       asyncRequestTimeouts[uniqueId] = setTimeout(function () {
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          delete chatMessaging.messagesCallbacks[uniqueId];
-        }
-
         if (timeoutRetriesCount) {
-          timeoutCallback();
-        }
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            delete chatMessaging.messagesCallbacks[uniqueId];
+          }
 
-        if (typeof callback == 'function') {
+          consoleLogging && console.log("[SDK][sendCallMessage] Retrying call request. uniqueId :" + uniqueId, {
+            message: message
+          }); //timeoutCallback();
+
+          sendCallMessage(message, callback, {
+            timeoutTime: timeoutTime,
+            timeoutRetriesCount: timeoutRetriesCount - 1
+          });
+        } else if (typeof callback == 'function') {
+          /**
+           * Request failed
+           */
           callback({
             done: 'SKIP'
           });
+        }
+
+        if (chatMessaging.messagesCallbacks[uniqueId]) {
+          delete chatMessaging.messagesCallbacks[uniqueId];
         }
       }, timeoutTime || globalCallRequestTimeout);
     }
@@ -1300,31 +1310,28 @@ function ChatCall(params) {
         if (res.done === 'TRUE') {
           callStopQueue.callStarted = true;
           callController.startCall(params);
-        } else if (res.done === 'SKIP') {
+        }
+        /*else if (res.done === 'SKIP') {
           callStopQueue.callStarted = true;
           callController.startCall(params);
-        } else {
-          consoleLogging && console.log('CREATE_SESSION faced a problem', res);
-          endCall({
-            callId: currentCallId
-          });
-        }
-      },
-          onTimeoutCallback = function onTimeoutCallback() {
-        --totalRetries;
+        }*/
 
-        if (callRequestController.imCallOwner || !totalRetries) {//callServerController.changeServer();
-        }
+        /*else {
+            consoleLogging && console.log('CREATE_SESSION faced a problem', res);
+            endCall({
+                callId: currentCallId
+            });
+        }*/
 
-        sendCallMessage(message, onResultCallback, {
-          timeoutCallback: onTimeoutCallback
-        });
-      };
+      }; // onTimeoutCallback = () => {
+      // sendCallMessage(message, null, {});
+      // };
+
 
       sendCallMessage(message, onResultCallback, {
-        timeoutCallback: onTimeoutCallback,
-        timeoutRetriesCount: totalRetries
-      });
+        timeoutTime: 4000,
+        timeoutRetriesCount: 1
+      }); // sendCallMessage(message, onResultCallback, {timeoutCallback: onTimeoutCallback, timeoutRetriesCount: totalRetries} );
     },
     startCall: function startCall(params) {
       var callController = this;
@@ -2303,9 +2310,10 @@ function ChatCall(params) {
     if (!currentCallId) return;
     var jsonMessage = typeof callMessage.content === 'string' && _utility["default"].isValidJson(callMessage.content) ? JSON.parse(callMessage.content) : callMessage.content,
         uniqueId = jsonMessage.uniqueId;
-    asyncRequestTimeouts[uniqueId] && clearTimeout(asyncRequestTimeouts[uniqueId]);
 
-    if (jsonMessage.done === 'FALSE') {
+    if (jsonMessage.done !== 'FALSE' || jsonMessage.done === 'FALSE' && jsonMessage.desc === 'duplicated') {
+      asyncRequestTimeouts[uniqueId] && clearTimeout(asyncRequestTimeouts[uniqueId]);
+    } else if (jsonMessage.done === 'FALSE') {
       _eventsModule.chatEvents.fireEvent('callEvents', {
         type: 'CALL_ERROR',
         code: 7000,
@@ -2407,6 +2415,8 @@ function ChatCall(params) {
 
         break;
     }
+
+    chatMessaging.messagesCallbacks[uniqueId] && delete chatMessaging.messagesCallbacks[uniqueId];
   };
 
   this.asyncInitialized = function (async) {

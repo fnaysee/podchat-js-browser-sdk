@@ -988,31 +988,37 @@ function ChatCall(params) {
 
             asyncClient.send(data, function (res) {
                 if (!res.hasError && callback) {
-                    if (typeof callback == 'function') {
-                        callback(res);
-                    }
+                    // if (typeof callback == 'function') {
+                    //     callback(res);
+                    // }
 
-                    if (chatMessaging.messagesCallbacks[uniqueId]) {
-                        delete chatMessaging.messagesCallbacks[uniqueId];
-                    }
+                    // if (chatMessaging.messagesCallbacks[uniqueId]) {
+                    //     delete chatMessaging.messagesCallbacks[uniqueId];
+                    // }
                 }
             });
 
             if (timeoutTime || globalCallRequestTimeout > 0) {
                 asyncRequestTimeouts[uniqueId] && clearTimeout(asyncRequestTimeouts[uniqueId]);
                 asyncRequestTimeouts[uniqueId] = setTimeout(function () {
-                    if (chatMessaging.messagesCallbacks[uniqueId]) {
-                        delete chatMessaging.messagesCallbacks[uniqueId];
-                    }
-
                     if(timeoutRetriesCount) {
-                        timeoutCallback();
-                    }
-
-                    if (typeof callback == 'function') {
+                        if (chatMessaging.messagesCallbacks[uniqueId]) {
+                            delete chatMessaging.messagesCallbacks[uniqueId];
+                        }
+                        consoleLogging && console.log("[SDK][sendCallMessage] Retrying call request. uniqueId :" + uniqueId, { message })
+                        //timeoutCallback();
+                        sendCallMessage(message, callback, {timeoutTime, timeoutRetriesCount: timeoutRetriesCount - 1})
+                    } else if (typeof callback == 'function') {
+                        /**
+                         * Request failed
+                         */
                         callback({
                             done: 'SKIP'
                         });
+                    }
+
+                    if (chatMessaging.messagesCallbacks[uniqueId]) {
+                        delete chatMessaging.messagesCallbacks[uniqueId];
                     }
                 }, timeoutTime || globalCallRequestTimeout);
             }
@@ -1297,26 +1303,27 @@ function ChatCall(params) {
                         if (res.done === 'TRUE') {
                             callStopQueue.callStarted = true;
                             callController.startCall(params);
-                        } else if (res.done === 'SKIP') {
+                        } /*else if (res.done === 'SKIP') {
                             callStopQueue.callStarted = true;
                             callController.startCall(params);
-                        } else {
+                        }*/
+                        /*else {
                             consoleLogging && console.log('CREATE_SESSION faced a problem', res);
                             endCall({
                                 callId: currentCallId
                             });
-                        }
-                    },
-                    onTimeoutCallback = () => {
-                        --totalRetries;
-                        if(callRequestController.imCallOwner || !totalRetries) {
-                            //callServerController.changeServer();
-                        }
+                        }*/
+                    }
+                    // onTimeoutCallback = () => {
+                        // sendCallMessage(message, null, {});
+                    // };
+                sendCallMessage(message, onResultCallback, {
+                        timeoutTime: 4000,
+                        timeoutRetriesCount: 1
+                    }
+                )
 
-                        sendCallMessage(message, onResultCallback, {timeoutCallback: onTimeoutCallback});
-                    };
-
-                sendCallMessage(message, onResultCallback, {timeoutCallback: onTimeoutCallback, timeoutRetriesCount: totalRetries} );
+                // sendCallMessage(message, onResultCallback, {timeoutCallback: onTimeoutCallback, timeoutRetriesCount: totalRetries} );
             },
             startCall: function (params) {
                 let callController = this;
@@ -2296,9 +2303,9 @@ function ChatCall(params) {
             uniqueId = jsonMessage.uniqueId;
 
 
-        asyncRequestTimeouts[uniqueId] && clearTimeout(asyncRequestTimeouts[uniqueId]);
-
-        if(jsonMessage.done === 'FALSE') {
+        if (jsonMessage.done !== 'FALSE' || (jsonMessage.done === 'FALSE' && jsonMessage.desc === 'duplicated')) {
+            asyncRequestTimeouts[uniqueId] && clearTimeout(asyncRequestTimeouts[uniqueId]);
+        } else if(jsonMessage.done === 'FALSE') {
             chatEvents.fireEvent('callEvents', {
                 type: 'CALL_ERROR',
                 code: 7000,
@@ -2392,6 +2399,8 @@ function ChatCall(params) {
                 }
                 break;
         }
+
+        chatMessaging.messagesCallbacks[uniqueId] && delete chatMessaging.messagesCallbacks[uniqueId];
     };
 
     this.asyncInitialized = function (async) {
