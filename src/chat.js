@@ -3705,7 +3705,8 @@ function Chat(params) {
                 lastSeen: messageContent.lastSeen,
                 sendEnable: messageContent.sendEnable,
                 receiveEnable: messageContent.receiveEnable,
-                contactSynced: messageContent.contactSynced
+                contactSynced: messageContent.contactSynced,
+                callCenter: messageContent.callCenter
             };
 
             if (messageContent.contactId) {
