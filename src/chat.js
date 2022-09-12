@@ -4005,7 +4005,8 @@ function Chat(params) {
                 uniqueName: messageContent.uniqueName,
                 userGroupHash: messageContent.userGroupHash,
                 leftWithHistory: messageContent.leftWithHistory,
-                closed: messageContent.closed
+                closed: messageContent.closed,
+                seenByAnyAssistant: messageContent.seenByAnyAssistant
             };
 
             // Add inviter if exist
