@@ -2276,27 +2276,58 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
 -->
 <form method="POST" >
     <fieldset>
-        <legend>Add Contact New</legend>
-        <label for="firstNameAdd">firstName : </label>
-        <input type="text" name="firstName" id="firstNameAdd" value="">
-        <br>
-        <label for="lastNameAdd">lastName : </label>
-        <input type="text" name="lastName" id="lastNameAdd" value="">
-        <br>
-        <label for="cellphoneNumberAdd">cellphoneNumber : </label>
-        <input type="text" name="cellphoneNumber" id="cellphoneNumberAdd" value="">
-        <br>
-        <label for="userNameAdd">username : </label>
-        <input type="text" name="userName" id="userNameAdd" value="">
-        <br>
-        <label for="emailAdd">email : </label>
-        <input type="text" name="email" id="emailAdd" value="">
-        <br>
-        <input type="hidden" name="_token_issuer_" value="1">
-        <button id="newAddContacts" type="submit">Add Contact</button>
+        <legend>New Contacts API</legend>
+        <fieldset>
+            <legend>Get Contacts </legend>
+            <label for="newGetContactsCount"> Count : </label>
+            <input type="text" name="newGetContactsCount" id="newGetContactsCount" value="10">
+            <br>
+            <label for="newGetContactsOffset"> Offset : </label>
+            <input type="text" name="newGetContactsOffset" id="newGetContactsOffset" value="0">
+            <br>
+            <button id="newGetContacts"  class="btn" type="button">Get Contacts</button>
+        </fieldset>
+        <fieldset>
+            <legend>Add </legend>
+            <label for="firstNameAdd">firstName : </label>
+            <input type="text" name="firstName" id="firstNameAdd" value="">
+            <br>
+            <label for="lastNameAdd">lastName : </label>
+            <input type="text" name="lastName" id="lastNameAdd" value="">
+            <br>
+            <label for="cellphoneNumberAdd">cellphoneNumber : </label>
+            <input type="text" name="cellphoneNumber" id="cellphoneNumberAdd" value="">
+            <br>
+            <label for="userNameAdd">username : </label>
+            <input type="text" name="userName" id="userNameAdd" value="">
+            <br>
+            <label for="emailAdd">email : </label>
+            <input type="text" name="email" id="emailAdd" value="">
+            <br>
+            <input type="hidden" name="_token_issuer_" value="1">
+            <button id="newAddContacts" type="submit">Add Contact</button>
+        </fieldset>
+        <fieldset>
+            <legend>Remove </legend>
+            <label for="newRemoveContactId"> Contact ID : </label>
+            <input type="text" name="newRemoveContactId" id="newRemoveContactId" value="">
+            <button id="newRemoveContacts" class="btn" type="button">Remove Contact</button>
+        </fieldset>
+
     </fieldset>
 </form>
 <script>
+    document.getElementById("newGetContacts").addEventListener("click", function (event) {
+        event.preventDefault();
+
+        var count = document.getElementById("newGetContactsCount").value;
+        var offset = document.getElementById("newGetContactsOffset").value;
+
+        chatAgent.getContacts({
+            count, offset
+        }, result => console.log("[HTML] getContacts: ", result))
+    });
+
     document.getElementById("newAddContacts").addEventListener("click", function (event) {
         event.preventDefault();
         var firstName = document.getElementById("firstNameAdd").value;
@@ -2305,7 +2336,7 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
         var cellphoneNumber = document.getElementById("cellphoneNumberAdd").value;
         var username = document.getElementById("userNameAdd").value;
 
-        chatAgent.newAddContacts({
+        chatAgent.addContacts({
             contacts: [
                 {
                     firstName,
@@ -2315,8 +2346,18 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
                     username
                 }
             ]
-        });
+        }, result => console.log("[HTML] newAddContacts.result: ", result));
     });
+
+    document.getElementById("newRemoveContacts").addEventListener("click", function (event) {
+        event.preventDefault();
+        var cID = document.getElementById("newRemoveContactId").value;
+        chatAgent.removeContacts({
+            id: cID
+        }, function (result) {
+            console.log("[HTML] removeContacts.result:  ", result);
+        });
+    })
 </script>
 
 <br>

@@ -46149,6 +46149,8 @@ break;/**
                  */case _constants.chatMessageVOTypes.EXPORT_CHAT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
                  * Type 200    Adding a user to contacts list
                  */case _constants.chatMessageVOTypes.ADD_CONTACTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+                 * Type 201    Remove contacts result
+                 */case _constants.chatMessageVOTypes.REMOVE_CONTACTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
                  * Type 220    Adding a user to contacts list
                  */case _constants.chatMessageVOTypes.CONTACT_THREAD_UPDATE:messageContent.threadId=threadId;_events.chatEvents.fireEvent('threadEvents',{type:'CONTACT_THREAD_UPDATE',result:messageContent});break;/**
                  /**
@@ -47599,15 +47601,159 @@ pushMsgType:3,token:token,timeout:params.timeout};if(params){if(parseInt(params.
 content:{},pushMsgType:3,token:token,timeout:params.timeout};if(params){if(parseInt(params.contactId)>0){blockData.content.contactId=params.contactId;}if(parseInt(params.threadId)>0){blockData.content.threadId=params.threadId;}if(parseInt(params.userId)>0){blockData.content.userId=params.userId;}}return chatMessaging.sendMessage(blockData,{onResult:function onResult(result){if((0,_typeof2["default"])(result.result)=='object'){result.result=formatDataToMakeBlockedUser(result.result);}callback&&callback(result);}});};publicized.unblock=function(params,callback){var unblockData={chatMessageVOType:_constants.chatMessageVOTypes.UNBLOCK,typeCode:generalTypeCode,//params.typeCode,
 pushMsgType:3,token:token,content:{},timeout:params.timeout};if(params){if(parseInt(params.blockId)>0){unblockData.subjectId=params.blockId;}if(parseInt(params.contactId)>0){unblockData.content.contactId=params.contactId;}if(parseInt(params.threadId)>0){unblockData.content.threadId=params.threadId;}if(parseInt(params.userId)>0){unblockData.content.userId=params.userId;}}return chatMessaging.sendMessage(unblockData,{onResult:function onResult(result){if((0,_typeof2["default"])(result.result)=='object'){result.result=formatDataToMakeBlockedUser(result.result);}callback&&callback(result);}});};publicized.getBlockedList=function(params,callback){var count=50,offset=0,content={};if(params){if(parseInt(params.count)>0){count=params.count;}if(parseInt(params.offset)>0){offset=params.offset;}}content.count=count;content.offset=offset;var getBlockedData={chatMessageVOType:_constants.chatMessageVOTypes.GET_BLOCKED,typeCode:generalTypeCode,//params.typeCode,
 content:content,pushMsgType:3,token:token,timeout:params.timeout};return chatMessaging.sendMessage(getBlockedData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={blockedUsers:[],contentCount:result.contentCount,hasNext:offset+count<result.contentCount&&messageLength>0,nextOffset:offset*1+messageLength*1},blockedUser;for(var i=0;i<messageLength;i++){blockedUser=formatDataToMakeBlockedUser(messageContent[i]);if(blockedUser){resultData.blockedUsers.push(blockedUser);}}returnData.result=resultData;}callback&&callback(returnData);}});};publicized.getUserNotSeenDuration=function(params,callback){var content={};if(params){if(Array.isArray(params.userIds)){content.userIds=params.userIds;}}var getNotSeenDurationData={chatMessageVOType:_constants.chatMessageVOTypes.GET_NOT_SEEN_DURATION,typeCode:generalTypeCode,//params.typeCode,
-content:content,pushMsgType:3,token:token,timeout:params.timeout};return chatMessaging.sendMessage(getNotSeenDurationData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){returnData.result=result.result;}callback&&callback(returnData);}});};publicized.addContacts=function(params,callback){var data={};if(params){if(typeof params.firstName==='string'){data.firstName=params.firstName;}else{data.firstName='';}if(typeof params.lastName==='string'){data.lastName=params.lastName;}else{data.lastName='';}if(typeof params.typeCode==='string'){data.typeCode=params.typeCode;}else if(generalTypeCode){data.typeCode=generalTypeCode;}if(typeof params.cellphoneNumber==='string'){data.cellphoneNumber=params.cellphoneNumber;}else{data.cellphoneNumber='';}if(typeof params.email==='string'){data.email=params.email;}else{data.email='';}if(typeof params.username==='string'){data.username=params.username;}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.ADD_CONTACTS,method:'POST',data:data,headers:{'_token_':token,'_token_issuer_':1}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if(!responseData.hasError){var messageContent=responseData.result,messageLength=responseData.result.length,resultData={contacts:[],contentCount:messageLength},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;/**
+content:content,pushMsgType:3,token:token,timeout:params.timeout};return chatMessaging.sendMessage(getNotSeenDurationData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){returnData.result=result.result;}callback&&callback(returnData);}});};/*
+    publicized.addContacts = function (params, callback) {
+        var data = {};
+
+        if (params) {
+            if (typeof params.firstName === 'string') {
+                data.firstName = params.firstName;
+            } else {
+                data.firstName = '';
+            }
+
+            if (typeof params.lastName === 'string') {
+                data.lastName = params.lastName;
+            } else {
+                data.lastName = '';
+            }
+
+            if (typeof params.typeCode === 'string') {
+                data.typeCode = params.typeCode;
+            } else if (generalTypeCode) {
+                data.typeCode = generalTypeCode;
+            }
+
+            if (typeof params.cellphoneNumber === 'string') {
+                data.cellphoneNumber = params.cellphoneNumber;
+            } else {
+                data.cellphoneNumber = '';
+            }
+
+            if (typeof params.email === 'string') {
+                data.email = params.email;
+            } else {
+                data.email = '';
+            }
+
+            if (typeof params.username === 'string') {
+                data.username = params.username;
+            }
+
+            data.uniqueId = Utility.generateUUID();
+        }
+
+        var requestParams = {
+            url: SERVICE_ADDRESSES.PLATFORM_ADDRESS + SERVICES_PATH.ADD_CONTACTS,
+            method: 'POST',
+            data: data,
+            headers: {
+                '_token_': token,
+                '_token_issuer_': 1
+            }
+        };
+
+        httpRequest(requestParams, function (result) {
+            if (!result.hasError) {
+                var responseData = JSON.parse(result.result.responseText);
+
+                var returnData = {
+                    hasError: responseData.hasError,
+                    cache: false,
+                    errorMessage: responseData.message,
+                    errorCode: responseData.errorCode
+                };
+
+                if (!responseData.hasError) {
+                    var messageContent = responseData.result,
+                        messageLength = responseData.result.length,
+                        resultData = {
+                            contacts: [],
+                            contentCount: messageLength
+                        },
+                        contactData;
+
+                    for (var i = 0; i < messageLength; i++) {
+                        contactData = formatDataToMakeContact(messageContent[i]);
+                        if (contactData) {
+                            resultData.contacts.push(contactData);
+                        }
+                    }
+
+                    returnData.result = resultData;
+
+                    /!**
                      * Add Contacts into cache database #cache
-                     */if(canUseCache&&cacheSecret.length>0){if(db){var cacheData=[];for(var i=0;i<resultData.contacts.length;i++){try{var tempData={},salt=_utility["default"].generateUUID();tempData.id=resultData.contacts[i].id;tempData.owner=chatMessaging.userInfo.id;tempData.uniqueId=resultData.contacts[i].uniqueId;tempData.userId=_utility["default"].crypt(resultData.contacts[i].userId,cacheSecret,salt);tempData.cellphoneNumber=_utility["default"].crypt(resultData.contacts[i].cellphoneNumber,cacheSecret,salt);tempData.email=_utility["default"].crypt(resultData.contacts[i].email,cacheSecret,salt);tempData.firstName=_utility["default"].crypt(resultData.contacts[i].firstName,cacheSecret,salt);tempData.lastName=_utility["default"].crypt(resultData.contacts[i].lastName,cacheSecret,salt);tempData.expireTime=new Date().getTime()+cacheExpireTime;tempData.data=_utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(resultData.contacts[i])),cacheSecret,salt);tempData.salt=salt;cacheData.push(tempData);}catch(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}db.contacts.bulkPut(cacheData)["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}callback&&callback(returnData);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});};publicized.newAddContacts=function(params,callback){var addContactsData={chatMessageVOType:_constants.chatMessageVOTypes.ADD_CONTACTS,content:{},pushMsgType:3,token:token,typeCode:generalTypeCode},AddContactVO={},firstNameList=[],lastNameList=[],cellPhoneNumberList=[],emailList=[],usernameList=[],uniqueIdList=[];if(params){for(var item in params.contacts){if(typeof params.contacts[item].firstName==='string'){firstNameList.push(params.contacts[item].firstName);}else{firstNameList.push('');}if(typeof params.contacts[item].lastName==='string'){lastNameList.push(params.contacts[item].lastName);}else{lastNameList.push('');}if(typeof params.contacts[item].cellphoneNumber==='string'){cellPhoneNumberList.push(params.contacts[item].cellphoneNumber);// data.cellphoneNumber = params.cellphoneNumber;
+                     *!/
+                    if (canUseCache && cacheSecret.length > 0) {
+                        if (db) {
+                            var cacheData = [];
+
+                            for (var i = 0; i < resultData.contacts.length; i++) {
+                                try {
+                                    var tempData = {},
+                                        salt = Utility.generateUUID();
+                                    tempData.id = resultData.contacts[i].id;
+                                    tempData.owner = chatMessaging.userInfo.id;
+                                    tempData.uniqueId = resultData.contacts[i].uniqueId;
+                                    tempData.userId = Utility.crypt(resultData.contacts[i].userId, cacheSecret, salt);
+                                    tempData.cellphoneNumber = Utility.crypt(resultData.contacts[i].cellphoneNumber, cacheSecret, salt);
+                                    tempData.email = Utility.crypt(resultData.contacts[i].email, cacheSecret, salt);
+                                    tempData.firstName = Utility.crypt(resultData.contacts[i].firstName, cacheSecret, salt);
+                                    tempData.lastName = Utility.crypt(resultData.contacts[i].lastName, cacheSecret, salt);
+                                    tempData.expireTime = new Date().getTime() + cacheExpireTime;
+                                    tempData.data = Utility.crypt(JSON.stringify(unsetNotSeenDuration(resultData.contacts[i])), cacheSecret, salt);
+                                    tempData.salt = salt;
+
+                                    cacheData.push(tempData);
+                                } catch (error) {
+                                    chatEvents.fireEvent('error', {
+                                        code: error.code,
+                                        message: error.message,
+                                        error: error
+                                    });
+                                }
+                            }
+
+                            db.contacts.bulkPut(cacheData)
+                                .catch(function (error) {
+                                    chatEvents.fireEvent('error', {
+                                        code: error.code,
+                                        message: error.message,
+                                        error: error
+                                    });
+                                });
+                        } else {
+                            chatEvents.fireEvent('error', {
+                                code: 6601,
+                                message: CHAT_ERRORS[6601],
+                                error: null
+                            });
+                        }
+                    }
+
+                }
+
+                callback && callback(returnData);
+
+            } else {
+                chatEvents.fireEvent('error', {
+                    code: result.errorCode,
+                    message: result.errorMessage,
+                    error: result
+                });
+            }
+        });
+    };
+*/ // publicized.newAddContacts
+publicized.addContacts=function(params,callback){var addContactsData={chatMessageVOType:_constants.chatMessageVOTypes.ADD_CONTACTS,content:{},pushMsgType:3,token:token,typeCode:generalTypeCode},AddContactVO={},firstNameList=[],lastNameList=[],cellPhoneNumberList=[],emailList=[],userNameList=[],uniqueIdList=[];if(params){for(var item in params.contacts){if(typeof params.contacts[item].firstName==='string'){firstNameList.push(params.contacts[item].firstName);}else{firstNameList.push('');}if(typeof params.contacts[item].lastName==='string'){lastNameList.push(params.contacts[item].lastName);}else{lastNameList.push('');}if(typeof params.contacts[item].cellphoneNumber==='string'){cellPhoneNumberList.push(params.contacts[item].cellphoneNumber);// data.cellphoneNumber = params.cellphoneNumber;
 }else{cellPhoneNumberList.push('');// data.cellphoneNumber = '';
 }if(typeof params.contacts[item].email==='string'){emailList.push(params.contacts[item].email);// data.email = params.email;
 }else{emailList.push('');// data.email = '';
-}if(typeof params.contacts[item].username==='string'){usernameList.push(params.contacts[item].username);// data.username = params.username;
+}if(typeof params.contacts[item].username==='string'){userNameList.push(params.contacts[item].username);// data.username = params.username;
 }uniqueIdList.push(_utility["default"].generateUUID());// data.uniqueId = Utility.generateUUID();
-}AddContactVO={uniqueIdList:uniqueIdList,emailList:emailList,usernameList:usernameList,firstNameList:firstNameList,lastNameList:lastNameList,cellphoneNumberList:cellPhoneNumberList};}addContactsData.content=AddContactVO;return chatMessaging.sendMessage(addContactsData,{onResult:function onResult(result){console.log(result);var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if((0,_typeof2["default"])(result.result)=='object'){var messageContent=responseData.result,messageLength=responseData.result.length,resultData={contacts:[],contentCount:messageLength},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;/**
+}AddContactVO={uniqueIdList:uniqueIdList,emailList:emailList,userNameList:userNameList,firstNameList:firstNameList,lastNameList:lastNameList,cellphoneNumberList:cellPhoneNumberList};}addContactsData.content=AddContactVO;return chatMessaging.sendMessage(addContactsData,{onResult:function onResult(result){// var responseData = JSON.parse(result.result.responseText);
+var returnData={hasError:result.hasError,cache:false,errorMessage:result.message,errorCode:result.errorCode};if((0,_typeof2["default"])(result.result)=='object'){var _result$result,_result$result2,_result$result2$resul;var messageContent=result===null||result===void 0?void 0:(_result$result=result.result)===null||_result$result===void 0?void 0:_result$result.result,messageLength=result===null||result===void 0?void 0:(_result$result2=result.result)===null||_result$result2===void 0?void 0:(_result$result2$resul=_result$result2.result)===null||_result$result2$resul===void 0?void 0:_result$result2$resul.length,resultData={contacts:[],contentCount:messageLength},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;/**
                      * Add Contacts into cache database #cache
                      */if(canUseCache&&cacheSecret.length>0){if(db){var cacheData=[];for(var i=0;i<resultData.contacts.length;i++){try{var tempData={},salt=_utility["default"].generateUUID();tempData.id=resultData.contacts[i].id;tempData.owner=chatMessaging.userInfo.id;tempData.uniqueId=resultData.contacts[i].uniqueId;tempData.userId=_utility["default"].crypt(resultData.contacts[i].userId,cacheSecret,salt);tempData.cellphoneNumber=_utility["default"].crypt(resultData.contacts[i].cellphoneNumber,cacheSecret,salt);tempData.email=_utility["default"].crypt(resultData.contacts[i].email,cacheSecret,salt);tempData.firstName=_utility["default"].crypt(resultData.contacts[i].firstName,cacheSecret,salt);tempData.lastName=_utility["default"].crypt(resultData.contacts[i].lastName,cacheSecret,salt);tempData.expireTime=new Date().getTime()+cacheExpireTime;tempData.data=_utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(resultData.contacts[i])),cacheSecret,salt);tempData.salt=salt;cacheData.push(tempData);}catch(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}db.contacts.bulkPut(cacheData)["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}// }
 callback&&callback(returnData);}//callback && callback(result);
@@ -47638,11 +47784,99 @@ callback&&callback(returnData);}//callback && callback(result);
                 });
                 */ //}
 //});
-};publicized.updateContacts=function(params,callback){var data={};if(params){if(parseInt(params.id)>0){data.id=parseInt(params.id);}else{_events.chatEvents.fireEvent('error',{code:999,message:'ID is required for Updating Contact!',error:undefined});}if(typeof params.firstName==='string'){data.firstName=params.firstName;}else{_events.chatEvents.fireEvent('error',{code:999,message:'firstName is required for Updating Contact!'});}if(typeof params.lastName==='string'){data.lastName=params.lastName;}else{_events.chatEvents.fireEvent('error',{code:999,message:'lastName is required for Updating Contact!'});}if(typeof params.cellphoneNumber==='string'){data.cellphoneNumber=params.cellphoneNumber;}else{_events.chatEvents.fireEvent('error',{code:999,message:'cellphoneNumber is required for Updating Contact!'});}if(typeof params.email==='string'){data.email=params.email;}else{_events.chatEvents.fireEvent('error',{code:999,message:'email is required for Updating Contact!'});}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.UPDATE_CONTACTS,method:'GET',data:data,headers:{'_token_':token,'_token_issuer_':1}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if(!responseData.hasError){var messageContent=responseData.result,messageLength=responseData.result.length,resultData={contacts:[],contentCount:messageLength},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;/**
-                     * Add Contacts into cache database #cache
-                     */if(canUseCache&&cacheSecret.length>0){if(db){var cacheData=[];for(var i=0;i<resultData.contacts.length;i++){try{var tempData={},salt=_utility["default"].generateUUID();tempData.id=resultData.contacts[i].id;tempData.owner=chatMessaging.userInfo.id;tempData.uniqueId=resultData.contacts[i].uniqueId;tempData.userId=_utility["default"].crypt(resultData.contacts[i].userId,cacheSecret,salt);tempData.cellphoneNumber=_utility["default"].crypt(resultData.contacts[i].cellphoneNumber,cacheSecret,salt);tempData.email=_utility["default"].crypt(resultData.contacts[i].email,cacheSecret,salt);tempData.firstName=_utility["default"].crypt(resultData.contacts[i].firstName,cacheSecret,salt);tempData.lastName=_utility["default"].crypt(resultData.contacts[i].lastName,cacheSecret,salt);tempData.expireTime=new Date().getTime()+cacheExpireTime;tempData.data=_utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(resultData.contacts[i])),cacheSecret,salt);tempData.salt=salt;cacheData.push(tempData);}catch(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}db.contacts.bulkPut(cacheData)["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}callback&&callback(returnData);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});};publicized.removeContacts=function(params,callback){var data={};if(params){if(parseInt(params.id)>0){data.id=parseInt(params.id);}else{_events.chatEvents.fireEvent('error',{code:999,message:'ID is required for Deleting Contact!',error:undefined});}}var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.REMOVE_CONTACTS,method:'POST',data:data,headers:{'_token_':token,'_token_issuer_':1}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if(!responseData.hasError){returnData.result=responseData.result;}/**
+};publicized.removeContacts=function(_ref,callback){var id=_ref.id;var data={chatMessageVOType:_constants.chatMessageVOTypes.REMOVE_CONTACTS,content:[parseInt(id)],pushMsgType:3,token:token,typeCode:generalTypeCode};if(!id){_events.chatEvents.fireEvent('error',{code:999,message:'ID is required for Deleting Contact!',error:undefined});}return chatMessaging.sendMessage(data,{onResult:function onResult(result){if(!result.hasError){// var responseData = JSON.parse(result.result.responseText);
+//
+/*var returnData = {
+                    hasError: result.hasError,
+                    cache: false,
+                    errorMessage: result.errorMessage,
+                    errorCode: result.errorCode
+                };
+
+
+
+                if (!result.hasError) {
+                    returnData.result = result.result;
+                }*/ /**
                  * Remove the contact from cache
-                 */if(canUseCache){if(db){db.contacts.where('id').equals(parseInt(params.id))["delete"]()["catch"](function(error){_events.chatEvents.fireEvent('error',{code:6602,message:CHAT_ERRORS[6602],error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}callback&&callback(returnData);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});};publicized.searchContacts=function(params,callback){var data={size:50,offset:0},whereClause={},returnCache=false;if(params){if(typeof params.firstName==='string'){data.firstName=whereClause.firstName=params.firstName;}if(typeof params.lastName==='string'){data.lastName=whereClause.lastName=params.lastName;}if(parseInt(params.cellphoneNumber)>0){data.cellphoneNumber=whereClause.cellphoneNumber=params.cellphoneNumber;}if(typeof params.email==='string'){data.email=whereClause.email=params.email;}if(typeof params.query==='string'){data.q=whereClause.q=params.query;}if(typeof params.uniqueId==='string'){data.uniqueId=whereClause.uniqueId=params.uniqueId;}if(parseInt(params.id)>0){data.id=whereClause.id=params.id;}if(parseInt(params.typeCode)>0){data.typeCode=whereClause.typeCode=params.typeCode;}// data.typeCode = whereClause.typeCode = generalTypeCode;//params.typeCode;
+                 */if(canUseCache){if(db){db.contacts.where('id').equals(parseInt(params.id))["delete"]()["catch"](function(error){_events.chatEvents.fireEvent('error',{code:6602,message:CHAT_ERRORS[6602],error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}result.result.uniqueId=result.uniqueId;callback&&callback(result.result);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}}});};publicized.updateContacts=function(params,callback){var data={};if(params){if(parseInt(params.id)>0){data.id=parseInt(params.id);}else{_events.chatEvents.fireEvent('error',{code:999,message:'ID is required for Updating Contact!',error:undefined});}if(typeof params.firstName==='string'){data.firstName=params.firstName;}else{_events.chatEvents.fireEvent('error',{code:999,message:'firstName is required for Updating Contact!'});}if(typeof params.lastName==='string'){data.lastName=params.lastName;}else{_events.chatEvents.fireEvent('error',{code:999,message:'lastName is required for Updating Contact!'});}if(typeof params.cellphoneNumber==='string'){data.cellphoneNumber=params.cellphoneNumber;}else{_events.chatEvents.fireEvent('error',{code:999,message:'cellphoneNumber is required for Updating Contact!'});}if(typeof params.email==='string'){data.email=params.email;}else{_events.chatEvents.fireEvent('error',{code:999,message:'email is required for Updating Contact!'});}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.UPDATE_CONTACTS,method:'GET',data:data,headers:{'_token_':token,'_token_issuer_':1}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if(!responseData.hasError){var messageContent=responseData.result,messageLength=responseData.result.length,resultData={contacts:[],contentCount:messageLength},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;/**
+                     * Add Contacts into cache database #cache
+                     */if(canUseCache&&cacheSecret.length>0){if(db){var cacheData=[];for(var i=0;i<resultData.contacts.length;i++){try{var tempData={},salt=_utility["default"].generateUUID();tempData.id=resultData.contacts[i].id;tempData.owner=chatMessaging.userInfo.id;tempData.uniqueId=resultData.contacts[i].uniqueId;tempData.userId=_utility["default"].crypt(resultData.contacts[i].userId,cacheSecret,salt);tempData.cellphoneNumber=_utility["default"].crypt(resultData.contacts[i].cellphoneNumber,cacheSecret,salt);tempData.email=_utility["default"].crypt(resultData.contacts[i].email,cacheSecret,salt);tempData.firstName=_utility["default"].crypt(resultData.contacts[i].firstName,cacheSecret,salt);tempData.lastName=_utility["default"].crypt(resultData.contacts[i].lastName,cacheSecret,salt);tempData.expireTime=new Date().getTime()+cacheExpireTime;tempData.data=_utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(resultData.contacts[i])),cacheSecret,salt);tempData.salt=salt;cacheData.push(tempData);}catch(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}db.contacts.bulkPut(cacheData)["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}callback&&callback(returnData);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});};// publicized.removeContacts = function (params, callback) {
+//     var data = {};
+//
+//     if (params) {
+//         if (parseInt(params.id) > 0) {
+//             data.id = parseInt(params.id);
+//         } else {
+//             chatEvents.fireEvent('error', {
+//                 code: 999,
+//                 message: 'ID is required for Deleting Contact!',
+//                 error: undefined
+//             });
+//         }
+//     }
+//
+//     var requestParams = {
+//         url: SERVICE_ADDRESSES.PLATFORM_ADDRESS + SERVICES_PATH.REMOVE_CONTACTS,
+//         method: 'POST',
+//         data: data,
+//         headers: {
+//             '_token_': token,
+//             '_token_issuer_': 1
+//         }
+//     };
+//
+//     httpRequest(requestParams, function (result) {
+//         if (!result.hasError) {
+//             var responseData = JSON.parse(result.result.responseText);
+//
+//             var returnData = {
+//                 hasError: responseData.hasError,
+//                 cache: false,
+//                 errorMessage: responseData.message,
+//                 errorCode: responseData.errorCode
+//             };
+//
+//             if (!responseData.hasError) {
+//                 returnData.result = responseData.result;
+//             }
+//
+//             /**
+//              * Remove the contact from cache
+//              */
+//             if (canUseCache) {
+//                 if (db) {
+//                     db.contacts.where('id')
+//                         .equals(parseInt(params.id))
+//                         .delete()
+//                         .catch(function (error) {
+//                             chatEvents.fireEvent('error', {
+//                                 code: 6602,
+//                                 message: CHAT_ERRORS[6602],
+//                                 error: error
+//                             });
+//                         });
+//                 } else {
+//                     chatEvents.fireEvent('error', {
+//                         code: 6601,
+//                         message: CHAT_ERRORS[6601],
+//                         error: null
+//                     });
+//                 }
+//             }
+//
+//             callback && callback(returnData);
+//
+//         } else {
+//             chatEvents.fireEvent('error', {
+//                 code: result.errorCode,
+//                 message: result.errorMessage,
+//                 error: result
+//             });
+//         }
+//     });
+// };
+publicized.searchContacts=function(params,callback){var data={size:50,offset:0},whereClause={},returnCache=false;if(params){if(typeof params.firstName==='string'){data.firstName=whereClause.firstName=params.firstName;}if(typeof params.lastName==='string'){data.lastName=whereClause.lastName=params.lastName;}if(parseInt(params.cellphoneNumber)>0){data.cellphoneNumber=whereClause.cellphoneNumber=params.cellphoneNumber;}if(typeof params.email==='string'){data.email=whereClause.email=params.email;}if(typeof params.query==='string'){data.q=whereClause.q=params.query;}if(typeof params.uniqueId==='string'){data.uniqueId=whereClause.uniqueId=params.uniqueId;}if(parseInt(params.id)>0){data.id=whereClause.id=params.id;}if(parseInt(params.typeCode)>0){data.typeCode=whereClause.typeCode=params.typeCode;}// data.typeCode = whereClause.typeCode = generalTypeCode;//params.typeCode;
 if(parseInt(params.size)>0){data.size=params.size;}if(parseInt(params.offset)>0){data.offset=params.offset;}var functionLevelCache=typeof params.cache=='boolean'?params.cache:true;}var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.SEARCH_CONTACTS,method:'POST',data:data,headers:{'_token_':token,'_token_issuer_':1}};/**
          * Search contacts in cache #cache
          */if(functionLevelCache&&canUseCache&&cacheSecret.length>0){if(db){/**
@@ -47731,8 +47965,8 @@ pc.createOffer(function(sdp){if(sdp.sdp.indexOf('typ relay')>-1){// sometimes sd
 promiseResolved=true;resolve(true);}pc.setLocalDescription(sdp,noop,noop);},noop);// create offer and set local description
 pc.onicecandidate=function(ice){//listen for candidate events
 if(promiseResolved||!ice||!ice.candidate||!ice.candidate.candidate||!(ice.candidate.candidate.indexOf('typ relay')>-1))return;promiseResolved=true;resolve(true);};});};publicized.getCustomerInfo=function(params,callback){var userId=params.userId||chatMessaging.userInfo.id,sendData={chatMessageVOType:_constants.chatMessageVOTypes.CUSTOMER_INFO,typeCode:generalTypeCode,//params.typeCode,
-content:[userId],token:token};return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.archiveThread=function(_ref,callback){var threadId=_ref.threadId;var sendData={chatMessageVOType:_constants.chatMessageVOTypes.ARCHIVE_THREAD,typeCode:generalTypeCode,//params.typeCode,
-token:token,subjectId:threadId};return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.unArchiveThread=function(_ref2,callback){var threadId=_ref2.threadId;var sendData={chatMessageVOType:_constants.chatMessageVOTypes.UNARCHIVE_THREAD,typeCode:generalTypeCode,//params.typeCode,
+content:[userId],token:token};return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.archiveThread=function(_ref2,callback){var threadId=_ref2.threadId;var sendData={chatMessageVOType:_constants.chatMessageVOTypes.ARCHIVE_THREAD,typeCode:generalTypeCode,//params.typeCode,
+token:token,subjectId:threadId};return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.unArchiveThread=function(_ref3,callback){var threadId=_ref3.threadId;var sendData={chatMessageVOType:_constants.chatMessageVOTypes.UNARCHIVE_THREAD,typeCode:generalTypeCode,//params.typeCode,
 token:token,subjectId:threadId};return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};init();return publicized;}if(window){if(!window.POD){window.POD={};}window.POD.Chat=Chat;//For backward compatibility
 window.PodChat=Chat;}var _default=Chat;// })();
 exports["default"]=_default;
@@ -48301,6 +48535,7 @@ var chatMessageVOTypes = {
   DELETE_MESSAGE_THREAD: 151,
   EXPORT_CHAT: 152,
   ADD_CONTACTS: 200,
+  REMOVE_CONTACTS: 201,
   CONTACT_THREAD_UPDATE: 220,
   SWITCH_TO_GROUP_CALL_REQUEST: 221,
   RECORD_CALL_STARTED: 222,
