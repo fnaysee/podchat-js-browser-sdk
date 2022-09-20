@@ -4560,8 +4560,8 @@ function ChatCall(params) {
         let sendData = {
             chatMessageVOType: chatMessageVOTypes.RECALL_THREAD_PARTICIPANT,
             typeCode: generalTypeCode, //params.typeCode,
-            content: params.content,
-            subjectId: params.threadId,
+            content: null,
+            subjectId: currentCallId,
         };
 
         if(!invitees || Array.isArray(invitees) || invitees.length) {
@@ -4569,13 +4569,13 @@ function ChatCall(params) {
             return;
         }
 
-        content.invitees = [];//params.invitees;
-        for (let i = 0; i < params.invitees.length; i++) {
-            let tempInvitee = params.invitees[i];
+        sendData.content = [];//params.invitees;
+        for (let i = 0; i < invitees.length; i++) {
+            let tempInvitee = invitees[i];
 
             if (tempInvitee && typeof tempInvitee.idType === "string") {
                 tempInvitee.idType = inviteeVOidTypes[tempInvitee.idType];
-                content.invitees.push(tempInvitee);
+                sendData.content.push(tempInvitee);
             }
         }
 
