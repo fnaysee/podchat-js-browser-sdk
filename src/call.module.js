@@ -1008,10 +1008,11 @@ function ChatCall(params) {
             if (timeoutTime || globalCallRequestTimeout > 0) {
                 asyncRequestTimeouts[uniqueId] && clearTimeout(asyncRequestTimeouts[uniqueId]);
                 asyncRequestTimeouts[uniqueId] = setTimeout(function () {
+                    if (chatMessaging.messagesCallbacks[uniqueId]) {
+                        delete chatMessaging.messagesCallbacks[uniqueId];
+                    }
+
                     if(timeoutRetriesCount) {
-                        if (chatMessaging.messagesCallbacks[uniqueId]) {
-                            delete chatMessaging.messagesCallbacks[uniqueId];
-                        }
                         consoleLogging && console.log("[SDK][sendCallMessage] Retrying call request. uniqueId :" + uniqueId, { message })
                         //timeoutCallback();
                         sendCallMessage(message, callback, {timeoutTime, timeoutRetriesCount: timeoutRetriesCount - 1})
@@ -1024,9 +1025,9 @@ function ChatCall(params) {
                         });
                     }
 
-                    if (chatMessaging.messagesCallbacks[uniqueId]) {
+                  /*  if (chatMessaging.messagesCallbacks[uniqueId]) {
                         delete chatMessaging.messagesCallbacks[uniqueId];
-                    }
+                    }*/
                 }, timeoutTime || globalCallRequestTimeout);
             }
         },
