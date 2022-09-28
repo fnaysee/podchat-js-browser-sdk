@@ -114,9 +114,13 @@ var deviceManager = {
     var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
     return new Promise(function (resolve, reject) {
       if (_mediaStreams.getScreenShareInput()) {
-        // console.log("exists resolving")
-        resolve(_mediaStreams.getScreenShareInput());
-        return;
+        if (!_mediaStreams.getScreenShareInput().active) {
+          _mediaStreams.stopScreenShareInput();
+        } else {
+          // console.log("exists resolving")
+          resolve(_mediaStreams.getScreenShareInput());
+          return;
+        }
       }
 
       navigator.mediaDevices.getDisplayMedia({

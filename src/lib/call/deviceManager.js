@@ -104,9 +104,13 @@ const deviceManager = {
     grantScreenSharePermission({closeStream = false}, callback = null) {
         return new Promise((resolve, reject) => {
             if(mediaStreams.getScreenShareInput()){
-                // console.log("exists resolving")
-                resolve(mediaStreams.getScreenShareInput());
-                return;
+                if(!mediaStreams.getScreenShareInput().active) {
+                    mediaStreams.stopScreenShareInput();
+                } else {
+                    // console.log("exists resolving")
+                    resolve(mediaStreams.getScreenShareInput());
+                    return;
+                }
             }
 
             navigator.mediaDevices.getDisplayMedia({

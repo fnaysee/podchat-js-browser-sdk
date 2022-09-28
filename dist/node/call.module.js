@@ -4591,8 +4591,8 @@ function ChatCall(params) {
       chatMessageVOType: _constants.chatMessageVOTypes.RECALL_THREAD_PARTICIPANT,
       typeCode: generalTypeCode,
       //params.typeCode,
-      content: params.content,
-      subjectId: params.threadId
+      content: null,
+      subjectId: currentCallId
     };
 
     if (!invitees || Array.isArray(invitees) || invitees.length) {
@@ -4600,14 +4600,14 @@ function ChatCall(params) {
       return;
     }
 
-    content.invitees = []; //params.invitees;
+    sendData.content = []; //params.invitees;
 
-    for (var i = 0; i < params.invitees.length; i++) {
-      var tempInvitee = params.invitees[i];
+    for (var i = 0; i < invitees.length; i++) {
+      var tempInvitee = invitees[i];
 
       if (tempInvitee && typeof tempInvitee.idType === "string") {
         tempInvitee.idType = _constants.inviteeVOidTypes[tempInvitee.idType];
-        content.invitees.push(tempInvitee);
+        sendData.content.push(tempInvitee);
       }
     }
 
