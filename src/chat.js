@@ -11968,43 +11968,43 @@ function Chat(params) {
             uniqueIdList = [];
 
         if (params) {
-            for(var item in params.contacts) {
-                if (typeof params.contacts[item].firstName === 'string') {
-                    firstNameList.push(params.contacts[item].firstName);
+            //for(var item in params.contacts) {
+                if (typeof params.firstName === 'string') {
+                    firstNameList.push(params.firstName);
                 } else {
                     firstNameList.push('');
                 }
 
-                if (typeof params.contacts[item].lastName === 'string') {
-                    lastNameList.push(params.contacts[item].lastName)
+                if (typeof params.lastName === 'string') {
+                    lastNameList.push(params.lastName)
                 } else {
                     lastNameList.push('');
                 }
 
-                if (typeof params.contacts[item].cellphoneNumber === 'string') {
-                    cellPhoneNumberList.push(params.contacts[item].cellphoneNumber)
+                if (typeof params.cellphoneNumber === 'string') {
+                    cellPhoneNumberList.push(params.cellphoneNumber)
                     // data.cellphoneNumber = params.cellphoneNumber;
                 } else {
                     cellPhoneNumberList.push('');
                     // data.cellphoneNumber = '';
                 }
 
-                if (typeof params.contacts[item].email === 'string') {
-                    emailList.push(params.contacts[item].email);
+                if (typeof params.email === 'string') {
+                    emailList.push(params.email);
                     // data.email = params.email;
                 } else {
                     emailList.push('');
                     // data.email = '';
                 }
 
-                if (typeof params.contacts[item].username === 'string') {
-                    userNameList.push(params.contacts[item].username);
+                if (typeof params.username === 'string') {
+                    userNameList.push(params.username);
                     // data.username = params.username;
                 }
 
                 uniqueIdList.push(Utility.generateUUID());
                 // data.uniqueId = Utility.generateUUID();
-            }
+            //}
 
             AddContactVO = {
                 uniqueIdList: uniqueIdList,
