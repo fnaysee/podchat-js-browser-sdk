@@ -7461,7 +7461,7 @@ function Chat(params) {
             return {
                 uniqueId: uploadUniqueId,
                 threadId: uploadThreadId,
-                participant: userInfo,
+                participant: chatMessaging.userInfo,
                 content: {
                     caption: params.content,
                     file: {
