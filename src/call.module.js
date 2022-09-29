@@ -439,7 +439,7 @@ function ChatCall(params) {
                         };
                         sendCallMessage(msgParams, null, {
                             timeoutTime: 4000,
-                            timeoutRetriesCount: 1,
+                            timeoutRetriesCount: 5,
                             // timeoutCallback(){
                             //     sendCallMessage(msgParams, null, {});
                             // }
@@ -481,7 +481,7 @@ function ChatCall(params) {
                         retries -= 1;
                         manager.sendSDPOfferRequestMessage(sdpOffer);
                     }
-                }, {timeoutTime: 4000, timeoutRetriesCount: 1});
+                }, {timeoutTime: 4000, timeoutRetriesCount: 5});
             },
             watchRTCPeerConnection: function () {
                 consoleLogging && console.log("[SDK][watchRTCPeerConnection] called with: ", "userId: ", config.userId, "topic: ", config.topic, "mediaType: ", config.mediaType, "direction: ", config.direction);
@@ -1327,7 +1327,7 @@ function ChatCall(params) {
                     // };
                 sendCallMessage(message, onResultCallback, {
                         timeoutTime: 4000,
-                        timeoutRetriesCount: 1
+                        timeoutRetriesCount: 5
                     }
                 )
 
@@ -1938,7 +1938,7 @@ function ChatCall(params) {
                     //brokerAddress:brkrAddr
                 }, null, {
                     timeoutTime: 4000,
-                    timeoutRetriesCount: 1
+                    timeoutRetriesCount: 5
                 });
             }
         },
@@ -1977,7 +1977,7 @@ function ChatCall(params) {
                     mediaType: (jsonMessage.topic.indexOf('screen-Share') !== -1 || jsonMessage.topic.indexOf('Vi-') !== -1 ? 2 : 1)
                 }, null, {
                     timeoutTime: 4000,
-                    timeoutRetriesCount: 1
+                    timeoutRetriesCount: 5
                 });
 
                 callUsers[userId].topicMetaData[jsonMessage.topic].sdpAnswerReceived = true;
