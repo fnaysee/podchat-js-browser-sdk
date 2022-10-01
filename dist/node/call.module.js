@@ -632,9 +632,9 @@ function ChatCall(params) {
           });
         };
 
-        analyserNode.fftSize = 256;
-        var bufferLength = analyserNode.frequencyBinCount;
-        var dataArray = new Uint8Array(bufferLength);
+        analyserNode.fftSize = 256; // const bufferLength = analyserNode.frequencyBinCount;
+        // const dataArray = new Uint8Array(bufferLength);
+
         audioSourceNode.connect(analyserNode);
         analyserNode.connect(audioCtx.destination);
 

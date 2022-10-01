@@ -11219,7 +11219,7 @@ function Chat(params) {
                         }
                     });
                 } else {
-                    uploadFileToPodspaceNew(fileUploadParams, function (result) {
+                    uploadFileToPodspaceUserGroupNew(fileUploadParams, function (result) {
                         if (!result.hasError) {
                             metadata['fileHash'] = result.result.hash;
                             metadata['name'] = result.result.name;
