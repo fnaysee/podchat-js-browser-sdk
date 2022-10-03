@@ -11804,7 +11804,6 @@ function Chat(params) {
         });
     };
 
-/*
     publicized.addContacts = function (params, callback) {
         var data = {};
 
@@ -11885,9 +11884,9 @@ function Chat(params) {
 
                     returnData.result = resultData;
 
-                    /!**
+                    /**
                      * Add Contacts into cache database #cache
-                     *!/
+                     */
                     if (canUseCache && cacheSecret.length > 0) {
                         if (db) {
                             var cacheData = [];
@@ -11948,10 +11947,8 @@ function Chat(params) {
             }
         });
     };
-*/
 
-    // publicized.newAddContacts
-    publicized.addContacts = function (params, callback) {
+    publicized.newAddContacts = function (params, callback) {
         var addContactsData = {
             chatMessageVOType: chatMessageVOTypes.ADD_CONTACTS,
             content: {},
@@ -12141,6 +12138,7 @@ function Chat(params) {
         //});
     };
 
+/*
     publicized.removeContacts = function ({id}, callback) {
         var data = {
                 chatMessageVOType: chatMessageVOTypes.REMOVE_CONTACTS,
@@ -12167,7 +12165,7 @@ function Chat(params) {
             if (!result.hasError) {
                 // var responseData = JSON.parse(result.result.responseText);
                 //
-                /*var returnData = {
+                /!*var returnData = {
                     hasError: result.hasError,
                     cache: false,
                     errorMessage: result.errorMessage,
@@ -12178,11 +12176,11 @@ function Chat(params) {
 
                 if (!result.hasError) {
                     returnData.result = result.result;
-                }*/
+                }*!/
 
-                /**
+                /!**
                  * Remove the contact from cache
-                 */
+                 *!/
                 if (canUseCache) {
                     if (db) {
                         db.contacts.where('id')
@@ -12215,6 +12213,7 @@ function Chat(params) {
             }
         }});
     };
+*/
 
     publicized.updateContacts = function (params, callback) {
         var data = {};
@@ -12373,81 +12372,81 @@ function Chat(params) {
         });
     };
 
-    // publicized.removeContacts = function (params, callback) {
-    //     var data = {};
-    //
-    //     if (params) {
-    //         if (parseInt(params.id) > 0) {
-    //             data.id = parseInt(params.id);
-    //         } else {
-    //             chatEvents.fireEvent('error', {
-    //                 code: 999,
-    //                 message: 'ID is required for Deleting Contact!',
-    //                 error: undefined
-    //             });
-    //         }
-    //     }
-    //
-    //     var requestParams = {
-    //         url: SERVICE_ADDRESSES.PLATFORM_ADDRESS + SERVICES_PATH.REMOVE_CONTACTS,
-    //         method: 'POST',
-    //         data: data,
-    //         headers: {
-    //             '_token_': token,
-    //             '_token_issuer_': 1
-    //         }
-    //     };
-    //
-    //     httpRequest(requestParams, function (result) {
-    //         if (!result.hasError) {
-    //             var responseData = JSON.parse(result.result.responseText);
-    //
-    //             var returnData = {
-    //                 hasError: responseData.hasError,
-    //                 cache: false,
-    //                 errorMessage: responseData.message,
-    //                 errorCode: responseData.errorCode
-    //             };
-    //
-    //             if (!responseData.hasError) {
-    //                 returnData.result = responseData.result;
-    //             }
-    //
-    //             /**
-    //              * Remove the contact from cache
-    //              */
-    //             if (canUseCache) {
-    //                 if (db) {
-    //                     db.contacts.where('id')
-    //                         .equals(parseInt(params.id))
-    //                         .delete()
-    //                         .catch(function (error) {
-    //                             chatEvents.fireEvent('error', {
-    //                                 code: 6602,
-    //                                 message: CHAT_ERRORS[6602],
-    //                                 error: error
-    //                             });
-    //                         });
-    //                 } else {
-    //                     chatEvents.fireEvent('error', {
-    //                         code: 6601,
-    //                         message: CHAT_ERRORS[6601],
-    //                         error: null
-    //                     });
-    //                 }
-    //             }
-    //
-    //             callback && callback(returnData);
-    //
-    //         } else {
-    //             chatEvents.fireEvent('error', {
-    //                 code: result.errorCode,
-    //                 message: result.errorMessage,
-    //                 error: result
-    //             });
-    //         }
-    //     });
-    // };
+    publicized.removeContacts = function (params, callback) {
+        var data = {};
+
+        if (params) {
+            if (parseInt(params.id) > 0) {
+                data.id = parseInt(params.id);
+            } else {
+                chatEvents.fireEvent('error', {
+                    code: 999,
+                    message: 'ID is required for Deleting Contact!',
+                    error: undefined
+                });
+            }
+        }
+
+        var requestParams = {
+            url: SERVICE_ADDRESSES.PLATFORM_ADDRESS + SERVICES_PATH.REMOVE_CONTACTS,
+            method: 'POST',
+            data: data,
+            headers: {
+                '_token_': token,
+                '_token_issuer_': 1
+            }
+        };
+
+        httpRequest(requestParams, function (result) {
+            if (!result.hasError) {
+                var responseData = JSON.parse(result.result.responseText);
+
+                var returnData = {
+                    hasError: responseData.hasError,
+                    cache: false,
+                    errorMessage: responseData.message,
+                    errorCode: responseData.errorCode
+                };
+
+                if (!responseData.hasError) {
+                    returnData.result = responseData.result;
+                }
+
+                /**
+                 * Remove the contact from cache
+                 */
+                if (canUseCache) {
+                    if (db) {
+                        db.contacts.where('id')
+                            .equals(parseInt(params.id))
+                            .delete()
+                            .catch(function (error) {
+                                chatEvents.fireEvent('error', {
+                                    code: 6602,
+                                    message: CHAT_ERRORS[6602],
+                                    error: error
+                                });
+                            });
+                    } else {
+                        chatEvents.fireEvent('error', {
+                            code: 6601,
+                            message: CHAT_ERRORS[6601],
+                            error: null
+                        });
+                    }
+                }
+
+                callback && callback(returnData);
+
+            } else {
+                chatEvents.fireEvent('error', {
+                    code: result.errorCode,
+                    message: result.errorMessage,
+                    error: result
+                });
+            }
+        });
+    };
 
     publicized.searchContacts = function (params, callback) {
         var data = {
