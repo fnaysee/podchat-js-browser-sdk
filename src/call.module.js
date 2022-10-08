@@ -978,6 +978,7 @@ function ChatCall(params) {
             }
 
             message.uniqueId = uniqueId;
+            message.chatId = currentCallId;
 
             let data = {
                 type: 3,
