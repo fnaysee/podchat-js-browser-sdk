@@ -432,11 +432,18 @@ function ChatCall(params) {
           }
 
           if (callServerController.isJanus() && config.direction === 'receive') {
-            sendCallMessage({
+            var msgParams = {
               id: 'REGISTER_RECV_NOTIFICATION',
               topic: config.topic,
               mediaType: config.mediaType === 'video' ? 2 : 1
-            }, null, {});
+            };
+            sendCallMessage(msgParams, null, {
+              timeoutTime: 4000,
+              timeoutRetriesCount: 5 // timeoutCallback(){
+              //     sendCallMessage(msgParams, null, {});
+              // }
+
+            });
           } else {
             config.peer.generateOffer(function (err, sdpOffer) {
               consoleLogging && console.debug("[SDK][establishPeerConnection][generateOffer] GenerateOffer:: ", " sdpOffer: ", sdpOffer, " err: ", err);
@@ -478,7 +485,10 @@ function ChatCall(params) {
             retries -= 1;
             manager.sendSDPOfferRequestMessage(sdpOffer);
           }
-        }, {});
+        }, {
+          timeoutTime: 4000,
+          timeoutRetriesCount: 5
+        });
       },
       watchRTCPeerConnection: function watchRTCPeerConnection() {
         consoleLogging && console.log("[SDK][watchRTCPeerConnection] called with: ", "userId: ", config.userId, "topic: ", config.topic, "mediaType: ", config.mediaType, "direction: ", config.direction);
@@ -786,7 +796,9 @@ function ChatCall(params) {
                 });
                 callStop();
               }
-            }, {});
+            }, {
+              timeoutTime: 5000
+            });
           }
         }
       },
@@ -967,9 +979,7 @@ function ChatCall(params) {
     var _ref$timeoutTime = _ref.timeoutTime,
         timeoutTime = _ref$timeoutTime === void 0 ? 0 : _ref$timeoutTime,
         _ref$timeoutRetriesCo = _ref.timeoutRetriesCount,
-        timeoutRetriesCount = _ref$timeoutRetriesCo === void 0 ? 0 : _ref$timeoutRetriesCo,
-        _ref$timeoutCallback = _ref.timeoutCallback,
-        timeoutCallback = _ref$timeoutCallback === void 0 ? null : _ref$timeoutCallback;
+        timeoutRetriesCount = _ref$timeoutRetriesCo === void 0 ? 0 : _ref$timeoutRetriesCo;
     message.token = token;
     var uniqueId;
 
@@ -1009,11 +1019,11 @@ function ChatCall(params) {
     if (timeoutTime || globalCallRequestTimeout > 0) {
       asyncRequestTimeouts[uniqueId] && clearTimeout(asyncRequestTimeouts[uniqueId]);
       asyncRequestTimeouts[uniqueId] = setTimeout(function () {
-        if (timeoutRetriesCount) {
-          if (chatMessaging.messagesCallbacks[uniqueId]) {
-            delete chatMessaging.messagesCallbacks[uniqueId];
-          }
+        if (chatMessaging.messagesCallbacks[uniqueId]) {
+          delete chatMessaging.messagesCallbacks[uniqueId];
+        }
 
+        if (timeoutRetriesCount) {
           consoleLogging && console.log("[SDK][sendCallMessage] Retrying call request. uniqueId :" + uniqueId, {
             message: message
           }); //timeoutCallback();
@@ -1030,10 +1040,10 @@ function ChatCall(params) {
             done: 'SKIP'
           });
         }
+        /*  if (chatMessaging.messagesCallbacks[uniqueId]) {
+              delete chatMessaging.messagesCallbacks[uniqueId];
+          }*/
 
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          delete chatMessaging.messagesCallbacks[uniqueId];
-        }
       }, timeoutTime || globalCallRequestTimeout);
     }
   },
@@ -1331,7 +1341,7 @@ function ChatCall(params) {
 
       sendCallMessage(message, onResultCallback, {
         timeoutTime: 4000,
-        timeoutRetriesCount: 1
+        timeoutRetriesCount: 5
       }); // sendCallMessage(message, onResultCallback, {timeoutCallback: onTimeoutCallback, timeoutRetriesCount: totalRetries} );
     },
     startCall: function startCall(params) {
@@ -1951,7 +1961,10 @@ function ChatCall(params) {
         topic: jsonMessage.topic,
         mediaType: jsonMessage.topic.indexOf('screen-Share') !== -1 || jsonMessage.topic.indexOf('Vi-') !== -1 ? 2 : 1 //brokerAddress:brkrAddr
 
-      }, null, {});
+      }, null, {
+        timeoutTime: 4000,
+        timeoutRetriesCount: 5
+      });
     }
   },
       handleProcessSdpOffer = function handleProcessSdpOffer(jsonMessage) {
@@ -1986,7 +1999,10 @@ function ChatCall(params) {
         useSrtp: false,
         topic: jsonMessage.topic,
         mediaType: jsonMessage.topic.indexOf('screen-Share') !== -1 || jsonMessage.topic.indexOf('Vi-') !== -1 ? 2 : 1
-      }, null, {});
+      }, null, {
+        timeoutTime: 4000,
+        timeoutRetriesCount: 5
+      });
       callUsers[userId].topicMetaData[jsonMessage.topic].sdpAnswerReceived = true;
       startMedia(callUsers[userId].htmlElements[jsonMessage.topic]);
 
