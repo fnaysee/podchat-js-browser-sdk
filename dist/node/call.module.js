@@ -2744,8 +2744,9 @@ function ChatCall(params) {
           type: 'CALL_PARTICIPANT_LEFT',
           callId: threadId,
           result: messageContent
-        }); //If I'm the only call participant, stop the call
+        });
 
+        if (currentCallId != threadId) return; //If I'm the only call participant, stop the call
 
         if (callUsers && Object.values(callUsers).length >= 1) {
           if (Object.values(callUsers).length < 2) {

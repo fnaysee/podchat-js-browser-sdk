@@ -45493,7 +45493,7 @@ break;/**
        * Type 92    Call Partner Leave
        * 1. I have left the call (GroupCall)
        * 2. Other person has left the call (GroupCall)
-       */case _constants.chatMessageVOTypes.LEAVE_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_PARTICIPANT_LEFT',callId:threadId,result:messageContent});//If I'm the only call participant, stop the call
+       */case _constants.chatMessageVOTypes.LEAVE_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_PARTICIPANT_LEFT',callId:threadId,result:messageContent});if(currentCallId!=threadId)return;//If I'm the only call participant, stop the call
 if(callUsers&&Object.values(callUsers).length>=1){if(Object.values(callUsers).length<2){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ENDED',callId:threadId});callStop();return;}if(!!messageContent[0].userId){//console.log("chatMessageVOTypes.LEAVE_CALL: ", messageContent[0].userId, chatMessaging.userInfo.id)
 if(messageContent[0].userId==chatMessaging.userInfo.id){callStop();}else{callStateController.removeParticipant(messageContent[0].userId);if(screenShareInfo.isStarted()&&screenShareInfo.getOwner()===messageContent[0].userId)callStateController.removeScreenShareFromCall();}}}break;/**
        * Type 93    Add Call Participant
