@@ -2091,6 +2091,17 @@ function Chat(params) {
                     }
 
                     if (fullResponseObject) {
+                        var time, timeMiliSeconds;
+                        if (messageContent.time.toString().length > 14) {
+                            time = messageContent.time;
+                            timeMiliSeconds = parseInt(messageContent.time / 1000000);
+                        } else {
+                            time = (messageContent.timeNanos)
+                                    ? (parseInt(parseInt(messageContent.time) / 1000) * 1000000000) + parseInt(messageContent.timeNanos)
+                                    : (parseInt(pushMessageVO.time));
+                            timeMiliSeconds = parseInt(messageContent.time);
+                        }
+
                         getThreads({
                             threadIds: [threadId]
                         }, function (threadsResult) {
@@ -2102,7 +2113,10 @@ function Chat(params) {
                                         message: {
                                             id: messageContent.id,
                                             pinned: messageContent.pinned,
-                                            threadId: threadId
+                                            threadId: threadId,
+                                            time,
+                                            timeMiliSeconds,
+                                            timeNanos: messageContent.timeNanos
                                         }
                                     }
                                 });
@@ -2123,7 +2137,10 @@ function Chat(params) {
                                 message: {
                                     id: messageContent.id,
                                     pinned: messageContent.pinned,
-                                    threadId: threadId
+                                    threadId: threadId,
+                                    time,
+                                    timeMiliSeconds,
+                                    timeNanos: messageContent.timeNanos
                                 }
                             }
                         });
