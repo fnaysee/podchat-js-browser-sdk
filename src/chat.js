@@ -2233,6 +2233,14 @@ function Chat(params) {
                         }
                     });
 
+                    chatEvents.fireEvent('threadEvents', {
+                        type: 'THREAD_LAST_SEEN_UPDATED',
+                        result: {
+                            thread: threadObject,
+                            unreadCount: (messageContent.unreadCount) ? messageContent.unreadCount : 0
+                        }
+                    });
+
                     // if (fullResponseObject) {
                     //     getThreads({
                     //         threadIds: [messageContent.id]
