@@ -1171,10 +1171,11 @@ function ChatCall(params) {
                 if (typeof +params.callId === 'number' && params.callId > 0) {
                     receiveCallData.subjectId = +params.callId;
                 } else {
-                    chatEvents.fireEvent('error', {
+                    raiseError(errorList.INVALID_CALLID, callback, true, {});
+                    /* chatEvents.fireEvent('error', {
                         code: 999,
                         message: 'Invalid call id!'
-                    });
+                    }); */
                     return;
                 }
             } else {
@@ -1210,10 +1211,11 @@ function ChatCall(params) {
                 if (typeof +params.callId === 'number' && params.callId > 0) {
                     endCallData.subjectId = +params.callId;
                 } else {
-                    chatEvents.fireEvent('error', {
+                    raiseError(errorList.INVALID_CALLID, callback, true, {});
+                    /* chatEvents.fireEvent('error', {
                         code: 999,
                         message: 'Invalid call id!'
-                    });
+                    }); */
                     return;
                 }
             } else {
@@ -3498,10 +3500,11 @@ function ChatCall(params) {
             if (typeof +params.callId === 'number' && params.callId > 0) {
                 terminateCallData.subjectId = +params.callId;
             } else {
-                chatEvents.fireEvent('error', {
+                raiseError(errorList.INVALID_CALLID, callback, true, {});
+                /*chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'Invalid call id!'
-                });
+                });*/
                 return;
             }
 
@@ -3533,10 +3536,11 @@ function ChatCall(params) {
             if (typeof +params.callId === 'number' && params.callId > 0) {
                 acceptCallData.subjectId = +params.callId;
             } else {
-                chatEvents.fireEvent('error', {
+                raiseError(errorList.INVALID_CALLID, callback, true, {});
+                /*chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'Invalid call id!'
-                });
+                });*/
                 return;
             }
 
@@ -3605,10 +3609,11 @@ function ChatCall(params) {
             if (typeof +params.callId === 'number' && params.callId > 0) {
                 rejectCallData.subjectId = +params.callId;
             } else {
-                chatEvents.fireEvent('error', {
+                raiseError(errorList.INVALID_CALLID, callback, true, {});
+                /*chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'Invalid call id!'
-                });
+                });*/
                 return;
             }
         } else {
@@ -3644,10 +3649,11 @@ function ChatCall(params) {
             if (typeof +params.callId === 'number' && params.callId > 0) {
                 recordCallData.subjectId = +params.callId;
             } else {
-                chatEvents.fireEvent('error', {
+                raiseError(errorList.INVALID_CALLID, callback, true, {});
+                /*chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'Invalid Call id!'
-                });
+                });*/
                 return;
             }
 
@@ -3686,10 +3692,11 @@ function ChatCall(params) {
             if (typeof +params.callId === 'number' && params.callId > 0) {
                 stopRecordingCallData.subjectId = +params.callId;
             } else {
-                chatEvents.fireEvent('error', {
+                raiseError(errorList.INVALID_CALLID, callback, true, {});
+                /*chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'Invalid Call id!'
-                });
+                });*/
                 return;
             }
         } else {
@@ -4318,10 +4325,11 @@ function ChatCall(params) {
             if (typeof +params.callId === 'number' && params.callId > 0) {
                 turnOnVideoData.subjectId = +params.callId;
             } else {
-                chatEvents.fireEvent('error', {
+                raiseError(errorList.INVALID_CALLID, callback, true, {});
+                /*chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'Invalid call id!'
-                });
+                });*/
                 return;
             }
         } else {
@@ -4367,10 +4375,11 @@ function ChatCall(params) {
             if (typeof +params.callId === 'number' && params.callId > 0) {
                 turnOffVideoData.subjectId = +params.callId;
             } else {
-                chatEvents.fireEvent('error', {
+                raiseError(errorList.INVALID_CALLID, callback, true, {});
+                /* chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'Invalid call id!'
-                });
+                }); */
                 return;
             }
         } else {
