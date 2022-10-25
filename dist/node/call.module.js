@@ -2653,7 +2653,7 @@ function ChatCall(params) {
           callId: threadId
         });
 
-        if (threadId === currentCallId) callStop();
+        if (threadId === currentCallId && callStopQueue.callStarted) callStop();
         break;
 
       /**
@@ -3590,25 +3590,89 @@ function ChatCall(params) {
 
     callRequestController.imCallOwner = false;
     callRequestController.callEstablishedInMySide = true;
+    var isMovingToNewCall = false;
+    new Promise(function (resolve, reject) {
+      if (callStopQueue.callStarted) {
+        isMovingToNewCall = true; // callStop(false);
 
-    _deviceManager["default"].grantUserMediaDevicesPermissions({
-      video: params.video,
-      audio: !params.mute,
-      closeStream: true
-    }, function (result) {
-      if (result.hasError) {
-        callback && callback({
-          hasError: true,
-          errorCode: result.errorCode,
-          errorMessage: result.errorMessage
+        _eventsModule.chatEvents.fireEvent("callEvents", {
+          type: 'MOVING_TO_NEW_CALL',
+          status: 'PROCESSING',
+          result: {
+            oldCall: currentCallId,
+            newCall: params.callId
+          }
         });
-        return;
-      }
 
-      chatMessaging.sendMessage(acceptCallData, {
-        onResult: function onResult(result) {
-          callback && callback(result);
+        endCall({
+          callId: currentCallId
+        });
+        setTimeout(function () {
+          resolve(true);
+          callRequestController.imCallOwner = false;
+          callRequestController.callEstablishedInMySide = true;
+          callRequestController.callRequestReceived = true;
+          currentCallId = params.callId;
+
+          _eventsModule.chatEvents.fireEvent('callEvents', {
+            type: 'CALL_SESSION_CREATED',
+            result: {
+              callId: params.callId
+            }
+          });
+        }, 3500);
+      } else {
+        resolve(true);
+      }
+    }).then(function () {
+      if (isMovingToNewCall) _eventsModule.chatEvents.fireEvent("callEvents", {
+        type: 'MOVING_TO_NEW_CALL',
+        status: 'STARTING',
+        result: {
+          oldCall: currentCallId,
+          newCall: params.callId
         }
+      });
+
+      _deviceManager["default"].grantUserMediaDevicesPermissions({
+        video: params.video,
+        audio: !params.mute,
+        closeStream: true
+      }, function (result) {
+        if (result.hasError) {
+          callback && callback({
+            hasError: true,
+            errorCode: result.errorCode,
+            errorMessage: result.errorMessage
+          });
+          return;
+        }
+
+        chatMessaging.sendMessage(acceptCallData, {
+          onResult: function onResult(result) {
+            if (!result.hasError && isMovingToNewCall) {
+              _eventsModule.chatEvents.fireEvent("callEvents", {
+                type: 'MOVING_TO_NEW_CALL',
+                status: 'DONE',
+                result: {
+                  oldCall: currentCallId,
+                  newCall: params.callId
+                }
+              });
+            } else {
+              _eventsModule.chatEvents.fireEvent("callEvents", {
+                type: 'MOVING_TO_NEW_CALL',
+                status: 'FAILED',
+                result: {
+                  oldCall: currentCallId,
+                  newCall: params.callId
+                }
+              });
+            }
+
+            callback && callback(result);
+          }
+        });
       });
     });
   };
