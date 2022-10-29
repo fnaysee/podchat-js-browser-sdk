@@ -4,6 +4,47 @@ All notable changes to this project will be documented here.
 to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.ir/pod/pod-basic-sdk/chat-js-browser-sdk/-/blob/master/changelog.md)
 
 ##[Unreleased]
+
+## [12.7.1-snapshot.22] - 2022-10-12
+### Added
+- fire Event: THREAD_LAST_SEEN_UPDATED on chat message: LAST_SEEN_UPDATED, type: 31
+
+## [12.7.1-snapshot.21] - 2022-10-11
+## [12.7.1-snapshot.20] - 2022-10-11
+### Changed
+- Event: MESSAGE_DELETE, Added: time, timeNanos
+
+## [12.7.1-snapshot.19] - 2022-10-9
+### Added
+- Retry requests to kurento
+- Property: chatId to call requests
+
+### Changed
+- Do nothing when leave call is not for current active call
+- Method: sendCallMessage
+
+## [12.7.1-snapshot.17] - 2022-10-1
+### Fixed
+- Bug in replyFileMessage
+
+## [12.7.1-snapshot.16] - 2022-09-29
+### Changed
+- Modified recallThreadParticipant
+### Fixed
+- Error: userInfo is not defined in method uploadFileToPodspaceNew
+
+
+## [12.7.1-snapshot.15] - 2022-09-12
+### Added
+- Property: seenByAnyAssistant to thread item
+- Property: callCenter to userInfo
+- Method: recallThreadParticipant
+### Changed
+- Improved sendCallMessage functionality
+- Improved error logs in console
+### Fixed
+- Video not present in recording result in firefox
+
 ## [12.7.1-snapshot.14] - 2022-09-5
 ### Added
 - Property: threadId to event: RECEIVE_CALL
