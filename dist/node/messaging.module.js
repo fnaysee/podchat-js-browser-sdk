@@ -15,6 +15,8 @@ var _dompurify = _interopRequireDefault(require("dompurify"));
 
 var _utility = _interopRequireDefault(require("./utility/utility"));
 
+var _errorHandler = require("./lib/errorHandler");
+
 // (function () {
 
 /**
@@ -76,6 +78,20 @@ function ChatMessaging(params) {
 
 
   this.sendMessage = function (params, callbacks, recursiveCallback) {
+    if (!currentModuleInstance.chatState) {
+      var clbck;
+
+      if (!callbacks) {
+        clbck = null;
+      } else if (typeof callbacks === "function") {
+        clbck = callbacks;
+      } else if (callbacks.onResult) {
+        clbck = callbacks.onResult;
+      }
+
+      (0, _errorHandler.raiseError)(_errorHandler.errorList.SOCKET_NOT_CONNECTED, clbck, true, {});
+      return;
+    }
     /**
      * + ChatMessage        {object}
      *    - token           {string}
@@ -91,6 +107,8 @@ function ChatMessaging(params) {
      *    - systemMedadata  {string}
      *    - repliedTo       {int}
      */
+
+
     var threadId = null;
     var asyncPriority = params.asyncPriority > 0 ? params.asyncPriority : msgPriority;
     var messageVO = {

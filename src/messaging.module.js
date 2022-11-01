@@ -1,6 +1,7 @@
 import { chatMessageVOTypes } from "./lib/constants"
 import DOMPurify from 'dompurify'
 import Utility from "./utility/utility"
+import {errorList, raiseError} from "./lib/errorHandler";
 // (function () {
     /**
      * Communicates with chat server
@@ -62,6 +63,19 @@ import Utility from "./utility/utility"
          * @return {object} Instant Function Return
          */
         this.sendMessage = function (params, callbacks, recursiveCallback) {
+            if(!currentModuleInstance.chatState) {
+                let clbck;
+                if(!callbacks) {
+                    clbck = null;
+                } else if(typeof callbacks === "function") {
+                    clbck = callbacks;
+                } else if(callbacks.onResult) {
+                    clbck = callbacks.onResult;
+                }
+                raiseError(errorList.SOCKET_NOT_CONNECTED, clbck, true, {});
+                return;
+            }
+
             /**
              * + ChatMessage        {object}
              *    - token           {string}

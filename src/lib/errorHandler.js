@@ -5,6 +5,10 @@ const errorList = {
         code: 12000,
         message:"[SDK] Call not started or invalid callId"
     },
+    SOCKET_NOT_CONNECTED: {
+        code: 12002,
+        message:"[SDK] Async is not connected"
+    },
     /**
      * 12350-12399
      */
@@ -74,7 +78,7 @@ const handleError = function (error) {
     return item[0];
 };
 
-const raiseError = function (errorObject, callback, firEvent = false, {
+const raiseError = function (errorObject, callback, fireEvent = false, {
     eventName = 'error',
     eventType = null,
     environmentDetails = null
@@ -85,7 +89,7 @@ const raiseError = function (errorObject, callback, firEvent = false, {
         errorMessage: errorObject.message
     });
 
-    firEvent && chatEvents.fireEvent(eventName, {
+    fireEvent && chatEvents.fireEvent(eventName, {
         type: eventType,
         code: errorObject.code,
         message: errorObject.message,

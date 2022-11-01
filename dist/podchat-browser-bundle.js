@@ -48550,6 +48550,10 @@ var errorList = {
     code: 12000,
     message: "[SDK] Call not started or invalid callId"
   },
+  SOCKET_NOT_CONNECTED: {
+    code: 12002,
+    message: "[SDK] Async is not connected"
+  },
 
   /**
    * 12350-12399
@@ -48625,7 +48629,7 @@ var handleError = function handleError(error) {
 };
 
 var raiseError = function raiseError(errorObject, callback) {
-  var firEvent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+  var fireEvent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
   var _ref = arguments.length > 3 ? arguments[3] : undefined,
       _ref$eventName = _ref.eventName,
@@ -48640,7 +48644,7 @@ var raiseError = function raiseError(errorObject, callback) {
     errorCode: errorObject.code,
     errorMessage: errorObject.message
   });
-  firEvent && _events.chatEvents.fireEvent(eventName, {
+  fireEvent && _events.chatEvents.fireEvent(eventName, {
     type: eventType,
     code: errorObject.code,
     message: errorObject.message,
@@ -48671,7 +48675,9 @@ var _constants = require("./lib/constants");
 
 var _dompurify = _interopRequireDefault(require("dompurify"));
 
-var _utility = _interopRequireDefault(require("./utility/utility")); // (function () {
+var _utility = _interopRequireDefault(require("./utility/utility"));
+
+var _errorHandler = require("./lib/errorHandler"); // (function () {
 
 /**
  * Communicates with chat server
@@ -48734,6 +48740,20 @@ function ChatMessaging(params) {
 
 
   this.sendMessage = function (params, callbacks, recursiveCallback) {
+    if (!currentModuleInstance.chatState) {
+      var clbck;
+
+      if (!callbacks) {
+        clbck = null;
+      } else if (typeof callbacks === "function") {
+        clbck = callbacks;
+      } else if (callbacks.onResult) {
+        clbck = callbacks.onResult;
+      }
+
+      (0, _errorHandler.raiseError)(_errorHandler.errorList.SOCKET_NOT_CONNECTED, clbck, true, {});
+      return;
+    }
     /**
      * + ChatMessage        {object}
      *    - token           {string}
@@ -48749,6 +48769,8 @@ function ChatMessaging(params) {
      *    - systemMedadata  {string}
      *    - repliedTo       {int}
      */
+
+
     var threadId = null;
     var asyncPriority = params.asyncPriority > 0 ? params.asyncPriority : msgPriority;
     var messageVO = {
@@ -48974,7 +48996,7 @@ function ChatMessaging(params) {
 var _default = ChatMessaging;
 exports["default"] = _default;
 
-},{"./lib/constants":264,"./utility/utility":267,"@babel/runtime/helpers/interopRequireDefault":3,"@babel/runtime/helpers/typeof":5,"dompurify":125}],267:[function(require,module,exports){
+},{"./lib/constants":264,"./lib/errorHandler":265,"./utility/utility":267,"@babel/runtime/helpers/interopRequireDefault":3,"@babel/runtime/helpers/typeof":5,"dompurify":125}],267:[function(require,module,exports){
 (function (global){(function (){
 "use strict";
 

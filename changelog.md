@@ -5,6 +5,11 @@ to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.i
 
 ##[Unreleased]
 
+## [12.7.2-snapshot.0] - 2022-11-01
+### Added
+- Added possibility to accept incoming call while user is in an existing call
+- Check to prevent request when socket not connected
+
 ## [12.7.1] - 2022-10-29
 ### Added
 - fire Event: THREAD_LAST_SEEN_UPDATED on chat message: LAST_SEEN_UPDATED, type: 31
