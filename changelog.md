@@ -4,6 +4,92 @@ All notable changes to this project will be documented here.
 to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.ir/pod/pod-basic-sdk/chat-js-browser-sdk/-/blob/master/changelog.md)
 
 ##[Unreleased]
+
+## [12.7.1] - 2022-10-29
+### Added
+- fire Event: THREAD_LAST_SEEN_UPDATED on chat message: LAST_SEEN_UPDATED, type: 31
+- Retry requests to kurento
+- Property: chatId to call requests
+- Property: callId to event type: CALL_PARTICIPANT_LEFT
+- Grant permissions internally in methods startCall, startGroupCall, acceptCall
+- SDK parameter: typeCodeOwnerId
+- Object: deviceManager
+- Method: deviceManager.grantUserMediaDevicesPermissions
+- Event type: SWITCH_TO_GROUP_CALL
+- Possibility to know if we are the call starter
+- Reset SDK internal data when starting a new call
+- Event type: CALL_RECORDING_STARTED
+- Property: callId to Event type: CALL_STARTED
+- Parameters: fromTime, toTime in method: getThreads
+- Method: sendCallSticker
+- Method: getCustomerInfo
+- Event: CONTACT_THREAD_UPDATE
+- Methods: archiveThread/unArchiveThread
+- Property: threadId to event: RECEIVE_CALL
+- Method: recallThreadParticipant
+- Property: seenByAnyAssistant to thread item
+- Property: callCenter to userInfo
+
+### Changed
+- Do not process some chat messages when subjectId is not equal to current callId
+- Retry the request instead of switching kurento
+- Removed contentCount from hasNext calculation in getThreads and getHistory
+- Modified LEAVE_CALL handling
+- exportChat supports multiline texts and enhanced its exports for special chars
+- Prevent duplicate call user in SDK on chat event CALL_PARTICIPANT_JOINED
+- Modified ScreenShare functionality
+- Modified video aspect ratio
+- Prevent listing unused tags in CALL_DIVS event
+- Removed Sentry from SDK
+- Event: MESSAGE_DELETE, Added: time, timeNanos
+
+### Fixed
+- Resolved userInfo exception in podspace methods
+- Error when callOptions is not received in SDK Params
+- Bug in replyFileMessage
+- Audio and Video problem after rejecting an incoming call
+
+
+## [12.7.1-snapshot.22] - 2022-10-12
+### Added
+- fire Event: THREAD_LAST_SEEN_UPDATED on chat message: LAST_SEEN_UPDATED, type: 31
+
+## [12.7.1-snapshot.21] - 2022-10-11
+## [12.7.1-snapshot.20] - 2022-10-11
+### Changed
+- Event: MESSAGE_DELETE, Added: time, timeNanos
+
+## [12.7.1-snapshot.19] - 2022-10-9
+### Added
+- Retry requests to kurento
+- Property: chatId to call requests
+
+### Changed
+- Do nothing when leave call is not for current active call
+- Method: sendCallMessage
+
+## [12.7.1-snapshot.17] - 2022-10-1
+### Fixed
+- Bug in replyFileMessage
+
+## [12.7.1-snapshot.16] - 2022-09-29
+### Changed
+- Modified recallThreadParticipant
+### Fixed
+- Error: userInfo is not defined in method uploadFileToPodspaceNew
+
+
+## [12.7.1-snapshot.15] - 2022-09-12
+### Added
+- Property: seenByAnyAssistant to thread item
+- Property: callCenter to userInfo
+- Method: recallThreadParticipant
+### Changed
+- Improved sendCallMessage functionality
+- Improved error logs in console
+### Fixed
+- Video not present in recording result in firefox
+
 ## [12.7.1-snapshot.14] - 2022-09-5
 ### Added
 - Property: threadId to event: RECEIVE_CALL
