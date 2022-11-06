@@ -4653,20 +4653,25 @@ function ChatCall(params) {
             subjectId: currentCallId,
         };
 
-        if(!invitees || Array.isArray(invitees) || invitees.length) {
+        if(!invitees || !Array.isArray(invitees) || !invitees.length) {
             raiseCallError(errorList.INVITEES_LIST_REQUIRED, callback, true, {});
             return;
         }
 
         sendData.content = [];//params.invitees;
-        for (let i = 0; i < invitees.length; i++) {
+        invitees.forEach(item => {
+            item.idType = inviteeVOidTypes[item.idType];
+            sendData.content.push(item);
+        })
+       /* for (let i = 0; i < invitees.length; i++) {
             let tempInvitee = invitees[i];
+
 
             if (tempInvitee && typeof tempInvitee.idType === "string") {
                 tempInvitee.idType = inviteeVOidTypes[tempInvitee.idType];
                 sendData.content.push(tempInvitee);
             }
-        }
+        }*/
 
         return chatMessaging.sendMessage(sendData, {
             onResult: function (result) {
