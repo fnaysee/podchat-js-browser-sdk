@@ -2453,11 +2453,18 @@ function ChatCall(params) {
             // chatMessageVOTypes.END_CALL
         ];
 
-        if((!currentCallId || currentCallId && threadId != currentCallId) && restrictedMessageTypes.includes(type)){
+        if(!callStopQueue.callStarted  && restrictedMessageTypes.includes(type)) {
             return true;
         } else {
             return false
         }
+
+
+        /* if((!currentCallId || currentCallId && threadId != currentCallId) && restrictedMessageTypes.includes(type)){
+            return true;
+        } else {
+            return false
+        } */
     }
 
     this.handleChatMessages = function(type, messageContent, contentCount, threadId, uniqueId) {
