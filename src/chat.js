@@ -2683,31 +2683,48 @@ function Chat(params) {
                  * Type 66    Last Message Deleted
                  */
                 case chatMessageVOTypes.LAST_MESSAGE_DELETED:
-                    if (fullResponseObject) {
-                        getThreads({
-                            threadIds: [messageContent.id]
-                        }, function (threadsResult) {
-                            var threads = threadsResult.result.threads;
 
-                            if (!threadsResult.cache) {
-                                chatEvents.fireEvent('threadEvents', {
-                                    type: 'THREAD_INFO_UPDATED',
-                                    result: {
-                                        thread: threads[0]
-                                    }
-                                });
-                            }
-                        });
-                    } else {
-                        var thread = formatDataToMakeConversation(messageContent);
+                    new Promise((resolve, reject)=> {
+                        if (fullResponseObject) {
+                            getThreads({
+                                threadIds: [messageContent.id]
+                            }, function (threadsResult) {
+                                var threads = threadsResult.result.threads;
 
-                        chatEvents.fireEvent('threadEvents', {
-                            type: 'THREAD_INFO_UPDATED',
-                            result: {
-                                thread: thread
-                            }
-                        });
-                    }
+                                if (!threadsResult.cache) {
+                                    resolve(threads[0])
+                                    chatEvents.fireEvent('threadEvents', {
+                                        type: 'THREAD_INFO_UPDATED',
+                                        result: {
+                                            thread: threads[0]
+                                        }
+                                    });
+                                }
+                            });
+                        } else {
+                            var thread = formatDataToMakeConversation(messageContent);
+                            resolve(thread);
+                            chatEvents.fireEvent('threadEvents', {
+                                type: 'THREAD_INFO_UPDATED',
+                                result: {
+                                    thread: thread
+                                }
+                            });
+                        }
+                    }).then(thread => {
+                        if(typeof messageContent.unreadCount !== "undefined") {
+                            chatEvents.fireEvent('threadEvents', {
+                                type: 'THREAD_UNREAD_COUNT_UPDATED',
+                                result: {
+                                    thread: thread,
+                                    unreadCount: (messageContent.unreadCount) ? messageContent.unreadCount : 0
+                                }
+                            });
+                        }
+                    })
+
+
+
                     break;
 
                 /**
