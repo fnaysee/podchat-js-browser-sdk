@@ -52,6 +52,7 @@ function ChatCall(params) {
       callVideoMinHeight = params.callOptions && params.callOptions.hasOwnProperty('callVideo') && (0, _typeof2["default"])(params.callOptions.callVideo) === 'object' && params.callOptions.callVideo.hasOwnProperty('minHeight') ? params.callOptions.callVideo.minHeight : 180,
       currentCallParams = {},
       currentCallId = null,
+      latestCallRequestId = null,
       //shouldReconnectCallTimeout = null,
   callMetaDataTypes = {
     POORCONNECTION: 1,
@@ -2471,7 +2472,7 @@ function ChatCall(params) {
   }
 
   this.handleChatMessages = function (type, messageContent, contentCount, threadId, uniqueId) {
-    consoleLogging && console.debug("[SDK][CALL_MODULE][handleChatMessages]", "type:", type, "threadId:", threadId, "currentCallId:", currentCallId, "shouldNotProcessChatMessage:", shouldNotProcessChatMessage(type, threadId));
+    consoleLogging && console.debug("[SDK][CALL_MODULE][handleChatMessages]", "type:", type, "threadId:", threadId, "currentCallId:", currentCallId, "latestCallRequestId:", latestCallRequestId, "shouldNotProcessChatMessage:", shouldNotProcessChatMessage(type, threadId));
 
     if (shouldNotProcessChatMessage(type, threadId)) {
       return;
@@ -2499,9 +2500,8 @@ function ChatCall(params) {
         });
 
         if (messageContent.callId > 0) {
-          if (!currentCallId) {
-            currentCallId = messageContent.callId;
-          }
+          // if(!currentCallId ) {
+          latestCallRequestId = messageContent.callId; // }
         } else {
           _eventsModule.chatEvents.fireEvent('callEvents', {
             type: 'PARTNER_RECEIVED_YOUR_CALL',
@@ -2556,11 +2556,10 @@ function ChatCall(params) {
           _eventsModule.chatEvents.fireEvent('callEvents', {
             type: 'RECEIVE_CALL',
             result: messageContent
-          });
+          }); // if(!currentCallId ) {
 
-          if (!currentCallId) {
-            currentCallId = messageContent.callId;
-          }
+
+          latestCallRequestId = messageContent.callId; // }
         } else {
           _eventsModule.chatEvents.fireEvent('callEvents', {
             type: 'PARTNER_RECEIVED_YOUR_CALL',
@@ -2585,6 +2584,7 @@ function ChatCall(params) {
         }
 
         callStop(false, false, false);
+        currentCallId = threadId;
 
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
@@ -2642,6 +2642,7 @@ function ChatCall(params) {
           result: messageContent
         });
 
+        console.log('im here');
         callStop();
         break;
 
@@ -2740,9 +2741,8 @@ function ChatCall(params) {
         }
 
         if (messageContent.callId > 0) {
-          if (!currentCallId) {
-            currentCallId = messageContent.callId;
-          }
+          // if(!currentCallId ) {
+          latestCallRequestId = messageContent.callId; // }
         }
 
         _eventsModule.chatEvents.fireEvent('callEvents', {

@@ -55,6 +55,7 @@ function ChatCall(params) {
             : 180,
         currentCallParams = {},
         currentCallId = null,
+        latestCallRequestId = null,
         //shouldReconnectCallTimeout = null,
         callMetaDataTypes = {
             POORCONNECTION: 1,
@@ -2468,7 +2469,7 @@ function ChatCall(params) {
     }
 
     this.handleChatMessages = function(type, messageContent, contentCount, threadId, uniqueId) {
-        consoleLogging && console.debug("[SDK][CALL_MODULE][handleChatMessages]", "type:", type, "threadId:", threadId, "currentCallId:", currentCallId,  "shouldNotProcessChatMessage:", shouldNotProcessChatMessage(type, threadId))
+        consoleLogging && console.debug("[SDK][CALL_MODULE][handleChatMessages]", "type:", type, "threadId:", threadId, "currentCallId:", currentCallId, "latestCallRequestId:", latestCallRequestId,  "shouldNotProcessChatMessage:", shouldNotProcessChatMessage(type, threadId))
         if(shouldNotProcessChatMessage(type, threadId)) {
             return;
         }
@@ -2495,9 +2496,9 @@ function ChatCall(params) {
                 });
 
                 if (messageContent.callId > 0) {
-                    if(!currentCallId ) {
-                        currentCallId = messageContent.callId;
-                    }
+                    // if(!currentCallId ) {
+                    latestCallRequestId = messageContent.callId;
+                    // }
 
                 } else {
                     chatEvents.fireEvent('callEvents', {
@@ -2551,9 +2552,9 @@ function ChatCall(params) {
                         type: 'RECEIVE_CALL',
                         result: messageContent
                     });
-                    if(!currentCallId ) {
-                        currentCallId = messageContent.callId;
-                    }
+                    // if(!currentCallId ) {
+                    latestCallRequestId = messageContent.callId;
+                    // }
                 } else {
                     chatEvents.fireEvent('callEvents', {
                         type: 'PARTNER_RECEIVED_YOUR_CALL',
@@ -2576,6 +2577,7 @@ function ChatCall(params) {
                 }
 
                 callStop(false, false, false);
+                currentCallId = threadId;
 
                 if (chatMessaging.messagesCallbacks[uniqueId]) {
                     chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
@@ -2729,10 +2731,9 @@ function ChatCall(params) {
                 }
 
                 if (messageContent.callId > 0) {
-                    if(!currentCallId ) {
-                        currentCallId = messageContent.callId;
-                    }
-
+                    // if(!currentCallId ) {
+                    latestCallRequestId = messageContent.callId;
+                    // }
                 }
 
                 chatEvents.fireEvent('callEvents', {
