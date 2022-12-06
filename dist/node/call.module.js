@@ -494,7 +494,7 @@ function ChatCall(params) {
       watchRTCPeerConnection: function watchRTCPeerConnection() {
         consoleLogging && console.log("[SDK][watchRTCPeerConnection] called with: ", "userId: ", config.userId, "topic: ", config.topic, "mediaType: ", config.mediaType, "direction: ", config.direction);
         var manager = this,
-            user = callUsers[config.userId]; // consoleLogging && console.log("[SDK][watchRTCPeerConnection] called with: ", callUsers, user);
+            user = callUsers[config.userId];
 
         config.peer.peerConnection.onconnectionstatechange = function () {
           if (!user || !config.peer) {
@@ -521,19 +521,25 @@ function ChatCall(params) {
           }
 
           if (config.peer.peerConnection.connectionState === 'connected') {
-            if (config.mediaType === 'video') {
-              if (config.direction === 'send') {
-                user.topicMetaData[config.topic].connectionQualityInterval = setInterval(function () {
-                  manager.checkConnectionQuality();
-                }, 1000);
-              }
+            if (config.direction === 'send' && !user.topicMetaData[config.topic].connectionQualityInterval) {
+              user.topicMetaData[config.topic].connectionQualityInterval = setInterval(function () {
+                manager.checkConnectionQuality();
+              }, 1000);
+            }
 
-              if (config.direction === 'receive') {
-                _eventsModule.chatEvents.fireEvent("callEvents", {
-                  type: "RECEIVE_VIDEO_CONNECTION_ESTABLISHED",
-                  userId: config.userId
-                });
-              }
+            if (config.mediaType === 'video') {
+              /*if(config.direction === 'send') {
+                  user.topicMetaData[config.topic].connectionQualityInterval = setInterval(function() {
+                      manager.checkConnectionQuality()
+                  }, 1000);
+              }*/
+
+              /*if(config.direction === 'receive') {
+                  chatEvents.fireEvent("callEvents", {
+                      type: "RECEIVE_VIDEO_CONNECTION_ESTABLISHED",
+                      userId: config.userId
+                  })
+              }*/
             }
           }
         };
@@ -574,6 +580,28 @@ function ChatCall(params) {
           }
 
           if (config.peer.peerConnection.iceConnectionState === "connected") {
+            if (config.direction === 'send' && !user.topicMetaData[config.topic].connectionQualityInterval) {
+              user.topicMetaData[config.topic].connectionQualityInterval = setInterval(function () {
+                // if(config.mediaType === 'video' )
+                manager.checkConnectionQuality(); // else
+                //     manager.checkAudioConnectionQuality();
+              }, 1000);
+            }
+
+            if (config.mediaType === 'video') {
+              /*if(config.direction === 'send') {
+                  user.topicMetaData[config.topic].connectionQualityInterval = setInterval(function() {
+                      manager.checkConnectionQuality()
+                  }, 1000);
+              }*/
+              if (config.direction === 'receive') {
+                _eventsModule.chatEvents.fireEvent("callEvents", {
+                  type: "RECEIVE_VIDEO_CONNECTION_ESTABLISHED",
+                  userId: config.userId
+                });
+              }
+            }
+
             if (config.direction === 'receive' && config.mediaType === 'audio') {
               manager.watchAudioLevel();
             }
@@ -664,62 +692,72 @@ function ChatCall(params) {
         }
       },
       checkConnectionQuality: function checkConnectionQuality() {
+        var manager = this;
+
         if (!callUsers[config.userId] || !config.peer || !config.peer.peerConnection) {
           this.removeConnectionQualityInterval();
           return;
         }
 
         config.peer.peerConnection.getStats(null).then(function (stats) {
-          //console.log(' watchRTCPeerConnection:: window.setInterval then(stats:', stats)
-          //let statsOutput = "";
+          // console.log(' watchRTCPeerConnection:: window.setInterval then(stats:', stats)
+          // let statsOutput = "";
           var user = callUsers[config.userId],
               topicMetadata = user.topicMetaData[config.topic];
           stats.forEach(function (report) {
             if (report && report.type && report.type === 'remote-inbound-rtp') {
-              /*statsOutput += `<h2>Report: ${report.type}</h2>\n<strong>ID:</strong> ${report.id}<br>\n` +
-                  `<strong>Timestamp:</strong> ${report.timestamp}<br>\n`;*/
+              // statsOutput += `<h2>Report: ${report.type}</h2>\n<strong>ID:</strong> ${report.id}<br>\n` +
+              //     `<strong>Timestamp:</strong> ${report.timestamp}<br>\n`;
               // Now the statistics for this report; we intentially drop the ones we
               // sorted to the top above
               if (!report['roundTripTime'] || report['roundTripTime'] > 1) {
                 if (topicMetadata.poorConnectionCount === 10) {
-                  _eventsModule.chatEvents.fireEvent('callEvents', {
-                    type: 'POOR_VIDEO_CONNECTION',
-                    subType: 'LONG_TIME',
-                    message: 'Poor connection for a long time',
-                    metadata: {
-                      elementId: "uiRemoteVideo-" + config.topic,
-                      topic: config.topic,
-                      userId: config.userId
-                    }
+                  // chatEvents.fireEvent('callEvents', {
+                  //     type: 'POOR_VIDEO_CONNECTION',
+                  //     subType: 'LONG_TIME',
+                  //     message: 'Poor connection for a long time',
+                  //     metadata: {
+                  //         elementId: "uiRemoteVideo-" + config.topic,
+                  //         topic: config.topic,
+                  //         userId: config.userId
+                  //     }
+                  // });
+                  sendQualityCheckEvent({
+                    userId: config.userId,
+                    topic: config.topic,
+                    mediaType: config.mediaType,
+                    isLongTime: true
                   });
                 }
 
                 if (topicMetadata.poorConnectionCount > 3 && !topicMetadata.isConnectionPoor) {
                   //alert('Poor connection detected...');
-                  consoleLogging && console.log('[SDK][checkConnectionQuality] Poor connection detected...');
+                  consoleLogging && console.log('[SDK][checkConnectionQuality] Poor connection detected...'); // chatEvents.fireEvent('callEvents', {
+                  //     type: 'POOR_VIDEO_CONNECTION',
+                  //     subType: 'SHORT_TIME',
+                  //     message: 'Poor connection detected',
+                  //     metadata: {
+                  //         elementId: "uiRemoteVideo-" + config.topic,
+                  //         topic: config.topic,
+                  //         userId: config.userId
+                  //     }
+                  // });
 
-                  _eventsModule.chatEvents.fireEvent('callEvents', {
-                    type: 'POOR_VIDEO_CONNECTION',
-                    subType: 'SHORT_TIME',
-                    message: 'Poor connection detected',
-                    metadata: {
-                      elementId: "uiRemoteVideo-" + config.topic,
-                      topic: config.topic,
-                      userId: config.userId
-                    }
+                  sendQualityCheckEvent({
+                    userId: config.userId,
+                    topic: config.topic,
+                    mediaType: config.mediaType
                   });
-
                   topicMetadata.isConnectionPoor = true;
                   topicMetadata.poorConnectionCount = 0;
-                  topicMetadata.poorConnectionResolvedCount = 0;
-                  sendCallMetaData({
-                    id: callMetaDataTypes.POORCONNECTION,
-                    userid: config.userId,
-                    content: {
-                      title: 'Poor Connection',
-                      description: config.topic
-                    }
-                  });
+                  topicMetadata.poorConnectionResolvedCount = 0; // sendCallMetaData({
+                  //     id: callMetaDataTypes.POORCONNECTION,
+                  //     userid: config.userId,
+                  //     content: {
+                  //         title: 'Poor Connection',
+                  //         description: config.topic,
+                  //     }
+                  // });
                 } else {
                   callUsers[config.userId].topicMetaData[config.topic].poorConnectionCount++;
                 }
@@ -728,37 +766,30 @@ function ChatCall(params) {
                   topicMetadata.poorConnectionResolvedCount = 0;
                   topicMetadata.poorConnectionCount = 0;
                   topicMetadata.isConnectionPoor = false;
-
-                  _eventsModule.chatEvents.fireEvent('callEvents', {
-                    type: 'POOR_VIDEO_CONNECTION_RESOLVED',
-                    message: 'Poor connection resolved',
-                    metadata: {
-                      elementId: "uiRemoteVideo-" + config.topic,
-                      topic: config.topic,
-                      userId: config.userId
-                    }
-                  });
-
-                  sendCallMetaData({
-                    id: callMetaDataTypes.POORCONNECTIONRESOLVED,
-                    userid: config.userId,
-                    content: {
-                      title: 'Poor Connection Resolved',
-                      description: config.topic
-                    }
-                  });
+                  sendQualityCheckEvent({
+                    userId: config.userId,
+                    topic: config.topic,
+                    mediaType: config.mediaType,
+                    isResolved: true
+                  }); // sendCallMetaData({
+                  //     id: callMetaDataTypes.POORCONNECTIONRESOLVED,
+                  //     userid: config.userId,
+                  //     content: {
+                  //         title: 'Poor Connection Resolved',
+                  //         description: config.topic
+                  //     }
+                  // });
                 } else {
                   topicMetadata.poorConnectionResolvedCount++;
                 }
-              }
-              /*Object.keys(report).forEach(function (statName) {
-                  if (statName !== "id" && statName !== "timestamp" && statName !== "type") {
-                      statsOutput += `<strong>${statName}:</strong> ${report[statName]}<br>\n`;
-                  }
-              });*/
+              } // Object.keys(report).forEach(function (statName) {
+              //     if (statName !== "id" && statName !== "timestamp" && statName !== "type") {
+              //         statsOutput += `<strong>${statName}:</strong> ${report[statName]}<br>\n`;
+              //     }
+              // });
 
             }
-          }); //document.querySelector(".stats-box").innerHTML = statsOutput;
+          }); // document.querySelector(".stats-box").innerHTML = statsOutput;
         });
       },
       removeConnectionQualityInterval: function removeConnectionQualityInterval() {
@@ -2209,29 +2240,42 @@ function ChatCall(params) {
 
     switch (id) {
       case callMetaDataTypes.POORCONNECTION:
-        _eventsModule.chatEvents.fireEvent("callEvents", {
-          type: 'POOR_VIDEO_CONNECTION',
-          subType: 'SHORT_TIME',
-          message: 'Poor connection detected',
-          metadata: {
-            elementId: "uiRemoteVideo-" + jMessage.content.description,
-            topic: jMessage.content.description,
-            userId: jMessage.userid
-          }
+        // chatEvents.fireEvent("callEvents", {
+        //     type: 'POOR_VIDEO_CONNECTION',
+        //     subType: 'SHORT_TIME',
+        //     message: 'Poor connection detected',
+        //     metadata: {
+        //         elementId: "uiRemoteVideo-" + jMessage.content.description,
+        //         topic: jMessage.content.description,
+        //         userId: jMessage.userid
+        //     }
+        // });
+        sendQualityCheckEvent({
+          userId: jMessage.userid,
+          topic: jMessage.content.description,
+          //jMessage.topic,
+          mediaType: jMessage.content.description.indexOf('Vi') !== -1 ? 'video' : 'audio',
+          //jMessage.mediaType,
+          canSendCallMetaData: false
         });
-
         break;
 
       case callMetaDataTypes.POORCONNECTIONRESOLVED:
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'POOR_VIDEO_CONNECTION_RESOLVED',
-          message: 'Poor connection resolved',
-          metadata: {
-            elementId: "uiRemoteVideo-" + jMessage.content.description,
-            topic: jMessage.content.description,
-            userId: jMessage.userid
-          }
-        });
+        sendQualityCheckEvent({
+          userId: jMessage.userid,
+          topic: jMessage.content.description,
+          mediaType: jMessage.content.description.indexOf('Vi') !== -1 ? 'video' : 'audio',
+          isResolved: true,
+          canSendCallMetaData: false
+        }); // chatEvents.fireEvent('callEvents', {
+        //     type: 'POOR_VIDEO_CONNECTION_RESOLVED',
+        //     message: 'Poor connection resolved',
+        //     metadata: {
+        //         elementId: "uiRemoteVideo-" + jMessage.content.description,
+        //         topic: jMessage.content.description,
+        //         userId: jMessage.userid
+        //     }
+        // });
 
         break;
 
@@ -2320,6 +2364,54 @@ function ChatCall(params) {
       startCallInfo: currentCallParams,
       customData: customData
     };
+  },
+      sendQualityCheckEvent = function sendQualityCheckEvent(_ref2) {
+    var userId = _ref2.userId,
+        topic = _ref2.topic,
+        mediaType = _ref2.mediaType,
+        _ref2$isLongTime = _ref2.isLongTime,
+        isLongTime = _ref2$isLongTime === void 0 ? false : _ref2$isLongTime,
+        _ref2$isResolved = _ref2.isResolved,
+        isResolved = _ref2$isResolved === void 0 ? false : _ref2$isResolved,
+        _ref2$canSendCallMeta = _ref2.canSendCallMetaData,
+        canSendCallMetaData = _ref2$canSendCallMeta === void 0 ? true : _ref2$canSendCallMeta;
+
+    if (mediaType === 'video') {
+      //TODO: Deprecated!
+      _eventsModule.chatEvents.fireEvent('callEvents', {
+        type: isResolved ? 'POOR_VIDEO_CONNECTION_RESOLVED' : 'POOR_VIDEO_CONNECTION',
+        subType: isResolved ? undefined : isLongTime ? 'LONG_TIME' : 'SHORT_TIME',
+        message: 'Poor connection resolved',
+        metadata: {
+          elementId: "uiRemoteVideo-" + topic,
+          topic: topic,
+          userId: userId
+        }
+      });
+    }
+
+    _eventsModule.chatEvents.fireEvent('callEvents', {
+      type: isResolved ? 'POOR_CONNECTION_RESOLVED' : 'POOR_CONNECTION',
+      subType: isResolved ? undefined : isLongTime ? 'LONG_TIME' : 'SHORT_TIME',
+      message: "Poor connection ".concat(isResolved ? 'resolved' : ''),
+      metadata: {
+        media: mediaType,
+        elementId: "uiRemoteVideo-" + topic,
+        topic: topic,
+        userId: userId
+      }
+    });
+
+    if (canSendCallMetaData) {
+      sendCallMetaData({
+        id: isResolved ? callMetaDataTypes.POORCONNECTIONRESOLVED : callMetaDataTypes.POORCONNECTION,
+        userid: userId,
+        content: {
+          title: "Poor Connection ".concat(isResolved ? 'Resolved' : ''),
+          description: topic
+        }
+      });
+    }
   };
 
   this.updateToken = function (newToken) {
@@ -2642,7 +2734,6 @@ function ChatCall(params) {
           result: messageContent
         });
 
-        console.log('im here');
         callStop();
         break;
 
@@ -3934,9 +4025,9 @@ function ChatCall(params) {
     });
   };
 
-  function calculateScreenSize(_ref2) {
-    var _ref2$quality = _ref2.quality,
-        quality = _ref2$quality === void 0 ? 3 : _ref2$quality;
+  function calculateScreenSize(_ref3) {
+    var _ref3$quality = _ref3.quality,
+        quality = _ref3$quality === void 0 ? 3 : _ref3$quality;
     var screenSize = window.screen,
         qualities = [{
       width: Math.round(screenSize.width / 3),
@@ -4654,9 +4745,9 @@ function ChatCall(params) {
     }
   };
 
-  this.sendCallSticker = function (_ref3, callback) {
-    var _ref3$sticker = _ref3.sticker,
-        sticker = _ref3$sticker === void 0 ? _constants.callStickerTypes.RAISE_HAND : _ref3$sticker;
+  this.sendCallSticker = function (_ref4, callback) {
+    var _ref4$sticker = _ref4.sticker,
+        sticker = _ref4$sticker === void 0 ? _constants.callStickerTypes.RAISE_HAND : _ref4$sticker;
     var sendMessageParams = {
       chatMessageVOType: _constants.chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE,
       typeCode: generalTypeCode,
@@ -4682,8 +4773,8 @@ function ChatCall(params) {
     });
   };
 
-  this.recallThreadParticipant = function (_ref4, callback) {
-    var invitees = _ref4.invitees;
+  this.recallThreadParticipant = function (_ref5, callback) {
+    var invitees = _ref5.invitees;
     var sendData = {
       chatMessageVOType: _constants.chatMessageVOTypes.RECALL_THREAD_PARTICIPANT,
       typeCode: generalTypeCode,
