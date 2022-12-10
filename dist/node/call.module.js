@@ -9,6 +9,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = void 0;
 
+var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));
+
 var _typeof2 = _interopRequireDefault(require("@babel/runtime/helpers/typeof"));
 
 var _constants = require("./lib/constants");
@@ -359,7 +361,11 @@ function ChatCall(params) {
               _deviceManager["default"].grantUserMediaDevicesPermissions({
                 audio: true
               }).then(function () {
-                options.audioStream = _deviceManager["default"].mediaStreams().getAudioInput();
+                var audioInput = _deviceManager["default"].mediaStreams().getAudioInput();
+
+                _deviceManager["default"].watchAudioInputStream(raiseCallError);
+
+                options.audioStream = audioInput;
                 resolve(options);
               })["catch"](function (error) {
                 reject(error);
@@ -505,6 +511,7 @@ function ChatCall(params) {
 
           if (config.peer.peerConnection.connectionState === 'disconnected') {
             manager.removeConnectionQualityInterval();
+            manager.removeAudioWatcherInterval();
           }
 
           if (config.peer.peerConnection.connectionState === "failed") {
@@ -580,6 +587,10 @@ function ChatCall(params) {
           }
 
           if (config.peer.peerConnection.iceConnectionState === "connected") {
+            if (config.mediaType === 'audio') {
+              manager.watchAudioLevel();
+            }
+
             if (config.direction === 'send' && !user.topicMetaData[config.topic].connectionQualityInterval) {
               user.topicMetaData[config.topic].connectionQualityInterval = setInterval(function () {
                 // if(config.mediaType === 'video' )
@@ -621,7 +632,7 @@ function ChatCall(params) {
       watchAudioLevel: function watchAudioLevel() {
         var manager = this,
             audioCtx = new AudioContext(),
-            stream = config.peer.getRemoteStream();
+            stream = config.direction === 'receive' ? config.peer.getRemoteStream() : config.peer.getLocalStream();
 
         if (config.peer && !stream) {
           setTimeout(function () {
@@ -629,64 +640,127 @@ function ChatCall(params) {
           }, 500);
           return;
         }
+        /*
+                        const audioSourceNode = audioCtx.createMediaStreamSource(stream)
+                            , analyserNode = audioCtx.createScriptProcessor(2048, 1, 1);
+                        let instant = 0.0, counter = 0;
+                        analyserNode.onaudioprocess = function(event) {
+                            if(!config.peer) {
+                                analyserNode.removeEventListener('audioprocess', null);
+                                analyserNode.onaudioprocess = null;
+                            }
+        
+                            counter++;
+        
+                            if(counter % 20 !== 0) {
+                                return;
+                            } else {
+                                counter = 0;
+                            }
+        
+                            const input = event.inputBuffer.getChannelData(0);
+                            let i;
+                            let sum = 0.0;
+                            let clipcount = 0;
+                            for (i = 0; i < input.length; ++i) {
+                                sum += input[i] * input[i];
+                                if (Math.abs(input[i]) > 0.99) {
+                                    clipcount += 1;
+                                }
+                            }
+        
+                            instant = Math.floor( Math.sqrt(sum / input.length) * 10000);
+                            chatEvents.fireEvent('callStreamEvents', {
+                                type: 'USER_SPEAKING',
+                                userId: config.userId,
+                                audioLevel: convertToAudioLevel(instant)
+                            })
+                        };
+                        analyserNode.fftSize = 256;
+                        // const bufferLength = analyserNode.frequencyBinCount;
+                        // const dataArray = new Uint8Array(bufferLength);
+                        audioSourceNode.connect(analyserNode);
+                        analyserNode.connect(audioCtx.destination);
+        
+                        function convertToAudioLevel(soundPower){
+                            if(soundPower < 10) {
+                                return 0;
+                            } else if(soundPower >= 10 && soundPower < 100) {
+                                return 1;
+                            } else if(soundPower >= 100 && soundPower < 200) {
+                                return 2;
+                            } else if(soundPower >= 200 && soundPower < 300) {
+                                return 3;
+                            } else if(soundPower >= 300) {
+                                return 4;
+                            }
+                        }
+        */
 
-        var audioSourceNode = audioCtx.createMediaStreamSource(stream),
-            analyserNode = audioCtx.createScriptProcessor(2048, 1, 1);
-        var instant = 0.0,
-            counter = 0;
 
-        analyserNode.onaudioprocess = function (event) {
-          if (!config.peer) {
-            analyserNode.removeEventListener('audioprocess', null);
-            analyserNode.onaudioprocess = null;
+        var user = callUsers[config.userId],
+            topicMetadata = user.topicMetaData[config.topic]; // Create and configure the audio pipeline
+
+        var audioContext = new AudioContext();
+        var analyzer = audioContext.createAnalyser();
+        analyzer.fftSize = 512;
+        analyzer.smoothingTimeConstant = 0.1;
+        var sourceNode = audioContext.createMediaStreamSource(stream);
+        sourceNode.connect(analyzer); // Analyze the sound
+
+        topicMetadata.audioLevelInterval = setInterval(function () {
+          // Compute the max volume level (-Infinity...0)
+          var fftBins = new Float32Array(analyzer.frequencyBinCount); // Number of values manipulated for each sample
+
+          analyzer.getFloatFrequencyData(fftBins); // audioPeakDB varies from -Infinity up to 0
+
+          var audioPeakDB = Math.max.apply(Math, (0, _toConsumableArray2["default"])(fftBins)); // Compute a wave (0...)
+
+          var frequencyRangeData = new Uint8Array(analyzer.frequencyBinCount);
+          analyzer.getByteFrequencyData(frequencyRangeData);
+          var sum = frequencyRangeData.reduce(function (p, c) {
+            return p + c;
+          }, 0); // audioMeter varies from 0 to 10
+
+          var audioMeter = Math.sqrt(sum / frequencyRangeData.length); //console.log({audioMeter}, {audioPeakDB});
+
+          if (audioPeakDB > -50 && audioMeter > 0) {
+            _eventsModule.chatEvents.fireEvent('callStreamEvents', {
+              type: 'USER_SPEAKING',
+              userId: config.userId,
+              audioLevel: convertToAudioLevel(audioPeakDB),
+              isNoise: false,
+              isMute: false
+            });
+          } else if (audioPeakDB !== -Infinity && audioPeakDB < -60 && audioMeter > 0) {
+            _eventsModule.chatEvents.fireEvent('callStreamEvents', {
+              type: 'USER_SPEAKING',
+              userId: config.userId,
+              audioLevel: 0,
+              isNoise: true,
+              isMute: false
+            });
+          } else if (audioPeakDB === -Infinity && audioMeter == 0) {
+            _eventsModule.chatEvents.fireEvent('callStreamEvents', {
+              type: 'USER_SPEAKING',
+              userId: config.userId,
+              audioLevel: 0,
+              isNoise: false,
+              isMute: true
+            });
           }
-
-          counter++;
-
-          if (counter % 20 !== 0) {
-            return;
-          } else {
-            counter = 0;
-          }
-
-          var input = event.inputBuffer.getChannelData(0);
-          var i;
-          var sum = 0.0;
-          var clipcount = 0;
-
-          for (i = 0; i < input.length; ++i) {
-            sum += input[i] * input[i];
-
-            if (Math.abs(input[i]) > 0.99) {
-              clipcount += 1;
-            }
-          }
-
-          instant = Math.floor(Math.sqrt(sum / input.length) * 10000);
-
-          _eventsModule.chatEvents.fireEvent('callStreamEvents', {
-            type: 'USER_SPEAKING',
-            userId: config.userId,
-            audioLevel: convertToAudioLevel(instant)
-          });
-        };
-
-        analyserNode.fftSize = 256; // const bufferLength = analyserNode.frequencyBinCount;
-        // const dataArray = new Uint8Array(bufferLength);
-
-        audioSourceNode.connect(analyserNode);
-        analyserNode.connect(audioCtx.destination);
+        }, 300);
 
         function convertToAudioLevel(soundPower) {
-          if (soundPower < 10) {
+          if (soundPower <= -60) {
             return 0;
-          } else if (soundPower >= 10 && soundPower < 100) {
+          } else if (soundPower >= -60 && soundPower < -50) {
             return 1;
-          } else if (soundPower >= 100 && soundPower < 200) {
+          } else if (soundPower >= -50 && soundPower < -40) {
             return 2;
-          } else if (soundPower >= 200 && soundPower < 300) {
+          } else if (soundPower >= -40 && soundPower < 30) {
             return 3;
-          } else if (soundPower >= 300) {
+          } else if (soundPower >= -30) {
             return 4;
           }
         }
@@ -696,6 +770,7 @@ function ChatCall(params) {
 
         if (!callUsers[config.userId] || !config.peer || !config.peer.peerConnection) {
           this.removeConnectionQualityInterval();
+          this.removeAudioWatcherInterval();
           return;
         }
 
@@ -798,6 +873,11 @@ function ChatCall(params) {
           clearInterval(callUsers[config.userId].topicMetaData[config.topic]['connectionQualityInterval']);
         }
       },
+      removeAudioWatcherInterval: function removeAudioWatcherInterval() {
+        if (callUsers[config.userId] && callUsers[config.userId].topicMetaData[config.topic]) {
+          clearInterval(callUsers[config.userId].topicMetaData[config.topic]['audioLevelInterval']);
+        }
+      },
       shouldReconnectTopic: function shouldReconnectTopic() {
         var manager = this,
             iceConnectionState = config.peer.peerConnection.iceConnectionState;
@@ -811,28 +891,30 @@ function ChatCall(params) {
               errorInfo: config.peer
             });
 
-            sendCallMessage({
-              id: 'STOP',
-              topic: config.topic
-            }, function (result) {
-              if (result.done === 'TRUE' || result.done === 'SKIP') {
-                manager.reconnectTopic();
-              }
-              /* else if (result.done === 'SKIP') {
-               manager.reconnectTopic();
-              } */
-              else {
-                consoleLogging && console.log('STOP topic faced a problem', result);
-                endCall({
-                  callId: currentCallId
-                });
-                callStop();
-              }
-            }, {
-              timeoutTime: 5000
-            });
+            manager.recreateTopic();
           }
         }
+      },
+      recreateTopic: function recreateTopic() {
+        var manager = this;
+        sendCallMessage({
+          id: 'STOP',
+          topic: config.topic
+        }, function (result) {
+          if (result.done === 'TRUE' || result.done === 'SKIP') {
+            manager.reconnectTopic();
+          }
+          /* else if (result.done === 'SKIP') {
+                   manager.reconnectTopic();
+                } */
+          else {
+            consoleLogging && console.log('STOP topic faced a problem', result);
+            endCall({
+              callId: currentCallId
+            });
+            callStop();
+          }
+        }, {});
       },
       reconnectTopic: function reconnectTopic() {
         var manager = this;
@@ -869,6 +951,7 @@ function ChatCall(params) {
 
             metadataInstance.clearIceCandidateInterval();
             manager.removeConnectionQualityInterval();
+            manager.removeAudioWatcherInterval();
 
             if (config.direction === 'send' && !config.isScreenShare) {
               /*let constraint = {
@@ -1452,7 +1535,8 @@ function ChatCall(params) {
         connectionQualityInterval: null,
         poorConnectionCount: 0,
         poorConnectionResolvedCount: 0,
-        isConnectionPoor: false
+        isConnectionPoor: false,
+        audioLevelInterval: null
       };
       user.topicMetaData[user.audioTopicName] = {
         interval: null,
@@ -2555,12 +2639,6 @@ function ChatCall(params) {
     } else {
       return false;
     }
-    /* if((!currentCallId || currentCallId && threadId != currentCallId) && restrictedMessageTypes.includes(type)){
-        return true;
-    } else {
-        return false
-    } */
-
   }
 
   this.handleChatMessages = function (type, messageContent, contentCount, threadId, uniqueId) {
@@ -4810,6 +4888,89 @@ function ChatCall(params) {
   };
 
   this.deviceManager = _deviceManager["default"];
+
+  this.deviceManager.reGrantMediaStreams = function (_ref6) {
+    var _ref6$audio = _ref6.audio,
+        audio = _ref6$audio === void 0 ? false : _ref6$audio,
+        _ref6$video = _ref6.video,
+        video = _ref6$video === void 0 ? false : _ref6$video,
+        _ref6$screenShare = _ref6.screenShare,
+        screenShare = _ref6$screenShare === void 0 ? false : _ref6$screenShare;
+    var user = callUsers[chatMessaging.userInfo.id];
+    var promises = [];
+
+    if (audio) {
+      _deviceManager["default"].mediaStreams().stopAudioInput();
+
+      promises.push(new Promise(function (resolve, reject) {
+        _deviceManager["default"].grantUserMediaDevicesPermissions({
+          audio: true
+        }, function (result) {
+          if (!result.hasError) {
+            document.getElementById("uiRemoteAudio-" + user.audioTopicName).remove();
+            user.audioTopicManager.recreateTopic();
+
+            _eventsModule.chatEvents.fireEvent('callEvents', {
+              type: 'CALL_DIVS',
+              result: generateCallUIList()
+            });
+
+            resolve(result);
+          }
+
+          reject(result);
+        });
+      }));
+    }
+
+    if (video) {
+      _deviceManager["default"].mediaStreams().stopVideoInput();
+
+      promises.push(new Promise(function (resolve, reject) {
+        _deviceManager["default"].grantUserMediaDevicesPermissions({
+          video: true
+        }, function (result) {
+          if (!result.hasError) {
+            document.getElementById("uiRemoteVideo-" + user.videoTopicName).remove();
+            user.videoTopicManager.recreateTopic();
+
+            _eventsModule.chatEvents.fireEvent('callEvents', {
+              type: 'CALL_DIVS',
+              result: generateCallUIList()
+            });
+
+            resolve(result);
+          }
+
+          reject(result);
+        });
+      }));
+    }
+
+    if (screenShare) {
+      _deviceManager["default"].mediaStreams().stopScreenShareInput();
+
+      promises.push(new Promise(function (resolve, reject) {
+        _deviceManager["default"].grantScreenSharePermission({}, function (result) {
+          if (!result.hasError) {
+            callUsers["screenShare"].videoTopicManager.recreateTopic();
+
+            _eventsModule.chatEvents.fireEvent('callEvents', {
+              type: 'CALL_DIVS',
+              result: generateCallUIList()
+            });
+
+            resolve(result);
+          }
+
+          reject(result);
+        });
+      }));
+    }
+
+    return Promise.all(promises);
+  };
+
   this.callStop = callStop;
   this.restartMedia = restartMedia;
 }

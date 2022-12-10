@@ -28,6 +28,9 @@ var deviceList = {
   audioOut: [],
   videoIn: []
 };
+var streamsMetada = {
+  audioInWatcherId: null
+};
 var deviceStreams = {
   videoIn: null,
   audioIn: null,
@@ -263,6 +266,51 @@ var deviceManager = {
   },
   mediaStreams: function mediaStreams() {
     return _mediaStreams;
+  },
+  watchAudioInputStream: function watchAudioInputStream(callErrorHandler) {
+    streamsMetada.audioInWatcherId = setInterval(function () {
+      var _deviceManager$mediaS;
+
+      if (!deviceManager.mediaStreams().getAudioInput()) {
+        clearInterval(streamsMetada.audioInWatcherId);
+        return;
+      }
+
+      var audioTracks = (_deviceManager$mediaS = deviceManager.mediaStreams().getAudioInput()) === null || _deviceManager$mediaS === void 0 ? void 0 : _deviceManager$mediaS.getAudioTracks();
+
+      if (audioTracks.length === 0) {
+        callErrorHandler(_errorHandler.errorList.NO_AUDIO_TRACKS_AVAILABLE, null, true, {});
+        clearInterval(streamsMetada.audioInWatcherId); // No audio from microphone has been captured
+
+        return;
+      } // We asked for the microphone so one track
+
+
+      var track = audioTracks[0];
+
+      if (track.muted) {
+        // Track is muted which means that the track is unable to provide media data.
+        // When muted, a track can't be unmuted.
+        // This track will no more provide data...
+        callErrorHandler(_errorHandler.errorList.AUDIO_TRACK_MUTED, null, true, {});
+        clearInterval(streamsMetada.audioInWatcherId);
+      }
+
+      if (!track.enabled) {
+        // Track is disabled (muted for telephonist) which means that the track provides silence instead of real data.
+        // When disabled, a track can be enabled again.
+        // When in that case, user can't be heard until track is enabled again.
+        callErrorHandler(_errorHandler.errorList.AUDIO_TRACK_DISABLED, null, true, {});
+      }
+
+      if (track.readyState === "ended") {
+        // Possibly a disconnection of the device
+        // When ended, a track can't be active again
+        // This track will no more provide data
+        callErrorHandler(_errorHandler.errorList.AUDIO_TRACK_ENDED, null, true, {});
+        clearInterval(streamsMetada.audioInWatcherId);
+      }
+    }, 10000);
   }
 };
 var _default = deviceManager;

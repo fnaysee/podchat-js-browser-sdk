@@ -56,6 +56,22 @@ var errorList = {
     code: 12404,
     message: "Could not grant screen share permission"
   },
+  NO_AUDIO_TRACKS_AVAILABLE: {
+    code: 12405,
+    message: "Audio stream has no tracks"
+  },
+  AUDIO_TRACK_MUTED: {
+    code: 12406,
+    message: "Audio track is muted and is not useful anymore, request the permission again"
+  },
+  AUDIO_TRACK_ENDED: {
+    code: 12407,
+    message: "Audio track is ended and is not useful anymore, request the permission again"
+  },
+  AUDIO_TRACK_DISABLED: {
+    code: 12408,
+    message: "Audio track is disabled, enable it to be able to send voice"
+  },
 
   /**
    * 12550-12570 ScreenShare
