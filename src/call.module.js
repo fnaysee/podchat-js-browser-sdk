@@ -888,23 +888,27 @@ function ChatCall(params) {
             },
             recreateTopic() {
                 let manager = this;
-                sendCallMessage({
-                    id: 'STOP',
-                    topic: config.topic
-                }, function (result) {
-                    if (result.done === 'TRUE' || result.done === 'SKIP') {
-                        manager.reconnectTopic();
-                    } /* else if (result.done === 'SKIP') {
+                return new Promise((resolve, reject) => {
+                    sendCallMessage({
+                        id: 'STOP',
+                        topic: config.topic
+                    }, function (result) {
+                        if (result.done === 'TRUE' || result.done === 'SKIP') {
+                            manager.reconnectTopic();
+                            resolve()
+                        } /* else if (result.done === 'SKIP') {
                                manager.reconnectTopic();
                             } */
-                    else {
-                        consoleLogging && console.log('STOP topic faced a problem', result);
-                        endCall({
-                            callId: currentCallId
-                        });
-                        callStop();
-                    }
-                }, {});
+                        else {
+                            consoleLogging && console.log('STOP topic faced a problem', result);
+                            endCall({
+                                callId: currentCallId
+                            });
+                            callStop();
+                            reject()
+                        }
+                    }, {});
+                })
             },
             reconnectTopic: function () {
                 const manager = this;
@@ -4862,66 +4866,28 @@ function ChatCall(params) {
 
     this.deviceManager = deviceManager
 
-    this.deviceManager.reGrantMediaStreams = function ({audio = false, video = false, screenShare = false}) {
-        let user = callUsers[chatMessaging.userInfo.id];
-        let promises = [];
-        if(audio){
-            deviceManager.mediaStreams().stopAudioInput();
-            promises.push(new Promise((resolve, reject) => {
-                deviceManager.grantUserMediaDevicesPermissions({audio: true}, function (result) {
-                    if(!result.hasError) {
-                        document.getElementById("uiRemoteAudio-" + user.audioTopicName).remove();
-                        user.audioTopicManager.recreateTopic();
-                        chatEvents.fireEvent('callEvents', {
-                            type: 'CALL_DIVS',
-                            result: generateCallUIList()
-                        });
-                        resolve(result);
-                    }
-
-                    reject(result);
+    this.resetCallStream = function({userId, streamType = 'audio'}, callback) {
+        return new Promise((resolve, reject) => {
+            if(userId === 'screenShare' || streamType === 'video') {
+                if(callUsers[userId]) {
+                    callUsers[userId].videoTopicManager.recreateTopic().then(()=> {
+                        resolve();
+                        callback && callback({hasError: false});
+                    }).catch(()=>{
+                        reject();
+                        callback && callback({hasError: true});
+                    });
+                }
+            } else {
+                callUsers[userId].audioTopicManager.recreateTopic().then(()=> {
+                    resolve();
+                    callback && callback({hasError: false});
+                }).catch(()=>{
+                    reject();
+                    callback && callback({hasError: true});
                 });
-            }))
-        }
-
-        if(video) {
-            deviceManager.mediaStreams().stopVideoInput();
-            promises.push(new Promise((resolve, reject) => {
-                deviceManager.grantUserMediaDevicesPermissions({video: true}, function (result) {
-                    if (!result.hasError) {
-                        document.getElementById("uiRemoteVideo-" + user.videoTopicName).remove();
-                        user.videoTopicManager.recreateTopic();
-                        chatEvents.fireEvent('callEvents', {
-                            type: 'CALL_DIVS',
-                            result: generateCallUIList()
-                        });
-                        resolve(result);
-                    }
-
-                    reject(result);
-                });
-            }));
-        }
-
-        if(screenShare) {
-            deviceManager.mediaStreams().stopScreenShareInput();
-            promises.push(new Promise((resolve, reject) => {
-                deviceManager.grantScreenSharePermission({}, function (result) {
-                    if (!result.hasError) {
-                        callUsers["screenShare"].videoTopicManager.recreateTopic();
-                        chatEvents.fireEvent('callEvents', {
-                            type: 'CALL_DIVS',
-                            result: generateCallUIList()
-                        });
-                        resolve(result);
-                    }
-
-                    reject(result);
-                });
-            }));
-        }
-
-        return Promise.all(promises);
+            }
+        });
     }
 
     this.callStop = callStop;

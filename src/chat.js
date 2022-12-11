@@ -13975,6 +13975,8 @@ function Chat(params) {
 
     publicized.deviceManager = callModule.deviceManager;
 
+    publicized.resetCallStream = callModule.resetCallStream;
+
     publicized.getMutualGroups = function (params, callback) {
         var count = +params.count ? +params.count : 50,
             offset = +params.offset ? +params.offset : 0;
