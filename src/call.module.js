@@ -2634,6 +2634,7 @@ function ChatCall(params) {
             chatMessageVOTypes.END_RECORD_CALL,
             chatMessageVOTypes.TERMINATE_CALL,
             chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE,
+            chatMessageVOTypes.CALL_RECORDING_FAILED,
             // chatMessageVOTypes.END_CALL
         ];
 
@@ -3440,6 +3441,23 @@ function ChatCall(params) {
                     chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
                 }
                 break;
+
+            /**
+             * Type 230    CALL_RECORDING_FAILED
+             */
+            case chatMessageVOTypes.CALL_RECORDING_FAILED:
+                if (chatMessaging.messagesCallbacks[uniqueId]) {
+                    chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+                }
+
+                chatEvents.fireEvent('callEvents', {
+                    type: 'CALL_RECORDING_FAILED',
+                    result: messageContent
+                });
+
+                break;
+
+
 
         }
     }

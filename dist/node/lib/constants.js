@@ -131,6 +131,7 @@ var chatMessageVOTypes = {
   CALL_STICKER_SYSTEM_MESSAGE: 225,
   CUSTOMER_INFO: 226,
   RECALL_THREAD_PARTICIPANT: 227,
+  CALL_RECORDING_FAILED: 230,
   ERROR: 999
 };
 exports.chatMessageVOTypes = chatMessageVOTypes;
