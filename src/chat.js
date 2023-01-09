@@ -13728,12 +13728,18 @@ function Chat(params) {
                     };
 
                     if (!returnData.hasError) {
-                        for(var i in result.result) {
+                        /* for(var i in result.result) {
                             stackArr.push(result.result[i]);
-                        }
+                        } */
+
+                        stackArr = [...stackArr, ...result.result];
 
                         consoleLogging && console.log("[SDK][exportChat] a step passed...");
-                        wantedCount = wantedCount > result.contentCount ? result.contentCount : wantedCount;
+                        // wantedCount = wantedCount > result.contentCount ? result.contentCount : wantedCount;
+                        if(result.result.length < stepCount) {
+                            wantedCount = stackArr.length
+                        }
+
                         setTimeout(function () {
                             chatEvents.fireEvent('threadEvents', {
                                 type: 'EXPORT_CHAT',
