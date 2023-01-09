@@ -13732,7 +13732,7 @@ function Chat(params) {
                             stackArr.push(result.result[i]);
                         } */
 
-                        stackArr = [...stackArr, ...result.result];
+                        stackArr.push(...result.result);
 
                         consoleLogging && console.log("[SDK][exportChat] a step passed...");
                         // wantedCount = wantedCount > result.contentCount ? result.contentCount : wantedCount;
