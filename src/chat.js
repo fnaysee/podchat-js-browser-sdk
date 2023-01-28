@@ -5029,6 +5029,10 @@ function Chat(params) {
                         sendMessageParams.content.metadataCriteria = whereClause.metadataCriteria = params.metadataCriteria;
                     }
 
+                    if (typeof params.onlyNewMessages === "boolean") {
+                        sendMessageParams.content.newMessages = params.onlyNewMessages;
+                    }
+
                     /**
                      * Get Thread Messages from cache
                      *
