@@ -9967,6 +9967,9 @@ function Chat(params) {
             if (typeof params.username === 'string') {
                 content.username = params.username;
             }
+            if (typeof params.coreUserId !== "undefined") {
+                content.coreUserId = params.coreUserId;
+            }
 
             var functionLevelCache = (typeof params.cache == 'boolean') ? params.cache : true;
         }
