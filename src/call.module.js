@@ -3000,14 +3000,14 @@ function ChatCall(params) {
                             if(!correctedData.mute) {
                                 callStateController.startParticipantAudio(correctedData.userId);
                             }
+
+                            chatEvents.fireEvent('callEvents', {
+                                type: 'CALL_DIVS',
+                                result: generateCallUIList()
+                            });
                         }, 500)
                     }
                 }
-
-                chatEvents.fireEvent('callEvents', {
-                    type: 'CALL_DIVS',
-                    result: generateCallUIList()
-                });
 
                 chatEvents.fireEvent('callEvents', {
                     type: 'CALL_PARTICIPANT_JOINED',
