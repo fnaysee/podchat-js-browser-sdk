@@ -1,6 +1,6 @@
 {
   "name": "podchat-browser",
-  "version": "12.7.2-snapshot.5",
+  "version": "12.7.2-snapshot.15",
   "description": "Javascript SDK to use POD's Chat Service - Browser Only",
   "main": "./dist/node/chat.js",
   "scripts": {
@@ -51,7 +51,7 @@
     "faker": "^5.5.3",
     "kurento-utils": "^6.16.0",
     "node-rsa": "^1.1.1",
-    "podasync-ws-only": "^2.7.10-snapshot.3",
+    "podasync-ws-only": "^2.7.10-snapshot.11",
     "query-string": "^6.8.1",
     "webrtc-adapter": "^8.0.0"
   },
