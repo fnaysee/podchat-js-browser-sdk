@@ -40,10 +40,25 @@ function ChatMessaging(params) {
   this.threadCallbacks = {};
   this.sendMessageCallbacks = {};
   this.messagesCallbacks = {};
-  this.asyncRequestTimeouts = {};
-  this.sendPingTimeout = null;
+  this.asyncRequestTimeouts = {}; // this.sendPingTimeout = null;
+
   this.chatState = false;
   this.userInfo = null;
+  /**
+   * sendPingTimeout removed,
+   *
+   * TODO: remove the interval when socket statet changes to closed
+   */
+
+  this.startChatPing = function () {
+    chatPingMessageInterval = setInterval(function () {
+      currentModuleInstance.ping();
+    }, 20000); //TODO: chatPingMessageInterval
+  };
+
+  this.stopChatPing = function () {
+    clearInterval(chatPingMessageInterval);
+  };
 
   this.asyncInitialized = function (client) {
     asyncClient = client;
@@ -280,11 +295,12 @@ function ChatMessaging(params) {
         }
       }, asyncRequestTimeout);
     }
+    /*          currentModuleInstance.sendPingTimeout && clearTimeout(currentModuleInstance.sendPingTimeout);
+                currentModuleInstance.sendPingTimeout = setTimeout(function () {
+                    currentModuleInstance.ping();
+                }, chatPingMessageInterval); */
 
-    currentModuleInstance.sendPingTimeout && clearTimeout(currentModuleInstance.sendPingTimeout);
-    currentModuleInstance.sendPingTimeout = setTimeout(function () {
-      currentModuleInstance.ping();
-    }, chatPingMessageInterval);
+
     recursiveCallback && recursiveCallback();
     return {
       uniqueId: uniqueId,
@@ -316,9 +332,11 @@ function ChatMessaging(params) {
         chatMessageVOType: _constants.chatMessageVOTypes.PING,
         pushMsgType: 3
       });
-    } else {
-      currentModuleInstance.sendPingTimeout && clearTimeout(currentModuleInstance.sendPingTimeout);
     }
+    /*else {
+        currentModuleInstance.sendPingTimeout && clearTimeout(currentModuleInstance.sendPingTimeout);
+    }*/
+
   };
 } // if (typeof module !== 'undefined' && typeof module.exports != 'undefined') {
 //     module.exports = ChatMessaging;

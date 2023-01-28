@@ -39114,7 +39114,7 @@ module.exports = function (thing, encoding, name) {
             connectionRetryInterval = params.connectionRetryInterval || 5000,
             socketReconnectRetryInterval,
             socketReconnectCheck,
-            retryStep = 4,
+            // retryStep = 4,
             reconnectOnClose = (typeof params.reconnectOnClose === 'boolean') ? params.reconnectOnClose : true,
             asyncLogging = (params.asyncLogging && typeof params.asyncLogging.onFunction === 'boolean') ? params.asyncLogging.onFunction : false,
             onReceiveLogging = (params.asyncLogging && typeof params.asyncLogging.onMessageReceive === 'boolean')
@@ -39122,6 +39122,26 @@ module.exports = function (thing, encoding, name) {
                 : false,
             onSendLogging = (params.asyncLogging && typeof params.asyncLogging.onMessageSend === 'boolean') ? params.asyncLogging.onMessageSend : false,
             workerId = (params.asyncLogging && typeof parseInt(params.asyncLogging.workerId) === 'number') ? params.asyncLogging.workerId : 0;
+
+        // function setRetryStep(val){
+        //     console.log("new retryStep value:", val);
+        //     retryStep = val;
+        // }
+        //
+        // function getRetryStep() {
+        //     return retryStep;
+        // }
+
+        const retryStep = {
+            value: 4,
+            get() {
+                return retryStep.value;
+            },
+            set(val) {
+                logLevel.debug && console.debug("[Async][async.js] retryStep new value:", val);
+                retryStep.value = val;
+            }
+        };
 
         /*******************************************************
          *            P R I V A T E   M E T H O D S            *
@@ -39175,7 +39195,7 @@ module.exports = function (thing, encoding, name) {
                     socketReconnectCheck && clearTimeout(socketReconnectCheck);
 
                     isSocketOpen = true;
-                    retryStep = 4;
+                    retryStep.set(4);
 
                     socketState = socketStateType.OPEN;
                     fireEvent('stateChange', {
@@ -39199,32 +39219,32 @@ module.exports = function (thing, encoding, name) {
                     isDeviceRegister = false;
                     oldPeerId = peerId;
 
-                    socketState = socketStateType.CLOSED;
-
-                    fireEvent('stateChange', {
-                        socketState: socketState,
-                        timeUntilReconnect: 0,
-                        deviceRegister: isDeviceRegister,
-                        serverRegister: isServerRegister,
-                        peerId: peerId
-                    });
+                    // socketState = socketStateType.CLOSED;
+                    //
+                    // fireEvent('stateChange', {
+                    //     socketState: socketState,
+                    //     timeUntilReconnect: 0,
+                    //     deviceRegister: isDeviceRegister,
+                    //     serverRegister: isServerRegister,
+                    //     peerId: peerId
+                    // });
 
                     fireEvent('disconnect', event);
 
                     if (reconnectOnClose) {
                         if (asyncLogging) {
                             if (workerId > 0) {
-                                Utility.asyncStepLogger(workerId + '\t Reconnecting after ' + retryStep + 's');
+                                Utility.asyncStepLogger(workerId + '\t Reconnecting after ' + retryStep.get() + 's');
                             }
                             else {
-                                Utility.asyncStepLogger('Reconnecting after ' + retryStep + 's');
+                                Utility.asyncStepLogger('Reconnecting after ' + retryStep.get() + 's');
                             }
                         }
 
                         socketState = socketStateType.CLOSED;
                         fireEvent('stateChange', {
                             socketState: socketState,
-                            timeUntilReconnect: 1000 * retryStep,
+                            timeUntilReconnect: 1000 * retryStep.get(),
                             deviceRegister: isDeviceRegister,
                             serverRegister: isServerRegister,
                             peerId: peerId
@@ -39234,10 +39254,11 @@ module.exports = function (thing, encoding, name) {
 
                         socketReconnectRetryInterval = setTimeout(function () {
                             socket.connect();
-                        }, 1000 * retryStep);
+                        }, 1000 * retryStep.get());
 
-                        if (retryStep < 64) {
-                            retryStep *= 2;
+                        if (retryStep.get() < 64) {
+                            // retryStep += 3;
+                            retryStep.set(retryStep.get() + 3)
                         }
 
                         // socketReconnectCheck && clearTimeout(socketReconnectCheck);
@@ -39727,7 +39748,8 @@ module.exports = function (thing, encoding, name) {
             socket.close();
 
             socketReconnectRetryInterval = setTimeout(function () {
-                retryStep = 4;
+                // retryStep = 4;
+                retryStep.set(4);
                 socket.connect();
             }, 2000);
         };
@@ -39775,7 +39797,8 @@ module.exports = function (thing, encoding, name) {
       waitForSocketToConnectTimeoutId,
       socketRealTimeStatusInterval,
       logLevel = params.logLevel,
-      pingController = new PingManager({waitTime: connectionCheckTimeout});
+      pingController = new PingManager({waitTime: connectionCheckTimeout}),
+      socketWatchTimeout;
 
 
     function PingManager(params) {
@@ -39804,6 +39827,8 @@ module.exports = function (thing, encoding, name) {
             config.timeoutIds.first = setTimeout(()=>{
               ping();
                 config.timeoutIds.fourth = setTimeout(()=>{
+                  logLevel.debug && console.debug("[Async][Socket.js] Force closing socket.");
+                  onCloseHandler(null);
                   socket.close();
                 }, 2000);
             }, 2000);
@@ -39834,22 +39859,36 @@ module.exports = function (thing, encoding, name) {
 
           socket = new WebSocket(address, []);
 
-          socketRealTimeStatusInterval && clearInterval(socketRealTimeStatusInterval);
-          socketRealTimeStatusInterval = setInterval(function() {
-            switch (socket.readyState) {
-              case 2:
-                onCloseHandler(null);
-                break;
-              case 3:
-                socketRealTimeStatusInterval && clearInterval(socketRealTimeStatusInterval);
-                break;
-            }
+          // socketRealTimeStatusInterval && clearInterval(socketRealTimeStatusInterval);
+          // socketRealTimeStatusInterval = setInterval(function() {
+          //   switch (socket.readyState) {
+          //     case 2:
+          //       onCloseHandler(null);
+          //       socketRealTimeStatusInterval && clearInterval(socketRealTimeStatusInterval);
+          //       break;
+          //     case 3:
+          //
+          //       break;
+          //   }
+          // }, 5000);
+
+          /**
+           * Watches the socket to make sure it's state changes to 1 in 5 seconds
+           */
+          socketWatchTimeout && clearTimeout(socketWatchTimeout);
+          socketWatchTimeout = setTimeout(() => {
+            // if(socket.readyState !== 1) {
+            logLevel.debug && console.debug("[Async][Socket.js] socketWatchTimeout triggered.");
+            onCloseHandler(null);
+            socket.close();
+            // }
           }, 5000);
 
           socket.onopen = function(event) {
             waitForSocketToConnect(function() {
               pingController.resetPingLoop();
               eventCallback["open"]();
+              socketWatchTimeout && clearTimeout(socketWatchTimeout);
             });
           }
 
@@ -39864,11 +39903,13 @@ module.exports = function (thing, encoding, name) {
             pingController.stopPingLoop();
             logLevel.debug && console.debug("[Async][Socket.js] socket.onclose happened. EventData:", event);
             onCloseHandler(event);
+            socketWatchTimeout && clearTimeout(socketWatchTimeout);
           }
 
           socket.onerror = function(event) {
             logLevel.debug && console.debug("[Async][Socket.js] socket.onerror happened. EventData:", event);
             eventCallback["error"](event);
+            socketWatchTimeout && clearTimeout(socketWatchTimeout);
           }
         } catch (error) {
           eventCallback["customError"]({
@@ -39881,6 +39922,10 @@ module.exports = function (thing, encoding, name) {
 
       onCloseHandler = function(event) {
         pingController.stopPingLoop();
+        socket.onclose = null;
+        socket.onmessage = null;
+        socket.onerror = null;
+        socket.onopen = null;
         eventCallback["close"](event);
       },
 
@@ -39949,6 +39994,8 @@ module.exports = function (thing, encoding, name) {
     this.close = function() {
       logLevel.debug && console.debug("[Async][Socket.js] Closing socket by call to this.close");
       socket.close();
+      onCloseHandler(null);
+      socketWatchTimeout && clearTimeout(socketWatchTimeout);
     }
 
     init();
@@ -45716,7 +45763,7 @@ if(messageContent[0].userId==chatMessaging.userInfo.id){callStop();}else{callSta
        * Type 93    Add Call Participant
        */case _constants.chatMessageVOTypes.ADD_CALL_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
        * Type 94    Call Participant Joined
-       */case _constants.chatMessageVOTypes.CALL_PARTICIPANT_JOINED:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(Array.isArray(messageContent)){var _loop2=function _loop2(i){var correctedData={video:messageContent[i].video,mute:messageContent[i].mute,userId:messageContent[i].userId,topicSend:messageContent[i].sendTopic};callStateController.removeParticipant(correctedData.userId);setTimeout(function(){callStateController.setupCallParticipant(correctedData);if(correctedData.video){callStateController.startParticipantVideo(correctedData.userId);}if(!correctedData.mute){callStateController.startParticipantAudio(correctedData.userId);}},500);};for(var i in messageContent){_loop2(i);}}_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_DIVS',result:generateCallUIList()});_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_PARTICIPANT_JOINED',result:messageContent});if(callUsers&&callUsers[chatMessaging.userInfo.id]&&callUsers[chatMessaging.userInfo.id].video){restartMediaOnKeyFrame(chatMessaging.userInfo.id,[2000,4000,8000,12000,16000,24000]);}if(callUsers&&callUsers['screenShare']&&callUsers['screenShare'].video&&screenShareInfo.isStarted()&&screenShareInfo.iAmOwner()){sendCallMetaData({id:callMetaDataTypes.SCREENSHAREMETADATA,userid:chatMessaging.userInfo.id,content:{dimension:{width:screenShareInfo.getWidth(),height:screenShareInfo.getHeight()}}});restartMediaOnKeyFrame('screenShare',[2000,4000,8000,12000,16000,24000]);}break;/**
+       */case _constants.chatMessageVOTypes.CALL_PARTICIPANT_JOINED:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(Array.isArray(messageContent)){var _loop2=function _loop2(i){var correctedData={video:messageContent[i].video,mute:messageContent[i].mute,userId:messageContent[i].userId,topicSend:messageContent[i].sendTopic};callStateController.removeParticipant(correctedData.userId);setTimeout(function(){callStateController.setupCallParticipant(correctedData);if(correctedData.video){callStateController.startParticipantVideo(correctedData.userId);}if(!correctedData.mute){callStateController.startParticipantAudio(correctedData.userId);}_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_DIVS',result:generateCallUIList()});},500);};for(var i in messageContent){_loop2(i);}}_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_PARTICIPANT_JOINED',result:messageContent});if(callUsers&&callUsers[chatMessaging.userInfo.id]&&callUsers[chatMessaging.userInfo.id].video){restartMediaOnKeyFrame(chatMessaging.userInfo.id,[2000,4000,8000,12000,16000,24000]);}if(callUsers&&callUsers['screenShare']&&callUsers['screenShare'].video&&screenShareInfo.isStarted()&&screenShareInfo.iAmOwner()){sendCallMetaData({id:callMetaDataTypes.SCREENSHAREMETADATA,userid:chatMessaging.userInfo.id,content:{dimension:{width:screenShareInfo.getWidth(),height:screenShareInfo.getHeight()}}});restartMediaOnKeyFrame('screenShare',[2000,4000,8000,12000,16000,24000]);}break;/**
        * Type 95    Remove Call Participant
        */case _constants.chatMessageVOTypes.REMOVE_CALL_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_PARTICIPANT_REMOVED',result:messageContent});break;/**
        * Type 96    Terminate Call
@@ -45938,11 +45985,13 @@ consoleLogging:consoleLogging,chatEvents:_events.chatEvents,asyncClient:asyncCli
                              * Check if user has KeyId stored in their cache or not?
                              */if(canUseCache){if(db){db.users.where('id').equals(parseInt(chatMessaging.userInfo.id)).toArray().then(function(users){if(users.length>0&&typeof users[0].keyId!='undefined'){var user=users[0];getEncryptionKey({keyId:user.keyId},function(result){if(!result.hasError){cacheSecret=result.secretKey;chatMessaging.chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();}else{if(result.message!==''){try{var response=JSON.parse(result.message);if(response.error==='invalid_param'){generateEncryptionKey({keyAlgorithm:'AES',keySize:256},function(){chatMessaging.chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();});}}catch(e){consoleLogging&&console.log(e);}}}});}else{generateEncryptionKey({keyAlgorithm:'AES',keySize:256},function(){chatMessaging.chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();});}})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.errorCode,message:error.errorMessage,error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}else{chatMessaging.chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();}}});}else if(chatMessaging.userInfo.id>0){chatMessaging.chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();}deliveryInterval&&clearInterval(deliveryInterval);deliveryInterval=setInterval(function(){if(Object.keys(messagesDelivery).length){messagesDeliveryQueueHandler();}},deliveryIntervalPitch);seenInterval&&clearInterval(seenInterval);seenInterval=setInterval(function(){if(Object.keys(messagesSeen).length){messagesSeenQueueHandler();}},seenIntervalPitch);//shouldReconnectCall();
 });asyncClient.on('stateChange',function(state){_events.chatEvents.fireEvent('chatState',state);chatFullStateObject=state;switch(state.socketState){case 1:// CONNECTED
-if(state.deviceRegister&&state.serverRegister){chatMessaging.chatState=true;chatMessaging.ping();}break;case 0:// CONNECTING
-case 2:// CLOSING
-case 3:// CLOSED
-chatMessaging.chatState=false;// TODO: Check if this is OK or not?!
-chatMessaging.sendPingTimeout&&clearTimeout(chatMessaging.sendPingTimeout);break;}});asyncClient.on('connect',function(newPeerId){asyncGetReadyTime=new Date().getTime();peerId=newPeerId;_events.chatEvents.fireEvent('connect');chatMessaging.ping();});asyncClient.on('disconnect',function(event){oldPeerId=peerId;peerId=undefined;_events.chatEvents.fireEvent('disconnect',event);_events.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:'Call Socket is closed!',error:event});});asyncClient.on('reconnect',function(newPeerId){peerId=newPeerId;_events.chatEvents.fireEvent('reconnect');});asyncClient.on('message',function(params,ack){receivedAsyncMessageHandler(params);ack&&ack();});asyncClient.on('error',function(error){_events.chatEvents.fireEvent('error',{code:error.errorCode,message:error.errorMessage,error:error.errorEvent});});},/**
+if(state.deviceRegister&&state.serverRegister){chatMessaging.chatState=true;// chatMessaging.ping();
+chatMessaging.startChatPing();}break;case 0:// CONNECTING
+chatMessaging.chatState=false;chatMessaging.stopChatPing();break;case 2:// CLOSING
+chatMessaging.chatState=false;chatMessaging.stopChatPing();break;case 3:// CLOSED
+chatMessaging.chatState=false;chatMessaging.stopChatPing();// TODO: Check if this is OK or not?!
+//chatMessaging.sendPingTimeout && clearTimeout(chatMessaging.sendPingTimeout);
+break;}});asyncClient.on('connect',function(newPeerId){asyncGetReadyTime=new Date().getTime();peerId=newPeerId;_events.chatEvents.fireEvent('connect');chatMessaging.ping();});asyncClient.on('disconnect',function(event){oldPeerId=peerId;peerId=undefined;_events.chatEvents.fireEvent('disconnect',event);_events.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:'Call Socket is closed!',error:event});});asyncClient.on('reconnect',function(newPeerId){peerId=newPeerId;_events.chatEvents.fireEvent('reconnect');});asyncClient.on('message',function(params,ack){receivedAsyncMessageHandler(params);ack&&ack();});asyncClient.on('error',function(error){_events.chatEvents.fireEvent('error',{code:error.errorCode,message:error.errorMessage,error:error.errorEvent});});},/**
          * Get Device Id With Token
          *
          * If ssoGrantDevicesAddress set as TRUE, chat agent gets Device ID
@@ -46931,7 +46980,7 @@ content:{}};sendMessageParams.content.summary=params.summary;return chatMessagin
          *
          * @return {object} Instant result of sendMessage
          */getHistory=function getHistory(params,callback){if(parseInt(params.threadId)>0){var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.GET_HISTORY,typeCode:generalTypeCode,//params.typeCode,
-content:{},subjectId:params.threadId},whereClause={},offset=parseInt(params.offset)>0?parseInt(params.offset):0,count=parseInt(params.count)>0?parseInt(params.count):config.getHistoryCount,order=typeof params.order!='undefined'?params.order.toLowerCase():'desc',functionLevelCache=typeof params.cache=='boolean'?params.cache:true,cacheResult={},serverResult={},cacheFirstMessage,cacheLastMessage,messages,returnCache,cacheReady=false,dynamicHistoryCount=params.dynamicHistoryCount&&typeof params.dynamicHistoryCount==='boolean'?params.dynamicHistoryCount:false,sendingQueue=params.queues&&typeof params.queues.sending==='boolean'?params.queues.sending:true,failedQueue=params.queues&&typeof params.queues.failed==='boolean'?params.queues.failed:true,uploadingQueue=params.queues&&typeof params.queues.uploading==='boolean'?params.queues.uploading:true,sendingQueueMessages=[],failedQueueMessages=[],uploadingQueueMessages=[];if(sendingQueue){getChatSendQueue(parseInt(params.threadId),function(sendQueueMessages){for(var i=0;i<sendQueueMessages.length;i++){var time=new Date().getTime();sendingQueueMessages.push(formatDataToMakeMessage(sendQueueMessages[i].threadId,{uniqueId:sendQueueMessages[i].uniqueId,ownerId:chatMessaging.userInfo.id,message:sendQueueMessages[i].content,metadata:sendQueueMessages[i].metadata,systemMetadata:sendQueueMessages[i].systemMetadata,replyInfo:sendQueueMessages[i].replyInfo,forwardInfo:sendQueueMessages[i].forwardInfo,time:time,timeNanos:time%1000*1000000}));}});}if(uploadingQueue){getChatUploadQueue(parseInt(params.threadId),function(uploadQueueMessages){for(var i=0;i<uploadQueueMessages.length;i++){uploadQueueMessages[i].message.participant=chatMessaging.userInfo;var time=new Date().getTime();uploadQueueMessages[i].message.time=time;uploadQueueMessages[i].message.timeNanos=time%1000*1000000;uploadingQueueMessages.push(formatDataToMakeMessage(params.threadId,uploadQueueMessages[i].message,false));}});}getChatWaitQueue(parseInt(params.threadId),failedQueue,function(waitQueueMessages){if(cacheSecret.length>0){for(var i=0;i<waitQueueMessages.length;i++){var decryptedEnqueuedMessage={};if(cacheInMemory){decryptedEnqueuedMessage=waitQueueMessages[i];}else{decryptedEnqueuedMessage=_utility["default"].jsonParser(chatDecrypt(waitQueueMessages[i].message,cacheSecret));}var time=new Date().getTime();failedQueueMessages[i]=formatDataToMakeMessage(waitQueueMessages[i].threadId,{uniqueId:decryptedEnqueuedMessage.uniqueId,ownerId:chatMessaging.userInfo.id,message:decryptedEnqueuedMessage.content,metadata:decryptedEnqueuedMessage.metadata,systemMetadata:decryptedEnqueuedMessage.systemMetadata,replyInfo:decryptedEnqueuedMessage.replyInfo,forwardInfo:decryptedEnqueuedMessage.forwardInfo,participant:chatMessaging.userInfo,time:time,timeNanos:time%1000*1000000});}}else{failedQueueMessages=[];}if(dynamicHistoryCount){var tempCount=count-(sendingQueueMessages.length+failedQueueMessages.length+uploadingQueueMessages.length);sendMessageParams.content.count=tempCount>0?tempCount:0;}else{sendMessageParams.content.count=count;}sendMessageParams.content.offset=offset;sendMessageParams.content.order=order;if(parseInt(params.messageId)>0){sendMessageParams.content.id=whereClause.id=params.messageId;}if(Array.isArray(params.uniqueIds)){sendMessageParams.content.uniqueIds=params.uniqueIds;}if(parseInt(params.fromTimeFull)>0&&params.fromTimeFull.toString().length===19){sendMessageParams.content.fromTime=whereClause.fromTime=parseInt(params.fromTimeFull.toString().substring(0,13));sendMessageParams.content.fromTimeNanos=whereClause.fromTimeNanos=parseInt(params.fromTimeFull.toString().substring(10,19));}else{if(parseInt(params.fromTime)>0&&parseInt(params.fromTime)<9999999999999){sendMessageParams.content.fromTime=whereClause.fromTime=parseInt(params.fromTime);}if(parseInt(params.fromTimeNanos)>0&&parseInt(params.fromTimeNanos)<999999999){sendMessageParams.content.fromTimeNanos=whereClause.fromTimeNanos=parseInt(params.fromTimeNanos);}}if(parseInt(params.toTimeFull)>0&&params.toTimeFull.toString().length===19){sendMessageParams.content.toTime=whereClause.toTime=parseInt(params.toTimeFull.toString().substring(0,13));sendMessageParams.content.toTimeNanos=whereClause.toTimeNanos=parseInt(params.toTimeFull.toString().substring(10,19));}else{if(parseInt(params.toTime)>0&&parseInt(params.toTime)<9999999999999){sendMessageParams.content.toTime=whereClause.toTime=parseInt(params.toTime);}if(parseInt(params.toTimeNanos)>0&&parseInt(params.toTimeNanos)<999999999){sendMessageParams.content.toTimeNanos=whereClause.toTimeNanos=parseInt(params.toTimeNanos);}}if(typeof params.query!='undefined'){sendMessageParams.content.query=whereClause.query=params.query;}if(params.allMentioned&&typeof params.allMentioned=='boolean'){sendMessageParams.content.allMentioned=whereClause.allMentioned=params.allMentioned;}if(params.unreadMentioned&&typeof params.unreadMentioned=='boolean'){sendMessageParams.content.unreadMentioned=whereClause.unreadMentioned=params.unreadMentioned;}if(params.messageType&&typeof params.messageType.toUpperCase()!=='undefined'&&_constants.chatMessageTypes[params.messageType.toUpperCase()]>0){sendMessageParams.content.messageType=whereClause.messageType=_constants.chatMessageTypes[params.messageType.toUpperCase()];}if((0,_typeof2["default"])(params.metadataCriteria)=='object'&&params.metadataCriteria.hasOwnProperty('field')){sendMessageParams.content.metadataCriteria=whereClause.metadataCriteria=params.metadataCriteria;}/**
+content:{},subjectId:params.threadId},whereClause={},offset=parseInt(params.offset)>0?parseInt(params.offset):0,count=parseInt(params.count)>0?parseInt(params.count):config.getHistoryCount,order=typeof params.order!='undefined'?params.order.toLowerCase():'desc',functionLevelCache=typeof params.cache=='boolean'?params.cache:true,cacheResult={},serverResult={},cacheFirstMessage,cacheLastMessage,messages,returnCache,cacheReady=false,dynamicHistoryCount=params.dynamicHistoryCount&&typeof params.dynamicHistoryCount==='boolean'?params.dynamicHistoryCount:false,sendingQueue=params.queues&&typeof params.queues.sending==='boolean'?params.queues.sending:true,failedQueue=params.queues&&typeof params.queues.failed==='boolean'?params.queues.failed:true,uploadingQueue=params.queues&&typeof params.queues.uploading==='boolean'?params.queues.uploading:true,sendingQueueMessages=[],failedQueueMessages=[],uploadingQueueMessages=[];if(sendingQueue){getChatSendQueue(parseInt(params.threadId),function(sendQueueMessages){for(var i=0;i<sendQueueMessages.length;i++){var time=new Date().getTime();sendingQueueMessages.push(formatDataToMakeMessage(sendQueueMessages[i].threadId,{uniqueId:sendQueueMessages[i].uniqueId,ownerId:chatMessaging.userInfo.id,message:sendQueueMessages[i].content,metadata:sendQueueMessages[i].metadata,systemMetadata:sendQueueMessages[i].systemMetadata,replyInfo:sendQueueMessages[i].replyInfo,forwardInfo:sendQueueMessages[i].forwardInfo,time:time,timeNanos:time%1000*1000000}));}});}if(uploadingQueue){getChatUploadQueue(parseInt(params.threadId),function(uploadQueueMessages){for(var i=0;i<uploadQueueMessages.length;i++){uploadQueueMessages[i].message.participant=chatMessaging.userInfo;var time=new Date().getTime();uploadQueueMessages[i].message.time=time;uploadQueueMessages[i].message.timeNanos=time%1000*1000000;uploadingQueueMessages.push(formatDataToMakeMessage(params.threadId,uploadQueueMessages[i].message,false));}});}getChatWaitQueue(parseInt(params.threadId),failedQueue,function(waitQueueMessages){if(cacheSecret.length>0){for(var i=0;i<waitQueueMessages.length;i++){var decryptedEnqueuedMessage={};if(cacheInMemory){decryptedEnqueuedMessage=waitQueueMessages[i];}else{decryptedEnqueuedMessage=_utility["default"].jsonParser(chatDecrypt(waitQueueMessages[i].message,cacheSecret));}var time=new Date().getTime();failedQueueMessages[i]=formatDataToMakeMessage(waitQueueMessages[i].threadId,{uniqueId:decryptedEnqueuedMessage.uniqueId,ownerId:chatMessaging.userInfo.id,message:decryptedEnqueuedMessage.content,metadata:decryptedEnqueuedMessage.metadata,systemMetadata:decryptedEnqueuedMessage.systemMetadata,replyInfo:decryptedEnqueuedMessage.replyInfo,forwardInfo:decryptedEnqueuedMessage.forwardInfo,participant:chatMessaging.userInfo,time:time,timeNanos:time%1000*1000000});}}else{failedQueueMessages=[];}if(dynamicHistoryCount){var tempCount=count-(sendingQueueMessages.length+failedQueueMessages.length+uploadingQueueMessages.length);sendMessageParams.content.count=tempCount>0?tempCount:0;}else{sendMessageParams.content.count=count;}sendMessageParams.content.offset=offset;sendMessageParams.content.order=order;if(parseInt(params.messageId)>0){sendMessageParams.content.id=whereClause.id=params.messageId;}if(Array.isArray(params.uniqueIds)){sendMessageParams.content.uniqueIds=params.uniqueIds;}if(parseInt(params.fromTimeFull)>0&&params.fromTimeFull.toString().length===19){sendMessageParams.content.fromTime=whereClause.fromTime=parseInt(params.fromTimeFull.toString().substring(0,13));sendMessageParams.content.fromTimeNanos=whereClause.fromTimeNanos=parseInt(params.fromTimeFull.toString().substring(10,19));}else{if(parseInt(params.fromTime)>0&&parseInt(params.fromTime)<9999999999999){sendMessageParams.content.fromTime=whereClause.fromTime=parseInt(params.fromTime);}if(parseInt(params.fromTimeNanos)>0&&parseInt(params.fromTimeNanos)<999999999){sendMessageParams.content.fromTimeNanos=whereClause.fromTimeNanos=parseInt(params.fromTimeNanos);}}if(parseInt(params.toTimeFull)>0&&params.toTimeFull.toString().length===19){sendMessageParams.content.toTime=whereClause.toTime=parseInt(params.toTimeFull.toString().substring(0,13));sendMessageParams.content.toTimeNanos=whereClause.toTimeNanos=parseInt(params.toTimeFull.toString().substring(10,19));}else{if(parseInt(params.toTime)>0&&parseInt(params.toTime)<9999999999999){sendMessageParams.content.toTime=whereClause.toTime=parseInt(params.toTime);}if(parseInt(params.toTimeNanos)>0&&parseInt(params.toTimeNanos)<999999999){sendMessageParams.content.toTimeNanos=whereClause.toTimeNanos=parseInt(params.toTimeNanos);}}if(typeof params.query!='undefined'){sendMessageParams.content.query=whereClause.query=params.query;}if(params.allMentioned&&typeof params.allMentioned=='boolean'){sendMessageParams.content.allMentioned=whereClause.allMentioned=params.allMentioned;}if(params.unreadMentioned&&typeof params.unreadMentioned=='boolean'){sendMessageParams.content.unreadMentioned=whereClause.unreadMentioned=params.unreadMentioned;}if(params.messageType&&typeof params.messageType.toUpperCase()!=='undefined'&&_constants.chatMessageTypes[params.messageType.toUpperCase()]>0){sendMessageParams.content.messageType=whereClause.messageType=_constants.chatMessageTypes[params.messageType.toUpperCase()];}if((0,_typeof2["default"])(params.metadataCriteria)=='object'&&params.metadataCriteria.hasOwnProperty('field')){sendMessageParams.content.metadataCriteria=whereClause.metadataCriteria=params.metadataCriteria;}if(typeof params.onlyNewMessages==="boolean"){sendMessageParams.content.newMessages=params.onlyNewMessages;}/**
                      * Get Thread Messages from cache
                      *
                      * Because we are not applying metadataCriteria search
@@ -47720,7 +47769,7 @@ content:JSON.stringify({'mute':typeof params.countMuteThreads==='boolean'?params
      * @param {string}  query           Search in contacts list to get (search LIKE firstName, lastName, email)
      *
      * @return {object} Instant Response
-     */publicized.getContacts=function(params,callback){var count=50,offset=0,content={},whereClause={},returnCache=false;if(params){if(parseInt(params.count)>0){count=parseInt(params.count);}if(parseInt(params.offset)>0){offset=parseInt(params.offset);}if(typeof params.query==='string'){content.query=whereClause.query=params.query;}if(typeof params.email==='string'){content.email=whereClause.email=params.email;}if(typeof params.cellphoneNumber==='string'){content.cellphoneNumber=whereClause.cellphoneNumber=params.cellphoneNumber;}if(parseInt(params.contactId)>0){content.id=whereClause.id=params.contactId;}if(typeof params.uniqueId==='string'){content.uniqueId=whereClause.uniqueId=params.uniqueId;}if(typeof params.username==='string'){content.username=params.username;}var functionLevelCache=typeof params.cache=='boolean'?params.cache:true;}content.size=count;content.offset=offset;var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.GET_CONTACTS,typeCode:generalTypeCode,//params.typeCode,
+     */publicized.getContacts=function(params,callback){var count=50,offset=0,content={},whereClause={},returnCache=false;if(params){if(parseInt(params.count)>0){count=parseInt(params.count);}if(parseInt(params.offset)>0){offset=parseInt(params.offset);}if(typeof params.query==='string'){content.query=whereClause.query=params.query;}if(typeof params.email==='string'){content.email=whereClause.email=params.email;}if(typeof params.cellphoneNumber==='string'){content.cellphoneNumber=whereClause.cellphoneNumber=params.cellphoneNumber;}if(parseInt(params.contactId)>0){content.id=whereClause.id=params.contactId;}if(typeof params.uniqueId==='string'){content.uniqueId=whereClause.uniqueId=params.uniqueId;}if(typeof params.username==='string'){content.username=params.username;}if(typeof params.coreUserId!=="undefined"){content.coreUserId=params.coreUserId;}var functionLevelCache=typeof params.cache=='boolean'?params.cache:true;}content.size=count;content.offset=offset;var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.GET_CONTACTS,typeCode:generalTypeCode,//params.typeCode,
 content:content};/**
          * Retrieve contacts from cache #cache
          */if(functionLevelCache&&canUseCache&&cacheSecret.length>0){if(db){/**
@@ -48047,7 +48096,7 @@ content:{count:count,offset:offset}};if(params){if((0,_typeof2["default"])(param
          * + locationPingRequest     {object}
          *    + content              {list} A map of { location: string, locationId: int }
          */var locationPingData={chatMessageVOType:_constants.chatMessageVOTypes.LOCATION_PING,typeCode:generalTypeCode,//params.typeCode,
-pushMsgType:3,token:token},content={};if(params){if(typeof params.location==='string'&&locationPingTypes.hasOwnProperty(params.location.toUpperCase())){content.location=locationPingTypes[params.location.toUpperCase()];if(params.location.toUpperCase()==='THREAD'){if(typeof params.threadId==='number'&&params.threadId>0){content.locationId=+params.threadId;}else{_events.chatEvents.fireEvent('error',{code:999,message:'You set the location to be a thread, you have to send a valid ThreadId'});return;}}}else{_events.chatEvents.fireEvent('error',{code:999,message:'Send a valid location type (CHAT / THREAD / CONTACTS)'});return;}locationPingData.content=JSON.stringify(content);}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to LocationPing!'});return;}return chatMessaging.sendMessage(locationPingData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.clearChatServerCaches=clearChatServerCaches;publicized.deleteCacheDatabases=deleteCacheDatabases;publicized.clearCacheDatabasesOfUser=clearCacheDatabasesOfUser;publicized.getChatState=function(){return chatFullStateObject;};publicized.reconnect=function(){asyncClient.reconnectSocket();};publicized.setToken=function(newToken){if(typeof newToken!=='undefined'){token=newToken;callModule.updateToken(token);chatMessaging.updateToken(token);_events.chatEvents.updateToken(token);}};publicized.generateUUID=_utility["default"].generateUUID;publicized.logout=function(){clearChatServerCaches();_events.chatEvents.clearEventCallbacks();chatMessaging.messagesCallbacks={};chatMessaging.sendMessageCallbacks={};chatMessaging.threadCallbacks={};asyncClient.logout();};publicized.inviteeIdTypes=_constants.inviteeVOidTypes;/**
+pushMsgType:3,token:token},content={};if(params){if(typeof params.location==='string'&&locationPingTypes.hasOwnProperty(params.location.toUpperCase())){content.location=locationPingTypes[params.location.toUpperCase()];if(params.location.toUpperCase()==='THREAD'){if(typeof params.threadId==='number'&&params.threadId>0){content.locationId=+params.threadId;}else{_events.chatEvents.fireEvent('error',{code:999,message:'You set the location to be a thread, you have to send a valid ThreadId'});return;}}}else{_events.chatEvents.fireEvent('error',{code:999,message:'Send a valid location type (CHAT / THREAD / CONTACTS)'});return;}locationPingData.content=JSON.stringify(content);}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to LocationPing!'});return;}return chatMessaging.sendMessage(locationPingData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.clearChatServerCaches=clearChatServerCaches;publicized.deleteCacheDatabases=deleteCacheDatabases;publicized.clearCacheDatabasesOfUser=clearCacheDatabasesOfUser;publicized.getChatState=function(){return chatFullStateObject;};publicized.reconnect=function(){asyncClient.reconnectSocket();};publicized.setToken=function(newToken){if(typeof newToken!=='undefined'){token=newToken;callModule.updateToken(token);chatMessaging.updateToken(token);_events.chatEvents.updateToken(token);}};publicized.generateUUID=_utility["default"].generateUUID;publicized.logout=function(){clearChatServerCaches();_events.chatEvents.clearEventCallbacks();chatMessaging.messagesCallbacks={};chatMessaging.sendMessageCallbacks={};chatMessaging.threadCallbacks={};chatMessaging.stopChatPing();asyncClient.logout();};publicized.inviteeIdTypes=_constants.inviteeVOidTypes;/**
      * Check a turn server availability
      *
      * @param turnIp
@@ -48984,10 +49033,25 @@ function ChatMessaging(params) {
   this.threadCallbacks = {};
   this.sendMessageCallbacks = {};
   this.messagesCallbacks = {};
-  this.asyncRequestTimeouts = {};
-  this.sendPingTimeout = null;
+  this.asyncRequestTimeouts = {}; // this.sendPingTimeout = null;
+
   this.chatState = false;
   this.userInfo = null;
+  /**
+   * sendPingTimeout removed,
+   *
+   * TODO: remove the interval when socket statet changes to closed
+   */
+
+  this.startChatPing = function () {
+    chatPingMessageInterval = setInterval(function () {
+      currentModuleInstance.ping();
+    }, 20000); //TODO: chatPingMessageInterval
+  };
+
+  this.stopChatPing = function () {
+    clearInterval(chatPingMessageInterval);
+  };
 
   this.asyncInitialized = function (client) {
     asyncClient = client;
@@ -49224,11 +49288,12 @@ function ChatMessaging(params) {
         }
       }, asyncRequestTimeout);
     }
+    /*          currentModuleInstance.sendPingTimeout && clearTimeout(currentModuleInstance.sendPingTimeout);
+                currentModuleInstance.sendPingTimeout = setTimeout(function () {
+                    currentModuleInstance.ping();
+                }, chatPingMessageInterval); */
 
-    currentModuleInstance.sendPingTimeout && clearTimeout(currentModuleInstance.sendPingTimeout);
-    currentModuleInstance.sendPingTimeout = setTimeout(function () {
-      currentModuleInstance.ping();
-    }, chatPingMessageInterval);
+
     recursiveCallback && recursiveCallback();
     return {
       uniqueId: uniqueId,
@@ -49260,9 +49325,11 @@ function ChatMessaging(params) {
         chatMessageVOType: _constants.chatMessageVOTypes.PING,
         pushMsgType: 3
       });
-    } else {
-      currentModuleInstance.sendPingTimeout && clearTimeout(currentModuleInstance.sendPingTimeout);
     }
+    /*else {
+        currentModuleInstance.sendPingTimeout && clearTimeout(currentModuleInstance.sendPingTimeout);
+    }*/
+
   };
 } // if (typeof module !== 'undefined' && typeof module.exports != 'undefined') {
 //     module.exports = ChatMessaging;
