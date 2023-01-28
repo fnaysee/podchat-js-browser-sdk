@@ -27,9 +27,23 @@ import {errorList, raiseError} from "./lib/errorHandler";
         this.sendMessageCallbacks = {};
         this.messagesCallbacks = {};
         this.asyncRequestTimeouts = {};
-        this.sendPingTimeout = null;
+        // this.sendPingTimeout = null;
         this.chatState = false;
         this.userInfo = null;
+
+        /**
+         * sendPingTimeout removed,
+         *
+         * TODO: remove the interval when socket statet changes to closed
+         */
+        this.startChatPing = function () {
+            chatPingMessageInterval = setInterval(() => {
+                currentModuleInstance.ping();
+            }, 20000) ;//TODO: chatPingMessageInterval
+        }
+        this.stopChatPing = function() {
+            clearInterval(chatPingMessageInterval);
+        }
 
         this.asyncInitialized = function (client) {
             asyncClient = client
@@ -270,10 +284,10 @@ import {errorList, raiseError} from "./lib/errorHandler";
                 }, asyncRequestTimeout);
             }
 
-            currentModuleInstance.sendPingTimeout && clearTimeout(currentModuleInstance.sendPingTimeout);
+/*          currentModuleInstance.sendPingTimeout && clearTimeout(currentModuleInstance.sendPingTimeout);
             currentModuleInstance.sendPingTimeout = setTimeout(function () {
                 currentModuleInstance.ping();
-            }, chatPingMessageInterval);
+            }, chatPingMessageInterval); */
 
             recursiveCallback && recursiveCallback();
 
@@ -306,9 +320,10 @@ import {errorList, raiseError} from "./lib/errorHandler";
                     chatMessageVOType: chatMessageVOTypes.PING,
                     pushMsgType: 3
                 });
-            } else {
-                currentModuleInstance.sendPingTimeout && clearTimeout(currentModuleInstance.sendPingTimeout);
             }
+            /*else {
+                currentModuleInstance.sendPingTimeout && clearTimeout(currentModuleInstance.sendPingTimeout);
+            }*/
         };
 
     }

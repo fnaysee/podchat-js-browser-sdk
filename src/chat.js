@@ -407,16 +407,23 @@ function Chat(params) {
                     case 1: // CONNECTED
                         if (state.deviceRegister && state.serverRegister) {
                             chatMessaging.chatState = true;
-                            chatMessaging.ping();
+                            // chatMessaging.ping();
+                            chatMessaging.startChatPing();
                         }
                         break;
                     case 0: // CONNECTING
+                        chatMessaging.chatState = false;
+                        chatMessaging.stopChatPing();
+                        break;
                     case 2: // CLOSING
+                        chatMessaging.chatState = false;
+                        chatMessaging.stopChatPing();
+                        break;
                     case 3: // CLOSED
                         chatMessaging.chatState = false;
-
+                        chatMessaging.stopChatPing();
                         // TODO: Check if this is OK or not?!
-                        chatMessaging.sendPingTimeout && clearTimeout(chatMessaging.sendPingTimeout);
+                        //chatMessaging.sendPingTimeout && clearTimeout(chatMessaging.sendPingTimeout);
                         break;
                 }
             });
@@ -14156,6 +14163,7 @@ function Chat(params) {
         chatMessaging.messagesCallbacks = {};
         chatMessaging.sendMessageCallbacks = {};
         chatMessaging.threadCallbacks = {};
+        chatMessaging.stopChatPing();
 
         asyncClient.logout();
     };
