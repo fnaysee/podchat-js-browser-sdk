@@ -6318,7 +6318,12 @@ function Chat(params) {
             if (typeof params.name === 'string') {
                 sendMessageParams.content.name = whereClause.name = params.name;
             }
-
+            if (typeof params.username === 'string') {
+                sendMessageParams.content.username = whereClause.username = params.username;
+            }
+            if (typeof params.cellphoneNumber === 'string') {
+                sendMessageParams.content.cellphoneNumber = whereClause.cellphoneNumber = params.cellphoneNumber;
+            }
             if (typeof params.admin === 'boolean') {
                 sendMessageParams.content.admin = params.admin;
             }
