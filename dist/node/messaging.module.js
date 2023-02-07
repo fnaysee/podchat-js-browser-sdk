@@ -248,7 +248,8 @@ function ChatMessaging(params) {
         priority: asyncPriority,
         content: JSON.stringify(messageVO),
         ttl: params.messageTtl > 0 ? params.messageTtl : messageTtl
-      }
+      },
+      uniqueId: messageVO.uniqueId
     };
     asyncClient.send(data, function (res) {
       if (!res.hasError && callbacks) {

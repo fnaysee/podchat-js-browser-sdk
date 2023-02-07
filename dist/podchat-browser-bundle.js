@@ -39241,6 +39241,8 @@ module.exports = function (thing, encoding, name) {
                             }
                         }
 
+                        logLevel.debug && console.debug("[Async][async.js] on socket close, retryStep:", retryStep.get());
+
                         socketState = socketStateType.CLOSED;
                         fireEvent('stateChange', {
                             socketState: socketState,
@@ -39631,6 +39633,7 @@ module.exports = function (thing, encoding, name) {
 
             var socketData = {
                 type: messageType,
+                uniqueId: params.uniqueId ? params.uniqueId : undefined,
                 content: params.content
             };
 
@@ -39953,7 +39956,8 @@ module.exports = function (thing, encoding, name) {
 
       sendData = function(params) {
         var data = {
-          type: params.type
+          type: params.type,
+          uniqueId: params.uniqueId
         };
 
         if (params.trackerId) {
@@ -49241,7 +49245,8 @@ function ChatMessaging(params) {
         priority: asyncPriority,
         content: JSON.stringify(messageVO),
         ttl: params.messageTtl > 0 ? params.messageTtl : messageTtl
-      }
+      },
+      uniqueId: messageVO.uniqueId
     };
     asyncClient.send(data, function (res) {
       if (!res.hasError && callbacks) {

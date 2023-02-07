@@ -236,7 +236,8 @@ import {errorList, raiseError} from "./lib/errorHandler";
                     ttl: (params.messageTtl > 0)
                         ? params.messageTtl
                         : messageTtl
-                }
+                },
+                uniqueId: messageVO.uniqueId
             };
 
             asyncClient.send(data, function (res) {
