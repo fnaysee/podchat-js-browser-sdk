@@ -11897,7 +11897,7 @@ function Chat(params) {
                 data.typeCode = generalTypeCode;
             }
 
-            data.ownerId = typeCodeOwnerId ? typeCodeOwnerId : (params.onwerId ? params.ownerId : undefined);
+            data.ownerId = typeCodeOwnerId ? typeCodeOwnerId : (params.ownerId ? params.ownerId : undefined);
 
             if (typeof params.cellphoneNumber === 'string') {
                 data.cellphoneNumber = params.cellphoneNumber;
@@ -12460,7 +12460,7 @@ function Chat(params) {
             }
         }
 
-        data.ownerId = typeCodeOwnerId ? typeCodeOwnerId : (params.onwerId ? params.ownerId : undefined);
+        data.ownerId = typeCodeOwnerId ? typeCodeOwnerId : (params.ownerId ? params.ownerId : undefined);
 
 
         var requestParams = {
