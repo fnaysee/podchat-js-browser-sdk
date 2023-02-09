@@ -32,6 +32,7 @@ function Chat(params) {
         oldPeerId,
         token = params.token,
         generalTypeCode = params.typeCode || 'default',
+        typeCodeOwnerId = params.typeCodeOwnerId || null,
         mapApiKey = params.mapApiKey || '8b77db18704aa646ee5aaea13e7370f4f88b9e8c',
         deviceId,
         productEnv = (typeof navigator != 'undefined') ? navigator.product : 'undefined',
@@ -201,6 +202,7 @@ function Chat(params) {
             //Utility: Utility,
             consoleLogging: consoleLogging,
             generalTypeCode: generalTypeCode,
+            typeCodeOwnerId,
             chatPingMessageInterval: chatPingMessageInterval,
             asyncRequestTimeout: asyncRequestTimeout,
             serverName: serverName,
@@ -11895,6 +11897,8 @@ function Chat(params) {
                 data.typeCode = generalTypeCode;
             }
 
+            data.ownerId = typeCodeOwnerId ? typeCodeOwnerId : (params.onwerId ? params.ownerId : undefined);
+
             if (typeof params.cellphoneNumber === 'string') {
                 data.cellphoneNumber = params.cellphoneNumber;
             } else {
@@ -12455,6 +12459,9 @@ function Chat(params) {
                 });
             }
         }
+
+        data.ownerId = typeCodeOwnerId ? typeCodeOwnerId : (params.onwerId ? params.ownerId : undefined);
+
 
         var requestParams = {
             url: SERVICE_ADDRESSES.PLATFORM_ADDRESS + SERVICES_PATH.REMOVE_CONTACTS,
