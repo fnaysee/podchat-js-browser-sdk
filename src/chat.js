@@ -4505,6 +4505,13 @@ function Chat(params) {
                 }
 
                 var functionLevelCache = (typeof params.cache == 'boolean') ? params.cache : true;
+
+                if (typeof params.isGroup === 'boolean') {
+                    content.isGroup = params.isGroup;
+                }
+                if (typeof params.type === 'number') {
+                    content.type = params.type;
+                }
             }
 
             content.count = count;

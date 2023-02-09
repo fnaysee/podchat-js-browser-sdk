@@ -1772,7 +1772,9 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
             offset: document.getElementById('g-p2p-off').value,
             // fromTime: 1651918475566 ,
             // toTime: new Date().getTime(),
-            // new: true
+            // new: true,
+            // isGroup: true,
+            // type: 0//undefined OR integer: NORMAL: 0x0, OWNER_GROUP: 0x1, PUBLIC_GROUP: 0x2, CHANNEL_GROUP: 0x4, CHANNEL: 0x8, NOTIFICATION_CHANNEL: 0x10, PUBLIC_THREAD: 0x20, PUBLIC_CHANNEL: 0x40, SELF: 0x80
         })">Get Threads</a>
         <a class="btn" href="#" onclick="getHistory({
 //            fromTimeFull: 1557830885624256000,
