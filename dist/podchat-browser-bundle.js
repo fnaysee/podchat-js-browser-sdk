@@ -34315,53 +34315,36 @@ utils.intFromLE = intFromLE;
 arguments[4][27][0].apply(exports,arguments)
 },{"buffer":31,"dup":27}],148:[function(require,module,exports){
 module.exports={
-  "_args": [
-    [
-      "elliptic@6.5.4",
-      "D:\\pod-chat-sdk\\chat-js-browser-sdk"
-    ]
+  "name": "elliptic",
+  "version": "6.5.4",
+  "description": "EC cryptography",
+  "main": "lib/elliptic.js",
+  "files": [
+    "lib"
   ],
-  "_development": true,
-  "_from": "elliptic@6.5.4",
-  "_id": "elliptic@6.5.4",
-  "_inBundle": false,
-  "_integrity": "sha512-iLhC6ULemrljPZb+QutR5TQGB+pdW6KGD5RSegS+8sorOZT+rdQFbsQFJgvN3eRqNALqJer4oQ16YvJHlU8hzQ==",
-  "_location": "/elliptic",
-  "_phantomChildren": {},
-  "_requested": {
-    "type": "version",
-    "registry": true,
-    "raw": "elliptic@6.5.4",
-    "name": "elliptic",
-    "escapedName": "elliptic",
-    "rawSpec": "6.5.4",
-    "saveSpec": null,
-    "fetchSpec": "6.5.4"
+  "scripts": {
+    "lint": "eslint lib test",
+    "lint:fix": "npm run lint -- --fix",
+    "unit": "istanbul test _mocha --reporter=spec test/index.js",
+    "test": "npm run lint && npm run unit",
+    "version": "grunt dist && git add dist/"
   },
-  "_requiredBy": [
-    "/browserify-sign",
-    "/create-ecdh"
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:indutny/elliptic"
+  },
+  "keywords": [
+    "EC",
+    "Elliptic",
+    "curve",
+    "Cryptography"
   ],
-  "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.5.4.tgz",
-  "_spec": "6.5.4",
-  "_where": "D:\\pod-chat-sdk\\chat-js-browser-sdk",
-  "author": {
-    "name": "Fedor Indutny",
-    "email": "fedor@indutny.com"
-  },
+  "author": "Fedor Indutny <fedor@indutny.com>",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/indutny/elliptic/issues"
   },
-  "dependencies": {
-    "bn.js": "^4.11.9",
-    "brorand": "^1.1.0",
-    "hash.js": "^1.0.0",
-    "hmac-drbg": "^1.0.1",
-    "inherits": "^2.0.4",
-    "minimalistic-assert": "^1.0.1",
-    "minimalistic-crypto-utils": "^1.0.1"
-  },
-  "description": "EC cryptography",
+  "homepage": "https://github.com/indutny/elliptic",
   "devDependencies": {
     "brfs": "^2.0.2",
     "coveralls": "^3.1.0",
@@ -34377,31 +34360,15 @@ module.exports={
     "istanbul": "^0.4.5",
     "mocha": "^8.0.1"
   },
-  "files": [
-    "lib"
-  ],
-  "homepage": "https://github.com/indutny/elliptic",
-  "keywords": [
-    "EC",
-    "Elliptic",
-    "curve",
-    "Cryptography"
-  ],
-  "license": "MIT",
-  "main": "lib/elliptic.js",
-  "name": "elliptic",
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/indutny/elliptic.git"
-  },
-  "scripts": {
-    "lint": "eslint lib test",
-    "lint:fix": "npm run lint -- --fix",
-    "test": "npm run lint && npm run unit",
-    "unit": "istanbul test _mocha --reporter=spec test/index.js",
-    "version": "grunt dist && git add dist/"
-  },
-  "version": "6.5.4"
+  "dependencies": {
+    "bn.js": "^4.11.9",
+    "brorand": "^1.1.0",
+    "hash.js": "^1.0.0",
+    "hmac-drbg": "^1.0.1",
+    "inherits": "^2.0.4",
+    "minimalistic-assert": "^1.0.1",
+    "minimalistic-crypto-utils": "^1.0.1"
+  }
 }
 
 },{}],149:[function(require,module,exports){
@@ -45985,7 +45952,11 @@ consoleLogging:consoleLogging,chatEvents:_events.chatEvents,asyncClient:asyncCli
          *
          * @return {undefined}
          * @return {undefined}
-         */initAsync=function initAsync(){var asyncGetReadyTime=new Date().getTime();asyncClient=new _podasyncWsOnly["default"]({protocol:protocol,queueHost:queueHost,queuePort:queuePort,queueUsername:queueUsername,queuePassword:queuePassword,queueReceive:queueReceive,queueSend:queueSend,queueConnectionTimeout:queueConnectionTimeout,socketAddress:socketAddress,serverName:serverName,deviceId:deviceId,wsConnectionWaitTime:wsConnectionWaitTime,connectionRetryInterval:connectionRetryInterval,connectionCheckTimeout:connectionCheckTimeout,connectionCheckTimeoutThreshold:connectionCheckTimeoutThreshold,messageTtl:messageTtl,reconnectOnClose:reconnectOnClose,asyncLogging:asyncLogging,logLevel:consoleLogging?3:1});callModule.asyncInitialized(asyncClient);chatMessaging.asyncInitialized(asyncClient);asyncClient.on('asyncReady',function(){if(actualTimingLog){_utility["default"].chatStepLogger('Async Connection ',new Date().getTime()-asyncGetReadyTime);}peerId=asyncClient.getPeerId();if(!chatMessaging.userInfo){var getUserInfoTime=new Date().getTime();getUserInfo(function(userInfoResult){if(actualTimingLog){_utility["default"].chatStepLogger('Get User Info ',new Date().getTime()-getUserInfoTime);}if(!userInfoResult.hasError){chatMessaging.userInfo=userInfoResult.result.user;getAllThreads({summary:true,cache:false});/**
+         */initAsync=function initAsync(){var asyncGetReadyTime=new Date().getTime();asyncClient=new _podasyncWsOnly["default"]({protocol:protocol,queueHost:queueHost,queuePort:queuePort,queueUsername:queueUsername,queuePassword:queuePassword,queueReceive:queueReceive,queueSend:queueSend,queueConnectionTimeout:queueConnectionTimeout,socketAddress:socketAddress,serverName:serverName,deviceId:deviceId,wsConnectionWaitTime:wsConnectionWaitTime,connectionRetryInterval:connectionRetryInterval,connectionCheckTimeout:connectionCheckTimeout,connectionCheckTimeoutThreshold:connectionCheckTimeoutThreshold,messageTtl:messageTtl,reconnectOnClose:reconnectOnClose,asyncLogging:asyncLogging,logLevel:consoleLogging?3:1});callModule.asyncInitialized(asyncClient);chatMessaging.asyncInitialized(asyncClient);asyncClient.on('asyncReady',function(){if(actualTimingLog){_utility["default"].chatStepLogger('Async Connection ',new Date().getTime()-asyncGetReadyTime);}peerId=asyncClient.getPeerId();if(!chatMessaging.userInfo){var getUserInfoTime=new Date().getTime();getUserInfo(function(userInfoResult){if(actualTimingLog){_utility["default"].chatStepLogger('Get User Info ',new Date().getTime()-getUserInfoTime);}if(!userInfoResult.hasError){chatMessaging.userInfo=userInfoResult.result.user;// getAllThreads({
+//     summary: true,
+//     cache: false
+// });
+/**
                              * Check if user has KeyId stored in their cache or not?
                              */if(canUseCache){if(db){db.users.where('id').equals(parseInt(chatMessaging.userInfo.id)).toArray().then(function(users){if(users.length>0&&typeof users[0].keyId!='undefined'){var user=users[0];getEncryptionKey({keyId:user.keyId},function(result){if(!result.hasError){cacheSecret=result.secretKey;chatMessaging.chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();}else{if(result.message!==''){try{var response=JSON.parse(result.message);if(response.error==='invalid_param'){generateEncryptionKey({keyAlgorithm:'AES',keySize:256},function(){chatMessaging.chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();});}}catch(e){consoleLogging&&console.log(e);}}}});}else{generateEncryptionKey({keyAlgorithm:'AES',keySize:256},function(){chatMessaging.chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();});}})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.errorCode,message:error.errorMessage,error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}else{chatMessaging.chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();}}});}else if(chatMessaging.userInfo.id>0){chatMessaging.chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();}deliveryInterval&&clearInterval(deliveryInterval);deliveryInterval=setInterval(function(){if(Object.keys(messagesDelivery).length){messagesDeliveryQueueHandler();}},deliveryIntervalPitch);seenInterval&&clearInterval(seenInterval);seenInterval=setInterval(function(){if(Object.keys(messagesSeen).length){messagesSeenQueueHandler();}},seenIntervalPitch);//shouldReconnectCall();
 });asyncClient.on('stateChange',function(state){_events.chatEvents.fireEvent('chatState',state);chatFullStateObject=state;switch(state.socketState){case 1:// CONNECTED

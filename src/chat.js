@@ -297,10 +297,10 @@ function Chat(params) {
                         if (!userInfoResult.hasError) {
                             chatMessaging.userInfo = userInfoResult.result.user;
 
-                            getAllThreads({
-                                summary: true,
-                                cache: false
-                            });
+                            // getAllThreads({
+                            //     summary: true,
+                            //     cache: false
+                            // });
 
                             /**
                              * Check if user has KeyId stored in their cache or not?
