@@ -54,6 +54,8 @@ function ChatCall(params) {
             ? params.callOptions.callVideo.minHeight
             : 180,
         currentCallParams = {},
+        requestedCallId = null,
+        acceptedCallId = null,
         currentCallId = null,
         latestCallRequestId = null,
         //shouldReconnectCallTimeout = null,
@@ -79,8 +81,25 @@ function ChatCall(params) {
             callRequestReceived: false,
             callEstablishedInMySide: false,
             callRequestTimeout: null,
-            iCanAcceptTheCall: function () {
-                return callRequestController.callRequestReceived && callRequestController.callEstablishedInMySide;
+
+            iRequestedCall: false,
+            iAcceptedCall: false,
+
+            canProcessStartCall: function (callId) {
+                consoleLogging && console.log(
+                    "[SDK] canProcessStartCall:",
+                    {callId},
+                    {acceptedCallId},
+                    callRequestController.iAcceptedCall,
+                    callRequestController.iAcceptedCall && acceptedCallId == callId
+                );
+
+                if(callRequestController.iAcceptedCall && acceptedCallId == callId
+                    || callRequestController.iRequestedCall && requestedCallId == callId)
+                    return true;
+
+                return false;
+                //callRequestController.callRequestReceived && callRequestController.callEstablishedInMySide;
             },
             cameraPaused: true
         },
@@ -600,7 +619,7 @@ function ChatCall(params) {
                             manager.watchAudioLevel();
                         }
                         config.state = peerStates.CONNECTED;
-                        callRequestController.callEstablishedInMySide = true;
+                        // callRequestController.callEstablishedInMySide = true;
                         chatEvents.fireEvent('callEvents', {
                             type: 'CALL_STATUS',
                             errorCode: 7000,
@@ -1335,9 +1354,9 @@ function ChatCall(params) {
                 token: token
             };
 
-            if (!callRequestController.callEstablishedInMySide) {
-                return;
-            }
+            // if (!callRequestController.callEstablishedInMySide) {
+            //     return;
+            // }
 
             if (params) {
                 if (typeof +params.callId === 'number' && params.callId > 0) {
@@ -1706,7 +1725,7 @@ function ChatCall(params) {
                 }
             },
             maybeReconnectAllTopics: function (){
-                if(!callUsers || !Object.keys(callUsers).length || !callRequestController.callEstablishedInMySide)
+                if(!callUsers || !Object.keys(callUsers).length) //|| !callRequestController.callEstablishedInMySide
                     return;
 
                 for(let i in callUsers) {
@@ -2261,37 +2280,49 @@ function ChatCall(params) {
         },
 */
 
-        callStop = function (resetCallOwner = true, resetCurrentCallId = true, resetCameraPaused = true) {
+        callStop = function (resetCurrentCallId = true, resetCameraPaused = true) {
 
-            // callTopicHealthChecker.stopTopicsHealthCheck();
+            return new Promise((resolve, reject) => {
+                // callTopicHealthChecker.stopTopicsHealthCheck();
 
-            deviceManager.mediaStreams().stopVideoInput();
-            deviceManager.mediaStreams().stopAudioInput();
-            deviceManager.mediaStreams().stopScreenShareInput();
+                deviceManager.mediaStreams().stopVideoInput();
+                deviceManager.mediaStreams().stopAudioInput();
+                deviceManager.mediaStreams().stopScreenShareInput();
 
-            callStateController.removeAllCallParticipants();
+                callStateController.removeAllCallParticipants();
 
-            if (callStopQueue.callStarted) {
-                sendCallMessage({
-                    id: 'CLOSE'
-                }, null, {});
-                callStopQueue.callStarted = false;
-            }
+                if (callStopQueue.callStarted) {
+                    sendCallMessage({
+                        id: 'CLOSE'
+                    }, null, {});
+                    callStopQueue.callStarted = false;
+                }
 
-            if(resetCameraPaused)
-                callRequestController.cameraPaused = false;
+                if(resetCameraPaused)
+                    callRequestController.cameraPaused = false;
 
-            callRequestController.callEstablishedInMySide = false;
-            callRequestController.callRequestReceived = false;
-            clearTimeout(callRequestController.callRequestTimeout);
+                // callRequestController.iRequestedCall = false;
+                // callRequestController.iAcceptedCall = false;
+                //acceptedCallId = null;
+                //requestedCallId = null;
 
-            if(resetCallOwner)
-                callRequestController.imCallOwner = false;
+                // callRequestController.callEstablishedInMySide = false;
+                // callRequestController.callRequestReceived = false;
+                clearTimeout(callRequestController.callRequestTimeout);
 
-            currentCallParams = {};
+                // if(resetCallOwner)
+                //     callRequestController.imCallOwner = false;
 
-            if(resetCurrentCallId)
-                currentCallId = null;
+                currentCallParams = {};
+
+                if(resetCurrentCallId)
+                    currentCallId = null;
+
+
+                setTimeout(()=>{
+                    resolve(true)
+                }, 2000);
+            })
         },
 
         restartMediaOnKeyFrame = function (userId, timeouts) {
@@ -2656,7 +2687,7 @@ function ChatCall(params) {
              * Type 70    Send Call Request
              */
             case chatMessageVOTypes.CALL_REQUEST:
-                callRequestController.callRequestReceived = true;
+                // callRequestController.callRequestReceived = true;
                 callReceived({
                     callId: messageContent.callId
                 }, function (r) {
@@ -2676,7 +2707,6 @@ function ChatCall(params) {
                     // if(!currentCallId ) {
                     latestCallRequestId = messageContent.callId;
                     // }
-
                 } else {
                     chatEvents.fireEvent('callEvents', {
                         type: 'PARTNER_RECEIVED_YOUR_CALL',
@@ -2745,7 +2775,7 @@ function ChatCall(params) {
              * Type 74    Start Call (Start sender and receivers)
              */
             case chatMessageVOTypes.START_CALL:
-                if(!callRequestController.iCanAcceptTheCall()) {
+                if(!callRequestController.canProcessStartCall(threadId)) {
                     chatEvents.fireEvent('callEvents', {
                         type: 'CALL_STARTED_ELSEWHERE',
                         message: 'Call already started somewhere else..., aborting...'
@@ -2753,50 +2783,16 @@ function ChatCall(params) {
                     return;
                 }
 
-                callStop(false, false, false);
-                currentCallId = threadId;
-
-                if (chatMessaging.messagesCallbacks[uniqueId]) {
-                    chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
-                }
-
-                messageContent.callId = threadId;
-                chatEvents.fireEvent('callEvents', {
-                    type: 'CALL_STARTED',
-                    result: messageContent
-                });
-
-                if (typeof messageContent === 'object'
-                    && messageContent.hasOwnProperty('chatDataDto')
-                    && !!messageContent.chatDataDto.kurentoAddress) {
-
-                    callServerController.setServers(messageContent.chatDataDto.kurentoAddress.split(','));
-
-                    startCallWebRTCFunctions({
-                        video: messageContent.clientDTO.video,
-                        mute: messageContent.clientDTO.mute,
-                        sendingTopic: messageContent.clientDTO.topicSend,
-                        receiveTopic: messageContent.clientDTO.topicReceive,
-                        screenShare: messageContent.chatDataDto.screenShare,
-                        brokerAddress: messageContent.chatDataDto.brokerAddressWeb,
-                        turnAddress: messageContent.chatDataDto.turnAddress,
-                        internalTurnAddress: messageContent.chatDataDto.internalTurnAddress,
-                        selfData: messageContent.clientDTO,
-                        clientsList: messageContent.otherClientDtoList,
-                        screenShareOwner: +messageContent.chatDataDto.screenShareUser,
-                        recordingOwner: +messageContent.chatDataDto.recordingUser
-                    }, function (callDivs) {
-                        chatEvents.fireEvent('callEvents', {
-                            type: 'CALL_DIVS',
-                            result: callDivs
-                        });
-                    });
+                if(currentCallId) {
+                    endCall({callId: currentCallId});
+                    callStop( true, false);
+                    setTimeout(()=>{
+                        currentCallId = threadId;
+                        processChatStartCallEvent(type, messageContent, contentCount, threadId, uniqueId);
+                    }, 5000);
                 } else {
-                    chatEvents.fireEvent('callEvents', {
-                        type: 'CALL_ERROR',
-                        message: 'Chat Data DTO is not present!',
-                        environmentDetails: getSDKCallDetails()
-                    });
+                    currentCallId = threadId;
+                    processChatStartCallEvent(type, messageContent, contentCount, threadId, uniqueId);
                 }
 
                 break;
@@ -2898,7 +2894,7 @@ function ChatCall(params) {
              * Type 91    Send Group Call Request
              */
             case chatMessageVOTypes.GROUP_CALL_REQUEST:
-                callRequestController.callRequestReceived = true;
+                // callRequestController.callRequestReceived = true;
                 callReceived({
                     callId: messageContent.callId
                 }, function (r) {});
@@ -3188,7 +3184,9 @@ function ChatCall(params) {
              * Type 111    Kafka Call Session Created
              */
             case chatMessageVOTypes.CALL_SESSION_CREATED:
-                if(!callRequestController.callEstablishedInMySide)
+                // if(!callRequestController.callEstablishedInMySide)
+                //     return;
+                if(!callRequestController.iRequestedCall)
                     return;
 
                 chatEvents.fireEvent('callEvents', {
@@ -3196,12 +3194,9 @@ function ChatCall(params) {
                     result: messageContent
                 });
 
-                if(!currentCallId)
-                    currentCallId = messageContent.callId;
-
-
-                //currentCallId = messageContent.callId;
-
+                // if(!requestedCallId) {
+                requestedCallId = messageContent.callId;
+                // }
                 break;
 
             /**
@@ -3462,7 +3457,52 @@ function ChatCall(params) {
         }
     }
 
-    this.startCall = function (params, callback) {
+    function processChatStartCallEvent(type, messageContent, contentCount, threadId, uniqueId){
+        if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+        }
+
+        messageContent.callId = threadId;
+        chatEvents.fireEvent('callEvents', {
+            type: 'CALL_STARTED',
+            result: messageContent
+        });
+
+        if (typeof messageContent === 'object'
+            && messageContent.hasOwnProperty('chatDataDto')
+            && !!messageContent.chatDataDto.kurentoAddress) {
+
+            callServerController.setServers(messageContent.chatDataDto.kurentoAddress.split(','));
+
+            startCallWebRTCFunctions({
+                video: messageContent.clientDTO.video,
+                mute: messageContent.clientDTO.mute,
+                sendingTopic: messageContent.clientDTO.topicSend,
+                receiveTopic: messageContent.clientDTO.topicReceive,
+                screenShare: messageContent.chatDataDto.screenShare,
+                brokerAddress: messageContent.chatDataDto.brokerAddressWeb,
+                turnAddress: messageContent.chatDataDto.turnAddress,
+                internalTurnAddress: messageContent.chatDataDto.internalTurnAddress,
+                selfData: messageContent.clientDTO,
+                clientsList: messageContent.otherClientDtoList,
+                screenShareOwner: +messageContent.chatDataDto.screenShareUser,
+                recordingOwner: +messageContent.chatDataDto.recordingUser
+            }, function (callDivs) {
+                chatEvents.fireEvent('callEvents', {
+                    type: 'CALL_DIVS',
+                    result: callDivs
+                });
+            });
+        } else {
+            chatEvents.fireEvent('callEvents', {
+                type: 'CALL_ERROR',
+                message: 'Chat Data DTO is not present!',
+                environmentDetails: getSDKCallDetails()
+            });
+        }
+    }
+
+    this.startCall = async function (params, callback) {
         let startCallData = {
             chatMessageVOType: chatMessageVOTypes.CALL_REQUEST,
             typeCode: generalTypeCode, //params.typeCode,
@@ -3528,10 +3568,15 @@ function ChatCall(params) {
             return;
         }
 
+        // if(currentCallId) {
+        //     await callStop();
+        // }
+
         callRequestController.cameraPaused = (typeof params.cameraPaused === 'boolean') ? params.cameraPaused : false;
-        callRequestController.callRequestReceived = true;
-        callRequestController.callEstablishedInMySide = true;
-        callRequestController.imCallOwner = true;
+        // callRequestController.callRequestReceived = true;
+        // callRequestController.callEstablishedInMySide = true;
+        // callRequestController.imCallOwner = true;
+        callRequestController.iRequestedCall = true;
 
         deviceManager.grantUserMediaDevicesPermissions({
             video: params.type == 'video',
@@ -3571,7 +3616,7 @@ function ChatCall(params) {
         });
     };
 
-    this.startGroupCall = function (params, callback) {
+    this.startGroupCall = async function (params, callback) {
         let startCallData = {
             chatMessageVOType: chatMessageVOTypes.GROUP_CALL_REQUEST,
             typeCode: generalTypeCode, //params.typeCode,
@@ -3637,10 +3682,15 @@ function ChatCall(params) {
             return;
         }
 
+        // if(currentCallId) {
+        //     await callStop();
+        // }
+
         callRequestController.cameraPaused = (typeof params.cameraPaused === 'boolean') ? params.cameraPaused : false;
-        callRequestController.callRequestReceived = true;
-        callRequestController.callEstablishedInMySide = true;
-        callRequestController.imCallOwner = true;
+        // callRequestController.callRequestReceived = true;
+        // callRequestController.callEstablishedInMySide = true;
+        // callRequestController.imCallOwner = true;
+        callRequestController.iRequestedCall = true;
 
         deviceManager.grantUserMediaDevicesPermissions({
             video: params.type == 'video',
@@ -3659,7 +3709,7 @@ function ChatCall(params) {
             if(callNoAnswerTimeout) {
                 callRequestController.callRequestTimeout = setTimeout( function(metaData) {
                     //Reject the call if participant didn't answer
-                    if(!callStopQueue.callStarted ) {
+                    if(!callStopQueue.callStarted) {
                         chatEvents.fireEvent("callEvents", {
                             type: "CALL_NO_ANSWER_TIMEOUT",
                             message: "[CALL_SESSION_CREATED] Call request timed out, No answer",
@@ -3726,7 +3776,7 @@ function ChatCall(params) {
         });
     };
 
-    this.acceptCall = function (params, callback) {
+    this.acceptCall = async function (params, callback) {
         let acceptCallData = {
             chatMessageVOType: chatMessageVOTypes.ACCEPT_CALL,
             typeCode: generalTypeCode, //params.typeCode,
@@ -3763,8 +3813,8 @@ function ChatCall(params) {
             acceptCallData.content = JSON.stringify(content);
 
             if(params.joinCall) {
-                callRequestController.callRequestReceived = true;
-                currentCallId = params.callId;
+                // callRequestController.callRequestReceived = true;
+                // currentCallId = params.callId;
             }
         } else {
             chatEvents.fireEvent('error', {
@@ -3774,12 +3824,64 @@ function ChatCall(params) {
             return;
         }
 
-        callRequestController.imCallOwner = false;
-        callRequestController.callEstablishedInMySide = true;
+        // if(callRequestController.iAcceptedCall || callRequestController.iRequestedCall) {
+        //     await callStop();
+        // }
 
-        let isMovingToNewCall = false
+        // if(currentCallId) {
+        //     endCall({callId: currentCallId});
+        // }
 
-        new Promise((resolve, reject) => {
+        acceptedCallId = parseInt(params.callId);
+        callRequestController.iAcceptedCall = true;
+        // console.log("acceptCall: ", {acceptedCallId}, callRequestController.iAcceptedCall);
+        // callRequestController.imCallOwner = false;
+        // callRequestController.callEstablishedInMySide = true;
+
+        // let isMovingToNewCall = false;
+
+        deviceManager.grantUserMediaDevicesPermissions({
+            video: params.video,
+            audio: !params.mute,
+            closeStream: true
+        }, function (result) {
+            if (result.hasError) {
+                callback && callback({
+                    hasError: true,
+                    errorCode: result.errorCode,
+                    errorMessage: result.errorMessage,
+                });
+                return;
+            }
+
+            chatMessaging.sendMessage(acceptCallData, {
+                onResult: function (result) {
+                    // if(!result.hasError && isMovingToNewCall) {
+                    //     chatEvents.fireEvent("callEvents", {
+                    //         type: 'MOVING_TO_NEW_CALL',
+                    //         status: 'DONE',
+                    //         result: {
+                    //             oldCall: currentCallId,
+                    //             newCall: params.callId
+                    //         }
+                    //     });
+                    // } else {
+                    //     chatEvents.fireEvent("callEvents", {
+                    //         type: 'MOVING_TO_NEW_CALL',
+                    //         status: 'FAILED',
+                    //         result: {
+                    //             oldCall: currentCallId,
+                    //             newCall: params.callId
+                    //         }
+                    //     });
+                    // }
+
+                    callback && callback(result);
+                }
+            });
+        });
+
+/*        new Promise((resolve, reject) => {
             if(callStopQueue.callStarted) {
                 isMovingToNewCall = true;
                 // callStop(false);
@@ -3794,9 +3896,9 @@ function ChatCall(params) {
                 endCall({callId: currentCallId});
                 setTimeout(()=>{
                     resolve(true);
-                    callRequestController.imCallOwner = false;
-                    callRequestController.callEstablishedInMySide = true;
-                    callRequestController.callRequestReceived = true;
+                    // callRequestController.imCallOwner = false;
+                    // callRequestController.callEstablishedInMySide = true;
+                    // callRequestController.callRequestReceived = true;
                     currentCallId = params.callId;
                     chatEvents.fireEvent('callEvents', {
                         type: 'CALL_SESSION_CREATED',
@@ -3858,7 +3960,7 @@ function ChatCall(params) {
                     }
                 });
             });
-        })
+        })*/
     };
 
     this.rejectCall = this.cancelCall = function (params, callback) {
