@@ -9,6 +9,10 @@ const errorList = {
         code: 12002,
         message:"[SDK] Async is not connected"
     },
+    SOCKET_CONNECTION_FAILED: {
+        code: 12003,
+        message:"[SDK] Async socket connection failed"
+    },
     /**
      * 12350-12399
      */

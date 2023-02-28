@@ -20,6 +20,7 @@ import {
 } from "./lib/constants";
 
 import deviceManager from "./lib/call/deviceManager.js";
+import {errorList, raiseError} from "./lib/errorHandler";
 
 function Chat(params) {
     /*******************************************************
@@ -461,11 +462,16 @@ function Chat(params) {
             });
 
             asyncClient.on('error', function (error) {
-                chatEvents.fireEvent('error', {
-                    code: error.errorCode,
-                    message: error.errorMessage,
-                    error: error.errorEvent
-                });
+                if(error.errorCode) {
+                    chatEvents.fireEvent('error', {
+                        code: error.errorCode,
+                        message: error.errorMessage,
+                        error: error.errorEvent
+                    });
+                } else {
+                    raiseError(errorList.SOCKET_CONNECTION_FAILED, null, true, {});
+                }
+
             });
         },
 
