@@ -21,6 +21,7 @@ import {
 
 import deviceManager from "./lib/call/deviceManager.js";
 import {errorList, raiseError} from "./lib/errorHandler";
+import {store} from "./lib/store";
 
 function Chat(params) {
     /*******************************************************
@@ -1470,6 +1471,12 @@ function Chat(params) {
                         chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                     }
 
+                    let participant = formatDataToMakeParticipant(messageContent, threadId);
+
+                    if(participant.id == chatMessaging.userInfo.id) {
+                        store.threads.remove(threadId);
+                    }
+
                     /**
                      * Remove the participant from cache
                      */
@@ -1553,7 +1560,7 @@ function Chat(params) {
                                         type: 'THREAD_LEAVE_PARTICIPANT',
                                         result: {
                                             thread: threads[0],
-                                            participant: formatDataToMakeParticipant(messageContent, threadId)
+                                            participant: participant
                                         }
                                     });
 
@@ -1568,7 +1575,7 @@ function Chat(params) {
                                         type: 'THREAD_LEAVE_PARTICIPANT',
                                         result: {
                                             threadId: threadId,
-                                            participant: formatDataToMakeParticipant(messageContent, threadId)
+                                            participant: participant
                                         }
                                     });
                                 }
@@ -1579,7 +1586,7 @@ function Chat(params) {
                             type: 'THREAD_LEAVE_PARTICIPANT',
                             result: {
                                 thread: threadId,
-                                participant: formatDataToMakeParticipant(messageContent, threadId)
+                                participant: participant
                             }
                         });
 
@@ -2072,6 +2079,9 @@ function Chat(params) {
                         chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                     }
 
+                    let msgTime = (parseInt(parseInt(messageContent.time) / 1000) * 1000000000) + parseInt(messageContent.timeNanos);
+                    store.threads.get(threadId).unreadCount.decrease(msgTime);
+
                     if (messageContent.pinned) {
                         unPinMessage({
                             messageId: messageContent.id,
@@ -2240,13 +2250,24 @@ function Chat(params) {
                     var threadObject = messageContent;
                     threadObject.unreadCount = (messageContent.unreadCount) ? messageContent.unreadCount : 0;
 
-                    chatEvents.fireEvent('threadEvents', {
-                        type: 'THREAD_UNREAD_COUNT_UPDATED',
-                        result: {
-                            thread: threadObject,
-                            unreadCount: (messageContent.unreadCount) ? messageContent.unreadCount : 0
+                    if (
+                        messageContent.lastSeenMessageNanos
+                        && store.threads.get(threadId)
+                    ) {
+                        let msgTime = (parseInt(parseInt(messageContent.lastSeenMessageTime) / 1000) * 1000000000) + parseInt(messageContent.lastSeenMessageNanos);
+                        if(msgTime > store.threads.get(threadId).lastSeenMessageTime.get()){
+                            store.threads.get(threadId).unreadCount.set(messageContent.unreadCount || 0);
+                            store.threads.get(threadId).lastSeenMessageTime.set(msgTime);
                         }
-                    });
+                    }
+
+                    // chatEvents.fireEvent('threadEvents', {
+                    //     type: 'THREAD_UNREAD_COUNT_UPDATED',
+                    //     result: {
+                    //         thread: threadObject,
+                    //         unreadCount: (messageContent.unreadCount) ? messageContent.unreadCount : 0
+                    //     }
+                    // });
 
                     chatEvents.fireEvent('threadEvents', {
                         type: 'THREAD_LAST_SEEN_UPDATED',
@@ -2727,15 +2748,15 @@ function Chat(params) {
                             });
                         }
                     }).then(thread => {
-                        if(typeof messageContent.unreadCount !== "undefined") {
-                            chatEvents.fireEvent('threadEvents', {
-                                type: 'THREAD_UNREAD_COUNT_UPDATED',
-                                result: {
-                                    thread: thread,
-                                    unreadCount: (messageContent.unreadCount) ? messageContent.unreadCount : 0
-                                }
-                            });
-                        }
+                        // if(typeof messageContent.unreadCount !== "undefined") {
+                        //     chatEvents.fireEvent('threadEvents', {
+                        //         type: 'THREAD_UNREAD_COUNT_UPDATED',
+                        //         result: {
+                        //             thread: thread,
+                        //             unreadCount: (messageContent.unreadCount) ? messageContent.unreadCount : 0
+                        //         }
+                        //     });
+                        // }
                     })
 
 
@@ -3115,6 +3136,9 @@ function Chat(params) {
                         chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
+                    messageContent.threadId = threadId;
+                    store.threads.remove(threadId);
+
                     chatEvents.fireEvent('threadEvents', {
                         type: 'DELETE_THREAD',
                         result: messageContent
@@ -3397,6 +3421,22 @@ function Chat(params) {
                 }
             }
 
+            if(message.conversation) {
+                delete message.conversation.unreadCount;
+
+                store.threads.save(message.conversation);
+
+                if(message.ownerId != chatMessaging.userInfo.id) {
+                    if(message.time > store.threads.get(threadId).lastSeenMessageTime.get()) {
+                        store.threads.get(threadId).unreadCount.increase();
+                    }
+                } else { //If is my message set unread count to 0
+                    store.threads.get(threadId).unreadCount.set(0);
+                }
+
+                message.conversation.unreadCount = store.threads.get(threadId).unreadCount.get()
+            }
+
             chatEvents.fireEvent('messageEvents', {
                 type: 'MESSAGE_NEW',
                 cache: false,
@@ -3414,13 +3454,13 @@ function Chat(params) {
             threadObject.lastParticipantName = (!!message.participant && message.participant.hasOwnProperty('name')) ? message.participant.name : '';
             threadObject.lastMessage = (message.hasOwnProperty('message')) ? message.message : '';
 
-            chatEvents.fireEvent('threadEvents', {
-                type: 'THREAD_UNREAD_COUNT_UPDATED',
-                result: {
-                    thread: threadObject,
-                    unreadCount: (threadObject.unreadCount) ? threadObject.unreadCount : 0
-                }
-            });
+            // chatEvents.fireEvent('threadEvents', {
+            //     type: 'THREAD_UNREAD_COUNT_UPDATED',
+            //     result: {
+            //         thread: threadObject,
+            //         unreadCount: (threadObject.unreadCount) ? threadObject.unreadCount : 0
+            //     }
+            // });
 
             chatEvents.fireEvent('threadEvents', {
                 type: 'THREAD_LAST_ACTIVITY_TIME',
@@ -3534,6 +3574,14 @@ function Chat(params) {
                 }
             }
 
+            if(message.conversation) {
+                delete message.conversation.unreadCount;
+
+                store.threads.save(message.conversation);
+                console.log("new message conversation:",message.conversation);
+                message.conversation.unreadCount = store.threads.get(threadId).unreadCount.get() || 0;
+            }
+
             if (fullResponseObject) {
                 getThreads({
                     threadIds: [threadId]
@@ -3595,6 +3643,13 @@ function Chat(params) {
             var redirectToThread = (showThread === true) ? showThread : false;
 
             if (addFromService) {
+                if(store.threads.get(threadData.id)){
+                    delete threadData.unreadCount;
+                    threadData.unreadCount = store.threads.get(threadData.id).unreadCount.get();
+                }
+
+                store.threads.save(threadData);
+
                 chatEvents.fireEvent('threadEvents', {
                     type: 'THREAD_NEW',
                     redirectToThread: redirectToThread,
@@ -4660,6 +4715,7 @@ function Chat(params) {
                             }
                         }
 
+                        store.threads.saveMany(resultData.threads);
                         returnData.result = resultData;
 
                         /**
@@ -14298,6 +14354,16 @@ function Chat(params) {
             }
         });
     };
+
+    store.events.on(store.threads.eventsList.UNREAD_COUNT_UPDATED, (thread) => {
+        chatEvents.fireEvent('threadEvents', {
+            type: 'THREAD_UNREAD_COUNT_UPDATED',
+            result: {
+                thread,
+                unreadCount: thread.unreadCount || 0
+            }
+        });
+    })
 
     init();
 
