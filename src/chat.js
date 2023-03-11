@@ -3578,7 +3578,6 @@ function Chat(params) {
                 delete message.conversation.unreadCount;
 
                 store.threads.save(message.conversation);
-                console.log("new message conversation:",message.conversation);
                 message.conversation.unreadCount = store.threads.get(threadId).unreadCount.get() || 0;
             }
 
