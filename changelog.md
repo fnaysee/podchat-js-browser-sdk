@@ -5,6 +5,35 @@ to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.i
 
 ##[Unreleased]
 
+## [12.8.0] - 2023-03-12
+### Added
+- Prevent request when socket not connected
+- Method: inqueryCallState
+- Event: THREAD_UNREAD_COUNT_UPDATED on chat: LAST_MESSAGE_DELETED
+- Method: resetCallStream
+- Event: CALL_RECORDING_FAILED
+- unreadCount cache, threads cached
+- Parameters: isGroup, type to getThreads
+- uniqueId to async messages
+- Parameters: username, cellphoneNumber to getThreadParticipants
+- Event: CALL_RECORDING_FAILED
+- Method: reGrantMediaStreams
+
+### Changed
+- Implemented new poor connection event for audio and video
+- audioLevel improvement
+- Modified chat ping and async
+- Improved socket connection error
+- Refactor call request handling
+- Parameter: coreUserId to getContacts
+- Parameter: onlyNewMessages to getHistory
+- 
+### Fixed
+- Removed unnecessary call to getAllThreads on asyncReady
+- Improved functionality of field: ownerId
+- Bug in CALL_DIVS event in groupCall
+- Modified method exportChat due to the chat server changes
+
 ## [12.7.2-snapshot.0] - 2022-11-01
 ### Added
 - Added possibility to accept incoming call while user is in an existing call
