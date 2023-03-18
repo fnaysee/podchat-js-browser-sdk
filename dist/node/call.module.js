@@ -3297,7 +3297,8 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.START_SCREEN_SHARE:
-        if (!callRequestController.callEstablishedInMySide) return;
+        // if(!callRequestController.callEstablishedInMySide)
+        //     return;
         screenShareInfo.setIsStarted(true);
         screenShareInfo.setOwner(messageContent.screenOwner.id);
 
@@ -3355,8 +3356,8 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.DESTINED_RECORD_CALL:
-        if (!callRequestController.callEstablishedInMySide) return;
-
+        // if(!callRequestController.callEstablishedInMySide)
+        //     return;
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }

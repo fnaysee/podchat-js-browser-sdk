@@ -34315,36 +34315,53 @@ utils.intFromLE = intFromLE;
 arguments[4][27][0].apply(exports,arguments)
 },{"buffer":31,"dup":27}],148:[function(require,module,exports){
 module.exports={
-  "name": "elliptic",
-  "version": "6.5.4",
-  "description": "EC cryptography",
-  "main": "lib/elliptic.js",
-  "files": [
-    "lib"
+  "_args": [
+    [
+      "elliptic@6.5.4",
+      "D:\\social-sdk\\podchat-browser-sdk"
+    ]
   ],
-  "scripts": {
-    "lint": "eslint lib test",
-    "lint:fix": "npm run lint -- --fix",
-    "unit": "istanbul test _mocha --reporter=spec test/index.js",
-    "test": "npm run lint && npm run unit",
-    "version": "grunt dist && git add dist/"
+  "_development": true,
+  "_from": "elliptic@6.5.4",
+  "_id": "elliptic@6.5.4",
+  "_inBundle": false,
+  "_integrity": "sha512-iLhC6ULemrljPZb+QutR5TQGB+pdW6KGD5RSegS+8sorOZT+rdQFbsQFJgvN3eRqNALqJer4oQ16YvJHlU8hzQ==",
+  "_location": "/elliptic",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "elliptic@6.5.4",
+    "name": "elliptic",
+    "escapedName": "elliptic",
+    "rawSpec": "6.5.4",
+    "saveSpec": null,
+    "fetchSpec": "6.5.4"
   },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:indutny/elliptic"
-  },
-  "keywords": [
-    "EC",
-    "Elliptic",
-    "curve",
-    "Cryptography"
+  "_requiredBy": [
+    "/browserify-sign",
+    "/create-ecdh"
   ],
-  "author": "Fedor Indutny <fedor@indutny.com>",
-  "license": "MIT",
+  "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.5.4.tgz",
+  "_spec": "6.5.4",
+  "_where": "D:\\social-sdk\\podchat-browser-sdk",
+  "author": {
+    "name": "Fedor Indutny",
+    "email": "fedor@indutny.com"
+  },
   "bugs": {
     "url": "https://github.com/indutny/elliptic/issues"
   },
-  "homepage": "https://github.com/indutny/elliptic",
+  "dependencies": {
+    "bn.js": "^4.11.9",
+    "brorand": "^1.1.0",
+    "hash.js": "^1.0.0",
+    "hmac-drbg": "^1.0.1",
+    "inherits": "^2.0.4",
+    "minimalistic-assert": "^1.0.1",
+    "minimalistic-crypto-utils": "^1.0.1"
+  },
+  "description": "EC cryptography",
   "devDependencies": {
     "brfs": "^2.0.2",
     "coveralls": "^3.1.0",
@@ -34360,15 +34377,31 @@ module.exports={
     "istanbul": "^0.4.5",
     "mocha": "^8.0.1"
   },
-  "dependencies": {
-    "bn.js": "^4.11.9",
-    "brorand": "^1.1.0",
-    "hash.js": "^1.0.0",
-    "hmac-drbg": "^1.0.1",
-    "inherits": "^2.0.4",
-    "minimalistic-assert": "^1.0.1",
-    "minimalistic-crypto-utils": "^1.0.1"
-  }
+  "files": [
+    "lib"
+  ],
+  "homepage": "https://github.com/indutny/elliptic",
+  "keywords": [
+    "EC",
+    "Elliptic",
+    "curve",
+    "Cryptography"
+  ],
+  "license": "MIT",
+  "main": "lib/elliptic.js",
+  "name": "elliptic",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/indutny/elliptic.git"
+  },
+  "scripts": {
+    "lint": "eslint lib test",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "npm run lint && npm run unit",
+    "unit": "istanbul test _mocha --reporter=spec test/index.js",
+    "version": "grunt dist && git add dist/"
+  },
+  "version": "6.5.4"
 }
 
 },{}],149:[function(require,module,exports){
@@ -45792,14 +45825,18 @@ break;/**
        * Type 122   End Record Call Request
        */case _constants.chatMessageVOTypes.END_RECORD_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}_eventsModule.chatEvents.fireEvent('callEvents',{type:'STOP_RECORDING_CALL',result:messageContent});break;/**
        * Type 123   Start Screen Share
-       */case _constants.chatMessageVOTypes.START_SCREEN_SHARE:if(!callRequestController.callEstablishedInMySide)return;screenShareInfo.setIsStarted(true);screenShareInfo.setOwner(messageContent.screenOwner.id);if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}else if(!screenShareInfo.iAmOwner()){callStateController.addScreenShareToCall("receive",false);}_eventsModule.chatEvents.fireEvent('callEvents',{type:'START_SCREEN_SHARE',result:messageContent});break;/**
+       */case _constants.chatMessageVOTypes.START_SCREEN_SHARE:// if(!callRequestController.callEstablishedInMySide)
+//     return;
+screenShareInfo.setIsStarted(true);screenShareInfo.setOwner(messageContent.screenOwner.id);if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}else if(!screenShareInfo.iAmOwner()){callStateController.addScreenShareToCall("receive",false);}_eventsModule.chatEvents.fireEvent('callEvents',{type:'START_SCREEN_SHARE',result:messageContent});break;/**
        * Type 124   End Screen Share
        */case _constants.chatMessageVOTypes.END_SCREEN_SHARE:// screenShareInfo.setIAmOwner(false);
 if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}else if(!screenShareInfo.iAmOwner()){consoleLogging&&console.log("[SDK][END_SCREEN_SHARE], im not owner of screen");callStateController.removeScreenShareFromCall();}_eventsModule.chatEvents.fireEvent('callEvents',{type:'END_SCREEN_SHARE',result:messageContent});break;/**
        * Type 125   Delete From Call List
        */case _constants.chatMessageVOTypes.DELETE_FROM_CALL_HISTORY:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_eventsModule.chatEvents.fireEvent('callEvents',{type:'DELETE_FROM_CALL_LIST',result:messageContent});break;/**
        * Type 126   Destinated Record Call Request
-       */case _constants.chatMessageVOTypes.DESTINED_RECORD_CALL:if(!callRequestController.callEstablishedInMySide)return;if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}_eventsModule.chatEvents.fireEvent('callEvents',{type:'START_RECORDING_CALL',result:messageContent});restartMediaOnKeyFrame(chatMessaging.userInfo.id,[4000,8000,12000,25000]);restartMediaOnKeyFrame("screenShare",[4000,8000,12000,25000]);break;/**
+       */case _constants.chatMessageVOTypes.DESTINED_RECORD_CALL:// if(!callRequestController.callEstablishedInMySide)
+//     return;
+if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}_eventsModule.chatEvents.fireEvent('callEvents',{type:'START_RECORDING_CALL',result:messageContent});restartMediaOnKeyFrame(chatMessaging.userInfo.id,[4000,8000,12000,25000]);restartMediaOnKeyFrame("screenShare",[4000,8000,12000,25000]);break;/**
        * Type 129   Get Calls To Join
        */case _constants.chatMessageVOTypes.GET_CALLS_TO_JOIN:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
       * Type 221  Event to tell us p2p call converted to a group call
