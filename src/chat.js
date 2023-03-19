@@ -1954,69 +1954,79 @@ function Chat(params) {
                         chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    if (fullResponseObject) {
-                        getThreads({
-                            threadIds: [messageContent.id],
-                            cache: false
-                        }, function (threadsResult) {
-                            var thread = formatDataToMakeConversation(threadsResult.result.threads[0]);
+                    let formattedThread = formatDataToMakeConversation(messageContent);
+                    store.threads.save(formattedThread);
 
-                            /**
-                             * Add Updated Thread into cache database #cache
-                             */
-                            if (canUseCache && cacheSecret.length > 0) {
-                                if (db) {
-                                    var tempData = {};
+                    chatEvents.fireEvent('threadEvents', {
+                        type: 'THREAD_INFO_UPDATED',
+                        result: {
+                            thread: store.threads.get(messageContent.id).get()
+                        }
+                    });
 
-                                    try {
-                                        var salt = Utility.generateUUID();
-
-                                        tempData.id = thread.id;
-                                        tempData.owner = chatMessaging.userInfo.id;
-                                        tempData.title = Utility.crypt(thread.title, cacheSecret, salt);
-                                        tempData.time = thread.time;
-                                        tempData.data = Utility.crypt(JSON.stringify(unsetNotSeenDuration(thread)), cacheSecret, salt);
-                                        tempData.salt = salt;
-                                    } catch (error) {
-                                        chatEvents.fireEvent('error', {
-                                            code: error.code,
-                                            message: error.message,
-                                            error: error
-                                        });
-                                    }
-
-                                    db.threads.put(tempData)
-                                        .catch(function (error) {
-                                            chatEvents.fireEvent('error', {
-                                                code: error.code,
-                                                message: error.message,
-                                                error: error
-                                            });
-                                        });
-                                } else {
-                                    chatEvents.fireEvent('error', {
-                                        code: 6601,
-                                        message: CHAT_ERRORS[6601],
-                                        error: null
-                                    });
-                                }
-                            }
-
-                            chatEvents.fireEvent('threadEvents', {
-                                type: 'THREAD_INFO_UPDATED',
-                                result: {
-                                    thread: thread
-                                }
-                            });
-                        });
-                    } else {
-                        chatEvents.fireEvent('threadEvents', {
-                            type: 'THREAD_INFO_UPDATED',
-                            result: {
-                                thread: messageContent
-                            }
-                        });
-                    }
+                    // if (fullResponseObject) {
+                    //     getThreads({
+                    //         threadIds: [messageContent.id],
+                    //         cache: false
+                    //     }, function (threadsResult) {
+                    //         var thread = formatDataToMakeConversation(threadsResult.result.threads[0]);
+                    //
+                    //         /**
+                    //          * Add Updated Thread into cache database #cache
+                    //          */
+                    //         if (canUseCache && cacheSecret.length > 0) {
+                    //             if (db) {
+                    //                 var tempData = {};
+                    //
+                    //                 try {
+                    //                     var salt = Utility.generateUUID();
+                    //
+                    //                     tempData.id = thread.id;
+                    //                     tempData.owner = chatMessaging.userInfo.id;
+                    //                     tempData.title = Utility.crypt(thread.title, cacheSecret, salt);
+                    //                     tempData.time = thread.time;
+                    //                     tempData.data = Utility.crypt(JSON.stringify(unsetNotSeenDuration(thread)), cacheSecret, salt);
+                    //                     tempData.salt = salt;
+                    //                 } catch (error) {
+                    //                     chatEvents.fireEvent('error', {
+                    //                         code: error.code,
+                    //                         message: error.message,
+                    //                         error: error
+                    //                     });
+                    //                 }
+                    //
+                    //                 db.threads.put(tempData)
+                    //                     .catch(function (error) {
+                    //                         chatEvents.fireEvent('error', {
+                    //                             code: error.code,
+                    //                             message: error.message,
+                    //                             error: error
+                    //                         });
+                    //                     });
+                    //             } else {
+                    //                 chatEvents.fireEvent('error', {
+                    //                     code: 6601,
+                    //                     message: CHAT_ERRORS[6601],
+                    //                     error: null
+                    //                 });
+                    //             }
+                    //         }
+                    //
+                    //         chatEvents.fireEvent('threadEvents', {
+                    //             type: 'THREAD_INFO_UPDATED',
+                    //             result: {
+                    //                 thread: thread
+                    //             }
+                    //         });
+                    //     });
+                    // } else {
+                    //     chatEvents.fireEvent('threadEvents', {
+                    //         type: 'THREAD_INFO_UPDATED',
+                    //         result: {
+                    //             thread: messageContent
+                    //         }
+                    //     });
+                    // }
                     break;
 
                 /**
@@ -2115,47 +2125,47 @@ function Chat(params) {
                         }
                     }
 
-                    if (fullResponseObject) {
-                        var time, timeMiliSeconds;
-                        if (messageContent.time.toString().length > 14) {
-                            time = messageContent.time;
-                            timeMiliSeconds = parseInt(messageContent.time / 1000000);
-                        } else {
-                            time = (messageContent.timeNanos)
-                                    ? (parseInt(parseInt(messageContent.time) / 1000) * 1000000000) + parseInt(messageContent.timeNanos)
-                                    : (parseInt(pushMessageVO.time));
-                            timeMiliSeconds = parseInt(messageContent.time);
-                        }
-
-                        getThreads({
-                            threadIds: [threadId]
-                        }, function (threadsResult) {
-                            var threads = threadsResult.result.threads;
-                            if (!threadsResult.cache) {
-                                chatEvents.fireEvent('messageEvents', {
-                                    type: 'MESSAGE_DELETE',
-                                    result: {
-                                        message: {
-                                            id: messageContent.id,
-                                            pinned: messageContent.pinned,
-                                            threadId: threadId,
-                                            time,
-                                            timeMiliSeconds,
-                                            timeNanos: messageContent.timeNanos
-                                        }
-                                    }
-                                });
-                                if (messageContent.pinned) {
-                                    chatEvents.fireEvent('threadEvents', {
-                                        type: 'THREAD_LAST_ACTIVITY_TIME',
-                                        result: {
-                                            thread: threads[0]
-                                        }
-                                    });
-                                }
-                            }
-                        });
-                    } else {
+                    // if (fullResponseObject) {
+                    //     var time, timeMiliSeconds;
+                    //     if (messageContent.time.toString().length > 14) {
+                    //         time = messageContent.time;
+                    //         timeMiliSeconds = parseInt(messageContent.time / 1000000);
+                    //     } else {
+                    //         time = (messageContent.timeNanos)
+                    //                 ? (parseInt(parseInt(messageContent.time) / 1000) * 1000000000) + parseInt(messageContent.timeNanos)
+                    //                 : (parseInt(pushMessageVO.time));
+                    //         timeMiliSeconds = parseInt(messageContent.time);
+                    //     }
+                    //
+                    //     getThreads({
+                    //         threadIds: [threadId]
+                    //     }, function (threadsResult) {
+                    //         var threads = threadsResult.result.threads;
+                    //         if (!threadsResult.cache) {
+                    //             chatEvents.fireEvent('messageEvents', {
+                    //                 type: 'MESSAGE_DELETE',
+                    //                 result: {
+                    //                     message: {
+                    //                         id: messageContent.id,
+                    //                         pinned: messageContent.pinned,
+                    //                         threadId: threadId,
+                    //                         time,
+                    //                         timeMiliSeconds,
+                    //                         timeNanos: messageContent.timeNanos
+                    //                     }
+                    //                 }
+                    //             });
+                    //             if (messageContent.pinned) {
+                    //                 chatEvents.fireEvent('threadEvents', {
+                    //                     type: 'THREAD_LAST_ACTIVITY_TIME',
+                    //                     result: {
+                    //                         thread: threads[0]
+                    //                     }
+                    //                 });
+                    //             }
+                    //         }
+                    //     });
+                    // } else {
                         chatEvents.fireEvent('messageEvents', {
                             type: 'MESSAGE_DELETE',
                             result: {
@@ -2163,84 +2173,25 @@ function Chat(params) {
                                     id: messageContent.id,
                                     pinned: messageContent.pinned,
                                     threadId: threadId,
-                                    time,
-                                    timeMiliSeconds,
+                                    time: messageContent.time,
+                                    // timeMiliSeconds,
                                     timeNanos: messageContent.timeNanos
                                 }
                             }
                         });
                         if (messageContent.pinned) {
+                            let thread = store.threads.get(threadId);
+                            if(thread)
+                                thread = thread.get();
                             chatEvents.fireEvent('threadEvents', {
                                 type: 'THREAD_LAST_ACTIVITY_TIME',
                                 result: {
-                                    thread: threadId
+                                    thread: thread ? thread : threadId
                                 }
                             });
                         }
-                    }
+                    //}
 
-                    break;
-
-                /**
-                 * Type 30    Thread Info Updated
-                 */
-                case chatMessageVOTypes.THREAD_INFO_UPDATED:
-                    // TODO: Check this line again
-                    // if (!messageContent.conversation && !messageContent.conversation.id) {
-                    //     messageContent.conversation.id = threadId;
-                    // }
-                    //
-                    // var thread = formatDataToMakeConversation(messageContent.conversation);
-                    var thread = formatDataToMakeConversation(messageContent);
-
-                    /**
-                     * Add Updated Thread into cache database #cache
-                     */
-                    // if (canUseCache && cacheSecret.length > 0) {
-                    //     if (db) {
-                    //         var tempData = {};
-                    //
-                    //         try {
-                    //             var salt = Utility.generateUUID();
-                    //
-                    //             tempData.id = thread.id;
-                    //             tempData.owner = chatMessaging.userInfo.id;
-                    //             tempData.title = Utility.crypt(thread.title, cacheSecret, salt);
-                    //             tempData.time = thread.time;
-                    //             tempData.data = Utility.crypt(JSON.stringify(unsetNotSeenDuration(thread)), cacheSecret, salt);
-                    //             tempData.salt = salt;
-                    //         }
-                    //         catch (error) {
-                    //             chatEvents.fireEvent('error', {
-                    //                 code: error.code,
-                    //                 message: error.message,
-                    //                 error: error
-                    //             });
-                    //         }
-                    //
-                    //         db.threads.put(tempData)
-                    //             .catch(function (error) {
-                    //                 chatEvents.fireEvent('error', {
-                    //                     code: error.code,
-                    //                     message: error.message,
-                    //                     error: error
-                    //                 });
-                    //             });
-                    //     }
-                    //     else {
-                    //         chatEvents.fireEvent('error', {
-                    //             code: 6601,
-                    //             message: CHAT_ERRORS[6601],
-                    //             error: null
-                    //         });
-                    //     }
-                    // }
-                    chatEvents.fireEvent('threadEvents', {
-                        type: 'THREAD_INFO_UPDATED',
-                        result: {
-                            thread: thread
-                        }
-                    });
                     break;
 
                 /**
@@ -2269,6 +2220,7 @@ function Chat(params) {
                     //     }
                     // });
 
+                    threadObject = store.threads.get(threadId) ? store.threads.get(threadId).get() : threadObject;
                     chatEvents.fireEvent('threadEvents', {
                         type: 'THREAD_LAST_SEEN_UPDATED',
                         result: {
@@ -2719,35 +2671,43 @@ function Chat(params) {
                  * Type 66    Last Message Deleted
                  */
                 case chatMessageVOTypes.LAST_MESSAGE_DELETED:
-
-                    new Promise((resolve, reject)=> {
-                        if (fullResponseObject) {
-                            getThreads({
-                                threadIds: [messageContent.id]
-                            }, function (threadsResult) {
-                                var threads = threadsResult.result.threads;
-
-                                if (!threadsResult.cache) {
-                                    resolve(threads[0])
-                                    chatEvents.fireEvent('threadEvents', {
-                                        type: 'THREAD_INFO_UPDATED',
-                                        result: {
-                                            thread: threads[0]
-                                        }
-                                    });
-                                }
-                            });
-                        } else {
-                            var thread = formatDataToMakeConversation(messageContent);
-                            resolve(thread);
-                            chatEvents.fireEvent('threadEvents', {
-                                type: 'THREAD_INFO_UPDATED',
-                                result: {
-                                    thread: thread
-                                }
-                            });
+                    delete messageContent.unreadCount;
+                    let threadOfDeletedMessage = formatDataToMakeConversation(messageContent);
+                    store.threads.save(threadOfDeletedMessage);
+                    chatEvents.fireEvent('threadEvents', {
+                        type: 'THREAD_INFO_UPDATED',
+                        result: {
+                            thread: store.threads.get(threadOfDeletedMessage.id).get()
                         }
-                    }).then(thread => {
+                    });
+                    // new Promise((resolve, reject)=> {
+                    //     if (fullResponseObject) {
+                    //         getThreads({
+                    //             threadIds: [messageContent.id]
+                    //         }, function (threadsResult) {
+                    //             var threads = threadsResult.result.threads;
+                    //
+                    //             if (!threadsResult.cache) {
+                    //                 resolve(threads[0])
+                    //                 chatEvents.fireEvent('threadEvents', {
+                    //                     type: 'THREAD_INFO_UPDATED',
+                    //                     result: {
+                    //                         thread: threads[0]
+                    //                     }
+                    //                 });
+                    //             }
+                    //         });
+                    //     } else {
+                    //         var thread = formatDataToMakeConversation(messageContent);
+                    //         resolve(thread);
+                    //         chatEvents.fireEvent('threadEvents', {
+                    //             type: 'THREAD_INFO_UPDATED',
+                    //             result: {
+                    //                 thread: thread
+                    //             }
+                    //         });
+                    //     }
+                    // }).then(thread => {
                         // if(typeof messageContent.unreadCount !== "undefined") {
                         //     chatEvents.fireEvent('threadEvents', {
                         //         type: 'THREAD_UNREAD_COUNT_UPDATED',
@@ -2757,7 +2717,7 @@ function Chat(params) {
                         //         }
                         //     });
                         // }
-                    })
+                    // })
 
 
 
@@ -2767,31 +2727,40 @@ function Chat(params) {
                  * Type 67    Last Message Edited
                  */
                 case chatMessageVOTypes.LAST_MESSAGE_EDITED:
-                    if (fullResponseObject) {
-                        getThreads({
-                            threadIds: [messageContent.id]
-                        }, function (threadsResult) {
-                            var threads = threadsResult.result.threads;
-
-                            if (!threadsResult.cache) {
-                                chatEvents.fireEvent('threadEvents', {
-                                    type: 'THREAD_INFO_UPDATED',
-                                    result: {
-                                        thread: threads[0]
-                                    }
-                                });
-                            }
-                        });
-                    } else {
-                        var thread = formatDataToMakeConversation(messageContent);
-
-                        chatEvents.fireEvent('threadEvents', {
-                            type: 'THREAD_INFO_UPDATED',
-                            result: {
-                                thread: thread
-                            }
-                        });
-                    }
+                    delete messageContent.unreadCount;
+                    let threadOfEditedMessage = formatDataToMakeConversation(messageContent);
+                    store.threads.save(threadOfEditedMessage);
+                    chatEvents.fireEvent('threadEvents', {
+                        type: 'THREAD_INFO_UPDATED',
+                        result: {
+                            thread: store.threads.get(threadOfEditedMessage.id).get()
+                        }
+                    });
+                    // if (fullResponseObject) {
+                    //     getThreads({
+                    //         threadIds: [messageContent.id]
+                    //     }, function (threadsResult) {
+                    //         var threads = threadsResult.result.threads;
+                    //
+                    //         if (!threadsResult.cache) {
+                    //             chatEvents.fireEvent('threadEvents', {
+                    //                 type: 'THREAD_INFO_UPDATED',
+                    //                 result: {
+                    //                     thread: threads[0]
+                    //                 }
+                    //             });
+                    //         }
+                    //     });
+                    // } else {
+                    //     var thread = formatDataToMakeConversation(messageContent);
+                    //
+                    //     chatEvents.fireEvent('threadEvents', {
+                    //         type: 'THREAD_INFO_UPDATED',
+                    //         result: {
+                    //             thread: thread
+                    //         }
+                    //     });
+                    // }
                     break;
 
                 /**
@@ -3581,29 +3550,29 @@ function Chat(params) {
                 message.conversation.unreadCount = store.threads.get(threadId).unreadCount.get() || 0;
             }
 
-            if (fullResponseObject) {
-                getThreads({
-                    threadIds: [threadId]
-                }, function (threadsResult) {
-                    var threads = threadsResult.result.threads;
-                    if (!threadsResult.cache) {
-                        chatEvents.fireEvent('messageEvents', {
-                            type: 'MESSAGE_EDIT',
-                            result: {
-                                message: message
-                            }
-                        });
-                        if (message.pinned) {
-                            chatEvents.fireEvent('threadEvents', {
-                                type: 'THREAD_LAST_ACTIVITY_TIME',
-                                result: {
-                                    thread: threads[0]
-                                }
-                            });
-                        }
-                    }
-                });
-            } else {
+            // if (fullResponseObject) {
+            //     getThreads({
+            //         threadIds: [threadId]
+            //     }, function (threadsResult) {
+            //         var threads = threadsResult.result.threads;
+            //         if (!threadsResult.cache) {
+            //             chatEvents.fireEvent('messageEvents', {
+            //                 type: 'MESSAGE_EDIT',
+            //                 result: {
+            //                     message: message
+            //                 }
+            //             });
+            //             if (message.pinned) {
+            //                 chatEvents.fireEvent('threadEvents', {
+            //                     type: 'THREAD_LAST_ACTIVITY_TIME',
+            //                     result: {
+            //                         thread: threads[0]
+            //                     }
+            //                 });
+            //             }
+            //         }
+            //     });
+            // } else {
                 chatEvents.fireEvent('messageEvents', {
                     type: 'MESSAGE_EDIT',
                     result: {
@@ -3611,14 +3580,17 @@ function Chat(params) {
                     }
                 });
                 if (message.pinned) {
+                    let thread = store.threads.get(threadId);
+                    if(thread)
+                        thread = thread.get();
                     chatEvents.fireEvent('threadEvents', {
                         type: 'THREAD_LAST_ACTIVITY_TIME',
                         result: {
-                            thread: threadId
+                            thread: thread ? thread : threadId
                         }
                     });
                 }
-            }
+            // }
 
         },
 

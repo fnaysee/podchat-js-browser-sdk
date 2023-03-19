@@ -304,9 +304,70 @@ sendMessageCallbacksHandler(_constants.chatMessageVOTypes.DELIVERY,threadId,uniq
                  * Type 20    Unmute muted Thread
                  */case _constants.chatMessageVOTypes.UNMUTE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var thread=threadsResult.result.threads[0];thread.mute=false;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNMUTE',result:{thread:thread}});});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNMUTE',result:{thread:threadId}});}break;/**
                  * Type 21    Update Thread Info
-                 */case _constants.chatMessageVOTypes.UPDATE_THREAD_INFO:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(fullResponseObject){getThreads({threadIds:[messageContent.id],cache:false},function(threadsResult){var thread=formatDataToMakeConversation(threadsResult.result.threads[0]);/**
-                             * Add Updated Thread into cache database #cache
-                             */if(canUseCache&&cacheSecret.length>0){if(db){var tempData={};try{var salt=_utility["default"].generateUUID();tempData.id=thread.id;tempData.owner=chatMessaging.userInfo.id;tempData.title=_utility["default"].crypt(thread.title,cacheSecret,salt);tempData.time=thread.time;tempData.data=_utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(thread)),cacheSecret,salt);tempData.salt=salt;}catch(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}db.threads.put(tempData)["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:thread}});});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:messageContent}});}break;/**
+                 */case _constants.chatMessageVOTypes.UPDATE_THREAD_INFO:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}var formattedThread=formatDataToMakeConversation(messageContent);_store.store.threads.save(formattedThread);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:_store.store.threads.get(messageContent.id).get()}});// if (fullResponseObject) {
+//     getThreads({
+//         threadIds: [messageContent.id],
+//         cache: false
+//     }, function (threadsResult) {
+//         var thread = formatDataToMakeConversation(threadsResult.result.threads[0]);
+//
+//         /**
+//          * Add Updated Thread into cache database #cache
+//          */
+//         if (canUseCache && cacheSecret.length > 0) {
+//             if (db) {
+//                 var tempData = {};
+//
+//                 try {
+//                     var salt = Utility.generateUUID();
+//
+//                     tempData.id = thread.id;
+//                     tempData.owner = chatMessaging.userInfo.id;
+//                     tempData.title = Utility.crypt(thread.title, cacheSecret, salt);
+//                     tempData.time = thread.time;
+//                     tempData.data = Utility.crypt(JSON.stringify(unsetNotSeenDuration(thread)), cacheSecret, salt);
+//                     tempData.salt = salt;
+//                 } catch (error) {
+//                     chatEvents.fireEvent('error', {
+//                         code: error.code,
+//                         message: error.message,
+//                         error: error
+//                     });
+//                 }
+//
+//                 db.threads.put(tempData)
+//                     .catch(function (error) {
+//                         chatEvents.fireEvent('error', {
+//                             code: error.code,
+//                             message: error.message,
+//                             error: error
+//                         });
+//                     });
+//             } else {
+//                 chatEvents.fireEvent('error', {
+//                     code: 6601,
+//                     message: CHAT_ERRORS[6601],
+//                     error: null
+//                 });
+//             }
+//         }
+//
+//         chatEvents.fireEvent('threadEvents', {
+//             type: 'THREAD_INFO_UPDATED',
+//             result: {
+//                 thread: thread
+//             }
+//         });
+//     });
+// } else {
+//     chatEvents.fireEvent('threadEvents', {
+//         type: 'THREAD_INFO_UPDATED',
+//         result: {
+//             thread: messageContent
+//         }
+//     });
+// }
+break;/**
                  * Type 22    Forward Multiple Messages
                  */case _constants.chatMessageVOTypes.FORWARD_MESSAGE:newMessageHandler(threadId,messageContent);break;/**
                  * Type 23    User Info
@@ -320,56 +381,50 @@ sendMessageCallbacksHandler(_constants.chatMessageVOTypes.DELIVERY,threadId,uniq
                  * Type 29    Delete Message
                  */case _constants.chatMessageVOTypes.DELETE_MESSAGE:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}var msgTime=parseInt(parseInt(messageContent.time)/1000)*1000000000+parseInt(messageContent.timeNanos);_store.store.threads.get(threadId).unreadCount.decrease(msgTime);if(messageContent.pinned){unPinMessage({messageId:messageContent.id,notifyAll:true});}/**
                      * Remove Message from cache
-                     */if(canUseCache&&cacheSecret.length>0){if(db){db.messages.where('id').equals(messageContent).and(function(message){return message.owner===chatMessaging.userInfo.id;})["delete"]()["catch"](function(error){_events.chatEvents.fireEvent('error',{code:6602,message:CHAT_ERRORS[6602],error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}if(fullResponseObject){var time,timeMiliSeconds;if(messageContent.time.toString().length>14){time=messageContent.time;timeMiliSeconds=parseInt(messageContent.time/1000000);}else{time=messageContent.timeNanos?parseInt(parseInt(messageContent.time)/1000)*1000000000+parseInt(messageContent.timeNanos):parseInt(pushMessageVO.time);timeMiliSeconds=parseInt(messageContent.time);}getThreads({threadIds:[threadId]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_DELETE',result:{message:{id:messageContent.id,pinned:messageContent.pinned,threadId:threadId,time:time,timeMiliSeconds:timeMiliSeconds,timeNanos:messageContent.timeNanos}}});if(messageContent.pinned){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0]}});}}});}else{_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_DELETE',result:{message:{id:messageContent.id,pinned:messageContent.pinned,threadId:threadId,time:time,timeMiliSeconds:timeMiliSeconds,timeNanos:messageContent.timeNanos}}});if(messageContent.pinned){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId}});}}break;/**
-                 * Type 30    Thread Info Updated
-                 */case _constants.chatMessageVOTypes.THREAD_INFO_UPDATED:// TODO: Check this line again
-// if (!messageContent.conversation && !messageContent.conversation.id) {
-//     messageContent.conversation.id = threadId;
-// }
+                     */if(canUseCache&&cacheSecret.length>0){if(db){db.messages.where('id').equals(messageContent).and(function(message){return message.owner===chatMessaging.userInfo.id;})["delete"]()["catch"](function(error){_events.chatEvents.fireEvent('error',{code:6602,message:CHAT_ERRORS[6602],error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}// if (fullResponseObject) {
+//     var time, timeMiliSeconds;
+//     if (messageContent.time.toString().length > 14) {
+//         time = messageContent.time;
+//         timeMiliSeconds = parseInt(messageContent.time / 1000000);
+//     } else {
+//         time = (messageContent.timeNanos)
+//                 ? (parseInt(parseInt(messageContent.time) / 1000) * 1000000000) + parseInt(messageContent.timeNanos)
+//                 : (parseInt(pushMessageVO.time));
+//         timeMiliSeconds = parseInt(messageContent.time);
+//     }
 //
-// var thread = formatDataToMakeConversation(messageContent.conversation);
-var thread=formatDataToMakeConversation(messageContent);/**
-                     * Add Updated Thread into cache database #cache
-                     */ // if (canUseCache && cacheSecret.length > 0) {
-//     if (db) {
-//         var tempData = {};
-//
-//         try {
-//             var salt = Utility.generateUUID();
-//
-//             tempData.id = thread.id;
-//             tempData.owner = chatMessaging.userInfo.id;
-//             tempData.title = Utility.crypt(thread.title, cacheSecret, salt);
-//             tempData.time = thread.time;
-//             tempData.data = Utility.crypt(JSON.stringify(unsetNotSeenDuration(thread)), cacheSecret, salt);
-//             tempData.salt = salt;
-//         }
-//         catch (error) {
-//             chatEvents.fireEvent('error', {
-//                 code: error.code,
-//                 message: error.message,
-//                 error: error
+//     getThreads({
+//         threadIds: [threadId]
+//     }, function (threadsResult) {
+//         var threads = threadsResult.result.threads;
+//         if (!threadsResult.cache) {
+//             chatEvents.fireEvent('messageEvents', {
+//                 type: 'MESSAGE_DELETE',
+//                 result: {
+//                     message: {
+//                         id: messageContent.id,
+//                         pinned: messageContent.pinned,
+//                         threadId: threadId,
+//                         time,
+//                         timeMiliSeconds,
+//                         timeNanos: messageContent.timeNanos
+//                     }
+//                 }
 //             });
-//         }
-//
-//         db.threads.put(tempData)
-//             .catch(function (error) {
-//                 chatEvents.fireEvent('error', {
-//                     code: error.code,
-//                     message: error.message,
-//                     error: error
+//             if (messageContent.pinned) {
+//                 chatEvents.fireEvent('threadEvents', {
+//                     type: 'THREAD_LAST_ACTIVITY_TIME',
+//                     result: {
+//                         thread: threads[0]
+//                     }
 //                 });
-//             });
-//     }
-//     else {
-//         chatEvents.fireEvent('error', {
-//             code: 6601,
-//             message: CHAT_ERRORS[6601],
-//             error: null
-//         });
-//     }
-// }
-_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:thread}});break;/**
+//             }
+//         }
+//     });
+// } else {
+_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_DELETE',result:{message:{id:messageContent.id,pinned:messageContent.pinned,threadId:threadId,time:messageContent.time,// timeMiliSeconds,
+timeNanos:messageContent.timeNanos}}});if(messageContent.pinned){var thread=_store.store.threads.get(threadId);if(thread)thread=thread.get();_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:thread?thread:threadId}});}//}
+break;/**
                  * Type 31    Thread Last Seen Updated
                  */case _constants.chatMessageVOTypes.LAST_SEEN_UPDATED:var threadObject=messageContent;threadObject.unreadCount=messageContent.unreadCount?messageContent.unreadCount:0;if(messageContent.lastSeenMessageNanos&&_store.store.threads.get(threadId)){var _msgTime=parseInt(parseInt(messageContent.lastSeenMessageTime)/1000)*1000000000+parseInt(messageContent.lastSeenMessageNanos);if(_msgTime>_store.store.threads.get(threadId).lastSeenMessageTime.get()){_store.store.threads.get(threadId).unreadCount.set(messageContent.unreadCount||0);_store.store.threads.get(threadId).lastSeenMessageTime.set(_msgTime);}}// chatEvents.fireEvent('threadEvents', {
 //     type: 'THREAD_UNREAD_COUNT_UPDATED',
@@ -378,7 +433,7 @@ _events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{
 //         unreadCount: (messageContent.unreadCount) ? messageContent.unreadCount : 0
 //     }
 // });
-_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_SEEN_UPDATED',result:{thread:threadObject,unreadCount:messageContent.unreadCount?messageContent.unreadCount:0}});// if (fullResponseObject) {
+threadObject=_store.store.threads.get(threadId)?_store.store.threads.get(threadId).get():threadObject;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_SEEN_UPDATED',result:{thread:threadObject,unreadCount:messageContent.unreadCount?messageContent.unreadCount:0}});// if (fullResponseObject) {
 //     getThreads({
 //         threadIds: [messageContent.id]
 //     }, function (threadsResult) {
@@ -467,7 +522,35 @@ break;/**
                  * Type 65    Stop Bot
                  */case _constants.chatMessageVOTypes.STOP_BOT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
                  * Type 66    Last Message Deleted
-                 */case _constants.chatMessageVOTypes.LAST_MESSAGE_DELETED:new Promise(function(resolve,reject){if(fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){resolve(threads[0]);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:threads[0]}});}});}else{var thread=formatDataToMakeConversation(messageContent);resolve(thread);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:thread}});}}).then(function(thread){// if(typeof messageContent.unreadCount !== "undefined") {
+                 */case _constants.chatMessageVOTypes.LAST_MESSAGE_DELETED:delete messageContent.unreadCount;var threadOfDeletedMessage=formatDataToMakeConversation(messageContent);_store.store.threads.save(threadOfDeletedMessage);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:_store.store.threads.get(threadOfDeletedMessage.id).get()}});// new Promise((resolve, reject)=> {
+//     if (fullResponseObject) {
+//         getThreads({
+//             threadIds: [messageContent.id]
+//         }, function (threadsResult) {
+//             var threads = threadsResult.result.threads;
+//
+//             if (!threadsResult.cache) {
+//                 resolve(threads[0])
+//                 chatEvents.fireEvent('threadEvents', {
+//                     type: 'THREAD_INFO_UPDATED',
+//                     result: {
+//                         thread: threads[0]
+//                     }
+//                 });
+//             }
+//         });
+//     } else {
+//         var thread = formatDataToMakeConversation(messageContent);
+//         resolve(thread);
+//         chatEvents.fireEvent('threadEvents', {
+//             type: 'THREAD_INFO_UPDATED',
+//             result: {
+//                 thread: thread
+//             }
+//         });
+//     }
+// }).then(thread => {
+// if(typeof messageContent.unreadCount !== "undefined") {
 //     chatEvents.fireEvent('threadEvents', {
 //         type: 'THREAD_UNREAD_COUNT_UPDATED',
 //         result: {
@@ -476,9 +559,35 @@ break;/**
 //         }
 //     });
 // }
-});break;/**
+// })
+break;/**
                  * Type 67    Last Message Edited
-                 */case _constants.chatMessageVOTypes.LAST_MESSAGE_EDITED:if(fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:threads[0]}});}});}else{var thread=formatDataToMakeConversation(messageContent);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:thread}});}break;/**
+                 */case _constants.chatMessageVOTypes.LAST_MESSAGE_EDITED:delete messageContent.unreadCount;var threadOfEditedMessage=formatDataToMakeConversation(messageContent);_store.store.threads.save(threadOfEditedMessage);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:_store.store.threads.get(threadOfEditedMessage.id).get()}});// if (fullResponseObject) {
+//     getThreads({
+//         threadIds: [messageContent.id]
+//     }, function (threadsResult) {
+//         var threads = threadsResult.result.threads;
+//
+//         if (!threadsResult.cache) {
+//             chatEvents.fireEvent('threadEvents', {
+//                 type: 'THREAD_INFO_UPDATED',
+//                 result: {
+//                     thread: threads[0]
+//                 }
+//             });
+//         }
+//     });
+// } else {
+//     var thread = formatDataToMakeConversation(messageContent);
+//
+//     chatEvents.fireEvent('threadEvents', {
+//         type: 'THREAD_INFO_UPDATED',
+//         result: {
+//             thread: thread
+//         }
+//     });
+// }
+break;/**
                  * Type 68    Get Bot Commands List
                  */case _constants.chatMessageVOTypes.BOT_COMMANDS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
                  * Type 69    Get Thread All Bots
@@ -647,7 +756,31 @@ _events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',re
              * Update Message on cache
              */if(canUseCache&&cacheSecret.length>0){if(db){try{var tempData={},salt=_utility["default"].generateUUID();tempData.id=parseInt(message.id);tempData.owner=parseInt(chatMessaging.userInfo.id);tempData.threadId=parseInt(message.threadId);tempData.time=message.time;tempData.message=_utility["default"].crypt(message.message,cacheSecret,salt);tempData.data=_utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(message)),cacheSecret,salt);tempData.salt=salt;/**
                          * Insert Message into cache database
-                         */db.messages.put(tempData)["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}catch(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}if(message.conversation){delete message.conversation.unreadCount;_store.store.threads.save(message.conversation);message.conversation.unreadCount=_store.store.threads.get(threadId).unreadCount.get()||0;}if(fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_EDIT',result:{message:message}});if(message.pinned){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0]}});}}});}else{_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_EDIT',result:{message:message}});if(message.pinned){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId}});}}},/**
+                         */db.messages.put(tempData)["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}catch(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}if(message.conversation){delete message.conversation.unreadCount;_store.store.threads.save(message.conversation);message.conversation.unreadCount=_store.store.threads.get(threadId).unreadCount.get()||0;}// if (fullResponseObject) {
+//     getThreads({
+//         threadIds: [threadId]
+//     }, function (threadsResult) {
+//         var threads = threadsResult.result.threads;
+//         if (!threadsResult.cache) {
+//             chatEvents.fireEvent('messageEvents', {
+//                 type: 'MESSAGE_EDIT',
+//                 result: {
+//                     message: message
+//                 }
+//             });
+//             if (message.pinned) {
+//                 chatEvents.fireEvent('threadEvents', {
+//                     type: 'THREAD_LAST_ACTIVITY_TIME',
+//                     result: {
+//                         thread: threads[0]
+//                     }
+//                 });
+//             }
+//         }
+//     });
+// } else {
+_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_EDIT',result:{message:message}});if(message.pinned){var thread=_store.store.threads.get(threadId);if(thread)thread=thread.get();_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:thread?thread:threadId}});}// }
+},/**
          * Create Thread
          *
          * Makes formatted Thread Object out of given contentCount,
