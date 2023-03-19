@@ -2521,27 +2521,40 @@ function Chat(params) {
                         chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    if (fullResponseObject) {
-                        getThreads({
-                            threadIds: [threadId]
-                        }, function (threadsResult) {
-                            var thread = threadsResult.result.threads[0];
+                    let pinnedThread = store.threads.get(threadId);
+                    if(pinnedThread)
+                        pinnedThread = pinnedThread.get()
+                    else
+                        pinnedThread = threadId;
 
-                            chatEvents.fireEvent('threadEvents', {
-                                type: 'THREAD_PIN',
-                                result: {
-                                    thread: thread
-                                }
-                            });
-                        });
-                    } else {
-                        chatEvents.fireEvent('threadEvents', {
-                            type: 'THREAD_PIN',
-                            result: {
-                                thread: threadId
-                            }
-                        });
-                    }
+                    chatEvents.fireEvent('threadEvents', {
+                        type: 'THREAD_PIN',
+                        result: {
+                            thread: pinnedThread
+                        }
+                    });
+
+                    // if (fullResponseObject) {
+                    //     getThreads({
+                    //         threadIds: [threadId]
+                    //     }, function (threadsResult) {
+                    //         var thread = threadsResult.result.threads[0];
+                    //
+                    //         chatEvents.fireEvent('threadEvents', {
+                    //             type: 'THREAD_PIN',
+                    //             result: {
+                    //                 thread: thread
+                    //             }
+                    //         });
+                    //     });
+                    // } else {
+                    //     chatEvents.fireEvent('threadEvents', {
+                    //         type: 'THREAD_PIN',
+                    //         result: {
+                    //             thread: threadId
+                    //         }
+                    //     });
+                    // }
 
                     break;
 
@@ -2553,27 +2566,40 @@ function Chat(params) {
                         chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    if (fullResponseObject) {
-                        getThreads({
-                            threadIds: [threadId]
-                        }, function (threadsResult) {
-                            var thread = threadsResult.result.threads[0];
+                    let unPinnedThread = store.threads.get(threadId);
+                    if(unPinnedThread)
+                        unPinnedThread = unPinnedThread.get()
+                    else
+                        unPinnedThread = threadId;
 
-                            chatEvents.fireEvent('threadEvents', {
-                                type: 'THREAD_UNPIN',
-                                result: {
-                                    thread: thread
-                                }
-                            });
-                        });
-                    } else {
-                        chatEvents.fireEvent('threadEvents', {
-                            type: 'THREAD_UNPIN',
-                            result: {
-                                thread: threadId
-                            }
-                        });
-                    }
+                    chatEvents.fireEvent('threadEvents', {
+                        type: 'THREAD_UNPIN',
+                        result: {
+                            thread: unPinnedThread
+                        }
+                    });
+
+                    // if (fullResponseObject) {
+                    //     getThreads({
+                    //         threadIds: [threadId]
+                    //     }, function (threadsResult) {
+                    //         var thread = threadsResult.result.threads[0];
+                    //
+                    //         chatEvents.fireEvent('threadEvents', {
+                    //             type: 'THREAD_UNPIN',
+                    //             result: {
+                    //                 thread: thread
+                    //             }
+                    //         });
+                    //     });
+                    // } else {
+                    //     chatEvents.fireEvent('threadEvents', {
+                    //         type: 'THREAD_UNPIN',
+                    //         result: {
+                    //             thread: threadId
+                    //         }
+                    //     });
+                    // }
 
                     break;
 
