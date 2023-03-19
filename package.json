@@ -8,7 +8,7 @@
     "publish:snapshot": "npm run version:snapshot && npm publish --tag snapshot",
     "version:snapshot": "npm version prerelease --preid snapshot",
     "publish:release": "npm run version:release && npm publish",
-    "version:release": "npm version 12.8.0",
+    "version:release": "npm version 12.8.1",
     "build:browser": "browserify -t [ babelify ] src/chat.js > dist/podchat-browser-bundle.js",
     "build:npm": "babel src -d dist/node --copy-files",
     "build": "npm run build:browser && npm run build:npm",
