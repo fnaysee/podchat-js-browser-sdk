@@ -1914,9 +1914,10 @@ function Chat(params) {
 
 
                     let mutedThread = store.threads.get(threadId);
-                    if(mutedThread)
+                    if(mutedThread){
+                        mutedThread.update("mute", true)
                         mutedThread = mutedThread.get()
-                    else
+                    } else
                         mutedThread = threadId;
 
                     chatEvents.fireEvent('threadEvents', {
@@ -1960,8 +1961,10 @@ function Chat(params) {
                     }
 
                     let unmutedThread = store.threads.get(threadId);
-                    if(unmutedThread)
+                    if(unmutedThread){
+                        unmutedThread.update("mute", false);
                         unmutedThread = unmutedThread.get()
+                    }
                     else
                         unmutedThread = threadId;
 
@@ -2522,9 +2525,10 @@ function Chat(params) {
                     }
 
                     let pinnedThread = store.threads.get(threadId);
-                    if(pinnedThread)
+                    if(pinnedThread){
+                        pinnedThread.update("pin", true);
                         pinnedThread = pinnedThread.get()
-                    else
+                    } else
                         pinnedThread = threadId;
 
                     chatEvents.fireEvent('threadEvents', {
@@ -2567,8 +2571,11 @@ function Chat(params) {
                     }
 
                     let unPinnedThread = store.threads.get(threadId);
-                    if(unPinnedThread)
+                    if(unPinnedThread){
+                        unPinnedThread.update("pin", false);
                         unPinnedThread = unPinnedThread.get()
+                    }
+
                     else
                         unPinnedThread = threadId;
 

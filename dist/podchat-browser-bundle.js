@@ -46425,7 +46425,7 @@ sendMessageCallbacksHandler(_constants.chatMessageVOTypes.DELIVERY,threadId,uniq
 // }
 break;/**
                  * Type 19    Mute Thread
-                 */case _constants.chatMessageVOTypes.MUTE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}var mutedThread=_store.store.threads.get(threadId);if(mutedThread)mutedThread=mutedThread.get();else mutedThread=threadId;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNMUTE',result:{thread:mutedThread}});// if (fullResponseObject) {
+                 */case _constants.chatMessageVOTypes.MUTE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}var mutedThread=_store.store.threads.get(threadId);if(mutedThread){mutedThread.update("mute",true);mutedThread=mutedThread.get();}else mutedThread=threadId;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNMUTE',result:{thread:mutedThread}});// if (fullResponseObject) {
 //     getThreads({
 //         threadIds: [threadId]
 //     }, function (threadsResult) {
@@ -46449,7 +46449,7 @@ break;/**
 // }
 break;/**
                  * Type 20    Unmute muted Thread
-                 */case _constants.chatMessageVOTypes.UNMUTE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}var unmutedThread=_store.store.threads.get(threadId);if(unmutedThread)unmutedThread=unmutedThread.get();else unmutedThread=threadId;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNMUTE',result:{thread:unmutedThread}});// if (fullResponseObject) {
+                 */case _constants.chatMessageVOTypes.UNMUTE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}var unmutedThread=_store.store.threads.get(threadId);if(unmutedThread){unmutedThread.update("mute",false);unmutedThread=unmutedThread.get();}else unmutedThread=threadId;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNMUTE',result:{thread:unmutedThread}});// if (fullResponseObject) {
 //     getThreads({
 //         threadIds: [threadId]
 //     }, function (threadsResult) {
@@ -46665,7 +46665,7 @@ break;/**
                  * Type 47    Get Not Seen Duration
                  */case _constants.chatMessageVOTypes.GET_NOT_SEEN_DURATION:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
                  * Type 48    Pin Thread
-                 */case _constants.chatMessageVOTypes.PIN_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}var pinnedThread=_store.store.threads.get(threadId);if(pinnedThread)pinnedThread=pinnedThread.get();else pinnedThread=threadId;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_PIN',result:{thread:pinnedThread}});// if (fullResponseObject) {
+                 */case _constants.chatMessageVOTypes.PIN_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}var pinnedThread=_store.store.threads.get(threadId);if(pinnedThread){pinnedThread.update("pin",true);pinnedThread=pinnedThread.get();}else pinnedThread=threadId;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_PIN',result:{thread:pinnedThread}});// if (fullResponseObject) {
 //     getThreads({
 //         threadIds: [threadId]
 //     }, function (threadsResult) {
@@ -46688,7 +46688,7 @@ break;/**
 // }
 break;/**
                  * Type 49    UnPin Thread
-                 */case _constants.chatMessageVOTypes.UNPIN_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}var unPinnedThread=_store.store.threads.get(threadId);if(unPinnedThread)unPinnedThread=unPinnedThread.get();else unPinnedThread=threadId;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNPIN',result:{thread:unPinnedThread}});// if (fullResponseObject) {
+                 */case _constants.chatMessageVOTypes.UNPIN_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}var unPinnedThread=_store.store.threads.get(threadId);if(unPinnedThread){unPinnedThread.update("pin",false);unPinnedThread=unPinnedThread.get();}else unPinnedThread=threadId;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNPIN',result:{thread:unPinnedThread}});// if (fullResponseObject) {
 //     getThreads({
 //         threadIds: [threadId]
 //     }, function (threadsResult) {
