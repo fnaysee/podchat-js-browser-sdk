@@ -337,7 +337,7 @@ sendMessageCallbacksHandler(_constants.chatMessageVOTypes.DELIVERY,threadId,uniq
 // }
 break;/**
                  * Type 19    Mute Thread
-                 */case _constants.chatMessageVOTypes.MUTE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}var mutedThread=_store.store.threads.get(threadId);if(mutedThread){mutedThread.update("mute",true);mutedThread=mutedThread.get();}else mutedThread=threadId;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNMUTE',result:{thread:mutedThread}});// if (fullResponseObject) {
+                 */case _constants.chatMessageVOTypes.MUTE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}var mutedThread=_store.store.threads.get(threadId);if(mutedThread){mutedThread.update("mute",true);mutedThread=mutedThread.get();}else mutedThread=threadId;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_MUTE',result:{thread:mutedThread}});// if (fullResponseObject) {
 //     getThreads({
 //         threadIds: [threadId]
 //     }, function (threadsResult) {

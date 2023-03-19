@@ -1921,7 +1921,7 @@ function Chat(params) {
                         mutedThread = threadId;
 
                     chatEvents.fireEvent('threadEvents', {
-                        type: 'THREAD_UNMUTE',
+                        type: 'THREAD_MUTE',
                         result: {
                             thread: mutedThread
                         }
