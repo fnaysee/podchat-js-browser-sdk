@@ -5,6 +5,10 @@ to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.i
 
 ##[Unreleased]
 
+## [12.8.1] - 2023-03-19
+### Fixed
+- ScreenShare problems after refactor call handling process
+
 ## [12.8.0] - 2023-03-12
 ### Added
 - Prevent request when socket not connected
