@@ -2574,9 +2574,7 @@ function Chat(params) {
                     if(unPinnedThread){
                         unPinnedThread.update("pin", false);
                         unPinnedThread = unPinnedThread.get()
-                    }
-
-                    else
+                    } else
                         unPinnedThread = threadId;
 
                     chatEvents.fireEvent('threadEvents', {
