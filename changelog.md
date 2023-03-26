@@ -5,6 +5,11 @@ to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.i
 
 ##[Unreleased]
 
+## [12.8.2-snapshot.5] - 2023-03-26
+### Changed
+- Removed fullResponseObject from some threadEvents
+
+
 ## [12.8.1] - 2023-03-19
 ### Fixed
 - ScreenShare problems after refactor call handling process
