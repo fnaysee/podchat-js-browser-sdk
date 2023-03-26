@@ -46810,7 +46810,29 @@ break;/**
                  * Type 101    Location Ping
                  */case _constants.chatMessageVOTypes.LOCATION_PING:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('systemEvents',{type:'LOCATION_PING',result:messageContent});break;/**
                  * Type 102    Close Thread
-                 */case _constants.chatMessageVOTypes.CLOSE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var thread=threadsResult.result.threads[0];thread.mute=true;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_CLOSE',result:{thread:thread}});});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_CLOSE',result:{thread:threadId}});}break;/**
+                 */case _constants.chatMessageVOTypes.CLOSE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}var closedThread=_store.store.threads.get(threadId);if(closedThread){closedThread=closedThread.get();_store.store.threads.remove(threadId);}else closedThread=threadId;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_CLOSE',result:{thread:closedThread}});// if (fullResponseObject) {
+//     getThreads({
+//         threadIds: [threadId]
+//     }, function (threadsResult) {
+//         var thread = threadsResult.result.threads[0];
+//         thread.mute = true;
+//
+//         chatEvents.fireEvent('threadEvents', {
+//             type: 'THREAD_CLOSE',
+//             result: {
+//                 thread: thread
+//             }
+//         });
+//     });
+// } else {
+//     chatEvents.fireEvent('threadEvents', {
+//         type: 'THREAD_CLOSE',
+//         result: {
+//             thread: threadId
+//         }
+//     });
+// }
+break;/**
                  * Type 104    Remove Bot Commands
                  */case _constants.chatMessageVOTypes.REMOVE_BOT_COMMANDS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
                  * Type 107    Register Assistant

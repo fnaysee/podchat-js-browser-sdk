@@ -2934,28 +2934,42 @@ function Chat(params) {
                         chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    if (fullResponseObject) {
-                        getThreads({
-                            threadIds: [threadId]
-                        }, function (threadsResult) {
-                            var thread = threadsResult.result.threads[0];
-                            thread.mute = true;
+                    let closedThread = store.threads.get(threadId);
+                    if(closedThread){
+                        closedThread = closedThread.get();
+                        store.threads.remove(threadId);
+                    } else
+                        closedThread = threadId;
 
-                            chatEvents.fireEvent('threadEvents', {
-                                type: 'THREAD_CLOSE',
-                                result: {
-                                    thread: thread
-                                }
-                            });
-                        });
-                    } else {
-                        chatEvents.fireEvent('threadEvents', {
-                            type: 'THREAD_CLOSE',
-                            result: {
-                                thread: threadId
-                            }
-                        });
-                    }
+                    chatEvents.fireEvent('threadEvents', {
+                        type: 'THREAD_CLOSE',
+                        result: {
+                            thread: closedThread
+                        }
+                    });
+
+                    // if (fullResponseObject) {
+                    //     getThreads({
+                    //         threadIds: [threadId]
+                    //     }, function (threadsResult) {
+                    //         var thread = threadsResult.result.threads[0];
+                    //         thread.mute = true;
+                    //
+                    //         chatEvents.fireEvent('threadEvents', {
+                    //             type: 'THREAD_CLOSE',
+                    //             result: {
+                    //                 thread: thread
+                    //             }
+                    //         });
+                    //     });
+                    // } else {
+                    //     chatEvents.fireEvent('threadEvents', {
+                    //         type: 'THREAD_CLOSE',
+                    //         result: {
+                    //             thread: threadId
+                    //         }
+                    //     });
+                    // }
 
                     break;
 
