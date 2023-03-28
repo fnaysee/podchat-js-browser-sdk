@@ -576,7 +576,7 @@ Entity.prototype.encode = function encode(data, enc, /* internal */ reporter) {
   return this._getEncoder(enc).encode(data, reporter);
 };
 
-},{"./decoders":22,"./encoders":25,"inherits":186}],15:[function(require,module,exports){
+},{"./decoders":22,"./encoders":25,"inherits":185}],15:[function(require,module,exports){
 'use strict';
 
 const inherits = require('inherits');
@@ -731,7 +731,7 @@ EncoderBuffer.prototype.join = function join(out, offset) {
   return out;
 };
 
-},{"../base/reporter":18,"inherits":186,"safer-buffer":225}],16:[function(require,module,exports){
+},{"../base/reporter":18,"inherits":185,"safer-buffer":224}],16:[function(require,module,exports){
 'use strict';
 
 const base = exports;
@@ -1381,7 +1381,7 @@ Node.prototype._isPrintstr = function isPrintstr(str) {
   return /^[A-Za-z0-9 '()+,-./:=?]*$/.test(str);
 };
 
-},{"../base/buffer":15,"../base/reporter":18,"minimalistic-assert":195}],18:[function(require,module,exports){
+},{"../base/buffer":15,"../base/reporter":18,"minimalistic-assert":194}],18:[function(require,module,exports){
 'use strict';
 
 const inherits = require('inherits');
@@ -1506,7 +1506,7 @@ ReporterError.prototype.rethrow = function rethrow(msg) {
   return this;
 };
 
-},{"inherits":186}],19:[function(require,module,exports){
+},{"inherits":185}],19:[function(require,module,exports){
 'use strict';
 
 // Helper
@@ -1926,7 +1926,7 @@ function derDecodeLen(buf, primitive, fail) {
   return len;
 }
 
-},{"../base/buffer":15,"../base/node":17,"../constants/der":19,"bn.js":27,"inherits":186}],22:[function(require,module,exports){
+},{"../base/buffer":15,"../base/node":17,"../constants/der":19,"bn.js":27,"inherits":185}],22:[function(require,module,exports){
 'use strict';
 
 const decoders = exports;
@@ -1987,7 +1987,7 @@ PEMDecoder.prototype.decode = function decode(data, options) {
   return DERDecoder.prototype.decode.call(this, input, options);
 };
 
-},{"./der":21,"inherits":186,"safer-buffer":225}],24:[function(require,module,exports){
+},{"./der":21,"inherits":185,"safer-buffer":224}],24:[function(require,module,exports){
 'use strict';
 
 const inherits = require('inherits');
@@ -2284,7 +2284,7 @@ function encodeTag(tag, primitive, cls, reporter) {
   return res;
 }
 
-},{"../base/node":17,"../constants/der":19,"inherits":186,"safer-buffer":225}],25:[function(require,module,exports){
+},{"../base/node":17,"../constants/der":19,"inherits":185,"safer-buffer":224}],25:[function(require,module,exports){
 'use strict';
 
 const encoders = exports;
@@ -2317,7 +2317,7 @@ PEMEncoder.prototype.encode = function encode(data, options) {
   return out.join('\n');
 };
 
-},{"./der":24,"inherits":186}],27:[function(require,module,exports){
+},{"./der":24,"inherits":185}],27:[function(require,module,exports){
 (function (module, exports) {
   'use strict';
 
@@ -9765,7 +9765,7 @@ AES.prototype.scrub = function () {
 
 module.exports.AES = AES
 
-},{"safe-buffer":224}],33:[function(require,module,exports){
+},{"safe-buffer":223}],33:[function(require,module,exports){
 var aes = require('./aes')
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('cipher-base')
@@ -9884,7 +9884,7 @@ StreamCipher.prototype.setAAD = function setAAD (buf) {
 
 module.exports = StreamCipher
 
-},{"./aes":32,"./ghash":37,"./incr32":38,"buffer-xor":75,"cipher-base":77,"inherits":186,"safe-buffer":224}],34:[function(require,module,exports){
+},{"./aes":32,"./ghash":37,"./incr32":38,"buffer-xor":75,"cipher-base":77,"inherits":185,"safe-buffer":223}],34:[function(require,module,exports){
 var ciphers = require('./encrypter')
 var deciphers = require('./decrypter')
 var modes = require('./modes/list.json')
@@ -10025,7 +10025,7 @@ function createDecipher (suite, password) {
 exports.createDecipher = createDecipher
 exports.createDecipheriv = createDecipheriv
 
-},{"./aes":32,"./authCipher":33,"./modes":45,"./streamCipher":48,"cipher-base":77,"evp_bytestokey":150,"inherits":186,"safe-buffer":224}],36:[function(require,module,exports){
+},{"./aes":32,"./authCipher":33,"./modes":45,"./streamCipher":48,"cipher-base":77,"evp_bytestokey":149,"inherits":185,"safe-buffer":223}],36:[function(require,module,exports){
 var MODES = require('./modes')
 var AuthCipher = require('./authCipher')
 var Buffer = require('safe-buffer').Buffer
@@ -10141,7 +10141,7 @@ function createCipher (suite, password) {
 exports.createCipheriv = createCipheriv
 exports.createCipher = createCipher
 
-},{"./aes":32,"./authCipher":33,"./modes":45,"./streamCipher":48,"cipher-base":77,"evp_bytestokey":150,"inherits":186,"safe-buffer":224}],37:[function(require,module,exports){
+},{"./aes":32,"./authCipher":33,"./modes":45,"./streamCipher":48,"cipher-base":77,"evp_bytestokey":149,"inherits":185,"safe-buffer":223}],37:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var ZEROES = Buffer.alloc(16, 0)
 
@@ -10232,7 +10232,7 @@ GHASH.prototype.final = function (abl, bl) {
 
 module.exports = GHASH
 
-},{"safe-buffer":224}],38:[function(require,module,exports){
+},{"safe-buffer":223}],38:[function(require,module,exports){
 function incr32 (iv) {
   var len = iv.length
   var item
@@ -10303,7 +10303,7 @@ exports.encrypt = function (self, data, decrypt) {
   return out
 }
 
-},{"buffer-xor":75,"safe-buffer":224}],41:[function(require,module,exports){
+},{"buffer-xor":75,"safe-buffer":223}],41:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 function encryptByte (self, byteParam, decrypt) {
@@ -10347,7 +10347,7 @@ exports.encrypt = function (self, chunk, decrypt) {
   return out
 }
 
-},{"safe-buffer":224}],42:[function(require,module,exports){
+},{"safe-buffer":223}],42:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 function encryptByte (self, byteParam, decrypt) {
@@ -10374,7 +10374,7 @@ exports.encrypt = function (self, chunk, decrypt) {
   return out
 }
 
-},{"safe-buffer":224}],43:[function(require,module,exports){
+},{"safe-buffer":223}],43:[function(require,module,exports){
 var xor = require('buffer-xor')
 var Buffer = require('safe-buffer').Buffer
 var incr32 = require('../incr32')
@@ -10406,7 +10406,7 @@ exports.encrypt = function (self, chunk) {
   return xor(chunk, pad)
 }
 
-},{"../incr32":38,"buffer-xor":75,"safe-buffer":224}],44:[function(require,module,exports){
+},{"../incr32":38,"buffer-xor":75,"safe-buffer":223}],44:[function(require,module,exports){
 exports.encrypt = function (self, block) {
   return self._cipher.encryptBlock(block)
 }
@@ -10677,7 +10677,7 @@ StreamCipher.prototype._final = function () {
 
 module.exports = StreamCipher
 
-},{"./aes":32,"cipher-base":77,"inherits":186,"safe-buffer":224}],49:[function(require,module,exports){
+},{"./aes":32,"cipher-base":77,"inherits":185,"safe-buffer":223}],49:[function(require,module,exports){
 var DES = require('browserify-des')
 var aes = require('browserify-aes/browser')
 var aesModes = require('browserify-aes/modes')
@@ -10746,7 +10746,7 @@ exports.createDecipher = exports.Decipher = createDecipher
 exports.createDecipheriv = exports.Decipheriv = createDecipheriv
 exports.listCiphers = exports.getCiphers = getCiphers
 
-},{"browserify-aes/browser":34,"browserify-aes/modes":45,"browserify-des":50,"browserify-des/modes":51,"evp_bytestokey":150}],50:[function(require,module,exports){
+},{"browserify-aes/browser":34,"browserify-aes/modes":45,"browserify-des":50,"browserify-des/modes":51,"evp_bytestokey":149}],50:[function(require,module,exports){
 var CipherBase = require('cipher-base')
 var des = require('des.js')
 var inherits = require('inherits')
@@ -10798,7 +10798,7 @@ DES.prototype._final = function () {
   return Buffer.from(this._des.final())
 }
 
-},{"cipher-base":77,"des.js":119,"inherits":186,"safe-buffer":224}],51:[function(require,module,exports){
+},{"cipher-base":77,"des.js":119,"inherits":185,"safe-buffer":223}],51:[function(require,module,exports){
 exports['des-ecb'] = {
   key: 8,
   iv: 0
@@ -10863,7 +10863,7 @@ crt.getr = getr
 module.exports = crt
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"bn.js":29,"buffer":76,"randombytes":221}],53:[function(require,module,exports){
+},{"bn.js":29,"buffer":76,"randombytes":220}],53:[function(require,module,exports){
 module.exports = require('./browser/algorithms.json')
 
 },{"./browser/algorithms.json":54}],54:[function(require,module,exports){
@@ -11124,7 +11124,7 @@ module.exports = {
   createVerify: createVerify
 }
 
-},{"./algorithms.json":54,"./sign":57,"./verify":58,"create-hash":80,"inherits":186,"readable-stream":73,"safe-buffer":74}],57:[function(require,module,exports){
+},{"./algorithms.json":54,"./sign":57,"./verify":58,"create-hash":80,"inherits":185,"readable-stream":73,"safe-buffer":74}],57:[function(require,module,exports){
 // much of this based on https://github.com/indutny/self-signed/blob/gh-pages/lib/rsa.js
 var Buffer = require('safe-buffer').Buffer
 var createHmac = require('create-hmac')
@@ -11269,7 +11269,7 @@ module.exports = sign
 module.exports.getKey = getKey
 module.exports.makeKey = makeKey
 
-},{"./curves.json":55,"bn.js":29,"browserify-rsa":52,"create-hmac":82,"elliptic":132,"parse-asn1":202,"safe-buffer":74}],58:[function(require,module,exports){
+},{"./curves.json":55,"bn.js":29,"browserify-rsa":52,"create-hmac":82,"elliptic":131,"parse-asn1":201,"safe-buffer":74}],58:[function(require,module,exports){
 // much of this based on https://github.com/indutny/self-signed/blob/gh-pages/lib/rsa.js
 var Buffer = require('safe-buffer').Buffer
 var BN = require('bn.js')
@@ -11355,7 +11355,7 @@ function checkValue (b, q) {
 
 module.exports = verify
 
-},{"./curves.json":55,"bn.js":29,"elliptic":132,"parse-asn1":202,"safe-buffer":74}],59:[function(require,module,exports){
+},{"./curves.json":55,"bn.js":29,"elliptic":131,"parse-asn1":201,"safe-buffer":74}],59:[function(require,module,exports){
 'use strict';
 
 function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
@@ -11626,7 +11626,7 @@ Object.defineProperty(Duplex.prototype, 'destroyed', {
   }
 });
 }).call(this)}).call(this,require('_process'))
-},{"./_stream_readable":62,"./_stream_writable":64,"_process":213,"inherits":186}],61:[function(require,module,exports){
+},{"./_stream_readable":62,"./_stream_writable":64,"_process":212,"inherits":185}],61:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -11666,7 +11666,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":63,"inherits":186}],62:[function(require,module,exports){
+},{"./_stream_transform":63,"inherits":185}],62:[function(require,module,exports){
 (function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -12793,7 +12793,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":59,"./_stream_duplex":60,"./internal/streams/async_iterator":65,"./internal/streams/buffer_list":66,"./internal/streams/destroy":67,"./internal/streams/from":69,"./internal/streams/state":71,"./internal/streams/stream":72,"_process":213,"buffer":76,"events":149,"inherits":186,"string_decoder/":257,"util":31}],63:[function(require,module,exports){
+},{"../errors":59,"./_stream_duplex":60,"./internal/streams/async_iterator":65,"./internal/streams/buffer_list":66,"./internal/streams/destroy":67,"./internal/streams/from":69,"./internal/streams/state":71,"./internal/streams/stream":72,"_process":212,"buffer":76,"events":148,"inherits":185,"string_decoder/":256,"util":31}],63:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12995,7 +12995,7 @@ function done(stream, er, data) {
   if (stream._transformState.transforming) throw new ERR_TRANSFORM_ALREADY_TRANSFORMING();
   return stream.push(null);
 }
-},{"../errors":59,"./_stream_duplex":60,"inherits":186}],64:[function(require,module,exports){
+},{"../errors":59,"./_stream_duplex":60,"inherits":185}],64:[function(require,module,exports){
 (function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -13695,7 +13695,7 @@ Writable.prototype._destroy = function (err, cb) {
   cb(err);
 };
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":59,"./_stream_duplex":60,"./internal/streams/destroy":67,"./internal/streams/state":71,"./internal/streams/stream":72,"_process":213,"buffer":76,"inherits":186,"util-deprecate":261}],65:[function(require,module,exports){
+},{"../errors":59,"./_stream_duplex":60,"./internal/streams/destroy":67,"./internal/streams/state":71,"./internal/streams/stream":72,"_process":212,"buffer":76,"inherits":185,"util-deprecate":259}],65:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -13905,7 +13905,7 @@ var createReadableStreamAsyncIterator = function createReadableStreamAsyncIterat
 
 module.exports = createReadableStreamAsyncIterator;
 }).call(this)}).call(this,require('_process'))
-},{"./end-of-stream":68,"_process":213}],66:[function(require,module,exports){
+},{"./end-of-stream":68,"_process":212}],66:[function(require,module,exports){
 'use strict';
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -14224,7 +14224,7 @@ module.exports = {
   errorOrDestroy: errorOrDestroy
 };
 }).call(this)}).call(this,require('_process'))
-},{"_process":213}],68:[function(require,module,exports){
+},{"_process":212}],68:[function(require,module,exports){
 // Ported from https://github.com/mafintosh/end-of-stream with
 // permission from the author, Mathias Buus (@mafintosh).
 'use strict';
@@ -14463,7 +14463,7 @@ module.exports = {
 },{"../../../errors":59}],72:[function(require,module,exports){
 module.exports = require('events').EventEmitter;
 
-},{"events":149}],73:[function(require,module,exports){
+},{"events":148}],73:[function(require,module,exports){
 exports = module.exports = require('./lib/_stream_readable.js');
 exports.Stream = exports;
 exports.Readable = exports;
@@ -16336,7 +16336,7 @@ function numberIsNaN (obj) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"base64-js":28,"buffer":76,"ieee754":185}],77:[function(require,module,exports){
+},{"base64-js":28,"buffer":76,"ieee754":184}],77:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('stream').Transform
 var StringDecoder = require('string_decoder').StringDecoder
@@ -16437,7 +16437,7 @@ CipherBase.prototype._toString = function (value, enc, fin) {
 
 module.exports = CipherBase
 
-},{"inherits":186,"safe-buffer":224,"stream":242,"string_decoder":257}],78:[function(require,module,exports){
+},{"inherits":185,"safe-buffer":223,"stream":241,"string_decoder":256}],78:[function(require,module,exports){
 (function (Buffer){(function (){
 var elliptic = require('elliptic')
 var BN = require('bn.js')
@@ -16565,7 +16565,7 @@ function formatReturnValue (bn, enc, len) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"bn.js":79,"buffer":76,"elliptic":132}],79:[function(require,module,exports){
+},{"bn.js":79,"buffer":76,"elliptic":131}],79:[function(require,module,exports){
 arguments[4][27][0].apply(exports,arguments)
 },{"buffer":31,"dup":27}],80:[function(require,module,exports){
 'use strict'
@@ -16599,14 +16599,14 @@ module.exports = function createHash (alg) {
   return new Hash(sha(alg))
 }
 
-},{"cipher-base":77,"inherits":186,"md5.js":191,"ripemd160":223,"sha.js":235}],81:[function(require,module,exports){
+},{"cipher-base":77,"inherits":185,"md5.js":190,"ripemd160":222,"sha.js":234}],81:[function(require,module,exports){
 var MD5 = require('md5.js')
 
 module.exports = function (buffer) {
   return new MD5().update(buffer).digest()
 }
 
-},{"md5.js":191}],82:[function(require,module,exports){
+},{"md5.js":190}],82:[function(require,module,exports){
 'use strict'
 var inherits = require('inherits')
 var Legacy = require('./legacy')
@@ -16670,7 +16670,7 @@ module.exports = function createHmac (alg, key) {
   return new Hmac(alg, key)
 }
 
-},{"./legacy":83,"cipher-base":77,"create-hash/md5":81,"inherits":186,"ripemd160":223,"safe-buffer":224,"sha.js":235}],83:[function(require,module,exports){
+},{"./legacy":83,"cipher-base":77,"create-hash/md5":81,"inherits":185,"ripemd160":222,"safe-buffer":223,"sha.js":234}],83:[function(require,module,exports){
 'use strict'
 var inherits = require('inherits')
 var Buffer = require('safe-buffer').Buffer
@@ -16718,7 +16718,7 @@ Hmac.prototype._final = function () {
 }
 module.exports = Hmac
 
-},{"cipher-base":77,"inherits":186,"safe-buffer":224}],84:[function(require,module,exports){
+},{"cipher-base":77,"inherits":185,"safe-buffer":223}],84:[function(require,module,exports){
 'use strict'
 
 exports.randomBytes = exports.rng = exports.pseudoRandomBytes = exports.prng = require('randombytes')
@@ -16817,7 +16817,7 @@ exports.constants = {
   'POINT_CONVERSION_HYBRID': 6
 }
 
-},{"browserify-cipher":49,"browserify-sign":56,"browserify-sign/algos":53,"create-ecdh":78,"create-hash":80,"create-hmac":82,"diffie-hellman":126,"pbkdf2":203,"public-encrypt":214,"randombytes":221,"randomfill":222}],85:[function(require,module,exports){
+},{"browserify-cipher":49,"browserify-sign":56,"browserify-sign/algos":53,"create-ecdh":78,"create-hash":80,"create-hmac":82,"diffie-hellman":125,"pbkdf2":202,"public-encrypt":213,"randombytes":220,"randomfill":221}],85:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -23578,7 +23578,7 @@ proto._update = function _update(inp, inOff, out, outOff) {
   }
 };
 
-},{"inherits":186,"minimalistic-assert":195}],121:[function(require,module,exports){
+},{"inherits":185,"minimalistic-assert":194}],121:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -23721,7 +23721,7 @@ Cipher.prototype._finalDecrypt = function _finalDecrypt() {
   return this._unpad(out);
 };
 
-},{"minimalistic-assert":195}],122:[function(require,module,exports){
+},{"minimalistic-assert":194}],122:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -23865,7 +23865,7 @@ DES.prototype._decrypt = function _decrypt(state, lStart, rStart, out, off) {
   utils.rip(l, r, out, off);
 };
 
-},{"./cipher":121,"./utils":124,"inherits":186,"minimalistic-assert":195}],123:[function(require,module,exports){
+},{"./cipher":121,"./utils":124,"inherits":185,"minimalistic-assert":194}],123:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -23921,7 +23921,7 @@ EDE.prototype._update = function _update(inp, inOff, out, outOff) {
 EDE.prototype._pad = DES.prototype._pad;
 EDE.prototype._unpad = DES.prototype._unpad;
 
-},{"./cipher":121,"./des":122,"inherits":186,"minimalistic-assert":195}],124:[function(require,module,exports){
+},{"./cipher":121,"./des":122,"inherits":185,"minimalistic-assert":194}],124:[function(require,module,exports){
 'use strict';
 
 exports.readUInt32BE = function readUInt32BE(bytes, off) {
@@ -24180,4484 +24180,6 @@ exports.padSplit = function padSplit(num, size, group) {
 };
 
 },{}],125:[function(require,module,exports){
-(function (global,setImmediate){(function (){
-/*
- * Dexie.js - a minimalistic wrapper for IndexedDB
- * ===============================================
- *
- * By David Fahlander, david.fahlander@gmail.com
- *
- * Version 2.0.4, Fri May 25 2018
- *
- * http://dexie.org
- *
- * Apache License Version 2.0, January 2004, http://www.apache.org/licenses/
- */
- 
-(function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-	typeof define === 'function' && define.amd ? define(factory) :
-	(global.Dexie = factory());
-}(this, (function () { 'use strict';
-
-var keys = Object.keys;
-var isArray = Array.isArray;
-var _global = typeof self !== 'undefined' ? self :
-    typeof window !== 'undefined' ? window :
-        global;
-function extend(obj, extension) {
-    if (typeof extension !== 'object')
-        return obj;
-    keys(extension).forEach(function (key) {
-        obj[key] = extension[key];
-    });
-    return obj;
-}
-var getProto = Object.getPrototypeOf;
-var _hasOwn = {}.hasOwnProperty;
-function hasOwn(obj, prop) {
-    return _hasOwn.call(obj, prop);
-}
-function props(proto, extension) {
-    if (typeof extension === 'function')
-        extension = extension(getProto(proto));
-    keys(extension).forEach(function (key) {
-        setProp(proto, key, extension[key]);
-    });
-}
-var defineProperty = Object.defineProperty;
-function setProp(obj, prop, functionOrGetSet, options) {
-    defineProperty(obj, prop, extend(functionOrGetSet && hasOwn(functionOrGetSet, "get") && typeof functionOrGetSet.get === 'function' ?
-        { get: functionOrGetSet.get, set: functionOrGetSet.set, configurable: true } :
-        { value: functionOrGetSet, configurable: true, writable: true }, options));
-}
-function derive(Child) {
-    return {
-        from: function (Parent) {
-            Child.prototype = Object.create(Parent.prototype);
-            setProp(Child.prototype, "constructor", Child);
-            return {
-                extend: props.bind(null, Child.prototype)
-            };
-        }
-    };
-}
-var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
-function getPropertyDescriptor(obj, prop) {
-    var pd = getOwnPropertyDescriptor(obj, prop), proto;
-    return pd || (proto = getProto(obj)) && getPropertyDescriptor(proto, prop);
-}
-var _slice = [].slice;
-function slice(args, start, end) {
-    return _slice.call(args, start, end);
-}
-function override(origFunc, overridedFactory) {
-    return overridedFactory(origFunc);
-}
-function assert(b) {
-    if (!b)
-        throw new Error("Assertion Failed");
-}
-function asap(fn) {
-    if (_global.setImmediate)
-        setImmediate(fn);
-    else
-        setTimeout(fn, 0);
-}
-
-/** Generate an object (hash map) based on given array.
- * @param extractor Function taking an array item and its index and returning an array of 2 items ([key, value]) to
- *        instert on the resulting object for each item in the array. If this function returns a falsy value, the
- *        current item wont affect the resulting object.
- */
-function arrayToObject(array, extractor) {
-    return array.reduce(function (result, item, i) {
-        var nameAndValue = extractor(item, i);
-        if (nameAndValue)
-            result[nameAndValue[0]] = nameAndValue[1];
-        return result;
-    }, {});
-}
-function trycatcher(fn, reject) {
-    return function () {
-        try {
-            fn.apply(this, arguments);
-        }
-        catch (e) {
-            reject(e);
-        }
-    };
-}
-function tryCatch(fn, onerror, args) {
-    try {
-        fn.apply(null, args);
-    }
-    catch (ex) {
-        onerror && onerror(ex);
-    }
-}
-function getByKeyPath(obj, keyPath) {
-    // http://www.w3.org/TR/IndexedDB/#steps-for-extracting-a-key-from-a-value-using-a-key-path
-    if (hasOwn(obj, keyPath))
-        return obj[keyPath]; // This line is moved from last to first for optimization purpose.
-    if (!keyPath)
-        return obj;
-    if (typeof keyPath !== 'string') {
-        var rv = [];
-        for (var i = 0, l = keyPath.length; i < l; ++i) {
-            var val = getByKeyPath(obj, keyPath[i]);
-            rv.push(val);
-        }
-        return rv;
-    }
-    var period = keyPath.indexOf('.');
-    if (period !== -1) {
-        var innerObj = obj[keyPath.substr(0, period)];
-        return innerObj === undefined ? undefined : getByKeyPath(innerObj, keyPath.substr(period + 1));
-    }
-    return undefined;
-}
-function setByKeyPath(obj, keyPath, value) {
-    if (!obj || keyPath === undefined)
-        return;
-    if ('isFrozen' in Object && Object.isFrozen(obj))
-        return;
-    if (typeof keyPath !== 'string' && 'length' in keyPath) {
-        assert(typeof value !== 'string' && 'length' in value);
-        for (var i = 0, l = keyPath.length; i < l; ++i) {
-            setByKeyPath(obj, keyPath[i], value[i]);
-        }
-    }
-    else {
-        var period = keyPath.indexOf('.');
-        if (period !== -1) {
-            var currentKeyPath = keyPath.substr(0, period);
-            var remainingKeyPath = keyPath.substr(period + 1);
-            if (remainingKeyPath === "")
-                if (value === undefined)
-                    delete obj[currentKeyPath];
-                else
-                    obj[currentKeyPath] = value;
-            else {
-                var innerObj = obj[currentKeyPath];
-                if (!innerObj)
-                    innerObj = (obj[currentKeyPath] = {});
-                setByKeyPath(innerObj, remainingKeyPath, value);
-            }
-        }
-        else {
-            if (value === undefined)
-                delete obj[keyPath];
-            else
-                obj[keyPath] = value;
-        }
-    }
-}
-function delByKeyPath(obj, keyPath) {
-    if (typeof keyPath === 'string')
-        setByKeyPath(obj, keyPath, undefined);
-    else if ('length' in keyPath)
-        [].map.call(keyPath, function (kp) {
-            setByKeyPath(obj, kp, undefined);
-        });
-}
-function shallowClone(obj) {
-    var rv = {};
-    for (var m in obj) {
-        if (hasOwn(obj, m))
-            rv[m] = obj[m];
-    }
-    return rv;
-}
-var concat = [].concat;
-function flatten(a) {
-    return concat.apply([], a);
-}
-//https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm
-var intrinsicTypes = "Boolean,String,Date,RegExp,Blob,File,FileList,ArrayBuffer,DataView,Uint8ClampedArray,ImageData,Map,Set"
-    .split(',').concat(flatten([8, 16, 32, 64].map(function (num) { return ["Int", "Uint", "Float"].map(function (t) { return t + num + "Array"; }); }))).filter(function (t) { return _global[t]; }).map(function (t) { return _global[t]; });
-function deepClone(any) {
-    if (!any || typeof any !== 'object')
-        return any;
-    var rv;
-    if (isArray(any)) {
-        rv = [];
-        for (var i = 0, l = any.length; i < l; ++i) {
-            rv.push(deepClone(any[i]));
-        }
-    }
-    else if (intrinsicTypes.indexOf(any.constructor) >= 0) {
-        rv = any;
-    }
-    else {
-        rv = any.constructor ? Object.create(any.constructor.prototype) : {};
-        for (var prop in any) {
-            if (hasOwn(any, prop)) {
-                rv[prop] = deepClone(any[prop]);
-            }
-        }
-    }
-    return rv;
-}
-function getObjectDiff(a, b, rv, prfx) {
-    // Compares objects a and b and produces a diff object.
-    rv = rv || {};
-    prfx = prfx || '';
-    keys(a).forEach(function (prop) {
-        if (!hasOwn(b, prop))
-            rv[prfx + prop] = undefined; // Property removed
-        else {
-            var ap = a[prop], bp = b[prop];
-            if (typeof ap === 'object' && typeof bp === 'object' &&
-                ap && bp &&
-                // Now compare constructors are same (not equal because wont work in Safari)
-                ('' + ap.constructor) === ('' + bp.constructor))
-                // Same type of object but its properties may have changed
-                getObjectDiff(ap, bp, rv, prfx + prop + ".");
-            else if (ap !== bp)
-                rv[prfx + prop] = b[prop]; // Primitive value changed
-        }
-    });
-    keys(b).forEach(function (prop) {
-        if (!hasOwn(a, prop)) {
-            rv[prfx + prop] = b[prop]; // Property added
-        }
-    });
-    return rv;
-}
-// If first argument is iterable or array-like, return it as an array
-var iteratorSymbol = typeof Symbol !== 'undefined' && Symbol.iterator;
-var getIteratorOf = iteratorSymbol ? function (x) {
-    var i;
-    return x != null && (i = x[iteratorSymbol]) && i.apply(x);
-} : function () { return null; };
-var NO_CHAR_ARRAY = {};
-// Takes one or several arguments and returns an array based on the following criteras:
-// * If several arguments provided, return arguments converted to an array in a way that
-//   still allows javascript engine to optimize the code.
-// * If single argument is an array, return a clone of it.
-// * If this-pointer equals NO_CHAR_ARRAY, don't accept strings as valid iterables as a special
-//   case to the two bullets below.
-// * If single argument is an iterable, convert it to an array and return the resulting array.
-// * If single argument is array-like (has length of type number), convert it to an array.
-function getArrayOf(arrayLike) {
-    var i, a, x, it;
-    if (arguments.length === 1) {
-        if (isArray(arrayLike))
-            return arrayLike.slice();
-        if (this === NO_CHAR_ARRAY && typeof arrayLike === 'string')
-            return [arrayLike];
-        if ((it = getIteratorOf(arrayLike))) {
-            a = [];
-            while ((x = it.next()), !x.done)
-                a.push(x.value);
-            return a;
-        }
-        if (arrayLike == null)
-            return [arrayLike];
-        i = arrayLike.length;
-        if (typeof i === 'number') {
-            a = new Array(i);
-            while (i--)
-                a[i] = arrayLike[i];
-            return a;
-        }
-        return [arrayLike];
-    }
-    i = arguments.length;
-    a = new Array(i);
-    while (i--)
-        a[i] = arguments[i];
-    return a;
-}
-
-// By default, debug will be true only if platform is a web platform and its page is served from localhost.
-// When debug = true, error's stacks will contain asyncronic long stacks.
-var debug = typeof location !== 'undefined' &&
-    // By default, use debug mode if served from localhost.
-    /^(http|https):\/\/(localhost|127\.0\.0\.1)/.test(location.href);
-function setDebug(value, filter) {
-    debug = value;
-    libraryFilter = filter;
-}
-var libraryFilter = function () { return true; };
-var NEEDS_THROW_FOR_STACK = !new Error("").stack;
-function getErrorWithStack() {
-    "use strict";
-    if (NEEDS_THROW_FOR_STACK)
-        try {
-            // Doing something naughty in strict mode here to trigger a specific error
-            // that can be explicitely ignored in debugger's exception settings.
-            // If we'd just throw new Error() here, IE's debugger's exception settings
-            // will just consider it as "exception thrown by javascript code" which is
-            // something you wouldn't want it to ignore.
-            getErrorWithStack.arguments;
-            throw new Error(); // Fallback if above line don't throw.
-        }
-        catch (e) {
-            return e;
-        }
-    return new Error();
-}
-function prettyStack(exception, numIgnoredFrames) {
-    var stack = exception.stack;
-    if (!stack)
-        return "";
-    numIgnoredFrames = (numIgnoredFrames || 0);
-    if (stack.indexOf(exception.name) === 0)
-        numIgnoredFrames += (exception.name + exception.message).split('\n').length;
-    return stack.split('\n')
-        .slice(numIgnoredFrames)
-        .filter(libraryFilter)
-        .map(function (frame) { return "\n" + frame; })
-        .join('');
-}
-function deprecated(what, fn) {
-    return function () {
-        console.warn(what + " is deprecated. See https://github.com/dfahlander/Dexie.js/wiki/Deprecations. " + prettyStack(getErrorWithStack(), 1));
-        return fn.apply(this, arguments);
-    };
-}
-
-var dexieErrorNames = [
-    'Modify',
-    'Bulk',
-    'OpenFailed',
-    'VersionChange',
-    'Schema',
-    'Upgrade',
-    'InvalidTable',
-    'MissingAPI',
-    'NoSuchDatabase',
-    'InvalidArgument',
-    'SubTransaction',
-    'Unsupported',
-    'Internal',
-    'DatabaseClosed',
-    'PrematureCommit',
-    'ForeignAwait'
-];
-var idbDomErrorNames = [
-    'Unknown',
-    'Constraint',
-    'Data',
-    'TransactionInactive',
-    'ReadOnly',
-    'Version',
-    'NotFound',
-    'InvalidState',
-    'InvalidAccess',
-    'Abort',
-    'Timeout',
-    'QuotaExceeded',
-    'Syntax',
-    'DataClone'
-];
-var errorList = dexieErrorNames.concat(idbDomErrorNames);
-var defaultTexts = {
-    VersionChanged: "Database version changed by other database connection",
-    DatabaseClosed: "Database has been closed",
-    Abort: "Transaction aborted",
-    TransactionInactive: "Transaction has already completed or failed"
-};
-//
-// DexieError - base class of all out exceptions.
-//
-function DexieError(name, msg) {
-    // Reason we don't use ES6 classes is because:
-    // 1. It bloats transpiled code and increases size of minified code.
-    // 2. It doesn't give us much in this case.
-    // 3. It would require sub classes to call super(), which
-    //    is not needed when deriving from Error.
-    this._e = getErrorWithStack();
-    this.name = name;
-    this.message = msg;
-}
-derive(DexieError).from(Error).extend({
-    stack: {
-        get: function () {
-            return this._stack ||
-                (this._stack = this.name + ": " + this.message + prettyStack(this._e, 2));
-        }
-    },
-    toString: function () { return this.name + ": " + this.message; }
-});
-function getMultiErrorMessage(msg, failures) {
-    return msg + ". Errors: " + failures
-        .map(function (f) { return f.toString(); })
-        .filter(function (v, i, s) { return s.indexOf(v) === i; }) // Only unique error strings
-        .join('\n');
-}
-//
-// ModifyError - thrown in Collection.modify()
-// Specific constructor because it contains members failures and failedKeys.
-//
-function ModifyError(msg, failures, successCount, failedKeys) {
-    this._e = getErrorWithStack();
-    this.failures = failures;
-    this.failedKeys = failedKeys;
-    this.successCount = successCount;
-}
-derive(ModifyError).from(DexieError);
-function BulkError(msg, failures) {
-    this._e = getErrorWithStack();
-    this.name = "BulkError";
-    this.failures = failures;
-    this.message = getMultiErrorMessage(msg, failures);
-}
-derive(BulkError).from(DexieError);
-//
-//
-// Dynamically generate error names and exception classes based
-// on the names in errorList.
-//
-//
-// Map of {ErrorName -> ErrorName + "Error"}
-var errnames = errorList.reduce(function (obj, name) { return (obj[name] = name + "Error", obj); }, {});
-// Need an alias for DexieError because we're gonna create subclasses with the same name.
-var BaseException = DexieError;
-// Map of {ErrorName -> exception constructor}
-var exceptions = errorList.reduce(function (obj, name) {
-    // Let the name be "DexieError" because this name may
-    // be shown in call stack and when debugging. DexieError is
-    // the most true name because it derives from DexieError,
-    // and we cannot change Function.name programatically without
-    // dynamically create a Function object, which would be considered
-    // 'eval-evil'.
-    var fullName = name + "Error";
-    function DexieError(msgOrInner, inner) {
-        this._e = getErrorWithStack();
-        this.name = fullName;
-        if (!msgOrInner) {
-            this.message = defaultTexts[name] || fullName;
-            this.inner = null;
-        }
-        else if (typeof msgOrInner === 'string') {
-            this.message = msgOrInner;
-            this.inner = inner || null;
-        }
-        else if (typeof msgOrInner === 'object') {
-            this.message = msgOrInner.name + " " + msgOrInner.message;
-            this.inner = msgOrInner;
-        }
-    }
-    derive(DexieError).from(BaseException);
-    obj[name] = DexieError;
-    return obj;
-}, {});
-// Use ECMASCRIPT standard exceptions where applicable:
-exceptions.Syntax = SyntaxError;
-exceptions.Type = TypeError;
-exceptions.Range = RangeError;
-var exceptionMap = idbDomErrorNames.reduce(function (obj, name) {
-    obj[name + "Error"] = exceptions[name];
-    return obj;
-}, {});
-function mapError(domError, message) {
-    if (!domError || domError instanceof DexieError || domError instanceof TypeError || domError instanceof SyntaxError || !domError.name || !exceptionMap[domError.name])
-        return domError;
-    var rv = new exceptionMap[domError.name](message || domError.message, domError);
-    if ("stack" in domError) {
-        // Derive stack from inner exception if it has a stack
-        setProp(rv, "stack", { get: function () {
-                return this.inner.stack;
-            } });
-    }
-    return rv;
-}
-var fullNameExceptions = errorList.reduce(function (obj, name) {
-    if (["Syntax", "Type", "Range"].indexOf(name) === -1)
-        obj[name + "Error"] = exceptions[name];
-    return obj;
-}, {});
-fullNameExceptions.ModifyError = ModifyError;
-fullNameExceptions.DexieError = DexieError;
-fullNameExceptions.BulkError = BulkError;
-
-function nop() { }
-function mirror(val) { return val; }
-function pureFunctionChain(f1, f2) {
-    // Enables chained events that takes ONE argument and returns it to the next function in chain.
-    // This pattern is used in the hook("reading") event.
-    if (f1 == null || f1 === mirror)
-        return f2;
-    return function (val) {
-        return f2(f1(val));
-    };
-}
-function callBoth(on1, on2) {
-    return function () {
-        on1.apply(this, arguments);
-        on2.apply(this, arguments);
-    };
-}
-function hookCreatingChain(f1, f2) {
-    // Enables chained events that takes several arguments and may modify first argument by making a modification and then returning the same instance.
-    // This pattern is used in the hook("creating") event.
-    if (f1 === nop)
-        return f2;
-    return function () {
-        var res = f1.apply(this, arguments);
-        if (res !== undefined)
-            arguments[0] = res;
-        var onsuccess = this.onsuccess, // In case event listener has set this.onsuccess
-        onerror = this.onerror; // In case event listener has set this.onerror
-        this.onsuccess = null;
-        this.onerror = null;
-        var res2 = f2.apply(this, arguments);
-        if (onsuccess)
-            this.onsuccess = this.onsuccess ? callBoth(onsuccess, this.onsuccess) : onsuccess;
-        if (onerror)
-            this.onerror = this.onerror ? callBoth(onerror, this.onerror) : onerror;
-        return res2 !== undefined ? res2 : res;
-    };
-}
-function hookDeletingChain(f1, f2) {
-    if (f1 === nop)
-        return f2;
-    return function () {
-        f1.apply(this, arguments);
-        var onsuccess = this.onsuccess, // In case event listener has set this.onsuccess
-        onerror = this.onerror; // In case event listener has set this.onerror
-        this.onsuccess = this.onerror = null;
-        f2.apply(this, arguments);
-        if (onsuccess)
-            this.onsuccess = this.onsuccess ? callBoth(onsuccess, this.onsuccess) : onsuccess;
-        if (onerror)
-            this.onerror = this.onerror ? callBoth(onerror, this.onerror) : onerror;
-    };
-}
-function hookUpdatingChain(f1, f2) {
-    if (f1 === nop)
-        return f2;
-    return function (modifications) {
-        var res = f1.apply(this, arguments);
-        extend(modifications, res); // If f1 returns new modifications, extend caller's modifications with the result before calling next in chain.
-        var onsuccess = this.onsuccess, // In case event listener has set this.onsuccess
-        onerror = this.onerror; // In case event listener has set this.onerror
-        this.onsuccess = null;
-        this.onerror = null;
-        var res2 = f2.apply(this, arguments);
-        if (onsuccess)
-            this.onsuccess = this.onsuccess ? callBoth(onsuccess, this.onsuccess) : onsuccess;
-        if (onerror)
-            this.onerror = this.onerror ? callBoth(onerror, this.onerror) : onerror;
-        return res === undefined ?
-            (res2 === undefined ? undefined : res2) :
-            (extend(res, res2));
-    };
-}
-function reverseStoppableEventChain(f1, f2) {
-    if (f1 === nop)
-        return f2;
-    return function () {
-        if (f2.apply(this, arguments) === false)
-            return false;
-        return f1.apply(this, arguments);
-    };
-}
-
-function promisableChain(f1, f2) {
-    if (f1 === nop)
-        return f2;
-    return function () {
-        var res = f1.apply(this, arguments);
-        if (res && typeof res.then === 'function') {
-            var thiz = this, i = arguments.length, args = new Array(i);
-            while (i--)
-                args[i] = arguments[i];
-            return res.then(function () {
-                return f2.apply(thiz, args);
-            });
-        }
-        return f2.apply(this, arguments);
-    };
-}
-
-/*
- * Copyright (c) 2014-2017 David Fahlander
- * Apache License Version 2.0, January 2004, http://www.apache.org/licenses/LICENSE-2.0
- */
-//
-// Promise and Zone (PSD) for Dexie library
-//
-// I started out writing this Promise class by copying promise-light (https://github.com/taylorhakes/promise-light) by
-// https://github.com/taylorhakes - an A+ and ECMASCRIPT 6 compliant Promise implementation.
-//
-// In previous versions this was fixed by not calling setTimeout when knowing that the resolve() or reject() came from another
-// tick. In Dexie v1.4.0, I've rewritten the Promise class entirely. Just some fragments of promise-light is left. I use
-// another strategy now that simplifies everything a lot: to always execute callbacks in a new micro-task, but have an own micro-task
-// engine that is indexedDB compliant across all browsers.
-// Promise class has also been optimized a lot with inspiration from bluebird - to avoid closures as much as possible.
-// Also with inspiration from bluebird, asyncronic stacks in debug mode.
-//
-// Specific non-standard features of this Promise class:
-// * Custom zone support (a.k.a. PSD) with ability to keep zones also when using native promises as well as
-//   native async / await.
-// * Promise.follow() method built upon the custom zone engine, that allows user to track all promises created from current stack frame
-//   and below + all promises that those promises creates or awaits.
-// * Detect any unhandled promise in a PSD-scope (PSD.onunhandled). 
-//
-// David Fahlander, https://github.com/dfahlander
-//
-// Just a pointer that only this module knows about.
-// Used in Promise constructor to emulate a private constructor.
-var INTERNAL = {};
-// Async stacks (long stacks) must not grow infinitely.
-var LONG_STACKS_CLIP_LIMIT = 100;
-var MAX_LONG_STACKS = 20;
-var ZONE_ECHO_LIMIT = 7;
-var nativePromiseInstanceAndProto = (function () {
-    try {
-        // Be able to patch native async functions
-        return new Function("let F=async ()=>{},p=F();return [p,Object.getPrototypeOf(p),Promise.resolve(),F.constructor];")();
-    }
-    catch (e) {
-        var P = _global.Promise;
-        return P ?
-            [P.resolve(), P.prototype, P.resolve()] :
-            [];
-    }
-})();
-var resolvedNativePromise = nativePromiseInstanceAndProto[0];
-var nativePromiseProto = nativePromiseInstanceAndProto[1];
-var resolvedGlobalPromise = nativePromiseInstanceAndProto[2];
-var nativePromiseThen = nativePromiseProto && nativePromiseProto.then;
-var NativePromise = resolvedNativePromise && resolvedNativePromise.constructor;
-var AsyncFunction = nativePromiseInstanceAndProto[3];
-var patchGlobalPromise = !!resolvedGlobalPromise;
-var stack_being_generated = false;
-/* The default function used only for the very first promise in a promise chain.
-   As soon as then promise is resolved or rejected, all next tasks will be executed in micro ticks
-   emulated in this module. For indexedDB compatibility, this means that every method needs to
-   execute at least one promise before doing an indexedDB operation. Dexie will always call
-   db.ready().then() for every operation to make sure the indexedDB event is started in an
-   indexedDB-compatible emulated micro task loop.
-*/
-var schedulePhysicalTick = resolvedGlobalPromise ?
-    function () { resolvedGlobalPromise.then(physicalTick); }
-    :
-        _global.setImmediate ?
-            // setImmediate supported. Those modern platforms also supports Function.bind().
-            setImmediate.bind(null, physicalTick) :
-            _global.MutationObserver ?
-                // MutationObserver supported
-                function () {
-                    var hiddenDiv = document.createElement("div");
-                    (new MutationObserver(function () {
-                        physicalTick();
-                        hiddenDiv = null;
-                    })).observe(hiddenDiv, { attributes: true });
-                    hiddenDiv.setAttribute('i', '1');
-                } :
-                // No support for setImmediate or MutationObserver. No worry, setTimeout is only called
-                // once time. Every tick that follows will be our emulated micro tick.
-                // Could have uses setTimeout.bind(null, 0, physicalTick) if it wasnt for that FF13 and below has a bug 
-                function () { setTimeout(physicalTick, 0); };
-// Configurable through Promise.scheduler.
-// Don't export because it would be unsafe to let unknown
-// code call it unless they do try..catch within their callback.
-// This function can be retrieved through getter of Promise.scheduler though,
-// but users must not do Promise.scheduler = myFuncThatThrowsException
-var asap$1 = function (callback, args) {
-    microtickQueue.push([callback, args]);
-    if (needsNewPhysicalTick) {
-        schedulePhysicalTick();
-        needsNewPhysicalTick = false;
-    }
-};
-var isOutsideMicroTick = true;
-var needsNewPhysicalTick = true;
-var unhandledErrors = [];
-var rejectingErrors = [];
-var currentFulfiller = null;
-var rejectionMapper = mirror; // Remove in next major when removing error mapping of DOMErrors and DOMExceptions
-var globalPSD = {
-    id: 'global',
-    global: true,
-    ref: 0,
-    unhandleds: [],
-    onunhandled: globalError,
-    pgp: false,
-    env: {},
-    finalize: function () {
-        this.unhandleds.forEach(function (uh) {
-            try {
-                globalError(uh[0], uh[1]);
-            }
-            catch (e) { }
-        });
-    }
-};
-var PSD = globalPSD;
-var microtickQueue = []; // Callbacks to call in this or next physical tick.
-var numScheduledCalls = 0; // Number of listener-calls left to do in this physical tick.
-var tickFinalizers = []; // Finalizers to call when there are no more async calls scheduled within current physical tick.
-function Promise(fn) {
-    if (typeof this !== 'object')
-        throw new TypeError('Promises must be constructed via new');
-    this._listeners = [];
-    this.onuncatched = nop; // Deprecate in next major. Not needed. Better to use global error handler.
-    // A library may set `promise._lib = true;` after promise is created to make resolve() or reject()
-    // execute the microtask engine implicitely within the call to resolve() or reject().
-    // To remain A+ compliant, a library must only set `_lib=true` if it can guarantee that the stack
-    // only contains library code when calling resolve() or reject().
-    // RULE OF THUMB: ONLY set _lib = true for promises explicitely resolving/rejecting directly from
-    // global scope (event handler, timer etc)!
-    this._lib = false;
-    // Current async scope
-    var psd = (this._PSD = PSD);
-    if (debug) {
-        this._stackHolder = getErrorWithStack();
-        this._prev = null;
-        this._numPrev = 0; // Number of previous promises (for long stacks)
-    }
-    if (typeof fn !== 'function') {
-        if (fn !== INTERNAL)
-            throw new TypeError('Not a function');
-        // Private constructor (INTERNAL, state, value).
-        // Used internally by Promise.resolve() and Promise.reject().
-        this._state = arguments[1];
-        this._value = arguments[2];
-        if (this._state === false)
-            handleRejection(this, this._value); // Map error, set stack and addPossiblyUnhandledError().
-        return;
-    }
-    this._state = null; // null (=pending), false (=rejected) or true (=resolved)
-    this._value = null; // error or result
-    ++psd.ref; // Refcounting current scope
-    executePromiseTask(this, fn);
-}
-// Prepare a property descriptor to put onto Promise.prototype.then
-var thenProp = {
-    get: function () {
-        var psd = PSD, microTaskId = totalEchoes;
-        function then(onFulfilled, onRejected) {
-            var _this = this;
-            var possibleAwait = !psd.global && (psd !== PSD || microTaskId !== totalEchoes);
-            if (possibleAwait)
-                decrementExpectedAwaits();
-            var rv = new Promise(function (resolve, reject) {
-                propagateToListener(_this, new Listener(nativeAwaitCompatibleWrap(onFulfilled, psd, possibleAwait), nativeAwaitCompatibleWrap(onRejected, psd, possibleAwait), resolve, reject, psd));
-            });
-            debug && linkToPreviousPromise(rv, this);
-            return rv;
-        }
-        then.prototype = INTERNAL; // For idempotense, see setter below.
-        return then;
-    },
-    // Be idempotent and allow another framework (such as zone.js or another instance of a Dexie.Promise module) to replace Promise.prototype.then
-    // and when that framework wants to restore the original property, we must identify that and restore the original property descriptor.
-    set: function (value) {
-        setProp(this, 'then', value && value.prototype === INTERNAL ?
-            thenProp : // Restore to original property descriptor.
-            {
-                get: function () {
-                    return value; // Getter returning provided value (behaves like value is just changed)
-                },
-                set: thenProp.set // Keep a setter that is prepared to restore original.
-            });
-    }
-};
-props(Promise.prototype, {
-    then: thenProp,
-    _then: function (onFulfilled, onRejected) {
-        // A little tinier version of then() that don't have to create a resulting promise.
-        propagateToListener(this, new Listener(null, null, onFulfilled, onRejected, PSD));
-    },
-    catch: function (onRejected) {
-        if (arguments.length === 1)
-            return this.then(null, onRejected);
-        // First argument is the Error type to catch
-        var type = arguments[0], handler = arguments[1];
-        return typeof type === 'function' ? this.then(null, function (err) {
-            // Catching errors by its constructor type (similar to java / c++ / c#)
-            // Sample: promise.catch(TypeError, function (e) { ... });
-            return err instanceof type ? handler(err) : PromiseReject(err);
-        })
-            : this.then(null, function (err) {
-                // Catching errors by the error.name property. Makes sense for indexedDB where error type
-                // is always DOMError but where e.name tells the actual error type.
-                // Sample: promise.catch('ConstraintError', function (e) { ... });
-                return err && err.name === type ? handler(err) : PromiseReject(err);
-            });
-    },
-    finally: function (onFinally) {
-        return this.then(function (value) {
-            onFinally();
-            return value;
-        }, function (err) {
-            onFinally();
-            return PromiseReject(err);
-        });
-    },
-    stack: {
-        get: function () {
-            if (this._stack)
-                return this._stack;
-            try {
-                stack_being_generated = true;
-                var stacks = getStack(this, [], MAX_LONG_STACKS);
-                var stack = stacks.join("\nFrom previous: ");
-                if (this._state !== null)
-                    this._stack = stack; // Stack may be updated on reject.
-                return stack;
-            }
-            finally {
-                stack_being_generated = false;
-            }
-        }
-    },
-    timeout: function (ms, msg) {
-        var _this = this;
-        return ms < Infinity ?
-            new Promise(function (resolve, reject) {
-                var handle = setTimeout(function () { return reject(new exceptions.Timeout(msg)); }, ms);
-                _this.then(resolve, reject).finally(clearTimeout.bind(null, handle));
-            }) : this;
-    }
-});
-if (typeof Symbol !== 'undefined' && Symbol.toStringTag)
-    setProp(Promise.prototype, Symbol.toStringTag, 'Promise');
-// Now that Promise.prototype is defined, we have all it takes to set globalPSD.env.
-// Environment globals snapshotted on leaving global zone
-globalPSD.env = snapShot();
-function Listener(onFulfilled, onRejected, resolve, reject, zone) {
-    this.onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : null;
-    this.onRejected = typeof onRejected === 'function' ? onRejected : null;
-    this.resolve = resolve;
-    this.reject = reject;
-    this.psd = zone;
-}
-// Promise Static Properties
-props(Promise, {
-    all: function () {
-        var values = getArrayOf.apply(null, arguments) // Supports iterables, implicit arguments and array-like.
-            .map(onPossibleParallellAsync); // Handle parallell async/awaits 
-        return new Promise(function (resolve, reject) {
-            if (values.length === 0)
-                resolve([]);
-            var remaining = values.length;
-            values.forEach(function (a, i) { return Promise.resolve(a).then(function (x) {
-                values[i] = x;
-                if (!--remaining)
-                    resolve(values);
-            }, reject); });
-        });
-    },
-    resolve: function (value) {
-        if (value instanceof Promise)
-            return value;
-        if (value && typeof value.then === 'function')
-            return new Promise(function (resolve, reject) {
-                value.then(resolve, reject);
-            });
-        var rv = new Promise(INTERNAL, true, value);
-        linkToPreviousPromise(rv, currentFulfiller);
-        return rv;
-    },
-    reject: PromiseReject,
-    race: function () {
-        var values = getArrayOf.apply(null, arguments).map(onPossibleParallellAsync);
-        return new Promise(function (resolve, reject) {
-            values.map(function (value) { return Promise.resolve(value).then(resolve, reject); });
-        });
-    },
-    PSD: {
-        get: function () { return PSD; },
-        set: function (value) { return PSD = value; }
-    },
-    //totalEchoes: {get: ()=>totalEchoes},
-    //task: {get: ()=>task},
-    newPSD: newScope,
-    usePSD: usePSD,
-    scheduler: {
-        get: function () { return asap$1; },
-        set: function (value) { asap$1 = value; }
-    },
-    rejectionMapper: {
-        get: function () { return rejectionMapper; },
-        set: function (value) { rejectionMapper = value; } // Map reject failures
-    },
-    follow: function (fn, zoneProps) {
-        return new Promise(function (resolve, reject) {
-            return newScope(function (resolve, reject) {
-                var psd = PSD;
-                psd.unhandleds = []; // For unhandled standard- or 3rd party Promises. Checked at psd.finalize()
-                psd.onunhandled = reject; // Triggered directly on unhandled promises of this library.
-                psd.finalize = callBoth(function () {
-                    var _this = this;
-                    // Unhandled standard or 3rd part promises are put in PSD.unhandleds and
-                    // examined upon scope completion while unhandled rejections in this Promise
-                    // will trigger directly through psd.onunhandled
-                    run_at_end_of_this_or_next_physical_tick(function () {
-                        _this.unhandleds.length === 0 ? resolve() : reject(_this.unhandleds[0]);
-                    });
-                }, psd.finalize);
-                fn();
-            }, zoneProps, resolve, reject);
-        });
-    }
-});
-/**
-* Take a potentially misbehaving resolver function and make sure
-* onFulfilled and onRejected are only called once.
-*
-* Makes no guarantees about asynchrony.
-*/
-function executePromiseTask(promise, fn) {
-    // Promise Resolution Procedure:
-    // https://github.com/promises-aplus/promises-spec#the-promise-resolution-procedure
-    try {
-        fn(function (value) {
-            if (promise._state !== null)
-                return; // Already settled
-            if (value === promise)
-                throw new TypeError('A promise cannot be resolved with itself.');
-            var shouldExecuteTick = promise._lib && beginMicroTickScope();
-            if (value && typeof value.then === 'function') {
-                executePromiseTask(promise, function (resolve, reject) {
-                    value instanceof Promise ?
-                        value._then(resolve, reject) :
-                        value.then(resolve, reject);
-                });
-            }
-            else {
-                promise._state = true;
-                promise._value = value;
-                propagateAllListeners(promise);
-            }
-            if (shouldExecuteTick)
-                endMicroTickScope();
-        }, handleRejection.bind(null, promise)); // If Function.bind is not supported. Exception is handled in catch below
-    }
-    catch (ex) {
-        handleRejection(promise, ex);
-    }
-}
-function handleRejection(promise, reason) {
-    rejectingErrors.push(reason);
-    if (promise._state !== null)
-        return;
-    var shouldExecuteTick = promise._lib && beginMicroTickScope();
-    reason = rejectionMapper(reason);
-    promise._state = false;
-    promise._value = reason;
-    debug && reason !== null && typeof reason === 'object' && !reason._promise && tryCatch(function () {
-        var origProp = getPropertyDescriptor(reason, "stack");
-        reason._promise = promise;
-        setProp(reason, "stack", {
-            get: function () {
-                return stack_being_generated ?
-                    origProp && (origProp.get ?
-                        origProp.get.apply(reason) :
-                        origProp.value) :
-                    promise.stack;
-            }
-        });
-    });
-    // Add the failure to a list of possibly uncaught errors
-    addPossiblyUnhandledError(promise);
-    propagateAllListeners(promise);
-    if (shouldExecuteTick)
-        endMicroTickScope();
-}
-function propagateAllListeners(promise) {
-    //debug && linkToPreviousPromise(promise);
-    var listeners = promise._listeners;
-    promise._listeners = [];
-    for (var i = 0, len = listeners.length; i < len; ++i) {
-        propagateToListener(promise, listeners[i]);
-    }
-    var psd = promise._PSD;
-    --psd.ref || psd.finalize(); // if psd.ref reaches zero, call psd.finalize();
-    if (numScheduledCalls === 0) {
-        // If numScheduledCalls is 0, it means that our stack is not in a callback of a scheduled call,
-        // and that no deferreds where listening to this rejection or success.
-        // Since there is a risk that our stack can contain application code that may
-        // do stuff after this code is finished that may generate new calls, we cannot
-        // call finalizers here.
-        ++numScheduledCalls;
-        asap$1(function () {
-            if (--numScheduledCalls === 0)
-                finalizePhysicalTick(); // Will detect unhandled errors
-        }, []);
-    }
-}
-function propagateToListener(promise, listener) {
-    if (promise._state === null) {
-        promise._listeners.push(listener);
-        return;
-    }
-    var cb = promise._state ? listener.onFulfilled : listener.onRejected;
-    if (cb === null) {
-        // This Listener doesnt have a listener for the event being triggered (onFulfilled or onReject) so lets forward the event to any eventual listeners on the Promise instance returned by then() or catch()
-        return (promise._state ? listener.resolve : listener.reject)(promise._value);
-    }
-    ++listener.psd.ref;
-    ++numScheduledCalls;
-    asap$1(callListener, [cb, promise, listener]);
-}
-function callListener(cb, promise, listener) {
-    try {
-        // Set static variable currentFulfiller to the promise that is being fullfilled,
-        // so that we connect the chain of promises (for long stacks support)
-        currentFulfiller = promise;
-        // Call callback and resolve our listener with it's return value.
-        var ret, value = promise._value;
-        if (promise._state) {
-            // cb is onResolved
-            ret = cb(value);
-        }
-        else {
-            // cb is onRejected
-            if (rejectingErrors.length)
-                rejectingErrors = [];
-            ret = cb(value);
-            if (rejectingErrors.indexOf(value) === -1)
-                markErrorAsHandled(promise); // Callback didnt do Promise.reject(err) nor reject(err) onto another promise.
-        }
-        listener.resolve(ret);
-    }
-    catch (e) {
-        // Exception thrown in callback. Reject our listener.
-        listener.reject(e);
-    }
-    finally {
-        // Restore env and currentFulfiller.
-        currentFulfiller = null;
-        if (--numScheduledCalls === 0)
-            finalizePhysicalTick();
-        --listener.psd.ref || listener.psd.finalize();
-    }
-}
-function getStack(promise, stacks, limit) {
-    if (stacks.length === limit)
-        return stacks;
-    var stack = "";
-    if (promise._state === false) {
-        var failure = promise._value, errorName, message;
-        if (failure != null) {
-            errorName = failure.name || "Error";
-            message = failure.message || failure;
-            stack = prettyStack(failure, 0);
-        }
-        else {
-            errorName = failure; // If error is undefined or null, show that.
-            message = "";
-        }
-        stacks.push(errorName + (message ? ": " + message : "") + stack);
-    }
-    if (debug) {
-        stack = prettyStack(promise._stackHolder, 2);
-        if (stack && stacks.indexOf(stack) === -1)
-            stacks.push(stack);
-        if (promise._prev)
-            getStack(promise._prev, stacks, limit);
-    }
-    return stacks;
-}
-function linkToPreviousPromise(promise, prev) {
-    // Support long stacks by linking to previous completed promise.
-    var numPrev = prev ? prev._numPrev + 1 : 0;
-    if (numPrev < LONG_STACKS_CLIP_LIMIT) {
-        promise._prev = prev;
-        promise._numPrev = numPrev;
-    }
-}
-/* The callback to schedule with setImmediate() or setTimeout().
-   It runs a virtual microtick and executes any callback registered in microtickQueue.
- */
-function physicalTick() {
-    beginMicroTickScope() && endMicroTickScope();
-}
-function beginMicroTickScope() {
-    var wasRootExec = isOutsideMicroTick;
-    isOutsideMicroTick = false;
-    needsNewPhysicalTick = false;
-    return wasRootExec;
-}
-/* Executes micro-ticks without doing try..catch.
-   This can be possible because we only use this internally and
-   the registered functions are exception-safe (they do try..catch
-   internally before calling any external method). If registering
-   functions in the microtickQueue that are not exception-safe, this
-   would destroy the framework and make it instable. So we don't export
-   our asap method.
-*/
-function endMicroTickScope() {
-    var callbacks, i, l;
-    do {
-        while (microtickQueue.length > 0) {
-            callbacks = microtickQueue;
-            microtickQueue = [];
-            l = callbacks.length;
-            for (i = 0; i < l; ++i) {
-                var item = callbacks[i];
-                item[0].apply(null, item[1]);
-            }
-        }
-    } while (microtickQueue.length > 0);
-    isOutsideMicroTick = true;
-    needsNewPhysicalTick = true;
-}
-function finalizePhysicalTick() {
-    var unhandledErrs = unhandledErrors;
-    unhandledErrors = [];
-    unhandledErrs.forEach(function (p) {
-        p._PSD.onunhandled.call(null, p._value, p);
-    });
-    var finalizers = tickFinalizers.slice(0); // Clone first because finalizer may remove itself from list.
-    var i = finalizers.length;
-    while (i)
-        finalizers[--i]();
-}
-function run_at_end_of_this_or_next_physical_tick(fn) {
-    function finalizer() {
-        fn();
-        tickFinalizers.splice(tickFinalizers.indexOf(finalizer), 1);
-    }
-    tickFinalizers.push(finalizer);
-    ++numScheduledCalls;
-    asap$1(function () {
-        if (--numScheduledCalls === 0)
-            finalizePhysicalTick();
-    }, []);
-}
-function addPossiblyUnhandledError(promise) {
-    // Only add to unhandledErrors if not already there. The first one to add to this list
-    // will be upon the first rejection so that the root cause (first promise in the
-    // rejection chain) is the one listed.
-    if (!unhandledErrors.some(function (p) { return p._value === promise._value; }))
-        unhandledErrors.push(promise);
-}
-function markErrorAsHandled(promise) {
-    // Called when a reject handled is actually being called.
-    // Search in unhandledErrors for any promise whos _value is this promise_value (list
-    // contains only rejected promises, and only one item per error)
-    var i = unhandledErrors.length;
-    while (i)
-        if (unhandledErrors[--i]._value === promise._value) {
-            // Found a promise that failed with this same error object pointer,
-            // Remove that since there is a listener that actually takes care of it.
-            unhandledErrors.splice(i, 1);
-            return;
-        }
-}
-function PromiseReject(reason) {
-    return new Promise(INTERNAL, false, reason);
-}
-function wrap(fn, errorCatcher) {
-    var psd = PSD;
-    return function () {
-        var wasRootExec = beginMicroTickScope(), outerScope = PSD;
-        try {
-            switchToZone(psd, true);
-            return fn.apply(this, arguments);
-        }
-        catch (e) {
-            errorCatcher && errorCatcher(e);
-        }
-        finally {
-            switchToZone(outerScope, false);
-            if (wasRootExec)
-                endMicroTickScope();
-        }
-    };
-}
-//
-// variables used for native await support
-//
-var task = { awaits: 0, echoes: 0, id: 0 }; // The ongoing macro-task when using zone-echoing.
-var taskCounter = 0; // ID counter for macro tasks.
-var zoneStack = []; // Stack of left zones to restore asynchronically.
-var zoneEchoes = 0; // zoneEchoes is a must in order to persist zones between native await expressions.
-var totalEchoes = 0; // ID counter for micro-tasks. Used to detect possible native await in our Promise.prototype.then.
-var zone_id_counter = 0;
-function newScope(fn, props$$1, a1, a2) {
-    var parent = PSD, psd = Object.create(parent);
-    psd.parent = parent;
-    psd.ref = 0;
-    psd.global = false;
-    psd.id = ++zone_id_counter;
-    // Prepare for promise patching (done in usePSD):
-    var globalEnv = globalPSD.env;
-    psd.env = patchGlobalPromise ? {
-        Promise: Promise,
-        PromiseProp: { value: Promise, configurable: true, writable: true },
-        all: Promise.all,
-        race: Promise.race,
-        resolve: Promise.resolve,
-        reject: Promise.reject,
-        nthen: getPatchedPromiseThen(globalEnv.nthen, psd),
-        gthen: getPatchedPromiseThen(globalEnv.gthen, psd) // global then
-    } : {};
-    if (props$$1)
-        extend(psd, props$$1);
-    // unhandleds and onunhandled should not be specifically set here.
-    // Leave them on parent prototype.
-    // unhandleds.push(err) will push to parent's prototype
-    // onunhandled() will call parents onunhandled (with this scope's this-pointer though!)
-    ++parent.ref;
-    psd.finalize = function () {
-        --this.parent.ref || this.parent.finalize();
-    };
-    var rv = usePSD(psd, fn, a1, a2);
-    if (psd.ref === 0)
-        psd.finalize();
-    return rv;
-}
-// Function to call if scopeFunc returns NativePromise
-// Also for each NativePromise in the arguments to Promise.all()
-function incrementExpectedAwaits() {
-    if (!task.id)
-        task.id = ++taskCounter;
-    ++task.awaits;
-    task.echoes += ZONE_ECHO_LIMIT;
-    return task.id;
-}
-// Function to call when 'then' calls back on a native promise where onAwaitExpected() had been called.
-// Also call this when a native await calls then method on a promise. In that case, don't supply
-// sourceTaskId because we already know it refers to current task.
-function decrementExpectedAwaits(sourceTaskId) {
-    if (!task.awaits || (sourceTaskId && sourceTaskId !== task.id))
-        return;
-    if (--task.awaits === 0)
-        task.id = 0;
-    task.echoes = task.awaits * ZONE_ECHO_LIMIT; // Will reset echoes to 0 if awaits is 0.
-}
-// Call from Promise.all() and Promise.race()
-function onPossibleParallellAsync(possiblePromise) {
-    if (task.echoes && possiblePromise && possiblePromise.constructor === NativePromise) {
-        incrementExpectedAwaits();
-        return possiblePromise.then(function (x) {
-            decrementExpectedAwaits();
-            return x;
-        }, function (e) {
-            decrementExpectedAwaits();
-            return rejection(e);
-        });
-    }
-    return possiblePromise;
-}
-function zoneEnterEcho(targetZone) {
-    ++totalEchoes;
-    if (!task.echoes || --task.echoes === 0) {
-        task.echoes = task.id = 0; // Cancel zone echoing.
-    }
-    zoneStack.push(PSD);
-    switchToZone(targetZone, true);
-}
-function zoneLeaveEcho() {
-    var zone = zoneStack[zoneStack.length - 1];
-    zoneStack.pop();
-    switchToZone(zone, false);
-}
-function switchToZone(targetZone, bEnteringZone) {
-    var currentZone = PSD;
-    if (bEnteringZone ? task.echoes && (!zoneEchoes++ || targetZone !== PSD) : zoneEchoes && (!--zoneEchoes || targetZone !== PSD)) {
-        // Enter or leave zone asynchronically as well, so that tasks initiated during current tick
-        // will be surrounded by the zone when they are invoked.
-        enqueueNativeMicroTask(bEnteringZone ? zoneEnterEcho.bind(null, targetZone) : zoneLeaveEcho);
-    }
-    if (targetZone === PSD)
-        return;
-    PSD = targetZone; // The actual zone switch occurs at this line.
-    // Snapshot on every leave from global zone.
-    if (currentZone === globalPSD)
-        globalPSD.env = snapShot();
-    if (patchGlobalPromise) {
-        // Let's patch the global and native Promises (may be same or may be different)
-        var GlobalPromise = globalPSD.env.Promise;
-        // Swich environments (may be PSD-zone or the global zone. Both apply.)
-        var targetEnv = targetZone.env;
-        // Change Promise.prototype.then for native and global Promise (they MAY differ on polyfilled environments, but both can be accessed)
-        // Must be done on each zone change because the patched method contains targetZone in its closure.
-        nativePromiseProto.then = targetEnv.nthen;
-        GlobalPromise.prototype.then = targetEnv.gthen;
-        if (currentZone.global || targetZone.global) {
-            // Leaving or entering global zone. It's time to patch / restore global Promise.
-            // Set this Promise to window.Promise so that transiled async functions will work on Firefox, Safari and IE, as well as with Zonejs and angular.
-            Object.defineProperty(_global, 'Promise', targetEnv.PromiseProp);
-            // Support Promise.all() etc to work indexedDB-safe also when people are including es6-promise as a module (they might
-            // not be accessing global.Promise but a local reference to it)
-            GlobalPromise.all = targetEnv.all;
-            GlobalPromise.race = targetEnv.race;
-            GlobalPromise.resolve = targetEnv.resolve;
-            GlobalPromise.reject = targetEnv.reject;
-        }
-    }
-}
-function snapShot() {
-    var GlobalPromise = _global.Promise;
-    return patchGlobalPromise ? {
-        Promise: GlobalPromise,
-        PromiseProp: Object.getOwnPropertyDescriptor(_global, "Promise"),
-        all: GlobalPromise.all,
-        race: GlobalPromise.race,
-        resolve: GlobalPromise.resolve,
-        reject: GlobalPromise.reject,
-        nthen: nativePromiseProto.then,
-        gthen: GlobalPromise.prototype.then
-    } : {};
-}
-function usePSD(psd, fn, a1, a2, a3) {
-    var outerScope = PSD;
-    try {
-        switchToZone(psd, true);
-        return fn(a1, a2, a3);
-    }
-    finally {
-        switchToZone(outerScope, false);
-    }
-}
-function enqueueNativeMicroTask(job) {
-    //
-    // Precondition: nativePromiseThen !== undefined
-    //
-    nativePromiseThen.call(resolvedNativePromise, job);
-}
-function nativeAwaitCompatibleWrap(fn, zone, possibleAwait) {
-    return typeof fn !== 'function' ? fn : function () {
-        var outerZone = PSD;
-        if (possibleAwait)
-            incrementExpectedAwaits();
-        switchToZone(zone, true);
-        try {
-            return fn.apply(this, arguments);
-        }
-        finally {
-            switchToZone(outerZone, false);
-        }
-    };
-}
-function getPatchedPromiseThen(origThen, zone) {
-    return function (onResolved, onRejected) {
-        return origThen.call(this, nativeAwaitCompatibleWrap(onResolved, zone, false), nativeAwaitCompatibleWrap(onRejected, zone, false));
-    };
-}
-var UNHANDLEDREJECTION = "unhandledrejection";
-function globalError(err, promise) {
-    var rv;
-    try {
-        rv = promise.onuncatched(err);
-    }
-    catch (e) { }
-    if (rv !== false)
-        try {
-            var event, eventData = { promise: promise, reason: err };
-            if (_global.document && document.createEvent) {
-                event = document.createEvent('Event');
-                event.initEvent(UNHANDLEDREJECTION, true, true);
-                extend(event, eventData);
-            }
-            else if (_global.CustomEvent) {
-                event = new CustomEvent(UNHANDLEDREJECTION, { detail: eventData });
-                extend(event, eventData);
-            }
-            if (event && _global.dispatchEvent) {
-                dispatchEvent(event);
-                if (!_global.PromiseRejectionEvent && _global.onunhandledrejection)
-                    // No native support for PromiseRejectionEvent but user has set window.onunhandledrejection. Manually call it.
-                    try {
-                        _global.onunhandledrejection(event);
-                    }
-                    catch (_) { }
-            }
-            if (!event.defaultPrevented) {
-                console.warn("Unhandled rejection: " + (err.stack || err));
-            }
-        }
-        catch (e) { }
-}
-var rejection = Promise.reject;
-
-function Events(ctx) {
-    var evs = {};
-    var rv = function (eventName, subscriber) {
-        if (subscriber) {
-            // Subscribe. If additional arguments than just the subscriber was provided, forward them as well.
-            var i = arguments.length, args = new Array(i - 1);
-            while (--i)
-                args[i - 1] = arguments[i];
-            evs[eventName].subscribe.apply(null, args);
-            return ctx;
-        }
-        else if (typeof (eventName) === 'string') {
-            // Return interface allowing to fire or unsubscribe from event
-            return evs[eventName];
-        }
-    };
-    rv.addEventType = add;
-    for (var i = 1, l = arguments.length; i < l; ++i) {
-        add(arguments[i]);
-    }
-    return rv;
-    function add(eventName, chainFunction, defaultFunction) {
-        if (typeof eventName === 'object')
-            return addConfiguredEvents(eventName);
-        if (!chainFunction)
-            chainFunction = reverseStoppableEventChain;
-        if (!defaultFunction)
-            defaultFunction = nop;
-        var context = {
-            subscribers: [],
-            fire: defaultFunction,
-            subscribe: function (cb) {
-                if (context.subscribers.indexOf(cb) === -1) {
-                    context.subscribers.push(cb);
-                    context.fire = chainFunction(context.fire, cb);
-                }
-            },
-            unsubscribe: function (cb) {
-                context.subscribers = context.subscribers.filter(function (fn) { return fn !== cb; });
-                context.fire = context.subscribers.reduce(chainFunction, defaultFunction);
-            }
-        };
-        evs[eventName] = rv[eventName] = context;
-        return context;
-    }
-    function addConfiguredEvents(cfg) {
-        // events(this, {reading: [functionChain, nop]});
-        keys(cfg).forEach(function (eventName) {
-            var args = cfg[eventName];
-            if (isArray(args)) {
-                add(eventName, cfg[eventName][0], cfg[eventName][1]);
-            }
-            else if (args === 'asap') {
-                // Rather than approaching event subscription using a functional approach, we here do it in a for-loop where subscriber is executed in its own stack
-                // enabling that any exception that occur wont disturb the initiator and also not nescessary be catched and forgotten.
-                var context = add(eventName, mirror, function fire() {
-                    // Optimazation-safe cloning of arguments into args.
-                    var i = arguments.length, args = new Array(i);
-                    while (i--)
-                        args[i] = arguments[i];
-                    // All each subscriber:
-                    context.subscribers.forEach(function (fn) {
-                        asap(function fireEvent() {
-                            fn.apply(null, args);
-                        });
-                    });
-                });
-            }
-            else
-                throw new exceptions.InvalidArgument("Invalid event config");
-        });
-    }
-}
-
-/*
- * Dexie.js - a minimalistic wrapper for IndexedDB
- * ===============================================
- *
- * Copyright (c) 2014-2017 David Fahlander
- *
- * Version 2.0.4, Fri May 25 2018
- *
- * http://dexie.org
- *
- * Apache License Version 2.0, January 2004, http://www.apache.org/licenses/LICENSE-2.0
- *
- */
-var DEXIE_VERSION = '2.0.4';
-var maxString = String.fromCharCode(65535);
-var maxKey = (function () { try {
-    IDBKeyRange.only([[]]);
-    return [[]];
-}
-catch (e) {
-    return maxString;
-} })();
-var minKey = -Infinity;
-var INVALID_KEY_ARGUMENT = "Invalid key provided. Keys must be of type string, number, Date or Array<string | number | Date>.";
-var STRING_EXPECTED = "String expected.";
-var connections = [];
-var isIEOrEdge = typeof navigator !== 'undefined' && /(MSIE|Trident|Edge)/.test(navigator.userAgent);
-var hasIEDeleteObjectStoreBug = isIEOrEdge;
-var hangsOnDeleteLargeKeyRange = isIEOrEdge;
-var dexieStackFrameFilter = function (frame) { return !/(dexie\.js|dexie\.min\.js)/.test(frame); };
-var dbNamesDB; // Global database for backing Dexie.getDatabaseNames() on browser without indexedDB.webkitGetDatabaseNames() 
-// Init debug
-setDebug(debug, dexieStackFrameFilter);
-function Dexie(dbName, options) {
-    /// <param name="options" type="Object" optional="true">Specify only if you wich to control which addons that should run on this instance</param>
-    var deps = Dexie.dependencies;
-    var opts = extend({
-        // Default Options
-        addons: Dexie.addons,
-        autoOpen: true,
-        indexedDB: deps.indexedDB,
-        IDBKeyRange: deps.IDBKeyRange // Backend IDBKeyRange api. Default to browser env.
-    }, options);
-    var addons = opts.addons, autoOpen = opts.autoOpen, indexedDB = opts.indexedDB, IDBKeyRange = opts.IDBKeyRange;
-    var globalSchema = this._dbSchema = {};
-    var versions = [];
-    var dbStoreNames = [];
-    var allTables = {};
-    ///<var type="IDBDatabase" />
-    var idbdb = null; // Instance of IDBDatabase
-    var dbOpenError = null;
-    var isBeingOpened = false;
-    var onReadyBeingFired = null;
-    var openComplete = false;
-    var READONLY = "readonly", READWRITE = "readwrite";
-    var db = this;
-    var dbReadyResolve, dbReadyPromise = new Promise(function (resolve) {
-        dbReadyResolve = resolve;
-    }), cancelOpen, openCanceller = new Promise(function (_, reject) {
-        cancelOpen = reject;
-    });
-    var autoSchema = true;
-    var hasNativeGetDatabaseNames = !!getNativeGetDatabaseNamesFn(indexedDB), hasGetAll;
-    function init() {
-        // Default subscribers to "versionchange" and "blocked".
-        // Can be overridden by custom handlers. If custom handlers return false, these default
-        // behaviours will be prevented.
-        db.on("versionchange", function (ev) {
-            // Default behavior for versionchange event is to close database connection.
-            // Caller can override this behavior by doing db.on("versionchange", function(){ return false; });
-            // Let's not block the other window from making it's delete() or open() call.
-            // NOTE! This event is never fired in IE,Edge or Safari.
-            if (ev.newVersion > 0)
-                console.warn("Another connection wants to upgrade database '" + db.name + "'. Closing db now to resume the upgrade.");
-            else
-                console.warn("Another connection wants to delete database '" + db.name + "'. Closing db now to resume the delete request.");
-            db.close();
-            // In many web applications, it would be recommended to force window.reload()
-            // when this event occurs. To do that, subscribe to the versionchange event
-            // and call window.location.reload(true) if ev.newVersion > 0 (not a deletion)
-            // The reason for this is that your current web app obviously has old schema code that needs
-            // to be updated. Another window got a newer version of the app and needs to upgrade DB but
-            // your window is blocking it unless we close it here.
-        });
-        db.on("blocked", function (ev) {
-            if (!ev.newVersion || ev.newVersion < ev.oldVersion)
-                console.warn("Dexie.delete('" + db.name + "') was blocked");
-            else
-                console.warn("Upgrade '" + db.name + "' blocked by other connection holding version " + ev.oldVersion / 10);
-        });
-    }
-    //
-    //
-    //
-    // ------------------------- Versioning Framework---------------------------
-    //
-    //
-    //
-    this.version = function (versionNumber) {
-        /// <param name="versionNumber" type="Number"></param>
-        /// <returns type="Version"></returns>
-        if (idbdb || isBeingOpened)
-            throw new exceptions.Schema("Cannot add version when database is open");
-        this.verno = Math.max(this.verno, versionNumber);
-        var versionInstance = versions.filter(function (v) { return v._cfg.version === versionNumber; })[0];
-        if (versionInstance)
-            return versionInstance;
-        versionInstance = new Version(versionNumber);
-        versions.push(versionInstance);
-        versions.sort(lowerVersionFirst);
-        // Disable autoschema mode, as at least one version is specified.
-        autoSchema = false;
-        return versionInstance;
-    };
-    function Version(versionNumber) {
-        this._cfg = {
-            version: versionNumber,
-            storesSource: null,
-            dbschema: {},
-            tables: {},
-            contentUpgrade: null
-        };
-        this.stores({}); // Derive earlier schemas by default.
-    }
-    extend(Version.prototype, {
-        stores: function (stores) {
-            /// <summary>
-            ///   Defines the schema for a particular version
-            /// </summary>
-            /// <param name="stores" type="Object">
-            /// Example: <br/>
-            ///   {users: "id++,first,last,&amp;username,*email", <br/>
-            ///   passwords: "id++,&amp;username"}<br/>
-            /// <br/>
-            /// Syntax: {Table: "[primaryKey][++],[&amp;][*]index1,[&amp;][*]index2,..."}<br/><br/>
-            /// Special characters:<br/>
-            ///  "&amp;"  means unique key, <br/>
-            ///  "*"  means value is multiEntry, <br/>
-            ///  "++" means auto-increment and only applicable for primary key <br/>
-            /// </param>
-            this._cfg.storesSource = this._cfg.storesSource ? extend(this._cfg.storesSource, stores) : stores;
-            // Derive stores from earlier versions if they are not explicitely specified as null or a new syntax.
-            var storesSpec = {};
-            versions.forEach(function (version) {
-                extend(storesSpec, version._cfg.storesSource);
-            });
-            var dbschema = (this._cfg.dbschema = {});
-            this._parseStoresSpec(storesSpec, dbschema);
-            // Update the latest schema to this version
-            // Update API
-            globalSchema = db._dbSchema = dbschema;
-            removeTablesApi([allTables, db, Transaction.prototype]); // Keep Transaction.prototype even though it should be depr.
-            setApiOnPlace([allTables, db, Transaction.prototype, this._cfg.tables], keys(dbschema), dbschema);
-            dbStoreNames = keys(dbschema);
-            return this;
-        },
-        upgrade: function (upgradeFunction) {
-            this._cfg.contentUpgrade = upgradeFunction;
-            return this;
-        },
-        _parseStoresSpec: function (stores, outSchema) {
-            keys(stores).forEach(function (tableName) {
-                if (stores[tableName] !== null) {
-                    var instanceTemplate = {};
-                    var indexes = parseIndexSyntax(stores[tableName]);
-                    var primKey = indexes.shift();
-                    if (primKey.multi)
-                        throw new exceptions.Schema("Primary key cannot be multi-valued");
-                    if (primKey.keyPath)
-                        setByKeyPath(instanceTemplate, primKey.keyPath, primKey.auto ? 0 : primKey.keyPath);
-                    indexes.forEach(function (idx) {
-                        if (idx.auto)
-                            throw new exceptions.Schema("Only primary key can be marked as autoIncrement (++)");
-                        if (!idx.keyPath)
-                            throw new exceptions.Schema("Index must have a name and cannot be an empty string");
-                        setByKeyPath(instanceTemplate, idx.keyPath, idx.compound ? idx.keyPath.map(function () { return ""; }) : "");
-                    });
-                    outSchema[tableName] = new TableSchema(tableName, primKey, indexes, instanceTemplate);
-                }
-            });
-        }
-    });
-    function runUpgraders(oldVersion, idbtrans, reject) {
-        var trans = db._createTransaction(READWRITE, dbStoreNames, globalSchema);
-        trans.create(idbtrans);
-        trans._completion.catch(reject);
-        var rejectTransaction = trans._reject.bind(trans);
-        newScope(function () {
-            PSD.trans = trans;
-            if (oldVersion === 0) {
-                // Create tables:
-                keys(globalSchema).forEach(function (tableName) {
-                    createTable(idbtrans, tableName, globalSchema[tableName].primKey, globalSchema[tableName].indexes);
-                });
-                Promise.follow(function () { return db.on.populate.fire(trans); }).catch(rejectTransaction);
-            }
-            else
-                updateTablesAndIndexes(oldVersion, trans, idbtrans).catch(rejectTransaction);
-        });
-    }
-    function updateTablesAndIndexes(oldVersion, trans, idbtrans) {
-        // Upgrade version to version, step-by-step from oldest to newest version.
-        // Each transaction object will contain the table set that was current in that version (but also not-yet-deleted tables from its previous version)
-        var queue = [];
-        var oldVersionStruct = versions.filter(function (version) { return version._cfg.version === oldVersion; })[0];
-        if (!oldVersionStruct)
-            throw new exceptions.Upgrade("Dexie specification of currently installed DB version is missing");
-        globalSchema = db._dbSchema = oldVersionStruct._cfg.dbschema;
-        var anyContentUpgraderHasRun = false;
-        var versToRun = versions.filter(function (v) { return v._cfg.version > oldVersion; });
-        versToRun.forEach(function (version) {
-            /// <param name="version" type="Version"></param>
-            queue.push(function () {
-                var oldSchema = globalSchema;
-                var newSchema = version._cfg.dbschema;
-                adjustToExistingIndexNames(oldSchema, idbtrans);
-                adjustToExistingIndexNames(newSchema, idbtrans);
-                globalSchema = db._dbSchema = newSchema;
-                var diff = getSchemaDiff(oldSchema, newSchema);
-                // Add tables           
-                diff.add.forEach(function (tuple) {
-                    createTable(idbtrans, tuple[0], tuple[1].primKey, tuple[1].indexes);
-                });
-                // Change tables
-                diff.change.forEach(function (change) {
-                    if (change.recreate) {
-                        throw new exceptions.Upgrade("Not yet support for changing primary key");
-                    }
-                    else {
-                        var store = idbtrans.objectStore(change.name);
-                        // Add indexes
-                        change.add.forEach(function (idx) {
-                            addIndex(store, idx);
-                        });
-                        // Update indexes
-                        change.change.forEach(function (idx) {
-                            store.deleteIndex(idx.name);
-                            addIndex(store, idx);
-                        });
-                        // Delete indexes
-                        change.del.forEach(function (idxName) {
-                            store.deleteIndex(idxName);
-                        });
-                    }
-                });
-                if (version._cfg.contentUpgrade) {
-                    anyContentUpgraderHasRun = true;
-                    return Promise.follow(function () {
-                        version._cfg.contentUpgrade(trans);
-                    });
-                }
-            });
-            queue.push(function (idbtrans) {
-                if (!anyContentUpgraderHasRun || !hasIEDeleteObjectStoreBug) {
-                    var newSchema = version._cfg.dbschema;
-                    // Delete old tables
-                    deleteRemovedTables(newSchema, idbtrans);
-                }
-            });
-        });
-        // Now, create a queue execution engine
-        function runQueue() {
-            return queue.length ? Promise.resolve(queue.shift()(trans.idbtrans)).then(runQueue) :
-                Promise.resolve();
-        }
-        return runQueue().then(function () {
-            createMissingTables(globalSchema, idbtrans); // At last, make sure to create any missing tables. (Needed by addons that add stores to DB without specifying version)
-        });
-    }
-    function getSchemaDiff(oldSchema, newSchema) {
-        var diff = {
-            del: [],
-            add: [],
-            change: [] // Array of {name: tableName, recreate: newDefinition, del: delIndexNames, add: newIndexDefs, change: changedIndexDefs}
-        };
-        for (var table in oldSchema) {
-            if (!newSchema[table])
-                diff.del.push(table);
-        }
-        for (table in newSchema) {
-            var oldDef = oldSchema[table], newDef = newSchema[table];
-            if (!oldDef) {
-                diff.add.push([table, newDef]);
-            }
-            else {
-                var change = {
-                    name: table,
-                    def: newDef,
-                    recreate: false,
-                    del: [],
-                    add: [],
-                    change: []
-                };
-                if (oldDef.primKey.src !== newDef.primKey.src) {
-                    // Primary key has changed. Remove and re-add table.
-                    change.recreate = true;
-                    diff.change.push(change);
-                }
-                else {
-                    // Same primary key. Just find out what differs:
-                    var oldIndexes = oldDef.idxByName;
-                    var newIndexes = newDef.idxByName;
-                    for (var idxName in oldIndexes) {
-                        if (!newIndexes[idxName])
-                            change.del.push(idxName);
-                    }
-                    for (idxName in newIndexes) {
-                        var oldIdx = oldIndexes[idxName], newIdx = newIndexes[idxName];
-                        if (!oldIdx)
-                            change.add.push(newIdx);
-                        else if (oldIdx.src !== newIdx.src)
-                            change.change.push(newIdx);
-                    }
-                    if (change.del.length > 0 || change.add.length > 0 || change.change.length > 0) {
-                        diff.change.push(change);
-                    }
-                }
-            }
-        }
-        return diff;
-    }
-    function createTable(idbtrans, tableName, primKey, indexes) {
-        /// <param name="idbtrans" type="IDBTransaction"></param>
-        var store = idbtrans.db.createObjectStore(tableName, primKey.keyPath ? { keyPath: primKey.keyPath, autoIncrement: primKey.auto } : { autoIncrement: primKey.auto });
-        indexes.forEach(function (idx) { addIndex(store, idx); });
-        return store;
-    }
-    function createMissingTables(newSchema, idbtrans) {
-        keys(newSchema).forEach(function (tableName) {
-            if (!idbtrans.db.objectStoreNames.contains(tableName)) {
-                createTable(idbtrans, tableName, newSchema[tableName].primKey, newSchema[tableName].indexes);
-            }
-        });
-    }
-    function deleteRemovedTables(newSchema, idbtrans) {
-        for (var i = 0; i < idbtrans.db.objectStoreNames.length; ++i) {
-            var storeName = idbtrans.db.objectStoreNames[i];
-            if (newSchema[storeName] == null) {
-                idbtrans.db.deleteObjectStore(storeName);
-            }
-        }
-    }
-    function addIndex(store, idx) {
-        store.createIndex(idx.name, idx.keyPath, { unique: idx.unique, multiEntry: idx.multi });
-    }
-    //
-    //
-    //      Dexie Protected API
-    //
-    //
-    this._allTables = allTables;
-    this._createTransaction = function (mode, storeNames, dbschema, parentTransaction) {
-        return new Transaction(mode, storeNames, dbschema, parentTransaction);
-    };
-    /* Generate a temporary transaction when db operations are done outside a transaction scope.
-    */
-    function tempTransaction(mode, storeNames, fn) {
-        if (!openComplete && (!PSD.letThrough)) {
-            if (!isBeingOpened) {
-                if (!autoOpen)
-                    return rejection(new exceptions.DatabaseClosed());
-                db.open().catch(nop); // Open in background. If if fails, it will be catched by the final promise anyway.
-            }
-            return dbReadyPromise.then(function () { return tempTransaction(mode, storeNames, fn); });
-        }
-        else {
-            var trans = db._createTransaction(mode, storeNames, globalSchema);
-            try {
-                trans.create();
-            }
-            catch (ex) {
-                return rejection(ex);
-            }
-            return trans._promise(mode, function (resolve, reject) {
-                return newScope(function () {
-                    PSD.trans = trans;
-                    return fn(resolve, reject, trans);
-                });
-            }).then(function (result) {
-                // Instead of resolving value directly, wait with resolving it until transaction has completed.
-                // Otherwise the data would not be in the DB if requesting it in the then() operation.
-                // Specifically, to ensure that the following expression will work:
-                //
-                //   db.friends.put({name: "Arne"}).then(function () {
-                //       db.friends.where("name").equals("Arne").count(function(count) {
-                //           assert (count === 1);
-                //       });
-                //   });
-                //
-                return trans._completion.then(function () { return result; });
-            }); /*.catch(err => { // Don't do this as of now. If would affect bulk- and modify methods in a way that could be more intuitive. But wait! Maybe change in next major.
-                trans._reject(err);
-                return rejection(err);
-            });*/
-        }
-    }
-    this._whenReady = function (fn) {
-        return openComplete || PSD.letThrough ? fn() : new Promise(function (resolve, reject) {
-            if (!isBeingOpened) {
-                if (!autoOpen) {
-                    reject(new exceptions.DatabaseClosed());
-                    return;
-                }
-                db.open().catch(nop); // Open in background. If if fails, it will be catched by the final promise anyway.
-            }
-            dbReadyPromise.then(resolve, reject);
-        }).then(fn);
-    };
-    //
-    //
-    //
-    //
-    //      Dexie API
-    //
-    //
-    //
-    this.verno = 0;
-    this.open = function () {
-        if (isBeingOpened || idbdb)
-            return dbReadyPromise.then(function () { return dbOpenError ? rejection(dbOpenError) : db; });
-        debug && (openCanceller._stackHolder = getErrorWithStack()); // Let stacks point to when open() was called rather than where new Dexie() was called.
-        isBeingOpened = true;
-        dbOpenError = null;
-        openComplete = false;
-        // Function pointers to call when the core opening process completes.
-        var resolveDbReady = dbReadyResolve, 
-        // upgradeTransaction to abort on failure.
-        upgradeTransaction = null;
-        return Promise.race([openCanceller, new Promise(function (resolve, reject) {
-                // Multiply db.verno with 10 will be needed to workaround upgrading bug in IE:
-                // IE fails when deleting objectStore after reading from it.
-                // A future version of Dexie.js will stopover an intermediate version to workaround this.
-                // At that point, we want to be backward compatible. Could have been multiplied with 2, but by using 10, it is easier to map the number to the real version number.
-                // If no API, throw!
-                if (!indexedDB)
-                    throw new exceptions.MissingAPI("indexedDB API not found. If using IE10+, make sure to run your code on a server URL " +
-                        "(not locally). If using old Safari versions, make sure to include indexedDB polyfill.");
-                var req = autoSchema ? indexedDB.open(dbName) : indexedDB.open(dbName, Math.round(db.verno * 10));
-                if (!req)
-                    throw new exceptions.MissingAPI("IndexedDB API not available"); // May happen in Safari private mode, see https://github.com/dfahlander/Dexie.js/issues/134
-                req.onerror = eventRejectHandler(reject);
-                req.onblocked = wrap(fireOnBlocked);
-                req.onupgradeneeded = wrap(function (e) {
-                    upgradeTransaction = req.transaction;
-                    if (autoSchema && !db._allowEmptyDB) {
-                        // Caller did not specify a version or schema. Doing that is only acceptable for opening alread existing databases.
-                        // If onupgradeneeded is called it means database did not exist. Reject the open() promise and make sure that we
-                        // do not create a new database by accident here.
-                        req.onerror = preventDefault; // Prohibit onabort error from firing before we're done!
-                        upgradeTransaction.abort(); // Abort transaction (would hope that this would make DB disappear but it doesnt.)
-                        // Close database and delete it.
-                        req.result.close();
-                        var delreq = indexedDB.deleteDatabase(dbName); // The upgrade transaction is atomic, and javascript is single threaded - meaning that there is no risk that we delete someone elses database here!
-                        delreq.onsuccess = delreq.onerror = wrap(function () {
-                            reject(new exceptions.NoSuchDatabase("Database " + dbName + " doesnt exist"));
-                        });
-                    }
-                    else {
-                        upgradeTransaction.onerror = eventRejectHandler(reject);
-                        var oldVer = e.oldVersion > Math.pow(2, 62) ? 0 : e.oldVersion; // Safari 8 fix.
-                        runUpgraders(oldVer / 10, upgradeTransaction, reject, req);
-                    }
-                }, reject);
-                req.onsuccess = wrap(function () {
-                    // Core opening procedure complete. Now let's just record some stuff.
-                    upgradeTransaction = null;
-                    idbdb = req.result;
-                    connections.push(db); // Used for emulating versionchange event on IE/Edge/Safari.
-                    if (autoSchema)
-                        readGlobalSchema();
-                    else if (idbdb.objectStoreNames.length > 0) {
-                        try {
-                            adjustToExistingIndexNames(globalSchema, idbdb.transaction(safariMultiStoreFix(idbdb.objectStoreNames), READONLY));
-                        }
-                        catch (e) {
-                            // Safari may bail out if > 1 store names. However, this shouldnt be a showstopper. Issue #120.
-                        }
-                    }
-                    idbdb.onversionchange = wrap(function (ev) {
-                        db._vcFired = true; // detect implementations that not support versionchange (IE/Edge/Safari)
-                        db.on("versionchange").fire(ev);
-                    });
-                    if (!hasNativeGetDatabaseNames && dbName !== '__dbnames') {
-                        dbNamesDB.dbnames.put({ name: dbName }).catch(nop);
-                    }
-                    resolve();
-                }, reject);
-            })]).then(function () {
-            // Before finally resolving the dbReadyPromise and this promise,
-            // call and await all on('ready') subscribers:
-            // Dexie.vip() makes subscribers able to use the database while being opened.
-            // This is a must since these subscribers take part of the opening procedure.
-            onReadyBeingFired = [];
-            return Promise.resolve(Dexie.vip(db.on.ready.fire)).then(function fireRemainders() {
-                if (onReadyBeingFired.length > 0) {
-                    // In case additional subscribers to db.on('ready') were added during the time db.on.ready.fire was executed.
-                    var remainders = onReadyBeingFired.reduce(promisableChain, nop);
-                    onReadyBeingFired = [];
-                    return Promise.resolve(Dexie.vip(remainders)).then(fireRemainders);
-                }
-            });
-        }).finally(function () {
-            onReadyBeingFired = null;
-        }).then(function () {
-            // Resolve the db.open() with the db instance.
-            isBeingOpened = false;
-            return db;
-        }).catch(function (err) {
-            try {
-                // Did we fail within onupgradeneeded? Make sure to abort the upgrade transaction so it doesnt commit.
-                upgradeTransaction && upgradeTransaction.abort();
-            }
-            catch (e) { }
-            isBeingOpened = false; // Set before calling db.close() so that it doesnt reject openCanceller again (leads to unhandled rejection event).
-            db.close(); // Closes and resets idbdb, removes connections, resets dbReadyPromise and openCanceller so that a later db.open() is fresh.
-            // A call to db.close() may have made on-ready subscribers fail. Use dbOpenError if set, since err could be a follow-up error on that.
-            dbOpenError = err; // Record the error. It will be used to reject further promises of db operations.
-            return rejection(dbOpenError);
-        }).finally(function () {
-            openComplete = true;
-            resolveDbReady(); // dbReadyPromise is resolved no matter if open() rejects or resolved. It's just to wake up waiters.
-        });
-    };
-    this.close = function () {
-        var idx = connections.indexOf(db);
-        if (idx >= 0)
-            connections.splice(idx, 1);
-        if (idbdb) {
-            try {
-                idbdb.close();
-            }
-            catch (e) { }
-            idbdb = null;
-        }
-        autoOpen = false;
-        dbOpenError = new exceptions.DatabaseClosed();
-        if (isBeingOpened)
-            cancelOpen(dbOpenError);
-        // Reset dbReadyPromise promise:
-        dbReadyPromise = new Promise(function (resolve) {
-            dbReadyResolve = resolve;
-        });
-        openCanceller = new Promise(function (_, reject) {
-            cancelOpen = reject;
-        });
-    };
-    this.delete = function () {
-        var hasArguments = arguments.length > 0;
-        return new Promise(function (resolve, reject) {
-            if (hasArguments)
-                throw new exceptions.InvalidArgument("Arguments not allowed in db.delete()");
-            if (isBeingOpened) {
-                dbReadyPromise.then(doDelete);
-            }
-            else {
-                doDelete();
-            }
-            function doDelete() {
-                db.close();
-                var req = indexedDB.deleteDatabase(dbName);
-                req.onsuccess = wrap(function () {
-                    if (!hasNativeGetDatabaseNames) {
-                        dbNamesDB.dbnames.delete(dbName).catch(nop);
-                    }
-                    resolve();
-                });
-                req.onerror = eventRejectHandler(reject);
-                req.onblocked = fireOnBlocked;
-            }
-        });
-    };
-    this.backendDB = function () {
-        return idbdb;
-    };
-    this.isOpen = function () {
-        return idbdb !== null;
-    };
-    this.hasBeenClosed = function () {
-        return dbOpenError && (dbOpenError instanceof exceptions.DatabaseClosed);
-    };
-    this.hasFailed = function () {
-        return dbOpenError !== null;
-    };
-    this.dynamicallyOpened = function () {
-        return autoSchema;
-    };
-    //
-    // Properties
-    //
-    this.name = dbName;
-    // db.tables - an array of all Table instances.
-    props(this, {
-        tables: {
-            get: function () {
-                /// <returns type="Array" elementType="Table" />
-                return keys(allTables).map(function (name) { return allTables[name]; });
-            }
-        }
-    });
-    //
-    // Events
-    //
-    this.on = Events(this, "populate", "blocked", "versionchange", { ready: [promisableChain, nop] });
-    this.on.ready.subscribe = override(this.on.ready.subscribe, function (subscribe) {
-        return function (subscriber, bSticky) {
-            Dexie.vip(function () {
-                if (openComplete) {
-                    // Database already open. Call subscriber asap.
-                    if (!dbOpenError)
-                        Promise.resolve().then(subscriber);
-                    // bSticky: Also subscribe to future open sucesses (after close / reopen) 
-                    if (bSticky)
-                        subscribe(subscriber);
-                }
-                else if (onReadyBeingFired) {
-                    // db.on('ready') subscribers are currently being executed and have not yet resolved or rejected
-                    onReadyBeingFired.push(subscriber);
-                    if (bSticky)
-                        subscribe(subscriber);
-                }
-                else {
-                    // Database not yet open. Subscribe to it.
-                    subscribe(subscriber);
-                    // If bSticky is falsy, make sure to unsubscribe subscriber when fired once.
-                    if (!bSticky)
-                        subscribe(function unsubscribe() {
-                            db.on.ready.unsubscribe(subscriber);
-                            db.on.ready.unsubscribe(unsubscribe);
-                        });
-                }
-            });
-        };
-    });
-    this.transaction = function () {
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="mode" type="String">"r" for readonly, or "rw" for readwrite</param>
-        /// <param name="tableInstances">Table instance, Array of Table instances, String or String Array of object stores to include in the transaction</param>
-        /// <param name="scopeFunc" type="Function">Function to execute with transaction</param>
-        var args = extractTransactionArgs.apply(this, arguments);
-        return this._transaction.apply(this, args);
-    };
-    function extractTransactionArgs(mode, _tableArgs_, scopeFunc) {
-        // Let table arguments be all arguments between mode and last argument.
-        var i = arguments.length;
-        if (i < 2)
-            throw new exceptions.InvalidArgument("Too few arguments");
-        // Prevent optimzation killer (https://github.com/petkaantonov/bluebird/wiki/Optimization-killers#32-leaking-arguments)
-        // and clone arguments except the first one into local var 'args'.
-        var args = new Array(i - 1);
-        while (--i)
-            args[i - 1] = arguments[i];
-        // Let scopeFunc be the last argument and pop it so that args now only contain the table arguments.
-        scopeFunc = args.pop();
-        var tables = flatten(args); // Support using array as middle argument, or a mix of arrays and non-arrays.
-        return [mode, tables, scopeFunc];
-    }
-    this._transaction = function (mode, tables, scopeFunc) {
-        var parentTransaction = PSD.trans;
-        // Check if parent transactions is bound to this db instance, and if caller wants to reuse it
-        if (!parentTransaction || parentTransaction.db !== db || mode.indexOf('!') !== -1)
-            parentTransaction = null;
-        var onlyIfCompatible = mode.indexOf('?') !== -1;
-        mode = mode.replace('!', '').replace('?', ''); // Ok. Will change arguments[0] as well but we wont touch arguments henceforth.
-        try {
-            //
-            // Get storeNames from arguments. Either through given table instances, or through given table names.
-            //
-            var storeNames = tables.map(function (table) {
-                var storeName = table instanceof Table ? table.name : table;
-                if (typeof storeName !== 'string')
-                    throw new TypeError("Invalid table argument to Dexie.transaction(). Only Table or String are allowed");
-                return storeName;
-            });
-            //
-            // Resolve mode. Allow shortcuts "r" and "rw".
-            //
-            if (mode == "r" || mode == READONLY)
-                mode = READONLY;
-            else if (mode == "rw" || mode == READWRITE)
-                mode = READWRITE;
-            else
-                throw new exceptions.InvalidArgument("Invalid transaction mode: " + mode);
-            if (parentTransaction) {
-                // Basic checks
-                if (parentTransaction.mode === READONLY && mode === READWRITE) {
-                    if (onlyIfCompatible) {
-                        // Spawn new transaction instead.
-                        parentTransaction = null;
-                    }
-                    else
-                        throw new exceptions.SubTransaction("Cannot enter a sub-transaction with READWRITE mode when parent transaction is READONLY");
-                }
-                if (parentTransaction) {
-                    storeNames.forEach(function (storeName) {
-                        if (parentTransaction && parentTransaction.storeNames.indexOf(storeName) === -1) {
-                            if (onlyIfCompatible) {
-                                // Spawn new transaction instead.
-                                parentTransaction = null;
-                            }
-                            else
-                                throw new exceptions.SubTransaction("Table " + storeName +
-                                    " not included in parent transaction.");
-                        }
-                    });
-                }
-                if (onlyIfCompatible && parentTransaction && !parentTransaction.active) {
-                    // '?' mode should not keep using an inactive transaction.
-                    parentTransaction = null;
-                }
-            }
-        }
-        catch (e) {
-            return parentTransaction ?
-                parentTransaction._promise(null, function (_, reject) { reject(e); }) :
-                rejection(e);
-        }
-        // If this is a sub-transaction, lock the parent and then launch the sub-transaction.
-        return (parentTransaction ?
-            parentTransaction._promise(mode, enterTransactionScope, "lock") :
-            PSD.trans ?
-                // no parent transaction despite PSD.trans exists. Make sure also
-                // that the zone we create is not a sub-zone of current, because
-                // Promise.follow() should not wait for it if so.
-                usePSD(PSD.transless, function () { return db._whenReady(enterTransactionScope); }) :
-                db._whenReady(enterTransactionScope));
-        function enterTransactionScope() {
-            return Promise.resolve().then(function () {
-                // Keep a pointer to last non-transactional PSD to use if someone calls Dexie.ignoreTransaction().
-                var transless = PSD.transless || PSD;
-                // Our transaction.
-                //return new Promise((resolve, reject) => {
-                var trans = db._createTransaction(mode, storeNames, globalSchema, parentTransaction);
-                // Let the transaction instance be part of a Promise-specific data (PSD) value.
-                var zoneProps = {
-                    trans: trans,
-                    transless: transless
-                };
-                if (parentTransaction) {
-                    // Emulate transaction commit awareness for inner transaction (must 'commit' when the inner transaction has no more operations ongoing)
-                    trans.idbtrans = parentTransaction.idbtrans;
-                }
-                else {
-                    trans.create(); // Create the backend transaction so that complete() or error() will trigger even if no operation is made upon it.
-                }
-                // Support for native async await.
-                if (scopeFunc.constructor === AsyncFunction) {
-                    incrementExpectedAwaits();
-                }
-                var returnValue;
-                var promiseFollowed = Promise.follow(function () {
-                    // Finally, call the scope function with our table and transaction arguments.
-                    returnValue = scopeFunc.call(trans, trans);
-                    if (returnValue) {
-                        if (returnValue.constructor === NativePromise) {
-                            var decrementor = decrementExpectedAwaits.bind(null, null);
-                            returnValue.then(decrementor, decrementor);
-                        }
-                        else if (typeof returnValue.next === 'function' && typeof returnValue.throw === 'function') {
-                            // scopeFunc returned an iterator with throw-support. Handle yield as await.
-                            returnValue = awaitIterator(returnValue);
-                        }
-                    }
-                }, zoneProps);
-                return (returnValue && typeof returnValue.then === 'function' ?
-                    // Promise returned. User uses promise-style transactions.
-                    Promise.resolve(returnValue).then(function (x) { return trans.active ?
-                        x // Transaction still active. Continue.
-                        : rejection(new exceptions.PrematureCommit("Transaction committed too early. See http://bit.ly/2kdckMn")); })
-                    // No promise returned. Wait for all outstanding promises before continuing. 
-                    : promiseFollowed.then(function () { return returnValue; })).then(function (x) {
-                    // sub transactions don't react to idbtrans.oncomplete. We must trigger a completion:
-                    if (parentTransaction)
-                        trans._resolve();
-                    // wait for trans._completion
-                    // (if root transaction, this means 'complete' event. If sub-transaction, we've just fired it ourselves)
-                    return trans._completion.then(function () { return x; });
-                }).catch(function (e) {
-                    trans._reject(e); // Yes, above then-handler were maybe not called because of an unhandled rejection in scopeFunc!
-                    return rejection(e);
-                });
-            });
-        }
-    };
-    this.table = function (tableName) {
-        /// <returns type="Table"></returns>
-        if (!hasOwn(allTables, tableName)) {
-            throw new exceptions.InvalidTable("Table " + tableName + " does not exist");
-        }
-        return allTables[tableName];
-    };
-    //
-    //
-    //
-    // Table Class
-    //
-    //
-    //
-    function Table(name, tableSchema, optionalTrans) {
-        /// <param name="name" type="String"></param>
-        this.name = name;
-        this.schema = tableSchema;
-        this._tx = optionalTrans;
-        this.hook = allTables[name] ? allTables[name].hook : Events(null, {
-            "creating": [hookCreatingChain, nop],
-            "reading": [pureFunctionChain, mirror],
-            "updating": [hookUpdatingChain, nop],
-            "deleting": [hookDeletingChain, nop]
-        });
-    }
-    function BulkErrorHandlerCatchAll(errorList, done, supportHooks) {
-        return (supportHooks ? hookedEventRejectHandler : eventRejectHandler)(function (e) {
-            errorList.push(e);
-            done && done();
-        });
-    }
-    function bulkDelete(idbstore, trans, keysOrTuples, hasDeleteHook, deletingHook) {
-        // If hasDeleteHook, keysOrTuples must be an array of tuples: [[key1, value2],[key2,value2],...],
-        // else keysOrTuples must be just an array of keys: [key1, key2, ...].
-        return new Promise(function (resolve, reject) {
-            var len = keysOrTuples.length, lastItem = len - 1;
-            if (len === 0)
-                return resolve();
-            if (!hasDeleteHook) {
-                for (var i = 0; i < len; ++i) {
-                    var req = idbstore.delete(keysOrTuples[i]);
-                    req.onerror = eventRejectHandler(reject);
-                    if (i === lastItem)
-                        req.onsuccess = wrap(function () { return resolve(); });
-                }
-            }
-            else {
-                var hookCtx, errorHandler = hookedEventRejectHandler(reject), successHandler = hookedEventSuccessHandler(null);
-                tryCatch(function () {
-                    for (var i = 0; i < len; ++i) {
-                        hookCtx = { onsuccess: null, onerror: null };
-                        var tuple = keysOrTuples[i];
-                        deletingHook.call(hookCtx, tuple[0], tuple[1], trans);
-                        var req = idbstore.delete(tuple[0]);
-                        req._hookCtx = hookCtx;
-                        req.onerror = errorHandler;
-                        if (i === lastItem)
-                            req.onsuccess = hookedEventSuccessHandler(resolve);
-                        else
-                            req.onsuccess = successHandler;
-                    }
-                }, function (err) {
-                    hookCtx.onerror && hookCtx.onerror(err);
-                    throw err;
-                });
-            }
-        });
-    }
-    props(Table.prototype, {
-        //
-        // Table Protected Methods
-        //
-        _trans: function getTransaction(mode, fn, writeLocked) {
-            var trans = this._tx || PSD.trans;
-            return trans && trans.db === db ?
-                trans === PSD.trans ?
-                    trans._promise(mode, fn, writeLocked) :
-                    newScope(function () { return trans._promise(mode, fn, writeLocked); }, { trans: trans, transless: PSD.transless || PSD }) :
-                tempTransaction(mode, [this.name], fn);
-        },
-        _idbstore: function getIDBObjectStore(mode, fn, writeLocked) {
-            var tableName = this.name;
-            function supplyIdbStore(resolve, reject, trans) {
-                if (trans.storeNames.indexOf(tableName) === -1)
-                    throw new exceptions.NotFound("Table" + tableName + " not part of transaction");
-                return fn(resolve, reject, trans.idbtrans.objectStore(tableName), trans);
-            }
-            return this._trans(mode, supplyIdbStore, writeLocked);
-        },
-        //
-        // Table Public Methods
-        //
-        get: function (keyOrCrit, cb) {
-            if (keyOrCrit && keyOrCrit.constructor === Object)
-                return this.where(keyOrCrit).first(cb);
-            var self = this;
-            return this._idbstore(READONLY, function (resolve, reject, idbstore) {
-                var req = idbstore.get(keyOrCrit);
-                req.onerror = eventRejectHandler(reject);
-                req.onsuccess = wrap(function () {
-                    resolve(self.hook.reading.fire(req.result));
-                }, reject);
-            }).then(cb);
-        },
-        where: function (indexOrCrit) {
-            if (typeof indexOrCrit === 'string')
-                return new WhereClause(this, indexOrCrit);
-            if (isArray(indexOrCrit))
-                return new WhereClause(this, "[" + indexOrCrit.join('+') + "]");
-            // indexOrCrit is an object map of {[keyPath]:value} 
-            var keyPaths = keys(indexOrCrit);
-            if (keyPaths.length === 1)
-                // Only one critera. This was the easy case:
-                return this
-                    .where(keyPaths[0])
-                    .equals(indexOrCrit[keyPaths[0]]);
-            // Multiple criterias.
-            // Let's try finding a compound index that matches all keyPaths in
-            // arbritary order:
-            var compoundIndex = this.schema.indexes.concat(this.schema.primKey).filter(function (ix) {
-                return ix.compound &&
-                    keyPaths.every(function (keyPath) { return ix.keyPath.indexOf(keyPath) >= 0; }) &&
-                    ix.keyPath.every(function (keyPath) { return keyPaths.indexOf(keyPath) >= 0; });
-            })[0];
-            if (compoundIndex && maxKey !== maxString)
-                // Cool! We found such compound index
-                // and this browser supports compound indexes (maxKey !== maxString)!
-                return this
-                    .where(compoundIndex.name)
-                    .equals(compoundIndex.keyPath.map(function (kp) { return indexOrCrit[kp]; }));
-            if (!compoundIndex)
-                console.warn("The query " + JSON.stringify(indexOrCrit) + " on " + this.name + " would benefit of a " +
-                    ("compound index [" + keyPaths.join('+') + "]"));
-            // Ok, now let's fallback to finding at least one matching index
-            // and filter the rest.
-            var idxByName = this.schema.idxByName;
-            var simpleIndex = keyPaths.reduce(function (r, keyPath) { return [
-                r[0] || idxByName[keyPath],
-                r[0] || !idxByName[keyPath] ?
-                    combine(r[1], function (x) { return '' + getByKeyPath(x, keyPath) ==
-                        '' + indexOrCrit[keyPath]; })
-                    : r[1]
-            ]; }, [null, null]);
-            var idx = simpleIndex[0];
-            return idx ?
-                this.where(idx.name).equals(indexOrCrit[idx.keyPath])
-                    .filter(simpleIndex[1]) :
-                compoundIndex ?
-                    this.filter(simpleIndex[1]) : // Has compound but browser bad. Allow filter.
-                    this.where(keyPaths).equals(''); // No index at all. Fail lazily.
-        },
-        count: function (cb) {
-            return this.toCollection().count(cb);
-        },
-        offset: function (offset) {
-            return this.toCollection().offset(offset);
-        },
-        limit: function (numRows) {
-            return this.toCollection().limit(numRows);
-        },
-        reverse: function () {
-            return this.toCollection().reverse();
-        },
-        filter: function (filterFunction) {
-            return this.toCollection().and(filterFunction);
-        },
-        each: function (fn) {
-            return this.toCollection().each(fn);
-        },
-        toArray: function (cb) {
-            return this.toCollection().toArray(cb);
-        },
-        orderBy: function (index) {
-            return new Collection(new WhereClause(this, isArray(index) ?
-                "[" + index.join('+') + "]" :
-                index));
-        },
-        toCollection: function () {
-            return new Collection(new WhereClause(this));
-        },
-        mapToClass: function (constructor, structure) {
-            /// <summary>
-            ///     Map table to a javascript constructor function. Objects returned from the database will be instances of this class, making
-            ///     it possible to the instanceOf operator as well as extending the class using constructor.prototype.method = function(){...}.
-            /// </summary>
-            /// <param name="constructor">Constructor function representing the class.</param>
-            /// <param name="structure" optional="true">Helps IDE code completion by knowing the members that objects contain and not just the indexes. Also
-            /// know what type each member has. Example: {name: String, emailAddresses: [String], password}</param>
-            this.schema.mappedClass = constructor;
-            var instanceTemplate = Object.create(constructor.prototype);
-            if (structure) {
-                // structure and instanceTemplate is for IDE code competion only while constructor.prototype is for actual inheritance.
-                applyStructure(instanceTemplate, structure);
-            }
-            this.schema.instanceTemplate = instanceTemplate;
-            // Now, subscribe to the when("reading") event to make all objects that come out from this table inherit from given class
-            // no matter which method to use for reading (Table.get() or Table.where(...)... )
-            var readHook = function (obj) {
-                if (!obj)
-                    return obj; // No valid object. (Value is null). Return as is.
-                // Create a new object that derives from constructor:
-                var res = Object.create(constructor.prototype);
-                // Clone members:
-                for (var m in obj)
-                    if (hasOwn(obj, m))
-                        try {
-                            res[m] = obj[m];
-                        }
-                        catch (_) { }
-                return res;
-            };
-            if (this.schema.readHook) {
-                this.hook.reading.unsubscribe(this.schema.readHook);
-            }
-            this.schema.readHook = readHook;
-            this.hook("reading", readHook);
-            return constructor;
-        },
-        defineClass: function (structure) {
-            /// <summary>
-            ///     Define all members of the class that represents the table. This will help code completion of when objects are read from the database
-            ///     as well as making it possible to extend the prototype of the returned constructor function.
-            /// </summary>
-            /// <param name="structure">Helps IDE code completion by knowing the members that objects contain and not just the indexes. Also
-            /// know what type each member has. Example: {name: String, emailAddresses: [String], properties: {shoeSize: Number}}</param>
-            return this.mapToClass(Dexie.defineClass(structure), structure);
-        },
-        bulkDelete: function (keys$$1) {
-            if (this.hook.deleting.fire === nop) {
-                return this._idbstore(READWRITE, function (resolve, reject, idbstore, trans) {
-                    resolve(bulkDelete(idbstore, trans, keys$$1, false, nop));
-                });
-            }
-            else {
-                return this
-                    .where(':id')
-                    .anyOf(keys$$1)
-                    .delete()
-                    .then(function () { }); // Resolve with undefined.
-            }
-        },
-        bulkPut: function (objects, keys$$1) {
-            var _this = this;
-            return this._idbstore(READWRITE, function (resolve, reject, idbstore) {
-                if (!idbstore.keyPath && !_this.schema.primKey.auto && !keys$$1)
-                    throw new exceptions.InvalidArgument("bulkPut() with non-inbound keys requires keys array in second argument");
-                if (idbstore.keyPath && keys$$1)
-                    throw new exceptions.InvalidArgument("bulkPut(): keys argument invalid on tables with inbound keys");
-                if (keys$$1 && keys$$1.length !== objects.length)
-                    throw new exceptions.InvalidArgument("Arguments objects and keys must have the same length");
-                if (objects.length === 0)
-                    return resolve(); // Caller provided empty list.
-                var done = function (result) {
-                    if (errorList.length === 0)
-                        resolve(result);
-                    else
-                        reject(new BulkError(_this.name + ".bulkPut(): " + errorList.length + " of " + numObjs + " operations failed", errorList));
-                };
-                var req, errorList = [], errorHandler, numObjs = objects.length, table = _this;
-                if (_this.hook.creating.fire === nop && _this.hook.updating.fire === nop) {
-                    //
-                    // Standard Bulk (no 'creating' or 'updating' hooks to care about)
-                    //
-                    errorHandler = BulkErrorHandlerCatchAll(errorList);
-                    for (var i = 0, l = objects.length; i < l; ++i) {
-                        req = keys$$1 ? idbstore.put(objects[i], keys$$1[i]) : idbstore.put(objects[i]);
-                        req.onerror = errorHandler;
-                    }
-                    // Only need to catch success or error on the last operation
-                    // according to the IDB spec.
-                    req.onerror = BulkErrorHandlerCatchAll(errorList, done);
-                    req.onsuccess = eventSuccessHandler(done);
-                }
-                else {
-                    var effectiveKeys = keys$$1 || idbstore.keyPath && objects.map(function (o) { return getByKeyPath(o, idbstore.keyPath); });
-                    // Generate map of {[key]: object}
-                    var objectLookup = effectiveKeys && arrayToObject(effectiveKeys, function (key, i) { return key != null && [key, objects[i]]; });
-                    var promise = !effectiveKeys ?
-                        // Auto-incremented key-less objects only without any keys argument.
-                        table.bulkAdd(objects) :
-                        // Keys provided. Either as inbound in provided objects, or as a keys argument.
-                        // Begin with updating those that exists in DB:
-                        table.where(':id').anyOf(effectiveKeys.filter(function (key) { return key != null; })).modify(function () {
-                            this.value = objectLookup[this.primKey];
-                            objectLookup[this.primKey] = null; // Mark as "don't add this"
-                        }).catch(ModifyError, function (e) {
-                            errorList = e.failures; // No need to concat here. These are the first errors added.
-                        }).then(function () {
-                            // Now, let's examine which items didnt exist so we can add them:
-                            var objsToAdd = [], keysToAdd = keys$$1 && [];
-                            // Iterate backwards. Why? Because if same key was used twice, just add the last one.
-                            for (var i = effectiveKeys.length - 1; i >= 0; --i) {
-                                var key = effectiveKeys[i];
-                                if (key == null || objectLookup[key]) {
-                                    objsToAdd.push(objects[i]);
-                                    keys$$1 && keysToAdd.push(key);
-                                    if (key != null)
-                                        objectLookup[key] = null; // Mark as "dont add again"
-                                }
-                            }
-                            // The items are in reverse order so reverse them before adding.
-                            // Could be important in order to get auto-incremented keys the way the caller
-                            // would expect. Could have used unshift instead of push()/reverse(),
-                            // but: http://jsperf.com/unshift-vs-reverse
-                            objsToAdd.reverse();
-                            keys$$1 && keysToAdd.reverse();
-                            return table.bulkAdd(objsToAdd, keysToAdd);
-                        }).then(function (lastAddedKey) {
-                            // Resolve with key of the last object in given arguments to bulkPut():
-                            var lastEffectiveKey = effectiveKeys[effectiveKeys.length - 1]; // Key was provided.
-                            return lastEffectiveKey != null ? lastEffectiveKey : lastAddedKey;
-                        });
-                    promise.then(done).catch(BulkError, function (e) {
-                        // Concat failure from ModifyError and reject using our 'done' method.
-                        errorList = errorList.concat(e.failures);
-                        done();
-                    }).catch(reject);
-                }
-            }, "locked"); // If called from transaction scope, lock transaction til all steps are done.
-        },
-        bulkAdd: function (objects, keys$$1) {
-            var self = this, creatingHook = this.hook.creating.fire;
-            return this._idbstore(READWRITE, function (resolve, reject, idbstore, trans) {
-                if (!idbstore.keyPath && !self.schema.primKey.auto && !keys$$1)
-                    throw new exceptions.InvalidArgument("bulkAdd() with non-inbound keys requires keys array in second argument");
-                if (idbstore.keyPath && keys$$1)
-                    throw new exceptions.InvalidArgument("bulkAdd(): keys argument invalid on tables with inbound keys");
-                if (keys$$1 && keys$$1.length !== objects.length)
-                    throw new exceptions.InvalidArgument("Arguments objects and keys must have the same length");
-                if (objects.length === 0)
-                    return resolve(); // Caller provided empty list.
-                function done(result) {
-                    if (errorList.length === 0)
-                        resolve(result);
-                    else
-                        reject(new BulkError(self.name + ".bulkAdd(): " + errorList.length + " of " + numObjs + " operations failed", errorList));
-                }
-                var req, errorList = [], errorHandler, successHandler, numObjs = objects.length;
-                if (creatingHook !== nop) {
-                    //
-                    // There are subscribers to hook('creating')
-                    // Must behave as documented.
-                    //
-                    var keyPath = idbstore.keyPath, hookCtx;
-                    errorHandler = BulkErrorHandlerCatchAll(errorList, null, true);
-                    successHandler = hookedEventSuccessHandler(null);
-                    tryCatch(function () {
-                        for (var i = 0, l = objects.length; i < l; ++i) {
-                            hookCtx = { onerror: null, onsuccess: null };
-                            var key = keys$$1 && keys$$1[i];
-                            var obj = objects[i], effectiveKey = keys$$1 ? key : keyPath ? getByKeyPath(obj, keyPath) : undefined, keyToUse = creatingHook.call(hookCtx, effectiveKey, obj, trans);
-                            if (effectiveKey == null && keyToUse != null) {
-                                if (keyPath) {
-                                    obj = deepClone(obj);
-                                    setByKeyPath(obj, keyPath, keyToUse);
-                                }
-                                else {
-                                    key = keyToUse;
-                                }
-                            }
-                            req = key != null ? idbstore.add(obj, key) : idbstore.add(obj);
-                            req._hookCtx = hookCtx;
-                            if (i < l - 1) {
-                                req.onerror = errorHandler;
-                                if (hookCtx.onsuccess)
-                                    req.onsuccess = successHandler;
-                            }
-                        }
-                    }, function (err) {
-                        hookCtx.onerror && hookCtx.onerror(err);
-                        throw err;
-                    });
-                    req.onerror = BulkErrorHandlerCatchAll(errorList, done, true);
-                    req.onsuccess = hookedEventSuccessHandler(done);
-                }
-                else {
-                    //
-                    // Standard Bulk (no 'creating' hook to care about)
-                    //
-                    errorHandler = BulkErrorHandlerCatchAll(errorList);
-                    for (var i = 0, l = objects.length; i < l; ++i) {
-                        req = keys$$1 ? idbstore.add(objects[i], keys$$1[i]) : idbstore.add(objects[i]);
-                        req.onerror = errorHandler;
-                    }
-                    // Only need to catch success or error on the last operation
-                    // according to the IDB spec.
-                    req.onerror = BulkErrorHandlerCatchAll(errorList, done);
-                    req.onsuccess = eventSuccessHandler(done);
-                }
-            });
-        },
-        add: function (obj, key) {
-            /// <summary>
-            ///   Add an object to the database. In case an object with same primary key already exists, the object will not be added.
-            /// </summary>
-            /// <param name="obj" type="Object">A javascript object to insert</param>
-            /// <param name="key" optional="true">Primary key</param>
-            var creatingHook = this.hook.creating.fire;
-            return this._idbstore(READWRITE, function (resolve, reject, idbstore, trans) {
-                var hookCtx = { onsuccess: null, onerror: null };
-                if (creatingHook !== nop) {
-                    var effectiveKey = (key != null) ? key : (idbstore.keyPath ? getByKeyPath(obj, idbstore.keyPath) : undefined);
-                    var keyToUse = creatingHook.call(hookCtx, effectiveKey, obj, trans); // Allow subscribers to when("creating") to generate the key.
-                    if (effectiveKey == null && keyToUse != null) {
-                        if (idbstore.keyPath)
-                            setByKeyPath(obj, idbstore.keyPath, keyToUse);
-                        else
-                            key = keyToUse;
-                    }
-                }
-                try {
-                    var req = key != null ? idbstore.add(obj, key) : idbstore.add(obj);
-                    req._hookCtx = hookCtx;
-                    req.onerror = hookedEventRejectHandler(reject);
-                    req.onsuccess = hookedEventSuccessHandler(function (result) {
-                        // TODO: Remove these two lines in next major release (2.0?)
-                        // It's no good practice to have side effects on provided parameters
-                        var keyPath = idbstore.keyPath;
-                        if (keyPath)
-                            setByKeyPath(obj, keyPath, result);
-                        resolve(result);
-                    });
-                }
-                catch (e) {
-                    if (hookCtx.onerror)
-                        hookCtx.onerror(e);
-                    throw e;
-                }
-            });
-        },
-        put: function (obj, key) {
-            var _this = this;
-            /// <summary>
-            ///   Add an object to the database but in case an object with same primary key alread exists, the existing one will get updated.
-            /// </summary>
-            /// <param name="obj" type="Object">A javascript object to insert or update</param>
-            /// <param name="key" optional="true">Primary key</param>
-            var creatingHook = this.hook.creating.fire, updatingHook = this.hook.updating.fire;
-            if (creatingHook !== nop || updatingHook !== nop) {
-                //
-                // People listens to when("creating") or when("updating") events!
-                // We must know whether the put operation results in an CREATE or UPDATE.
-                //
-                var keyPath = this.schema.primKey.keyPath;
-                var effectiveKey = (key !== undefined) ? key : (keyPath && getByKeyPath(obj, keyPath));
-                if (effectiveKey == null)
-                    return this.add(obj);
-                // Since key is optional, make sure we get it from obj if not provided
-                // Primary key exist. Lock transaction and try modifying existing. If nothing modified, call add().
-                // clone obj before this async call. If caller modifies obj the line after put(), the IDB spec requires that it should not affect operation.
-                obj = deepClone(obj);
-                return this._trans(READWRITE, function () {
-                    return _this.where(":id").equals(effectiveKey).modify(function () {
-                        // Replace extisting value with our object
-                        // CRUD event firing handled in Collection.modify()
-                        this.value = obj;
-                    }).then(function (count) { return count === 0 ? _this.add(obj, key) : effectiveKey; });
-                }, "locked"); // Lock needed because operation is splitted into modify() and add().
-            }
-            else {
-                // Use the standard IDB put() method.
-                return this._idbstore(READWRITE, function (resolve, reject, idbstore) {
-                    var req = key !== undefined ? idbstore.put(obj, key) : idbstore.put(obj);
-                    req.onerror = eventRejectHandler(reject);
-                    req.onsuccess = wrap(function (ev) {
-                        var keyPath = idbstore.keyPath;
-                        if (keyPath)
-                            setByKeyPath(obj, keyPath, ev.target.result);
-                        resolve(req.result);
-                    });
-                });
-            }
-        },
-        'delete': function (key) {
-            /// <param name="key">Primary key of the object to delete</param>
-            if (this.hook.deleting.subscribers.length) {
-                // People listens to when("deleting") event. Must implement delete using Collection.delete() that will
-                // call the CRUD event. Only Collection.delete() will know whether an object was actually deleted.
-                return this.where(":id").equals(key).delete();
-            }
-            else {
-                // No one listens. Use standard IDB delete() method.
-                return this._idbstore(READWRITE, function (resolve, reject, idbstore) {
-                    var req = idbstore.delete(key);
-                    req.onerror = eventRejectHandler(reject);
-                    req.onsuccess = wrap(function () {
-                        resolve(req.result);
-                    });
-                });
-            }
-        },
-        clear: function () {
-            if (this.hook.deleting.subscribers.length) {
-                // People listens to when("deleting") event. Must implement delete using Collection.delete() that will
-                // call the CRUD event. Only Collection.delete() will knows which objects that are actually deleted.
-                return this.toCollection().delete();
-            }
-            else {
-                return this._idbstore(READWRITE, function (resolve, reject, idbstore) {
-                    var req = idbstore.clear();
-                    req.onerror = eventRejectHandler(reject);
-                    req.onsuccess = wrap(function () {
-                        resolve(req.result);
-                    });
-                });
-            }
-        },
-        update: function (keyOrObject, modifications) {
-            if (typeof modifications !== 'object' || isArray(modifications))
-                throw new exceptions.InvalidArgument("Modifications must be an object.");
-            if (typeof keyOrObject === 'object' && !isArray(keyOrObject)) {
-                // object to modify. Also modify given object with the modifications:
-                keys(modifications).forEach(function (keyPath) {
-                    setByKeyPath(keyOrObject, keyPath, modifications[keyPath]);
-                });
-                var key = getByKeyPath(keyOrObject, this.schema.primKey.keyPath);
-                if (key === undefined)
-                    return rejection(new exceptions.InvalidArgument("Given object does not contain its primary key"));
-                return this.where(":id").equals(key).modify(modifications);
-            }
-            else {
-                // key to modify
-                return this.where(":id").equals(keyOrObject).modify(modifications);
-            }
-        }
-    });
-    //
-    //
-    //
-    // Transaction Class
-    //
-    //
-    //
-    function Transaction(mode, storeNames, dbschema, parent) {
-        var _this = this;
-        /// <summary>
-        ///    Transaction class. Represents a database transaction. All operations on db goes through a Transaction.
-        /// </summary>
-        /// <param name="mode" type="String">Any of "readwrite" or "readonly"</param>
-        /// <param name="storeNames" type="Array">Array of table names to operate on</param>
-        this.db = db;
-        this.mode = mode;
-        this.storeNames = storeNames;
-        this.idbtrans = null;
-        this.on = Events(this, "complete", "error", "abort");
-        this.parent = parent || null;
-        this.active = true;
-        this._reculock = 0;
-        this._blockedFuncs = [];
-        this._resolve = null;
-        this._reject = null;
-        this._waitingFor = null;
-        this._waitingQueue = null;
-        this._spinCount = 0; // Just for debugging waitFor()
-        this._completion = new Promise(function (resolve, reject) {
-            _this._resolve = resolve;
-            _this._reject = reject;
-        });
-        this._completion.then(function () {
-            _this.active = false;
-            _this.on.complete.fire();
-        }, function (e) {
-            var wasActive = _this.active;
-            _this.active = false;
-            _this.on.error.fire(e);
-            _this.parent ?
-                _this.parent._reject(e) :
-                wasActive && _this.idbtrans && _this.idbtrans.abort();
-            return rejection(e); // Indicate we actually DO NOT catch this error.
-        });
-    }
-    props(Transaction.prototype, {
-        //
-        // Transaction Protected Methods (not required by API users, but needed internally and eventually by dexie extensions)
-        //
-        _lock: function () {
-            assert(!PSD.global); // Locking and unlocking reuires to be within a PSD scope.
-            // Temporary set all requests into a pending queue if they are called before database is ready.
-            ++this._reculock; // Recursive read/write lock pattern using PSD (Promise Specific Data) instead of TLS (Thread Local Storage)
-            if (this._reculock === 1 && !PSD.global)
-                PSD.lockOwnerFor = this;
-            return this;
-        },
-        _unlock: function () {
-            assert(!PSD.global); // Locking and unlocking reuires to be within a PSD scope.
-            if (--this._reculock === 0) {
-                if (!PSD.global)
-                    PSD.lockOwnerFor = null;
-                while (this._blockedFuncs.length > 0 && !this._locked()) {
-                    var fnAndPSD = this._blockedFuncs.shift();
-                    try {
-                        usePSD(fnAndPSD[1], fnAndPSD[0]);
-                    }
-                    catch (e) { }
-                }
-            }
-            return this;
-        },
-        _locked: function () {
-            // Checks if any write-lock is applied on this transaction.
-            // To simplify the Dexie API for extension implementations, we support recursive locks.
-            // This is accomplished by using "Promise Specific Data" (PSD).
-            // PSD data is bound to a Promise and any child Promise emitted through then() or resolve( new Promise() ).
-            // PSD is local to code executing on top of the call stacks of any of any code executed by Promise():
-            //         * callback given to the Promise() constructor  (function (resolve, reject){...})
-            //         * callbacks given to then()/catch()/finally() methods (function (value){...})
-            // If creating a new independant Promise instance from within a Promise call stack, the new Promise will derive the PSD from the call stack of the parent Promise.
-            // Derivation is done so that the inner PSD __proto__ points to the outer PSD.
-            // PSD.lockOwnerFor will point to current transaction object if the currently executing PSD scope owns the lock.
-            return this._reculock && PSD.lockOwnerFor !== this;
-        },
-        create: function (idbtrans) {
-            var _this = this;
-            if (!this.mode)
-                return this;
-            assert(!this.idbtrans);
-            if (!idbtrans && !idbdb) {
-                switch (dbOpenError && dbOpenError.name) {
-                    case "DatabaseClosedError":
-                        // Errors where it is no difference whether it was caused by the user operation or an earlier call to db.open()
-                        throw new exceptions.DatabaseClosed(dbOpenError);
-                    case "MissingAPIError":
-                        // Errors where it is no difference whether it was caused by the user operation or an earlier call to db.open()
-                        throw new exceptions.MissingAPI(dbOpenError.message, dbOpenError);
-                    default:
-                        // Make it clear that the user operation was not what caused the error - the error had occurred earlier on db.open()!
-                        throw new exceptions.OpenFailed(dbOpenError);
-                }
-            }
-            if (!this.active)
-                throw new exceptions.TransactionInactive();
-            assert(this._completion._state === null);
-            idbtrans = this.idbtrans = idbtrans || idbdb.transaction(safariMultiStoreFix(this.storeNames), this.mode);
-            idbtrans.onerror = wrap(function (ev) {
-                preventDefault(ev); // Prohibit default bubbling to window.error
-                _this._reject(idbtrans.error);
-            });
-            idbtrans.onabort = wrap(function (ev) {
-                preventDefault(ev);
-                _this.active && _this._reject(new exceptions.Abort(idbtrans.error));
-                _this.active = false;
-                _this.on("abort").fire(ev);
-            });
-            idbtrans.oncomplete = wrap(function () {
-                _this.active = false;
-                _this._resolve();
-            });
-            return this;
-        },
-        _promise: function (mode, fn, bWriteLock) {
-            var _this = this;
-            if (mode === READWRITE && this.mode !== READWRITE)
-                return rejection(new exceptions.ReadOnly("Transaction is readonly"));
-            if (!this.active)
-                return rejection(new exceptions.TransactionInactive());
-            if (this._locked()) {
-                return new Promise(function (resolve, reject) {
-                    _this._blockedFuncs.push([function () {
-                            _this._promise(mode, fn, bWriteLock).then(resolve, reject);
-                        }, PSD]);
-                });
-            }
-            else if (bWriteLock) {
-                return newScope(function () {
-                    var p = new Promise(function (resolve, reject) {
-                        _this._lock();
-                        var rv = fn(resolve, reject, _this);
-                        if (rv && rv.then)
-                            rv.then(resolve, reject);
-                    });
-                    p.finally(function () { return _this._unlock(); });
-                    p._lib = true;
-                    return p;
-                });
-            }
-            else {
-                var p = new Promise(function (resolve, reject) {
-                    var rv = fn(resolve, reject, _this);
-                    if (rv && rv.then)
-                        rv.then(resolve, reject);
-                });
-                p._lib = true;
-                return p;
-            }
-        },
-        _root: function () {
-            return this.parent ? this.parent._root() : this;
-        },
-        waitFor: function (promise) {
-            // Always operate on the root transaction (in case this is a sub stransaction)
-            var root = this._root();
-            // For stability reasons, convert parameter to promise no matter what type is passed to waitFor().
-            // (We must be able to call .then() on it.)
-            promise = Promise.resolve(promise);
-            if (root._waitingFor) {
-                // Already called waitFor(). Wait for both to complete.
-                root._waitingFor = root._waitingFor.then(function () { return promise; });
-            }
-            else {
-                // We're not in waiting state. Start waiting state.
-                root._waitingFor = promise;
-                root._waitingQueue = [];
-                // Start interacting with indexedDB until promise completes:
-                var store = root.idbtrans.objectStore(root.storeNames[0]);
-                (function spin() {
-                    ++root._spinCount; // For debugging only
-                    while (root._waitingQueue.length)
-                        (root._waitingQueue.shift())();
-                    if (root._waitingFor)
-                        store.get(-Infinity).onsuccess = spin;
-                }());
-            }
-            var currentWaitPromise = root._waitingFor;
-            return new Promise(function (resolve, reject) {
-                promise.then(function (res) { return root._waitingQueue.push(wrap(resolve.bind(null, res))); }, function (err) { return root._waitingQueue.push(wrap(reject.bind(null, err))); }).finally(function () {
-                    if (root._waitingFor === currentWaitPromise) {
-                        // No one added a wait after us. Safe to stop the spinning.
-                        root._waitingFor = null;
-                    }
-                });
-            });
-        },
-        //
-        // Transaction Public Properties and Methods
-        //
-        abort: function () {
-            this.active && this._reject(new exceptions.Abort());
-            this.active = false;
-        },
-        tables: {
-            get: deprecated("Transaction.tables", function () { return allTables; })
-        },
-        table: function (name) {
-            var table = db.table(name); // Don't check that table is part of transaction. It must fail lazily!
-            return new Table(name, table.schema, this);
-        }
-    });
-    //
-    //
-    //
-    // WhereClause
-    //
-    //
-    //
-    function WhereClause(table, index, orCollection) {
-        /// <param name="table" type="Table"></param>
-        /// <param name="index" type="String" optional="true"></param>
-        /// <param name="orCollection" type="Collection" optional="true"></param>
-        this._ctx = {
-            table: table,
-            index: index === ":id" ? null : index,
-            or: orCollection
-        };
-    }
-    props(WhereClause.prototype, function () {
-        // WhereClause private methods
-        function fail(collectionOrWhereClause, err, T) {
-            var collection = collectionOrWhereClause instanceof WhereClause ?
-                new Collection(collectionOrWhereClause) :
-                collectionOrWhereClause;
-            collection._ctx.error = T ? new T(err) : new TypeError(err);
-            return collection;
-        }
-        function emptyCollection(whereClause) {
-            return new Collection(whereClause, function () { return IDBKeyRange.only(""); }).limit(0);
-        }
-        function upperFactory(dir) {
-            return dir === "next" ? function (s) { return s.toUpperCase(); } : function (s) { return s.toLowerCase(); };
-        }
-        function lowerFactory(dir) {
-            return dir === "next" ? function (s) { return s.toLowerCase(); } : function (s) { return s.toUpperCase(); };
-        }
-        function nextCasing(key, lowerKey, upperNeedle, lowerNeedle, cmp, dir) {
-            var length = Math.min(key.length, lowerNeedle.length);
-            var llp = -1;
-            for (var i = 0; i < length; ++i) {
-                var lwrKeyChar = lowerKey[i];
-                if (lwrKeyChar !== lowerNeedle[i]) {
-                    if (cmp(key[i], upperNeedle[i]) < 0)
-                        return key.substr(0, i) + upperNeedle[i] + upperNeedle.substr(i + 1);
-                    if (cmp(key[i], lowerNeedle[i]) < 0)
-                        return key.substr(0, i) + lowerNeedle[i] + upperNeedle.substr(i + 1);
-                    if (llp >= 0)
-                        return key.substr(0, llp) + lowerKey[llp] + upperNeedle.substr(llp + 1);
-                    return null;
-                }
-                if (cmp(key[i], lwrKeyChar) < 0)
-                    llp = i;
-            }
-            if (length < lowerNeedle.length && dir === "next")
-                return key + upperNeedle.substr(key.length);
-            if (length < key.length && dir === "prev")
-                return key.substr(0, upperNeedle.length);
-            return (llp < 0 ? null : key.substr(0, llp) + lowerNeedle[llp] + upperNeedle.substr(llp + 1));
-        }
-        function addIgnoreCaseAlgorithm(whereClause, match, needles, suffix) {
-            /// <param name="needles" type="Array" elementType="String"></param>
-            var upper, lower, compare, upperNeedles, lowerNeedles, direction, nextKeySuffix, needlesLen = needles.length;
-            if (!needles.every(function (s) { return typeof s === 'string'; })) {
-                return fail(whereClause, STRING_EXPECTED);
-            }
-            function initDirection(dir) {
-                upper = upperFactory(dir);
-                lower = lowerFactory(dir);
-                compare = (dir === "next" ? simpleCompare : simpleCompareReverse);
-                var needleBounds = needles.map(function (needle) {
-                    return { lower: lower(needle), upper: upper(needle) };
-                }).sort(function (a, b) {
-                    return compare(a.lower, b.lower);
-                });
-                upperNeedles = needleBounds.map(function (nb) { return nb.upper; });
-                lowerNeedles = needleBounds.map(function (nb) { return nb.lower; });
-                direction = dir;
-                nextKeySuffix = (dir === "next" ? "" : suffix);
-            }
-            initDirection("next");
-            var c = new Collection(whereClause, function () {
-                return IDBKeyRange.bound(upperNeedles[0], lowerNeedles[needlesLen - 1] + suffix);
-            });
-            c._ondirectionchange = function (direction) {
-                // This event onlys occur before filter is called the first time.
-                initDirection(direction);
-            };
-            var firstPossibleNeedle = 0;
-            c._addAlgorithm(function (cursor, advance, resolve) {
-                /// <param name="cursor" type="IDBCursor"></param>
-                /// <param name="advance" type="Function"></param>
-                /// <param name="resolve" type="Function"></param>
-                var key = cursor.key;
-                if (typeof key !== 'string')
-                    return false;
-                var lowerKey = lower(key);
-                if (match(lowerKey, lowerNeedles, firstPossibleNeedle)) {
-                    return true;
-                }
-                else {
-                    var lowestPossibleCasing = null;
-                    for (var i = firstPossibleNeedle; i < needlesLen; ++i) {
-                        var casing = nextCasing(key, lowerKey, upperNeedles[i], lowerNeedles[i], compare, direction);
-                        if (casing === null && lowestPossibleCasing === null)
-                            firstPossibleNeedle = i + 1;
-                        else if (lowestPossibleCasing === null || compare(lowestPossibleCasing, casing) > 0) {
-                            lowestPossibleCasing = casing;
-                        }
-                    }
-                    if (lowestPossibleCasing !== null) {
-                        advance(function () { cursor.continue(lowestPossibleCasing + nextKeySuffix); });
-                    }
-                    else {
-                        advance(resolve);
-                    }
-                    return false;
-                }
-            });
-            return c;
-        }
-        //
-        // WhereClause public methods
-        //
-        return {
-            between: function (lower, upper, includeLower, includeUpper) {
-                /// <summary>
-                ///     Filter out records whose where-field lays between given lower and upper values. Applies to Strings, Numbers and Dates.
-                /// </summary>
-                /// <param name="lower"></param>
-                /// <param name="upper"></param>
-                /// <param name="includeLower" optional="true">Whether items that equals lower should be included. Default true.</param>
-                /// <param name="includeUpper" optional="true">Whether items that equals upper should be included. Default false.</param>
-                /// <returns type="Collection"></returns>
-                includeLower = includeLower !== false; // Default to true
-                includeUpper = includeUpper === true; // Default to false
-                try {
-                    if ((cmp(lower, upper) > 0) ||
-                        (cmp(lower, upper) === 0 && (includeLower || includeUpper) && !(includeLower && includeUpper)))
-                        return emptyCollection(this); // Workaround for idiotic W3C Specification that DataError must be thrown if lower > upper. The natural result would be to return an empty collection.
-                    return new Collection(this, function () { return IDBKeyRange.bound(lower, upper, !includeLower, !includeUpper); });
-                }
-                catch (e) {
-                    return fail(this, INVALID_KEY_ARGUMENT);
-                }
-            },
-            equals: function (value) {
-                return new Collection(this, function () { return IDBKeyRange.only(value); });
-            },
-            above: function (value) {
-                return new Collection(this, function () { return IDBKeyRange.lowerBound(value, true); });
-            },
-            aboveOrEqual: function (value) {
-                return new Collection(this, function () { return IDBKeyRange.lowerBound(value); });
-            },
-            below: function (value) {
-                return new Collection(this, function () { return IDBKeyRange.upperBound(value, true); });
-            },
-            belowOrEqual: function (value) {
-                return new Collection(this, function () { return IDBKeyRange.upperBound(value); });
-            },
-            startsWith: function (str) {
-                /// <param name="str" type="String"></param>
-                if (typeof str !== 'string')
-                    return fail(this, STRING_EXPECTED);
-                return this.between(str, str + maxString, true, true);
-            },
-            startsWithIgnoreCase: function (str) {
-                /// <param name="str" type="String"></param>
-                if (str === "")
-                    return this.startsWith(str);
-                return addIgnoreCaseAlgorithm(this, function (x, a) { return x.indexOf(a[0]) === 0; }, [str], maxString);
-            },
-            equalsIgnoreCase: function (str) {
-                /// <param name="str" type="String"></param>
-                return addIgnoreCaseAlgorithm(this, function (x, a) { return x === a[0]; }, [str], "");
-            },
-            anyOfIgnoreCase: function () {
-                var set = getArrayOf.apply(NO_CHAR_ARRAY, arguments);
-                if (set.length === 0)
-                    return emptyCollection(this);
-                return addIgnoreCaseAlgorithm(this, function (x, a) { return a.indexOf(x) !== -1; }, set, "");
-            },
-            startsWithAnyOfIgnoreCase: function () {
-                var set = getArrayOf.apply(NO_CHAR_ARRAY, arguments);
-                if (set.length === 0)
-                    return emptyCollection(this);
-                return addIgnoreCaseAlgorithm(this, function (x, a) {
-                    return a.some(function (n) {
-                        return x.indexOf(n) === 0;
-                    });
-                }, set, maxString);
-            },
-            anyOf: function () {
-                var set = getArrayOf.apply(NO_CHAR_ARRAY, arguments);
-                var compare = ascending;
-                try {
-                    set.sort(compare);
-                }
-                catch (e) {
-                    return fail(this, INVALID_KEY_ARGUMENT);
-                }
-                if (set.length === 0)
-                    return emptyCollection(this);
-                var c = new Collection(this, function () { return IDBKeyRange.bound(set[0], set[set.length - 1]); });
-                c._ondirectionchange = function (direction) {
-                    compare = (direction === "next" ? ascending : descending);
-                    set.sort(compare);
-                };
-                var i = 0;
-                c._addAlgorithm(function (cursor, advance, resolve) {
-                    var key = cursor.key;
-                    while (compare(key, set[i]) > 0) {
-                        // The cursor has passed beyond this key. Check next.
-                        ++i;
-                        if (i === set.length) {
-                            // There is no next. Stop searching.
-                            advance(resolve);
-                            return false;
-                        }
-                    }
-                    if (compare(key, set[i]) === 0) {
-                        // The current cursor value should be included and we should continue a single step in case next item has the same key or possibly our next key in set.
-                        return true;
-                    }
-                    else {
-                        // cursor.key not yet at set[i]. Forward cursor to the next key to hunt for.
-                        advance(function () { cursor.continue(set[i]); });
-                        return false;
-                    }
-                });
-                return c;
-            },
-            notEqual: function (value) {
-                return this.inAnyRange([[minKey, value], [value, maxKey]], { includeLowers: false, includeUppers: false });
-            },
-            noneOf: function () {
-                var set = getArrayOf.apply(NO_CHAR_ARRAY, arguments);
-                if (set.length === 0)
-                    return new Collection(this); // Return entire collection.
-                try {
-                    set.sort(ascending);
-                }
-                catch (e) {
-                    return fail(this, INVALID_KEY_ARGUMENT);
-                }
-                // Transform ["a","b","c"] to a set of ranges for between/above/below: [[minKey,"a"], ["a","b"], ["b","c"], ["c",maxKey]]
-                var ranges = set.reduce(function (res, val) { return res ? res.concat([[res[res.length - 1][1], val]]) : [[minKey, val]]; }, null);
-                ranges.push([set[set.length - 1], maxKey]);
-                return this.inAnyRange(ranges, { includeLowers: false, includeUppers: false });
-            },
-            /** Filter out values withing given set of ranges.
-            * Example, give children and elders a rebate of 50%:
-            *
-            *   db.friends.where('age').inAnyRange([[0,18],[65,Infinity]]).modify({Rebate: 1/2});
-            *
-            * @param {(string|number|Date|Array)[][]} ranges
-            * @param {{includeLowers: boolean, includeUppers: boolean}} options
-            */
-            inAnyRange: function (ranges, options) {
-                if (ranges.length === 0)
-                    return emptyCollection(this);
-                if (!ranges.every(function (range) { return range[0] !== undefined && range[1] !== undefined && ascending(range[0], range[1]) <= 0; })) {
-                    return fail(this, "First argument to inAnyRange() must be an Array of two-value Arrays [lower,upper] where upper must not be lower than lower", exceptions.InvalidArgument);
-                }
-                var includeLowers = !options || options.includeLowers !== false; // Default to true
-                var includeUppers = options && options.includeUppers === true; // Default to false
-                function addRange(ranges, newRange) {
-                    for (var i = 0, l = ranges.length; i < l; ++i) {
-                        var range = ranges[i];
-                        if (cmp(newRange[0], range[1]) < 0 && cmp(newRange[1], range[0]) > 0) {
-                            range[0] = min(range[0], newRange[0]);
-                            range[1] = max(range[1], newRange[1]);
-                            break;
-                        }
-                    }
-                    if (i === l)
-                        ranges.push(newRange);
-                    return ranges;
-                }
-                var sortDirection = ascending;
-                function rangeSorter(a, b) { return sortDirection(a[0], b[0]); }
-                // Join overlapping ranges
-                var set;
-                try {
-                    set = ranges.reduce(addRange, []);
-                    set.sort(rangeSorter);
-                }
-                catch (ex) {
-                    return fail(this, INVALID_KEY_ARGUMENT);
-                }
-                var i = 0;
-                var keyIsBeyondCurrentEntry = includeUppers ?
-                    function (key) { return ascending(key, set[i][1]) > 0; } :
-                    function (key) { return ascending(key, set[i][1]) >= 0; };
-                var keyIsBeforeCurrentEntry = includeLowers ?
-                    function (key) { return descending(key, set[i][0]) > 0; } :
-                    function (key) { return descending(key, set[i][0]) >= 0; };
-                function keyWithinCurrentRange(key) {
-                    return !keyIsBeyondCurrentEntry(key) && !keyIsBeforeCurrentEntry(key);
-                }
-                var checkKey = keyIsBeyondCurrentEntry;
-                var c = new Collection(this, function () {
-                    return IDBKeyRange.bound(set[0][0], set[set.length - 1][1], !includeLowers, !includeUppers);
-                });
-                c._ondirectionchange = function (direction) {
-                    if (direction === "next") {
-                        checkKey = keyIsBeyondCurrentEntry;
-                        sortDirection = ascending;
-                    }
-                    else {
-                        checkKey = keyIsBeforeCurrentEntry;
-                        sortDirection = descending;
-                    }
-                    set.sort(rangeSorter);
-                };
-                c._addAlgorithm(function (cursor, advance, resolve) {
-                    var key = cursor.key;
-                    while (checkKey(key)) {
-                        // The cursor has passed beyond this key. Check next.
-                        ++i;
-                        if (i === set.length) {
-                            // There is no next. Stop searching.
-                            advance(resolve);
-                            return false;
-                        }
-                    }
-                    if (keyWithinCurrentRange(key)) {
-                        // The current cursor value should be included and we should continue a single step in case next item has the same key or possibly our next key in set.
-                        return true;
-                    }
-                    else if (cmp(key, set[i][1]) === 0 || cmp(key, set[i][0]) === 0) {
-                        // includeUpper or includeLower is false so keyWithinCurrentRange() returns false even though we are at range border.
-                        // Continue to next key but don't include this one.
-                        return false;
-                    }
-                    else {
-                        // cursor.key not yet at set[i]. Forward cursor to the next key to hunt for.
-                        advance(function () {
-                            if (sortDirection === ascending)
-                                cursor.continue(set[i][0]);
-                            else
-                                cursor.continue(set[i][1]);
-                        });
-                        return false;
-                    }
-                });
-                return c;
-            },
-            startsWithAnyOf: function () {
-                var set = getArrayOf.apply(NO_CHAR_ARRAY, arguments);
-                if (!set.every(function (s) { return typeof s === 'string'; })) {
-                    return fail(this, "startsWithAnyOf() only works with strings");
-                }
-                if (set.length === 0)
-                    return emptyCollection(this);
-                return this.inAnyRange(set.map(function (str) {
-                    return [str, str + maxString];
-                }));
-            }
-        };
-    });
-    //
-    //
-    //
-    // Collection Class
-    //
-    //
-    //
-    function Collection(whereClause, keyRangeGenerator) {
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="whereClause" type="WhereClause">Where clause instance</param>
-        /// <param name="keyRangeGenerator" value="function(){ return IDBKeyRange.bound(0,1);}" optional="true"></param>
-        var keyRange = null, error = null;
-        if (keyRangeGenerator)
-            try {
-                keyRange = keyRangeGenerator();
-            }
-            catch (ex) {
-                error = ex;
-            }
-        var whereCtx = whereClause._ctx, table = whereCtx.table;
-        this._ctx = {
-            table: table,
-            index: whereCtx.index,
-            isPrimKey: (!whereCtx.index || (table.schema.primKey.keyPath && whereCtx.index === table.schema.primKey.name)),
-            range: keyRange,
-            keysOnly: false,
-            dir: "next",
-            unique: "",
-            algorithm: null,
-            filter: null,
-            replayFilter: null,
-            justLimit: true,
-            isMatch: null,
-            offset: 0,
-            limit: Infinity,
-            error: error,
-            or: whereCtx.or,
-            valueMapper: table.hook.reading.fire
-        };
-    }
-    function isPlainKeyRange(ctx, ignoreLimitFilter) {
-        return !(ctx.filter || ctx.algorithm || ctx.or) &&
-            (ignoreLimitFilter ? ctx.justLimit : !ctx.replayFilter);
-    }
-    props(Collection.prototype, function () {
-        //
-        // Collection Private Functions
-        //
-        function addFilter(ctx, fn) {
-            ctx.filter = combine(ctx.filter, fn);
-        }
-        function addReplayFilter(ctx, factory, isLimitFilter) {
-            var curr = ctx.replayFilter;
-            ctx.replayFilter = curr ? function () { return combine(curr(), factory()); } : factory;
-            ctx.justLimit = isLimitFilter && !curr;
-        }
-        function addMatchFilter(ctx, fn) {
-            ctx.isMatch = combine(ctx.isMatch, fn);
-        }
-        /** @param ctx {
-         *      isPrimKey: boolean,
-         *      table: Table,
-         *      index: string
-         * }
-         * @param store IDBObjectStore
-         **/
-        function getIndexOrStore(ctx, store) {
-            if (ctx.isPrimKey)
-                return store;
-            var indexSpec = ctx.table.schema.idxByName[ctx.index];
-            if (!indexSpec)
-                throw new exceptions.Schema("KeyPath " + ctx.index + " on object store " + store.name + " is not indexed");
-            return store.index(indexSpec.name);
-        }
-        /** @param ctx {
-         *      isPrimKey: boolean,
-         *      table: Table,
-         *      index: string,
-         *      keysOnly: boolean,
-         *      range?: IDBKeyRange,
-         *      dir: "next" | "prev"
-         * }
-         */
-        function openCursor(ctx, store) {
-            var idxOrStore = getIndexOrStore(ctx, store);
-            return ctx.keysOnly && 'openKeyCursor' in idxOrStore ?
-                idxOrStore.openKeyCursor(ctx.range || null, ctx.dir + ctx.unique) :
-                idxOrStore.openCursor(ctx.range || null, ctx.dir + ctx.unique);
-        }
-        function iter(ctx, fn, resolve, reject, idbstore) {
-            var filter = ctx.replayFilter ? combine(ctx.filter, ctx.replayFilter()) : ctx.filter;
-            if (!ctx.or) {
-                iterate(openCursor(ctx, idbstore), combine(ctx.algorithm, filter), fn, resolve, reject, !ctx.keysOnly && ctx.valueMapper);
-            }
-            else
-                (function () {
-                    var set = {};
-                    var resolved = 0;
-                    function resolveboth() {
-                        if (++resolved === 2)
-                            resolve(); // Seems like we just support or btwn max 2 expressions, but there are no limit because we do recursion.
-                    }
-                    function union(item, cursor, advance) {
-                        if (!filter || filter(cursor, advance, resolveboth, reject)) {
-                            var primaryKey = cursor.primaryKey;
-                            var key = '' + primaryKey;
-                            if (key === '[object ArrayBuffer]')
-                                key = '' + new Uint8Array(primaryKey);
-                            if (!hasOwn(set, key)) {
-                                set[key] = true;
-                                fn(item, cursor, advance);
-                            }
-                        }
-                    }
-                    ctx.or._iterate(union, resolveboth, reject, idbstore);
-                    iterate(openCursor(ctx, idbstore), ctx.algorithm, union, resolveboth, reject, !ctx.keysOnly && ctx.valueMapper);
-                })();
-        }
-        return {
-            //
-            // Collection Protected Functions
-            //
-            _read: function (fn, cb) {
-                var ctx = this._ctx;
-                return ctx.error ?
-                    ctx.table._trans(null, rejection.bind(null, ctx.error)) :
-                    ctx.table._idbstore(READONLY, fn).then(cb);
-            },
-            _write: function (fn) {
-                var ctx = this._ctx;
-                return ctx.error ?
-                    ctx.table._trans(null, rejection.bind(null, ctx.error)) :
-                    ctx.table._idbstore(READWRITE, fn, "locked"); // When doing write operations on collections, always lock the operation so that upcoming operations gets queued.
-            },
-            _addAlgorithm: function (fn) {
-                var ctx = this._ctx;
-                ctx.algorithm = combine(ctx.algorithm, fn);
-            },
-            _iterate: function (fn, resolve, reject, idbstore) {
-                return iter(this._ctx, fn, resolve, reject, idbstore);
-            },
-            clone: function (props$$1) {
-                var rv = Object.create(this.constructor.prototype), ctx = Object.create(this._ctx);
-                if (props$$1)
-                    extend(ctx, props$$1);
-                rv._ctx = ctx;
-                return rv;
-            },
-            raw: function () {
-                this._ctx.valueMapper = null;
-                return this;
-            },
-            //
-            // Collection Public methods
-            //
-            each: function (fn) {
-                var ctx = this._ctx;
-                return this._read(function (resolve, reject, idbstore) {
-                    iter(ctx, fn, resolve, reject, idbstore);
-                });
-            },
-            count: function (cb) {
-                var ctx = this._ctx;
-                if (isPlainKeyRange(ctx, true)) {
-                    // This is a plain key range. We can use the count() method if the index.
-                    return this._read(function (resolve, reject, idbstore) {
-                        var idx = getIndexOrStore(ctx, idbstore);
-                        var req = (ctx.range ? idx.count(ctx.range) : idx.count());
-                        req.onerror = eventRejectHandler(reject);
-                        req.onsuccess = function (e) {
-                            resolve(Math.min(e.target.result, ctx.limit));
-                        };
-                    }, cb);
-                }
-                else {
-                    // Algorithms, filters or expressions are applied. Need to count manually.
-                    var count = 0;
-                    return this._read(function (resolve, reject, idbstore) {
-                        iter(ctx, function () { ++count; return false; }, function () { resolve(count); }, reject, idbstore);
-                    }, cb);
-                }
-            },
-            sortBy: function (keyPath, cb) {
-                /// <param name="keyPath" type="String"></param>
-                var parts = keyPath.split('.').reverse(), lastPart = parts[0], lastIndex = parts.length - 1;
-                function getval(obj, i) {
-                    if (i)
-                        return getval(obj[parts[i]], i - 1);
-                    return obj[lastPart];
-                }
-                var order = this._ctx.dir === "next" ? 1 : -1;
-                function sorter(a, b) {
-                    var aVal = getval(a, lastIndex), bVal = getval(b, lastIndex);
-                    return aVal < bVal ? -order : aVal > bVal ? order : 0;
-                }
-                return this.toArray(function (a) {
-                    return a.sort(sorter);
-                }).then(cb);
-            },
-            toArray: function (cb) {
-                var ctx = this._ctx;
-                return this._read(function (resolve, reject, idbstore) {
-                    if (hasGetAll && ctx.dir === 'next' && isPlainKeyRange(ctx, true) && ctx.limit > 0) {
-                        // Special optimation if we could use IDBObjectStore.getAll() or
-                        // IDBKeyRange.getAll():
-                        var readingHook = ctx.table.hook.reading.fire;
-                        var idxOrStore = getIndexOrStore(ctx, idbstore);
-                        var req = ctx.limit < Infinity ?
-                            idxOrStore.getAll(ctx.range, ctx.limit) :
-                            idxOrStore.getAll(ctx.range);
-                        req.onerror = eventRejectHandler(reject);
-                        req.onsuccess = readingHook === mirror ?
-                            eventSuccessHandler(resolve) :
-                            eventSuccessHandler(function (res) {
-                                try {
-                                    resolve(res.map(readingHook));
-                                }
-                                catch (e) {
-                                    reject(e);
-                                }
-                            });
-                    }
-                    else {
-                        // Getting array through a cursor.
-                        var a = [];
-                        iter(ctx, function (item) { a.push(item); }, function arrayComplete() {
-                            resolve(a);
-                        }, reject, idbstore);
-                    }
-                }, cb);
-            },
-            offset: function (offset) {
-                var ctx = this._ctx;
-                if (offset <= 0)
-                    return this;
-                ctx.offset += offset; // For count()
-                if (isPlainKeyRange(ctx)) {
-                    addReplayFilter(ctx, function () {
-                        var offsetLeft = offset;
-                        return function (cursor, advance) {
-                            if (offsetLeft === 0)
-                                return true;
-                            if (offsetLeft === 1) {
-                                --offsetLeft;
-                                return false;
-                            }
-                            advance(function () {
-                                cursor.advance(offsetLeft);
-                                offsetLeft = 0;
-                            });
-                            return false;
-                        };
-                    });
-                }
-                else {
-                    addReplayFilter(ctx, function () {
-                        var offsetLeft = offset;
-                        return function () { return (--offsetLeft < 0); };
-                    });
-                }
-                return this;
-            },
-            limit: function (numRows) {
-                this._ctx.limit = Math.min(this._ctx.limit, numRows); // For count()
-                addReplayFilter(this._ctx, function () {
-                    var rowsLeft = numRows;
-                    return function (cursor, advance, resolve) {
-                        if (--rowsLeft <= 0)
-                            advance(resolve); // Stop after this item has been included
-                        return rowsLeft >= 0; // If numRows is already below 0, return false because then 0 was passed to numRows initially. Otherwise we wouldnt come here.
-                    };
-                }, true);
-                return this;
-            },
-            until: function (filterFunction, bIncludeStopEntry) {
-                addFilter(this._ctx, function (cursor, advance, resolve) {
-                    if (filterFunction(cursor.value)) {
-                        advance(resolve);
-                        return bIncludeStopEntry;
-                    }
-                    else {
-                        return true;
-                    }
-                });
-                return this;
-            },
-            first: function (cb) {
-                return this.limit(1).toArray(function (a) { return a[0]; }).then(cb);
-            },
-            last: function (cb) {
-                return this.reverse().first(cb);
-            },
-            filter: function (filterFunction) {
-                /// <param name="jsFunctionFilter" type="Function">function(val){return true/false}</param>
-                addFilter(this._ctx, function (cursor) {
-                    return filterFunction(cursor.value);
-                });
-                // match filters not used in Dexie.js but can be used by 3rd part libraries to test a
-                // collection for a match without querying DB. Used by Dexie.Observable.
-                addMatchFilter(this._ctx, filterFunction);
-                return this;
-            },
-            and: function (filterFunction) {
-                return this.filter(filterFunction);
-            },
-            or: function (indexName) {
-                return new WhereClause(this._ctx.table, indexName, this);
-            },
-            reverse: function () {
-                this._ctx.dir = (this._ctx.dir === "prev" ? "next" : "prev");
-                if (this._ondirectionchange)
-                    this._ondirectionchange(this._ctx.dir);
-                return this;
-            },
-            desc: function () {
-                return this.reverse();
-            },
-            eachKey: function (cb) {
-                var ctx = this._ctx;
-                ctx.keysOnly = !ctx.isMatch;
-                return this.each(function (val, cursor) { cb(cursor.key, cursor); });
-            },
-            eachUniqueKey: function (cb) {
-                this._ctx.unique = "unique";
-                return this.eachKey(cb);
-            },
-            eachPrimaryKey: function (cb) {
-                var ctx = this._ctx;
-                ctx.keysOnly = !ctx.isMatch;
-                return this.each(function (val, cursor) { cb(cursor.primaryKey, cursor); });
-            },
-            keys: function (cb) {
-                var ctx = this._ctx;
-                ctx.keysOnly = !ctx.isMatch;
-                var a = [];
-                return this.each(function (item, cursor) {
-                    a.push(cursor.key);
-                }).then(function () {
-                    return a;
-                }).then(cb);
-            },
-            primaryKeys: function (cb) {
-                var ctx = this._ctx;
-                if (hasGetAll && ctx.dir === 'next' && isPlainKeyRange(ctx, true) && ctx.limit > 0) {
-                    // Special optimation if we could use IDBObjectStore.getAllKeys() or
-                    // IDBKeyRange.getAllKeys():
-                    return this._read(function (resolve, reject, idbstore) {
-                        var idxOrStore = getIndexOrStore(ctx, idbstore);
-                        var req = ctx.limit < Infinity ?
-                            idxOrStore.getAllKeys(ctx.range, ctx.limit) :
-                            idxOrStore.getAllKeys(ctx.range);
-                        req.onerror = eventRejectHandler(reject);
-                        req.onsuccess = eventSuccessHandler(resolve);
-                    }).then(cb);
-                }
-                ctx.keysOnly = !ctx.isMatch;
-                var a = [];
-                return this.each(function (item, cursor) {
-                    a.push(cursor.primaryKey);
-                }).then(function () {
-                    return a;
-                }).then(cb);
-            },
-            uniqueKeys: function (cb) {
-                this._ctx.unique = "unique";
-                return this.keys(cb);
-            },
-            firstKey: function (cb) {
-                return this.limit(1).keys(function (a) { return a[0]; }).then(cb);
-            },
-            lastKey: function (cb) {
-                return this.reverse().firstKey(cb);
-            },
-            distinct: function () {
-                var ctx = this._ctx, idx = ctx.index && ctx.table.schema.idxByName[ctx.index];
-                if (!idx || !idx.multi)
-                    return this; // distinct() only makes differencies on multiEntry indexes.
-                var set = {};
-                addFilter(this._ctx, function (cursor) {
-                    var strKey = cursor.primaryKey.toString(); // Converts any Date to String, String to String, Number to String and Array to comma-separated string
-                    var found = hasOwn(set, strKey);
-                    set[strKey] = true;
-                    return !found;
-                });
-                return this;
-            },
-            //
-            // Methods that mutate storage
-            //
-            modify: function (changes) {
-                var self = this, ctx = this._ctx, hook = ctx.table.hook, updatingHook = hook.updating.fire, deletingHook = hook.deleting.fire;
-                return this._write(function (resolve, reject, idbstore, trans) {
-                    var modifyer;
-                    if (typeof changes === 'function') {
-                        // Changes is a function that may update, add or delete propterties or even require a deletion the object itself (delete this.item)
-                        if (updatingHook === nop && deletingHook === nop) {
-                            // Noone cares about what is being changed. Just let the modifier function be the given argument as is.
-                            modifyer = changes;
-                        }
-                        else {
-                            // People want to know exactly what is being modified or deleted.
-                            // Let modifyer be a proxy function that finds out what changes the caller is actually doing
-                            // and call the hooks accordingly!
-                            modifyer = function (item) {
-                                var origItem = deepClone(item); // Clone the item first so we can compare laters.
-                                if (changes.call(this, item, this) === false)
-                                    return false; // Call the real modifyer function (If it returns false explicitely, it means it dont want to modify anyting on this object)
-                                if (!hasOwn(this, "value")) {
-                                    // The real modifyer function requests a deletion of the object. Inform the deletingHook that a deletion is taking place.
-                                    deletingHook.call(this, this.primKey, item, trans);
-                                }
-                                else {
-                                    // No deletion. Check what was changed
-                                    var objectDiff = getObjectDiff(origItem, this.value);
-                                    var additionalChanges = updatingHook.call(this, objectDiff, this.primKey, origItem, trans);
-                                    if (additionalChanges) {
-                                        // Hook want to apply additional modifications. Make sure to fullfill the will of the hook.
-                                        item = this.value;
-                                        keys(additionalChanges).forEach(function (keyPath) {
-                                            setByKeyPath(item, keyPath, additionalChanges[keyPath]); // Adding {keyPath: undefined} means that the keyPath should be deleted. Handled by setByKeyPath
-                                        });
-                                    }
-                                }
-                            };
-                        }
-                    }
-                    else if (updatingHook === nop) {
-                        // changes is a set of {keyPath: value} and no one is listening to the updating hook.
-                        var keyPaths = keys(changes);
-                        var numKeys = keyPaths.length;
-                        modifyer = function (item) {
-                            var anythingModified = false;
-                            for (var i = 0; i < numKeys; ++i) {
-                                var keyPath = keyPaths[i], val = changes[keyPath];
-                                if (getByKeyPath(item, keyPath) !== val) {
-                                    setByKeyPath(item, keyPath, val); // Adding {keyPath: undefined} means that the keyPath should be deleted. Handled by setByKeyPath
-                                    anythingModified = true;
-                                }
-                            }
-                            return anythingModified;
-                        };
-                    }
-                    else {
-                        // changes is a set of {keyPath: value} and people are listening to the updating hook so we need to call it and
-                        // allow it to add additional modifications to make.
-                        var origChanges = changes;
-                        changes = shallowClone(origChanges); // Let's work with a clone of the changes keyPath/value set so that we can restore it in case a hook extends it.
-                        modifyer = function (item) {
-                            var anythingModified = false;
-                            var additionalChanges = updatingHook.call(this, changes, this.primKey, deepClone(item), trans);
-                            if (additionalChanges)
-                                extend(changes, additionalChanges);
-                            keys(changes).forEach(function (keyPath) {
-                                var val = changes[keyPath];
-                                if (getByKeyPath(item, keyPath) !== val) {
-                                    setByKeyPath(item, keyPath, val);
-                                    anythingModified = true;
-                                }
-                            });
-                            if (additionalChanges)
-                                changes = shallowClone(origChanges); // Restore original changes for next iteration
-                            return anythingModified;
-                        };
-                    }
-                    var count = 0;
-                    var successCount = 0;
-                    var iterationComplete = false;
-                    var failures = [];
-                    var failKeys = [];
-                    var currentKey = null;
-                    function modifyItem(item, cursor) {
-                        currentKey = cursor.primaryKey;
-                        var thisContext = {
-                            primKey: cursor.primaryKey,
-                            value: item,
-                            onsuccess: null,
-                            onerror: null
-                        };
-                        function onerror(e) {
-                            failures.push(e);
-                            failKeys.push(thisContext.primKey);
-                            checkFinished();
-                            return true; // Catch these errors and let a final rejection decide whether or not to abort entire transaction
-                        }
-                        if (modifyer.call(thisContext, item, thisContext) !== false) {
-                            var bDelete = !hasOwn(thisContext, "value");
-                            ++count;
-                            tryCatch(function () {
-                                var req = (bDelete ? cursor.delete() : cursor.update(thisContext.value));
-                                req._hookCtx = thisContext;
-                                req.onerror = hookedEventRejectHandler(onerror);
-                                req.onsuccess = hookedEventSuccessHandler(function () {
-                                    ++successCount;
-                                    checkFinished();
-                                });
-                            }, onerror);
-                        }
-                        else if (thisContext.onsuccess) {
-                            // Hook will expect either onerror or onsuccess to always be called!
-                            thisContext.onsuccess(thisContext.value);
-                        }
-                    }
-                    function doReject(e) {
-                        if (e) {
-                            failures.push(e);
-                            failKeys.push(currentKey);
-                        }
-                        return reject(new ModifyError("Error modifying one or more objects", failures, successCount, failKeys));
-                    }
-                    function checkFinished() {
-                        if (iterationComplete && successCount + failures.length === count) {
-                            if (failures.length > 0)
-                                doReject();
-                            else
-                                resolve(successCount);
-                        }
-                    }
-                    self.clone().raw()._iterate(modifyItem, function () {
-                        iterationComplete = true;
-                        checkFinished();
-                    }, doReject, idbstore);
-                });
-            },
-            'delete': function () {
-                var _this = this;
-                var ctx = this._ctx, range = ctx.range, deletingHook = ctx.table.hook.deleting.fire, hasDeleteHook = deletingHook !== nop;
-                if (!hasDeleteHook &&
-                    isPlainKeyRange(ctx) &&
-                    ((ctx.isPrimKey && !hangsOnDeleteLargeKeyRange) || !range)) {
-                    // May use IDBObjectStore.delete(IDBKeyRange) in this case (Issue #208)
-                    // For chromium, this is the way most optimized version.
-                    // For IE/Edge, this could hang the indexedDB engine and make operating system instable
-                    // (https://gist.github.com/dfahlander/5a39328f029de18222cf2125d56c38f7)
-                    return this._write(function (resolve, reject, idbstore) {
-                        // Our API contract is to return a count of deleted items, so we have to count() before delete().
-                        var onerror = eventRejectHandler(reject), countReq = (range ? idbstore.count(range) : idbstore.count());
-                        countReq.onerror = onerror;
-                        countReq.onsuccess = function () {
-                            var count = countReq.result;
-                            tryCatch(function () {
-                                var delReq = (range ? idbstore.delete(range) : idbstore.clear());
-                                delReq.onerror = onerror;
-                                delReq.onsuccess = function () { return resolve(count); };
-                            }, function (err) { return reject(err); });
-                        };
-                    });
-                }
-                // Default version to use when collection is not a vanilla IDBKeyRange on the primary key.
-                // Divide into chunks to not starve RAM.
-                // If has delete hook, we will have to collect not just keys but also objects, so it will use
-                // more memory and need lower chunk size.
-                var CHUNKSIZE = hasDeleteHook ? 2000 : 10000;
-                return this._write(function (resolve, reject, idbstore, trans) {
-                    var totalCount = 0;
-                    // Clone collection and change its table and set a limit of CHUNKSIZE on the cloned Collection instance.
-                    var collection = _this
-                        .clone({
-                        keysOnly: !ctx.isMatch && !hasDeleteHook
-                    }) // load just keys (unless filter() or and() or deleteHook has subscribers)
-                        .distinct() // In case multiEntry is used, never delete same key twice because resulting count
-                        .limit(CHUNKSIZE)
-                        .raw(); // Don't filter through reading-hooks (like mapped classes etc)
-                    var keysOrTuples = [];
-                    // We're gonna do things on as many chunks that are needed.
-                    // Use recursion of nextChunk function:
-                    var nextChunk = function () { return collection.each(hasDeleteHook ? function (val, cursor) {
-                        // Somebody subscribes to hook('deleting'). Collect all primary keys and their values,
-                        // so that the hook can be called with its values in bulkDelete().
-                        keysOrTuples.push([cursor.primaryKey, cursor.value]);
-                    } : function (val, cursor) {
-                        // No one subscribes to hook('deleting'). Collect only primary keys:
-                        keysOrTuples.push(cursor.primaryKey);
-                    }).then(function () {
-                        // Chromium deletes faster when doing it in sort order.
-                        hasDeleteHook ?
-                            keysOrTuples.sort(function (a, b) { return ascending(a[0], b[0]); }) :
-                            keysOrTuples.sort(ascending);
-                        return bulkDelete(idbstore, trans, keysOrTuples, hasDeleteHook, deletingHook);
-                    }).then(function () {
-                        var count = keysOrTuples.length;
-                        totalCount += count;
-                        keysOrTuples = [];
-                        return count < CHUNKSIZE ? totalCount : nextChunk();
-                    }); };
-                    resolve(nextChunk());
-                });
-            }
-        };
-    });
-    //
-    //
-    //
-    // ------------------------- Help functions ---------------------------
-    //
-    //
-    //
-    function lowerVersionFirst(a, b) {
-        return a._cfg.version - b._cfg.version;
-    }
-    function setApiOnPlace(objs, tableNames, dbschema) {
-        tableNames.forEach(function (tableName) {
-            var schema = dbschema[tableName];
-            objs.forEach(function (obj) {
-                if (!(tableName in obj)) {
-                    if (obj === Transaction.prototype || obj instanceof Transaction) {
-                        // obj is a Transaction prototype (or prototype of a subclass to Transaction)
-                        // Make the API a getter that returns this.table(tableName)
-                        setProp(obj, tableName, { get: function () { return this.table(tableName); } });
-                    }
-                    else {
-                        // Table will not be bound to a transaction (will use Dexie.currentTransaction)
-                        obj[tableName] = new Table(tableName, schema);
-                    }
-                }
-            });
-        });
-    }
-    function removeTablesApi(objs) {
-        objs.forEach(function (obj) {
-            for (var key in obj) {
-                if (obj[key] instanceof Table)
-                    delete obj[key];
-            }
-        });
-    }
-    function iterate(req, filter, fn, resolve, reject, valueMapper) {
-        // Apply valueMapper (hook('reading') or mappped class)
-        var mappedFn = valueMapper ? function (x, c, a) { return fn(valueMapper(x), c, a); } : fn;
-        // Wrap fn with PSD and microtick stuff from Promise.
-        var wrappedFn = wrap(mappedFn, reject);
-        if (!req.onerror)
-            req.onerror = eventRejectHandler(reject);
-        if (filter) {
-            req.onsuccess = trycatcher(function filter_record() {
-                var cursor = req.result;
-                if (cursor) {
-                    var c = function () { cursor.continue(); };
-                    if (filter(cursor, function (advancer) { c = advancer; }, resolve, reject))
-                        wrappedFn(cursor.value, cursor, function (advancer) { c = advancer; });
-                    c();
-                }
-                else {
-                    resolve();
-                }
-            }, reject);
-        }
-        else {
-            req.onsuccess = trycatcher(function filter_record() {
-                var cursor = req.result;
-                if (cursor) {
-                    var c = function () { cursor.continue(); };
-                    wrappedFn(cursor.value, cursor, function (advancer) { c = advancer; });
-                    c();
-                }
-                else {
-                    resolve();
-                }
-            }, reject);
-        }
-    }
-    function parseIndexSyntax(indexes) {
-        /// <param name="indexes" type="String"></param>
-        /// <returns type="Array" elementType="IndexSpec"></returns>
-        var rv = [];
-        indexes.split(',').forEach(function (index) {
-            index = index.trim();
-            var name = index.replace(/([&*]|\+\+)/g, ""); // Remove "&", "++" and "*"
-            // Let keyPath of "[a+b]" be ["a","b"]:
-            var keyPath = /^\[/.test(name) ? name.match(/^\[(.*)\]$/)[1].split('+') : name;
-            rv.push(new IndexSpec(name, keyPath || null, /\&/.test(index), /\*/.test(index), /\+\+/.test(index), isArray(keyPath), /\./.test(index)));
-        });
-        return rv;
-    }
-    function cmp(key1, key2) {
-        return indexedDB.cmp(key1, key2);
-    }
-    function min(a, b) {
-        return cmp(a, b) < 0 ? a : b;
-    }
-    function max(a, b) {
-        return cmp(a, b) > 0 ? a : b;
-    }
-    function ascending(a, b) {
-        return indexedDB.cmp(a, b);
-    }
-    function descending(a, b) {
-        return indexedDB.cmp(b, a);
-    }
-    function simpleCompare(a, b) {
-        return a < b ? -1 : a === b ? 0 : 1;
-    }
-    function simpleCompareReverse(a, b) {
-        return a > b ? -1 : a === b ? 0 : 1;
-    }
-    function combine(filter1, filter2) {
-        return filter1 ?
-            filter2 ?
-                function () { return filter1.apply(this, arguments) && filter2.apply(this, arguments); } :
-                filter1 :
-            filter2;
-    }
-    function readGlobalSchema() {
-        db.verno = idbdb.version / 10;
-        db._dbSchema = globalSchema = {};
-        dbStoreNames = slice(idbdb.objectStoreNames, 0);
-        if (dbStoreNames.length === 0)
-            return; // Database contains no stores.
-        var trans = idbdb.transaction(safariMultiStoreFix(dbStoreNames), 'readonly');
-        dbStoreNames.forEach(function (storeName) {
-            var store = trans.objectStore(storeName), keyPath = store.keyPath, dotted = keyPath && typeof keyPath === 'string' && keyPath.indexOf('.') !== -1;
-            var primKey = new IndexSpec(keyPath, keyPath || "", false, false, !!store.autoIncrement, keyPath && typeof keyPath !== 'string', dotted);
-            var indexes = [];
-            for (var j = 0; j < store.indexNames.length; ++j) {
-                var idbindex = store.index(store.indexNames[j]);
-                keyPath = idbindex.keyPath;
-                dotted = keyPath && typeof keyPath === 'string' && keyPath.indexOf('.') !== -1;
-                var index = new IndexSpec(idbindex.name, keyPath, !!idbindex.unique, !!idbindex.multiEntry, false, keyPath && typeof keyPath !== 'string', dotted);
-                indexes.push(index);
-            }
-            globalSchema[storeName] = new TableSchema(storeName, primKey, indexes, {});
-        });
-        setApiOnPlace([allTables], keys(globalSchema), globalSchema);
-    }
-    function adjustToExistingIndexNames(schema, idbtrans) {
-        /// <summary>
-        /// Issue #30 Problem with existing db - adjust to existing index names when migrating from non-dexie db
-        /// </summary>
-        /// <param name="schema" type="Object">Map between name and TableSchema</param>
-        /// <param name="idbtrans" type="IDBTransaction"></param>
-        var storeNames = idbtrans.db.objectStoreNames;
-        for (var i = 0; i < storeNames.length; ++i) {
-            var storeName = storeNames[i];
-            var store = idbtrans.objectStore(storeName);
-            hasGetAll = 'getAll' in store;
-            for (var j = 0; j < store.indexNames.length; ++j) {
-                var indexName = store.indexNames[j];
-                var keyPath = store.index(indexName).keyPath;
-                var dexieName = typeof keyPath === 'string' ? keyPath : "[" + slice(keyPath).join('+') + "]";
-                if (schema[storeName]) {
-                    var indexSpec = schema[storeName].idxByName[dexieName];
-                    if (indexSpec)
-                        indexSpec.name = indexName;
-                }
-            }
-        }
-        // Bug with getAll() on Safari ver<604 on Workers only, see discussion following PR #579
-        if (/Safari/.test(navigator.userAgent) &&
-            !/(Chrome\/|Edge\/)/.test(navigator.userAgent) &&
-            _global.WorkerGlobalScope && _global instanceof _global.WorkerGlobalScope &&
-            [].concat(navigator.userAgent.match(/Safari\/(\d*)/))[1] < 604) {
-            hasGetAll = false;
-        }
-    }
-    function fireOnBlocked(ev) {
-        db.on("blocked").fire(ev);
-        // Workaround (not fully*) for missing "versionchange" event in IE,Edge and Safari:
-        connections
-            .filter(function (c) { return c.name === db.name && c !== db && !c._vcFired; })
-            .map(function (c) { return c.on("versionchange").fire(ev); });
-    }
-    extend(this, {
-        Collection: Collection,
-        Table: Table,
-        Transaction: Transaction,
-        Version: Version,
-        WhereClause: WhereClause
-    });
-    init();
-    addons.forEach(function (fn) {
-        fn(db);
-    });
-}
-function parseType(type) {
-    if (typeof type === 'function') {
-        return new type();
-    }
-    else if (isArray(type)) {
-        return [parseType(type[0])];
-    }
-    else if (type && typeof type === 'object') {
-        var rv = {};
-        applyStructure(rv, type);
-        return rv;
-    }
-    else {
-        return type;
-    }
-}
-function applyStructure(obj, structure) {
-    keys(structure).forEach(function (member) {
-        var value = parseType(structure[member]);
-        obj[member] = value;
-    });
-    return obj;
-}
-function hookedEventSuccessHandler(resolve) {
-    // wrap() is needed when calling hooks because the rare scenario of:
-    //  * hook does a db operation that fails immediately (IDB throws exception)
-    //    For calling db operations on correct transaction, wrap makes sure to set PSD correctly.
-    //    wrap() will also execute in a virtual tick.
-    //  * If not wrapped in a virtual tick, direct exception will launch a new physical tick.
-    //  * If this was the last event in the bulk, the promise will resolve after a physical tick
-    //    and the transaction will have committed already.
-    // If no hook, the virtual tick will be executed in the reject()/resolve of the final promise,
-    // because it is always marked with _lib = true when created using Transaction._promise().
-    return wrap(function (event) {
-        var req = event.target, ctx = req._hookCtx, // Contains the hook error handler. Put here instead of closure to boost performance.
-        result = ctx.value || req.result, // Pass the object value on updates. The result from IDB is the primary key.
-        hookSuccessHandler = ctx && ctx.onsuccess;
-        hookSuccessHandler && hookSuccessHandler(result);
-        resolve && resolve(result);
-    }, resolve);
-}
-function eventRejectHandler(reject) {
-    return wrap(function (event) {
-        preventDefault(event);
-        reject(event.target.error);
-        return false;
-    });
-}
-function eventSuccessHandler(resolve) {
-    return wrap(function (event) {
-        resolve(event.target.result);
-    });
-}
-function hookedEventRejectHandler(reject) {
-    return wrap(function (event) {
-        // See comment on hookedEventSuccessHandler() why wrap() is needed only when supporting hooks.
-        var req = event.target, err = req.error, ctx = req._hookCtx, // Contains the hook error handler. Put here instead of closure to boost performance.
-        hookErrorHandler = ctx && ctx.onerror;
-        hookErrorHandler && hookErrorHandler(err);
-        preventDefault(event);
-        reject(err);
-        return false;
-    });
-}
-function preventDefault(event) {
-    if (event.stopPropagation)
-        event.stopPropagation();
-    if (event.preventDefault)
-        event.preventDefault();
-}
-function awaitIterator(iterator) {
-    var callNext = function (result) { return iterator.next(result); }, doThrow = function (error) { return iterator.throw(error); }, onSuccess = step(callNext), onError = step(doThrow);
-    function step(getNext) {
-        return function (val) {
-            var next = getNext(val), value = next.value;
-            return next.done ? value :
-                (!value || typeof value.then !== 'function' ?
-                    isArray(value) ? Promise.all(value).then(onSuccess, onError) : onSuccess(value) :
-                    value.then(onSuccess, onError));
-        };
-    }
-    return step(callNext)();
-}
-//
-// IndexSpec struct
-//
-function IndexSpec(name, keyPath, unique, multi, auto, compound, dotted) {
-    /// <param name="name" type="String"></param>
-    /// <param name="keyPath" type="String"></param>
-    /// <param name="unique" type="Boolean"></param>
-    /// <param name="multi" type="Boolean"></param>
-    /// <param name="auto" type="Boolean"></param>
-    /// <param name="compound" type="Boolean"></param>
-    /// <param name="dotted" type="Boolean"></param>
-    this.name = name;
-    this.keyPath = keyPath;
-    this.unique = unique;
-    this.multi = multi;
-    this.auto = auto;
-    this.compound = compound;
-    this.dotted = dotted;
-    var keyPathSrc = typeof keyPath === 'string' ? keyPath : keyPath && ('[' + [].join.call(keyPath, '+') + ']');
-    this.src = (unique ? '&' : '') + (multi ? '*' : '') + (auto ? "++" : "") + keyPathSrc;
-}
-//
-// TableSchema struct
-//
-function TableSchema(name, primKey, indexes, instanceTemplate) {
-    /// <param name="name" type="String"></param>
-    /// <param name="primKey" type="IndexSpec"></param>
-    /// <param name="indexes" type="Array" elementType="IndexSpec"></param>
-    /// <param name="instanceTemplate" type="Object"></param>
-    this.name = name;
-    this.primKey = primKey || new IndexSpec();
-    this.indexes = indexes || [new IndexSpec()];
-    this.instanceTemplate = instanceTemplate;
-    this.mappedClass = null;
-    this.idxByName = arrayToObject(indexes, function (index) { return [index.name, index]; });
-}
-function safariMultiStoreFix(storeNames) {
-    return storeNames.length === 1 ? storeNames[0] : storeNames;
-}
-function getNativeGetDatabaseNamesFn(indexedDB) {
-    var fn = indexedDB && (indexedDB.getDatabaseNames || indexedDB.webkitGetDatabaseNames);
-    return fn && fn.bind(indexedDB);
-}
-// Export Error classes
-props(Dexie, fullNameExceptions); // Dexie.XXXError = class XXXError {...};
-//
-// Static methods and properties
-// 
-props(Dexie, {
-    //
-    // Static delete() method.
-    //
-    delete: function (databaseName) {
-        var db = new Dexie(databaseName), promise = db.delete();
-        promise.onblocked = function (fn) {
-            db.on("blocked", fn);
-            return this;
-        };
-        return promise;
-    },
-    //
-    // Static exists() method.
-    //
-    exists: function (name) {
-        return new Dexie(name).open().then(function (db) {
-            db.close();
-            return true;
-        }).catch(Dexie.NoSuchDatabaseError, function () { return false; });
-    },
-    //
-    // Static method for retrieving a list of all existing databases at current host.
-    //
-    getDatabaseNames: function (cb) {
-        var getDatabaseNames = getNativeGetDatabaseNamesFn(Dexie.dependencies.indexedDB);
-        return getDatabaseNames ? new Promise(function (resolve, reject) {
-            var req = getDatabaseNames();
-            req.onsuccess = function (event) {
-                resolve(slice(event.target.result, 0)); // Converst DOMStringList to Array<String>
-            };
-            req.onerror = eventRejectHandler(reject);
-        }).then(cb) : dbNamesDB.dbnames.toCollection().primaryKeys(cb);
-    },
-    defineClass: function () {
-        // Default constructor able to copy given properties into this object.
-        function Class(properties) {
-            /// <param name="properties" type="Object" optional="true">Properties to initialize object with.
-            /// </param>
-            if (properties)
-                extend(this, properties);
-        }
-        return Class;
-    },
-    applyStructure: applyStructure,
-    ignoreTransaction: function (scopeFunc) {
-        // In case caller is within a transaction but needs to create a separate transaction.
-        // Example of usage:
-        //
-        // Let's say we have a logger function in our app. Other application-logic should be unaware of the
-        // logger function and not need to include the 'logentries' table in all transaction it performs.
-        // The logging should always be done in a separate transaction and not be dependant on the current
-        // running transaction context. Then you could use Dexie.ignoreTransaction() to run code that starts a new transaction.
-        //
-        //     Dexie.ignoreTransaction(function() {
-        //         db.logentries.add(newLogEntry);
-        //     });
-        //
-        // Unless using Dexie.ignoreTransaction(), the above example would try to reuse the current transaction
-        // in current Promise-scope.
-        //
-        // An alternative to Dexie.ignoreTransaction() would be setImmediate() or setTimeout(). The reason we still provide an
-        // API for this because
-        //  1) The intention of writing the statement could be unclear if using setImmediate() or setTimeout().
-        //  2) setTimeout() would wait unnescessary until firing. This is however not the case with setImmediate().
-        //  3) setImmediate() is not supported in the ES standard.
-        //  4) You might want to keep other PSD state that was set in a parent PSD, such as PSD.letThrough.
-        return PSD.trans ?
-            usePSD(PSD.transless, scopeFunc) : // Use the closest parent that was non-transactional.
-            scopeFunc(); // No need to change scope because there is no ongoing transaction.
-    },
-    vip: function (fn) {
-        // To be used by subscribers to the on('ready') event.
-        // This will let caller through to access DB even when it is blocked while the db.ready() subscribers are firing.
-        // This would have worked automatically if we were certain that the Provider was using Dexie.Promise for all asyncronic operations. The promise PSD
-        // from the provider.connect() call would then be derived all the way to when provider would call localDatabase.applyChanges(). But since
-        // the provider more likely is using non-promise async APIs or other thenable implementations, we cannot assume that.
-        // Note that this method is only useful for on('ready') subscribers that is returning a Promise from the event. If not using vip()
-        // the database could deadlock since it wont open until the returned Promise is resolved, and any non-VIPed operation started by
-        // the caller will not resolve until database is opened.
-        return newScope(function () {
-            PSD.letThrough = true; // Make sure we are let through if still blocking db due to onready is firing.
-            return fn();
-        });
-    },
-    async: function (generatorFn) {
-        return function () {
-            try {
-                var rv = awaitIterator(generatorFn.apply(this, arguments));
-                if (!rv || typeof rv.then !== 'function')
-                    return Promise.resolve(rv);
-                return rv;
-            }
-            catch (e) {
-                return rejection(e);
-            }
-        };
-    },
-    spawn: function (generatorFn, args, thiz) {
-        try {
-            var rv = awaitIterator(generatorFn.apply(thiz, args || []));
-            if (!rv || typeof rv.then !== 'function')
-                return Promise.resolve(rv);
-            return rv;
-        }
-        catch (e) {
-            return rejection(e);
-        }
-    },
-    // Dexie.currentTransaction property
-    currentTransaction: {
-        get: function () { return PSD.trans || null; }
-    },
-    waitFor: function (promiseOrFunction, optionalTimeout) {
-        // If a function is provided, invoke it and pass the returning value to Transaction.waitFor()
-        var promise = Promise.resolve(typeof promiseOrFunction === 'function' ? Dexie.ignoreTransaction(promiseOrFunction) : promiseOrFunction)
-            .timeout(optionalTimeout || 60000); // Default the timeout to one minute. Caller may specify Infinity if required.       
-        // Run given promise on current transaction. If no current transaction, just return a Dexie promise based
-        // on given value.
-        return PSD.trans ? PSD.trans.waitFor(promise) : promise;
-    },
-    // Export our Promise implementation since it can be handy as a standalone Promise implementation
-    Promise: Promise,
-    // Dexie.debug proptery:
-    // Dexie.debug = false
-    // Dexie.debug = true
-    // Dexie.debug = "dexie" - don't hide dexie's stack frames.
-    debug: {
-        get: function () { return debug; },
-        set: function (value) {
-            setDebug(value, value === 'dexie' ? function () { return true; } : dexieStackFrameFilter);
-        }
-    },
-    // Export our derive/extend/override methodology
-    derive: derive,
-    extend: extend,
-    props: props,
-    override: override,
-    // Export our Events() function - can be handy as a toolkit
-    Events: Events,
-    // Utilities
-    getByKeyPath: getByKeyPath,
-    setByKeyPath: setByKeyPath,
-    delByKeyPath: delByKeyPath,
-    shallowClone: shallowClone,
-    deepClone: deepClone,
-    getObjectDiff: getObjectDiff,
-    asap: asap,
-    maxKey: maxKey,
-    minKey: minKey,
-    // Addon registry
-    addons: [],
-    // Global DB connection list
-    connections: connections,
-    MultiModifyError: exceptions.Modify,
-    errnames: errnames,
-    // Export other static classes
-    IndexSpec: IndexSpec,
-    TableSchema: TableSchema,
-    //
-    // Dependencies
-    //
-    // These will automatically work in browsers with indexedDB support, or where an indexedDB polyfill has been included.
-    //
-    // In node.js, however, these properties must be set "manually" before instansiating a new Dexie().
-    // For node.js, you need to require indexeddb-js or similar and then set these deps.
-    //
-    dependencies: (function () {
-        try {
-            return {
-                // Required:
-                indexedDB: _global.indexedDB || _global.mozIndexedDB || _global.webkitIndexedDB || _global.msIndexedDB,
-                IDBKeyRange: _global.IDBKeyRange || _global.webkitIDBKeyRange
-            };
-        }
-        catch (e) {
-            return {
-                indexedDB: null,
-                IDBKeyRange: null
-            };
-        }
-    })(),
-    // API Version Number: Type Number, make sure to always set a version number that can be comparable correctly. Example: 0.9, 0.91, 0.92, 1.0, 1.01, 1.1, 1.2, 1.21, etc.
-    semVer: DEXIE_VERSION,
-    version: DEXIE_VERSION.split('.')
-        .map(function (n) { return parseInt(n); })
-        .reduce(function (p, c, i) { return p + (c / Math.pow(10, i * 2)); }),
-    // https://github.com/dfahlander/Dexie.js/issues/186
-    // typescript compiler tsc in mode ts-->es5 & commonJS, will expect require() to return
-    // x.default. Workaround: Set Dexie.default = Dexie.
-    default: Dexie,
-    // Make it possible to import {Dexie} (non-default import)
-    // Reason 1: May switch to that in future.
-    // Reason 2: We declare it both default and named exported in d.ts to make it possible
-    // to let addons extend the Dexie interface with Typescript 2.1 (works only when explicitely
-    // exporting the symbol, not just default exporting)
-    Dexie: Dexie
-});
-// Map DOMErrors and DOMExceptions to corresponding Dexie errors. May change in Dexie v2.0.
-Promise.rejectionMapper = mapError;
-// Initialize dbNamesDB (won't ever be opened on chromium browsers')
-dbNamesDB = new Dexie('__dbnames');
-dbNamesDB.version(1).stores({ dbnames: 'name' });
-(function () {
-    // Migrate from Dexie 1.x database names stored in localStorage:
-    var DBNAMES = 'Dexie.DatabaseNames';
-    try {
-        if (typeof localStorage !== undefined && _global.document !== undefined) {
-            // Have localStorage and is not executing in a worker. Lets migrate from Dexie 1.x.
-            JSON.parse(localStorage.getItem(DBNAMES) || "[]")
-                .forEach(function (name) { return dbNamesDB.dbnames.put({ name: name }).catch(nop); });
-            localStorage.removeItem(DBNAMES);
-        }
-    }
-    catch (_e) { }
-})();
-
-return Dexie;
-
-})));
-
-
-}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
-},{"timers":259}],126:[function(require,module,exports){
 (function (Buffer){(function (){
 var generatePrime = require('./lib/generatePrime')
 var primes = require('./lib/primes.json')
@@ -28703,7 +24225,7 @@ exports.DiffieHellmanGroup = exports.createDiffieHellmanGroup = exports.getDiffi
 exports.createDiffieHellman = exports.DiffieHellman = createDiffieHellman
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"./lib/dh":127,"./lib/generatePrime":128,"./lib/primes.json":129,"buffer":76}],127:[function(require,module,exports){
+},{"./lib/dh":126,"./lib/generatePrime":127,"./lib/primes.json":128,"buffer":76}],126:[function(require,module,exports){
 (function (Buffer){(function (){
 var BN = require('bn.js');
 var MillerRabin = require('miller-rabin');
@@ -28871,7 +24393,7 @@ function formatReturnValue(bn, enc) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"./generatePrime":128,"bn.js":130,"buffer":76,"miller-rabin":193,"randombytes":221}],128:[function(require,module,exports){
+},{"./generatePrime":127,"bn.js":129,"buffer":76,"miller-rabin":192,"randombytes":220}],127:[function(require,module,exports){
 var randomBytes = require('randombytes');
 module.exports = findPrime;
 findPrime.simpleSieve = simpleSieve;
@@ -28978,7 +24500,7 @@ function findPrime(bits, gen) {
 
 }
 
-},{"bn.js":130,"miller-rabin":193,"randombytes":221}],129:[function(require,module,exports){
+},{"bn.js":129,"miller-rabin":192,"randombytes":220}],128:[function(require,module,exports){
 module.exports={
     "modp1": {
         "gen": "02",
@@ -29013,9 +24535,9 @@ module.exports={
         "prime": "ffffffffffffffffc90fdaa22168c234c4c6628b80dc1cd129024e088a67cc74020bbea63b139b22514a08798e3404ddef9519b3cd3a431b302b0a6df25f14374fe1356d6d51c245e485b576625e7ec6f44c42e9a637ed6b0bff5cb6f406b7edee386bfb5a899fa5ae9f24117c4b1fe649286651ece45b3dc2007cb8a163bf0598da48361c55d39a69163fa8fd24cf5f83655d23dca3ad961c62f356208552bb9ed529077096966d670c354e4abc9804f1746c08ca18217c32905e462e36ce3be39e772c180e86039b2783a2ec07a28fb5c55df06f4c52c9de2bcbf6955817183995497cea956ae515d2261898fa051015728e5a8aaac42dad33170d04507a33a85521abdf1cba64ecfb850458dbef0a8aea71575d060c7db3970f85a6e1e4c7abf5ae8cdb0933d71e8c94e04a25619dcee3d2261ad2ee6bf12ffa06d98a0864d87602733ec86a64521f2b18177b200cbbe117577a615d6c770988c0bad946e208e24fa074e5ab3143db5bfce0fd108e4b82d120a92108011a723c12a787e6d788719a10bdba5b2699c327186af4e23c1a946834b6150bda2583e9ca2ad44ce8dbbbc2db04de8ef92e8efc141fbecaa6287c59474e6bc05d99b2964fa090c3a2233ba186515be7ed1f612970cee2d7afb81bdd762170481cd0069127d5b05aa993b4ea988d8fddc186ffb7dc90a6c08f4df435c93402849236c3fab4d27c7026c1d4dcb2602646dec9751e763dba37bdf8ff9406ad9e530ee5db382f413001aeb06a53ed9027d831179727b0865a8918da3edbebcf9b14ed44ce6cbaced4bb1bdb7f1447e6cc254b332051512bd7af426fb8f401378cd2bf5983ca01c64b92ecf032ea15d1721d03f482d7ce6e74fef6d55e702f46980c82b5a84031900b1c9e59e7c97fbec7e8f323a97a7e36cc88be0f1d45b7ff585ac54bd407b22b4154aacc8f6d7ebf48e1d814cc5ed20f8037e0a79715eef29be32806a1d58bb7c5da76f550aa3d8a1fbff0eb19ccb1a313d55cda56c9ec2ef29632387fe8d76e3c0468043e8f663f4860ee12bf2d5b0b7474d6e694f91e6dbe115974a3926f12fee5e438777cb6a932df8cd8bec4d073b931ba3bc832b68d9dd300741fa7bf8afc47ed2576f6936ba424663aab639c5ae4f5683423b4742bf1c978238f16cbe39d652de3fdb8befc848ad922222e04a4037c0713eb57a81a23f0c73473fc646cea306b4bcbc8862f8385ddfa9d4b7fa2c087e879683303ed5bdd3a062b3cf5b3a278a66d2a13f83f44f82ddf310ee074ab6a364597e899a0255dc164f31cc50846851df9ab48195ded7ea1b1d510bd7ee74d73faf36bc31ecfa268359046f4eb879f924009438b481c6cd7889a002ed5ee382bc9190da6fc026e479558e4475677e9aa9e3050e2765694dfc81f56e880b96e7160c980dd98edd3dfffffffffffffffff"
     }
 }
-},{}],130:[function(require,module,exports){
+},{}],129:[function(require,module,exports){
 arguments[4][27][0].apply(exports,arguments)
-},{"buffer":31,"dup":27}],131:[function(require,module,exports){
+},{"buffer":31,"dup":27}],130:[function(require,module,exports){
 /*! @license DOMPurify 2.3.3 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/2.3.3/LICENSE */
 
 (function (global, factory) {
@@ -30415,7 +25937,7 @@ arguments[4][27][0].apply(exports,arguments)
 }));
 
 
-},{}],132:[function(require,module,exports){
+},{}],131:[function(require,module,exports){
 'use strict';
 
 var elliptic = exports;
@@ -30430,7 +25952,7 @@ elliptic.curves = require('./elliptic/curves');
 elliptic.ec = require('./elliptic/ec');
 elliptic.eddsa = require('./elliptic/eddsa');
 
-},{"../package.json":148,"./elliptic/curve":135,"./elliptic/curves":138,"./elliptic/ec":139,"./elliptic/eddsa":142,"./elliptic/utils":146,"brorand":30}],133:[function(require,module,exports){
+},{"../package.json":147,"./elliptic/curve":134,"./elliptic/curves":137,"./elliptic/ec":138,"./elliptic/eddsa":141,"./elliptic/utils":145,"brorand":30}],132:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -30813,7 +26335,7 @@ BasePoint.prototype.dblp = function dblp(k) {
   return r;
 };
 
-},{"../utils":146,"bn.js":147}],134:[function(require,module,exports){
+},{"../utils":145,"bn.js":146}],133:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -31250,7 +26772,7 @@ Point.prototype.eqXToP = function eqXToP(x) {
 Point.prototype.toP = Point.prototype.normalize;
 Point.prototype.mixedAdd = Point.prototype.add;
 
-},{"../utils":146,"./base":133,"bn.js":147,"inherits":186}],135:[function(require,module,exports){
+},{"../utils":145,"./base":132,"bn.js":146,"inherits":185}],134:[function(require,module,exports){
 'use strict';
 
 var curve = exports;
@@ -31260,7 +26782,7 @@ curve.short = require('./short');
 curve.mont = require('./mont');
 curve.edwards = require('./edwards');
 
-},{"./base":133,"./edwards":134,"./mont":136,"./short":137}],136:[function(require,module,exports){
+},{"./base":132,"./edwards":133,"./mont":135,"./short":136}],135:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -31440,7 +26962,7 @@ Point.prototype.getX = function getX() {
   return this.x.fromRed();
 };
 
-},{"../utils":146,"./base":133,"bn.js":147,"inherits":186}],137:[function(require,module,exports){
+},{"../utils":145,"./base":132,"bn.js":146,"inherits":185}],136:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -32380,7 +27902,7 @@ JPoint.prototype.isInfinity = function isInfinity() {
   return this.z.cmpn(0) === 0;
 };
 
-},{"../utils":146,"./base":133,"bn.js":147,"inherits":186}],138:[function(require,module,exports){
+},{"../utils":145,"./base":132,"bn.js":146,"inherits":185}],137:[function(require,module,exports){
 'use strict';
 
 var curves = exports;
@@ -32588,7 +28110,7 @@ defineCurve('secp256k1', {
   ],
 });
 
-},{"./curve":135,"./precomputed/secp256k1":145,"./utils":146,"hash.js":172}],139:[function(require,module,exports){
+},{"./curve":134,"./precomputed/secp256k1":144,"./utils":145,"hash.js":171}],138:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -32833,7 +28355,7 @@ EC.prototype.getKeyRecoveryParam = function(e, signature, Q, enc) {
   throw new Error('Unable to find valid recovery factor');
 };
 
-},{"../curves":138,"../utils":146,"./key":140,"./signature":141,"bn.js":147,"brorand":30,"hmac-drbg":184}],140:[function(require,module,exports){
+},{"../curves":137,"../utils":145,"./key":139,"./signature":140,"bn.js":146,"brorand":30,"hmac-drbg":183}],139:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -32956,7 +28478,7 @@ KeyPair.prototype.inspect = function inspect() {
          ' pub: ' + (this.pub && this.pub.inspect()) + ' >';
 };
 
-},{"../utils":146,"bn.js":147}],141:[function(require,module,exports){
+},{"../utils":145,"bn.js":146}],140:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -33124,7 +28646,7 @@ Signature.prototype.toDER = function toDER(enc) {
   return utils.encode(res, enc);
 };
 
-},{"../utils":146,"bn.js":147}],142:[function(require,module,exports){
+},{"../utils":145,"bn.js":146}],141:[function(require,module,exports){
 'use strict';
 
 var hash = require('hash.js');
@@ -33244,7 +28766,7 @@ EDDSA.prototype.isPoint = function isPoint(val) {
   return val instanceof this.pointClass;
 };
 
-},{"../curves":138,"../utils":146,"./key":143,"./signature":144,"hash.js":172}],143:[function(require,module,exports){
+},{"../curves":137,"../utils":145,"./key":142,"./signature":143,"hash.js":171}],142:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -33341,7 +28863,7 @@ KeyPair.prototype.getPublic = function getPublic(enc) {
 
 module.exports = KeyPair;
 
-},{"../utils":146}],144:[function(require,module,exports){
+},{"../utils":145}],143:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -33408,7 +28930,7 @@ Signature.prototype.toHex = function toHex() {
 
 module.exports = Signature;
 
-},{"../utils":146,"bn.js":147}],145:[function(require,module,exports){
+},{"../utils":145,"bn.js":146}],144:[function(require,module,exports){
 module.exports = {
   doubles: {
     step: 4,
@@ -34190,7 +29712,7 @@ module.exports = {
   },
 };
 
-},{}],146:[function(require,module,exports){
+},{}],145:[function(require,module,exports){
 'use strict';
 
 var utils = exports;
@@ -34311,9 +29833,9 @@ function intFromLE(bytes) {
 utils.intFromLE = intFromLE;
 
 
-},{"bn.js":147,"minimalistic-assert":195,"minimalistic-crypto-utils":196}],147:[function(require,module,exports){
+},{"bn.js":146,"minimalistic-assert":194,"minimalistic-crypto-utils":195}],146:[function(require,module,exports){
 arguments[4][27][0].apply(exports,arguments)
-},{"buffer":31,"dup":27}],148:[function(require,module,exports){
+},{"buffer":31,"dup":27}],147:[function(require,module,exports){
 module.exports={
   "_args": [
     [
@@ -34404,7 +29926,7 @@ module.exports={
   "version": "6.5.4"
 }
 
-},{}],149:[function(require,module,exports){
+},{}],148:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -34903,7 +30425,7 @@ function eventTargetAgnosticAddListener(emitter, name, listener, flags) {
   }
 }
 
-},{}],150:[function(require,module,exports){
+},{}],149:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var MD5 = require('md5.js')
 
@@ -34950,7 +30472,7 @@ function EVP_BytesToKey (password, salt, keyBits, ivLen) {
 
 module.exports = EVP_BytesToKey
 
-},{"md5.js":191,"safe-buffer":224}],151:[function(require,module,exports){
+},{"md5.js":190,"safe-buffer":223}],150:[function(require,module,exports){
 /* jshint node: true */
 'use strict';
 
@@ -35058,7 +30580,7 @@ var freeice = function(opts) {
 };
 
 module.exports = freeice;
-},{"./stun.json":152,"./turn.json":153,"normalice":197}],152:[function(require,module,exports){
+},{"./stun.json":151,"./turn.json":152,"normalice":196}],151:[function(require,module,exports){
 module.exports=[
   "stun.l.google.com:19302",
   "stun1.l.google.com:19302",
@@ -35075,10 +30597,10 @@ module.exports=[
   "stun.voxgratia.org"
 ]
 
-},{}],153:[function(require,module,exports){
+},{}],152:[function(require,module,exports){
 module.exports=[]
 
-},{}],154:[function(require,module,exports){
+},{}],153:[function(require,module,exports){
 var WildEmitter = require('wildemitter');
 
 function getMaxVolume (analyser, fftBins) {
@@ -35223,7 +30745,7 @@ module.exports = function(stream, options) {
   return harker;
 }
 
-},{"wildemitter":265}],155:[function(require,module,exports){
+},{"wildemitter":263}],154:[function(require,module,exports){
 'use strict'
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('readable-stream').Transform
@@ -35320,39 +30842,39 @@ HashBase.prototype._digest = function () {
 
 module.exports = HashBase
 
-},{"inherits":186,"readable-stream":170,"safe-buffer":171}],156:[function(require,module,exports){
+},{"inherits":185,"readable-stream":169,"safe-buffer":170}],155:[function(require,module,exports){
 arguments[4][59][0].apply(exports,arguments)
-},{"dup":59}],157:[function(require,module,exports){
+},{"dup":59}],156:[function(require,module,exports){
 arguments[4][60][0].apply(exports,arguments)
-},{"./_stream_readable":159,"./_stream_writable":161,"_process":213,"dup":60,"inherits":186}],158:[function(require,module,exports){
+},{"./_stream_readable":158,"./_stream_writable":160,"_process":212,"dup":60,"inherits":185}],157:[function(require,module,exports){
 arguments[4][61][0].apply(exports,arguments)
-},{"./_stream_transform":160,"dup":61,"inherits":186}],159:[function(require,module,exports){
+},{"./_stream_transform":159,"dup":61,"inherits":185}],158:[function(require,module,exports){
 arguments[4][62][0].apply(exports,arguments)
-},{"../errors":156,"./_stream_duplex":157,"./internal/streams/async_iterator":162,"./internal/streams/buffer_list":163,"./internal/streams/destroy":164,"./internal/streams/from":166,"./internal/streams/state":168,"./internal/streams/stream":169,"_process":213,"buffer":76,"dup":62,"events":149,"inherits":186,"string_decoder/":257,"util":31}],160:[function(require,module,exports){
+},{"../errors":155,"./_stream_duplex":156,"./internal/streams/async_iterator":161,"./internal/streams/buffer_list":162,"./internal/streams/destroy":163,"./internal/streams/from":165,"./internal/streams/state":167,"./internal/streams/stream":168,"_process":212,"buffer":76,"dup":62,"events":148,"inherits":185,"string_decoder/":256,"util":31}],159:[function(require,module,exports){
 arguments[4][63][0].apply(exports,arguments)
-},{"../errors":156,"./_stream_duplex":157,"dup":63,"inherits":186}],161:[function(require,module,exports){
+},{"../errors":155,"./_stream_duplex":156,"dup":63,"inherits":185}],160:[function(require,module,exports){
 arguments[4][64][0].apply(exports,arguments)
-},{"../errors":156,"./_stream_duplex":157,"./internal/streams/destroy":164,"./internal/streams/state":168,"./internal/streams/stream":169,"_process":213,"buffer":76,"dup":64,"inherits":186,"util-deprecate":261}],162:[function(require,module,exports){
+},{"../errors":155,"./_stream_duplex":156,"./internal/streams/destroy":163,"./internal/streams/state":167,"./internal/streams/stream":168,"_process":212,"buffer":76,"dup":64,"inherits":185,"util-deprecate":259}],161:[function(require,module,exports){
 arguments[4][65][0].apply(exports,arguments)
-},{"./end-of-stream":165,"_process":213,"dup":65}],163:[function(require,module,exports){
+},{"./end-of-stream":164,"_process":212,"dup":65}],162:[function(require,module,exports){
 arguments[4][66][0].apply(exports,arguments)
-},{"buffer":76,"dup":66,"util":31}],164:[function(require,module,exports){
+},{"buffer":76,"dup":66,"util":31}],163:[function(require,module,exports){
 arguments[4][67][0].apply(exports,arguments)
-},{"_process":213,"dup":67}],165:[function(require,module,exports){
+},{"_process":212,"dup":67}],164:[function(require,module,exports){
 arguments[4][68][0].apply(exports,arguments)
-},{"../../../errors":156,"dup":68}],166:[function(require,module,exports){
+},{"../../../errors":155,"dup":68}],165:[function(require,module,exports){
 arguments[4][69][0].apply(exports,arguments)
-},{"dup":69}],167:[function(require,module,exports){
+},{"dup":69}],166:[function(require,module,exports){
 arguments[4][70][0].apply(exports,arguments)
-},{"../../../errors":156,"./end-of-stream":165,"dup":70}],168:[function(require,module,exports){
+},{"../../../errors":155,"./end-of-stream":164,"dup":70}],167:[function(require,module,exports){
 arguments[4][71][0].apply(exports,arguments)
-},{"../../../errors":156,"dup":71}],169:[function(require,module,exports){
+},{"../../../errors":155,"dup":71}],168:[function(require,module,exports){
 arguments[4][72][0].apply(exports,arguments)
-},{"dup":72,"events":149}],170:[function(require,module,exports){
+},{"dup":72,"events":148}],169:[function(require,module,exports){
 arguments[4][73][0].apply(exports,arguments)
-},{"./lib/_stream_duplex.js":157,"./lib/_stream_passthrough.js":158,"./lib/_stream_readable.js":159,"./lib/_stream_transform.js":160,"./lib/_stream_writable.js":161,"./lib/internal/streams/end-of-stream.js":165,"./lib/internal/streams/pipeline.js":167,"dup":73}],171:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":156,"./lib/_stream_passthrough.js":157,"./lib/_stream_readable.js":158,"./lib/_stream_transform.js":159,"./lib/_stream_writable.js":160,"./lib/internal/streams/end-of-stream.js":164,"./lib/internal/streams/pipeline.js":166,"dup":73}],170:[function(require,module,exports){
 arguments[4][74][0].apply(exports,arguments)
-},{"buffer":76,"dup":74}],172:[function(require,module,exports){
+},{"buffer":76,"dup":74}],171:[function(require,module,exports){
 var hash = exports;
 
 hash.utils = require('./hash/utils');
@@ -35369,7 +30891,7 @@ hash.sha384 = hash.sha.sha384;
 hash.sha512 = hash.sha.sha512;
 hash.ripemd160 = hash.ripemd.ripemd160;
 
-},{"./hash/common":173,"./hash/hmac":174,"./hash/ripemd":175,"./hash/sha":176,"./hash/utils":183}],173:[function(require,module,exports){
+},{"./hash/common":172,"./hash/hmac":173,"./hash/ripemd":174,"./hash/sha":175,"./hash/utils":182}],172:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -35463,7 +30985,7 @@ BlockHash.prototype._pad = function pad() {
   return res;
 };
 
-},{"./utils":183,"minimalistic-assert":195}],174:[function(require,module,exports){
+},{"./utils":182,"minimalistic-assert":194}],173:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -35512,7 +31034,7 @@ Hmac.prototype.digest = function digest(enc) {
   return this.outer.digest(enc);
 };
 
-},{"./utils":183,"minimalistic-assert":195}],175:[function(require,module,exports){
+},{"./utils":182,"minimalistic-assert":194}],174:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -35660,7 +31182,7 @@ var sh = [
   8, 5, 12, 9, 12, 5, 14, 6, 8, 13, 6, 5, 15, 13, 11, 11
 ];
 
-},{"./common":173,"./utils":183}],176:[function(require,module,exports){
+},{"./common":172,"./utils":182}],175:[function(require,module,exports){
 'use strict';
 
 exports.sha1 = require('./sha/1');
@@ -35669,7 +31191,7 @@ exports.sha256 = require('./sha/256');
 exports.sha384 = require('./sha/384');
 exports.sha512 = require('./sha/512');
 
-},{"./sha/1":177,"./sha/224":178,"./sha/256":179,"./sha/384":180,"./sha/512":181}],177:[function(require,module,exports){
+},{"./sha/1":176,"./sha/224":177,"./sha/256":178,"./sha/384":179,"./sha/512":180}],176:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -35745,7 +31267,7 @@ SHA1.prototype._digest = function digest(enc) {
     return utils.split32(this.h, 'big');
 };
 
-},{"../common":173,"../utils":183,"./common":182}],178:[function(require,module,exports){
+},{"../common":172,"../utils":182,"./common":181}],177:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -35777,7 +31299,7 @@ SHA224.prototype._digest = function digest(enc) {
 };
 
 
-},{"../utils":183,"./256":179}],179:[function(require,module,exports){
+},{"../utils":182,"./256":178}],178:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -35884,7 +31406,7 @@ SHA256.prototype._digest = function digest(enc) {
     return utils.split32(this.h, 'big');
 };
 
-},{"../common":173,"../utils":183,"./common":182,"minimalistic-assert":195}],180:[function(require,module,exports){
+},{"../common":172,"../utils":182,"./common":181,"minimalistic-assert":194}],179:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -35921,7 +31443,7 @@ SHA384.prototype._digest = function digest(enc) {
     return utils.split32(this.h.slice(0, 12), 'big');
 };
 
-},{"../utils":183,"./512":181}],181:[function(require,module,exports){
+},{"../utils":182,"./512":180}],180:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -36253,7 +31775,7 @@ function g1_512_lo(xh, xl) {
   return r;
 }
 
-},{"../common":173,"../utils":183,"minimalistic-assert":195}],182:[function(require,module,exports){
+},{"../common":172,"../utils":182,"minimalistic-assert":194}],181:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -36304,7 +31826,7 @@ function g1_256(x) {
 }
 exports.g1_256 = g1_256;
 
-},{"../utils":183}],183:[function(require,module,exports){
+},{"../utils":182}],182:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -36584,7 +32106,7 @@ function shr64_lo(ah, al, num) {
 }
 exports.shr64_lo = shr64_lo;
 
-},{"inherits":186,"minimalistic-assert":195}],184:[function(require,module,exports){
+},{"inherits":185,"minimalistic-assert":194}],183:[function(require,module,exports){
 'use strict';
 
 var hash = require('hash.js');
@@ -36699,7 +32221,7 @@ HmacDRBG.prototype.generate = function generate(len, enc, add, addEnc) {
   return utils.encode(res, enc);
 };
 
-},{"hash.js":172,"minimalistic-assert":195,"minimalistic-crypto-utils":196}],185:[function(require,module,exports){
+},{"hash.js":171,"minimalistic-assert":194,"minimalistic-crypto-utils":195}],184:[function(require,module,exports){
 /*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
@@ -36786,7 +32308,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],186:[function(require,module,exports){
+},{}],185:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -36815,7 +32337,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],187:[function(require,module,exports){
+},{}],186:[function(require,module,exports){
 (function (global){(function (){
 // https://github.com/maxogden/websocket-stream/blob/48dc3ddf943e5ada668c31ccd94e9186f02fafbd/ws-fallback.js
 
@@ -36836,10 +32358,10 @@ if (typeof WebSocket !== 'undefined') {
 module.exports = ws
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],188:[function(require,module,exports){
+},{}],187:[function(require,module,exports){
 // Does nothing at all.
 
-},{}],189:[function(require,module,exports){
+},{}],188:[function(require,module,exports){
 /*
  * (C) Copyright 2014-2015 Kurento (http://kurento.org/)
  *
@@ -37760,7 +33282,7 @@ exports.WebRtcPeerSendonly = WebRtcPeerSendonly
 exports.WebRtcPeerSendrecv = WebRtcPeerSendrecv
 exports.hark = harkUtils
 
-},{"events":149,"freeice":151,"hark":154,"inherits":186,"kurento-browser-extensions":188,"merge":192,"sdp-translator":231,"ua-parser-js":260,"uuid/v4":264}],190:[function(require,module,exports){
+},{"events":148,"freeice":150,"hark":153,"inherits":185,"kurento-browser-extensions":187,"merge":191,"sdp-translator":230,"ua-parser-js":258,"uuid/v4":262}],189:[function(require,module,exports){
 /*
  * (C) Copyright 2014 Kurento (http://kurento.org/)
  *
@@ -37792,7 +33314,7 @@ var WebRtcPeer = require('./WebRtcPeer');
 
 exports.WebRtcPeer = WebRtcPeer;
 
-},{"./WebRtcPeer":189}],191:[function(require,module,exports){
+},{"./WebRtcPeer":188}],190:[function(require,module,exports){
 'use strict'
 var inherits = require('inherits')
 var HashBase = require('hash-base')
@@ -37940,7 +33462,7 @@ function fnI (a, b, c, d, m, k, s) {
 
 module.exports = MD5
 
-},{"hash-base":155,"inherits":186,"safe-buffer":224}],192:[function(require,module,exports){
+},{"hash-base":154,"inherits":185,"safe-buffer":223}],191:[function(require,module,exports){
 /*!
  * @name JavaScript/NodeJS Merge v1.2.1
  * @author yeikos
@@ -38118,7 +33640,7 @@ module.exports = MD5
 	}
 
 })(typeof module === 'object' && module && typeof module.exports === 'object' && module.exports);
-},{}],193:[function(require,module,exports){
+},{}],192:[function(require,module,exports){
 var bn = require('bn.js');
 var brorand = require('brorand');
 
@@ -38235,9 +33757,9 @@ MillerRabin.prototype.getDivisor = function getDivisor(n, k) {
   return false;
 };
 
-},{"bn.js":194,"brorand":30}],194:[function(require,module,exports){
+},{"bn.js":193,"brorand":30}],193:[function(require,module,exports){
 arguments[4][27][0].apply(exports,arguments)
-},{"buffer":31,"dup":27}],195:[function(require,module,exports){
+},{"buffer":31,"dup":27}],194:[function(require,module,exports){
 module.exports = assert;
 
 function assert(val, msg) {
@@ -38250,7 +33772,7 @@ assert.equal = function assertEqual(l, r, msg) {
     throw new Error(msg || ('Assertion failed: ' + l + ' != ' + r));
 };
 
-},{}],196:[function(require,module,exports){
+},{}],195:[function(require,module,exports){
 'use strict';
 
 var utils = exports;
@@ -38310,7 +33832,7 @@ utils.encode = function encode(arr, enc) {
     return arr;
 };
 
-},{}],197:[function(require,module,exports){
+},{}],196:[function(require,module,exports){
 /**
   # normalice
 
@@ -38372,7 +33894,7 @@ module.exports = function(input) {
   return output;
 };
 
-},{}],198:[function(require,module,exports){
+},{}],197:[function(require,module,exports){
 module.exports={"2.16.840.1.101.3.4.1.1": "aes-128-ecb",
 "2.16.840.1.101.3.4.1.2": "aes-128-cbc",
 "2.16.840.1.101.3.4.1.3": "aes-128-ofb",
@@ -38386,7 +33908,7 @@ module.exports={"2.16.840.1.101.3.4.1.1": "aes-128-ecb",
 "2.16.840.1.101.3.4.1.43": "aes-256-ofb",
 "2.16.840.1.101.3.4.1.44": "aes-256-cfb"
 }
-},{}],199:[function(require,module,exports){
+},{}],198:[function(require,module,exports){
 // from https://github.com/indutny/self-signed/blob/gh-pages/lib/asn1.js
 // Fedor, you are amazing.
 'use strict'
@@ -38510,7 +34032,7 @@ exports.signature = asn1.define('signature', function () {
   )
 })
 
-},{"./certificate":200,"asn1.js":13}],200:[function(require,module,exports){
+},{"./certificate":199,"asn1.js":13}],199:[function(require,module,exports){
 // from https://github.com/Rantanen/node-dtls/blob/25a7dc861bda38cfeac93a723500eea4f0ac2e86/Certificate.js
 // thanks to @Rantanen
 
@@ -38601,7 +34123,7 @@ var X509Certificate = asn.define('X509Certificate', function () {
 
 module.exports = X509Certificate
 
-},{"asn1.js":13}],201:[function(require,module,exports){
+},{"asn1.js":13}],200:[function(require,module,exports){
 // adapted from https://github.com/apatil/pemstrip
 var findProc = /Proc-Type: 4,ENCRYPTED[\n\r]+DEK-Info: AES-((?:128)|(?:192)|(?:256))-CBC,([0-9A-H]+)[\n\r]+([0-9A-z\n\r+/=]+)[\n\r]+/m
 var startRegex = /^-----BEGIN ((?:.*? KEY)|CERTIFICATE)-----/m
@@ -38634,7 +34156,7 @@ module.exports = function (okey, password) {
   }
 }
 
-},{"browserify-aes":34,"evp_bytestokey":150,"safe-buffer":224}],202:[function(require,module,exports){
+},{"browserify-aes":34,"evp_bytestokey":149,"safe-buffer":223}],201:[function(require,module,exports){
 var asn1 = require('./asn1')
 var aesid = require('./aesid.json')
 var fixProc = require('./fixProc')
@@ -38743,11 +34265,11 @@ function decrypt (data, password) {
   return Buffer.concat(out)
 }
 
-},{"./aesid.json":198,"./asn1":199,"./fixProc":201,"browserify-aes":34,"pbkdf2":203,"safe-buffer":224}],203:[function(require,module,exports){
+},{"./aesid.json":197,"./asn1":198,"./fixProc":200,"browserify-aes":34,"pbkdf2":202,"safe-buffer":223}],202:[function(require,module,exports){
 exports.pbkdf2 = require('./lib/async')
 exports.pbkdf2Sync = require('./lib/sync')
 
-},{"./lib/async":204,"./lib/sync":207}],204:[function(require,module,exports){
+},{"./lib/async":203,"./lib/sync":206}],203:[function(require,module,exports){
 (function (global){(function (){
 var Buffer = require('safe-buffer').Buffer
 
@@ -38869,7 +34391,7 @@ module.exports = function (password, salt, iterations, keylen, digest, callback)
 }
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./default-encoding":205,"./precondition":206,"./sync":207,"./to-buffer":208,"safe-buffer":224}],205:[function(require,module,exports){
+},{"./default-encoding":204,"./precondition":205,"./sync":206,"./to-buffer":207,"safe-buffer":223}],204:[function(require,module,exports){
 (function (process,global){(function (){
 var defaultEncoding
 /* istanbul ignore next */
@@ -38885,7 +34407,7 @@ if (global.process && global.process.browser) {
 module.exports = defaultEncoding
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":213}],206:[function(require,module,exports){
+},{"_process":212}],205:[function(require,module,exports){
 var MAX_ALLOC = Math.pow(2, 30) - 1 // default in iojs
 
 module.exports = function (iterations, keylen) {
@@ -38906,7 +34428,7 @@ module.exports = function (iterations, keylen) {
   }
 }
 
-},{}],207:[function(require,module,exports){
+},{}],206:[function(require,module,exports){
 var md5 = require('create-hash/md5')
 var RIPEMD160 = require('ripemd160')
 var sha = require('sha.js')
@@ -39013,7 +34535,7 @@ function pbkdf2 (password, salt, iterations, keylen, digest) {
 
 module.exports = pbkdf2
 
-},{"./default-encoding":205,"./precondition":206,"./to-buffer":208,"create-hash/md5":81,"ripemd160":223,"safe-buffer":224,"sha.js":235}],208:[function(require,module,exports){
+},{"./default-encoding":204,"./precondition":205,"./to-buffer":207,"create-hash/md5":81,"ripemd160":222,"safe-buffer":223,"sha.js":234}],207:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 module.exports = function (thing, encoding, name) {
@@ -39028,7 +34550,7 @@ module.exports = function (thing, encoding, name) {
   }
 }
 
-},{"safe-buffer":224}],209:[function(require,module,exports){
+},{"safe-buffer":223}],208:[function(require,module,exports){
 (function () {
     /*
      * Async module to handle async messaging
@@ -39773,7 +35295,7 @@ module.exports = function (thing, encoding, name) {
     }
 })();
 
-},{"../utility/logger.js":211,"../utility/utility.js":212,"./socket.js":210}],210:[function(require,module,exports){
+},{"../utility/logger.js":210,"../utility/utility.js":211,"./socket.js":209}],209:[function(require,module,exports){
 (function() {
   /*
    * Socket Module to connect and handle Socket functionalities
@@ -40016,7 +35538,7 @@ module.exports = function (thing, encoding, name) {
 
 })();
 
-},{"isomorphic-ws":187}],211:[function(require,module,exports){
+},{"isomorphic-ws":186}],210:[function(require,module,exports){
 function LogLevel(logLevel){
     let ll = logLevel || 2;
     switch (ll) {
@@ -40052,7 +35574,7 @@ else {
     window.POD.LogLevel = LogLevel;
 }
 
-},{}],212:[function(require,module,exports){
+},{}],211:[function(require,module,exports){
 (function (global){(function (){
 (function() {
   /**
@@ -40280,7 +35802,7 @@ else {
 })();
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],213:[function(require,module,exports){
+},{}],212:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -40466,7 +35988,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],214:[function(require,module,exports){
+},{}],213:[function(require,module,exports){
 exports.publicEncrypt = require('./publicEncrypt')
 exports.privateDecrypt = require('./privateDecrypt')
 
@@ -40478,7 +36000,7 @@ exports.publicDecrypt = function publicDecrypt (key, buf) {
   return exports.privateDecrypt(key, buf, true)
 }
 
-},{"./privateDecrypt":217,"./publicEncrypt":218}],215:[function(require,module,exports){
+},{"./privateDecrypt":216,"./publicEncrypt":217}],214:[function(require,module,exports){
 var createHash = require('create-hash')
 var Buffer = require('safe-buffer').Buffer
 
@@ -40499,9 +36021,9 @@ function i2ops (c) {
   return out
 }
 
-},{"create-hash":80,"safe-buffer":224}],216:[function(require,module,exports){
+},{"create-hash":80,"safe-buffer":223}],215:[function(require,module,exports){
 arguments[4][27][0].apply(exports,arguments)
-},{"buffer":31,"dup":27}],217:[function(require,module,exports){
+},{"buffer":31,"dup":27}],216:[function(require,module,exports){
 var parseKeys = require('parse-asn1')
 var mgf = require('./mgf')
 var xor = require('./xor')
@@ -40608,7 +36130,7 @@ function compare (a, b) {
   return dif
 }
 
-},{"./mgf":215,"./withPublic":219,"./xor":220,"bn.js":216,"browserify-rsa":52,"create-hash":80,"parse-asn1":202,"safe-buffer":224}],218:[function(require,module,exports){
+},{"./mgf":214,"./withPublic":218,"./xor":219,"bn.js":215,"browserify-rsa":52,"create-hash":80,"parse-asn1":201,"safe-buffer":223}],217:[function(require,module,exports){
 var parseKeys = require('parse-asn1')
 var randomBytes = require('randombytes')
 var createHash = require('create-hash')
@@ -40698,7 +36220,7 @@ function nonZero (len) {
   return out
 }
 
-},{"./mgf":215,"./withPublic":219,"./xor":220,"bn.js":216,"browserify-rsa":52,"create-hash":80,"parse-asn1":202,"randombytes":221,"safe-buffer":224}],219:[function(require,module,exports){
+},{"./mgf":214,"./withPublic":218,"./xor":219,"bn.js":215,"browserify-rsa":52,"create-hash":80,"parse-asn1":201,"randombytes":220,"safe-buffer":223}],218:[function(require,module,exports){
 var BN = require('bn.js')
 var Buffer = require('safe-buffer').Buffer
 
@@ -40712,7 +36234,7 @@ function withPublic (paddedMsg, key) {
 
 module.exports = withPublic
 
-},{"bn.js":216,"safe-buffer":224}],220:[function(require,module,exports){
+},{"bn.js":215,"safe-buffer":223}],219:[function(require,module,exports){
 module.exports = function xor (a, b) {
   var len = a.length
   var i = -1
@@ -40722,7 +36244,7 @@ module.exports = function xor (a, b) {
   return a
 }
 
-},{}],221:[function(require,module,exports){
+},{}],220:[function(require,module,exports){
 (function (process,global){(function (){
 'use strict'
 
@@ -40776,7 +36298,7 @@ function randomBytes (size, cb) {
 }
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":213,"safe-buffer":224}],222:[function(require,module,exports){
+},{"_process":212,"safe-buffer":223}],221:[function(require,module,exports){
 (function (process,global){(function (){
 'use strict'
 
@@ -40888,7 +36410,7 @@ function randomFillSync (buf, offset, size) {
 }
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":213,"randombytes":221,"safe-buffer":224}],223:[function(require,module,exports){
+},{"_process":212,"randombytes":220,"safe-buffer":223}],222:[function(require,module,exports){
 'use strict'
 var Buffer = require('buffer').Buffer
 var inherits = require('inherits')
@@ -41053,7 +36575,7 @@ function fn5 (a, b, c, d, e, m, k, s) {
 
 module.exports = RIPEMD160
 
-},{"buffer":76,"hash-base":155,"inherits":186}],224:[function(require,module,exports){
+},{"buffer":76,"hash-base":154,"inherits":185}],223:[function(require,module,exports){
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
 var Buffer = buffer.Buffer
@@ -41117,7 +36639,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-},{"buffer":76}],225:[function(require,module,exports){
+},{"buffer":76}],224:[function(require,module,exports){
 (function (process){(function (){
 /* eslint-disable node/no-deprecated-api */
 
@@ -41198,7 +36720,7 @@ if (!safer.constants) {
 module.exports = safer
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":213,"buffer":76}],226:[function(require,module,exports){
+},{"_process":212,"buffer":76}],225:[function(require,module,exports){
 var grammar = module.exports = {
   v: [{
       name: 'version',
@@ -41457,7 +36979,7 @@ Object.keys(grammar).forEach(function (key) {
   });
 });
 
-},{}],227:[function(require,module,exports){
+},{}],226:[function(require,module,exports){
 var parser = require('./parser');
 var writer = require('./writer');
 
@@ -41467,7 +36989,7 @@ exports.parseFmtpConfig = parser.parseFmtpConfig;
 exports.parsePayloads = parser.parsePayloads;
 exports.parseRemoteCandidates = parser.parseRemoteCandidates;
 
-},{"./parser":228,"./writer":229}],228:[function(require,module,exports){
+},{"./parser":227,"./writer":228}],227:[function(require,module,exports){
 var toIntIfInt = function (v) {
   return String(Number(v)) === v ? Number(v) : v;
 };
@@ -41562,7 +37084,7 @@ exports.parseRemoteCandidates = function (str) {
   return candidates;
 };
 
-},{"./grammar":226}],229:[function(require,module,exports){
+},{"./grammar":225}],228:[function(require,module,exports){
 var grammar = require('./grammar');
 
 // customized util.format - discards excess arguments and can void middle ones
@@ -41678,7 +37200,7 @@ module.exports = function (session, opts) {
   return sdp.join('\r\n') + '\r\n';
 };
 
-},{"./grammar":226}],230:[function(require,module,exports){
+},{"./grammar":225}],229:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -41719,7 +37241,7 @@ module.exports = function arrayEquals(array) {
 };
 
 
-},{}],231:[function(require,module,exports){
+},{}],230:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -41737,7 +37259,7 @@ module.exports = function arrayEquals(array) {
 
 exports.Interop = require('./interop');
 
-},{"./interop":232}],232:[function(require,module,exports){
+},{"./interop":231}],231:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -42622,7 +38144,7 @@ Interop.prototype.toUnifiedPlan = function(desc) {
     //#endregion
 };
 
-},{"./array-equals":230,"./transform":233}],233:[function(require,module,exports){
+},{"./array-equals":229,"./transform":232}],232:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -42736,7 +38258,7 @@ exports.parse = function(sdp) {
 };
 
 
-},{"sdp-transform":227}],234:[function(require,module,exports){
+},{"sdp-transform":226}],233:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 // prototype class for hash functions
@@ -42819,7 +38341,7 @@ Hash.prototype._update = function () {
 
 module.exports = Hash
 
-},{"safe-buffer":224}],235:[function(require,module,exports){
+},{"safe-buffer":223}],234:[function(require,module,exports){
 var exports = module.exports = function SHA (algorithm) {
   algorithm = algorithm.toLowerCase()
 
@@ -42836,7 +38358,7 @@ exports.sha256 = require('./sha256')
 exports.sha384 = require('./sha384')
 exports.sha512 = require('./sha512')
 
-},{"./sha":236,"./sha1":237,"./sha224":238,"./sha256":239,"./sha384":240,"./sha512":241}],236:[function(require,module,exports){
+},{"./sha":235,"./sha1":236,"./sha224":237,"./sha256":238,"./sha384":239,"./sha512":240}],235:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-0, as defined
  * in FIPS PUB 180-1
@@ -42932,7 +38454,7 @@ Sha.prototype._hash = function () {
 
 module.exports = Sha
 
-},{"./hash":234,"inherits":186,"safe-buffer":224}],237:[function(require,module,exports){
+},{"./hash":233,"inherits":185,"safe-buffer":223}],236:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
  * in FIPS PUB 180-1
@@ -43033,7 +38555,7 @@ Sha1.prototype._hash = function () {
 
 module.exports = Sha1
 
-},{"./hash":234,"inherits":186,"safe-buffer":224}],238:[function(require,module,exports){
+},{"./hash":233,"inherits":185,"safe-buffer":223}],237:[function(require,module,exports){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
  * in FIPS 180-2
@@ -43088,7 +38610,7 @@ Sha224.prototype._hash = function () {
 
 module.exports = Sha224
 
-},{"./hash":234,"./sha256":239,"inherits":186,"safe-buffer":224}],239:[function(require,module,exports){
+},{"./hash":233,"./sha256":238,"inherits":185,"safe-buffer":223}],238:[function(require,module,exports){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
  * in FIPS 180-2
@@ -43225,7 +38747,7 @@ Sha256.prototype._hash = function () {
 
 module.exports = Sha256
 
-},{"./hash":234,"inherits":186,"safe-buffer":224}],240:[function(require,module,exports){
+},{"./hash":233,"inherits":185,"safe-buffer":223}],239:[function(require,module,exports){
 var inherits = require('inherits')
 var SHA512 = require('./sha512')
 var Hash = require('./hash')
@@ -43284,7 +38806,7 @@ Sha384.prototype._hash = function () {
 
 module.exports = Sha384
 
-},{"./hash":234,"./sha512":241,"inherits":186,"safe-buffer":224}],241:[function(require,module,exports){
+},{"./hash":233,"./sha512":240,"inherits":185,"safe-buffer":223}],240:[function(require,module,exports){
 var inherits = require('inherits')
 var Hash = require('./hash')
 var Buffer = require('safe-buffer').Buffer
@@ -43546,7 +39068,7 @@ Sha512.prototype._hash = function () {
 
 module.exports = Sha512
 
-},{"./hash":234,"inherits":186,"safe-buffer":224}],242:[function(require,module,exports){
+},{"./hash":233,"inherits":185,"safe-buffer":223}],241:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -43677,35 +39199,35 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":149,"inherits":186,"readable-stream/lib/_stream_duplex.js":244,"readable-stream/lib/_stream_passthrough.js":245,"readable-stream/lib/_stream_readable.js":246,"readable-stream/lib/_stream_transform.js":247,"readable-stream/lib/_stream_writable.js":248,"readable-stream/lib/internal/streams/end-of-stream.js":252,"readable-stream/lib/internal/streams/pipeline.js":254}],243:[function(require,module,exports){
+},{"events":148,"inherits":185,"readable-stream/lib/_stream_duplex.js":243,"readable-stream/lib/_stream_passthrough.js":244,"readable-stream/lib/_stream_readable.js":245,"readable-stream/lib/_stream_transform.js":246,"readable-stream/lib/_stream_writable.js":247,"readable-stream/lib/internal/streams/end-of-stream.js":251,"readable-stream/lib/internal/streams/pipeline.js":253}],242:[function(require,module,exports){
 arguments[4][59][0].apply(exports,arguments)
-},{"dup":59}],244:[function(require,module,exports){
+},{"dup":59}],243:[function(require,module,exports){
 arguments[4][60][0].apply(exports,arguments)
-},{"./_stream_readable":246,"./_stream_writable":248,"_process":213,"dup":60,"inherits":186}],245:[function(require,module,exports){
+},{"./_stream_readable":245,"./_stream_writable":247,"_process":212,"dup":60,"inherits":185}],244:[function(require,module,exports){
 arguments[4][61][0].apply(exports,arguments)
-},{"./_stream_transform":247,"dup":61,"inherits":186}],246:[function(require,module,exports){
+},{"./_stream_transform":246,"dup":61,"inherits":185}],245:[function(require,module,exports){
 arguments[4][62][0].apply(exports,arguments)
-},{"../errors":243,"./_stream_duplex":244,"./internal/streams/async_iterator":249,"./internal/streams/buffer_list":250,"./internal/streams/destroy":251,"./internal/streams/from":253,"./internal/streams/state":255,"./internal/streams/stream":256,"_process":213,"buffer":76,"dup":62,"events":149,"inherits":186,"string_decoder/":257,"util":31}],247:[function(require,module,exports){
+},{"../errors":242,"./_stream_duplex":243,"./internal/streams/async_iterator":248,"./internal/streams/buffer_list":249,"./internal/streams/destroy":250,"./internal/streams/from":252,"./internal/streams/state":254,"./internal/streams/stream":255,"_process":212,"buffer":76,"dup":62,"events":148,"inherits":185,"string_decoder/":256,"util":31}],246:[function(require,module,exports){
 arguments[4][63][0].apply(exports,arguments)
-},{"../errors":243,"./_stream_duplex":244,"dup":63,"inherits":186}],248:[function(require,module,exports){
+},{"../errors":242,"./_stream_duplex":243,"dup":63,"inherits":185}],247:[function(require,module,exports){
 arguments[4][64][0].apply(exports,arguments)
-},{"../errors":243,"./_stream_duplex":244,"./internal/streams/destroy":251,"./internal/streams/state":255,"./internal/streams/stream":256,"_process":213,"buffer":76,"dup":64,"inherits":186,"util-deprecate":261}],249:[function(require,module,exports){
+},{"../errors":242,"./_stream_duplex":243,"./internal/streams/destroy":250,"./internal/streams/state":254,"./internal/streams/stream":255,"_process":212,"buffer":76,"dup":64,"inherits":185,"util-deprecate":259}],248:[function(require,module,exports){
 arguments[4][65][0].apply(exports,arguments)
-},{"./end-of-stream":252,"_process":213,"dup":65}],250:[function(require,module,exports){
+},{"./end-of-stream":251,"_process":212,"dup":65}],249:[function(require,module,exports){
 arguments[4][66][0].apply(exports,arguments)
-},{"buffer":76,"dup":66,"util":31}],251:[function(require,module,exports){
+},{"buffer":76,"dup":66,"util":31}],250:[function(require,module,exports){
 arguments[4][67][0].apply(exports,arguments)
-},{"_process":213,"dup":67}],252:[function(require,module,exports){
+},{"_process":212,"dup":67}],251:[function(require,module,exports){
 arguments[4][68][0].apply(exports,arguments)
-},{"../../../errors":243,"dup":68}],253:[function(require,module,exports){
+},{"../../../errors":242,"dup":68}],252:[function(require,module,exports){
 arguments[4][69][0].apply(exports,arguments)
-},{"dup":69}],254:[function(require,module,exports){
+},{"dup":69}],253:[function(require,module,exports){
 arguments[4][70][0].apply(exports,arguments)
-},{"../../../errors":243,"./end-of-stream":252,"dup":70}],255:[function(require,module,exports){
+},{"../../../errors":242,"./end-of-stream":251,"dup":70}],254:[function(require,module,exports){
 arguments[4][71][0].apply(exports,arguments)
-},{"../../../errors":243,"dup":71}],256:[function(require,module,exports){
+},{"../../../errors":242,"dup":71}],255:[function(require,module,exports){
 arguments[4][72][0].apply(exports,arguments)
-},{"dup":72,"events":149}],257:[function(require,module,exports){
+},{"dup":72,"events":148}],256:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -44002,88 +39524,9 @@ function simpleWrite(buf) {
 function simpleEnd(buf) {
   return buf && buf.length ? this.write(buf) : '';
 }
-},{"safe-buffer":258}],258:[function(require,module,exports){
+},{"safe-buffer":257}],257:[function(require,module,exports){
 arguments[4][74][0].apply(exports,arguments)
-},{"buffer":76,"dup":74}],259:[function(require,module,exports){
-(function (setImmediate,clearImmediate){(function (){
-var nextTick = require('process/browser.js').nextTick;
-var apply = Function.prototype.apply;
-var slice = Array.prototype.slice;
-var immediateIds = {};
-var nextImmediateId = 0;
-
-// DOM APIs, for completeness
-
-exports.setTimeout = function() {
-  return new Timeout(apply.call(setTimeout, window, arguments), clearTimeout);
-};
-exports.setInterval = function() {
-  return new Timeout(apply.call(setInterval, window, arguments), clearInterval);
-};
-exports.clearTimeout =
-exports.clearInterval = function(timeout) { timeout.close(); };
-
-function Timeout(id, clearFn) {
-  this._id = id;
-  this._clearFn = clearFn;
-}
-Timeout.prototype.unref = Timeout.prototype.ref = function() {};
-Timeout.prototype.close = function() {
-  this._clearFn.call(window, this._id);
-};
-
-// Does not start the time, just sets up the members needed.
-exports.enroll = function(item, msecs) {
-  clearTimeout(item._idleTimeoutId);
-  item._idleTimeout = msecs;
-};
-
-exports.unenroll = function(item) {
-  clearTimeout(item._idleTimeoutId);
-  item._idleTimeout = -1;
-};
-
-exports._unrefActive = exports.active = function(item) {
-  clearTimeout(item._idleTimeoutId);
-
-  var msecs = item._idleTimeout;
-  if (msecs >= 0) {
-    item._idleTimeoutId = setTimeout(function onTimeout() {
-      if (item._onTimeout)
-        item._onTimeout();
-    }, msecs);
-  }
-};
-
-// That's not how node.js implements it but the exposed api is the same.
-exports.setImmediate = typeof setImmediate === "function" ? setImmediate : function(fn) {
-  var id = nextImmediateId++;
-  var args = arguments.length < 2 ? false : slice.call(arguments, 1);
-
-  immediateIds[id] = true;
-
-  nextTick(function onNextTick() {
-    if (immediateIds[id]) {
-      // fn.call() is faster so we optimize for the common use-case
-      // @see http://jsperf.com/call-apply-segu
-      if (args) {
-        fn.apply(null, args);
-      } else {
-        fn.call(null);
-      }
-      // Prevent ids from leaking
-      exports.clearImmediate(id);
-    }
-  });
-
-  return id;
-};
-
-exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
-  delete immediateIds[id];
-};
-}).call(this)}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
-},{"process/browser.js":213,"timers":259}],260:[function(require,module,exports){
+},{"buffer":76,"dup":74}],258:[function(require,module,exports){
 /*!
  * UAParser.js v0.7.24
  * Lightweight JavaScript-based User-Agent string parser
@@ -45022,7 +40465,7 @@ exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate :
 
 })(typeof window === 'object' ? window : this);
 
-},{}],261:[function(require,module,exports){
+},{}],259:[function(require,module,exports){
 (function (global){(function (){
 
 /**
@@ -45093,7 +40536,7 @@ function config (name) {
 }
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],262:[function(require,module,exports){
+},{}],260:[function(require,module,exports){
 /**
  * Convert array of 16 byte values to UUID string format of the form:
  * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
@@ -45121,7 +40564,7 @@ function bytesToUuid(buf, offset) {
 
 module.exports = bytesToUuid;
 
-},{}],263:[function(require,module,exports){
+},{}],261:[function(require,module,exports){
 // Unique ID creation requires a high quality random # generator.  In the
 // browser this is a little complicated due to unknown quality of Math.random()
 // and inconsistent support for the `crypto` API.  We do the best we can via
@@ -45157,7 +40600,7 @@ if (getRandomValues) {
   };
 }
 
-},{}],264:[function(require,module,exports){
+},{}],262:[function(require,module,exports){
 var rng = require('./lib/rng');
 var bytesToUuid = require('./lib/bytesToUuid');
 
@@ -45188,7 +40631,7 @@ function v4(options, buf, offset) {
 
 module.exports = v4;
 
-},{"./lib/bytesToUuid":262,"./lib/rng":263}],265:[function(require,module,exports){
+},{"./lib/bytesToUuid":260,"./lib/rng":261}],263:[function(require,module,exports){
 /*
 WildEmitter.js is a slim little event emitter by @henrikjoreteg largely based
 on @visionmedia's Emitter from UI Kit.
@@ -45345,7 +40788,7 @@ WildEmitter.mixin = function (constructor) {
 
 WildEmitter.mixin(WildEmitter);
 
-},{}],266:[function(require,module,exports){
+},{}],264:[function(require,module,exports){
 "use strict";var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");var _typeof3=require("@babel/runtime/helpers/typeof");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _regenerator=_interopRequireDefault(require("@babel/runtime/regenerator"));var _asyncToGenerator2=_interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _constants=require("./lib/constants");var _kurentoUtils=_interopRequireDefault(require("kurento-utils"));var _utility=_interopRequireDefault(require("./utility/utility"));var _eventsModule=require("./events.module.js");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));var _errorHandler=_interopRequireWildcard(require("./lib/errorHandler"));function _getRequireWildcardCache(nodeInterop){if(typeof WeakMap!=="function")return null;var cacheBabelInterop=new WeakMap();var cacheNodeInterop=new WeakMap();return(_getRequireWildcardCache=function _getRequireWildcardCache(nodeInterop){return nodeInterop?cacheNodeInterop:cacheBabelInterop;})(nodeInterop);}function _interopRequireWildcard(obj,nodeInterop){if(!nodeInterop&&obj&&obj.__esModule){return obj;}if(obj===null||_typeof3(obj)!=="object"&&typeof obj!=="function"){return{"default":obj};}var cache=_getRequireWildcardCache(nodeInterop);if(cache&&cache.has(obj)){return cache.get(obj);}var newObj={};var hasPropertyDescriptor=Object.defineProperty&&Object.getOwnPropertyDescriptor;for(var key in obj){if(key!=="default"&&Object.prototype.hasOwnProperty.call(obj,key)){var desc=hasPropertyDescriptor?Object.getOwnPropertyDescriptor(obj,key):null;if(desc&&(desc.get||desc.set)){Object.defineProperty(newObj,key,desc);}else{newObj[key]=obj[key];}}}newObj["default"]=obj;if(cache){cache.set(obj,newObj);}return newObj;}function ChatCall(params){var _params$asyncLogging,_params$asyncLogging2,_params$asyncLogging3,_params$callOptions,_params$callOptions2;var//Utility = params.Utility,
 currentModuleInstance=this,asyncClient=params.asyncClient,//chatEvents = params.chatEvents,
 chatMessaging=params.chatMessaging,token=params.token,asyncRequestTimeouts={},callTypes={'VOICE':0x0,'VIDEO':0x1},generalTypeCode=params.typeCode,callOptions=params.callOptions,useInternalTurnAddress=!!(params.callOptions&&params.callOptions.useInternalTurnAddress),callTurnIp=params.callOptions&&params.callOptions.hasOwnProperty('callTurnIp')&&typeof params.callOptions.callTurnIp==='string'?params.callOptions.callTurnIp:'46.32.6.188',callDivId=params.callOptions&&params.callOptions.hasOwnProperty('callDivId')&&typeof params.callOptions.callDivId==='string'?params.callOptions.callDivId:'call-div',callAudioTagClassName=params.callOptions&&params.callOptions.hasOwnProperty('callAudioTagClassName')&&typeof params.callOptions.callAudioTagClassName==='string'?params.callOptions.callAudioTagClassName:'',callVideoTagClassName=params.callOptions&&params.callOptions.hasOwnProperty('callVideoTagClassName')&&typeof params.callOptions.callVideoTagClassName==='string'?params.callOptions.callVideoTagClassName:'',callVideoMinWidth=params.callOptions&&params.callOptions.hasOwnProperty('callVideo')&&(0,_typeof2["default"])(params.callOptions.callVideo)==='object'&&params.callOptions.callVideo.hasOwnProperty('minWidth')?params.callOptions.callVideo.minWidth:320,callVideoMinHeight=params.callOptions&&params.callOptions.hasOwnProperty('callVideo')&&(0,_typeof2["default"])(params.callOptions.callVideo)==='object'&&params.callOptions.callVideo.hasOwnProperty('minHeight')?params.callOptions.callVideo.minHeight:180,currentCallParams={},requestedCallId=null,acceptedCallId=null,currentCallId=null,latestCallRequestId=null,//shouldReconnectCallTimeout = null,
@@ -46085,10 +41528,13 @@ invitees.forEach(function(item){item.idType=_constants.inviteeVOidTypes[item.idT
          }
      }*/return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};this.deviceManager=_deviceManager["default"];this.resetCallStream=function(_ref9,callback){var userId=_ref9.userId,_ref9$streamType=_ref9.streamType,streamType=_ref9$streamType===void 0?'audio':_ref9$streamType;return new Promise(function(resolve,reject){if(userId==='screenShare'||streamType==='video'){if(callUsers[userId]){callUsers[userId].videoTopicManager.recreateTopic().then(function(){resolve();callback&&callback({hasError:false});})["catch"](function(){reject();callback&&callback({hasError:true});});}}else{callUsers[userId].audioTopicManager.recreateTopic().then(function(){resolve();callback&&callback({hasError:false});})["catch"](function(){reject();callback&&callback({hasError:true});});}});};this.callStop=callStop;this.restartMedia=restartMedia;}var _default=ChatCall;exports["default"]=_default;
 
-},{"./events.module.js":268,"./lib/call/deviceManager.js":269,"./lib/constants":270,"./lib/errorHandler":271,"./utility/utility":276,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/toConsumableArray":9,"@babel/runtime/helpers/typeof":10,"@babel/runtime/regenerator":12,"kurento-utils":190}],267:[function(require,module,exports){
-'use strict';var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");var _typeof3=require("@babel/runtime/helpers/typeof");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _podasyncWsOnly=_interopRequireDefault(require("podasync-ws-only"));var _utility=_interopRequireDefault(require("./utility/utility"));var _dexie=_interopRequireDefault(require("dexie"));var _call=_interopRequireDefault(require("./call.module"));var _events=_interopRequireWildcard(require("./events.module"));var _messaging=_interopRequireDefault(require("./messaging.module"));var _constants=require("./lib/constants");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));var _errorHandler=require("./lib/errorHandler");var _store=require("./lib/store");function _getRequireWildcardCache(nodeInterop){if(typeof WeakMap!=="function")return null;var cacheBabelInterop=new WeakMap();var cacheNodeInterop=new WeakMap();return(_getRequireWildcardCache=function _getRequireWildcardCache(nodeInterop){return nodeInterop?cacheNodeInterop:cacheBabelInterop;})(nodeInterop);}function _interopRequireWildcard(obj,nodeInterop){if(!nodeInterop&&obj&&obj.__esModule){return obj;}if(obj===null||_typeof3(obj)!=="object"&&typeof obj!=="function"){return{"default":obj};}var cache=_getRequireWildcardCache(nodeInterop);if(cache&&cache.has(obj)){return cache.get(obj);}var newObj={};var hasPropertyDescriptor=Object.defineProperty&&Object.getOwnPropertyDescriptor;for(var key in obj){if(key!=="default"&&Object.prototype.hasOwnProperty.call(obj,key)){var desc=hasPropertyDescriptor?Object.getOwnPropertyDescriptor(obj,key):null;if(desc&&(desc.get||desc.set)){Object.defineProperty(newObj,key,desc);}else{newObj[key]=obj[key];}}}newObj["default"]=obj;if(cache){cache.set(obj,newObj);}return newObj;}function Chat(params){/*******************************************************
-     *          P R I V A T E   V A R I A B L E S          *
-     *******************************************************/var asyncClient,peerId,oldPeerId,token=params.token,generalTypeCode=params.typeCode||'default',typeCodeOwnerId=params.typeCodeOwnerId||null,mapApiKey=params.mapApiKey||'8b77db18704aa646ee5aaea13e7370f4f88b9e8c',deviceId,productEnv=typeof navigator!='undefined'?navigator.product:'undefined',db,queueDb,forceWaitQueueInMemory=params.forceWaitQueueInMemory&&typeof params.forceWaitQueueInMemory==='boolean'?params.forceWaitQueueInMemory:false,hasCache=productEnv!=='ReactNative'&&typeof _dexie["default"]!='undefined',cacheInMemory=forceWaitQueueInMemory?true:!hasCache,enableCache=params.enableCache&&typeof params.enableCache==='boolean'?params.enableCache:false,canUseCache=hasCache&&enableCache,isCacheReady=false,cacheDeletingInProgress=false,cacheExpireTime=params.cacheExpireTime||2*24*60*60*1000,cacheSecret='VjaaS9YxNdVVAd3cAsRPcU5FyxRcyyV6tG6bFGjjK5RV8JJjLrXNbS5zZxnqUT6Y',cacheSyncWorker,grantDeviceIdFromSSO=params.grantDeviceIdFromSSO&&typeof params.grantDeviceIdFromSSO==='boolean'?params.grantDeviceIdFromSSO:false,messagesDelivery={},messagesSeen={},deliveryInterval,deliveryIntervalPitch=params.deliveryIntervalPitch||2000,seenInterval,seenIntervalPitch=params.seenIntervalPitch||2000,getImageFromLinkObjects={},locationPingTypes={'CHAT':1,'THREAD':2,'CONTACTS':3},systemMessageIntervalPitch=params.systemMessageIntervalPitch||1000,isTypingInterval,protocol=params.protocol||'websocket',queueHost=params.queueHost,queuePort=params.queuePort,queueUsername=params.queueUsername,queuePassword=params.queuePassword,queueReceive=params.queueReceive,queueSend=params.queueSend,queueConnectionTimeout=params.queueConnectionTimeout,socketAddress=params.socketAddress,serverName=params.serverName||'',wsConnectionWaitTime=params.wsConnectionWaitTime,connectionRetryInterval=params.connectionRetryInterval,msgPriority=params.msgPriority||1,messageTtl=params.messageTtl||10000,reconnectOnClose=params.reconnectOnClose,asyncLogging=params.asyncLogging,chatPingMessageInterval=20000,getUserInfoTimeout,config={getHistoryCount:50},SERVICE_ADDRESSES={SSO_ADDRESS:params.ssoHost||'https://accounts.pod.ir',PLATFORM_ADDRESS:params.platformHost||'https://api.pod.ir/srv/core',FILESERVER_ADDRESS:params.fileServer||'https://core.pod.ir',PODSPACE_FILESERVER_ADDRESS:params.podSpaceFileServer||'https://podspace.pod.ir',MAP_ADDRESS:params.mapServer||'https://api.neshan.org/v2'},SERVICES_PATH={// Grant Devices
+},{"./events.module.js":266,"./lib/call/deviceManager.js":267,"./lib/constants":268,"./lib/errorHandler":269,"./utility/utility":274,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/toConsumableArray":9,"@babel/runtime/helpers/typeof":10,"@babel/runtime/regenerator":12,"kurento-utils":189}],265:[function(require,module,exports){
+'use strict';var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _podasyncWsOnly=_interopRequireDefault(require("podasync-ws-only"));var _utility=_interopRequireDefault(require("./utility/utility"));var _call=_interopRequireDefault(require("./call.module"));var _events=require("./events.module");var _messaging=_interopRequireDefault(require("./messaging.module"));var _constants=require("./lib/constants");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));var _errorHandler=require("./lib/errorHandler");var _store=require("./lib/store");function Chat(params){/*******************************************************
+   *          P R I V A T E   V A R I A B L E S          *
+   *******************************************************/var asyncClient,peerId,oldPeerId,token=params.token,generalTypeCode=params.typeCode||'default',typeCodeOwnerId=params.typeCodeOwnerId||null,mapApiKey=params.mapApiKey||'8b77db18704aa646ee5aaea13e7370f4f88b9e8c',deviceId,productEnv=typeof navigator!='undefined'?navigator.product:'undefined',// queueDb,
+// forceWaitQueueInMemory = true,//(params.forceWaitQueueInMemory && typeof params.forceWaitQueueInMemory === 'boolean') ? params.forceWaitQueueInMemory : false,
+cacheInMemory=true,// enableCache = (params.enableCache && typeof params.enableCache === 'boolean') ? params.enableCache : false,
+cacheSecret='VjaaS9YxNdVVAd3cAsRPcU5FyxRcyyV6tG6bFGjjK5RV8JJjLrXNbS5zZxnqUT6Y',grantDeviceIdFromSSO=params.grantDeviceIdFromSSO&&typeof params.grantDeviceIdFromSSO==='boolean'?params.grantDeviceIdFromSSO:false,messagesDelivery={},messagesSeen={},deliveryInterval,deliveryIntervalPitch=params.deliveryIntervalPitch||2000,seenInterval,seenIntervalPitch=params.seenIntervalPitch||2000,getImageFromLinkObjects={},locationPingTypes={'CHAT':1,'THREAD':2,'CONTACTS':3},systemMessageIntervalPitch=params.systemMessageIntervalPitch||1000,isTypingInterval,protocol=params.protocol||'websocket',queueHost=params.queueHost,queuePort=params.queuePort,queueUsername=params.queueUsername,queuePassword=params.queuePassword,queueReceive=params.queueReceive,queueSend=params.queueSend,queueConnectionTimeout=params.queueConnectionTimeout,socketAddress=params.socketAddress,serverName=params.serverName||'',wsConnectionWaitTime=params.wsConnectionWaitTime,connectionRetryInterval=params.connectionRetryInterval,msgPriority=params.msgPriority||1,messageTtl=params.messageTtl||10000,reconnectOnClose=params.reconnectOnClose,asyncLogging=params.asyncLogging,chatPingMessageInterval=20000,getUserInfoTimeout,config={getHistoryCount:50},SERVICE_ADDRESSES={SSO_ADDRESS:params.ssoHost||'https://accounts.pod.ir',PLATFORM_ADDRESS:params.platformHost||'https://api.pod.ir/srv/core',FILESERVER_ADDRESS:params.fileServer||'https://core.pod.ir',PODSPACE_FILESERVER_ADDRESS:params.podSpaceFileServer||'https://podspace.pod.ir',MAP_ADDRESS:params.mapServer||'https://api.neshan.org/v2'},SERVICES_PATH={// Grant Devices
 SSO_DEVICES:'/oauth2/grants/devices',SSO_GENERATE_KEY:'/handshake/users/',SSO_GET_KEY:'/handshake/keys/',// Contacts
 ADD_CONTACTS:'/nzh/addContacts',UPDATE_CONTACTS:'/nzh/updateContacts',REMOVE_CONTACTS:'/nzh/removeContacts',SEARCH_CONTACTS:'/nzh/listContacts',// File/Image Upload and Download
 UPLOAD_IMAGE:'/nzh/uploadImage',GET_IMAGE:'/nzh/image/',UPLOAD_FILE:'/nzh/uploadFile',GET_FILE:'/nzh/file/',// POD Drive Services
@@ -46109,33 +41555,46 @@ REVERSE:'/reverse',SEARCH:'/search',ROUTING:'/routing',STATIC_IMAGE:'/static'},C
 6600:'Your Environment doesn\'t have Databse compatibility',6601:'Database is not defined! (missing db)',6602:'Database Error',// Map Errors
 6700:'You should Enter a Center Location like {lat: " ", lng: " "}'},getUserInfoRetry=5,getUserInfoRetryCount=0,chatFullStateObject={},httpRequestObject={},connectionCheckTimeout=params.connectionCheckTimeout,connectionCheckTimeoutThreshold=params.connectionCheckTimeoutThreshold,httpRequestTimeout=params.httpRequestTimeout>=0?params.httpRequestTimeout:0,asyncRequestTimeout=typeof params.asyncRequestTimeout==='number'&&params.asyncRequestTimeout>=0?params.asyncRequestTimeout:0,//callRequestTimeout = (typeof params.callRequestTimeout === 'number' && params.callRequestTimeout >= 0) ? params.callRequestTimeout : 10000,
 httpUploadRequestTimeout=params.httpUploadRequestTimeout>=0?params.httpUploadRequestTimeout:0,actualTimingLog=params.asyncLogging.actualTiming&&typeof params.asyncLogging.actualTiming==='boolean'?params.asyncLogging.actualTiming:false,consoleLogging=params.asyncLogging.consoleLogging&&typeof params.asyncLogging.consoleLogging==='boolean'?params.asyncLogging.consoleLogging:false,minIntegerValue=Number.MAX_SAFE_INTEGER*-1,maxIntegerValue=Number.MAX_SAFE_INTEGER,chatSendQueue=[],chatWaitQueue=[],chatUploadQueue=[],fullResponseObject=params.fullResponseObject||false;if(!consoleLogging){/**
-         * Disable kurento-utils logs
-         */window.Logger={error:function error(){},log:function log(){},debug:function debug(){}};}(0,_events.initEventHandler)(Object.assign(params,{consoleLogging:consoleLogging}));var/*chatEvents = new ChatEvents(Object.assign(params, {
-
-            //Utility: Utility,
-            consoleLogging,
-        })),*/chatMessaging=new _messaging["default"](Object.assign(params,{asyncClient:asyncClient,//Utility: Utility,
+     * Disable kurento-utils logs
+     */window.Logger={error:function error(){},log:function log(){},debug:function debug(){}};}(0,_events.initEventHandler)(Object.assign(params,{consoleLogging:consoleLogging}));var/*chatEvents = new ChatEvents(Object.assign(params, {
+        //Utility: Utility,
+      consoleLogging,
+  })),*/chatMessaging=new _messaging["default"](Object.assign(params,{asyncClient:asyncClient,//Utility: Utility,
 consoleLogging:consoleLogging,generalTypeCode:generalTypeCode,typeCodeOwnerId:typeCodeOwnerId,chatPingMessageInterval:chatPingMessageInterval,asyncRequestTimeout:asyncRequestTimeout,serverName:serverName,messageTtl:messageTtl,msgPriority:msgPriority})),callModule=new _call["default"](Object.assign(params,{//Utility: Utility,
 consoleLogging:consoleLogging,chatEvents:_events.chatEvents,asyncClient:asyncClient,chatMessaging:chatMessaging}));/*******************************************************
-     *            P R I V A T E   M E T H O D S            *
-     *******************************************************/var init=function init(){/**
-             * Initialize Cache Databases
-             */startCacheDatabases(function(){if(grantDeviceIdFromSSO){var getDeviceIdWithTokenTime=new Date().getTime();getDeviceIdWithToken(function(retrievedDeviceId){if(actualTimingLog){_utility["default"].chatStepLogger('Get Device ID ',new Date().getTime()-getDeviceIdWithTokenTime);}deviceId=retrievedDeviceId;initAsync();});}else{initAsync();}});},/**
-         * Initialize Async
-         *
-         * Initializes Async module and sets proper callbacks
-         *
-         * @access private
-         *
-         * @return {undefined}
-         * @return {undefined}
-         */initAsync=function initAsync(){var asyncGetReadyTime=new Date().getTime();asyncClient=new _podasyncWsOnly["default"]({protocol:protocol,queueHost:queueHost,queuePort:queuePort,queueUsername:queueUsername,queuePassword:queuePassword,queueReceive:queueReceive,queueSend:queueSend,queueConnectionTimeout:queueConnectionTimeout,socketAddress:socketAddress,serverName:serverName,deviceId:deviceId,wsConnectionWaitTime:wsConnectionWaitTime,connectionRetryInterval:connectionRetryInterval,connectionCheckTimeout:connectionCheckTimeout,connectionCheckTimeoutThreshold:connectionCheckTimeoutThreshold,messageTtl:messageTtl,reconnectOnClose:reconnectOnClose,asyncLogging:asyncLogging,logLevel:consoleLogging?3:1});callModule.asyncInitialized(asyncClient);chatMessaging.asyncInitialized(asyncClient);asyncClient.on('asyncReady',function(){if(actualTimingLog){_utility["default"].chatStepLogger('Async Connection ',new Date().getTime()-asyncGetReadyTime);}peerId=asyncClient.getPeerId();if(!chatMessaging.userInfo){var getUserInfoTime=new Date().getTime();getUserInfo(function(userInfoResult){if(actualTimingLog){_utility["default"].chatStepLogger('Get User Info ',new Date().getTime()-getUserInfoTime);}if(!userInfoResult.hasError){chatMessaging.userInfo=userInfoResult.result.user;// getAllThreads({
+   *            P R I V A T E   M E T H O D S            *
+   *******************************************************/var init=function init(){/**
+     * Initialize Cache Databases
+     */ // startCacheDatabases(function () {
+//     if (grantDeviceIdFromSSO) {
+//         var getDeviceIdWithTokenTime = new Date().getTime();
+//         getDeviceIdWithToken(function (retrievedDeviceId) {
+//             if (actualTimingLog) {
+//                 Utility.chatStepLogger('Get Device ID ', new Date().getTime() - getDeviceIdWithTokenTime);
+//             }
+//
+//             deviceId = retrievedDeviceId;
+//
+//             initAsync();
+//         });
+//     } else {
+//         initAsync();
+//     }
+// });
+if(grantDeviceIdFromSSO){var getDeviceIdWithTokenTime=new Date().getTime();getDeviceIdWithToken(function(retrievedDeviceId){if(actualTimingLog){_utility["default"].chatStepLogger('Get Device ID ',new Date().getTime()-getDeviceIdWithTokenTime);}deviceId=retrievedDeviceId;initAsync();});}else{initAsync();}},/**
+   * Initialize Async
+   *
+   * Initializes Async module and sets proper callbacks
+   *
+   * @access private
+   *
+   * @return {undefined}
+   * @return {undefined}
+   */initAsync=function initAsync(){var asyncGetReadyTime=new Date().getTime();asyncClient=new _podasyncWsOnly["default"]({protocol:protocol,queueHost:queueHost,queuePort:queuePort,queueUsername:queueUsername,queuePassword:queuePassword,queueReceive:queueReceive,queueSend:queueSend,queueConnectionTimeout:queueConnectionTimeout,socketAddress:socketAddress,serverName:serverName,deviceId:deviceId,wsConnectionWaitTime:wsConnectionWaitTime,connectionRetryInterval:connectionRetryInterval,connectionCheckTimeout:connectionCheckTimeout,connectionCheckTimeoutThreshold:connectionCheckTimeoutThreshold,messageTtl:messageTtl,reconnectOnClose:reconnectOnClose,asyncLogging:asyncLogging,logLevel:consoleLogging?3:1});callModule.asyncInitialized(asyncClient);chatMessaging.asyncInitialized(asyncClient);asyncClient.on('asyncReady',function(){if(actualTimingLog){_utility["default"].chatStepLogger('Async Connection ',new Date().getTime()-asyncGetReadyTime);}peerId=asyncClient.getPeerId();if(!chatMessaging.userInfo){var getUserInfoTime=new Date().getTime();getUserInfo(function(userInfoResult){if(actualTimingLog){_utility["default"].chatStepLogger('Get User Info ',new Date().getTime()-getUserInfoTime);}if(!userInfoResult.hasError){chatMessaging.userInfo=userInfoResult.result.user;// getAllThreads({
 //     summary: true,
 //     cache: false
 // });
-/**
-                             * Check if user has KeyId stored in their cache or not?
-                             */if(canUseCache){if(db){db.users.where('id').equals(parseInt(chatMessaging.userInfo.id)).toArray().then(function(users){if(users.length>0&&typeof users[0].keyId!='undefined'){var user=users[0];getEncryptionKey({keyId:user.keyId},function(result){if(!result.hasError){cacheSecret=result.secretKey;chatMessaging.chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();}else{if(result.message!==''){try{var response=JSON.parse(result.message);if(response.error==='invalid_param'){generateEncryptionKey({keyAlgorithm:'AES',keySize:256},function(){chatMessaging.chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();});}}catch(e){consoleLogging&&console.log(e);}}}});}else{generateEncryptionKey({keyAlgorithm:'AES',keySize:256},function(){chatMessaging.chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();});}})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.errorCode,message:error.errorMessage,error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}else{chatMessaging.chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();}}});}else if(chatMessaging.userInfo.id>0){chatMessaging.chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();}deliveryInterval&&clearInterval(deliveryInterval);deliveryInterval=setInterval(function(){if(Object.keys(messagesDelivery).length){messagesDeliveryQueueHandler();}},deliveryIntervalPitch);seenInterval&&clearInterval(seenInterval);seenInterval=setInterval(function(){if(Object.keys(messagesSeen).length){messagesSeenQueueHandler();}},seenIntervalPitch);//shouldReconnectCall();
+chatMessaging.chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();}});}else if(chatMessaging.userInfo.id>0){chatMessaging.chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();}deliveryInterval&&clearInterval(deliveryInterval);deliveryInterval=setInterval(function(){if(Object.keys(messagesDelivery).length){messagesDeliveryQueueHandler();}},deliveryIntervalPitch);seenInterval&&clearInterval(seenInterval);seenInterval=setInterval(function(){if(Object.keys(messagesSeen).length){messagesSeenQueueHandler();}},seenIntervalPitch);//shouldReconnectCall();
 });asyncClient.on('stateChange',function(state){_events.chatEvents.fireEvent('chatState',state);chatFullStateObject=state;switch(state.socketState){case 1:// CONNECTED
 if(state.deviceRegister&&state.serverRegister){chatMessaging.chatState=true;// chatMessaging.ping();
 chatMessaging.startChatPing();}break;case 0:// CONNECTING
@@ -46144,169 +41603,165 @@ chatMessaging.chatState=false;chatMessaging.stopChatPing();break;case 3:// CLOSE
 chatMessaging.chatState=false;chatMessaging.stopChatPing();// TODO: Check if this is OK or not?!
 //chatMessaging.sendPingTimeout && clearTimeout(chatMessaging.sendPingTimeout);
 break;}});asyncClient.on('connect',function(newPeerId){asyncGetReadyTime=new Date().getTime();peerId=newPeerId;_events.chatEvents.fireEvent('connect');chatMessaging.ping();});asyncClient.on('disconnect',function(event){oldPeerId=peerId;peerId=undefined;_events.chatEvents.fireEvent('disconnect',event);_events.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:'Call Socket is closed!',error:event});});asyncClient.on('reconnect',function(newPeerId){peerId=newPeerId;_events.chatEvents.fireEvent('reconnect');});asyncClient.on('message',function(params,ack){receivedAsyncMessageHandler(params);ack&&ack();});asyncClient.on('error',function(error){if(error.errorCode){_events.chatEvents.fireEvent('error',{code:error.errorCode,message:error.errorMessage,error:error.errorEvent});}else{(0,_errorHandler.raiseError)(_errorHandler.errorList.SOCKET_CONNECTION_FAILED,null,true,{});}});},/**
-         * Get Device Id With Token
-         *
-         * If ssoGrantDevicesAddress set as TRUE, chat agent gets Device ID
-         * from SSO server and passes it to Async Module
-         *
-         * @access private
-         *
-         * @param {function}  callback    The callback function to run after getting Device Id
-         *
-         * @return {undefined}
-         */getDeviceIdWithToken=function getDeviceIdWithToken(callback){var deviceId;var params={url:SERVICE_ADDRESSES.SSO_ADDRESS+SERVICES_PATH.SSO_DEVICES,method:'GET',headers:{'Authorization':'Bearer '+token}};httpRequest(params,function(result){if(!result.hasError){var devices=JSON.parse(result.result.responseText).devices;if(devices&&devices.length>0){for(var i=0;i<devices.length;i++){if(devices[i].current){deviceId=devices[i].uid;break;}}if(!deviceId){_events.chatEvents.fireEvent('error',{code:6000,message:CHAT_ERRORS[6000],error:null});}else{callback(deviceId);}}else{_events.chatEvents.fireEvent('error',{code:6001,message:CHAT_ERRORS[6001],error:null});}}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});},/**
-         * Handshake with SSO to get user's keys
-         *
-         * In order to Encrypt and Decrypt cache we need a key.
-         * We can retrieve encryption keys from SSO, all we
-         * need to do is to do a handshake with SSO and
-         * get the keys.
-         *
-         * @access private
-         *
-         * @param params
-         * @param {function}  callback    The callback function to run after Generating Keys
-         *
-         * @return {undefined}
-         */generateEncryptionKey=function generateEncryptionKey(params,callback){var data={validity:10*365*24*60*60,// 10 Years
-renew:false,keyAlgorithm:'aes',keySize:256};if(params){if(params.keyAlgorithm!==undefined){data.keyAlgorithm=params.keyAlgorithm;}if(parseInt(params.keySize)>0){data.keySize=params.keySize;}}var httpRequestParams={url:SERVICE_ADDRESSES.SSO_ADDRESS+SERVICES_PATH.SSO_GENERATE_KEY,method:'POST',data:data,headers:{'Authorization':'Bearer '+token}};httpRequest(httpRequestParams,function(result){if(!result.hasError){try{var response=JSON.parse(result.result.responseText);}catch(e){consoleLogging&&console.log(e);}/**
-                     * Save new Key Id in cache and update cacheSecret
-                     */if(canUseCache){if(db){db.users.update(chatMessaging.userInfo.id,{keyId:response.keyId}).then(function(){getEncryptionKey({keyId:response.keyId},function(result){if(!result.hasError){cacheSecret=result.secretKey;callback&&callback();}});})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}else{_events.chatEvents.fireEvent('error',{code:result.error,message:result.error_description,error:result});}});},/**
-         * Get Encryption Keys by KeyId
-         *
-         * In order to Encrypt and Decrypt cache we need a key.
-         * We can retrieve encryption keys from SSO by sending
-         * KeyId to SSO and get related keys
-         *
-         * @access private
-         *
-         * @param params
-         * @param {function}  callback    The callback function to run after getting Keys
-         *
-         * @return {undefined}
-         */getEncryptionKey=function getEncryptionKey(params,callback){var keyId;if(params){if(typeof params.keyId!=='undefined'){keyId=params.keyId;var httpRequestParams={url:SERVICE_ADDRESSES.SSO_ADDRESS+SERVICES_PATH.SSO_GET_KEY+keyId,method:'GET',headers:{'Authorization':'Bearer '+token}};httpRequest(httpRequestParams,function(result){if(!result.hasError){try{var response=JSON.parse(result.result.responseText);}catch(e){consoleLogging&&console.log(e);}callback&&callback({hasError:false,secretKey:response.secretKey});}else{callback&&callback({hasError:true,code:result.errorCode,message:result.errorMessage});_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});}}},/**
-         * HTTP Request class
-         *
-         * Manages all HTTP Requests
-         *
-         * @access private
-         *
-         * @param {object}    params      Given parameters including (Headers, ...)
-         * @param {function}  callback    The callback function to run after
-         *
-         * @return {undefined}
-         */httpRequest=function httpRequest(params,callback){var url=params.url,xhrResponseType=params.responseType||'text',fileSize,originalFileName,threadId,fileUniqueId,fileObject,data=params.data,method=typeof params.method=='string'?params.method:'GET',fileUploadUniqueId=typeof params.uniqueId=='string'?params.uniqueId:'uniqueId',hasError=false;if(!url){callback({hasError:true,errorCode:6201,errorMessage:CHAT_ERRORS[6201]});return;}var hasFile=false;httpRequestObject[eval('fileUploadUniqueId')]=new XMLHttpRequest();var settings=params.settings;httpRequestObject[eval('fileUploadUniqueId')].responseType=xhrResponseType;if(data&&(0,_typeof2["default"])(data)==='object'&&(data.hasOwnProperty('image')||data.hasOwnProperty('file'))){httpRequestObject[eval('fileUploadUniqueId')].timeout=settings&&(0,_typeof2["default"])(parseInt(settings.uploadTimeout))>0&&settings.uploadTimeout>0?settings.uploadTimeout:httpUploadRequestTimeout;}else{httpRequestObject[eval('fileUploadUniqueId')].timeout=settings&&(0,_typeof2["default"])(parseInt(settings.timeout))>0&&settings.timeout>0?settings.timeout:httpRequestTimeout;}httpRequestObject[eval('fileUploadUniqueId')].addEventListener('error',function(event){if(callback&&method==='POST'){if(hasFile){hasError=true;_events.chatEvents.fireEvent('fileUploadEvents',{threadId:threadId,uniqueId:fileUniqueId,state:'UPLOAD_ERROR',progress:0,fileInfo:{fileName:originalFileName,fileSize:fileSize},fileObject:fileObject,errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (XMLHttpRequest Error Event Listener)'});}callback({hasError:true,errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (XMLHttpRequest Error Event Listener)'});}else{if(callback){callback({hasError:true,errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (XMLHttpRequest Error Event Listener)'});}if(params.enableDownloadProgressEvents){_events.chatEvents.fireEvent('fileDownloadEvents',{hashCode:params.hashCode,state:'DOWNLOAD_ERROR',errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (XMLHttpRequest Error Event Listener)'});}}},false);if(params.enableDownloadProgressEvents){httpRequestObject[eval('fileUploadUniqueId')].onprogress=function(event){_events.chatEvents.fireEvent('fileDownloadEvents',{hashCode:params.hashCode,state:'DOWNLOADING',progress:Math.round(event.loaded/event.total*100)});};}httpRequestObject[eval('fileUploadUniqueId')].addEventListener('abort',function(event){if(callback){if(hasFile){hasError=true;_events.chatEvents.fireEvent('fileUploadEvents',{threadId:threadId,uniqueId:fileUniqueId,state:'UPLOAD_CANCELED',progress:0,fileInfo:{fileName:originalFileName,fileSize:fileSize},fileObject:fileObject,errorCode:6303,errorMessage:CHAT_ERRORS[6303]});}callback({hasError:true,errorCode:6303,errorMessage:CHAT_ERRORS[6303]});}},false);try{if(method==='GET'){if((0,_typeof2["default"])(data)==='object'&&data!==null){var keys=Object.keys(data);if(keys.length>0){url+='?';for(var i=0;i<keys.length;i++){var key=keys[i];url+=key+'='+data[key];if(i<keys.length-1){url+='&';}}}}else if(typeof data==='string'){url+='?'+data;}httpRequestObject[eval('fileUploadUniqueId')].open(method,url,true);if((0,_typeof2["default"])(params.headers)==='object'){for(var key in params.headers){if(params.headers.hasOwnProperty(key))httpRequestObject[eval('fileUploadUniqueId')].setRequestHeader(key,params.headers[key]);}}httpRequestObject[eval('fileUploadUniqueId')].send();}if(method==='POST'&&data){httpRequestObject[eval('fileUploadUniqueId')].open(method,url,true);if((0,_typeof2["default"])(params.headers)==='object'){for(var key in params.headers){if(params.headers.hasOwnProperty(key))httpRequestObject[eval('fileUploadUniqueId')].setRequestHeader(key,params.headers[key]);}}if((0,_typeof2["default"])(data)=='object'){if(data.hasOwnProperty('image')||data.hasOwnProperty('file')){hasFile=true;var formData=new FormData();for(var key in data){if(data.hasOwnProperty(key))formData.append(key,data[key]);}fileSize=data.fileSize;originalFileName=data.originalFileName;threadId=data.threadId;fileUniqueId=data.uniqueId;fileObject=data['image']?data['image']:data['file'];httpRequestObject[eval('fileUploadUniqueId')].upload.onprogress=function(event){if(event.lengthComputable&&!hasError){_events.chatEvents.fireEvent('fileUploadEvents',{threadId:threadId,uniqueId:fileUniqueId,state:'UPLOADING',progress:Math.round(event.loaded/event.total*100),fileInfo:{fileName:originalFileName,fileSize:fileSize},fileObject:fileObject});}};httpRequestObject[eval('fileUploadUniqueId')].send(formData);}else{httpRequestObject[eval('fileUploadUniqueId')].setRequestHeader('Content-Type','application/x-www-form-urlencoded');var keys=Object.keys(data);if(keys.length>0){var sendData='';for(var i=0;i<keys.length;i++){var key=keys[i];sendData+=key+'='+data[key];if(i<keys.length-1){sendData+='&';}}}httpRequestObject[eval('fileUploadUniqueId')].send(sendData);}}else{httpRequestObject[eval('fileUploadUniqueId')].send(data);}}}catch(e){callback&&callback({hasError:true,cache:false,errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (Request Catch Error)'+e});}httpRequestObject[eval('fileUploadUniqueId')].onreadystatechange=function(){if(httpRequestObject[eval('fileUploadUniqueId')].readyState===4){if(httpRequestObject[eval('fileUploadUniqueId')].status===200){if(hasFile){hasError=false;var fileHashCode='';try{var fileUploadResult=JSON.parse(httpRequestObject[eval('fileUploadUniqueId')].response);if(!!fileUploadResult&&fileUploadResult.hasOwnProperty('result')){fileHashCode=fileUploadResult.result.hashCode;}}catch(e){consoleLogging&&console.log(e);}_events.chatEvents.fireEvent('fileUploadEvents',{threadId:threadId,uniqueId:fileUniqueId,fileHash:fileHashCode,state:'UPLOADED',progress:100,fileInfo:{fileName:originalFileName,fileSize:fileSize},fileObject:fileObject});}callback&&callback({hasError:false,cache:false,result:{response:httpRequestObject[eval('fileUploadUniqueId')].response,responseText:xhrResponseType==='text'?httpRequestObject[eval('fileUploadUniqueId')].responseText:'',responseHeaders:httpRequestObject[eval('fileUploadUniqueId')].getAllResponseHeaders(),responseContentType:httpRequestObject[eval('fileUploadUniqueId')].getResponseHeader('content-type')}});}else{if(hasFile){hasError=true;_events.chatEvents.fireEvent('fileUploadEvents',{threadId:threadId,uniqueId:fileUniqueId,state:'UPLOAD_ERROR',progress:0,fileInfo:{fileName:originalFileName,fileSize:fileSize},fileObject:fileObject,errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (Request Status != 200)',statusCode:httpRequestObject[eval('fileUploadUniqueId')].status});}callback&&callback({hasError:true,errorMessage:xhrResponseType==='text'?httpRequestObject[eval('fileUploadUniqueId')].responseText:'ُAn error accoured!',errorCode:httpRequestObject[eval('fileUploadUniqueId')].status});}}};},/**
-         * Get User Info
-         *
-         * This functions gets user info from chat serverName.
-         * If info is not retrived the function will attemp
-         * 5 more times to get info from erver
-         *
-         * @recursive
-         * @access private
-         *
-         * @param {function}    callback    The callback function to call after
-         *
-         * @return {object} Instant function return
-         */getUserInfo=function getUserInfoRecursive(callback){getUserInfoRetryCount++;if(getUserInfoRetryCount>getUserInfoRetry){getUserInfoTimeout&&clearTimeout(getUserInfoTimeout);getUserInfoRetryCount=0;_events.chatEvents.fireEvent('error',{code:6101,message:CHAT_ERRORS[6101],error:null});}else{getUserInfoTimeout&&clearTimeout(getUserInfoTimeout);getUserInfoTimeout=setTimeout(function(){getUserInfoRecursive(callback);},getUserInfoRetryCount*10000);return chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.USER_INFO,typeCode:generalTypeCode//params.typeCode
-},{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){getUserInfoTimeout&&clearTimeout(getUserInfoTimeout);var messageContent=result.result;var currentUser=formatDataToMakeUser(messageContent);/**
-                             * Add current user into cache database #cache
-                             */if(canUseCache){if(db){db.users.where('id').equals(parseInt(currentUser.id)).toArray().then(function(users){if(users.length>0&&users[0].id>0){db.users.update(currentUser.id,{cellphoneNumber:currentUser.cellphoneNumber,email:currentUser.email,image:currentUser.image,name:currentUser.name})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{db.users.put(currentUser)["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}returnData.result={user:currentUser};getUserInfoRetryCount=0;callback&&callback(returnData);/**
-                             * Delete callback so if server pushes response
-                             * before cache, cache won't send data again
-                             */callback=undefined;}}});}},sendSystemMessage=function sendSystemMessage(params){return chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.SYSTEM_MESSAGE,subjectId:params.threadId,content:params.content,uniqueId:params.uniqueId,pushMsgType:3});},/**
-         * Chat Send Message Queue Handler
-         *
-         * Whenever something pushes into cahtSendQueue
-         * this function invokes and does the message
-         * sending progress throught async
-         *
-         * @access private
-         *
-         * @return {undefined}
-         */chatSendQueueHandler=function chatSendQueueHandler(){if(chatSendQueue.length){var messageToBeSend=chatSendQueue[0];/**
-                 * Getting chatSendQueue from either cache or
-                 * memory and scrolling through the send queue
-                 * to send all the messages which are waiting
-                 * for chatMessaging.chatState to become TRUE
-                 *
-                 * There is a small possibility that a Message
-                 * wouldn't make it through network, so it Will
-                 * not reach chat server. To avoid losing those
-                 * messages, we put a clone of every message
-                 * in waitQ, and when ack of the message comes,
-                 * we delete that message from waitQ. otherwise
-                 * we assume that these messages have been failed to
-                 * send and keep them to be either canceled or resent
-                 * by user later. When user calls getHistory(), they
-                 * will have failed messages alongside with typical
-                 * messages history.
-                 */if(chatMessaging.chatState){getChatSendQueue(0,function(chatSendQueue){deleteFromChatSentQueue(messageToBeSend,function(){chatMessaging.sendMessage(messageToBeSend.message,messageToBeSend.callbacks,function(){if(chatSendQueue.length){chatSendQueueHandler();}});});});}}},putInMessagesDeliveryQueue=function putInMessagesDeliveryQueue(threadId,messageId){if(messagesDelivery.hasOwnProperty(threadId)&&typeof messagesDelivery[threadId]==='number'&&!!messagesDelivery[threadId]){if(messagesDelivery[threadId]<messageId){messagesDelivery[threadId]=messageId;}}else{messagesDelivery[threadId]=messageId;}},putInMessagesSeenQueue=function putInMessagesSeenQueue(threadId,messageId){if(messagesSeen.hasOwnProperty(threadId)&&typeof messagesSeen[threadId]==='number'&&!!messagesSeen[threadId]){if(messagesSeen[threadId]<messageId){messagesSeen[threadId]=messageId;}}else{messagesSeen[threadId]=messageId;}},/**
-         * Messages Delivery Queue Handler
-         *
-         * Whenever something pushes into messagesDelivery
-         * this function invokes and does the message
-         * delivery progress throught async
-         *
-         * @access private
-         *
-         * @return {undefined}
-         */messagesDeliveryQueueHandler=function messagesDeliveryQueueHandler(){if(Object.keys(messagesDelivery).length){if(chatMessaging.chatState){for(var key in messagesDelivery){deliver({messageId:messagesDelivery[key]});delete messagesDelivery[key];}}}},/**
-         * Messages Seen Queue Handler
-         *
-         * Whenever something pushes into messagesSeen
-         * this function invokes and does the message
-         * seen progress throught async
-         *
-         * @access private
-         *
-         * @return {undefined}
-         */messagesSeenQueueHandler=function messagesSeenQueueHandler(){if(Object.keys(messagesSeen).length){if(chatMessaging.chatState){for(var key in messagesSeen){seen({messageId:messagesSeen[key]});delete messagesSeen[key];}}}},/**
-         * Clear Cache
-         *
-         * Clears Async queue so that all the remained messages will be
-         * ignored
-         *
-         * @access private
-         *
-         * @return {undefined}
-         */clearChatServerCaches=function clearChatServerCaches(){chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.LOGOUT,pushMsgType:3});},/**
-         * Received Async Message Handler
-         *
-         * This functions parses received message from async
-         *
-         * @access private
-         *
-         * @param {object}    asyncMessage    Received Message from Async
-         *
-         * @return {undefined}
-         */receivedAsyncMessageHandler=function receivedAsyncMessageHandler(asyncMessage){/**
-             * + Message Received From Async      {object}
-             *    - id                            {int}
-             *    - senderMessageId               {int}
-             *    - senderName                    {string}
-             *    - senderId                      {int}
-             *    - type                          {int}
-             *    - content                       {string}
-             */if(asyncMessage.senderName===serverName){var content=JSON.parse(asyncMessage.content);chatMessageHandler(content);}else{callModule.callMessageHandler(asyncMessage);}},/**
-         * Chat Message Handler
-         *
-         * Manages received chat messages and do the job
-         *
-         * @access private
-         *
-         * @param {object}    chatMessage     Content of Async Message which is considered as Chat Message
-         *
-         * @return {undefined}
-         */chatMessageHandler=function chatMessageHandler(chatMessage){if(chatMessage.typeCode&&chatMessage.typeCode!==generalTypeCode){return;}var threadId=chatMessage.subjectId,type=chatMessage.type,messageContent=typeof chatMessage.content==='string'&&_utility["default"].isValidJson(chatMessage.content)?JSON.parse(chatMessage.content):chatMessage.content,contentCount=chatMessage.contentCount,uniqueId=chatMessage.uniqueId,time=chatMessage.time;chatMessaging.asyncRequestTimeouts[uniqueId]&&clearTimeout(chatMessaging.asyncRequestTimeouts[uniqueId]);switch(type){/**
-                 * Type 1    Get Threads
-                 */case _constants.chatMessageVOTypes.CREATE_THREAD:messageContent.uniqueId=uniqueId;if(chatMessaging.messagesCallbacks[uniqueId]){createThread(messageContent,true,true);chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}else{createThread(messageContent,true,false);}break;/**
-                 * Type 2    Message
-                 */case _constants.chatMessageVOTypes.MESSAGE:newMessageHandler(threadId,messageContent);break;/**
-                 * Type 3    Message Sent
-                 */case _constants.chatMessageVOTypes.SENT:if(chatMessaging.sendMessageCallbacks[uniqueId]&&chatMessaging.sendMessageCallbacks[uniqueId].onSent){chatMessaging.sendMessageCallbacks[uniqueId].onSent({uniqueId:uniqueId,messageId:messageContent});delete chatMessaging.sendMessageCallbacks[uniqueId].onSent;chatMessaging.threadCallbacks[threadId][uniqueId].onSent=true;}break;/**
-                 * Type 4    Message Delivery
-                 */case _constants.chatMessageVOTypes.DELIVERY:var threadObject={id:messageContent.conversationId,lastSeenMessageId:messageContent.messageId,lastSeenMessageTime:messageContent.messageTime,lastParticipantId:messageContent.participantId};_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadObject}});// if (fullResponseObject) {
+   * Get Device Id With Token
+   *
+   * If ssoGrantDevicesAddress set as TRUE, chat agent gets Device ID
+   * from SSO server and passes it to Async Module
+   *
+   * @access private
+   *
+   * @param {function}  callback    The callback function to run after getting Device Id
+   *
+   * @return {undefined}
+   */getDeviceIdWithToken=function getDeviceIdWithToken(callback){var deviceId;var params={url:SERVICE_ADDRESSES.SSO_ADDRESS+SERVICES_PATH.SSO_DEVICES,method:'GET',headers:{'Authorization':'Bearer '+token}};httpRequest(params,function(result){if(!result.hasError){var devices=JSON.parse(result.result.responseText).devices;if(devices&&devices.length>0){for(var i=0;i<devices.length;i++){if(devices[i].current){deviceId=devices[i].uid;break;}}if(!deviceId){_events.chatEvents.fireEvent('error',{code:6000,message:CHAT_ERRORS[6000],error:null});}else{callback(deviceId);}}else{_events.chatEvents.fireEvent('error',{code:6001,message:CHAT_ERRORS[6001],error:null});}}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});},/**
+   * Handshake with SSO to get user's keys
+   *
+   * In order to Encrypt and Decrypt cache we need a key.
+   * We can retrieve encryption keys from SSO, all we
+   * need to do is to do a handshake with SSO and
+   * get the keys.
+   *
+   * @access private
+   *
+   * @param params
+   * @param {function}  callback    The callback function to run after Generating Keys
+   *
+   * @return {undefined}
+   */generateEncryptionKey=function generateEncryptionKey(params,callback){var data={validity:10*365*24*60*60,// 10 Years
+renew:false,keyAlgorithm:'aes',keySize:256};if(params){if(params.keyAlgorithm!==undefined){data.keyAlgorithm=params.keyAlgorithm;}if(parseInt(params.keySize)>0){data.keySize=params.keySize;}}var httpRequestParams={url:SERVICE_ADDRESSES.SSO_ADDRESS+SERVICES_PATH.SSO_GENERATE_KEY,method:'POST',data:data,headers:{'Authorization':'Bearer '+token}};httpRequest(httpRequestParams,function(result){if(!result.hasError){try{var response=JSON.parse(result.result.responseText);}catch(e){consoleLogging&&console.log(e);}}else{_events.chatEvents.fireEvent('error',{code:result.error,message:result.error_description,error:result});}});},/**
+   * Get Encryption Keys by KeyId
+   *
+   * In order to Encrypt and Decrypt cache we need a key.
+   * We can retrieve encryption keys from SSO by sending
+   * KeyId to SSO and get related keys
+   *
+   * @access private
+   *
+   * @param params
+   * @param {function}  callback    The callback function to run after getting Keys
+   *
+   * @return {undefined}
+   */getEncryptionKey=function getEncryptionKey(params,callback){var keyId;if(params){if(typeof params.keyId!=='undefined'){keyId=params.keyId;var httpRequestParams={url:SERVICE_ADDRESSES.SSO_ADDRESS+SERVICES_PATH.SSO_GET_KEY+keyId,method:'GET',headers:{'Authorization':'Bearer '+token}};httpRequest(httpRequestParams,function(result){if(!result.hasError){try{var response=JSON.parse(result.result.responseText);}catch(e){consoleLogging&&console.log(e);}callback&&callback({hasError:false,secretKey:response.secretKey});}else{callback&&callback({hasError:true,code:result.errorCode,message:result.errorMessage});_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});}}},/**
+   * HTTP Request class
+   *
+   * Manages all HTTP Requests
+   *
+   * @access private
+   *
+   * @param {object}    params      Given parameters including (Headers, ...)
+   * @param {function}  callback    The callback function to run after
+   *
+   * @return {undefined}
+   */httpRequest=function httpRequest(params,callback){var url=params.url,xhrResponseType=params.responseType||'text',fileSize,originalFileName,threadId,fileUniqueId,fileObject,data=params.data,method=typeof params.method=='string'?params.method:'GET',fileUploadUniqueId=typeof params.uniqueId=='string'?params.uniqueId:'uniqueId',hasError=false;if(!url){callback({hasError:true,errorCode:6201,errorMessage:CHAT_ERRORS[6201]});return;}var hasFile=false;httpRequestObject[eval('fileUploadUniqueId')]=new XMLHttpRequest();var settings=params.settings;httpRequestObject[eval('fileUploadUniqueId')].responseType=xhrResponseType;if(data&&(0,_typeof2["default"])(data)==='object'&&(data.hasOwnProperty('image')||data.hasOwnProperty('file'))){httpRequestObject[eval('fileUploadUniqueId')].timeout=settings&&(0,_typeof2["default"])(parseInt(settings.uploadTimeout))>0&&settings.uploadTimeout>0?settings.uploadTimeout:httpUploadRequestTimeout;}else{httpRequestObject[eval('fileUploadUniqueId')].timeout=settings&&(0,_typeof2["default"])(parseInt(settings.timeout))>0&&settings.timeout>0?settings.timeout:httpRequestTimeout;}httpRequestObject[eval('fileUploadUniqueId')].addEventListener('error',function(event){if(callback&&method==='POST'){if(hasFile){hasError=true;_events.chatEvents.fireEvent('fileUploadEvents',{threadId:threadId,uniqueId:fileUniqueId,state:'UPLOAD_ERROR',progress:0,fileInfo:{fileName:originalFileName,fileSize:fileSize},fileObject:fileObject,errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (XMLHttpRequest Error Event Listener)'});}callback({hasError:true,errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (XMLHttpRequest Error Event Listener)'});}else{if(callback){callback({hasError:true,errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (XMLHttpRequest Error Event Listener)'});}if(params.enableDownloadProgressEvents){_events.chatEvents.fireEvent('fileDownloadEvents',{hashCode:params.hashCode,state:'DOWNLOAD_ERROR',errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (XMLHttpRequest Error Event Listener)'});}}},false);if(params.enableDownloadProgressEvents){httpRequestObject[eval('fileUploadUniqueId')].onprogress=function(event){_events.chatEvents.fireEvent('fileDownloadEvents',{hashCode:params.hashCode,state:'DOWNLOADING',progress:Math.round(event.loaded/event.total*100)});};}httpRequestObject[eval('fileUploadUniqueId')].addEventListener('abort',function(event){if(callback){if(hasFile){hasError=true;_events.chatEvents.fireEvent('fileUploadEvents',{threadId:threadId,uniqueId:fileUniqueId,state:'UPLOAD_CANCELED',progress:0,fileInfo:{fileName:originalFileName,fileSize:fileSize},fileObject:fileObject,errorCode:6303,errorMessage:CHAT_ERRORS[6303]});}callback({hasError:true,errorCode:6303,errorMessage:CHAT_ERRORS[6303]});}},false);try{if(method==='GET'){if((0,_typeof2["default"])(data)==='object'&&data!==null){var keys=Object.keys(data);if(keys.length>0){url+='?';for(var i=0;i<keys.length;i++){var key=keys[i];url+=key+'='+data[key];if(i<keys.length-1){url+='&';}}}}else if(typeof data==='string'){url+='?'+data;}httpRequestObject[eval('fileUploadUniqueId')].open(method,url,true);if((0,_typeof2["default"])(params.headers)==='object'){for(var key in params.headers){if(params.headers.hasOwnProperty(key))httpRequestObject[eval('fileUploadUniqueId')].setRequestHeader(key,params.headers[key]);}}httpRequestObject[eval('fileUploadUniqueId')].send();}if(method==='POST'&&data){httpRequestObject[eval('fileUploadUniqueId')].open(method,url,true);if((0,_typeof2["default"])(params.headers)==='object'){for(var key in params.headers){if(params.headers.hasOwnProperty(key))httpRequestObject[eval('fileUploadUniqueId')].setRequestHeader(key,params.headers[key]);}}if((0,_typeof2["default"])(data)=='object'){if(data.hasOwnProperty('image')||data.hasOwnProperty('file')){hasFile=true;var formData=new FormData();for(var key in data){if(data.hasOwnProperty(key))formData.append(key,data[key]);}fileSize=data.fileSize;originalFileName=data.originalFileName;threadId=data.threadId;fileUniqueId=data.uniqueId;fileObject=data['image']?data['image']:data['file'];httpRequestObject[eval('fileUploadUniqueId')].upload.onprogress=function(event){if(event.lengthComputable&&!hasError){_events.chatEvents.fireEvent('fileUploadEvents',{threadId:threadId,uniqueId:fileUniqueId,state:'UPLOADING',progress:Math.round(event.loaded/event.total*100),fileInfo:{fileName:originalFileName,fileSize:fileSize},fileObject:fileObject});}};httpRequestObject[eval('fileUploadUniqueId')].send(formData);}else{httpRequestObject[eval('fileUploadUniqueId')].setRequestHeader('Content-Type','application/x-www-form-urlencoded');var keys=Object.keys(data);if(keys.length>0){var sendData='';for(var i=0;i<keys.length;i++){var key=keys[i];sendData+=key+'='+data[key];if(i<keys.length-1){sendData+='&';}}}httpRequestObject[eval('fileUploadUniqueId')].send(sendData);}}else{httpRequestObject[eval('fileUploadUniqueId')].send(data);}}}catch(e){callback&&callback({hasError:true,cache:false,errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (Request Catch Error)'+e});}httpRequestObject[eval('fileUploadUniqueId')].onreadystatechange=function(){if(httpRequestObject[eval('fileUploadUniqueId')].readyState===4){if(httpRequestObject[eval('fileUploadUniqueId')].status===200){if(hasFile){hasError=false;var fileHashCode='';try{var fileUploadResult=JSON.parse(httpRequestObject[eval('fileUploadUniqueId')].response);if(!!fileUploadResult&&fileUploadResult.hasOwnProperty('result')){fileHashCode=fileUploadResult.result.hashCode;}}catch(e){consoleLogging&&console.log(e);}_events.chatEvents.fireEvent('fileUploadEvents',{threadId:threadId,uniqueId:fileUniqueId,fileHash:fileHashCode,state:'UPLOADED',progress:100,fileInfo:{fileName:originalFileName,fileSize:fileSize},fileObject:fileObject});}callback&&callback({hasError:false,cache:false,result:{response:httpRequestObject[eval('fileUploadUniqueId')].response,responseText:xhrResponseType==='text'?httpRequestObject[eval('fileUploadUniqueId')].responseText:'',responseHeaders:httpRequestObject[eval('fileUploadUniqueId')].getAllResponseHeaders(),responseContentType:httpRequestObject[eval('fileUploadUniqueId')].getResponseHeader('content-type')}});}else{if(hasFile){hasError=true;_events.chatEvents.fireEvent('fileUploadEvents',{threadId:threadId,uniqueId:fileUniqueId,state:'UPLOAD_ERROR',progress:0,fileInfo:{fileName:originalFileName,fileSize:fileSize},fileObject:fileObject,errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (Request Status != 200)',statusCode:httpRequestObject[eval('fileUploadUniqueId')].status});}callback&&callback({hasError:true,errorMessage:xhrResponseType==='text'?httpRequestObject[eval('fileUploadUniqueId')].responseText:'ُAn error accoured!',errorCode:httpRequestObject[eval('fileUploadUniqueId')].status});}}};},/**
+   * Get User Info
+   *
+   * This functions gets user info from chat serverName.
+   * If info is not retrived the function will attemp
+   * 5 more times to get info from erver
+   *
+   * @recursive
+   * @access private
+   *
+   * @param {function}    callback    The callback function to call after
+   *
+   * @return {object} Instant function return
+   */getUserInfo=function getUserInfoRecursive(callback){getUserInfoRetryCount++;if(getUserInfoRetryCount>getUserInfoRetry){getUserInfoTimeout&&clearTimeout(getUserInfoTimeout);getUserInfoRetryCount=0;_events.chatEvents.fireEvent('error',{code:6101,message:CHAT_ERRORS[6101],error:null});}else{getUserInfoTimeout&&clearTimeout(getUserInfoTimeout);getUserInfoTimeout=setTimeout(function(){getUserInfoRecursive(callback);},getUserInfoRetryCount*10000);return chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.USER_INFO,typeCode:generalTypeCode//params.typeCode
+},{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){getUserInfoTimeout&&clearTimeout(getUserInfoTimeout);var messageContent=result.result;var currentUser=formatDataToMakeUser(messageContent);returnData.result={user:currentUser};getUserInfoRetryCount=0;callback&&callback(returnData);/**
+             * Delete callback so if server pushes response
+             * before cache, cache won't send data again
+             */callback=undefined;}}});}},sendSystemMessage=function sendSystemMessage(params){return chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.SYSTEM_MESSAGE,subjectId:params.threadId,content:params.content,uniqueId:params.uniqueId,pushMsgType:3});},/**
+   * Chat Send Message Queue Handler
+   *
+   * Whenever something pushes into cahtSendQueue
+   * this function invokes and does the message
+   * sending progress throught async
+   *
+   * @access private
+   *
+   * @return {undefined}
+   */chatSendQueueHandler=function chatSendQueueHandler(){if(chatSendQueue.length){var messageToBeSend=chatSendQueue[0];/**
+       * Getting chatSendQueue from either cache or
+       * memory and scrolling through the send queue
+       * to send all the messages which are waiting
+       * for chatMessaging.chatState to become TRUE
+       *
+       * There is a small possibility that a Message
+       * wouldn't make it through network, so it Will
+       * not reach chat server. To avoid losing those
+       * messages, we put a clone of every message
+       * in waitQ, and when ack of the message comes,
+       * we delete that message from waitQ. otherwise
+       * we assume that these messages have been failed to
+       * send and keep them to be either canceled or resent
+       * by user later. When user calls getHistory(), they
+       * will have failed messages alongside with typical
+       * messages history.
+       */if(chatMessaging.chatState){getChatSendQueue(0,function(chatSendQueue){deleteFromChatSentQueue(messageToBeSend,function(){chatMessaging.sendMessage(messageToBeSend.message,messageToBeSend.callbacks,function(){if(chatSendQueue.length){chatSendQueueHandler();}});});});}}},putInMessagesDeliveryQueue=function putInMessagesDeliveryQueue(threadId,messageId){if(messagesDelivery.hasOwnProperty(threadId)&&typeof messagesDelivery[threadId]==='number'&&!!messagesDelivery[threadId]){if(messagesDelivery[threadId]<messageId){messagesDelivery[threadId]=messageId;}}else{messagesDelivery[threadId]=messageId;}},putInMessagesSeenQueue=function putInMessagesSeenQueue(threadId,messageId){if(messagesSeen.hasOwnProperty(threadId)&&typeof messagesSeen[threadId]==='number'&&!!messagesSeen[threadId]){if(messagesSeen[threadId]<messageId){messagesSeen[threadId]=messageId;}}else{messagesSeen[threadId]=messageId;}},/**
+   * Messages Delivery Queue Handler
+   *
+   * Whenever something pushes into messagesDelivery
+   * this function invokes and does the message
+   * delivery progress throught async
+   *
+   * @access private
+   *
+   * @return {undefined}
+   */messagesDeliveryQueueHandler=function messagesDeliveryQueueHandler(){if(Object.keys(messagesDelivery).length){if(chatMessaging.chatState){for(var key in messagesDelivery){deliver({messageId:messagesDelivery[key]});delete messagesDelivery[key];}}}},/**
+   * Messages Seen Queue Handler
+   *
+   * Whenever something pushes into messagesSeen
+   * this function invokes and does the message
+   * seen progress throught async
+   *
+   * @access private
+   *
+   * @return {undefined}
+   */messagesSeenQueueHandler=function messagesSeenQueueHandler(){if(Object.keys(messagesSeen).length){if(chatMessaging.chatState){for(var key in messagesSeen){seen({messageId:messagesSeen[key]});delete messagesSeen[key];}}}},/**
+   * Clear Cache
+   *
+   * Clears Async queue so that all the remained messages will be
+   * ignored
+   *
+   * @access private
+   *
+   * @return {undefined}
+   */clearChatServerCaches=function clearChatServerCaches(){chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.LOGOUT,pushMsgType:3});},/**
+   * Received Async Message Handler
+   *
+   * This functions parses received message from async
+   *
+   * @access private
+   *
+   * @param {object}    asyncMessage    Received Message from Async
+   *
+   * @return {undefined}
+   */receivedAsyncMessageHandler=function receivedAsyncMessageHandler(asyncMessage){/**
+     * + Message Received From Async      {object}
+     *    - id                            {int}
+     *    - senderMessageId               {int}
+     *    - senderName                    {string}
+     *    - senderId                      {int}
+     *    - type                          {int}
+     *    - content                       {string}
+     */if(asyncMessage.senderName===serverName){var content=JSON.parse(asyncMessage.content);chatMessageHandler(content);}else{callModule.callMessageHandler(asyncMessage);}},/**
+   * Chat Message Handler
+   *
+   * Manages received chat messages and do the job
+   *
+   * @access private
+   *
+   * @param {object}    chatMessage     Content of Async Message which is considered as Chat Message
+   *
+   * @return {undefined}
+   */chatMessageHandler=function chatMessageHandler(chatMessage){if(chatMessage.typeCode&&chatMessage.typeCode!==generalTypeCode){return;}var threadId=chatMessage.subjectId,type=chatMessage.type,messageContent=typeof chatMessage.content==='string'&&_utility["default"].isValidJson(chatMessage.content)?JSON.parse(chatMessage.content):chatMessage.content,contentCount=chatMessage.contentCount,uniqueId=chatMessage.uniqueId,time=chatMessage.time;chatMessaging.asyncRequestTimeouts[uniqueId]&&clearTimeout(chatMessaging.asyncRequestTimeouts[uniqueId]);switch(type){/**
+       * Type 1    Get Threads
+       */case _constants.chatMessageVOTypes.CREATE_THREAD:messageContent.uniqueId=uniqueId;if(chatMessaging.messagesCallbacks[uniqueId]){createThread(messageContent,true,true);chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}else{createThread(messageContent,true,false);}break;/**
+       * Type 2    Message
+       */case _constants.chatMessageVOTypes.MESSAGE:newMessageHandler(threadId,messageContent);break;/**
+       * Type 3    Message Sent
+       */case _constants.chatMessageVOTypes.SENT:if(chatMessaging.sendMessageCallbacks[uniqueId]&&chatMessaging.sendMessageCallbacks[uniqueId].onSent){chatMessaging.sendMessageCallbacks[uniqueId].onSent({uniqueId:uniqueId,messageId:messageContent});delete chatMessaging.sendMessageCallbacks[uniqueId].onSent;chatMessaging.threadCallbacks[threadId][uniqueId].onSent=true;}break;/**
+       * Type 4    Message Delivery
+       */case _constants.chatMessageVOTypes.DELIVERY:var threadObject={id:messageContent.conversationId,lastSeenMessageId:messageContent.messageId,lastSeenMessageTime:messageContent.messageTime,lastParticipantId:messageContent.participantId};_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{threadId:threadId,thread:threadObject}});// if (fullResponseObject) {
 //     getHistory({
 //         offset: 0,
 //         threadId: threadId,
@@ -46335,58 +41790,113 @@ renew:false,keyAlgorithm:'aes',keySize:256};if(params){if(params.keyAlgorithm!==
 //     });
 // }
 sendMessageCallbacksHandler(_constants.chatMessageVOTypes.DELIVERY,threadId,uniqueId);break;/**
-                 * Type 5    Message Seen
-                 */case _constants.chatMessageVOTypes.SEEN:var threadObject={id:messageContent.conversationId,lastSeenMessageId:messageContent.messageId,lastSeenMessageTime:messageContent.messageTime,lastParticipantId:messageContent.participantId};_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadObject}});_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_SEEN',result:{message:messageContent.messageId,threadId:threadId,senderId:messageContent.participantId}});sendMessageCallbacksHandler(_constants.chatMessageVOTypes.SEEN,threadId,uniqueId);break;/**
-                 * Type 6    Chat Ping
-                 */case _constants.chatMessageVOTypes.PING:break;/**
-                 * Type 7    Block Contact
-                 */case _constants.chatMessageVOTypes.BLOCK:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
-                 * Type 8    Unblock Blocked User
-                 */case _constants.chatMessageVOTypes.UNBLOCK:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
-                 * Type 9   Leave Thread
-                 */case _constants.chatMessageVOTypes.LEAVE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}var participant=formatDataToMakeParticipant(messageContent,threadId);if(participant.id==chatMessaging.userInfo.id){_store.store.threads.remove(threadId);}/**
-                     * Remove the participant from cache
-                     */if(canUseCache){if(db){/**
-                             * Remove the participant from participants
-                             * table
-                             */db.participants.where('threadId').equals(parseInt(threadId)).and(function(participant){return participant.id===messageContent.id||participant.owner===chatMessaging.userInfo.id;})["delete"]()["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});/**
-                             * If this is the user who is leaving the thread
-                             * we should delete the thread and messages of
-                             * thread from this users cache database
-                             */if(messageContent.id===chatMessaging.userInfo.id){/**
-                                 * Remove Thread from this users cache
-                                 */db.threads.where('[owner+id]').equals([chatMessaging.userInfo.id,threadId])["delete"]()["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});/**
-                                 * Remove all messages of the thread which
-                                 * this user left
-                                 */db.messages.where('threadId').equals(parseInt(threadId)).and(function(message){return message.owner===chatMessaging.userInfo.id;})["delete"]()["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}if(fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){if(!threadsResult.cache){var threads=threadsResult.result.threads;if(threads.length>0){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LEAVE_PARTICIPANT',result:{thread:threads[0],participant:participant}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0]}});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LEAVE_PARTICIPANT',result:{threadId:threadId,participant:participant}});}}});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LEAVE_PARTICIPANT',result:{thread:threadId,participant:participant}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId}});}break;/**
-                 * Type 11    Add Participant to Thread
-                 */case _constants.chatMessageVOTypes.ADD_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}/**
-                     * Add participants into cache
-                     */if(canUseCache&&cacheSecret.length>0){if(db){var cacheData=[];for(var i=0;i<messageContent.participants.length;i++){try{var tempData={},salt=_utility["default"].generateUUID();tempData.id=messageContent.participants[i].id;tempData.owner=chatMessaging.userInfo.id;tempData.threadId=messageContent.id;tempData.notSeenDuration=messageContent.participants[i].notSeenDuration;tempData.admin=messageContent.participants[i].admin;tempData.auditor=messageContent.participants[i].auditor;tempData.name=_utility["default"].crypt(messageContent.participants[i].name,cacheSecret,salt);tempData.contactName=_utility["default"].crypt(messageContent.participants[i].contactName,cacheSecret,salt);tempData.email=_utility["default"].crypt(messageContent.participants[i].email,cacheSecret,salt);tempData.expireTime=new Date().getTime()+cacheExpireTime;tempData.data=_utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(messageContent.participants[i])),cacheSecret,salt);tempData.salt=salt;cacheData.push(tempData);}catch(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}db.participants.bulkPut(cacheData)["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}if(fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_ADD_PARTICIPANTS',result:{thread:threads[0]}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0]}});}});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_ADD_PARTICIPANTS',result:{thread:messageContent}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:messageContent}});}break;/**
-                 * Type 13    Get Contacts List
-                 */case _constants.chatMessageVOTypes.GET_CONTACTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
-                 * Type 14    Get Threads List
-                 */case _constants.chatMessageVOTypes.GET_THREADS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
-                 * Type 15    Get Message History of a Thread
-                 */case _constants.chatMessageVOTypes.GET_HISTORY:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
-                 * Type 17    Remove sb from thread
-                 */case _constants.chatMessageVOTypes.REMOVED_FROM_THREAD:var threadThatImRemovedFrom=_store.store.threads.get(threadId);if(threadThatImRemovedFrom)_store.store.threads.remove(threadId);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVED_FROM',result:{thread:threadId}});/**
-                     * This user has been removed from a thread
-                     * So we should delete thread, its participants
-                     * and it's messages from this users cache
-                     */if(canUseCache){if(db){/**
-                             * Remove Thread from this users cache
-                             */db.threads.where('[owner+id]').equals([chatMessaging.userInfo.id,threadId])["delete"]()["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});/**
-                             * Remove all messages of the thread which this
-                             * user left
-                             */db.messages.where('threadId').equals(parseInt(threadId)).and(function(message){return message.owner===chatMessaging.userInfo.id;})["delete"]()["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});/**
-                             * Remove all participants of the thread which
-                             * this user left
-                             */db.participants.where('threadId').equals(parseInt(threadId)).and(function(participant){return participant.owner===chatMessaging.userInfo.id;})["delete"]()["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}break;/**
-                 * Type 18    Remove a participant from Thread
-                 */case _constants.chatMessageVOTypes.REMOVE_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}var removeParticipantThread=_store.store.threads.get(threadId);if(removeParticipantThread)removeParticipantThread=removeParticipantThread.get();else removeParticipantThread=threadId;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVE_PARTICIPANTS',result:{thread:removeParticipantThread}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:removeParticipantThread}});/**
-                     * Remove the participant from cache
-                     */if(canUseCache){if(db){for(var i=0;i<messageContent.length;i++){db.participants.where('id').equals(parseInt(messageContent[i].id)).and(function(participants){return participants.threadId===threadId;})["delete"]()["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}// if (fullResponseObject) {
+       * Type 5    Message Seen
+       */case _constants.chatMessageVOTypes.SEEN:var threadObject={id:messageContent.conversationId,lastSeenMessageId:messageContent.messageId,lastSeenMessageTime:messageContent.messageTime,lastParticipantId:messageContent.participantId};_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{threadId:threadId,thread:threadObject}});_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_SEEN',result:{message:messageContent.messageId,threadId:threadId,senderId:messageContent.participantId}});sendMessageCallbacksHandler(_constants.chatMessageVOTypes.SEEN,threadId,uniqueId);break;/**
+       * Type 6    Chat Ping
+       */case _constants.chatMessageVOTypes.PING:break;/**
+       * Type 7    Block Contact
+       */case _constants.chatMessageVOTypes.BLOCK:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
+       * Type 8    Unblock Blocked User
+       */case _constants.chatMessageVOTypes.UNBLOCK:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
+       * Type 9   Leave Thread
+       */case _constants.chatMessageVOTypes.LEAVE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}var participant=formatDataToMakeParticipant(messageContent,threadId);var localThread=_store.store.threads.get(threadId);if(participant.id==chatMessaging.userInfo.id&&localThread){_store.store.threads.remove(threadId);}_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LEAVE_PARTICIPANT',result:{threadId:threadId,thread:localThread?localThread.get():null,participant:participant}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{threadId:threadId,thread:localThread?localThread.get():null}});// if (fullResponseObject) {
+//     getThreads({
+//         threadIds: [threadId]
+//     }, function (threadsResult) {
+//         if (!threadsResult.cache) {
+//             var threads = threadsResult.result.threads;
+//             if (threads.length > 0) {
+//                 chatEvents.fireEvent('threadEvents', {
+//                     type: 'THREAD_LEAVE_PARTICIPANT',
+//                     result: {
+//                         thread: threads[0],
+//                         participant: participant
+//                     }
+//                 });
+//
+//                 chatEvents.fireEvent('threadEvents', {
+//                     type: 'THREAD_LAST_ACTIVITY_TIME',
+//                     result: {
+//                         thread: threads[0]
+//                     }
+//                 });
+//             } else {
+//                 chatEvents.fireEvent('threadEvents', {
+//                     type: 'THREAD_LEAVE_PARTICIPANT',
+//                     result: {
+//                         threadId: threadId,
+//                         participant: participant
+//                     }
+//                 });
+//             }
+//         }
+//     });
+// } else {
+//     chatEvents.fireEvent('threadEvents', {
+//         type: 'THREAD_LEAVE_PARTICIPANT',
+//         result: {
+//             thread: threadId,
+//             participant: participant
+//         }
+//     });
+//
+//     chatEvents.fireEvent('threadEvents', {
+//         type: 'THREAD_LAST_ACTIVITY_TIME',
+//         result: {
+//             thread: threadId
+//         }
+//     });
+// }
+break;/**
+       * Type 11    Add Participant to Thread
+       */case _constants.chatMessageVOTypes.ADD_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}var newParticipantThread=formatDataToMakeConversation(messageContent);_store.store.threads.save(newParticipantThread);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_ADD_PARTICIPANTS',result:{threadId:threadId,thread:_store.store.threads.get(messageContent.id).get()}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{threadId:threadId,thread:_store.store.threads.get(messageContent.id).get()}});// if (fullResponseObject) {
+//     getThreads({
+//         threadIds: [messageContent.id]
+//     }, function (threadsResult) {
+//         var threads = threadsResult.result.threads;
+//
+//         if (!threadsResult.cache) {
+//             chatEvents.fireEvent('threadEvents', {
+//                 type: 'THREAD_ADD_PARTICIPANTS',
+//                 result: {
+//                     thread: threads[0]
+//                 }
+//             });
+//
+//             chatEvents.fireEvent('threadEvents', {
+//                 type: 'THREAD_LAST_ACTIVITY_TIME',
+//                 result: {
+//                     thread: threads[0]
+//                 }
+//             });
+//         }
+//     });
+// } else {
+//     chatEvents.fireEvent('threadEvents', {
+//         type: 'THREAD_ADD_PARTICIPANTS',
+//         result: {
+//             thread: messageContent
+//         }
+//     });
+//
+//     chatEvents.fireEvent('threadEvents', {
+//         type: 'THREAD_LAST_ACTIVITY_TIME',
+//         result: {
+//             thread: messageContent
+//         }
+//     });
+// }
+break;/**
+       * Type 13    Get Contacts List
+       */case _constants.chatMessageVOTypes.GET_CONTACTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       * Type 14    Get Threads List
+       */case _constants.chatMessageVOTypes.GET_THREADS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+       * Type 15    Get Message History of a Thread
+       */case _constants.chatMessageVOTypes.GET_HISTORY:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       * Type 17    Remove sb from thread
+       */case _constants.chatMessageVOTypes.REMOVED_FROM_THREAD:var threadThatImRemovedFrom=_store.store.threads.get(threadId);if(threadThatImRemovedFrom)_store.store.threads.remove(threadId);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVED_FROM',result:{threadId:threadId,thread:threadThatImRemovedFrom?threadThatImRemovedFrom.get():null}});break;/**
+       * Type 18    Remove a participant from Thread
+       */case _constants.chatMessageVOTypes.REMOVE_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}var removeParticipantThread=_store.store.threads.get(threadId);if(removeParticipantThread)removeParticipantThread=removeParticipantThread.get();_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVE_PARTICIPANTS',result:{threadId:threadId,thread:removeParticipantThread||null}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{threadId:threadId,thread:removeParticipantThread||null}});// if (fullResponseObject) {
 //     getThreads({
 //         threadIds: [threadId]
 //     }, function (threadsResult) {
@@ -46424,8 +41934,8 @@ sendMessageCallbacksHandler(_constants.chatMessageVOTypes.DELIVERY,threadId,uniq
 //     });
 // }
 break;/**
-                 * Type 19    Mute Thread
-                 */case _constants.chatMessageVOTypes.MUTE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}var mutedThread=_store.store.threads.get(threadId);if(mutedThread){mutedThread.update("mute",true);mutedThread=mutedThread.get();}else mutedThread=threadId;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_MUTE',result:{thread:mutedThread}});// if (fullResponseObject) {
+       * Type 19    Mute Thread
+       */case _constants.chatMessageVOTypes.MUTE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}var mutedThread=_store.store.threads.get(threadId);if(mutedThread){mutedThread.update("mute",true);mutedThread=mutedThread.get();}_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_MUTE',result:{threadId:threadId,thread:mutedThread||null}});// if (fullResponseObject) {
 //     getThreads({
 //         threadIds: [threadId]
 //     }, function (threadsResult) {
@@ -46448,8 +41958,8 @@ break;/**
 //     });
 // }
 break;/**
-                 * Type 20    Unmute muted Thread
-                 */case _constants.chatMessageVOTypes.UNMUTE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}var unmutedThread=_store.store.threads.get(threadId);if(unmutedThread){unmutedThread.update("mute",false);unmutedThread=unmutedThread.get();}else unmutedThread=threadId;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNMUTE',result:{thread:unmutedThread}});// if (fullResponseObject) {
+       * Type 20    Unmute muted Thread
+       */case _constants.chatMessageVOTypes.UNMUTE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}var unmutedThread=_store.store.threads.get(threadId);if(unmutedThread){unmutedThread.update("mute",false);unmutedThread=unmutedThread.get();}_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNMUTE',result:{threadId:threadId,thread:unmutedThread||null}});// if (fullResponseObject) {
 //     getThreads({
 //         threadIds: [threadId]
 //     }, function (threadsResult) {
@@ -46472,8 +41982,8 @@ break;/**
 //     });
 // }
 break;/**
-                 * Type 21    Update Thread Info
-                 */case _constants.chatMessageVOTypes.UPDATE_THREAD_INFO:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}var formattedThread=formatDataToMakeConversation(messageContent);_store.store.threads.save(formattedThread);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:_store.store.threads.get(messageContent.id).get()}});// if (fullResponseObject) {
+       * Type 21    Update Thread Info
+       */case _constants.chatMessageVOTypes.UPDATE_THREAD_INFO:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}var formattedThread=formatDataToMakeConversation(messageContent);_store.store.threads.save(formattedThread);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{threadId:threadId,thread:_store.store.threads.get(messageContent.id).get()}});// if (fullResponseObject) {
 //     getThreads({
 //         threadIds: [messageContent.id],
 //         cache: false
@@ -46483,43 +41993,6 @@ break;/**
 //         /**
 //          * Add Updated Thread into cache database #cache
 //          */
-//         if (canUseCache && cacheSecret.length > 0) {
-//             if (db) {
-//                 var tempData = {};
-//
-//                 try {
-//                     var salt = Utility.generateUUID();
-//
-//                     tempData.id = thread.id;
-//                     tempData.owner = chatMessaging.userInfo.id;
-//                     tempData.title = Utility.crypt(thread.title, cacheSecret, salt);
-//                     tempData.time = thread.time;
-//                     tempData.data = Utility.crypt(JSON.stringify(unsetNotSeenDuration(thread)), cacheSecret, salt);
-//                     tempData.salt = salt;
-//                 } catch (error) {
-//                     chatEvents.fireEvent('error', {
-//                         code: error.code,
-//                         message: error.message,
-//                         error: error
-//                     });
-//                 }
-//
-//                 db.threads.put(tempData)
-//                     .catch(function (error) {
-//                         chatEvents.fireEvent('error', {
-//                             code: error.code,
-//                             message: error.message,
-//                             error: error
-//                         });
-//                     });
-//             } else {
-//                 chatEvents.fireEvent('error', {
-//                     code: 6601,
-//                     message: CHAT_ERRORS[6601],
-//                     error: null
-//                 });
-//             }
-//         }
 //
 //         chatEvents.fireEvent('threadEvents', {
 //             type: 'THREAD_INFO_UPDATED',
@@ -46537,20 +42010,18 @@ break;/**
 //     });
 // }
 break;/**
-                 * Type 22    Forward Multiple Messages
-                 */case _constants.chatMessageVOTypes.FORWARD_MESSAGE:newMessageHandler(threadId,messageContent);break;/**
-                 * Type 23    User Info
-                 */case _constants.chatMessageVOTypes.USER_INFO:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('systemEvents',{type:'SERVER_TIME',result:{time:time}});break;/**
-                 * Type 25    Get Blocked List
-                 */case _constants.chatMessageVOTypes.GET_BLOCKED:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
-                 * Type 27    Thread Participants List
-                 */case _constants.chatMessageVOTypes.THREAD_PARTICIPANTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
-                 * Type 28    Edit Message
-                 */case _constants.chatMessageVOTypes.EDIT_MESSAGE:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}chatEditMessageHandler(threadId,messageContent);break;/**
-                 * Type 29    Delete Message
-                 */case _constants.chatMessageVOTypes.DELETE_MESSAGE:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}var msgTime=parseInt(parseInt(messageContent.time)/1000)*1000000000+parseInt(messageContent.timeNanos);_store.store.threads.get(threadId).unreadCount.decrease(msgTime);if(messageContent.pinned){unPinMessage({messageId:messageContent.id,notifyAll:true});}/**
-                     * Remove Message from cache
-                     */if(canUseCache&&cacheSecret.length>0){if(db){db.messages.where('id').equals(messageContent).and(function(message){return message.owner===chatMessaging.userInfo.id;})["delete"]()["catch"](function(error){_events.chatEvents.fireEvent('error',{code:6602,message:CHAT_ERRORS[6602],error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}// if (fullResponseObject) {
+       * Type 22    Forward Multiple Messages
+       */case _constants.chatMessageVOTypes.FORWARD_MESSAGE:newMessageHandler(threadId,messageContent);break;/**
+       * Type 23    User Info
+       */case _constants.chatMessageVOTypes.USER_INFO:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('systemEvents',{type:'SERVER_TIME',result:{time:time}});break;/**
+       * Type 25    Get Blocked List
+       */case _constants.chatMessageVOTypes.GET_BLOCKED:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       * Type 27    Thread Participants List
+       */case _constants.chatMessageVOTypes.THREAD_PARTICIPANTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       * Type 28    Edit Message
+       */case _constants.chatMessageVOTypes.EDIT_MESSAGE:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}chatEditMessageHandler(threadId,messageContent);break;/**
+       * Type 29    Delete Message
+       */case _constants.chatMessageVOTypes.DELETE_MESSAGE:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}var msgTime=parseInt(parseInt(messageContent.time)/1000)*1000000000+parseInt(messageContent.timeNanos);_store.store.threads.get(threadId).unreadCount.decrease(msgTime);if(messageContent.pinned){unPinMessage({messageId:messageContent.id,notifyAll:true});}// if (fullResponseObject) {
 //     var time, timeMiliSeconds;
 //     if (messageContent.time.toString().length > 14) {
 //         time = messageContent.time;
@@ -46592,17 +42063,17 @@ break;/**
 //     });
 // } else {
 _events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_DELETE',result:{message:{id:messageContent.id,pinned:messageContent.pinned,threadId:threadId,time:messageContent.time,// timeMiliSeconds,
-timeNanos:messageContent.timeNanos}}});if(messageContent.pinned){var thread=_store.store.threads.get(threadId);if(thread)thread=thread.get();_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:thread?thread:threadId}});}//}
+timeNanos:messageContent.timeNanos}}});if(messageContent.pinned){var thread=_store.store.threads.get(threadId);if(thread)thread=thread.get();_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{threadId:threadId,thread:thread?thread:null}});}//}
 break;/**
-                 * Type 31    Thread Last Seen Updated
-                 */case _constants.chatMessageVOTypes.LAST_SEEN_UPDATED:var threadObject=messageContent;threadObject.unreadCount=messageContent.unreadCount?messageContent.unreadCount:0;if(messageContent.lastSeenMessageNanos&&_store.store.threads.get(threadId)){var _msgTime=parseInt(parseInt(messageContent.lastSeenMessageTime)/1000)*1000000000+parseInt(messageContent.lastSeenMessageNanos);if(_msgTime>_store.store.threads.get(threadId).lastSeenMessageTime.get()){_store.store.threads.get(threadId).unreadCount.set(messageContent.unreadCount||0);_store.store.threads.get(threadId).lastSeenMessageTime.set(_msgTime);}}// chatEvents.fireEvent('threadEvents', {
+       * Type 31    Thread Last Seen Updated
+       */case _constants.chatMessageVOTypes.LAST_SEEN_UPDATED:var threadObject=messageContent;threadObject.unreadCount=messageContent.unreadCount?messageContent.unreadCount:0;if(messageContent.lastSeenMessageNanos&&_store.store.threads.get(threadId)){var _msgTime=parseInt(parseInt(messageContent.lastSeenMessageTime)/1000)*1000000000+parseInt(messageContent.lastSeenMessageNanos);if(_msgTime>_store.store.threads.get(threadId).lastSeenMessageTime.get()){_store.store.threads.get(threadId).unreadCount.set(messageContent.unreadCount||0);_store.store.threads.get(threadId).lastSeenMessageTime.set(_msgTime);}}// chatEvents.fireEvent('threadEvents', {
 //     type: 'THREAD_UNREAD_COUNT_UPDATED',
 //     result: {
 //         thread: threadObject,
 //         unreadCount: (messageContent.unreadCount) ? messageContent.unreadCount : 0
 //     }
 // });
-threadObject=_store.store.threads.get(threadId)?_store.store.threads.get(threadId).get():threadObject;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_SEEN_UPDATED',result:{thread:threadObject,unreadCount:messageContent.unreadCount?messageContent.unreadCount:0}});// if (fullResponseObject) {
+threadObject=_store.store.threads.get(threadId)?_store.store.threads.get(threadId).get():threadObject;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_SEEN_UPDATED',result:{threadId:threadId,thread:threadObject,unreadCount:messageContent.unreadCount?messageContent.unreadCount:0}});// if (fullResponseObject) {
 //     getThreads({
 //         threadIds: [messageContent.id]
 //     }, function (threadsResult) {
@@ -46642,30 +42113,112 @@ threadObject=_store.store.threads.get(threadId)?_store.store.threads.get(threadI
 //     });
 // }
 break;/**
-                 * Type 32    Get Message Delivered List
-                 */case _constants.chatMessageVOTypes.GET_MESSAGE_DELIVERY_PARTICIPANTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
-                 * Type 33    Get Message Seen List
-                 */case _constants.chatMessageVOTypes.GET_MESSAGE_SEEN_PARTICIPANTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
-                 * Type 34    Is Public Group Name Available?
-                 */case _constants.chatMessageVOTypes.IS_NAME_AVAILABLE:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
-                 * Type 39    Join Public Group or Channel
-                 */case _constants.chatMessageVOTypes.JOIN_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
-                 * Type 40    Bot Messages
-                 */case _constants.chatMessageVOTypes.BOT_MESSAGE:_events.chatEvents.fireEvent('botEvents',{type:'BOT_MESSAGE',result:{bot:messageContent}});break;/**
-                 * Type 41    Spam P2P Thread
-                 */case _constants.chatMessageVOTypes.SPAM_PV_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
-                 * Type 42    Set Role To User
-                 */case _constants.chatMessageVOTypes.SET_ROLE_TO_USER:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_ADD_ADMIN',result:{thread:threads[0],admin:messageContent}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0],admin:messageContent}});}});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_ADD_ADMIN',result:{thread:threadId,admin:messageContent}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId,admin:messageContent}});}break;/**
-                 * Type 43    Remove Role From User
-                 */case _constants.chatMessageVOTypes.REMOVE_ROLE_FROM_USER:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVE_ADMIN',result:{thread:threads[0],admin:messageContent}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0],admin:messageContent}});}});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVE_ADMIN',result:{thread:threadId,admin:messageContent}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId,admin:messageContent}});}break;/**
-                 * Type 44    Clear History
-                 */case _constants.chatMessageVOTypes.CLEAR_HISTORY:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
-                 * Type 46    System Messages
-                 */case _constants.chatMessageVOTypes.SYSTEM_MESSAGE:_events.chatEvents.fireEvent('systemEvents',{type:'IS_TYPING',result:{thread:threadId,user:messageContent}});break;/**
-                 * Type 47    Get Not Seen Duration
-                 */case _constants.chatMessageVOTypes.GET_NOT_SEEN_DURATION:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
-                 * Type 48    Pin Thread
-                 */case _constants.chatMessageVOTypes.PIN_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}var pinnedThread=_store.store.threads.get(threadId);if(pinnedThread){pinnedThread.update("pin",true);pinnedThread=pinnedThread.get();}else pinnedThread=threadId;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_PIN',result:{thread:pinnedThread}});// if (fullResponseObject) {
+       * Type 32    Get Message Delivered List
+       */case _constants.chatMessageVOTypes.GET_MESSAGE_DELIVERY_PARTICIPANTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       * Type 33    Get Message Seen List
+       */case _constants.chatMessageVOTypes.GET_MESSAGE_SEEN_PARTICIPANTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       * Type 34    Is Public Group Name Available?
+       */case _constants.chatMessageVOTypes.IS_NAME_AVAILABLE:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       * Type 39    Join Public Group or Channel
+       */case _constants.chatMessageVOTypes.JOIN_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       * Type 40    Bot Messages
+       */case _constants.chatMessageVOTypes.BOT_MESSAGE:_events.chatEvents.fireEvent('botEvents',{type:'BOT_MESSAGE',result:{bot:messageContent}});break;/**
+       * Type 41    Spam P2P Thread
+       */case _constants.chatMessageVOTypes.SPAM_PV_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
+       * Type 42    Set Role To User
+       */case _constants.chatMessageVOTypes.SET_ROLE_TO_USER:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}var srtuThread=_store.store.threads.get(threadId);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_ADD_ADMIN',result:{threadId:threadId,thread:srtuThread?srtuThread.get():null,admin:messageContent}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{threadId:threadId,thread:srtuThread?srtuThread.get():null,admin:messageContent}});// if (fullResponseObject) {
+//     getThreads({
+//         threadIds: [messageContent.id]
+//     }, function (threadsResult) {
+//         var threads = threadsResult.result.threads;
+//
+//         if (!threadsResult.cache) {
+//             chatEvents.fireEvent('threadEvents', {
+//                 type: 'THREAD_ADD_ADMIN',
+//                 result: {
+//                     thread: threads[0],
+//                     admin: messageContent
+//                 }
+//             });
+//
+//             chatEvents.fireEvent('threadEvents', {
+//                 type: 'THREAD_LAST_ACTIVITY_TIME',
+//                 result: {
+//                     thread: threads[0],
+//                     admin: messageContent
+//                 }
+//             });
+//         }
+//     });
+// } else {
+//     chatEvents.fireEvent('threadEvents', {
+//         type: 'THREAD_ADD_ADMIN',
+//         result: {
+//             thread: threadId,
+//             admin: messageContent
+//         }
+//     });
+//
+//     chatEvents.fireEvent('threadEvents', {
+//         type: 'THREAD_LAST_ACTIVITY_TIME',
+//         result: {
+//             thread: threadId,
+//             admin: messageContent
+//         }
+//     });
+// }
+break;/**
+       * Type 43    Remove Role From User
+       */case _constants.chatMessageVOTypes.REMOVE_ROLE_FROM_USER:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}var rrfuThread=_store.store.threads.get(threadId);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVE_ADMIN',result:{threadId:threadId,thread:rrfuThread?rrfuThread.get():null,admin:messageContent}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{threadId:threadId,thread:rrfuThread?rrfuThread.get():null,admin:messageContent}});// if (fullResponseObject) {
+//     getThreads({
+//         threadIds: [messageContent.id]
+//     }, function (threadsResult) {
+//         var threads = threadsResult.result.threads;
+//
+//         if (!threadsResult.cache) {
+//             chatEvents.fireEvent('threadEvents', {
+//                 type: 'THREAD_REMOVE_ADMIN',
+//                 result: {
+//                     thread: threads[0],
+//                     admin: messageContent
+//                 }
+//             });
+//
+//             chatEvents.fireEvent('threadEvents', {
+//                 type: 'THREAD_LAST_ACTIVITY_TIME',
+//                 result: {
+//                     thread: threads[0],
+//                     admin: messageContent
+//                 }
+//             });
+//         }
+//     });
+// } else {
+//     chatEvents.fireEvent('threadEvents', {
+//         type: 'THREAD_REMOVE_ADMIN',
+//         result: {
+//             thread: threadId,
+//             admin: messageContent
+//         }
+//     });
+//
+//     chatEvents.fireEvent('threadEvents', {
+//         type: 'THREAD_LAST_ACTIVITY_TIME',
+//         result: {
+//             thread: threadId,
+//             admin: messageContent
+//         }
+//     });
+// }
+break;/**
+       * Type 44    Clear History
+       */case _constants.chatMessageVOTypes.CLEAR_HISTORY:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
+       * Type 46    System Messages
+       */case _constants.chatMessageVOTypes.SYSTEM_MESSAGE:_events.chatEvents.fireEvent('systemEvents',{type:'IS_TYPING',result:{thread:threadId,user:messageContent}});break;/**
+       * Type 47    Get Not Seen Duration
+       */case _constants.chatMessageVOTypes.GET_NOT_SEEN_DURATION:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
+       * Type 48    Pin Thread
+       */case _constants.chatMessageVOTypes.PIN_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}var pinnedThread=_store.store.threads.get(threadId);if(pinnedThread){pinnedThread.update("pin",true);pinnedThread=pinnedThread.get();}else pinnedThread=null;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_PIN',result:{thread:pinnedThread}});// if (fullResponseObject) {
 //     getThreads({
 //         threadIds: [threadId]
 //     }, function (threadsResult) {
@@ -46687,8 +42240,8 @@ break;/**
 //     });
 // }
 break;/**
-                 * Type 49    UnPin Thread
-                 */case _constants.chatMessageVOTypes.UNPIN_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}var unPinnedThread=_store.store.threads.get(threadId);if(unPinnedThread){unPinnedThread.update("pin",false);unPinnedThread=unPinnedThread.get();}else unPinnedThread=threadId;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNPIN',result:{thread:unPinnedThread}});// if (fullResponseObject) {
+       * Type 49    UnPin Thread
+       */case _constants.chatMessageVOTypes.UNPIN_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}var unPinnedThread=_store.store.threads.get(threadId);if(unPinnedThread){unPinnedThread.update("pin",false);unPinnedThread=unPinnedThread.get();}else unPinnedThread=null;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNPIN',result:{thread:unPinnedThread}});// if (fullResponseObject) {
 //     getThreads({
 //         threadIds: [threadId]
 //     }, function (threadsResult) {
@@ -46710,30 +42263,30 @@ break;/**
 //     });
 // }
 break;/**
-                 * Type 50    Pin Message
-                 */case _constants.chatMessageVOTypes.PIN_MESSAGE:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'MESSAGE_PIN',result:{thread:threadId,pinMessage:formatDataToMakePinMessage(threadId,messageContent)}});break;/**
-                 * Type 51    UnPin Message
-                 */case _constants.chatMessageVOTypes.UNPIN_MESSAGE:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'MESSAGE_UNPIN',result:{thread:threadId,pinMessage:formatDataToMakePinMessage(threadId,messageContent)}});break;/**
-                 * Type 52    Update Chat Profile
-                 */case _constants.chatMessageVOTypes.UPDATE_CHAT_PROFILE:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('userEvents',{type:'CHAT_PROFILE_UPDATED',result:{user:messageContent}});break;/**
-                 * Type 53    Change Thread Privacy
-                 */case _constants.chatMessageVOTypes.CHANGE_THREAD_PRIVACY:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_PRIVACY_CHANGED',result:{thread:messageContent}});break;/**
-                 * Type 54    Get Participant Roles
-                 */case _constants.chatMessageVOTypes.GET_PARTICIPANT_ROLES:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('userEvents',{type:'GET_PARTICIPANT_ROLES',result:{roles:messageContent}});break;/**
-                 * Type 60    Get Contact Not Seen Duration
-                 */case _constants.chatMessageVOTypes.GET_CONTACT_NOT_SEEN_DURATION:_events.chatEvents.fireEvent('contactEvents',{type:'CONTACTS_LAST_SEEN',result:messageContent});break;/**
-                 * Type 61      Get All Unread Message Count
-                 */case _constants.chatMessageVOTypes.ALL_UNREAD_MESSAGE_COUNT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('systemEvents',{type:'ALL_UNREAD_MESSAGES_COUNT',result:messageContent});break;/**
-                 * Type 62    Create Bot
-                 */case _constants.chatMessageVOTypes.CREATE_BOT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
-                 * Type 63    Define Bot Commands
-                 */case _constants.chatMessageVOTypes.DEFINE_BOT_COMMAND:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
-                 * Type 64    Start Bot
-                 */case _constants.chatMessageVOTypes.START_BOT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
-                 * Type 65    Stop Bot
-                 */case _constants.chatMessageVOTypes.STOP_BOT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
-                 * Type 66    Last Message Deleted
-                 */case _constants.chatMessageVOTypes.LAST_MESSAGE_DELETED:delete messageContent.unreadCount;var threadOfDeletedMessage=formatDataToMakeConversation(messageContent);_store.store.threads.save(threadOfDeletedMessage);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:_store.store.threads.get(threadOfDeletedMessage.id).get()}});// new Promise((resolve, reject)=> {
+       * Type 50    Pin Message
+       */case _constants.chatMessageVOTypes.PIN_MESSAGE:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'MESSAGE_PIN',result:{threadId:threadId,thread:threadId,pinMessage:formatDataToMakePinMessage(threadId,messageContent)}});break;/**
+       * Type 51    UnPin Message
+       */case _constants.chatMessageVOTypes.UNPIN_MESSAGE:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'MESSAGE_UNPIN',result:{threadId:threadId,thread:threadId,pinMessage:formatDataToMakePinMessage(threadId,messageContent)}});break;/**
+       * Type 52    Update Chat Profile
+       */case _constants.chatMessageVOTypes.UPDATE_CHAT_PROFILE:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('userEvents',{type:'CHAT_PROFILE_UPDATED',result:{user:messageContent}});break;/**
+       * Type 53    Change Thread Privacy
+       */case _constants.chatMessageVOTypes.CHANGE_THREAD_PRIVACY:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_store.store.threads.save(messageContent);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_PRIVACY_CHANGED',result:{threadId:threadId,thread:messageContent}});break;/**
+       * Type 54    Get Participant Roles
+       */case _constants.chatMessageVOTypes.GET_PARTICIPANT_ROLES:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('userEvents',{type:'GET_PARTICIPANT_ROLES',result:{roles:messageContent}});break;/**
+       * Type 60    Get Contact Not Seen Duration
+       */case _constants.chatMessageVOTypes.GET_CONTACT_NOT_SEEN_DURATION:_events.chatEvents.fireEvent('contactEvents',{type:'CONTACTS_LAST_SEEN',result:messageContent});break;/**
+       * Type 61      Get All Unread Message Count
+       */case _constants.chatMessageVOTypes.ALL_UNREAD_MESSAGE_COUNT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('systemEvents',{type:'ALL_UNREAD_MESSAGES_COUNT',result:messageContent});break;/**
+       * Type 62    Create Bot
+       */case _constants.chatMessageVOTypes.CREATE_BOT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       * Type 63    Define Bot Commands
+       */case _constants.chatMessageVOTypes.DEFINE_BOT_COMMAND:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       * Type 64    Start Bot
+       */case _constants.chatMessageVOTypes.START_BOT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       * Type 65    Stop Bot
+       */case _constants.chatMessageVOTypes.STOP_BOT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       * Type 66    Last Message Deleted
+       */case _constants.chatMessageVOTypes.LAST_MESSAGE_DELETED:delete messageContent.unreadCount;var threadOfDeletedMessage=formatDataToMakeConversation(messageContent);_store.store.threads.save(threadOfDeletedMessage);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{threadId:threadId,thread:_store.store.threads.get(threadOfDeletedMessage.id).get()}});// new Promise((resolve, reject)=> {
 //     if (fullResponseObject) {
 //         getThreads({
 //             threadIds: [messageContent.id]
@@ -46772,8 +42325,8 @@ break;/**
 // }
 // })
 break;/**
-                 * Type 67    Last Message Edited
-                 */case _constants.chatMessageVOTypes.LAST_MESSAGE_EDITED:delete messageContent.unreadCount;var threadOfEditedMessage=formatDataToMakeConversation(messageContent);_store.store.threads.save(threadOfEditedMessage);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:_store.store.threads.get(threadOfEditedMessage.id).get()}});// if (fullResponseObject) {
+       * Type 67    Last Message Edited
+       */case _constants.chatMessageVOTypes.LAST_MESSAGE_EDITED:delete messageContent.unreadCount;var threadOfEditedMessage=formatDataToMakeConversation(messageContent);_store.store.threads.save(threadOfEditedMessage);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{threadId:threadId,thread:_store.store.threads.get(threadOfEditedMessage.id).get()}});// if (fullResponseObject) {
 //     getThreads({
 //         threadIds: [messageContent.id]
 //     }, function (threadsResult) {
@@ -46799,18 +42352,18 @@ break;/**
 //     });
 // }
 break;/**
-                 * Type 68    Get Bot Commands List
-                 */case _constants.chatMessageVOTypes.BOT_COMMANDS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
-                 * Type 69    Get Thread All Bots
-                 */case _constants.chatMessageVOTypes.THREAD_ALL_BOTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
-                 * Type 70    Send Call Request
-                 */case _constants.chatMessageVOTypes.CALL_REQUEST:case _constants.chatMessageVOTypes.ACCEPT_CALL:case _constants.chatMessageVOTypes.REJECT_CALL:case _constants.chatMessageVOTypes.RECEIVE_CALL_REQUEST:case _constants.chatMessageVOTypes.START_CALL:case _constants.chatMessageVOTypes.END_CALL_REQUEST:case _constants.chatMessageVOTypes.END_CALL:case _constants.chatMessageVOTypes.GET_CALLS:case _constants.chatMessageVOTypes.RECONNECT:case _constants.chatMessageVOTypes.CONNECT:case _constants.chatMessageVOTypes.GROUP_CALL_REQUEST:case _constants.chatMessageVOTypes.LEAVE_CALL:case _constants.chatMessageVOTypes.ADD_CALL_PARTICIPANT:case _constants.chatMessageVOTypes.CALL_PARTICIPANT_JOINED:case _constants.chatMessageVOTypes.REMOVE_CALL_PARTICIPANT:case _constants.chatMessageVOTypes.TERMINATE_CALL:case _constants.chatMessageVOTypes.MUTE_CALL_PARTICIPANT:case _constants.chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT:case _constants.chatMessageVOTypes.RECORD_CALL:case _constants.chatMessageVOTypes.RECORD_CALL_STARTED:case _constants.chatMessageVOTypes.END_RECORD_CALL:case _constants.chatMessageVOTypes.START_SCREEN_SHARE:case _constants.chatMessageVOTypes.END_SCREEN_SHARE:case _constants.chatMessageVOTypes.DELETE_FROM_CALL_HISTORY:case _constants.chatMessageVOTypes.TURN_ON_VIDEO_CALL:case _constants.chatMessageVOTypes.TURN_OFF_VIDEO_CALL:case _constants.chatMessageVOTypes.ACTIVE_CALL_PARTICIPANTS:case _constants.chatMessageVOTypes.CALL_SESSION_CREATED:case _constants.chatMessageVOTypes.CANCEL_GROUP_CALL:case _constants.chatMessageVOTypes.DESTINED_RECORD_CALL:case _constants.chatMessageVOTypes.GET_CALLS_TO_JOIN:case _constants.chatMessageVOTypes.SWITCH_TO_GROUP_CALL_REQUEST:case _constants.chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE:case _constants.chatMessageVOTypes.CALL_RECORDING_FAILED:callModule.handleChatMessages(type,messageContent,contentCount,threadId,uniqueId);break;/**
-                 * Type 90    Contacts Synced
-                 */case _constants.chatMessageVOTypes.CONTACT_SYNCED:_events.chatEvents.fireEvent('contactEvents',{type:'CONTACTS_SYNCED',result:messageContent});break;/**
-                 * Type 101    Location Ping
-                 */case _constants.chatMessageVOTypes.LOCATION_PING:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('systemEvents',{type:'LOCATION_PING',result:messageContent});break;/**
-                 * Type 102    Close Thread
-                 */case _constants.chatMessageVOTypes.CLOSE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}var closedThread=_store.store.threads.get(threadId);if(closedThread){closedThread=closedThread.get();_store.store.threads.remove(threadId);}else closedThread=threadId;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_CLOSE',result:{thread:closedThread}});// if (fullResponseObject) {
+       * Type 68    Get Bot Commands List
+       */case _constants.chatMessageVOTypes.BOT_COMMANDS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       * Type 69    Get Thread All Bots
+       */case _constants.chatMessageVOTypes.THREAD_ALL_BOTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       * Type 70    Send Call Request
+       */case _constants.chatMessageVOTypes.CALL_REQUEST:case _constants.chatMessageVOTypes.ACCEPT_CALL:case _constants.chatMessageVOTypes.REJECT_CALL:case _constants.chatMessageVOTypes.RECEIVE_CALL_REQUEST:case _constants.chatMessageVOTypes.START_CALL:case _constants.chatMessageVOTypes.END_CALL_REQUEST:case _constants.chatMessageVOTypes.END_CALL:case _constants.chatMessageVOTypes.GET_CALLS:case _constants.chatMessageVOTypes.RECONNECT:case _constants.chatMessageVOTypes.CONNECT:case _constants.chatMessageVOTypes.GROUP_CALL_REQUEST:case _constants.chatMessageVOTypes.LEAVE_CALL:case _constants.chatMessageVOTypes.ADD_CALL_PARTICIPANT:case _constants.chatMessageVOTypes.CALL_PARTICIPANT_JOINED:case _constants.chatMessageVOTypes.REMOVE_CALL_PARTICIPANT:case _constants.chatMessageVOTypes.TERMINATE_CALL:case _constants.chatMessageVOTypes.MUTE_CALL_PARTICIPANT:case _constants.chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT:case _constants.chatMessageVOTypes.RECORD_CALL:case _constants.chatMessageVOTypes.RECORD_CALL_STARTED:case _constants.chatMessageVOTypes.END_RECORD_CALL:case _constants.chatMessageVOTypes.START_SCREEN_SHARE:case _constants.chatMessageVOTypes.END_SCREEN_SHARE:case _constants.chatMessageVOTypes.DELETE_FROM_CALL_HISTORY:case _constants.chatMessageVOTypes.TURN_ON_VIDEO_CALL:case _constants.chatMessageVOTypes.TURN_OFF_VIDEO_CALL:case _constants.chatMessageVOTypes.ACTIVE_CALL_PARTICIPANTS:case _constants.chatMessageVOTypes.CALL_SESSION_CREATED:case _constants.chatMessageVOTypes.CANCEL_GROUP_CALL:case _constants.chatMessageVOTypes.DESTINED_RECORD_CALL:case _constants.chatMessageVOTypes.GET_CALLS_TO_JOIN:case _constants.chatMessageVOTypes.SWITCH_TO_GROUP_CALL_REQUEST:case _constants.chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE:case _constants.chatMessageVOTypes.CALL_RECORDING_FAILED:callModule.handleChatMessages(type,messageContent,contentCount,threadId,uniqueId);break;/**
+       * Type 90    Contacts Synced
+       */case _constants.chatMessageVOTypes.CONTACT_SYNCED:_events.chatEvents.fireEvent('contactEvents',{type:'CONTACTS_SYNCED',result:messageContent});break;/**
+       * Type 101    Location Ping
+       */case _constants.chatMessageVOTypes.LOCATION_PING:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('systemEvents',{type:'LOCATION_PING',result:messageContent});break;/**
+       * Type 102    Close Thread
+       */case _constants.chatMessageVOTypes.CLOSE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}var closedThread=_store.store.threads.get(threadId);if(closedThread){closedThread=closedThread.get();_store.store.threads.remove(threadId);}else closedThread=null;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_CLOSE',result:{threadId:threadId,thread:closedThread}});// if (fullResponseObject) {
 //     getThreads({
 //         threadIds: [threadId]
 //     }, function (threadsResult) {
@@ -46833,100 +42386,95 @@ break;/**
 //     });
 // }
 break;/**
-                 * Type 104    Remove Bot Commands
-                 */case _constants.chatMessageVOTypes.REMOVE_BOT_COMMANDS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
-                 * Type 107    Register Assistant
-                 */case _constants.chatMessageVOTypes.REGISTER_ASSISTANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANT_REGISTER',result:messageContent});break;/**
-                 * Type 108    Deactivate Assistant
-                 */case _constants.chatMessageVOTypes.DEACTIVATE_ASSISTANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANT_DEACTIVATE',result:messageContent});break;/**
-                 * Type 109    Get Assistants List
-                 */case _constants.chatMessageVOTypes.GET_ASSISTANTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANTS_LIST',result:messageContent});break;/**
-                 * Type 115    Get Assistants History
-                 */case _constants.chatMessageVOTypes.ASSISTANT_HISTORY:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANTS_HSITORY',result:messageContent});break;/**
-                 * Type 116    Block Assistants
-                 */case _constants.chatMessageVOTypes.BLOCK_ASSISTANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANT_BLOCK',result:messageContent});break;/**
-                 * Type 117    UnBlock Assistant
-                 */case _constants.chatMessageVOTypes.UNBLOCK_ASSISTANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANT_UNBLOCK',result:messageContent});break;/**
-                 * Type 118    Blocked Assistants List
-                 */case _constants.chatMessageVOTypes.BLOCKED_ASSISTANTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANTS_BLOCKED_LIST',result:messageContent});break;/**
-                 * Type 130    Mutual Groups
-                 */case _constants.chatMessageVOTypes.MUTUAL_GROUPS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}_events.chatEvents.fireEvent('threadEvents',{type:'MUTUAL_GROUPS',result:messageContent});break;/**
-                 * Type 140    Create Tag
-                 */case _constants.chatMessageVOTypes.CREATE_TAG:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'NEW_TAG',result:messageContent});break;/**
-                 * Type 141    Edit Tag
-                 */case _constants.chatMessageVOTypes.EDIT_TAG:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'EDIT_TAG',result:messageContent});break;/**
-                 * Type 142    Delete Tag
-                 */case _constants.chatMessageVOTypes.DELETE_TAG:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'DELETE_TAG',result:messageContent});break;/**
-                 * Type 143    Delete Tag
-                 */case _constants.chatMessageVOTypes.ADD_TAG_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'ADD_TAG_PARTICIPANT',result:messageContent});break;/**
-                 * Type 144    Delete Tag
-                 */case _constants.chatMessageVOTypes.REMOVE_TAG_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'REMOVE_TAG_PARTICIPANT',result:messageContent});break;/**
-                 * Type 145    Delete Tag
-                 */case _constants.chatMessageVOTypes.GET_TAG_LIST:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'TAG_LIST',result:messageContent});break;/**
-                 * Type 151    Delete Message Thread
-                 */case _constants.chatMessageVOTypes.DELETE_MESSAGE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}messageContent.threadId=threadId;_store.store.threads.remove(threadId);_events.chatEvents.fireEvent('threadEvents',{type:'DELETE_THREAD',result:messageContent});break;/**
-                 * Type 152    Gives us a json to export for user
-                 */case _constants.chatMessageVOTypes.EXPORT_CHAT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
-                 * Type 200    Adding a user to contacts list
-                 */case _constants.chatMessageVOTypes.ADD_CONTACTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
-                 * Type 201    Remove contacts result
-                 */case _constants.chatMessageVOTypes.REMOVE_CONTACTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
-                 * Type 220    Adding a user to contacts list
-                 */case _constants.chatMessageVOTypes.CONTACT_THREAD_UPDATE:messageContent.threadId=threadId;_events.chatEvents.fireEvent('threadEvents',{type:'CONTACT_THREAD_UPDATE',result:messageContent});break;/**
-                 /**
-                 * Type 223    ARCHIVE_THREAD
-                 */case _constants.chatMessageVOTypes.ARCHIVE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
-                 /**
-                 * Type 224    UNARCHIVE_THREAD
-                 */case _constants.chatMessageVOTypes.UNARCHIVE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
-                * Type 226    CUSTOMER_INFO
-                */case _constants.chatMessageVOTypes.CUSTOMER_INFO:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
-                 * Type 999   All unknown errors
-                 */case _constants.chatMessageVOTypes.ERROR:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(true,messageContent.message,messageContent.code,messageContent,0));}/**
-                     * If error code is 21, Token is invalid &
-                     * user should logged out
-                     */if(messageContent.code===21){// TODO: Temporarily removed due to unknown side-effects
+       * Type 104    Remove Bot Commands
+       */case _constants.chatMessageVOTypes.REMOVE_BOT_COMMANDS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       * Type 107    Register Assistant
+       */case _constants.chatMessageVOTypes.REGISTER_ASSISTANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANT_REGISTER',result:messageContent});break;/**
+       * Type 108    Deactivate Assistant
+       */case _constants.chatMessageVOTypes.DEACTIVATE_ASSISTANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANT_DEACTIVATE',result:messageContent});break;/**
+       * Type 109    Get Assistants List
+       */case _constants.chatMessageVOTypes.GET_ASSISTANTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANTS_LIST',result:messageContent});break;/**
+       * Type 115    Get Assistants History
+       */case _constants.chatMessageVOTypes.ASSISTANT_HISTORY:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANTS_HSITORY',result:messageContent});break;/**
+       * Type 116    Block Assistants
+       */case _constants.chatMessageVOTypes.BLOCK_ASSISTANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANT_BLOCK',result:messageContent});break;/**
+       * Type 117    UnBlock Assistant
+       */case _constants.chatMessageVOTypes.UNBLOCK_ASSISTANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANT_UNBLOCK',result:messageContent});break;/**
+       * Type 118    Blocked Assistants List
+       */case _constants.chatMessageVOTypes.BLOCKED_ASSISTANTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANTS_BLOCKED_LIST',result:messageContent});break;/**
+       * Type 130    Mutual Groups
+       */case _constants.chatMessageVOTypes.MUTUAL_GROUPS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}_events.chatEvents.fireEvent('threadEvents',{type:'MUTUAL_GROUPS',result:messageContent});break;/**
+       * Type 140    Create Tag
+       */case _constants.chatMessageVOTypes.CREATE_TAG:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'NEW_TAG',result:messageContent});break;/**
+       * Type 141    Edit Tag
+       */case _constants.chatMessageVOTypes.EDIT_TAG:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'EDIT_TAG',result:messageContent});break;/**
+       * Type 142    Delete Tag
+       */case _constants.chatMessageVOTypes.DELETE_TAG:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'DELETE_TAG',result:messageContent});break;/**
+       * Type 143    Delete Tag
+       */case _constants.chatMessageVOTypes.ADD_TAG_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'ADD_TAG_PARTICIPANT',result:messageContent});break;/**
+       * Type 144    Delete Tag
+       */case _constants.chatMessageVOTypes.REMOVE_TAG_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'REMOVE_TAG_PARTICIPANT',result:messageContent});break;/**
+       * Type 145    Delete Tag
+       */case _constants.chatMessageVOTypes.GET_TAG_LIST:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'TAG_LIST',result:messageContent});break;/**
+       * Type 151    Delete Message Thread
+       */case _constants.chatMessageVOTypes.DELETE_MESSAGE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}messageContent.threadId=threadId;_store.store.threads.remove(threadId);_events.chatEvents.fireEvent('threadEvents',{type:'DELETE_THREAD',result:messageContent});break;/**
+       * Type 152    Gives us a json to export for user
+       */case _constants.chatMessageVOTypes.EXPORT_CHAT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+       * Type 200    Adding a user to contacts list
+       */case _constants.chatMessageVOTypes.ADD_CONTACTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+       * Type 201    Remove contacts result
+       */case _constants.chatMessageVOTypes.REMOVE_CONTACTS:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+       * Type 220    Adding a user to contacts list
+       */case _constants.chatMessageVOTypes.CONTACT_THREAD_UPDATE:messageContent.threadId=threadId;_events.chatEvents.fireEvent('threadEvents',{type:'CONTACT_THREAD_UPDATE',result:messageContent});break;/**
+       /**
+       * Type 223    ARCHIVE_THREAD
+       */case _constants.chatMessageVOTypes.ARCHIVE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+       /**
+       * Type 224    UNARCHIVE_THREAD
+       */case _constants.chatMessageVOTypes.UNARCHIVE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+       * Type 226    CUSTOMER_INFO
+       */case _constants.chatMessageVOTypes.CUSTOMER_INFO:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+       * Type 999   All unknown errors
+       */case _constants.chatMessageVOTypes.ERROR:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(true,messageContent.message,messageContent.code,messageContent,0));}/**
+         * If error code is 21, Token is invalid &
+         * user should logged out
+         */if(messageContent.code===21){// TODO: Temporarily removed due to unknown side-effects
 // chatMessaging.chatState = false;
 // asyncClient.logout();
 // clearChatServerCaches();
 }/* If the error code is 208, so the user
-                     * has been blocked cause of spam activity
-                     */if(messageContent.code===208){if(chatMessaging.sendMessageCallbacks[uniqueId]){getItemFromChatWaitQueue(uniqueId,function(message){_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_FAILED',cache:false,result:{message:message}});});}}_events.chatEvents.fireEvent('error',{code:messageContent.code,message:messageContent.message,error:messageContent,uniqueId:uniqueId});break;}},/**
-         * Send Message Callbacks Handler
-         *
-         * When you send Delivery or Seen Acknowledgements of a message
-         * You should send Delivery and Seen for all the Messages before
-         * that message so that you wont have un delivered/unseen messages
-         * after seeing the last message of a thread
-         *
-         * @access private
-         *
-         * @param {int}     actionType      Switch between Delivery or Seen
-         * @param {int}    threadId        Id of thread
-         * @param {string}  uniqueId        uniqueId of message
-         *
-         * @return {undefined}
-         */sendMessageCallbacksHandler=function sendMessageCallbacksHandler(actionType,threadId,uniqueId){switch(actionType){case _constants.chatMessageVOTypes.DELIVERY:if(chatMessaging.threadCallbacks[threadId]){var lastThreadCallbackIndex=Object.keys(chatMessaging.threadCallbacks[threadId]).indexOf(uniqueId);if(typeof lastThreadCallbackIndex!=='undefined'){while(lastThreadCallbackIndex>-1){var tempUniqueId=Object.entries(chatMessaging.threadCallbacks[threadId])[lastThreadCallbackIndex][0];if(chatMessaging.sendMessageCallbacks[tempUniqueId]&&chatMessaging.sendMessageCallbacks[tempUniqueId].onDeliver){if(chatMessaging.threadCallbacks[threadId][tempUniqueId]&&chatMessaging.threadCallbacks[threadId][tempUniqueId].onSent){chatMessaging.sendMessageCallbacks[tempUniqueId].onDeliver({uniqueId:tempUniqueId});delete chatMessaging.sendMessageCallbacks[tempUniqueId].onDeliver;chatMessaging.threadCallbacks[threadId][tempUniqueId].onDeliver=true;}}lastThreadCallbackIndex-=1;}}}break;case _constants.chatMessageVOTypes.SEEN:if(chatMessaging.threadCallbacks[threadId]){var lastThreadCallbackIndex=Object.keys(chatMessaging.threadCallbacks[threadId]).indexOf(uniqueId);if(typeof lastThreadCallbackIndex!=='undefined'){while(lastThreadCallbackIndex>-1){var tempUniqueId=Object.entries(chatMessaging.threadCallbacks[threadId])[lastThreadCallbackIndex][0];if(chatMessaging.sendMessageCallbacks[tempUniqueId]&&chatMessaging.sendMessageCallbacks[tempUniqueId].onSeen){if(chatMessaging.threadCallbacks[threadId][tempUniqueId]&&chatMessaging.threadCallbacks[threadId][tempUniqueId].onSent){if(!chatMessaging.threadCallbacks[threadId][tempUniqueId].onDeliver){chatMessaging.sendMessageCallbacks[tempUniqueId].onDeliver({uniqueId:tempUniqueId});delete chatMessaging.sendMessageCallbacks[tempUniqueId].onDeliver;chatMessaging.threadCallbacks[threadId][tempUniqueId].onDeliver=true;}chatMessaging.sendMessageCallbacks[tempUniqueId].onSeen({uniqueId:tempUniqueId});delete chatMessaging.sendMessageCallbacks[tempUniqueId].onSeen;chatMessaging.threadCallbacks[threadId][tempUniqueId].onSeen=true;if(chatMessaging.threadCallbacks[threadId][tempUniqueId].onSent&&chatMessaging.threadCallbacks[threadId][tempUniqueId].onDeliver&&chatMessaging.threadCallbacks[threadId][tempUniqueId].onSeen){delete chatMessaging.threadCallbacks[threadId][tempUniqueId];delete chatMessaging.sendMessageCallbacks[tempUniqueId];}}}lastThreadCallbackIndex-=1;}}}break;default:break;}},/**
-         * New Message Handler
-         *
-         * Handles Event Emitter of a newly received Chat Message
-         *
-         * @access private
-         *
-         * @param {int}    threadId         ID of image
-         * @param {object}  messageContent   Json Content of the message
-         *
-         * @return {undefined}
-         */newMessageHandler=function newMessageHandler(threadId,messageContent){var message=formatDataToMakeMessage(threadId,messageContent);/*
-             * Send Message delivery for the last message
-             * has been received while being online
-             */ // putInMessagesDeliveryQueue(threadId, message.id);
-/**
-             * Add New Messages into cache database
-             */if(canUseCache&&cacheSecret.length>0){if(db){/**
-                     * Insert new messages into cache database
-                     * after deleting old messages from cache
-                     */var tempData={};try{var salt=_utility["default"].generateUUID();tempData.id=parseInt(message.id);tempData.owner=parseInt(chatMessaging.userInfo.id);tempData.threadId=parseInt(message.threadId);tempData.time=message.time;tempData.message=_utility["default"].crypt(message.message,cacheSecret,salt);tempData.data=_utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(message)),cacheSecret,salt);tempData.salt=salt;tempData.sendStatus='sent';}catch(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}db.messages.put(tempData)["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}if(message.conversation){delete message.conversation.unreadCount;_store.store.threads.save(message.conversation);if(message.ownerId!=chatMessaging.userInfo.id){if(message.time>_store.store.threads.get(threadId).lastSeenMessageTime.get()){_store.store.threads.get(threadId).unreadCount.increase();}}else{//If is my message set unread count to 0
+         * has been blocked cause of spam activity
+         */if(messageContent.code===208){if(chatMessaging.sendMessageCallbacks[uniqueId]){getItemFromChatWaitQueue(uniqueId,function(message){_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_FAILED',cache:false,result:{message:message}});});}}_events.chatEvents.fireEvent('error',{code:messageContent.code,message:messageContent.message,error:messageContent,uniqueId:uniqueId});break;}},/**
+   * Send Message Callbacks Handler
+   *
+   * When you send Delivery or Seen Acknowledgements of a message
+   * You should send Delivery and Seen for all the Messages before
+   * that message so that you wont have un delivered/unseen messages
+   * after seeing the last message of a thread
+   *
+   * @access private
+   *
+   * @param {int}     actionType      Switch between Delivery or Seen
+   * @param {int}    threadId        Id of thread
+   * @param {string}  uniqueId        uniqueId of message
+   *
+   * @return {undefined}
+   */sendMessageCallbacksHandler=function sendMessageCallbacksHandler(actionType,threadId,uniqueId){switch(actionType){case _constants.chatMessageVOTypes.DELIVERY:if(chatMessaging.threadCallbacks[threadId]){var lastThreadCallbackIndex=Object.keys(chatMessaging.threadCallbacks[threadId]).indexOf(uniqueId);if(typeof lastThreadCallbackIndex!=='undefined'){while(lastThreadCallbackIndex>-1){var tempUniqueId=Object.entries(chatMessaging.threadCallbacks[threadId])[lastThreadCallbackIndex][0];if(chatMessaging.sendMessageCallbacks[tempUniqueId]&&chatMessaging.sendMessageCallbacks[tempUniqueId].onDeliver){if(chatMessaging.threadCallbacks[threadId][tempUniqueId]&&chatMessaging.threadCallbacks[threadId][tempUniqueId].onSent){chatMessaging.sendMessageCallbacks[tempUniqueId].onDeliver({uniqueId:tempUniqueId});delete chatMessaging.sendMessageCallbacks[tempUniqueId].onDeliver;chatMessaging.threadCallbacks[threadId][tempUniqueId].onDeliver=true;}}lastThreadCallbackIndex-=1;}}}break;case _constants.chatMessageVOTypes.SEEN:if(chatMessaging.threadCallbacks[threadId]){var lastThreadCallbackIndex=Object.keys(chatMessaging.threadCallbacks[threadId]).indexOf(uniqueId);if(typeof lastThreadCallbackIndex!=='undefined'){while(lastThreadCallbackIndex>-1){var tempUniqueId=Object.entries(chatMessaging.threadCallbacks[threadId])[lastThreadCallbackIndex][0];if(chatMessaging.sendMessageCallbacks[tempUniqueId]&&chatMessaging.sendMessageCallbacks[tempUniqueId].onSeen){if(chatMessaging.threadCallbacks[threadId][tempUniqueId]&&chatMessaging.threadCallbacks[threadId][tempUniqueId].onSent){if(!chatMessaging.threadCallbacks[threadId][tempUniqueId].onDeliver){chatMessaging.sendMessageCallbacks[tempUniqueId].onDeliver({uniqueId:tempUniqueId});delete chatMessaging.sendMessageCallbacks[tempUniqueId].onDeliver;chatMessaging.threadCallbacks[threadId][tempUniqueId].onDeliver=true;}chatMessaging.sendMessageCallbacks[tempUniqueId].onSeen({uniqueId:tempUniqueId});delete chatMessaging.sendMessageCallbacks[tempUniqueId].onSeen;chatMessaging.threadCallbacks[threadId][tempUniqueId].onSeen=true;if(chatMessaging.threadCallbacks[threadId][tempUniqueId].onSent&&chatMessaging.threadCallbacks[threadId][tempUniqueId].onDeliver&&chatMessaging.threadCallbacks[threadId][tempUniqueId].onSeen){delete chatMessaging.threadCallbacks[threadId][tempUniqueId];delete chatMessaging.sendMessageCallbacks[tempUniqueId];}}}lastThreadCallbackIndex-=1;}}}break;default:break;}},/**
+   * New Message Handler
+   *
+   * Handles Event Emitter of a newly received Chat Message
+   *
+   * @access private
+   *
+   * @param {int}    threadId         ID of image
+   * @param {object}  messageContent   Json Content of the message
+   *
+   * @return {undefined}
+   */newMessageHandler=function newMessageHandler(threadId,messageContent){var message=formatDataToMakeMessage(threadId,messageContent);/*
+     * Send Message delivery for the last message
+     * has been received while being online
+     */ // putInMessagesDeliveryQueue(threadId, message.id);
+if(message.conversation){delete message.conversation.unreadCount;_store.store.threads.save(message.conversation);if(message.ownerId!=chatMessaging.userInfo.id){if(message.time>_store.store.threads.get(threadId).lastSeenMessageTime.get()){_store.store.threads.get(threadId).unreadCount.increase();}}else{//If is my message set unread count to 0
 _store.store.threads.get(threadId).unreadCount.set(0);}message.conversation.unreadCount=_store.store.threads.get(threadId).unreadCount.get();}_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_NEW',cache:false,result:{message:message}});var threadObject=message.conversation;var lastMessageVoCopy=Object.assign({},message);lastMessageVoCopy.conversation&&delete lastMessageVoCopy.conversation;threadObject.lastParticipantImage=!!message.participant&&message.participant.hasOwnProperty('image')?message.participant.image:'';threadObject.lastMessageVO=lastMessageVoCopy;threadObject.lastParticipantName=!!message.participant&&message.participant.hasOwnProperty('name')?message.participant.name:'';threadObject.lastMessage=message.hasOwnProperty('message')?message.message:'';// chatEvents.fireEvent('threadEvents', {
 //     type: 'THREAD_UNREAD_COUNT_UPDATED',
 //     result: {
@@ -46934,7 +42482,7 @@ _store.store.threads.get(threadId).unreadCount.set(0);}message.conversation.unre
 //         unreadCount: (threadObject.unreadCount) ? threadObject.unreadCount : 0
 //     }
 // });
-_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadObject}});// if (fullResponseObject) {
+_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{threadId:threadId,thread:threadObject}});// if (fullResponseObject) {
 //     getThreads({
 //         threadIds: [threadId]
 //     }, function (threadsResult) {
@@ -46973,23 +42521,19 @@ _events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',re
 //     });
 // }
 /**
-             * Update waitQ and remove sent messages from it
-             */deleteFromChatWaitQueue(message,function(){});},/**
-         * Chat Edit Message Handler
-         *
-         * Handles Event Emitter of an edited Chat Message
-         *
-         * @access private
-         *
-         * @param {int}    threadId         ID of image
-         * @param {object}  messageContent   Json Content of the message
-         *
-         * @return {undefined}
-         */chatEditMessageHandler=function chatEditMessageHandler(threadId,messageContent){var message=formatDataToMakeMessage(threadId,messageContent);/**
-             * Update Message on cache
-             */if(canUseCache&&cacheSecret.length>0){if(db){try{var tempData={},salt=_utility["default"].generateUUID();tempData.id=parseInt(message.id);tempData.owner=parseInt(chatMessaging.userInfo.id);tempData.threadId=parseInt(message.threadId);tempData.time=message.time;tempData.message=_utility["default"].crypt(message.message,cacheSecret,salt);tempData.data=_utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(message)),cacheSecret,salt);tempData.salt=salt;/**
-                         * Insert Message into cache database
-                         */db.messages.put(tempData)["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}catch(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}if(message.conversation){delete message.conversation.unreadCount;_store.store.threads.save(message.conversation);message.conversation.unreadCount=_store.store.threads.get(threadId).unreadCount.get()||0;}// if (fullResponseObject) {
+     * Update waitQ and remove sent messages from it
+     */deleteFromChatWaitQueue(message,function(){});},/**
+   * Chat Edit Message Handler
+   *
+   * Handles Event Emitter of an edited Chat Message
+   *
+   * @access private
+   *
+   * @param {int}    threadId         ID of image
+   * @param {object}  messageContent   Json Content of the message
+   *
+   * @return {undefined}
+   */chatEditMessageHandler=function chatEditMessageHandler(threadId,messageContent){var message=formatDataToMakeMessage(threadId,messageContent);if(message.conversation){delete message.conversation.unreadCount;_store.store.threads.save(message.conversation);message.conversation.unreadCount=_store.store.threads.get(threadId).unreadCount.get()||0;}// if (fullResponseObject) {
 //     getThreads({
 //         threadIds: [threadId]
 //     }, function (threadsResult) {
@@ -47012,1327 +42556,1010 @@ _events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',re
 //         }
 //     });
 // } else {
-_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_EDIT',result:{message:message}});if(message.pinned){var thread=_store.store.threads.get(threadId);if(thread)thread=thread.get();_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:thread?thread:threadId}});}// }
+_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_EDIT',result:{message:message}});if(message.pinned){var thread=_store.store.threads.get(threadId);if(thread)thread=thread.get();_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{threadId:threadId,thread:thread?thread:null}});}// }
 },/**
-         * Create Thread
-         *
-         * Makes formatted Thread Object out of given contentCount,
-         * If Thread has been newly created, a THREAD_NEW event
-         * will be emitted
-         *
-         * @access private
-         *
-         * @param {object}    messageContent    Json object of thread taken from chat server
-         * @param {boolean}   addFromService    if this is a newly created Thread, addFromService should be True
-         *
-         * @param showThread
-         * @return {object} Formatted Thread Object
-         */createThread=function createThread(messageContent,addFromService,showThread){var threadData=formatDataToMakeConversation(messageContent);var redirectToThread=showThread===true?showThread:false;if(addFromService){if(_store.store.threads.get(threadData.id)){delete threadData.unreadCount;threadData.unreadCount=_store.store.threads.get(threadData.id).unreadCount.get();}_store.store.threads.save(threadData);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_NEW',redirectToThread:redirectToThread,result:{thread:threadData}});/**
-                 * Add New Thread into cache database #cache
-                 */if(canUseCache&&cacheSecret.length>0){if(db){var tempData={};try{var salt=_utility["default"].generateUUID();tempData.id=threadData.id;tempData.owner=chatMessaging.userInfo.id;tempData.title=_utility["default"].crypt(threadData.title,cacheSecret,salt);tempData.time=threadData.time;tempData.data=_utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(threadData)),cacheSecret,salt);tempData.salt=salt;}catch(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}db.threads.put(tempData)["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}return threadData;},/**
-         * Format Data To Make Linked User
-         *
-         * This functions re-formats given JSON to proper Object
-         *
-         * @access private
-         *
-         * @param {object}  messageContent    Json object of thread taken from chat server
-         *
-         * @return {object} linkedUser Object
-         */formatDataToMakeLinkedUser=function formatDataToMakeLinkedUser(messageContent){/**
-             * + RelatedUserVO                 {object}
-             *   - coreUserId                  {int}
-             *   - username                    {string}
-             *   - nickname                    {string}
-             *   - name                        {string}
-             *   - image                       {string}
-             */var linkedUser={coreUserId:typeof messageContent.coreUserId!=='undefined'?messageContent.coreUserId:messageContent.id,username:messageContent.username,nickname:messageContent.nickname,name:messageContent.name,image:messageContent.image};// return linkedUser;
+   * Create Thread
+   *
+   * Makes formatted Thread Object out of given contentCount,
+   * If Thread has been newly created, a THREAD_NEW event
+   * will be emitted
+   *
+   * @access private
+   *
+   * @param {object}    messageContent    Json object of thread taken from chat server
+   * @param {boolean}   addFromService    if this is a newly created Thread, addFromService should be True
+   *
+   * @param showThread
+   * @return {object} Formatted Thread Object
+   */createThread=function createThread(messageContent,addFromService,showThread){var threadData=formatDataToMakeConversation(messageContent);var redirectToThread=showThread===true?showThread:false;if(addFromService){if(_store.store.threads.get(threadData.id)){delete threadData.unreadCount;threadData.unreadCount=_store.store.threads.get(threadData.id).unreadCount.get();}_store.store.threads.save(threadData);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_NEW',redirectToThread:redirectToThread,result:{threadId:threadData.id,thread:threadData}});}return threadData;},/**
+   * Format Data To Make Linked User
+   *
+   * This functions re-formats given JSON to proper Object
+   *
+   * @access private
+   *
+   * @param {object}  messageContent    Json object of thread taken from chat server
+   *
+   * @return {object} linkedUser Object
+   */formatDataToMakeLinkedUser=function formatDataToMakeLinkedUser(messageContent){/**
+     * + RelatedUserVO                 {object}
+     *   - coreUserId                  {int}
+     *   - username                    {string}
+     *   - nickname                    {string}
+     *   - name                        {string}
+     *   - image                       {string}
+     */var linkedUser={coreUserId:typeof messageContent.coreUserId!=='undefined'?messageContent.coreUserId:messageContent.id,username:messageContent.username,nickname:messageContent.nickname,name:messageContent.name,image:messageContent.image};// return linkedUser;
 return JSON.parse(JSON.stringify(linkedUser));},/**
-         * Format Data To Make Contact
-         *
-         * This functions reformats given JSON to proper Object
-         *
-         * @access private
-         *
-         * @param {object}  messageContent    Json object of thread taken from chat server
-         *
-         * @return {object} contact Object
-         */formatDataToMakeContact=function formatDataToMakeContact(messageContent){/**
-             * + ContactVO                        {object}
-             *    - id                            {int}
-             *    - blocked                       {boolean}
-             *    - userId                        {int}
-             *    - firstName                     {string}
-             *    - lastName                      {string}
-             *    - image                         {string}
-             *    - email                         {string}
-             *    - cellphoneNumber               {string}
-             *    - uniqueId                      {string}
-             *    - notSeenDuration               {int}
-             *    - hasUser                       {boolean}
-             *    - linkedUser                    {object : RelatedUserVO}
-             */var contact={id:messageContent.id,blocked:typeof messageContent.blocked!=='undefined'?messageContent.blocked:false,userId:messageContent.userId,firstName:messageContent.firstName,lastName:messageContent.lastName,image:messageContent.profileImage,email:messageContent.email,cellphoneNumber:messageContent.cellphoneNumber,uniqueId:messageContent.uniqueId,notSeenDuration:messageContent.notSeenDuration,hasUser:messageContent.hasUser,linkedUser:undefined};if(typeof messageContent.linkedUser!=='undefined'){contact.linkedUser=formatDataToMakeLinkedUser(messageContent.linkedUser);}// return contact;
+   * Format Data To Make Contact
+   *
+   * This functions reformats given JSON to proper Object
+   *
+   * @access private
+   *
+   * @param {object}  messageContent    Json object of thread taken from chat server
+   *
+   * @return {object} contact Object
+   */formatDataToMakeContact=function formatDataToMakeContact(messageContent){/**
+     * + ContactVO                        {object}
+     *    - id                            {int}
+     *    - blocked                       {boolean}
+     *    - userId                        {int}
+     *    - firstName                     {string}
+     *    - lastName                      {string}
+     *    - image                         {string}
+     *    - email                         {string}
+     *    - cellphoneNumber               {string}
+     *    - uniqueId                      {string}
+     *    - notSeenDuration               {int}
+     *    - hasUser                       {boolean}
+     *    - linkedUser                    {object : RelatedUserVO}
+     */var contact={id:messageContent.id,blocked:typeof messageContent.blocked!=='undefined'?messageContent.blocked:false,userId:messageContent.userId,firstName:messageContent.firstName,lastName:messageContent.lastName,image:messageContent.profileImage,email:messageContent.email,cellphoneNumber:messageContent.cellphoneNumber,uniqueId:messageContent.uniqueId,notSeenDuration:messageContent.notSeenDuration,hasUser:messageContent.hasUser,linkedUser:undefined};if(typeof messageContent.linkedUser!=='undefined'){contact.linkedUser=formatDataToMakeLinkedUser(messageContent.linkedUser);}// return contact;
 return JSON.parse(JSON.stringify(contact));},/**
-         * Format Data To Make User
-         *
-         * This functions reformats given JSON to proper Object
-         *
-         * @access private
-         *
-         * @param {object}  messageContent    Json object of thread taken from chat server
-         *
-         * @return {object} user Object
-         */formatDataToMakeUser=function formatDataToMakeUser(messageContent){/**
-             * + User                     {object}
-             *    - id                    {int}
-             *    - name                  {string}
-             *    - email                 {string}
-             *    - cellphoneNumber       {string}
-             *    - image                 {string}
-             *    - lastSeen              {int}
-             *    - sendEnable            {boolean}
-             *    - receiveEnable         {boolean}
-             *    - contactSynced         {boolean}
-             *    - chatProfileVO         {object:chatProfileVO}
-             */var user={id:messageContent.id,coreUserId:messageContent.coreUserId,username:messageContent.username,name:messageContent.name,email:messageContent.email,cellphoneNumber:messageContent.cellphoneNumber,image:messageContent.image,lastSeen:messageContent.lastSeen,sendEnable:messageContent.sendEnable,receiveEnable:messageContent.receiveEnable,contactSynced:messageContent.contactSynced,callCenter:messageContent.callCenter};if(messageContent.contactId){user.contactId=messageContent.contactId;}if(messageContent.contactName){user.contactName=messageContent.contactName;}if(messageContent.contactFirstName){user.contactFirstName=messageContent.contactFirstName;}if(messageContent.contactLastName){user.contactLastName=messageContent.contactLastName;}if(messageContent.blocked){user.blocked=messageContent.blocked;}// Add chatProfileVO if exist
+   * Format Data To Make User
+   *
+   * This functions reformats given JSON to proper Object
+   *
+   * @access private
+   *
+   * @param {object}  messageContent    Json object of thread taken from chat server
+   *
+   * @return {object} user Object
+   */formatDataToMakeUser=function formatDataToMakeUser(messageContent){/**
+     * + User                     {object}
+     *    - id                    {int}
+     *    - name                  {string}
+     *    - email                 {string}
+     *    - cellphoneNumber       {string}
+     *    - image                 {string}
+     *    - lastSeen              {int}
+     *    - sendEnable            {boolean}
+     *    - receiveEnable         {boolean}
+     *    - contactSynced         {boolean}
+     *    - chatProfileVO         {object:chatProfileVO}
+     */var user={id:messageContent.id,coreUserId:messageContent.coreUserId,username:messageContent.username,name:messageContent.name,email:messageContent.email,cellphoneNumber:messageContent.cellphoneNumber,image:messageContent.image,lastSeen:messageContent.lastSeen,sendEnable:messageContent.sendEnable,receiveEnable:messageContent.receiveEnable,contactSynced:messageContent.contactSynced,callCenter:messageContent.callCenter};if(messageContent.contactId){user.contactId=messageContent.contactId;}if(messageContent.contactName){user.contactName=messageContent.contactName;}if(messageContent.contactFirstName){user.contactFirstName=messageContent.contactFirstName;}if(messageContent.contactLastName){user.contactLastName=messageContent.contactLastName;}if(messageContent.blocked){user.blocked=messageContent.blocked;}// Add chatProfileVO if exist
 if(messageContent.chatProfileVO){user.chatProfileVO=messageContent.chatProfileVO;}// return user;
 return JSON.parse(JSON.stringify(user));},/**
-         * Format Data To Make Blocked User
-         *
-         * This functions reformats given JSON to proper Object
-         *
-         * @access private
-         *
-         * @param {object}  messageContent    Json object of thread taken from chat server
-         *
-         * @return {object} blockedUser Object
-         */formatDataToMakeBlockedUser=function formatDataToMakeBlockedUser(messageContent){/**
-             * + BlockedUser              {object}
-             *    - id                    {int}
-             *    - coreUserId            {int}
-             *    - firstName             {string}
-             *    - lastName              {string}
-             *    - nickName              {string}
-             *    - profileImage          {string}
-             *    - contact               {object: contactVO}
-             */var blockedUser={blockId:messageContent.id,coreUserId:messageContent.coreUserId,firstName:messageContent.firstName,lastName:messageContent.lastName,nickName:messageContent.nickName,profileImage:messageContent.profileImage};// Add contactVO if exist
+   * Format Data To Make Blocked User
+   *
+   * This functions reformats given JSON to proper Object
+   *
+   * @access private
+   *
+   * @param {object}  messageContent    Json object of thread taken from chat server
+   *
+   * @return {object} blockedUser Object
+   */formatDataToMakeBlockedUser=function formatDataToMakeBlockedUser(messageContent){/**
+     * + BlockedUser              {object}
+     *    - id                    {int}
+     *    - coreUserId            {int}
+     *    - firstName             {string}
+     *    - lastName              {string}
+     *    - nickName              {string}
+     *    - profileImage          {string}
+     *    - contact               {object: contactVO}
+     */var blockedUser={blockId:messageContent.id,coreUserId:messageContent.coreUserId,firstName:messageContent.firstName,lastName:messageContent.lastName,nickName:messageContent.nickName,profileImage:messageContent.profileImage};// Add contactVO if exist
 if(messageContent.contactVO){blockedUser.contact=messageContent.contactVO;}// return blockedUser;
 return JSON.parse(JSON.stringify(blockedUser));},formatDataToMakeAssistanthistoryItem=function formatDataToMakeAssistanthistoryItem(messageContent){var assistant={actionType:Object.keys(_constants.assistantActionTypes)[Object.values(_constants.assistantActionTypes).indexOf(messageContent.actionType)],actionTime:messageContent.actionTime};// Add chatProfileVO if exist
 if(messageContent.participantVO){assistant.participantVO=messageContent.participantVO;}// return participant;
 return JSON.parse(JSON.stringify(assistant));},formatDataToMakeAssistantHistoryList=function formatDataToMakeAssistantHistoryList(assistantsList){var returnData=[];for(var i=0;i<assistantsList.length;i++){returnData.push(formatDataToMakeAssistanthistoryItem(assistantsList[i]));}return returnData;},/**
-         * Format Data To Make Invitee
-         *
-         * This functions reformats given JSON to proper Object
-         *
-         * @access private
-         *
-         * @param {object}  messageContent    Json object of thread taken from chat server
-         *
-         * @return {object} inviteeData Object
-         */formatDataToMakeInvitee=function formatDataToMakeInvitee(messageContent){/**
-             * + InviteeVO       {object}
-             *    - id           {string}
-             *    - idType       {int}
-             */return{id:messageContent.id,idType:_constants.inviteeVOidTypes[messageContent.idType]};},/**
-         * Format Data To Make Participant
-         *
-         * This functions reformats given JSON to proper Object
-         *
-         * @access private
-         *
-         * @param {object}  messageContent    Json object of thread taken from chat server
-         *
-         * @param threadId
-         * @return {object} participant Object
-         */formatDataToMakeParticipant=function formatDataToMakeParticipant(messageContent,threadId){/**
-             * + ParticipantVO                   {object}
-             *    - id                           {int}
-             *    - coreUserId                   {int}
-             *    - threadId                     {int}
-             *    - sendEnable                   {boolean}
-             *    - receiveEnable                {boolean}
-             *    - firstName                    {string}
-             *    - lastName                     {string}
-             *    - name                         {string}
-             *    - cellphoneNumber              {string}
-             *    - email                        {string}
-             *    - image                        {string}
-             *    - chatProfileVO                {object}
-             *    - myFriend                     {boolean}
-             *    - online                       {boolean}
-             *    - notSeenDuration              {int}
-             *    - contactId                    {int}
-             *    - contactName                  {string}
-             *    - contactFirstName             {string}
-             *    - contactLastName              {string}
-             *    - blocked                      {boolean}
-             *    - admin                        {boolean}
-             *    - auditor                      {boolean}
-             *    - keyId                        {string}
-             *    - roles                        {list:string}
-             *    - username                     {string}
-             */var participant={id:messageContent.id,coreUserId:messageContent.coreUserId,threadId:parseInt(threadId),sendEnable:messageContent.sendEnable,receiveEnable:messageContent.receiveEnable,firstName:messageContent.firstName,lastName:messageContent.lastName,name:messageContent.name,cellphoneNumber:messageContent.cellphoneNumber,email:messageContent.email,image:messageContent.image,myFriend:messageContent.myFriend,online:messageContent.online,notSeenDuration:messageContent.notSeenDuration,contactId:messageContent.contactId,contactName:messageContent.contactName,contactFirstName:messageContent.contactFirstName,contactLastName:messageContent.contactLastName,blocked:messageContent.blocked,admin:messageContent.admin,auditor:messageContent.auditor,keyId:messageContent.keyId,roles:messageContent.roles,username:messageContent.username};// Add chatProfileVO if exist
+   * Format Data To Make Invitee
+   *
+   * This functions reformats given JSON to proper Object
+   *
+   * @access private
+   *
+   * @param {object}  messageContent    Json object of thread taken from chat server
+   *
+   * @return {object} inviteeData Object
+   */formatDataToMakeInvitee=function formatDataToMakeInvitee(messageContent){/**
+     * + InviteeVO       {object}
+     *    - id           {string}
+     *    - idType       {int}
+     */return{id:messageContent.id,idType:_constants.inviteeVOidTypes[messageContent.idType]};},/**
+   * Format Data To Make Participant
+   *
+   * This functions reformats given JSON to proper Object
+   *
+   * @access private
+   *
+   * @param {object}  messageContent    Json object of thread taken from chat server
+   *
+   * @param threadId
+   * @return {object} participant Object
+   */formatDataToMakeParticipant=function formatDataToMakeParticipant(messageContent,threadId){/**
+     * + ParticipantVO                   {object}
+     *    - id                           {int}
+     *    - coreUserId                   {int}
+     *    - threadId                     {int}
+     *    - sendEnable                   {boolean}
+     *    - receiveEnable                {boolean}
+     *    - firstName                    {string}
+     *    - lastName                     {string}
+     *    - name                         {string}
+     *    - cellphoneNumber              {string}
+     *    - email                        {string}
+     *    - image                        {string}
+     *    - chatProfileVO                {object}
+     *    - myFriend                     {boolean}
+     *    - online                       {boolean}
+     *    - notSeenDuration              {int}
+     *    - contactId                    {int}
+     *    - contactName                  {string}
+     *    - contactFirstName             {string}
+     *    - contactLastName              {string}
+     *    - blocked                      {boolean}
+     *    - admin                        {boolean}
+     *    - auditor                      {boolean}
+     *    - keyId                        {string}
+     *    - roles                        {list:string}
+     *    - username                     {string}
+     */var participant={id:messageContent.id,coreUserId:messageContent.coreUserId,threadId:parseInt(threadId),sendEnable:messageContent.sendEnable,receiveEnable:messageContent.receiveEnable,firstName:messageContent.firstName,lastName:messageContent.lastName,name:messageContent.name,cellphoneNumber:messageContent.cellphoneNumber,email:messageContent.email,image:messageContent.image,myFriend:messageContent.myFriend,online:messageContent.online,notSeenDuration:messageContent.notSeenDuration,contactId:messageContent.contactId,contactName:messageContent.contactName,contactFirstName:messageContent.contactFirstName,contactLastName:messageContent.contactLastName,blocked:messageContent.blocked,admin:messageContent.admin,auditor:messageContent.auditor,keyId:messageContent.keyId,roles:messageContent.roles,username:messageContent.username};// Add chatProfileVO if exist
 if(messageContent.chatProfileVO){participant.chatProfileVO=messageContent.chatProfileVO;}// return participant;
 return JSON.parse(JSON.stringify(participant));},/**
-         * Format Data To Make Conversation
-         *
-         * This functions reformats given JSON to proper Object
-         *
-         * @access private
-         *
-         * @param {object}  messageContent    Json object of thread taken from chat server
-         *
-         * @return {object} Conversation Object
-         */formatDataToMakeConversation=function formatDataToMakeConversation(messageContent){/**
-             * + Conversation                           {object}
-             *    - id                                  {int}
-             *    - joinDate                            {int}
-             *    - title                               {string}
-             *    - inviter                             {object : ParticipantVO}
-             *    - participants                        {list : ParticipantVO}
-             *    - time                                {int}
-             *    - lastMessage                         {string}
-             *    - lastParticipantName                 {string}
-             *    - group                               {boolean}
-             *    - partner                             {int}
-             *    - lastParticipantImage                {string}
-             *    - image                               {string}
-             *    - description                         {string}
-             *    - unreadCount                         {int}
-             *    - lastSeenMessageId                   {int}
-             *    - lastSeenMessageTime                 {int}
-             *    - lastSeenMessageNanos                {integer}
-             *    - lastMessageVO                       {object : ChatMessageVO}
-             *    - pinMessageVO                        {object : pinMessageVO}
-             *    - partnerLastSeenMessageId            {int}
-             *    - partnerLastSeenMessageTime          {int}
-             *    - partnerLastSeenMessageNanos         {integer}
-             *    - partnerLastDeliveredMessageId       {int}
-             *    - partnerLastDeliveredMessageTime     {int}
-             *    - partnerLastDeliveredMessageNanos    {integer}
-             *    - type                                {int}
-             *    - metadata                            {string}
-             *    - mute                                {boolean}
-             *    - participantCount                    {int}
-             *    - canEditInfo                         {boolean}
-             *    - canSpam                             {boolean}
-             *    - admin                               {boolean}
-             *    - mentioned                           {boolean}
-             *    - pin                                 {boolean}
-             *    - uniqueName                          {string}
-             *    - userGroupHash                       {string}
-             *    - leftWithHistory                     {boolean}
-             *    - closed                              {boolean}
-             */var conversation={id:messageContent.id,joinDate:messageContent.joinDate,title:messageContent.title,inviter:undefined,participants:undefined,time:messageContent.time,lastMessage:messageContent.lastMessage,lastParticipantName:messageContent.lastParticipantName,group:messageContent.group,partner:messageContent.partner,lastParticipantImage:messageContent.lastParticipantImage,image:messageContent.image,description:messageContent.description,unreadCount:messageContent.unreadCount,lastSeenMessageId:messageContent.lastSeenMessageId,lastSeenMessageTime:messageContent.lastSeenMessageNanos?parseInt(parseInt(messageContent.lastSeenMessageTime)/1000)*1000000000+parseInt(messageContent.lastSeenMessageNanos):parseInt(messageContent.lastSeenMessageTime),lastMessageVO:undefined,pinMessageVO:undefined,partnerLastSeenMessageId:messageContent.partnerLastSeenMessageId,partnerLastSeenMessageTime:messageContent.partnerLastSeenMessageNanos?parseInt(parseInt(messageContent.partnerLastSeenMessageTime)/1000)*1000000000+parseInt(messageContent.partnerLastSeenMessageNanos):parseInt(messageContent.partnerLastSeenMessageTime),partnerLastDeliveredMessageId:messageContent.partnerLastDeliveredMessageId,partnerLastDeliveredMessageTime:messageContent.partnerLastDeliveredMessageNanos?parseInt(parseInt(messageContent.partnerLastDeliveredMessageTime)/1000)*1000000000+parseInt(messageContent.partnerLastDeliveredMessageNanos):parseInt(messageContent.partnerLastDeliveredMessageTime),archiveThread:messageContent.archiveThread,type:messageContent.type,metadata:messageContent.metadata,mute:messageContent.mute,participantCount:messageContent.participantCount,canEditInfo:messageContent.canEditInfo,canSpam:messageContent.canSpam,admin:messageContent.admin,mentioned:messageContent.mentioned,pin:messageContent.pin,uniqueName:messageContent.uniqueName,userGroupHash:messageContent.userGroupHash,leftWithHistory:messageContent.leftWithHistory,closed:messageContent.closed,seenByAnyAssistant:messageContent.seenByAnyAssistant};// Add inviter if exist
+   * Format Data To Make Conversation
+   *
+   * This functions reformats given JSON to proper Object
+   *
+   * @access private
+   *
+   * @param {object}  messageContent    Json object of thread taken from chat server
+   *
+   * @return {object} Conversation Object
+   */formatDataToMakeConversation=function formatDataToMakeConversation(messageContent){/**
+     * + Conversation                           {object}
+     *    - id                                  {int}
+     *    - joinDate                            {int}
+     *    - title                               {string}
+     *    - inviter                             {object : ParticipantVO}
+     *    - participants                        {list : ParticipantVO}
+     *    - time                                {int}
+     *    - lastMessage                         {string}
+     *    - lastParticipantName                 {string}
+     *    - group                               {boolean}
+     *    - partner                             {int}
+     *    - lastParticipantImage                {string}
+     *    - image                               {string}
+     *    - description                         {string}
+     *    - unreadCount                         {int}
+     *    - lastSeenMessageId                   {int}
+     *    - lastSeenMessageTime                 {int}
+     *    - lastSeenMessageNanos                {integer}
+     *    - lastMessageVO                       {object : ChatMessageVO}
+     *    - pinMessageVO                        {object : pinMessageVO}
+     *    - partnerLastSeenMessageId            {int}
+     *    - partnerLastSeenMessageTime          {int}
+     *    - partnerLastSeenMessageNanos         {integer}
+     *    - partnerLastDeliveredMessageId       {int}
+     *    - partnerLastDeliveredMessageTime     {int}
+     *    - partnerLastDeliveredMessageNanos    {integer}
+     *    - type                                {int}
+     *    - metadata                            {string}
+     *    - mute                                {boolean}
+     *    - participantCount                    {int}
+     *    - canEditInfo                         {boolean}
+     *    - canSpam                             {boolean}
+     *    - admin                               {boolean}
+     *    - mentioned                           {boolean}
+     *    - pin                                 {boolean}
+     *    - uniqueName                          {string}
+     *    - userGroupHash                       {string}
+     *    - leftWithHistory                     {boolean}
+     *    - closed                              {boolean}
+     */var conversation={id:messageContent.id,joinDate:messageContent.joinDate,title:messageContent.title,inviter:undefined,participants:undefined,time:messageContent.time,lastMessage:messageContent.lastMessage,lastParticipantName:messageContent.lastParticipantName,group:messageContent.group,partner:messageContent.partner,lastParticipantImage:messageContent.lastParticipantImage,image:messageContent.image,description:messageContent.description,unreadCount:messageContent.unreadCount,lastSeenMessageId:messageContent.lastSeenMessageId,lastSeenMessageTime:messageContent.lastSeenMessageNanos?parseInt(parseInt(messageContent.lastSeenMessageTime)/1000)*1000000000+parseInt(messageContent.lastSeenMessageNanos):parseInt(messageContent.lastSeenMessageTime),lastMessageVO:undefined,pinMessageVO:undefined,partnerLastSeenMessageId:messageContent.partnerLastSeenMessageId,partnerLastSeenMessageTime:messageContent.partnerLastSeenMessageNanos?parseInt(parseInt(messageContent.partnerLastSeenMessageTime)/1000)*1000000000+parseInt(messageContent.partnerLastSeenMessageNanos):parseInt(messageContent.partnerLastSeenMessageTime),partnerLastDeliveredMessageId:messageContent.partnerLastDeliveredMessageId,partnerLastDeliveredMessageTime:messageContent.partnerLastDeliveredMessageNanos?parseInt(parseInt(messageContent.partnerLastDeliveredMessageTime)/1000)*1000000000+parseInt(messageContent.partnerLastDeliveredMessageNanos):parseInt(messageContent.partnerLastDeliveredMessageTime),archiveThread:messageContent.archiveThread,type:messageContent.type,metadata:messageContent.metadata,mute:messageContent.mute,participantCount:messageContent.participantCount,canEditInfo:messageContent.canEditInfo,canSpam:messageContent.canSpam,admin:messageContent.admin,mentioned:messageContent.mentioned,pin:messageContent.pin,uniqueName:messageContent.uniqueName,userGroupHash:messageContent.userGroupHash,leftWithHistory:messageContent.leftWithHistory,closed:messageContent.closed,seenByAnyAssistant:messageContent.seenByAnyAssistant};// Add inviter if exist
 if(messageContent.inviter){conversation.inviter=formatDataToMakeParticipant(messageContent.inviter,messageContent.id);}// Add participants list if exist
 if(messageContent.participants&&Array.isArray(messageContent.participants)){conversation.participants=[];for(var i=0;i<messageContent.participants.length;i++){var participantData=formatDataToMakeParticipant(messageContent.participants[i],messageContent.id);if(participantData){conversation.participants.push(participantData);}}}// Add lastMessageVO if exist
 if(messageContent.lastMessageVO){conversation.lastMessageVO=formatDataToMakeMessage(messageContent.id,messageContent.lastMessageVO);}// Add pinMessageVO if exist
 if(messageContent.pinMessageVO){conversation.pinMessageVO=formatDataToMakePinMessage(messageContent.id,messageContent.pinMessageVO);}// return conversation;
 return JSON.parse(JSON.stringify(conversation));},/**
-         * Format Data To Make Reply Info
-         *
-         * This functions reformats given JSON to proper Object
-         *
-         * @access private
-         *
-         * @param {object}  messageContent    Json object of thread taken from chat server
-         *
-         * @param threadId
-         * @return {object} replyInfo Object
-         */formatDataToMakeReplyInfo=function formatDataToMakeReplyInfo(messageContent,threadId){/**
-             * + replyInfoVO                  {object : replyInfoVO}
-             *   - participant                {object : ParticipantVO}
-             *   - repliedToMessageId         {int}
-             *   - repliedToMessageTime       {int}
-             *   - repliedToMessageNanos      {int}
-             *   - message                    {string}
-             *   - deleted                    {boolean}
-             *   - messageType                {int}
-             *   - metadata                   {string}
-             *   - systemMetadata             {string}
-             */var replyInfo={participant:undefined,repliedToMessageId:messageContent.repliedToMessageId,repliedToMessageTime:messageContent.repliedToMessageNanos?parseInt(parseInt(messageContent.repliedToMessageTime)/1000)*1000000000+parseInt(messageContent.repliedToMessageNanos):parseInt(messageContent.repliedToMessageTime),repliedToMessageTimeMiliSeconds:parseInt(messageContent.repliedToMessageTime),repliedToMessageTimeNanos:parseInt(messageContent.repliedToMessageNanos),message:messageContent.message,deleted:messageContent.deleted,messageType:messageContent.messageType,metadata:messageContent.metadata,systemMetadata:messageContent.systemMetadata};if(messageContent.participant){replyInfo.participant=formatDataToMakeParticipant(messageContent.participant,threadId);}// return replyInfo;
+   * Format Data To Make Reply Info
+   *
+   * This functions reformats given JSON to proper Object
+   *
+   * @access private
+   *
+   * @param {object}  messageContent    Json object of thread taken from chat server
+   *
+   * @param threadId
+   * @return {object} replyInfo Object
+   */formatDataToMakeReplyInfo=function formatDataToMakeReplyInfo(messageContent,threadId){/**
+     * + replyInfoVO                  {object : replyInfoVO}
+     *   - participant                {object : ParticipantVO}
+     *   - repliedToMessageId         {int}
+     *   - repliedToMessageTime       {int}
+     *   - repliedToMessageNanos      {int}
+     *   - message                    {string}
+     *   - deleted                    {boolean}
+     *   - messageType                {int}
+     *   - metadata                   {string}
+     *   - systemMetadata             {string}
+     */var replyInfo={participant:undefined,repliedToMessageId:messageContent.repliedToMessageId,repliedToMessageTime:messageContent.repliedToMessageNanos?parseInt(parseInt(messageContent.repliedToMessageTime)/1000)*1000000000+parseInt(messageContent.repliedToMessageNanos):parseInt(messageContent.repliedToMessageTime),repliedToMessageTimeMiliSeconds:parseInt(messageContent.repliedToMessageTime),repliedToMessageTimeNanos:parseInt(messageContent.repliedToMessageNanos),message:messageContent.message,deleted:messageContent.deleted,messageType:messageContent.messageType,metadata:messageContent.metadata,systemMetadata:messageContent.systemMetadata};if(messageContent.participant){replyInfo.participant=formatDataToMakeParticipant(messageContent.participant,threadId);}// return replyInfo;
 return JSON.parse(JSON.stringify(replyInfo));},/**
-         * Format Data To Make Forward Info
-         *
-         * This functions reformats given JSON to proper Object
-         *
-         * @access private
-         *
-         * @param {object}  messageContent    Json object of thread taken from chat server
-         *
-         * @param threadId
-         * @return {object} forwardInfo Object
-         */formatDataToMakeForwardInfo=function formatDataToMakeForwardInfo(messageContent,threadId){/**
-             * + forwardInfo                  {object : forwardInfoVO}
-             *   - participant                {object : ParticipantVO}
-             *   - conversation               {object : ConversationSummary}
-             */var forwardInfo={participant:undefined,conversation:undefined};if(messageContent.conversation){forwardInfo.conversation=formatDataToMakeConversation(messageContent.conversation);}if(messageContent.participant){forwardInfo.participant=formatDataToMakeParticipant(messageContent.participant,threadId);}// return forwardInfo;
+   * Format Data To Make Forward Info
+   *
+   * This functions reformats given JSON to proper Object
+   *
+   * @access private
+   *
+   * @param {object}  messageContent    Json object of thread taken from chat server
+   *
+   * @param threadId
+   * @return {object} forwardInfo Object
+   */formatDataToMakeForwardInfo=function formatDataToMakeForwardInfo(messageContent,threadId){/**
+     * + forwardInfo                  {object : forwardInfoVO}
+     *   - participant                {object : ParticipantVO}
+     *   - conversation               {object : ConversationSummary}
+     */var forwardInfo={participant:undefined,conversation:undefined};if(messageContent.conversation){forwardInfo.conversation=formatDataToMakeConversation(messageContent.conversation);}if(messageContent.participant){forwardInfo.participant=formatDataToMakeParticipant(messageContent.participant,threadId);}// return forwardInfo;
 return JSON.parse(JSON.stringify(forwardInfo));},/**
-         * Format Data To Make Message
-         *
-         * This functions reformats given JSON to proper Object
-         *
-         * @access private
-         *
-         *
-         * @return {object} message Object
-         * @param threadId
-         * @param pushMessageVO
-         * @param fromCache
-         */formatDataToMakeMessage=function formatDataToMakeMessage(threadId,pushMessageVO,fromCache){/**
-             * + MessageVO                       {object}
-             *    - id                           {int}
-             *    - threadId                     {int}
-             *    - ownerId                      {int}
-             *    - uniqueId                     {string}
-             *    - previousId                   {int}
-             *    - message                      {string}
-             *    - messageType                  {int}
-             *    - edited                       {boolean}
-             *    - editable                     {boolean}
-             *    - deletable                    {boolean}
-             *    - delivered                    {boolean}
-             *    - seen                         {boolean}
-             *    - mentioned                    {boolean}
-             *    - pinned                       {boolean}
-             *    - participant                  {object : ParticipantVO}
-             *    - conversation                 {object : ConversationVO}
-             *    - replyInfo                    {object : replyInfoVO}
-             *    - forwardInfo                  {object : forwardInfoVO}
-             *    - metadata                     {string}
-             *    - systemMetadata               {string}
-             *    - time                         {int}
-             *    - timeNanos                    {int}
-             */if(fromCache||pushMessageVO.time.toString().length>14){var time=pushMessageVO.time,timeMiliSeconds=parseInt(pushMessageVO.time/1000000);}else{var time=pushMessageVO.timeNanos?parseInt(parseInt(pushMessageVO.time)/1000)*1000000000+parseInt(pushMessageVO.timeNanos):parseInt(pushMessageVO.time),timeMiliSeconds=parseInt(pushMessageVO.time);}var message={id:pushMessageVO.id,threadId:threadId,ownerId:pushMessageVO.ownerId?pushMessageVO.ownerId:undefined,uniqueId:pushMessageVO.uniqueId,previousId:pushMessageVO.previousId,message:pushMessageVO.message,messageType:pushMessageVO.messageType,edited:pushMessageVO.edited,editable:pushMessageVO.editable,deletable:pushMessageVO.deletable,delivered:pushMessageVO.delivered,seen:pushMessageVO.seen,mentioned:pushMessageVO.mentioned,pinned:pushMessageVO.pinned,participant:undefined,conversation:undefined,replyInfo:undefined,forwardInfo:undefined,metadata:pushMessageVO.metadata,systemMetadata:pushMessageVO.systemMetadata,time:time,timeMiliSeconds:timeMiliSeconds,timeNanos:parseInt(pushMessageVO.timeNanos),callHistory:pushMessageVO.callHistoryVO};if(pushMessageVO.participant){message.ownerId=pushMessageVO.participant.id;}if(pushMessageVO.conversation){message.conversation=formatDataToMakeConversation(pushMessageVO.conversation);message.threadId=pushMessageVO.conversation.id;}if(pushMessageVO.replyInfoVO||pushMessageVO.replyInfo){message.replyInfo=pushMessageVO.replyInfoVO?formatDataToMakeReplyInfo(pushMessageVO.replyInfoVO,threadId):formatDataToMakeReplyInfo(pushMessageVO.replyInfo,threadId);}if(pushMessageVO.forwardInfo){message.forwardInfo=formatDataToMakeForwardInfo(pushMessageVO.forwardInfo,threadId);}if(pushMessageVO.participant){message.participant=formatDataToMakeParticipant(pushMessageVO.participant,threadId);}// return message;
+   * Format Data To Make Message
+   *
+   * This functions reformats given JSON to proper Object
+   *
+   * @access private
+   *
+   *
+   * @return {object} message Object
+   * @param threadId
+   * @param pushMessageVO
+   * @param fromCache
+   */formatDataToMakeMessage=function formatDataToMakeMessage(threadId,pushMessageVO,fromCache){/**
+     * + MessageVO                       {object}
+     *    - id                           {int}
+     *    - threadId                     {int}
+     *    - ownerId                      {int}
+     *    - uniqueId                     {string}
+     *    - previousId                   {int}
+     *    - message                      {string}
+     *    - messageType                  {int}
+     *    - edited                       {boolean}
+     *    - editable                     {boolean}
+     *    - deletable                    {boolean}
+     *    - delivered                    {boolean}
+     *    - seen                         {boolean}
+     *    - mentioned                    {boolean}
+     *    - pinned                       {boolean}
+     *    - participant                  {object : ParticipantVO}
+     *    - conversation                 {object : ConversationVO}
+     *    - replyInfo                    {object : replyInfoVO}
+     *    - forwardInfo                  {object : forwardInfoVO}
+     *    - metadata                     {string}
+     *    - systemMetadata               {string}
+     *    - time                         {int}
+     *    - timeNanos                    {int}
+     */if(fromCache||pushMessageVO.time.toString().length>14){var time=pushMessageVO.time,timeMiliSeconds=parseInt(pushMessageVO.time/1000000);}else{var time=pushMessageVO.timeNanos?parseInt(parseInt(pushMessageVO.time)/1000)*1000000000+parseInt(pushMessageVO.timeNanos):parseInt(pushMessageVO.time),timeMiliSeconds=parseInt(pushMessageVO.time);}var message={id:pushMessageVO.id,threadId:threadId,ownerId:pushMessageVO.ownerId?pushMessageVO.ownerId:undefined,uniqueId:pushMessageVO.uniqueId,previousId:pushMessageVO.previousId,message:pushMessageVO.message,messageType:pushMessageVO.messageType,edited:pushMessageVO.edited,editable:pushMessageVO.editable,deletable:pushMessageVO.deletable,delivered:pushMessageVO.delivered,seen:pushMessageVO.seen,mentioned:pushMessageVO.mentioned,pinned:pushMessageVO.pinned,participant:undefined,conversation:undefined,replyInfo:undefined,forwardInfo:undefined,metadata:pushMessageVO.metadata,systemMetadata:pushMessageVO.systemMetadata,time:time,timeMiliSeconds:timeMiliSeconds,timeNanos:parseInt(pushMessageVO.timeNanos),callHistory:pushMessageVO.callHistoryVO};if(pushMessageVO.participant){message.ownerId=pushMessageVO.participant.id;}if(pushMessageVO.conversation){message.conversation=formatDataToMakeConversation(pushMessageVO.conversation);message.threadId=pushMessageVO.conversation.id;}if(pushMessageVO.replyInfoVO||pushMessageVO.replyInfo){message.replyInfo=pushMessageVO.replyInfoVO?formatDataToMakeReplyInfo(pushMessageVO.replyInfoVO,threadId):formatDataToMakeReplyInfo(pushMessageVO.replyInfo,threadId);}if(pushMessageVO.forwardInfo){message.forwardInfo=formatDataToMakeForwardInfo(pushMessageVO.forwardInfo,threadId);}if(pushMessageVO.participant){message.participant=formatDataToMakeParticipant(pushMessageVO.participant,threadId);}// return message;
 return JSON.parse(JSON.stringify(message));},/**
-         * Format Data To Make Pin Message
-         *
-         * This functions reformats given JSON to proper Object
-         *
-         * @access private
-         *
-         * @param {object}  messageContent    Json object of thread taken from chat server
-         *
-         * @return {object} pin message Object
-         */formatDataToMakePinMessage=function formatDataToMakePinMessage(threadId,pushMessageVO){/**
-             * + PinMessageVO                    {object}
-             *    - messageId                    {int}
-             *    - time                         {int}
-             *    - sender                       {int}
-             *    - text                         {string}
-             *    - notifyAll                    {boolean}
-             */var pinMessage={threadId:threadId,time:pushMessageVO.time,sender:pushMessageVO.sender,messageId:pushMessageVO.messageId,text:pushMessageVO.text};if(typeof pushMessageVO.notifyAll==='boolean'){pinMessage.notifyAll=pushMessageVO.notifyAll;}// return pinMessage;
+   * Format Data To Make Pin Message
+   *
+   * This functions reformats given JSON to proper Object
+   *
+   * @access private
+   *
+   * @param {object}  messageContent    Json object of thread taken from chat server
+   *
+   * @return {object} pin message Object
+   */formatDataToMakePinMessage=function formatDataToMakePinMessage(threadId,pushMessageVO){/**
+     * + PinMessageVO                    {object}
+     *    - messageId                    {int}
+     *    - time                         {int}
+     *    - sender                       {int}
+     *    - text                         {string}
+     *    - notifyAll                    {boolean}
+     */var pinMessage={threadId:threadId,time:pushMessageVO.time,sender:pushMessageVO.sender,messageId:pushMessageVO.messageId,text:pushMessageVO.text};if(typeof pushMessageVO.notifyAll==='boolean'){pinMessage.notifyAll=pushMessageVO.notifyAll;}// return pinMessage;
 return JSON.parse(JSON.stringify(pinMessage));},/**
-         * Reformat Thread History
-         *
-         * This functions reformats given Array of thread Messages
-         * into proper chat message object
-         *
-         * @access private
-         *
-         * @param {int}    threadId         Id of Thread
-         * @param {object}  historyContent   Array of Thread History Messages
-         *
-         * @return {object} Formatted Thread History
-         */reformatThreadHistory=function reformatThreadHistory(threadId,historyContent){var returnData=[];for(var i=0;i<historyContent.length;i++){returnData.push(formatDataToMakeMessage(threadId,historyContent[i]));}return returnData;},/**
-         * Reformat Thread Participants
-         *
-         * This functions reformats given Array of thread Participants
-         * into proper thread participant
-         *
-         * @access private
-         *
-         * @param {object}  participantsContent   Array of Thread Participant Objects
-         * @param {int}    threadId              Id of Thread
-         *
-         * @return {object} Formatted Thread Participant Array
-         */reformatThreadParticipants=function reformatThreadParticipants(participantsContent,threadId){var returnData=[];for(var i=0;i<participantsContent.length;i++){returnData.push(formatDataToMakeParticipant(participantsContent[i],threadId));}return returnData;},/**
-         * Unset Not Seen Duration
-         *
-         * This functions unsets notSeenDuration property of cached objects
-         *
-         * @access private
-         *
-         * @param {object}  content   Object or Array to be modified
-         *
-         * @return {object}
-         */unsetNotSeenDuration=function unsetNotSeenDuration(content){/**
-             * Make a copy from original object to modify it's
-             * attributes, because we don't want to change
-             * the original object
-             */var temp=cloneObject(content);if(temp.hasOwnProperty('notSeenDuration')){temp.notSeenDuration=undefined;}if(temp.hasOwnProperty('inviter')){temp.inviter.notSeenDuration=undefined;}if(temp.hasOwnProperty('participant')){temp.participant.notSeenDuration=undefined;}return temp;},/**
-         * Clone Object/Array
-         *
-         * This functions makes a deep clone of given object or array
-         *
-         * @access private
-         *
-         * @param {object}  original   Object or Array to be cloned
-         *
-         * @return {object} Cloned object
-         */cloneObject=function cloneObject(original){var out,value,key;out=Array.isArray(original)?[]:{};for(key in original){value=original[key];out[key]=(0,_typeof2["default"])(value)==='object'&&value!==null?cloneObject(value):value;}return out;},/**
-         * Get Treads.
-         *
-         * This functions gets threads list
-         *
-         * @access private
-         *
-         * @param {int}       count                 count of threads to be received
-         * @param {int}       offset                offset of select query
-         * @param {array}     threadIds             An array of thread ids to be received
-         * @param {string}    name                  Search term to look up in thread Titles
-         * @param {int}      creatorCoreUserId     SSO User Id of thread creator
-         * @param {int}      partnerCoreUserId     SSO User Id of thread partner
-         * @param {int}      partnerCoreContactId  Contact Id of thread partner
-         * @param {function}  callback              The callback function to call after
-         *
-         * @return {object} Instant sendMessage result
-         */getThreads=function getThreads(params,callback){var count=50,offset=0,content={},whereClause={},returnCache=false;if(params){if(parseInt(params.count)>0){count=params.count;}if(parseInt(params.offset)>0){offset=params.offset;}if(typeof params.threadName==='string'){content.name=whereClause.name=params.threadName;}if(typeof params.username==='string'){content.username=params.username;}if(typeof params.cellphoneNumber==='string'){content.cellphoneNumber=params.cellphoneNumber;}if(Array.isArray(params.threadIds)){content.threadIds=whereClause.threadIds=params.threadIds;}if(typeof params["new"]==='boolean'){content["new"]=params["new"];}if(parseInt(params.creatorCoreUserId)>0){content.creatorCoreUserId=whereClause.creatorCoreUserId=params.creatorCoreUserId;}if(parseInt(params.partnerCoreUserId)>0){content.partnerCoreUserId=whereClause.partnerCoreUserId=params.partnerCoreUserId;}if(parseInt(params.partnerCoreContactId)>0){content.partnerCoreContactId=whereClause.partnerCoreContactId=params.partnerCoreContactId;}if(parseInt(params.fromTime)>0&&parseInt(params.fromTime)<9999999999999){content.fromTime=parseInt(params.fromTime);}if(parseInt(params.toTime)>0&&parseInt(params.toTime)<9999999999999){content.toTime=parseInt(params.toTime);}var functionLevelCache=typeof params.cache=='boolean'?params.cache:true;if(typeof params.isGroup==='boolean'){content.isGroup=params.isGroup;}if(typeof params.type==='number'){content.type=params.type;}}content.count=count;content.offset=offset;var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.GET_THREADS,typeCode:generalTypeCode,//params.typeCode,
+   * Reformat Thread History
+   *
+   * This functions reformats given Array of thread Messages
+   * into proper chat message object
+   *
+   * @access private
+   *
+   * @param {int}    threadId         Id of Thread
+   * @param {object}  historyContent   Array of Thread History Messages
+   *
+   * @return {object} Formatted Thread History
+   */reformatThreadHistory=function reformatThreadHistory(threadId,historyContent){var returnData=[];for(var i=0;i<historyContent.length;i++){returnData.push(formatDataToMakeMessage(threadId,historyContent[i]));}return returnData;},/**
+   * Reformat Thread Participants
+   *
+   * This functions reformats given Array of thread Participants
+   * into proper thread participant
+   *
+   * @access private
+   *
+   * @param {object}  participantsContent   Array of Thread Participant Objects
+   * @param {int}    threadId              Id of Thread
+   *
+   * @return {object} Formatted Thread Participant Array
+   */reformatThreadParticipants=function reformatThreadParticipants(participantsContent,threadId){var returnData=[];for(var i=0;i<participantsContent.length;i++){returnData.push(formatDataToMakeParticipant(participantsContent[i],threadId));}return returnData;},/**
+   * Unset Not Seen Duration
+   *
+   * This functions unsets notSeenDuration property of cached objects
+   *
+   * @access private
+   *
+   * @param {object}  content   Object or Array to be modified
+   *
+   * @return {object}
+   */unsetNotSeenDuration=function unsetNotSeenDuration(content){/**
+     * Make a copy from original object to modify it's
+     * attributes, because we don't want to change
+     * the original object
+     */var temp=cloneObject(content);if(temp.hasOwnProperty('notSeenDuration')){temp.notSeenDuration=undefined;}if(temp.hasOwnProperty('inviter')){temp.inviter.notSeenDuration=undefined;}if(temp.hasOwnProperty('participant')){temp.participant.notSeenDuration=undefined;}return temp;},/**
+   * Clone Object/Array
+   *
+   * This functions makes a deep clone of given object or array
+   *
+   * @access private
+   *
+   * @param {object}  original   Object or Array to be cloned
+   *
+   * @return {object} Cloned object
+   */cloneObject=function cloneObject(original){var out,value,key;out=Array.isArray(original)?[]:{};for(key in original){value=original[key];out[key]=(0,_typeof2["default"])(value)==='object'&&value!==null?cloneObject(value):value;}return out;},/**
+   * Get Treads.
+   *
+   * This functions gets threads list
+   *
+   * @access private
+   *
+   * @param {int}       count                 count of threads to be received
+   * @param {int}       offset                offset of select query
+   * @param {array}     threadIds             An array of thread ids to be received
+   * @param {string}    name                  Search term to look up in thread Titles
+   * @param {int}      creatorCoreUserId     SSO User Id of thread creator
+   * @param {int}      partnerCoreUserId     SSO User Id of thread partner
+   * @param {int}      partnerCoreContactId  Contact Id of thread partner
+   * @param {function}  callback              The callback function to call after
+   *
+   * @return {object} Instant sendMessage result
+   */getThreads=function getThreads(params,callback){var count=50,offset=0,content={},returnCache=false;if(params){if(parseInt(params.count)>0){count=params.count;}if(parseInt(params.offset)>0){offset=params.offset;}if(typeof params.threadName==='string'){content.name=params.threadName;}if(typeof params.username==='string'){content.username=params.username;}if(typeof params.cellphoneNumber==='string'){content.cellphoneNumber=params.cellphoneNumber;}if(Array.isArray(params.threadIds)){content.threadIds=params.threadIds;}if(typeof params["new"]==='boolean'){content["new"]=params["new"];}if(parseInt(params.creatorCoreUserId)>0){content.creatorCoreUserId=params.creatorCoreUserId;}if(parseInt(params.partnerCoreUserId)>0){content.partnerCoreUserId=params.partnerCoreUserId;}if(parseInt(params.partnerCoreContactId)>0){content.partnerCoreContactId=params.partnerCoreContactId;}if(parseInt(params.fromTime)>0&&parseInt(params.fromTime)<9999999999999){content.fromTime=parseInt(params.fromTime);}if(parseInt(params.toTime)>0&&parseInt(params.toTime)<9999999999999){content.toTime=parseInt(params.toTime);}var functionLevelCache=typeof params.cache=='boolean'?params.cache:true;if(typeof params.isGroup==='boolean'){content.isGroup=params.isGroup;}if(typeof params.type==='number'){content.type=params.type;}}content.count=count;content.offset=offset;var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.GET_THREADS,typeCode:generalTypeCode,//params.typeCode,
 content:content};/**
-             * Retrieve threads from cache
-             */if(functionLevelCache&&canUseCache&&cacheSecret.length>0){if(db){var thenAble;if(Object.keys(whereClause).length===0){thenAble=db.threads.where('[owner+time]').between([chatMessaging.userInfo.id,minIntegerValue],[chatMessaging.userInfo.id,maxIntegerValue*1000]).reverse();}else{if(whereClause.hasOwnProperty('threadIds')){thenAble=db.threads.where('id').anyOf(whereClause.threadIds).and(function(thread){return thread.owner===chatMessaging.userInfo.id;});}if(whereClause.hasOwnProperty('name')){thenAble=db.threads.where('owner').equals(parseInt(chatMessaging.userInfo.id)).filter(function(thread){var reg=new RegExp(whereClause.name);return reg.test(chatDecrypt(thread.title,cacheSecret,thread.salt));});}if(whereClause.hasOwnProperty('creatorCoreUserId')){thenAble=db.threads.where('owner').equals(parseInt(chatMessaging.userInfo.id)).filter(function(thread){var threadObject=JSON.parse(chatDecrypt(thread.data,cacheSecret,thread.salt),false);return parseInt(threadObject.inviter.coreUserId)===parseInt(whereClause.creatorCoreUserId);});}}thenAble.offset(offset).limit(count).toArray().then(function(threads){db.threads.where('owner').equals(parseInt(chatMessaging.userInfo.id)).count().then(function(threadsCount){var cacheData=[];for(var i=0;i<threads.length;i++){try{cacheData.push(createThread(JSON.parse(chatDecrypt(threads[i].data,cacheSecret,threads[i].salt)),false));}catch(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}var returnData={hasError:false,cache:true,errorCode:0,errorMessage:'',result:{threads:cacheData,contentCount:threadsCount,hasNext:!(threads.length<count),nextOffset:offset*1+threads.length}};if(cacheData.length>0){callback&&callback(returnData);callback=undefined;returnCache=true;}});})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}/**
-             * Retrive get threads response from server
-             */return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode,uniqueId:result.uniqueId};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={threads:[],contentCount:result.contentCount,hasNext:messageContent&&!(messageLength<count),//(offset + count < result.contentCount && messageLength > 0),
-nextOffset:offset*1+messageLength*1},threadData;for(var i=0;i<messageLength;i++){threadData=createThread(messageContent[i],false);if(threadData){resultData.threads.push(threadData);}}_store.store.threads.saveMany(resultData.threads);returnData.result=resultData;/**
-                         * Updating cache on separated worker to find and
-                         * delete all messages that have been deleted from
-                         * thread's last section
-                         */if(typeof Worker!=='undefined'&&productEnv!=='ReactNative'&&canUseCache&&cacheSecret.length>0){if(typeof cacheSyncWorker==='undefined'){var plainWorker=function plainWorker(){self.importScripts('https://npmcdn.com/dexie@2.0.4/dist/dexie.min.js');db=new _dexie["default"]('podChat');db.version(1).stores({users:'&id, name, cellphoneNumber, keyId',contacts:'[owner+id], id, owner, uniqueId, userId, cellphoneNumber, email, firstName, lastName, expireTime',threads:'[owner+id] ,id, owner, title, time, pin, [owner+time]',participants:'[owner+id], id, owner, threadId, notSeenDuration, admin, name, contactName, email, expireTime',messages:'[owner+id], id, owner, threadId, time, [threadId+id], [threadId+owner+time]',messageGaps:'[owner+id], [owner+waitsFor], id, waitsFor, owner, threadId, time, [threadId+owner+time]',contentCount:'threadId, contentCount'});addEventListener('message',function(event){var data=JSON.parse(event.data);switch(data.type){case'getThreads':var content=JSON.parse(data.data),userId=parseInt(data.userId);for(var i=0;i<content.length;i++){var lastMessageTime=content[i].lastMessageVO?content[i].lastMessageVO.time:0,threadId=parseInt(content[i].id);if(lastMessageTime>0){db.messages.where('[threadId+owner+time]').between([threadId,userId,lastMessageTime],[threadId,userId,Number.MAX_SAFE_INTEGER*1000],false,true)["delete"]();}}break;}},false);};var code=plainWorker.toString();code=code.substring(code.indexOf('{')+1,code.lastIndexOf('}'));var blob=new Blob([code],{type:'application/javascript'});cacheSyncWorker=new Worker(URL.createObjectURL(blob));}var workerCommand={type:'getThreads',userId:chatMessaging.userInfo.id,data:JSON.stringify(resultData.threads)};cacheSyncWorker.postMessage(JSON.stringify(workerCommand));cacheSyncWorker.onmessage=function(event){if(event.data==='terminate'){cacheSyncWorker.terminate();cacheSyncWorker=undefined;}};cacheSyncWorker.onerror=function(event){consoleLogging&&console.log(event);};}/**
-                         * Add Threads into cache database #cache
-                         */if(canUseCache&&cacheSecret.length>0){if(db){var cacheData=[];/*
-                                 * There will be only 5 pinned threads
-                                 * So we multiply thread time by pin
-                                 * order to have them ordered on cache
-                                 * by the same order of server
-                                 */var pinnedThreadsOrderTime=5;for(var i=0;i<resultData.threads.length;i++){try{var tempData={},salt=_utility["default"].generateUUID();tempData.id=resultData.threads[i].id;tempData.owner=chatMessaging.userInfo.id;tempData.title=_utility["default"].crypt(resultData.threads[i].title,cacheSecret,salt);tempData.pin=resultData.threads[i].pin;tempData.time=resultData.threads[i].pin?resultData.threads[i].time*pinnedThreadsOrderTime:resultData.threads[i].time;tempData.data=_utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(resultData.threads[i])),cacheSecret,salt);tempData.salt=salt;cacheData.push(tempData);pinnedThreadsOrderTime--;}catch(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}db.threads.bulkPut(cacheData)["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}callback&&callback(returnData);/**
-                     * Delete callback so if server pushes response before
-                     * cache, cache won't send data again
-                     */callback=undefined;if(!returnData.hasError&&returnCache){_events.chatEvents.fireEvent('threadEvents',{type:'THREADS_LIST_CHANGE',result:returnData.result});}}});},getAllThreads=function getAllThreads(params,callback){var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.GET_THREADS,typeCode:generalTypeCode,//params.typeCode,
-content:{}};sendMessageParams.content.summary=params.summary;return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){if(!result.hasError){if(canUseCache){if(db){var allThreads=[];for(var m=0;m<result.result.length;m++){allThreads.push(result.result[m].id);}db.threads.where('owner').equals(parseInt(chatMessaging.userInfo.id)).and(function(thread){return allThreads.indexOf(thread.id)<0;})["delete"]()["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}callback&&callback(result);}});},/**
-         * Get History.
-         *
-         * This functions gets history of a thread
-         *
-         * @access private
-         *
-         * @param {int}       count             Count of threads to be received
-         * @param {int}       offset            Offset of select query
-         * @param {int}      threadId          Id of thread to get its history
-         * @param {int}      id                Id of single message to get
-         * @param {int}      userId            Messages of this SSO User
-         * @param {int}       messageType       Type of messages to get (types should be set by client)
-         * @param {int}      fromTime          Get messages which have bigger time than given fromTime
-         * @param {int}       fromTimeNanos     Get messages which have bigger time than given fromTimeNanos
-         * @param {int}      toTime            Get messages which have smaller time than given toTime
-         * @param {int}       toTimeNanos       Get messages which have smaller time than given toTimeNanos
-         * @param {int}      senderId          Messages of this sender only
-         * @param {string}    uniqueIds         Array of unique ids to retrieve
-         * @param {string}    order             Order of select query (default: DESC)
-         * @param {string}    query             Search term to be looked up in messages content
-         * @param {object}    metadataCriteria  This JSON will be used to search in message metadata with GraphQL
-         * @param {function}  callback          The callback function to call after
-         *
-         * @return {object} Instant result of sendMessage
-         */getHistory=function getHistory(params,callback){if(parseInt(params.threadId)>0){var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.GET_HISTORY,typeCode:generalTypeCode,//params.typeCode,
-content:{},subjectId:params.threadId},whereClause={},offset=parseInt(params.offset)>0?parseInt(params.offset):0,count=parseInt(params.count)>0?parseInt(params.count):config.getHistoryCount,order=typeof params.order!='undefined'?params.order.toLowerCase():'desc',functionLevelCache=typeof params.cache=='boolean'?params.cache:true,cacheResult={},serverResult={},cacheFirstMessage,cacheLastMessage,messages,returnCache,cacheReady=false,dynamicHistoryCount=params.dynamicHistoryCount&&typeof params.dynamicHistoryCount==='boolean'?params.dynamicHistoryCount:false,sendingQueue=params.queues&&typeof params.queues.sending==='boolean'?params.queues.sending:true,failedQueue=params.queues&&typeof params.queues.failed==='boolean'?params.queues.failed:true,uploadingQueue=params.queues&&typeof params.queues.uploading==='boolean'?params.queues.uploading:true,sendingQueueMessages=[],failedQueueMessages=[],uploadingQueueMessages=[];if(sendingQueue){getChatSendQueue(parseInt(params.threadId),function(sendQueueMessages){for(var i=0;i<sendQueueMessages.length;i++){var time=new Date().getTime();sendingQueueMessages.push(formatDataToMakeMessage(sendQueueMessages[i].threadId,{uniqueId:sendQueueMessages[i].uniqueId,ownerId:chatMessaging.userInfo.id,message:sendQueueMessages[i].content,metadata:sendQueueMessages[i].metadata,systemMetadata:sendQueueMessages[i].systemMetadata,replyInfo:sendQueueMessages[i].replyInfo,forwardInfo:sendQueueMessages[i].forwardInfo,time:time,timeNanos:time%1000*1000000}));}});}if(uploadingQueue){getChatUploadQueue(parseInt(params.threadId),function(uploadQueueMessages){for(var i=0;i<uploadQueueMessages.length;i++){uploadQueueMessages[i].message.participant=chatMessaging.userInfo;var time=new Date().getTime();uploadQueueMessages[i].message.time=time;uploadQueueMessages[i].message.timeNanos=time%1000*1000000;uploadingQueueMessages.push(formatDataToMakeMessage(params.threadId,uploadQueueMessages[i].message,false));}});}getChatWaitQueue(parseInt(params.threadId),failedQueue,function(waitQueueMessages){if(cacheSecret.length>0){for(var i=0;i<waitQueueMessages.length;i++){var decryptedEnqueuedMessage={};if(cacheInMemory){decryptedEnqueuedMessage=waitQueueMessages[i];}else{decryptedEnqueuedMessage=_utility["default"].jsonParser(chatDecrypt(waitQueueMessages[i].message,cacheSecret));}var time=new Date().getTime();failedQueueMessages[i]=formatDataToMakeMessage(waitQueueMessages[i].threadId,{uniqueId:decryptedEnqueuedMessage.uniqueId,ownerId:chatMessaging.userInfo.id,message:decryptedEnqueuedMessage.content,metadata:decryptedEnqueuedMessage.metadata,systemMetadata:decryptedEnqueuedMessage.systemMetadata,replyInfo:decryptedEnqueuedMessage.replyInfo,forwardInfo:decryptedEnqueuedMessage.forwardInfo,participant:chatMessaging.userInfo,time:time,timeNanos:time%1000*1000000});}}else{failedQueueMessages=[];}if(dynamicHistoryCount){var tempCount=count-(sendingQueueMessages.length+failedQueueMessages.length+uploadingQueueMessages.length);sendMessageParams.content.count=tempCount>0?tempCount:0;}else{sendMessageParams.content.count=count;}sendMessageParams.content.offset=offset;sendMessageParams.content.order=order;if(parseInt(params.messageId)>0){sendMessageParams.content.id=whereClause.id=params.messageId;}if(Array.isArray(params.uniqueIds)){sendMessageParams.content.uniqueIds=params.uniqueIds;}if(parseInt(params.fromTimeFull)>0&&params.fromTimeFull.toString().length===19){sendMessageParams.content.fromTime=whereClause.fromTime=parseInt(params.fromTimeFull.toString().substring(0,13));sendMessageParams.content.fromTimeNanos=whereClause.fromTimeNanos=parseInt(params.fromTimeFull.toString().substring(10,19));}else{if(parseInt(params.fromTime)>0&&parseInt(params.fromTime)<9999999999999){sendMessageParams.content.fromTime=whereClause.fromTime=parseInt(params.fromTime);}if(parseInt(params.fromTimeNanos)>0&&parseInt(params.fromTimeNanos)<999999999){sendMessageParams.content.fromTimeNanos=whereClause.fromTimeNanos=parseInt(params.fromTimeNanos);}}if(parseInt(params.toTimeFull)>0&&params.toTimeFull.toString().length===19){sendMessageParams.content.toTime=whereClause.toTime=parseInt(params.toTimeFull.toString().substring(0,13));sendMessageParams.content.toTimeNanos=whereClause.toTimeNanos=parseInt(params.toTimeFull.toString().substring(10,19));}else{if(parseInt(params.toTime)>0&&parseInt(params.toTime)<9999999999999){sendMessageParams.content.toTime=whereClause.toTime=parseInt(params.toTime);}if(parseInt(params.toTimeNanos)>0&&parseInt(params.toTimeNanos)<999999999){sendMessageParams.content.toTimeNanos=whereClause.toTimeNanos=parseInt(params.toTimeNanos);}}if(typeof params.query!='undefined'){sendMessageParams.content.query=whereClause.query=params.query;}if(params.allMentioned&&typeof params.allMentioned=='boolean'){sendMessageParams.content.allMentioned=whereClause.allMentioned=params.allMentioned;}if(params.unreadMentioned&&typeof params.unreadMentioned=='boolean'){sendMessageParams.content.unreadMentioned=whereClause.unreadMentioned=params.unreadMentioned;}if(params.messageType&&typeof params.messageType.toUpperCase()!=='undefined'&&_constants.chatMessageTypes[params.messageType.toUpperCase()]>0){sendMessageParams.content.messageType=whereClause.messageType=_constants.chatMessageTypes[params.messageType.toUpperCase()];}if((0,_typeof2["default"])(params.metadataCriteria)=='object'&&params.metadataCriteria.hasOwnProperty('field')){sendMessageParams.content.metadataCriteria=whereClause.metadataCriteria=params.metadataCriteria;}if(typeof params.onlyNewMessages==="boolean"){sendMessageParams.content.newMessages=params.onlyNewMessages;}/**
-                     * Get Thread Messages from cache
-                     *
-                     * Because we are not applying metadataCriteria search
-                     * on cached data, if this attribute has been set, we
-                     * should not return any results from cache
-                     */ // TODO ASC order?!
-if(functionLevelCache&&canUseCache&&cacheSecret.length>0&&!whereClause.hasOwnProperty('metadataCriteria')&&order.toLowerCase()!=="asc"){if(db){var table=db.messages,collection;returnCache=true;if(whereClause.hasOwnProperty('id')&&whereClause.id>0){collection=table.where('id').equals(parseInt(params.id)).and(function(message){return message.owner===chatMessaging.userInfo.id;}).reverse();}else{collection=table.where('[threadId+owner+time]').between([parseInt(params.threadId),parseInt(chatMessaging.userInfo.id),minIntegerValue],[parseInt(params.threadId),parseInt(chatMessaging.userInfo.id),maxIntegerValue*1000]).reverse();}collection.toArray().then(function(resultMessages){messages=resultMessages.sort(_utility["default"].dynamicSort('time',!(order==='asc')));if(whereClause.hasOwnProperty('fromTime')){var fromTime=whereClause.hasOwnProperty('fromTimeNanos')?Math.floor(whereClause.fromTime/1000)*1000000000+whereClause.fromTimeNanos:whereClause.fromTime*1000000;messages=messages.filter(function(message){return message.time>=fromTime;});}if(whereClause.hasOwnProperty('toTime')){var toTime=whereClause.hasOwnProperty('toTimeNanos')?Math.floor(whereClause.toTime/1000)*1000000000+whereClause.toTimeNanos:whereClause.toTime*1000000;messages=messages.filter(function(message){return message.time<=toTime;});}if(whereClause.hasOwnProperty('query')&&typeof whereClause.query=='string'){messages=messages.filter(function(message){var reg=new RegExp(whereClause.query);return reg.test(chatDecrypt(message.message,cacheSecret,message.salt));});}/**
-                                     * We should check to see if message[offset-1] has
-                                     * GAP on cache or not? if yes, we should not return
-                                     * any value from cache, because there is a gap between
-                                     */if(offset>0){if((0,_typeof2["default"])(messages[offset-1])=='object'&&messages[offset-1].hasGap){returnCache=false;}}if(returnCache){messages=messages.slice(offset,offset+count);if(messages.length===0){returnCache=false;}cacheFirstMessage=messages[0];cacheLastMessage=messages[messages.length-1];/**
-                                         * There should not be any GAPs before
-                                         * firstMessage of requested messages in cache
-                                         * if there is a gap or more, the cache is not
-                                         * valid, therefore we wont return any values
-                                         * from cache and wait for server's response
-                                         *
-                                         * To find out if there is a gap or not, all we
-                                         * have to do is to check messageGaps table and
-                                         * query it for gaps with time bigger than
-                                         * firstMessage's time
-                                         */if(cacheFirstMessage&&cacheFirstMessage.time>0){db.messageGaps.where('[threadId+owner+time]').between([parseInt(params.threadId),parseInt(chatMessaging.userInfo.id),cacheFirstMessage.time],[parseInt(params.threadId),parseInt(chatMessaging.userInfo.id),maxIntegerValue*1000],true,true).toArray().then(function(gaps){// TODO fill these gaps in a worker
-if(gaps.length>0){returnCache=false;}})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}if(returnCache){collection.count().then(function(collectionContentCount){var contentCount=0;var cacheData=[];for(var i=0;i<messages.length;i++){/**
-                                                         * If any of messages between first and last message of cache response
-                                                         * has a GAP before them, we shouldn't return cache's result and
-                                                         * wait for server's response to hit in
-                                                         */if(i!==0&&i!==messages.length-1&&messages[i].hasGap){returnCache=false;break;}try{var tempMessage=formatDataToMakeMessage(messages[i].threadId,JSON.parse(chatDecrypt(messages[i].data,cacheSecret,messages[i].salt)),true);cacheData.push(tempMessage);cacheResult[tempMessage.id]={index:i,messageId:tempMessage.id,threadId:tempMessage.threadId,data:_utility["default"].MD5(JSON.stringify([tempMessage.id,tempMessage.message,tempMessage.metadata,tempMessage.systemMetadata]))};}catch(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}/**
-                                                     * If there is a GAP between messages of cache result
-                                                     * WE should not return data from cache, cause it is not valid!
-                                                     * Therefore we wait for server's response and edit cache afterwards
-                                                     */if(returnCache){/**
-                                                         * Get contentCount of this thread from cache
-                                                         */db.contentCount.where('threadId').equals(parseInt(params.threadId)).toArray().then(function(res){var hasNext=true;if(res.length>0&&res[0].threadId===parseInt(params.threadId)){contentCount=res[0].contentCount;hasNext=offset+count<res[0].contentCount&&messages.length>0;}else{contentCount=collectionContentCount;}var returnData={hasError:false,cache:true,errorCode:0,errorMessage:'',result:{history:cacheData,contentCount:contentCount,hasNext:hasNext,nextOffset:offset*1+messages.length}};if(sendingQueue){returnData.result.sending=sendingQueueMessages;}if(uploadingQueue){returnData.result.uploading=uploadingQueueMessages;}if(failedQueue){returnData.result.failed=failedQueueMessages;}cacheReady=true;callback&&callback(returnData);callback=undefined;})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}}})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}/**
-                     * Get Thread Messages From Server
-                     */return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode},resultMessagesId=[];if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length;var history=reformatThreadHistory(params.threadId,messageContent);if(messageLength>0){/**
-                                     * Calculating First and Last Messages of result
-                                     */var lastMessage=history[messageContent.length-1],firstMessage=history[0];/**
-                                     * Sending Delivery for Last Message of Thread
-                                     */if(chatMessaging.userInfo.id!==firstMessage.participant.id&&!firstMessage.delivered){putInMessagesDeliveryQueue(params.threadId,firstMessage.id);}}/**
-                                 * Add Thread Messages into cache database
-                                 * and remove deleted messages from cache database
-                                 */if(canUseCache&&cacheSecret.length>0){if(db){/**
-                                         * Cache Synchronization
-                                         *
-                                         * If there are some results in cache
-                                         * Database, we have to check if they need
-                                         * to be deleted or not?
-                                         *
-                                         * To do so, first of all we should make
-                                         * sure that metadataCriteria has not been
-                                         * set, cuz we are not applying it on the
-                                         * cache results, besides the results from
-                                         * cache should not be empty, otherwise
-                                         * there is no need to sync cache
-                                         */if(Object.keys(cacheResult).length>0&&!whereClause.hasOwnProperty('metadataCriteria')){/**
-                                             * Check if a condition has been
-                                             * applied on query or not, if there is
-                                             * none, the only limitations on
-                                             * results are count and offset
-                                             *
-                                             * whereClause == []
-                                             */if(!whereClause||Object.keys(whereClause).length===0){/**
-                                                 * There is no condition applied on
-                                                 * query and result is [], so there
-                                                 * are no messages in this thread
-                                                 * after this offset, and we should
-                                                 * delete those messages from cache
-                                                 * too
-                                                 *
-                                                 * result   []
-                                                 */if(messageLength===0){/**
-                                                     * Order is ASC, so if the server result is empty we
-                                                     * should delete everything from cache which has bigger
-                                                     * time than first item of cache results for this query
-                                                     */if(order==='asc'){var finalMessageTime=cacheFirstMessage.time;db.messages.where('[threadId+owner+time]').between([parseInt(params.threadId),parseInt(chatMessaging.userInfo.id),finalMessageTime],[parseInt(params.threadId),parseInt(chatMessaging.userInfo.id),maxIntegerValue*1000],true,false)["delete"]()["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}/**
-                                                     * Order is DESC, so if the
-                                                     * server result is empty we
-                                                     * should delete everything
-                                                     * from cache which has smaller
-                                                     * time than first item of
-                                                     * cache results for this query
-                                                     */else{var finalMessageTime=cacheFirstMessage.time;db.messages.where('[threadId+owner+time]').between([parseInt(params.threadId),parseInt(chatMessaging.userInfo.id),0],[parseInt(params.threadId),parseInt(chatMessaging.userInfo.id),finalMessageTime],true,true)["delete"]()["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}}/**
-                                                 * Result is not Empty or doesn't
-                                                 * have just one single record, so
-                                                 * we should remove everything
-                                                 * which are between firstMessage
-                                                 * and lastMessage of this result
-                                                 * from cache database and insert
-                                                 * the new result into cache, so
-                                                 * the deleted ones would be
-                                                 * deleted
-                                                 *
-                                                 * result   [..., n-1, n, n+1, ...]
-                                                 */else{/**
-                                                     * We should check for last message's previouseId if it
-                                                     * is undefined, so it is the first message of thread and
-                                                     * we should delete everything before it from cache
-                                                     */if(typeof firstMessage.previousId==='undefined'||typeof lastMessage.previousId==='undefined'){var finalMessageTime=typeof lastMessage.previousId==='undefined'?lastMessage.time:firstMessage.time;db.messages.where('[threadId+owner+time]').between([parseInt(params.threadId),parseInt(chatMessaging.userInfo.id),0],[parseInt(params.threadId),parseInt(chatMessaging.userInfo.id),finalMessageTime],true,false)["delete"]()["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}/**
-                                                     * Offset has been set as 0 so this result is either the
-                                                     * very beginning part of thread or the very last
-                                                     * Depending on the sort order
-                                                     *
-                                                     * offset == 0
-                                                     */if(offset===0){/**
-                                                         * Results are sorted ASC, and the offset is 0 so
-                                                         * the first Message of this result is first
-                                                         * Message of thread, everything in cache
-                                                         * database which has smaller time than this
-                                                         * one should be removed
-                                                         *
-                                                         * order    ASC
-                                                         * result   [0, 1, 2, ...]
-                                                         */if(order==='asc'){var finalMessageTime=firstMessage.time;db.messages.where('[threadId+owner+time]').between([parseInt(params.threadId),parseInt(chatMessaging.userInfo.id),0],[parseInt(params.threadId),parseInt(chatMessaging.userInfo.id),finalMessageTime],true,false)["delete"]()["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}/**
-                                                         * Results are sorted DESC and the offset is 0 so
-                                                         * the last Message of this result is the last
-                                                         * Message of the thread, everything in cache
-                                                         * database which has bigger time than this
-                                                         * one should be removed from cache
-                                                         *
-                                                         * order    DESC
-                                                         * result   [..., n-2, n-1, n]
-                                                         */else{var finalMessageTime=firstMessage.time;db.messages.where('[threadId+owner+time]').between([parseInt(params.threadId),parseInt(chatMessaging.userInfo.id),finalMessageTime],[parseInt(params.threadId),parseInt(chatMessaging.userInfo.id),maxIntegerValue*1000],false,true)["delete"]()["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}}/**
-                                                     * Server result is not Empty, so we should remove
-                                                     * everything which are between firstMessage and lastMessage
-                                                     * of this result from cache database and insert the new
-                                                     * result into cache, so the deleted ones would be deleted
-                                                     *
-                                                     * result   [..., n-1, n, n+1, ...]
-                                                     */var boundryStartMessageTime=firstMessage.time<lastMessage.time?firstMessage.time:lastMessage.time,boundryEndMessageTime=firstMessage.time>lastMessage.time?firstMessage.time:lastMessage.time;db.messages.where('[threadId+owner+time]').between([parseInt(params.threadId),parseInt(chatMessaging.userInfo.id),boundryStartMessageTime],[parseInt(params.threadId),parseInt(chatMessaging.userInfo.id),boundryEndMessageTime],true,true)["delete"]()["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}}/**
-                                             * whereClasue is not empty and we
-                                             * should check for every single one of
-                                             * the conditions to update the cache
-                                             * properly
-                                             *
-                                             * whereClause != []
-                                             */else{/**
-                                                 * When user ordered a message with
-                                                 * exact ID and server returns []
-                                                 * but there is something in cache
-                                                 * database, we should delete that
-                                                 * row from cache, because it has
-                                                 * been deleted
-                                                 */if(whereClause.hasOwnProperty('id')&&whereClause.id>0){db.messages.where('id').equals(parseInt(whereClause.id)).and(function(message){return message.owner===chatMessaging.userInfo.id;})["delete"]()["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}/**
-                                                 * When user sets a query to search
-                                                 * on messages we should delete all
-                                                 * the results came from cache and
-                                                 * insert new results instead,
-                                                 * because those messages would be
-                                                 * either removed or updated
-                                                 */if(whereClause.hasOwnProperty('query')&&typeof whereClause.query=='string'){db.messages.where('[threadId+owner+time]').between([parseInt(params.threadId),parseInt(chatMessaging.userInfo.id),minIntegerValue],[parseInt(params.threadId),parseInt(chatMessaging.userInfo.id),maxIntegerValue*1000]).and(function(message){var reg=new RegExp(whereClause.query);return reg.test(chatDecrypt(message.message,cacheSecret,message.salt));})["delete"]()["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}/**
-                                                 * Users sets fromTime or toTime or
-                                                 * both of them
-                                                 */if(whereClause.hasOwnProperty('fromTime')||whereClause.hasOwnProperty('toTime')){/**
-                                                     * Server response is Empty []
-                                                     */if(messageLength===0){/**
-                                                         * User set both fromTime and toTime, so we have a
-                                                         * boundary restriction in this case. if server
-                                                         * result is empty, we should delete all messages from cache
-                                                         * which are between fromTime and toTime. if
-                                                         * there are any messages on server in this
-                                                         * boundary, we should delete all messages
-                                                         * which are between time of first and last
-                                                         * message of the server result, from cache and
-                                                         * insert new result into cache.
-                                                         */if(whereClause.hasOwnProperty('fromTime')&&whereClause.hasOwnProperty('toTime')){/**
-                                                             * Server response is Empty []
-                                                             */var fromTime=whereClause.hasOwnProperty('fromTimeNanos')?whereClause.fromTime/1000*1000000000+whereClause.fromTimeNanos:whereClause.fromTime*1000000,toTime=whereClause.hasOwnProperty('toTimeNanos')?(whereClause.toTime/1000+1)*1000000000+whereClause.toTimeNanos:(whereClause.toTime+1)*1000000;db.messages.where('[threadId+owner+time]').between([parseInt(params.threadId),parseInt(chatMessaging.userInfo.id),fromTime],[parseInt(params.threadId),parseInt(chatMessaging.userInfo.id),toTime],true,true)["delete"]()["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}/**
-                                                         * User only set fromTime
-                                                         */else if(whereClause.hasOwnProperty('fromTime')){/**
-                                                             * Server response is Empty []
-                                                             */var fromTime=whereClause.hasOwnProperty('fromTimeNanos')?whereClause.fromTime/1000*1000000000+whereClause.fromTimeNanos:whereClause.fromTime*1000000;db.messages.where('[threadId+owner+time]').between([parseInt(params.threadId),parseInt(chatMessaging.userInfo.id),fromTime],[parseInt(params.threadId),parseInt(chatMessaging.userInfo.id),maxIntegerValue*1000],true,false)["delete"]()["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}/**
-                                                         * User only set toTime
-                                                         */else{/**
-                                                             * Server response is Empty []
-                                                             */var toTime=whereClause.hasOwnProperty('toTimeNanos')?(whereClause.toTime/1000+1)*1000000000+whereClause.toTimeNanos:(whereClause.toTime+1)*1000000;db.messages.where('[threadId+owner+time]').between([parseInt(params.threadId),parseInt(chatMessaging.userInfo.id),minIntegerValue],[parseInt(params.threadId),parseInt(chatMessaging.userInfo.id),toTime],true,true)["delete"]()["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}}/**
-                                                     * Server response is not Empty
-                                                     * [..., n-1, n, n+1, ...]
-                                                     */else{/**
-                                                         * Server response is not Empty
-                                                         * [..., n-1, n, n+1, ...]
-                                                         */var boundryStartMessageTime=firstMessage.time<lastMessage.time?firstMessage.time:lastMessage.time,boundryEndMessageTime=firstMessage.time>lastMessage.time?firstMessage.time:lastMessage.time;db.messages.where('[threadId+owner+time]').between([parseInt(params.threadId),parseInt(chatMessaging.userInfo.id),boundryStartMessageTime],[parseInt(params.threadId),parseInt(chatMessaging.userInfo.id),boundryEndMessageTime],true,true)["delete"]()["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}}}}/**
-                                         * Insert new messages into cache database
-                                         * after deleting old messages from cache
-                                         */var cacheData=[];for(var i=0;i<history.length;i++){serverResult[history[i].id]={index:i,data:_utility["default"].MD5(JSON.stringify([history[i].id,history[i].message,history[i].metadata,history[i].systemMetadata]))};try{var tempData={},salt=_utility["default"].generateUUID();tempData.id=parseInt(history[i].id);tempData.owner=parseInt(chatMessaging.userInfo.id);tempData.threadId=parseInt(history[i].threadId);tempData.time=history[i].time;tempData.message=_utility["default"].crypt(history[i].message,cacheSecret,salt);tempData.data=_utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(history[i])),cacheSecret,salt);tempData.salt=salt;tempData.sendStatus='sent';tempData.hasGap=false;cacheData.push(tempData);resultMessagesId.push(history[i].id);}catch(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}db.messages.bulkPut(cacheData).then(function(){if((0,_typeof2["default"])(lastMessage)=='object'&&lastMessage!=null&&lastMessage.id>0&&lastMessage.previousId>0){/**
-                                                     * Check to see if there is a Gap in cache before
-                                                     * lastMessage or not?
-                                                     * To do this, we should check existence of message
-                                                     * with the ID of lastMessage's previousId field
-                                                     */db.messages.where('[owner+id]').between([chatMessaging.userInfo.id,lastMessage.previousId],[chatMessaging.userInfo.id,lastMessage.previousId],true,true).toArray().then(function(messages){if(messages.length===0){/**
-                                                                 * Previous Message of last message is not in cache database
-                                                                 * so there is a GAP in cache database for this thread before
-                                                                 * the last message.
-                                                                 * We should insert this GAP in messageGaps database
-                                                                 */db.messageGaps.put({id:parseInt(lastMessage.id),owner:parseInt(chatMessaging.userInfo.id),waitsFor:parseInt(lastMessage.previousId),threadId:parseInt(lastMessage.threadId),time:lastMessage.time}).then(function(){db.messages.update([chatMessaging.userInfo.id,lastMessage.id],{hasGap:true})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}/**
-                                                 * Some new messages have been added into cache,
-                                                 * We should check to see if any GAPs have been
-                                                 * filled with these messages or not?
-                                                 */db.messageGaps.where('waitsFor').anyOf(resultMessagesId).and(function(messages){return messages.owner===chatMessaging.userInfo.id;}).toArray().then(function(needsToBeDeleted){/**
-                                                         * These messages have to be deleted from messageGaps table
-                                                         */var messagesToBeDeleted=needsToBeDeleted.map(function(msg){/**
-                                                             * We have to update messages table and
-                                                             * set hasGap for those messages as false
-                                                             */db.messages.update([chatMessaging.userInfo.id,msg.id],{hasGap:false})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});return[chatMessaging.userInfo.id,msg.id];});db.messageGaps.bulkDelete(messagesToBeDeleted);})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});/**
-                                         * Update contentCount of this thread in cache
-                                         * contentCount of thread would be count of all
-                                         * thread messages if and only if there are no
-                                         * other conditions applied on getHistory that
-                                         * count and offset
-                                         */if(Object.keys(whereClause).length===0){db.contentCount.put({threadId:parseInt(params.threadId),contentCount:result.contentCount})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}returnData.result={history:history,contentCount:result.contentCount,hasNext:result.result&&!(result.result.length<sendMessageParams.content.count),//(sendMessageParams.content.offset + sendMessageParams.content.count < result.contentCount && messageLength > 0),
-nextOffset:sendMessageParams.content.offset*1+messageLength*1};if(sendingQueue){returnData.result.sending=sendingQueueMessages;}if(uploadingQueue){returnData.result.uploading=uploadingQueueMessages;}if(failedQueue){returnData.result.failed=failedQueueMessages;}/**
-                                 * Check Differences between Cache and Server response
-                                 */if(returnCache&&cacheReady){/**
-                                     * If there are some messages in cache but they
-                                     * are not in server's response, we can assume
-                                     * that they have been removed from server, so
-                                     * we should call MESSAGE_DELETE event for them
-                                     */var batchDeleteMessage=[],batchEditMessage=[],batchNewMessage=[];for(var key in cacheResult){if(!serverResult.hasOwnProperty(key)){batchDeleteMessage.push({id:cacheResult[key].messageId,pinned:cacheResult[key].pinned,threadId:cacheResult[key].threadId});// chatEvents.fireEvent('messageEvents', {
-//     type: 'MESSAGE_DELETE',
-//     result: {
-//         message: {
-//             id: cacheResult[key].messageId,
-//             pinned: cacheResult[key].pinned,
-//             threadId: cacheResult[key].threadId
-//         }
-//     }
-// });
-}}if(batchDeleteMessage.length){_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_DELETE_BATCH',cache:true,result:batchDeleteMessage});}for(var key in serverResult){if(cacheResult.hasOwnProperty(key)){/**
-                                             * Check digest of cache and server response, if
-                                             * they are not the same, we should emit
-                                             */if(cacheResult[key].data!==serverResult[key].data){/**
-                                                 * This message is already on cache, but it's
-                                                 * content has been changed, so we emit a
-                                                 * message edit event to inform client
-                                                 */batchEditMessage.push(history[serverResult[key].index]);// chatEvents.fireEvent('messageEvents', {
-//     type: 'MESSAGE_EDIT',
-//     result: {
-//         message: history[serverResult[key].index]
-//     }
-// });
-}}else{/**
-                                             * This Message has not found on cache but it has
-                                             * came from server, so we emit it as a new message
-                                             */batchNewMessage.push(history[serverResult[key].index]);// chatEvents.fireEvent('messageEvents', {
-//     type: 'MESSAGE_NEW',
-//     cache: true,
-//     result: {
-//         message: history[serverResult[key].index]
-//     }
-// });
-}}if(batchEditMessage.length){_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_EDIT_BATCH',cache:true,result:batchEditMessage});}if(batchNewMessage.length){_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_NEW_BATCH',cache:true,result:batchNewMessage});}}else{callback&&callback(returnData);callback=undefined;}}}});});}else{_events.chatEvents.fireEvent('error',{code:999,message:'Thread ID is required for Getting history!'});}},/**
-         * Update Thread Info
-         *
-         * This functions updates metadata of thread
-         *
-         * @access private
-         *
-         * @param {int}       threadId      Id of thread
-         * @param {string}    image         URL og thread image to be set
-         * @param {string}    description   Description for thread
-         * @param {string}    title         New Title for thread
-         * @param {object}    metadata      New Metadata to be set on thread
-         * @param {function}  callback      The callback function to call after
-         *
-         * @return {object} Instant sendMessage result
-         */updateThreadInfo=function updateThreadInfo(params,callback){var updateThreadInfoData={chatMessageVOType:_constants.chatMessageVOTypes.UPDATE_THREAD_INFO,typeCode:generalTypeCode,//params.typeCode,
+     * Retrive get threads response from server
+     */return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode,uniqueId:result.uniqueId};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={threads:[],contentCount:result.contentCount,hasNext:messageContent&&!(messageLength<count),//(offset + count < result.contentCount && messageLength > 0),
+nextOffset:offset*1+messageLength*1},threadData;for(var i=0;i<messageLength;i++){threadData=createThread(messageContent[i],false);if(threadData){resultData.threads.push(threadData);}}_store.store.threads.saveMany(resultData.threads);returnData.result=resultData;}callback&&callback(returnData);/**
+         * Delete callback so if server pushes response before
+         * cache, cache won't send data again
+         */callback=undefined;if(!returnData.hasError&&returnCache){_events.chatEvents.fireEvent('threadEvents',{type:'THREADS_LIST_CHANGE',result:returnData.result});}}});},getAllThreads=function getAllThreads(params,callback){var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.GET_THREADS,typeCode:generalTypeCode,//params.typeCode,
+content:{}};sendMessageParams.content.summary=params.summary;return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){// if (!result.hasError) {}
+callback&&callback(result);}});},/**
+   * Get History.
+   *
+   * This functions gets history of a thread
+   *
+   * @access private
+   *
+   * @param {int}       count             Count of threads to be received
+   * @param {int}       offset            Offset of select query
+   * @param {int}      threadId          Id of thread to get its history
+   * @param {int}      id                Id of single message to get
+   * @param {int}      userId            Messages of this SSO User
+   * @param {int}       messageType       Type of messages to get (types should be set by client)
+   * @param {int}      fromTime          Get messages which have bigger time than given fromTime
+   * @param {int}       fromTimeNanos     Get messages which have bigger time than given fromTimeNanos
+   * @param {int}      toTime            Get messages which have smaller time than given toTime
+   * @param {int}       toTimeNanos       Get messages which have smaller time than given toTimeNanos
+   * @param {int}      senderId          Messages of this sender only
+   * @param {string}    uniqueIds         Array of unique ids to retrieve
+   * @param {string}    order             Order of select query (default: DESC)
+   * @param {string}    query             Search term to be looked up in messages content
+   * @param {object}    metadataCriteria  This JSON will be used to search in message metadata with GraphQL
+   * @param {function}  callback          The callback function to call after
+   *
+   * @return {object} Instant result of sendMessage
+   */getHistory=function getHistory(params,callback){if(parseInt(params.threadId)>0){var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.GET_HISTORY,typeCode:generalTypeCode,//params.typeCode,
+content:{},subjectId:params.threadId},offset=parseInt(params.offset)>0?parseInt(params.offset):0,count=parseInt(params.count)>0?parseInt(params.count):config.getHistoryCount,order=typeof params.order!='undefined'?params.order.toLowerCase():'desc',functionLevelCache=typeof params.cache=='boolean'?params.cache:true,cacheResult={},serverResult={},cacheFirstMessage,cacheLastMessage,messages,returnCache,cacheReady=false,dynamicHistoryCount=params.dynamicHistoryCount&&typeof params.dynamicHistoryCount==='boolean'?params.dynamicHistoryCount:false,sendingQueue=params.queues&&typeof params.queues.sending==='boolean'?params.queues.sending:true,failedQueue=params.queues&&typeof params.queues.failed==='boolean'?params.queues.failed:true,uploadingQueue=params.queues&&typeof params.queues.uploading==='boolean'?params.queues.uploading:true,sendingQueueMessages=[],failedQueueMessages=[],uploadingQueueMessages=[];if(sendingQueue){getChatSendQueue(parseInt(params.threadId),function(sendQueueMessages){for(var i=0;i<sendQueueMessages.length;i++){var time=new Date().getTime();sendingQueueMessages.push(formatDataToMakeMessage(sendQueueMessages[i].threadId,{uniqueId:sendQueueMessages[i].uniqueId,ownerId:chatMessaging.userInfo.id,message:sendQueueMessages[i].content,metadata:sendQueueMessages[i].metadata,systemMetadata:sendQueueMessages[i].systemMetadata,replyInfo:sendQueueMessages[i].replyInfo,forwardInfo:sendQueueMessages[i].forwardInfo,time:time,timeNanos:time%1000*1000000}));}});}if(uploadingQueue){getChatUploadQueue(parseInt(params.threadId),function(uploadQueueMessages){for(var i=0;i<uploadQueueMessages.length;i++){uploadQueueMessages[i].message.participant=chatMessaging.userInfo;var time=new Date().getTime();uploadQueueMessages[i].message.time=time;uploadQueueMessages[i].message.timeNanos=time%1000*1000000;uploadingQueueMessages.push(formatDataToMakeMessage(params.threadId,uploadQueueMessages[i].message,false));}});}getChatWaitQueue(parseInt(params.threadId),failedQueue,function(waitQueueMessages){if(cacheSecret.length>0){for(var i=0;i<waitQueueMessages.length;i++){var decryptedEnqueuedMessage={};if(cacheInMemory){decryptedEnqueuedMessage=waitQueueMessages[i];}var time=new Date().getTime();failedQueueMessages[i]=formatDataToMakeMessage(waitQueueMessages[i].threadId,{uniqueId:decryptedEnqueuedMessage.uniqueId,ownerId:chatMessaging.userInfo.id,message:decryptedEnqueuedMessage.content,metadata:decryptedEnqueuedMessage.metadata,systemMetadata:decryptedEnqueuedMessage.systemMetadata,replyInfo:decryptedEnqueuedMessage.replyInfo,forwardInfo:decryptedEnqueuedMessage.forwardInfo,participant:chatMessaging.userInfo,time:time,timeNanos:time%1000*1000000});}}else{failedQueueMessages=[];}if(dynamicHistoryCount){var tempCount=count-(sendingQueueMessages.length+failedQueueMessages.length+uploadingQueueMessages.length);sendMessageParams.content.count=tempCount>0?tempCount:0;}else{sendMessageParams.content.count=count;}sendMessageParams.content.offset=offset;sendMessageParams.content.order=order;if(parseInt(params.messageId)>0){sendMessageParams.content.id=params.messageId;}if(Array.isArray(params.uniqueIds)){sendMessageParams.content.uniqueIds=params.uniqueIds;}if(parseInt(params.fromTimeFull)>0&&params.fromTimeFull.toString().length===19){sendMessageParams.content.fromTime=parseInt(params.fromTimeFull.toString().substring(0,13));sendMessageParams.content.fromTimeNanos=parseInt(params.fromTimeFull.toString().substring(10,19));}else{if(parseInt(params.fromTime)>0&&parseInt(params.fromTime)<9999999999999){sendMessageParams.content.fromTime=parseInt(params.fromTime);}if(parseInt(params.fromTimeNanos)>0&&parseInt(params.fromTimeNanos)<999999999){sendMessageParams.content.fromTimeNanos=parseInt(params.fromTimeNanos);}}if(parseInt(params.toTimeFull)>0&&params.toTimeFull.toString().length===19){sendMessageParams.content.toTime=parseInt(params.toTimeFull.toString().substring(0,13));sendMessageParams.content.toTimeNanos=parseInt(params.toTimeFull.toString().substring(10,19));}else{if(parseInt(params.toTime)>0&&parseInt(params.toTime)<9999999999999){sendMessageParams.content.toTime=parseInt(params.toTime);}if(parseInt(params.toTimeNanos)>0&&parseInt(params.toTimeNanos)<999999999){sendMessageParams.content.toTimeNanos=parseInt(params.toTimeNanos);}}if(typeof params.query!='undefined'){sendMessageParams.content.query=params.query;}if(params.allMentioned&&typeof params.allMentioned=='boolean'){sendMessageParams.content.allMentioned=params.allMentioned;}if(params.unreadMentioned&&typeof params.unreadMentioned=='boolean'){sendMessageParams.content.unreadMentioned=params.unreadMentioned;}if(params.messageType&&typeof params.messageType.toUpperCase()!=='undefined'&&_constants.chatMessageTypes[params.messageType.toUpperCase()]>0){sendMessageParams.content.messageType=_constants.chatMessageTypes[params.messageType.toUpperCase()];}if((0,_typeof2["default"])(params.metadataCriteria)=='object'&&params.metadataCriteria.hasOwnProperty('field')){sendMessageParams.content.metadataCriteria=params.metadataCriteria;}if(typeof params.onlyNewMessages==="boolean"){sendMessageParams.content.newMessages=params.onlyNewMessages;}/**
+         * Get Thread Messages From Server
+         */return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode},resultMessagesId=[];if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length;var history=reformatThreadHistory(params.threadId,messageContent);if(messageLength>0){/**
+                 * Calculating First and Last Messages of result
+                 */var lastMessage=history[messageContent.length-1],firstMessage=history[0];/**
+                 * Sending Delivery for Last Message of Thread
+                 */if(chatMessaging.userInfo.id!==firstMessage.participant.id&&!firstMessage.delivered){putInMessagesDeliveryQueue(params.threadId,firstMessage.id);}}returnData.result={history:history,contentCount:result.contentCount,hasNext:result.result&&!(result.result.length<sendMessageParams.content.count),//(sendMessageParams.content.offset + sendMessageParams.content.count < result.contentCount && messageLength > 0),
+nextOffset:sendMessageParams.content.offset*1+messageLength*1};if(sendingQueue){returnData.result.sending=sendingQueueMessages;}if(uploadingQueue){returnData.result.uploading=uploadingQueueMessages;}if(failedQueue){returnData.result.failed=failedQueueMessages;}callback&&callback(returnData);callback=undefined;}}});});}else{_events.chatEvents.fireEvent('error',{code:999,message:'Thread ID is required for Getting history!'});}},/**
+   * Update Thread Info
+   *
+   * This functions updates metadata of thread
+   *
+   * @access private
+   *
+   * @param {int}       threadId      Id of thread
+   * @param {string}    image         URL og thread image to be set
+   * @param {string}    description   Description for thread
+   * @param {string}    title         New Title for thread
+   * @param {object}    metadata      New Metadata to be set on thread
+   * @param {function}  callback      The callback function to call after
+   *
+   * @return {object} Instant sendMessage result
+   */updateThreadInfo=function updateThreadInfo(params,callback){var updateThreadInfoData={chatMessageVOType:_constants.chatMessageVOTypes.UPDATE_THREAD_INFO,typeCode:generalTypeCode,//params.typeCode,
 content:{},pushMsgType:3,token:token},threadInfoContent={},fileUploadParams={},metadata={file:{}},threadId,fileUniqueId=_utility["default"].generateUUID();if(params){if(!params.userGroupHash||params.userGroupHash.length===0||typeof params.userGroupHash!=='string'){_events.chatEvents.fireEvent('error',{code:6304,message:CHAT_ERRORS[6304]});return;}else{fileUploadParams.userGroupHash=params.userGroupHash;}if(parseInt(params.threadId)>0){threadId=parseInt(params.threadId);updateThreadInfoData.subjectId=threadId;}else{_events.chatEvents.fireEvent('error',{code:999,message:'Thread ID is required for Updating thread info!'});}if(typeof params.description=='string'){threadInfoContent.description=params.description;}if(typeof params.title=='string'){threadInfoContent.name=params.title;}if((0,_typeof2["default"])(params.metadata)=='object'){threadInfoContent.metadata=JSON.parse(JSON.stringify(params.metadata));}else if(typeof params.metadata=='string'){try{threadInfoContent.metadata=JSON.parse(params.metadata);}catch(e){threadInfoContent.metadata={};}}else{threadInfoContent.metadata={};}updateThreadInfoData.content=threadInfoContent;if((0,_typeof2["default"])(params.image)=='object'&&params.image.size>0){return chatUploadHandler({threadId:threadId,file:params.image,fileUniqueId:fileUniqueId},function(uploadHandlerResult,uploadHandlerMetadata,fileType,fileExtension){fileUploadParams=Object.assign(fileUploadParams,uploadHandlerResult);threadInfoContent.metadata=JSON.stringify(Object.assign(threadInfoContent.metadata,uploadHandlerMetadata));putInChatUploadQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.UPDATE_THREAD_INFO,typeCode:generalTypeCode,//params.typeCode,
 subjectId:threadId,content:threadInfoContent,metadata:threadInfoContent.metadata,uniqueId:fileUniqueId,pushMsgType:3,token:token},callbacks:callback},function(){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){uploadImageToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){metadata['name']=result.result.name;metadata['fileHash']=result.result.hash;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;metadata['file']['actualHeight']=result.result.actualHeight;metadata['file']['actualWidth']=result.result.actualWidth;metadata['file']['link']="".concat(SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS,"/api/images/").concat(result.result.hash,"?checkUserGroupAccess=true");transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}else{_events.chatEvents.fireEvent('error',{code:999,message:'Thread picture can be a image type only!'});}});});}else if(typeof params.image=='string'&&params.image.length>5){threadInfoContent.metadata=JSON.stringify(Object.assign(threadInfoContent.metadata,{fileHash:params.image}));getImageDownloadLinkFromPodspaceNew({hashCode:params.image},function(result){if(!result.hasError){threadInfoContent.image=result.downloadUrl;}});return chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.UPDATE_THREAD_INFO,typeCode:generalTypeCode,//params.typeCode,
 subjectId:threadId,content:threadInfoContent,metadata:threadInfoContent.metadata,uniqueId:fileUniqueId,pushMsgType:3,token:token},{onResult:function onResult(result){callback&&callback(result);}});}else{if(Object.keys(threadInfoContent.metadata).length===0){delete threadInfoContent.metadata;}return chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.UPDATE_THREAD_INFO,typeCode:generalTypeCode,//params.typeCode,
 subjectId:threadId,content:threadInfoContent,metadata:threadInfoContent.metadata,uniqueId:fileUniqueId,pushMsgType:3,token:token},{onResult:function onResult(result){callback&&callback(result);}});}}},/**
-         * Update Chat Profile
-         *
-         * This functions updates metadata of thread
-         *
-         * @access private
-         *
-         * @param {int}       threadId      Id of thread
-         * @param {string}    image         URL og thread image to be set
-         * @param {string}    description   Description for thread
-         * @param {string}    title         New Title for thread
-         * @param {object}    metadata      New Metadata to be set on thread
-         * @param {function}  callback      The callback function to call after
-         *
-         * @return {object} Instant sendMessage result
-         */updateChatProfile=function updateChatProfile(params,callback){var updateChatProfileData={chatMessageVOType:_constants.chatMessageVOTypes.UPDATE_CHAT_PROFILE,content:{},pushMsgType:3,token:token};if(params){if(typeof params.bio=='string'){updateChatProfileData.content.bio=params.bio;}if((0,_typeof2["default"])(params.metadata)=='object'){updateChatProfileData.content.metadata=JSON.stringify(params.metadata);}else if(typeof params.metadata=='string'){updateChatProfileData.content.metadata=params.metadata;}}return chatMessaging.sendMessage(updateChatProfileData,{onResult:function onResult(result){callback&&callback(result);}});},/**
-         * Get Participant Roles
-         *
-         * This functions retrieves roles of an user if they are
-         * part of the thread
-         *
-         * @access private
-         *
-         * @param {int}       threadId      Id of thread
-         * @param {function}  callback      The callback function to call after
-         *
-         * @return {object} Instant sendMessage result
-         */getCurrentUserRoles=function getCurrentUserRoles(params,callback){var updateChatProfileData={chatMessageVOType:_constants.chatMessageVOTypes.GET_PARTICIPANT_ROLES,pushMsgType:3,subjectId:params.threadId,token:token};return chatMessaging.sendMessage(updateChatProfileData,{onResult:function onResult(result){callback&&callback(result);}});},/**
-         * Get Thread Participants
-         *
-         * Gets participants list of given thread
-         *
-         * @access pubic
-         *
-         * @param {int}     threadId        Id of thread which you want to get participants of
-         * @param {int}     count           Count of objects to get
-         * @param {int}     offset          Offset of select Query
-         * @param {string}  name            Search in Participants list (LIKE in name, contactName, email)
-         *
-         * @return {object} Instant Response
-         */getThreadParticipants=function getThreadParticipants(params,callback){var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.THREAD_PARTICIPANTS,typeCode:generalTypeCode,//params.typeCode,
-content:{},subjectId:params.threadId},whereClause={},returnCache=false;var offset=parseInt(params.offset)>0?parseInt(params.offset):0,count=parseInt(params.count)>0?parseInt(params.count):config.getHistoryCount;sendMessageParams.content.count=count;sendMessageParams.content.offset=offset;if(typeof params.name==='string'){sendMessageParams.content.name=whereClause.name=params.name;}if(typeof params.username==='string'){sendMessageParams.content.username=whereClause.username=params.username;}if(typeof params.cellphoneNumber==='string'){sendMessageParams.content.cellphoneNumber=whereClause.cellphoneNumber=params.cellphoneNumber;}if(typeof params.admin==='boolean'){sendMessageParams.content.admin=params.admin;}var functionLevelCache=typeof params.cache=='boolean'?params.cache:true;/**
-             * Retrieve thread participants from cache
-             */if(functionLevelCache&&canUseCache&&cacheSecret.length>0){if(db){db.participants.where('expireTime').below(new Date().getTime())["delete"]().then(function(){var thenAble;if(Object.keys(whereClause).length===0){thenAble=db.participants.where('threadId').equals(parseInt(params.threadId)).and(function(participant){return participant.owner===chatMessaging.userInfo.id;});}else{if(whereClause.hasOwnProperty('name')){thenAble=db.participants.where('threadId').equals(parseInt(params.threadId)).and(function(participant){return participant.owner===chatMessaging.userInfo.id;}).filter(function(contact){var reg=new RegExp(whereClause.name);return reg.test(chatDecrypt(contact.contactName,cacheSecret,contact.salt)+' '+chatDecrypt(contact.name,cacheSecret,contact.salt)+' '+chatDecrypt(contact.email,cacheSecret,contact.salt));});}}thenAble.offset(offset).limit(count).reverse().toArray().then(function(participants){db.participants.where('threadId').equals(parseInt(params.threadId)).and(function(participant){return participant.owner===chatMessaging.userInfo.id;}).count().then(function(participantsCount){var cacheData=[];for(var i=0;i<participants.length;i++){try{cacheData.push(formatDataToMakeParticipant(JSON.parse(chatDecrypt(participants[i].data,cacheSecret,participants[i].salt)),participants[i].threadId));}catch(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}var returnData={hasError:false,cache:true,errorCode:0,errorMessage:'',result:{participants:cacheData,contentCount:participantsCount,hasNext:!(participants.length<count),nextOffset:offset*1+participants.length}};if(cacheData.length>0){callback&&callback(returnData);callback=undefined;returnCache=true;}});})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={participants:reformatThreadParticipants(messageContent,params.threadId),contentCount:result.contentCount,hasNext:sendMessageParams.content.offset+sendMessageParams.content.count<result.contentCount&&messageLength>0,nextOffset:sendMessageParams.content.offset*1+messageLength*1};returnData.result=resultData;/**
-                         * Add thread participants into cache database #cache
-                         */if(canUseCache&&cacheSecret.length>0){if(db){var cacheData=[];for(var i=0;i<resultData.participants.length;i++){try{var tempData={},salt=_utility["default"].generateUUID();tempData.id=parseInt(resultData.participants[i].id);tempData.owner=parseInt(chatMessaging.userInfo.id);tempData.threadId=parseInt(resultData.participants[i].threadId);tempData.notSeenDuration=resultData.participants[i].notSeenDuration;tempData.admin=resultData.participants[i].admin;tempData.auditor=resultData.participants[i].auditor;tempData.name=_utility["default"].crypt(resultData.participants[i].name,cacheSecret,salt);tempData.contactName=_utility["default"].crypt(resultData.participants[i].contactName,cacheSecret,salt);tempData.email=_utility["default"].crypt(resultData.participants[i].email,cacheSecret,salt);tempData.expireTime=new Date().getTime()+cacheExpireTime;tempData.data=_utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(resultData.participants[i])),cacheSecret,salt);tempData.salt=salt;cacheData.push(tempData);}catch(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}db.participants.bulkPut(cacheData)["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}callback&&callback(returnData);/**
-                     * Delete callback so if server pushes response before
-                     * cache, cache won't send data again
-                     */callback=undefined;if(!returnData.hasError&&returnCache){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_PARTICIPANTS_LIST_CHANGE',threadId:params.threadId,result:returnData.result});}}});},/**
-         * Deliver
-         *
-         * This functions sends delivery messages for a message
-         *
-         * @access private
-         *
-         * @param {int}   messageId  Id of Message
-         *
-         * @return {object} Instant sendMessage result
-         */deliver=function deliver(params){return chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.DELIVERY,typeCode:generalTypeCode,//params.typeCode,
+   * Update Chat Profile
+   *
+   * This functions updates metadata of thread
+   *
+   * @access private
+   *
+   * @param {int}       threadId      Id of thread
+   * @param {string}    image         URL og thread image to be set
+   * @param {string}    description   Description for thread
+   * @param {string}    title         New Title for thread
+   * @param {object}    metadata      New Metadata to be set on thread
+   * @param {function}  callback      The callback function to call after
+   *
+   * @return {object} Instant sendMessage result
+   */updateChatProfile=function updateChatProfile(params,callback){var updateChatProfileData={chatMessageVOType:_constants.chatMessageVOTypes.UPDATE_CHAT_PROFILE,content:{},pushMsgType:3,token:token};if(params){if(typeof params.bio=='string'){updateChatProfileData.content.bio=params.bio;}if((0,_typeof2["default"])(params.metadata)=='object'){updateChatProfileData.content.metadata=JSON.stringify(params.metadata);}else if(typeof params.metadata=='string'){updateChatProfileData.content.metadata=params.metadata;}}return chatMessaging.sendMessage(updateChatProfileData,{onResult:function onResult(result){callback&&callback(result);}});},/**
+   * Get Participant Roles
+   *
+   * This functions retrieves roles of an user if they are
+   * part of the thread
+   *
+   * @access private
+   *
+   * @param {int}       threadId      Id of thread
+   * @param {function}  callback      The callback function to call after
+   *
+   * @return {object} Instant sendMessage result
+   */getCurrentUserRoles=function getCurrentUserRoles(params,callback){var updateChatProfileData={chatMessageVOType:_constants.chatMessageVOTypes.GET_PARTICIPANT_ROLES,pushMsgType:3,subjectId:params.threadId,token:token};return chatMessaging.sendMessage(updateChatProfileData,{onResult:function onResult(result){callback&&callback(result);}});},/**
+   * Get Thread Participants
+   *
+   * Gets participants list of given thread
+   *
+   * @access pubic
+   *
+   * @param {int}     threadId        Id of thread which you want to get participants of
+   * @param {int}     count           Count of objects to get
+   * @param {int}     offset          Offset of select Query
+   * @param {string}  name            Search in Participants list (LIKE in name, contactName, email)
+   *
+   * @return {object} Instant Response
+   */getThreadParticipants=function getThreadParticipants(params,callback){var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.THREAD_PARTICIPANTS,typeCode:generalTypeCode,//params.typeCode,
+content:{},subjectId:params.threadId},returnCache=false;var offset=parseInt(params.offset)>0?parseInt(params.offset):0,count=parseInt(params.count)>0?parseInt(params.count):config.getHistoryCount;sendMessageParams.content.count=count;sendMessageParams.content.offset=offset;if(typeof params.name==='string'){sendMessageParams.content.name=params.name;}if(typeof params.username==='string'){sendMessageParams.content.username=params.username;}if(typeof params.cellphoneNumber==='string'){sendMessageParams.content.cellphoneNumber=params.cellphoneNumber;}if(typeof params.admin==='boolean'){sendMessageParams.content.admin=params.admin;}var functionLevelCache=typeof params.cache=='boolean'?params.cache:true;return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={threadId:params.threadId,participants:reformatThreadParticipants(messageContent,params.threadId),contentCount:result.contentCount,hasNext:sendMessageParams.content.offset+sendMessageParams.content.count<result.contentCount&&messageLength>0,nextOffset:sendMessageParams.content.offset*1+messageLength*1};returnData.result=resultData;}callback&&callback(returnData);/**
+         * Delete callback so if server pushes response before
+         * cache, cache won't send data again
+         */callback=undefined;if(!returnData.hasError&&returnCache){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_PARTICIPANTS_LIST_CHANGE',threadId:params.threadId,result:returnData.result});}}});},/**
+   * Deliver
+   *
+   * This functions sends delivery messages for a message
+   *
+   * @access private
+   *
+   * @param {int}   messageId  Id of Message
+   *
+   * @return {object} Instant sendMessage result
+   */deliver=function deliver(params){return chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.DELIVERY,typeCode:generalTypeCode,//params.typeCode,
 content:params.messageId,pushMsgType:3});},/**
-         * Seen
-         *
-         * This functions sends seen acknowledge for a message
-         *
-         * @access private
-         *
-         * @param {int}   messageId  Id of Message
-         *
-         * @return {object} Instant sendMessage result
-         */seen=function seen(params){return chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.SEEN,typeCode:generalTypeCode,//params.typeCode,
+   * Seen
+   *
+   * This functions sends seen acknowledge for a message
+   *
+   * @access private
+   *
+   * @param {int}   messageId  Id of Message
+   *
+   * @return {object} Instant sendMessage result
+   */seen=function seen(params){return chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.SEEN,typeCode:generalTypeCode,//params.typeCode,
 content:params.messageId,pushMsgType:3});},/**
-         * Get Image.
-         *
-         * This functions gets an uploaded image from File Server.
-         *
-         * @since 3.9.9
-         * @access private
-         *
-         * @param {int}    imageId         ID of image
-         * @param {int}     width           Required width to get
-         * @param {int}     height          Required height to get
-         * @param {boolean} actual          Required height to get
-         * @param {boolean} downloadable    TRUE to be downloadable / FALSE to not
-         * @param {string}  hashCode        HashCode of uploaded file
-         *
-         * @return {object} Image Object
-         */getImage=function getImage(params,callback){var getImageData={};if(params){if(parseInt(params.imageId)>0){getImageData.imageId=params.imageId;}if(typeof params.hashCode=='string'){getImageData.hashCode=params.hashCode;}if(parseInt(params.width)>0){getImageData.width=params.width;}if(parseInt(params.height)>0){getImageData.height=params.height;}if(parseInt(params.actual)>0){getImageData.actual=params.actual;}if(parseInt(params.downloadable)>0){getImageData.downloadable=params.downloadable;}}httpRequest({url:SERVICE_ADDRESSES.FILESERVER_ADDRESS+SERVICES_PATH.GET_IMAGE,method:'GET',data:getImageData},function(result){if(!result.hasError){var queryString='?';for(var i in params){queryString+=i+'='+params[i]+'&';}queryString=queryString.slice(0,-1);var image=SERVICE_ADDRESSES.FILESERVER_ADDRESS+SERVICES_PATH.GET_IMAGE+queryString;callback({hasError:result.hasError,result:image});}else{callback({hasError:true});}});},/**
-         * Get File.
-         *
-         * This functions gets an uploaded file from File Server.
-         *
-         * @since 3.9.9
-         * @access private
-         *
-         * @param {int}    fileId          ID of file
-         * @param {boolean} downloadable    TRUE to be downloadable / False to not
-         * @param {string}  hashCode        HashCode of uploaded file
-         *
-         * @return {object} File Object
-         */getFile=function getFile(params,callback){var getFileData={};if(params){if(typeof params.fileId!=='undefined'){getFileData.fileId=params.fileId;}if(typeof params.hashCode=='string'){getFileData.hashCode=params.hashCode;}if(typeof params.downloadable=='boolean'){getFileData.downloadable=params.downloadable;}}httpRequest({url:SERVICE_ADDRESSES.FILESERVER_ADDRESS+SERVICES_PATH.GET_FILE,method:'GET',data:getFileData},function(result){if(!result.hasError){var queryString='?';for(var i in params){queryString+=i+'='+params[i]+'&';}queryString=queryString.slice(0,-1);var file=SERVICE_ADDRESSES.FILESERVER_ADDRESS+SERVICES_PATH.GET_FILE+queryString;callback({hasError:result.hasError,result:file});}else{callback({hasError:true});}});},/**
-         * Deprecated
-         *
-         * Get File From PodSpace
-         *
-         * This functions gets an uploaded file from Pod Space File Server.
-         *
-         * @since 3.9.9
-         * @access private
-         *
-         * @param {string}  hashCode        HashCode of uploaded file
-         *
-         * @return {object} File Object
-         */getFileFromPodspace=function getFileFromPodspace(params,callback){var downloadUniqueId=_utility["default"].generateUUID(),getFileData={};if(params){if(params.hashCode&&typeof params.hashCode=='string'){getFileData.hash=params.hashCode;}else{callback({hasError:true,error:'Enter a file hash to get'});return;}}if(params.responseType==='link'){var returnLink=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE+"?hash=".concat(params.hashCode,"&_token_=").concat(token,"&_token_issuer_=1");callback({hasError:false,type:'link',result:returnLink});}else{httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE,method:'GET',responseType:'blob',uniqueId:downloadUniqueId,headers:{'_token_':token,'_token_issuer_':1// 'Range': 'bytes=100-200'
+   * Get Image.
+   *
+   * This functions gets an uploaded image from File Server.
+   *
+   * @since 3.9.9
+   * @access private
+   *
+   * @param {int}    imageId         ID of image
+   * @param {int}     width           Required width to get
+   * @param {int}     height          Required height to get
+   * @param {boolean} actual          Required height to get
+   * @param {boolean} downloadable    TRUE to be downloadable / FALSE to not
+   * @param {string}  hashCode        HashCode of uploaded file
+   *
+   * @return {object} Image Object
+   */getImage=function getImage(params,callback){var getImageData={};if(params){if(parseInt(params.imageId)>0){getImageData.imageId=params.imageId;}if(typeof params.hashCode=='string'){getImageData.hashCode=params.hashCode;}if(parseInt(params.width)>0){getImageData.width=params.width;}if(parseInt(params.height)>0){getImageData.height=params.height;}if(parseInt(params.actual)>0){getImageData.actual=params.actual;}if(parseInt(params.downloadable)>0){getImageData.downloadable=params.downloadable;}}httpRequest({url:SERVICE_ADDRESSES.FILESERVER_ADDRESS+SERVICES_PATH.GET_IMAGE,method:'GET',data:getImageData},function(result){if(!result.hasError){var queryString='?';for(var i in params){queryString+=i+'='+params[i]+'&';}queryString=queryString.slice(0,-1);var image=SERVICE_ADDRESSES.FILESERVER_ADDRESS+SERVICES_PATH.GET_IMAGE+queryString;callback({hasError:result.hasError,result:image});}else{callback({hasError:true});}});},/**
+   * Get File.
+   *
+   * This functions gets an uploaded file from File Server.
+   *
+   * @since 3.9.9
+   * @access private
+   *
+   * @param {int}    fileId          ID of file
+   * @param {boolean} downloadable    TRUE to be downloadable / False to not
+   * @param {string}  hashCode        HashCode of uploaded file
+   *
+   * @return {object} File Object
+   */getFile=function getFile(params,callback){var getFileData={};if(params){if(typeof params.fileId!=='undefined'){getFileData.fileId=params.fileId;}if(typeof params.hashCode=='string'){getFileData.hashCode=params.hashCode;}if(typeof params.downloadable=='boolean'){getFileData.downloadable=params.downloadable;}}httpRequest({url:SERVICE_ADDRESSES.FILESERVER_ADDRESS+SERVICES_PATH.GET_FILE,method:'GET',data:getFileData},function(result){if(!result.hasError){var queryString='?';for(var i in params){queryString+=i+'='+params[i]+'&';}queryString=queryString.slice(0,-1);var file=SERVICE_ADDRESSES.FILESERVER_ADDRESS+SERVICES_PATH.GET_FILE+queryString;callback({hasError:result.hasError,result:file});}else{callback({hasError:true});}});},/**
+   * Deprecated
+   *
+   * Get File From PodSpace
+   *
+   * This functions gets an uploaded file from Pod Space File Server.
+   *
+   * @since 3.9.9
+   * @access private
+   *
+   * @param {string}  hashCode        HashCode of uploaded file
+   *
+   * @return {object} File Object
+   */getFileFromPodspace=function getFileFromPodspace(params,callback){var downloadUniqueId=_utility["default"].generateUUID(),getFileData={};if(params){if(params.hashCode&&typeof params.hashCode=='string'){getFileData.hash=params.hashCode;}else{callback({hasError:true,error:'Enter a file hash to get'});return;}}if(params.responseType==='link'){var returnLink=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE+"?hash=".concat(params.hashCode,"&_token_=").concat(token,"&_token_issuer_=1");callback({hasError:false,type:'link',result:returnLink});}else{httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE,method:'GET',responseType:'blob',uniqueId:downloadUniqueId,headers:{'_token_':token,'_token_issuer_':1// 'Range': 'bytes=100-200'
 },data:getFileData},function(result){if(!result.hasError){callback({hasError:result.hasError,result:result.result.response,type:'blob'});}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - File download has been canceled!"));});}};}},/**
-         * Get File From PodSpace New
-         *
-         * This functions gets an uploaded file from Pod Space File Server.
-         *
-         * @since 3.9.9
-         * @access private
-         *
-         * @param {string}  hashCode        HashCode of uploaded file
-         *
-         * @return {object} File Object
-         */getFileFromPodspaceNew=function getFileFromPodspaceNew(params,callback){var downloadUniqueId=_utility["default"].generateUUID(),getFileData={};if(params){if(params.hashCode&&typeof params.hashCode=='string'){getFileData.hash=params.hashCode;}else{callback({hasError:true,error:'Enter a file hash to get'});return;}if(params.checkUserGroupAccess){getFileData.checkUserGroupAccess=true;}}if(params.responseType==='link'){var returnLink=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true";callback({hasError:false,type:'link',result:returnLink});}else{httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true",method:'GET',responseType:'blob',uniqueId:downloadUniqueId,headers:{'Authorization':'Bearer '+token},enableDownloadProgressEvents:params.enableDownloadProgressEvents,hashCode:params.hashCode//data: getFileData
+   * Get File From PodSpace New
+   *
+   * This functions gets an uploaded file from Pod Space File Server.
+   *
+   * @since 3.9.9
+   * @access private
+   *
+   * @param {string}  hashCode        HashCode of uploaded file
+   *
+   * @return {object} File Object
+   */getFileFromPodspaceNew=function getFileFromPodspaceNew(params,callback){var downloadUniqueId=_utility["default"].generateUUID(),getFileData={};if(params){if(params.hashCode&&typeof params.hashCode=='string'){getFileData.hash=params.hashCode;}else{callback({hasError:true,error:'Enter a file hash to get'});return;}if(params.checkUserGroupAccess){getFileData.checkUserGroupAccess=true;}}if(params.responseType==='link'){var returnLink=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true";callback({hasError:false,type:'link',result:returnLink});}else{httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true",method:'GET',responseType:'blob',uniqueId:downloadUniqueId,headers:{'Authorization':'Bearer '+token},enableDownloadProgressEvents:params.enableDownloadProgressEvents,hashCode:params.hashCode//data: getFileData
 },function(result){if(!result.hasError){callback({hasError:result.hasError,result:result.result.response,type:'blob'});}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - File download has been canceled!"));});}};}},/**
-         * Deprecated
-         *
-         * Get Image From PodSpace
-         *
-         * This functions gets an uploaded image from Pod Space File Server.
-         *
-         * @since 3.9.9
-         * @access private
-         *
-         * @param {string}  hashCode        HashCode of uploaded file
-         * @param {string}  size            (1: 100×75, 2: 200×150, 3: 400×300)
-         * @param {string}  quality         Image quality betwenn 0.0 anf 1.0
-         *
-         * @return {object} File Object
-         */getImageFromPodspace=function getImageFromPodspace(params,callback){var downloadUniqueId=_utility["default"].generateUUID(),getImageData={size:params.size,quality:params.quality,crop:params.crop};if(params){if(params.hashCode&&typeof params.hashCode=='string'){getImageData.hash=params.hashCode;}else{callback({hasError:true,error:'Enter a file hash to get'});return;}if(params.responseType==='link'){var returnLink=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE+"?hash=".concat(params.hashCode,"&_token_=").concat(token,"&_token_issuer_=1&size=").concat(params.size,"&quality=").concat(params.quality,"&crop=").concat(params.crop);callback({hasError:false,type:'link',result:returnLink});}else if(params.responseType==='base64'){httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE,method:'GET',uniqueId:downloadUniqueId,responseType:'blob',headers:{'_token_':token,'_token_issuer_':1},data:getImageData},function(result){if(!result.hasError){var fr=new FileReader();fr.onloadend=function(){callback({hasError:result.hasError,type:'base64',result:fr.result});};fr.readAsDataURL(result.result.response);}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - Image download has been canceled!"));});}};}else{httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE,method:'GET',responseType:'blob',uniqueId:downloadUniqueId,headers:{'_token_':token,'_token_issuer_':1},data:getImageData},function(result){if(!result.hasError){callback({hasError:result.hasError,type:'blob',result:result.result.response});}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - Image download has been canceled!"));});}};}}},/**
-         * Get Image From PodSpace New
-         *
-         * This functions gets an uploaded image from Pod Space File Server.
-         *
-         * @since 3.9.9
-         * @access private
-         *
-         * @param {string}  hashCode        HashCode of uploaded file
-         * @param {string}  size            (1: 100×75, 2: 200×150, 3: 400×300)
-         * @param {string}  quality         Image quality betwenn 0.0 anf 1.0
-         *
-         * @return {object} File Object
-         */getImageFromPodspaceNew=function getImageFromPodspaceNew(params,callback){var downloadUniqueId=_utility["default"].generateUUID(),getImageData={size:params.size,quality:params.quality,crop:params.crop};if(params){if(params.hashCode&&typeof params.hashCode=='string'){getImageData.hash=params.hashCode;}else{callback({hasError:true,error:'Enter a file hash to get'});return;}if(params.responseType==='link'){var returnLink=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true&size=".concat(params.size,"&quality=").concat(params.quality,"&crop=").concat(params.crop);//+ SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE + `?hash=${params.hashCode}&_token_=${token}&_token_issuer_=1&size=${params.size}&quality=${params.quality}&crop=${params.crop}`;
+   * Deprecated
+   *
+   * Get Image From PodSpace
+   *
+   * This functions gets an uploaded image from Pod Space File Server.
+   *
+   * @since 3.9.9
+   * @access private
+   *
+   * @param {string}  hashCode        HashCode of uploaded file
+   * @param {string}  size            (1: 100×75, 2: 200×150, 3: 400×300)
+   * @param {string}  quality         Image quality betwenn 0.0 anf 1.0
+   *
+   * @return {object} File Object
+   */getImageFromPodspace=function getImageFromPodspace(params,callback){var downloadUniqueId=_utility["default"].generateUUID(),getImageData={size:params.size,quality:params.quality,crop:params.crop};if(params){if(params.hashCode&&typeof params.hashCode=='string'){getImageData.hash=params.hashCode;}else{callback({hasError:true,error:'Enter a file hash to get'});return;}if(params.responseType==='link'){var returnLink=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE+"?hash=".concat(params.hashCode,"&_token_=").concat(token,"&_token_issuer_=1&size=").concat(params.size,"&quality=").concat(params.quality,"&crop=").concat(params.crop);callback({hasError:false,type:'link',result:returnLink});}else if(params.responseType==='base64'){httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE,method:'GET',uniqueId:downloadUniqueId,responseType:'blob',headers:{'_token_':token,'_token_issuer_':1},data:getImageData},function(result){if(!result.hasError){var fr=new FileReader();fr.onloadend=function(){callback({hasError:result.hasError,type:'base64',result:fr.result});};fr.readAsDataURL(result.result.response);}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - Image download has been canceled!"));});}};}else{httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE,method:'GET',responseType:'blob',uniqueId:downloadUniqueId,headers:{'_token_':token,'_token_issuer_':1},data:getImageData},function(result){if(!result.hasError){callback({hasError:result.hasError,type:'blob',result:result.result.response});}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - Image download has been canceled!"));});}};}}},/**
+   * Get Image From PodSpace New
+   *
+   * This functions gets an uploaded image from Pod Space File Server.
+   *
+   * @since 3.9.9
+   * @access private
+   *
+   * @param {string}  hashCode        HashCode of uploaded file
+   * @param {string}  size            (1: 100×75, 2: 200×150, 3: 400×300)
+   * @param {string}  quality         Image quality betwenn 0.0 anf 1.0
+   *
+   * @return {object} File Object
+   */getImageFromPodspaceNew=function getImageFromPodspaceNew(params,callback){var downloadUniqueId=_utility["default"].generateUUID(),getImageData={size:params.size,quality:params.quality,crop:params.crop};if(params){if(params.hashCode&&typeof params.hashCode=='string'){getImageData.hash=params.hashCode;}else{callback({hasError:true,error:'Enter a file hash to get'});return;}if(params.responseType==='link'){var returnLink=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true&size=".concat(params.size,"&quality=").concat(params.quality,"&crop=").concat(params.crop);//+ SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE + `?hash=${params.hashCode}&_token_=${token}&_token_issuer_=1&size=${params.size}&quality=${params.quality}&crop=${params.crop}`;
 callback({hasError:false,type:'link',result:returnLink});}else if(params.responseType==='base64'){httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true&size=".concat(params.size,"&quality=").concat(params.quality,"&crop=").concat(params.crop),method:'GET',uniqueId:downloadUniqueId,responseType:'blob',headers:{'Authorization':'Bearer '+token},enableDownloadProgressEvents:params.enableDownloadProgressEvents,hashCode:params.hashCode//data: getImageData
 },function(result){if(!result.hasError){var fr=new FileReader();fr.onloadend=function(){callback({hasError:result.hasError,type:'base64',result:fr.result});};fr.readAsDataURL(result.result.response);}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - Image download has been canceled!"));});}};}else{httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true&size=".concat(params.size,"&quality=").concat(params.quality,"&crop=").concat(params.crop),method:'GET',responseType:'blob',uniqueId:downloadUniqueId,headers:{'Authorization':'Bearer '+token},enableDownloadProgressEvents:params.enableDownloadProgressEvents,hashCode:params.hashCode//data: getImageData
 },function(result){if(!result.hasError){callback({hasError:result.hasError,type:'blob',result:result.result.response});}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - Image download has been canceled!"));});}};}}},/**
-         * Deprecated
-         *
-         * Get Image Download Link From PodSpace
-         *
-         * This functions gets an uploaded image download link from Pod Space File Server.
-         *
-         * @since 9.1.3
-         * @access private
-         *
-         * @param {string}  hashCode        HashCode of uploaded file
-         *
-         * @return {string} Image Link
-         */getImageDownloadLinkFromPodspace=function getImageDownloadLinkFromPodspace(params,callback){if(params){if(params.hashCode&&typeof params.hashCode=='string'){var downloadUrl=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE+'?hash='+params.hashCode;callback&&callback({hasError:false,downloadUrl:downloadUrl});return downloadUrl;}else{callback&&callback({hasError:true,error:'Enter a image hash to get download link!'});}}},/**
-         * Get Image Download Link From PodSpace
-         *
-         * This functions gets an uploaded image download link from Pod Space File Server.
-         *
-         * @since 9.1.3
-         * @access private
-         *
-         * @param {string}  hashCode        HashCode of uploaded file
-         *
-         * @return {string} Image Link
-         */getImageDownloadLinkFromPodspaceNew=function getImageDownloadLinkFromPodspaceNew(params,callback){if(params){if(params.hashCode&&typeof params.hashCode=='string'){var downloadUrl=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE_NEW.replace('{fileHash}',params.hashCode);// + '?hash=' + params.hashCode;
+   * Deprecated
+   *
+   * Get Image Download Link From PodSpace
+   *
+   * This functions gets an uploaded image download link from Pod Space File Server.
+   *
+   * @since 9.1.3
+   * @access private
+   *
+   * @param {string}  hashCode        HashCode of uploaded file
+   *
+   * @return {string} Image Link
+   */getImageDownloadLinkFromPodspace=function getImageDownloadLinkFromPodspace(params,callback){if(params){if(params.hashCode&&typeof params.hashCode=='string'){var downloadUrl=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE+'?hash='+params.hashCode;callback&&callback({hasError:false,downloadUrl:downloadUrl});return downloadUrl;}else{callback&&callback({hasError:true,error:'Enter a image hash to get download link!'});}}},/**
+   * Get Image Download Link From PodSpace
+   *
+   * This functions gets an uploaded image download link from Pod Space File Server.
+   *
+   * @since 9.1.3
+   * @access private
+   *
+   * @param {string}  hashCode        HashCode of uploaded file
+   *
+   * @return {string} Image Link
+   */getImageDownloadLinkFromPodspaceNew=function getImageDownloadLinkFromPodspaceNew(params,callback){if(params){if(params.hashCode&&typeof params.hashCode=='string'){var downloadUrl=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE_NEW.replace('{fileHash}',params.hashCode);// + '?hash=' + params.hashCode;
 callback&&callback({hasError:false,downloadUrl:downloadUrl});return downloadUrl;}else{callback&&callback({hasError:true,error:'Enter a image hash to get download link!'});}}},/**
-         * Get File Download Link From PodSpace
-         *
-         * This functions gets an uploaded file download link from Pod Space File Server.
-         *
-         * @since 9.1.3
-         * @access private
-         *
-         * @param {string}  hashCode        HashCode of uploaded file
-         *
-         * @return {string} File Link
-         */getFileDownloadLinkFromPodspace=function getFileDownloadLinkFromPodspace(params,callback){if(params){if(params.hashCode&&typeof params.hashCode=='string'){var downloadUrl=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE+'?hash='+params.hashCode;callback&&callback({hasError:false,downloadUrl:downloadUrl});return downloadUrl;}else{callback&&callback({hasError:true,error:'Enter a file hash to get download link!'});}}},/**
-         * Upload File
-         *
-         * Upload files to File Server
-         *
-         * @since 3.9.9
-         * @access private
-         *
-         * @param {string}  fileName        A name for the file
-         * @param {file}    file            FILE: the file
-         *
-         * @link http://docs.pod.land/v1.0.8.0/Developer/CustomPost/605/File
-         *
-         * @return {object} Uploaded File Object
-         */uploadFile=function uploadFile(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.file.name;fileType=params.file.type;fileSize=params.file.size;fileExtension=params.file.name.split('.').pop();var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFileData.file=params.file;}if(params.randomFileName){uploadFileData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadFileData.fileName=fileName;}uploadFileData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadFileData.threadId=params.threadId;}else{uploadThreadId=0;uploadFileData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadFileData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadFileData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadFileData.originalFileName=params.originalFileName;}else{uploadFileData.originalFileName=fileName;}}httpRequest({url:SERVICE_ADDRESSES.FILESERVER_ADDRESS+SERVICES_PATH.UPLOAD_FILE,method:'POST',headers:{'_token_':token,'_token_issuer_':1},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result'});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:chatMessaging.userInfo,content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},/**
-         * Upload File To Pod Space
-         *
-         * Upload files to Pod Space Server
-         *
-         * @since 3.9.9
-         * @access private
-         *
-         * @param {string}  fileName        A name for the file
-         * @param {file}    file            FILE: the file
-         * @param {string}  userGroupHash   Unique identifier of threads on podspace
-         * @param {string}  token           User Token
-         * @param {string}  _token_issuer_  Token Issuer
-         *
-         * @link
-            *
-            * @return {object} Uploaded File Object
-         */uploadFileToPodspace=function uploadFileToPodspace(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.file.name;fileType=params.file.type;fileSize=params.file.size;fileExtension=params.file.name.split('.').pop();var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFileData.file=params.file;}if(params.randomFileName){uploadFileData.filename=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadFileData.filename=fileName;}uploadFileData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadFileData.threadId=params.threadId;}else{uploadThreadId=0;uploadFileData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadFileData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadFileData.uniqueId=uploadUniqueId;}if(typeof params.userGroupHash=='string'){//userGroupHash = params.userGroupHash;
+   * Get File Download Link From PodSpace
+   *
+   * This functions gets an uploaded file download link from Pod Space File Server.
+   *
+   * @since 9.1.3
+   * @access private
+   *
+   * @param {string}  hashCode        HashCode of uploaded file
+   *
+   * @return {string} File Link
+   */getFileDownloadLinkFromPodspace=function getFileDownloadLinkFromPodspace(params,callback){if(params){if(params.hashCode&&typeof params.hashCode=='string'){var downloadUrl=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE+'?hash='+params.hashCode;callback&&callback({hasError:false,downloadUrl:downloadUrl});return downloadUrl;}else{callback&&callback({hasError:true,error:'Enter a file hash to get download link!'});}}},/**
+   * Upload File
+   *
+   * Upload files to File Server
+   *
+   * @since 3.9.9
+   * @access private
+   *
+   * @param {string}  fileName        A name for the file
+   * @param {file}    file            FILE: the file
+   *
+   * @link http://docs.pod.land/v1.0.8.0/Developer/CustomPost/605/File
+   *
+   * @return {object} Uploaded File Object
+   */uploadFile=function uploadFile(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.file.name;fileType=params.file.type;fileSize=params.file.size;fileExtension=params.file.name.split('.').pop();var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFileData.file=params.file;}if(params.randomFileName){uploadFileData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadFileData.fileName=fileName;}uploadFileData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadFileData.threadId=params.threadId;}else{uploadThreadId=0;uploadFileData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadFileData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadFileData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadFileData.originalFileName=params.originalFileName;}else{uploadFileData.originalFileName=fileName;}}httpRequest({url:SERVICE_ADDRESSES.FILESERVER_ADDRESS+SERVICES_PATH.UPLOAD_FILE,method:'POST',headers:{'_token_':token,'_token_issuer_':1},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result'});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:chatMessaging.userInfo,content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},/**
+   * Upload File To Pod Space
+   *
+   * Upload files to Pod Space Server
+   *
+   * @since 3.9.9
+   * @access private
+   *
+   * @param {string}  fileName        A name for the file
+   * @param {file}    file            FILE: the file
+   * @param {string}  userGroupHash   Unique identifier of threads on podspace
+   * @param {string}  token           User Token
+   * @param {string}  _token_issuer_  Token Issuer
+   *
+   * @link
+      *
+      * @return {object} Uploaded File Object
+   */uploadFileToPodspace=function uploadFileToPodspace(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.file.name;fileType=params.file.type;fileSize=params.file.size;fileExtension=params.file.name.split('.').pop();var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFileData.file=params.file;}if(params.randomFileName){uploadFileData.filename=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadFileData.filename=fileName;}uploadFileData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadFileData.threadId=params.threadId;}else{uploadThreadId=0;uploadFileData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadFileData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadFileData.uniqueId=uploadUniqueId;}if(typeof params.userGroupHash=='string'){//userGroupHash = params.userGroupHash;
 uploadFileData.userGroupHash=params.userGroupHash;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to enter a userGroupHash to be able to upload on PodSpace!'});return;}if(typeof params.originalFileName=='string'){uploadFileData.originalFileName=params.originalFileName;}else{uploadFileData.originalFileName=fileName;}}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_FILE_TO_USERGROUP,method:'POST',headers:{'_token_':token,'_token_issuer_':1},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result'});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:chatMessaging.userInfo,content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},uploadFileToPodspaceNew=function uploadFileToPodspaceNew(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.file.name;fileType=params.file.type;fileSize=params.file.size;fileExtension=params.file.name.split('.').pop();var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFileData.file=params.file;}if(params.randomFileName){uploadFileData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadFileData.fileName=fileName;}uploadFileData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadFileData.threadId=params.threadId;}else{uploadThreadId=0;uploadFileData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadFileData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadFileData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadFileData.originalFileName=params.originalFileName;}else{uploadFileData.originalFileName=fileName;}}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_FILE_NEW,method:'POST',headers:{'Authorization':'Bearer '+token},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result'});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:chatMessaging.userInfo,content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},/**
-         * Upload File To Pod Space
-         *
-         * Upload files to Pod Space Server
-         *
-         * @since 3.9.9
-         * @access private
-         *
-         * @param {file}    file            FILE: the file
-         * @param {string}  userGroupHash   Unique identifier of threads on podspace
-         * @param {string}  token           User Token
-         *
-         * @link
-            *
-            * @return {object} Uploaded File Object
-         */uploadFileToPodspaceUserGroupNew=function uploadFileToPodspaceUserGroupNew(params,callback){var fileName,//fileType,
+   * Upload File To Pod Space
+   *
+   * Upload files to Pod Space Server
+   *
+   * @since 3.9.9
+   * @access private
+   *
+   * @param {file}    file            FILE: the file
+   * @param {string}  userGroupHash   Unique identifier of threads on podspace
+   * @param {string}  token           User Token
+   *
+   * @link
+      *
+      * @return {object} Uploaded File Object
+   */uploadFileToPodspaceUserGroupNew=function uploadFileToPodspaceUserGroupNew(params,callback){var fileName,//fileType,
 fileSize,//fileExtension,
 uploadUniqueId,uploadThreadId;fileName=params.file.name;//fileType = params.file.type;
 fileSize=params.file.size;//fileExtension = params.file.name.split('.').pop();
 var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFileData.file=params.file;}if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadFileData.threadId=params.threadId;}else{uploadThreadId=0;uploadFileData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadFileData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadFileData.uniqueId=uploadUniqueId;}if(typeof params.userGroupHash=='string'){uploadFileData.userGroupHash=params.userGroupHash;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to enter a userGroupHash to be able to upload on PodSpace!'});return;}if(typeof params.originalFileName=='string'){uploadFileData.originalFileName=params.originalFileName;}else{uploadFileData.originalFileName=fileName;}}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_FILE_TO_USERGROUP_NEW.replace('{userGroupHash}',uploadFileData.userGroupHash),method:'POST',headers:{'Authorization':'Bearer '+token},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result'});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:chatMessaging.userInfo,content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},/**
-         * Upload File
-         *
-         * Upload files to File Server
-         *
-         * @since 3.9.9
-         * @access private
-         *
-         * @param {string}  fileName        A name for the file
-         * @param {file}    file            FILE: the file
-         *
-         * @link http://docs.pod.land/v1.0.8.0/Developer/CustomPost/605/File
-         *
-         * @return {object} Uploaded File Object
-         */uploadFileFromUrl=function uploadFileFromUrl(params,callback){var uploadUniqueId,uploadThreadId;var uploadFileData={},fileExtension;if(params){if(typeof params.fileUrl!=='undefined'){uploadFileData.url=params.fileUrl;}if(typeof params.fileExtension!=='undefined'){fileExtension=params.fileExtension;}else{fileExtension='png';}if(typeof params.fileName=='string'){uploadFileData.filename=params.fileName;}else{uploadFileData.filename=_utility["default"].generateUUID()+'.'+fileExtension;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();}if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;}else{uploadThreadId=0;}uploadFileData.isPublic=true;}httpRequest({url:SERVICE_ADDRESSES.POD_DRIVE_ADDRESS+SERVICES_PATH.DRIVE_UPLOAD_FILE_FROM_URL,method:'POST',headers:{'_token_':token,'_token_issuer_':1},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result',error:e});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:chatMessaging.userInfo,content:{file:{uniqueId:uploadUniqueId,fileUrl:params.fileUrl}}};},/**
-         * Upload Image
-         *
-         * Upload images to Image Server
-         *
-         * @since 3.9.9
-         * @access private
-         *
-         * @param {string}  fileName        A name for the file
-         * @param {file}    image           FILE: the image file  (if its an image file)
-         * @param {float}   xC              Crop Start point x    (if its an image file)
-         * @param {float}   yC              Crop Start point Y    (if its an image file)
-         * @param {float}   hC              Crop size Height      (if its an image file)
-         * @param {float}   wC              Crop size Weight      (if its an image file)
-         *
-         * @link http://docs.pod.land/v1.0.8.0/Developer/CustomPost/215/UploadImage
-         *
-         * @return {object} Uploaded Image Object
-         */uploadImage=function uploadImage(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.image=params.image;uploadImageData.file=params.image;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.fileName=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}if(parseInt(params.xC)>0){uploadImageData.xC=params.xC;}if(parseInt(params.yC)>0){uploadImageData.yC=params.yC;}if(parseInt(params.hC)>0){uploadImageData.hC=params.hC;}if(parseInt(params.wC)>0){uploadImageData.wC=params.wC;}}httpRequest({url:SERVICE_ADDRESSES.FILESERVER_ADDRESS+SERVICES_PATH.UPLOAD_IMAGE,method:'POST',headers:{'_token_':token,'_token_issuer_':1},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(typeof response.hasError!=='undefined'&&!response.hasError){callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:chatMessaging.userInfo,content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}},/**
-         * Upload Image To Pod Space Publically
-         *
-         * Upload images to Pod Space Image Server
-         *
-         * @since 3.9.9
-         * @access private
-         *
-         * @param {string}  fileName        A name for the file
-         * @param {file}    image           FILE: the image file  (if its an image file)
-         * @param {float}   xC              Crop Start point x    (if its an image file)
-         * @param {float}   yC              Crop Start point Y    (if its an image file)
-         * @param {float}   hC              Crop size Height      (if its an image file)
-         * @param {float}   wC              Crop size Weight      (if its an image file)
-         * @param {string}  token           User Token
-         * @param {string}  _token_issuer_  Token Issuer
-         *
-         * @link https://podspace.pod.ir/apidocs/?srv=/nzh/drive/uploadImage
-         *
-         * @return {object} Uploaded Image Object
-         */uploadImageToPodspace=function uploadImageToPodspace(params,callback){var fileName,fileType,fileSize,fileWidth=0,fileHeight=0,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();var reader=new FileReader();reader.onload=function(e){var image=new Image();image.onload=function(){fileWidth=this.width;fileHeight=this.height;continueImageUpload(params);};image.src=e.target.result;};reader.readAsDataURL(params.image);var continueImageUpload=function continueImageUpload(params){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.file=params.image;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to send a image file!'});return;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.filename=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}uploadImageData.xC=parseInt(params.xC)||0;uploadImageData.yC=parseInt(params.yC)||0;uploadImageData.hC=parseInt(params.hC)||fileHeight;uploadImageData.wC=parseInt(params.wC)||fileWidth;}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_IMAGE,method:'POST',headers:{'_token_':token,'_token_issuer_':1},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(typeof response.hasError!=='undefined'&&!response.hasError){callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){consoleLogging&&console.log(e);callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:chatMessaging.userInfo,content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}};},uploadImageToPodspaceNew=function uploadImageToPodspaceNew(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.image=params.image;uploadImageData.file=params.image;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.fileName=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}if(parseInt(params.xC)>0){uploadImageData.xC=params.xC;}if(parseInt(params.yC)>0){uploadImageData.yC=params.yC;}if(parseInt(params.hC)>0){uploadImageData.hC=params.hC;}if(parseInt(params.wC)>0){uploadImageData.wC=params.wC;}}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_IMAGE_NEW,method:'POST',headers:{'Authorization':'Bearer '+token},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(!response.hasError){callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:chatMessaging.userInfo,content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}},/**
-         * Deprecated
-         *
-         * Upload Image To Pod Space
-         *
-         * Upload images to Pod Space Image Server
-         *
-         * @since 3.9.9
-         * @access private
-         *
-         * @param {string}  fileName        A name for the file
-         * @param {file}    image           FILE: the image file  (if its an image file)
-         * @param {float}   xC              Crop Start point x    (if its an image file)
-         * @param {float}   yC              Crop Start point Y    (if its an image file)
-         * @param {float}   hC              Crop size Height      (if its an image file)
-         * @param {float}   wC              Crop size Weight      (if its an image file)
-         * @param {string}  userGroupHash   Unique identifier of threads on podspace
-         * @param {string}  token           User Token
-         * @param {string}  _token_issuer_  Token Issuer
-         *
-         * @link https://podspace.pod.ir/apidocs/?srv=/userGroup/uploadImage/
-         *
-         * @return {object} Uploaded Image Object
-         */uploadImageToPodspaceUserGroup=function uploadImageToPodspaceUserGroup(params,callback){var fileName,fileType,fileSize,fileWidth=0,fileHeight=0,fileExtension,uploadUniqueId,uploadThreadId;var continueImageUpload=function continueImageUpload(params){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.file=params.image;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to send a image file!'});return;}if(typeof params.userGroupHash=='string'){// userGroupHash = params.userGroupHash;
+   * Upload File
+   *
+   * Upload files to File Server
+   *
+   * @since 3.9.9
+   * @access private
+   *
+   * @param {string}  fileName        A name for the file
+   * @param {file}    file            FILE: the file
+   *
+   * @link http://docs.pod.land/v1.0.8.0/Developer/CustomPost/605/File
+   *
+   * @return {object} Uploaded File Object
+   */uploadFileFromUrl=function uploadFileFromUrl(params,callback){var uploadUniqueId,uploadThreadId;var uploadFileData={},fileExtension;if(params){if(typeof params.fileUrl!=='undefined'){uploadFileData.url=params.fileUrl;}if(typeof params.fileExtension!=='undefined'){fileExtension=params.fileExtension;}else{fileExtension='png';}if(typeof params.fileName=='string'){uploadFileData.filename=params.fileName;}else{uploadFileData.filename=_utility["default"].generateUUID()+'.'+fileExtension;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();}if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;}else{uploadThreadId=0;}uploadFileData.isPublic=true;}httpRequest({url:SERVICE_ADDRESSES.POD_DRIVE_ADDRESS+SERVICES_PATH.DRIVE_UPLOAD_FILE_FROM_URL,method:'POST',headers:{'_token_':token,'_token_issuer_':1},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result',error:e});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:chatMessaging.userInfo,content:{file:{uniqueId:uploadUniqueId,fileUrl:params.fileUrl}}};},/**
+   * Upload Image
+   *
+   * Upload images to Image Server
+   *
+   * @since 3.9.9
+   * @access private
+   *
+   * @param {string}  fileName        A name for the file
+   * @param {file}    image           FILE: the image file  (if its an image file)
+   * @param {float}   xC              Crop Start point x    (if its an image file)
+   * @param {float}   yC              Crop Start point Y    (if its an image file)
+   * @param {float}   hC              Crop size Height      (if its an image file)
+   * @param {float}   wC              Crop size Weight      (if its an image file)
+   *
+   * @link http://docs.pod.land/v1.0.8.0/Developer/CustomPost/215/UploadImage
+   *
+   * @return {object} Uploaded Image Object
+   */uploadImage=function uploadImage(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.image=params.image;uploadImageData.file=params.image;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.fileName=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}if(parseInt(params.xC)>0){uploadImageData.xC=params.xC;}if(parseInt(params.yC)>0){uploadImageData.yC=params.yC;}if(parseInt(params.hC)>0){uploadImageData.hC=params.hC;}if(parseInt(params.wC)>0){uploadImageData.wC=params.wC;}}httpRequest({url:SERVICE_ADDRESSES.FILESERVER_ADDRESS+SERVICES_PATH.UPLOAD_IMAGE,method:'POST',headers:{'_token_':token,'_token_issuer_':1},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(typeof response.hasError!=='undefined'&&!response.hasError){callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:chatMessaging.userInfo,content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}},/**
+   * Upload Image To Pod Space Publically
+   *
+   * Upload images to Pod Space Image Server
+   *
+   * @since 3.9.9
+   * @access private
+   *
+   * @param {string}  fileName        A name for the file
+   * @param {file}    image           FILE: the image file  (if its an image file)
+   * @param {float}   xC              Crop Start point x    (if its an image file)
+   * @param {float}   yC              Crop Start point Y    (if its an image file)
+   * @param {float}   hC              Crop size Height      (if its an image file)
+   * @param {float}   wC              Crop size Weight      (if its an image file)
+   * @param {string}  token           User Token
+   * @param {string}  _token_issuer_  Token Issuer
+   *
+   * @link https://podspace.pod.ir/apidocs/?srv=/nzh/drive/uploadImage
+   *
+   * @return {object} Uploaded Image Object
+   */uploadImageToPodspace=function uploadImageToPodspace(params,callback){var fileName,fileType,fileSize,fileWidth=0,fileHeight=0,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();var reader=new FileReader();reader.onload=function(e){var image=new Image();image.onload=function(){fileWidth=this.width;fileHeight=this.height;continueImageUpload(params);};image.src=e.target.result;};reader.readAsDataURL(params.image);var continueImageUpload=function continueImageUpload(params){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.file=params.image;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to send a image file!'});return;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.filename=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}uploadImageData.xC=parseInt(params.xC)||0;uploadImageData.yC=parseInt(params.yC)||0;uploadImageData.hC=parseInt(params.hC)||fileHeight;uploadImageData.wC=parseInt(params.wC)||fileWidth;}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_IMAGE,method:'POST',headers:{'_token_':token,'_token_issuer_':1},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(typeof response.hasError!=='undefined'&&!response.hasError){callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){consoleLogging&&console.log(e);callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:chatMessaging.userInfo,content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}};},uploadImageToPodspaceNew=function uploadImageToPodspaceNew(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.image=params.image;uploadImageData.file=params.image;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.fileName=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}if(parseInt(params.xC)>0){uploadImageData.xC=params.xC;}if(parseInt(params.yC)>0){uploadImageData.yC=params.yC;}if(parseInt(params.hC)>0){uploadImageData.hC=params.hC;}if(parseInt(params.wC)>0){uploadImageData.wC=params.wC;}}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_IMAGE_NEW,method:'POST',headers:{'Authorization':'Bearer '+token},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(!response.hasError){callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:chatMessaging.userInfo,content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}},/**
+   * Deprecated
+   *
+   * Upload Image To Pod Space
+   *
+   * Upload images to Pod Space Image Server
+   *
+   * @since 3.9.9
+   * @access private
+   *
+   * @param {string}  fileName        A name for the file
+   * @param {file}    image           FILE: the image file  (if its an image file)
+   * @param {float}   xC              Crop Start point x    (if its an image file)
+   * @param {float}   yC              Crop Start point Y    (if its an image file)
+   * @param {float}   hC              Crop size Height      (if its an image file)
+   * @param {float}   wC              Crop size Weight      (if its an image file)
+   * @param {string}  userGroupHash   Unique identifier of threads on podspace
+   * @param {string}  token           User Token
+   * @param {string}  _token_issuer_  Token Issuer
+   *
+   * @link https://podspace.pod.ir/apidocs/?srv=/userGroup/uploadImage/
+   *
+   * @return {object} Uploaded Image Object
+   */uploadImageToPodspaceUserGroup=function uploadImageToPodspaceUserGroup(params,callback){var fileName,fileType,fileSize,fileWidth=0,fileHeight=0,fileExtension,uploadUniqueId,uploadThreadId;var continueImageUpload=function continueImageUpload(params){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.file=params.image;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to send a image file!'});return;}if(typeof params.userGroupHash=='string'){// userGroupHash = params.userGroupHash;
 uploadImageData.userGroupHash=params.userGroupHash;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to enter a userGroupHash to be able to upload on PodSpace!'});return;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.filename=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}uploadImageData.xC=parseInt(params.xC)||0;uploadImageData.yC=parseInt(params.yC)||0;uploadImageData.hC=parseInt(params.hC)||fileHeight;uploadImageData.wC=parseInt(params.wC)||fileWidth;}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_IMAGE_TO_USERGROUP,method:'POST',headers:{'_token_':token,'_token_issuer_':1},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(typeof response.hasError!=='undefined'&&!response.hasError){response.result.actualHeight=fileHeight;response.result.actualWidth=fileWidth;callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){consoleLogging&&console.log(e);callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:chatMessaging.userInfo,content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}};fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();var reader=new FileReader();reader.onload=function(e){var image=new Image();image.onload=function(){fileWidth=this.width;fileHeight=this.height;continueImageUpload(params);};image.src=e.target.result;};reader.readAsDataURL(params.image);},/**
-         * Upload Image To Podspace User Group
-         *
-         * Upload images to Pod Space Image Server
-         *
-         * @since 3.9.9
-         * @access private
-         *
-         * @param {string}  fileName        A name for the file
-         * @param {file}    image           FILE: the image file  (if its an image file)
-         * @param {float}   xC              Crop Start point x    (if its an image file)
-         * @param {float}   yC              Crop Start point Y    (if its an image file)
-         * @param {float}   hC              Crop size Height      (if its an image file)
-         * @param {float}   wC              Crop size Weight      (if its an image file)
-         * @param {string}  userGroupHash   Unique identifier of threads on podspace
-         * @param {string}  token           User Token
-         * @param {string}  _token_issuer_  Token Issuer
-         *
-         * @link https://podspace.pod.ir/apidocs/?srv=/userGroup/uploadImage/
-         *
-         * @return {object} Uploaded Image Object
-         */uploadImageToPodspaceUserGroupNew=function uploadImageToPodspaceUserGroupNew(params,callback){var fileName,fileType,fileSize,fileWidth=0,fileHeight=0,fileExtension,uploadUniqueId,uploadThreadId;var continueImageUpload=function continueImageUpload(params){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.file=params.image;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to send a image file!'});return;}if(typeof params.userGroupHash=='string'){uploadImageData.userGroupHash=params.userGroupHash;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to enter a userGroupHash to be able to upload on PodSpace!'});return;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.filename=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}uploadImageData.x=parseInt(params.xC)||0;uploadImageData.y=parseInt(params.yC)||0;uploadImageData.height=parseInt(params.hC)||fileHeight;uploadImageData.weight=parseInt(params.wC)||fileWidth;}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_IMAGE_TO_USERGROUP_NEW.replace('{userGroupHash}',uploadImageData.userGroupHash),method:'POST',headers:{'Authorization':'Bearer '+token},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(response.status<400){response.result.actualHeight=fileHeight;response.result.actualWidth=fileWidth;callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){consoleLogging&&console.log(e);callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:chatMessaging.userInfo,content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}};fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();var reader=new FileReader();reader.onload=function(e){var image=new Image();image.onload=function(){fileWidth=this.width;fileHeight=this.height;continueImageUpload(params);};image.src=e.target.result;};reader.readAsDataURL(params.image);},sendFileMessage=function sendFileMessage(params,callbacks){var metadata={file:{}},fileUploadParams={},fileUniqueId=typeof params.fileUniqueId=='string'&&params.fileUniqueId.length>0?params.fileUniqueId:_utility["default"].generateUUID();if(params){if(!params.userGroupHash||params.userGroupHash.length===0||typeof params.userGroupHash!=='string'){_events.chatEvents.fireEvent('error',{code:6304,message:CHAT_ERRORS[6304]});return;}else{fileUploadParams.userGroupHash=params.userGroupHash;}return chatUploadHandler({threadId:params.threadId,file:params.file,fileUniqueId:fileUniqueId},function(uploadHandlerResult,uploadHandlerMetadata,fileType,fileExtension){fileUploadParams=Object.assign(fileUploadParams,uploadHandlerResult);putInChatUploadQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.MESSAGE,typeCode:generalTypeCode,//params.typeCode,
+   * Upload Image To Podspace User Group
+   *
+   * Upload images to Pod Space Image Server
+   *
+   * @since 3.9.9
+   * @access private
+   *
+   * @param {string}  fileName        A name for the file
+   * @param {file}    image           FILE: the image file  (if its an image file)
+   * @param {float}   xC              Crop Start point x    (if its an image file)
+   * @param {float}   yC              Crop Start point Y    (if its an image file)
+   * @param {float}   hC              Crop size Height      (if its an image file)
+   * @param {float}   wC              Crop size Weight      (if its an image file)
+   * @param {string}  userGroupHash   Unique identifier of threads on podspace
+   * @param {string}  token           User Token
+   * @param {string}  _token_issuer_  Token Issuer
+   *
+   * @link https://podspace.pod.ir/apidocs/?srv=/userGroup/uploadImage/
+   *
+   * @return {object} Uploaded Image Object
+   */uploadImageToPodspaceUserGroupNew=function uploadImageToPodspaceUserGroupNew(params,callback){var fileName,fileType,fileSize,fileWidth=0,fileHeight=0,fileExtension,uploadUniqueId,uploadThreadId;var continueImageUpload=function continueImageUpload(params){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.file=params.image;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to send a image file!'});return;}if(typeof params.userGroupHash=='string'){uploadImageData.userGroupHash=params.userGroupHash;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to enter a userGroupHash to be able to upload on PodSpace!'});return;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.filename=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}uploadImageData.x=parseInt(params.xC)||0;uploadImageData.y=parseInt(params.yC)||0;uploadImageData.height=parseInt(params.hC)||fileHeight;uploadImageData.weight=parseInt(params.wC)||fileWidth;}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_IMAGE_TO_USERGROUP_NEW.replace('{userGroupHash}',uploadImageData.userGroupHash),method:'POST',headers:{'Authorization':'Bearer '+token},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(response.status<400){response.result.actualHeight=fileHeight;response.result.actualWidth=fileWidth;callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){consoleLogging&&console.log(e);callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:chatMessaging.userInfo,content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}};fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();var reader=new FileReader();reader.onload=function(e){var image=new Image();image.onload=function(){fileWidth=this.width;fileHeight=this.height;continueImageUpload(params);};image.src=e.target.result;};reader.readAsDataURL(params.image);},sendFileMessage=function sendFileMessage(params,callbacks){var metadata={file:{}},fileUploadParams={},fileUniqueId=typeof params.fileUniqueId=='string'&&params.fileUniqueId.length>0?params.fileUniqueId:_utility["default"].generateUUID();if(params){if(!params.userGroupHash||params.userGroupHash.length===0||typeof params.userGroupHash!=='string'){_events.chatEvents.fireEvent('error',{code:6304,message:CHAT_ERRORS[6304]});return;}else{fileUploadParams.userGroupHash=params.userGroupHash;}return chatUploadHandler({threadId:params.threadId,file:params.file,fileUniqueId:fileUniqueId},function(uploadHandlerResult,uploadHandlerMetadata,fileType,fileExtension){fileUploadParams=Object.assign(fileUploadParams,uploadHandlerResult);putInChatUploadQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.MESSAGE,typeCode:generalTypeCode,//params.typeCode,
 messageType:params.messageType&&typeof params.messageType.toUpperCase()!=='undefined'&&_constants.chatMessageTypes[params.messageType.toUpperCase()]>0?_constants.chatMessageTypes[params.messageType.toUpperCase()]:1,subjectId:params.threadId,repliedTo:params.repliedTo,content:params.content,metadata:JSON.stringify(objectDeepMerger(uploadHandlerMetadata,params.metadata)),systemMetadata:JSON.stringify(params.systemMetadata),uniqueId:fileUniqueId,pushMsgType:3},callbacks:callbacks},function(){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){uploadImageToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){// Send onFileUpload callback result
 if((0,_typeof2["default"])(callbacks)==='object'&&callbacks.hasOwnProperty('onFileUpload')){callbacks.onFileUpload&&callbacks.onFileUpload({name:result.result.name,hashCode:result.result.hash,parentHash:result.result.parentHash,size:result.result.size,actualHeight:result.result.actualHeight,actualWidth:result.result.actualWidth,link:"".concat(SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS,"/api/images/").concat(result.result.hash,"?checkUserGroupAccess=true")});}metadata['name']=result.result.name;metadata['fileHash']=result.result.hash;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;metadata['file']['actualHeight']=result.result.actualHeight;metadata['file']['actualWidth']=result.result.actualWidth;metadata['file']['link']="".concat(SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS,"/api/images/").concat(result.result.hash,"?checkUserGroupAccess=true");transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}else{uploadFileToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){metadata['fileHash']=result.result.hash;metadata['name']=result.result.name;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}});});}},/**
-         * Delete Cache Database
-         *
-         * This function truncates all tables of cache Database
-         * and drops whole tables
-         *
-         * @access private
-         *
-         * @return {undefined}
-         */deleteCacheDatabases=function deleteCacheDatabases(){if(db){db.close();}if(queueDb){queueDb.close();}var chatCacheDB=new _dexie["default"]('podChat');if(chatCacheDB){chatCacheDB["delete"]().then(function(){consoleLogging&&console.log('PodChat Database successfully deleted!');var queueDb=new _dexie["default"]('podQueues');if(queueDb){queueDb["delete"]().then(function(){consoleLogging&&console.log('PodQueues Database successfully deleted!');startCacheDatabases();})["catch"](function(err){consoleLogging&&console.log(err);});}})["catch"](function(err){consoleLogging&&console.log(err);});}},/**
-         * Clear Cache Database of Some User
-         *
-         * This function removes everything in cache
-         * for one specific user
-         *
-         * @access private
-         *
-         * @return {undefined}
-         */clearCacheDatabasesOfUser=function clearCacheDatabasesOfUser(callback){if(db&&!cacheDeletingInProgress){cacheDeletingInProgress=true;db.threads.where('owner').equals(parseInt(chatMessaging.userInfo.id))["delete"]().then(function(){consoleLogging&&console.log('Threads table deleted');db.contacts.where('owner').equals(parseInt(chatMessaging.userInfo.id))["delete"]().then(function(){consoleLogging&&console.log('Contacts table deleted');db.messages.where('owner').equals(parseInt(chatMessaging.userInfo.id))["delete"]().then(function(){consoleLogging&&console.log('Messages table deleted');db.participants.where('owner').equals(parseInt(chatMessaging.userInfo.id))["delete"]().then(function(){consoleLogging&&console.log('Participants table deleted');db.messageGaps.where('owner').equals(parseInt(chatMessaging.userInfo.id))["delete"]().then(function(){consoleLogging&&console.log('MessageGaps table deleted');cacheDeletingInProgress=false;callback&&callback();});});});});})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}},/**
-         * Initialize Cache Database
-         *
-         * if client's environment is capable of supporting indexedDB
-         * and the hasCache attribute set to be true, we created
-         * a indexedDB instance based on DexieDb and Initialize
-         * client sde caching
-         *
-         * @return {undefined}
-         */startCacheDatabases=function startCacheDatabases(callback){if(hasCache){queueDb=new _dexie["default"]('podQueues');queueDb.version(1).stores({waitQ:'[owner+threadId+uniqueId], owner, threadId, uniqueId, message'});if(enableCache){db=new _dexie["default"]('podChat');db.version(1).stores({users:'&id, name, cellphoneNumber, keyId',contacts:'[owner+id], id, owner, uniqueId, userId, cellphoneNumber, email, firstName, lastName, expireTime',threads:'[owner+id] ,id, owner, title, time, pin, [owner+time]',participants:'[owner+id], id, owner, threadId, notSeenDuration, admin, auditor, name, contactName, email, expireTime',messages:'[owner+id], id, owner, threadId, time, [threadId+id], [threadId+owner+time]',messageGaps:'[owner+id], [owner+waitsFor], id, waitsFor, owner, threadId, time, [threadId+owner+time]',contentCount:'threadId, contentCount'});db.open()["catch"](function(e){consoleLogging&&console.log('Open failed: '+e.stack);});db.on('ready',function(){isCacheReady=true;callback&&callback();},true);db.on('versionchange',function(event){window.location.reload();});}else{callback&&callback();}}else{consoleLogging&&console.log(CHAT_ERRORS[6600]);callback&&callback();}},/**
-         * Get Chat Send Queue
-         *
-         * This function returns chat send queue
-         *
-         * @access private
-         *
-         * @return {array}  An array of messages on sendQueue
-         */getChatSendQueue=function getChatSendQueue(threadId,callback){if(threadId){var tempSendQueue=[];for(var i=0;i<chatSendQueue.length;i++){if(chatSendQueue[i].threadId===threadId){tempSendQueue.push(chatSendQueue[i]);}}callback&&callback(tempSendQueue);}else{callback&&callback(chatSendQueue);}},/**
-         * Get Chat Wait Queue
-         *
-         * This function checks if cache is enbled on client's
-         * machine, and if it is, retrieves WaitQueue from
-         * cache. Otherwise returns WaitQueue from RAM
-         * After getting failed messages from cache or RAM
-         * we should check them with server to be sure if
-         * they have been sent already or not?
-         *
-         * @access private
-         *
-         * @return {array}  An array of messages on Wait Queue
-         */getChatWaitQueue=function getChatWaitQueue(threadId,active,callback){if(active&&threadId>0){if(hasCache&&(0,_typeof2["default"])(queueDb)=='object'&&!forceWaitQueueInMemory){queueDb.waitQ.where('threadId').equals(threadId).and(function(item){return item.owner===parseInt(chatMessaging.userInfo.id);}).toArray().then(function(waitQueueOnCache){var uniqueIds=[];for(var i=0;i<waitQueueOnCache.length;i++){uniqueIds.push(waitQueueOnCache[i].uniqueId);}if(uniqueIds.length&&chatMessaging.chatState){chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.GET_HISTORY,content:{uniqueIds:uniqueIds},subjectId:threadId},{onResult:function onResult(result){if(!result.hasError){var messageContent=result.result;/**
-                                             * Delete those messages from wait
-                                             * queue which are already on the
-                                             * server databases
-                                             */for(var i=0;i<messageContent.length;i++){for(var j=0;j<uniqueIds.length;j++){if(uniqueIds[j]===messageContent[i].uniqueId){deleteFromChatWaitQueue(messageContent[i],function(){});uniqueIds.splice(j,1);waitQueueOnCache.splice(j,1);}}}/**
-                                             * Delete those messages from wait
-                                             * queue which are in the send
-                                             * queue and are going to be sent
-                                             */for(var i=0;i<chatSendQueue.length;i++){for(var j=0;j<uniqueIds.length;j++){if(uniqueIds[j]===chatSendQueue[i].message.uniqueId){deleteFromChatWaitQueue(chatSendQueue[i].message,function(){});uniqueIds.splice(j,1);waitQueueOnCache.splice(j,1);}}}callback&&callback(waitQueueOnCache);}}});}else{callback&&callback(waitQueueOnCache);}})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{var uniqueIds=[],queueToBeSent=[];for(var i=0;i<chatWaitQueue.length;i++){if(chatWaitQueue[i].subjectId==threadId){queueToBeSent.push(chatWaitQueue[i]);uniqueIds.push(chatWaitQueue[i].uniqueId);}}if(uniqueIds.length){chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.GET_HISTORY,content:{uniqueIds:uniqueIds},subjectId:threadId},{onResult:function onResult(result){if(!result.hasError){var messageContent=result.result;for(var i=0;i<messageContent.length;i++){for(var j=0;j<uniqueIds.length;j++){if(uniqueIds[j]===messageContent[i].uniqueId){uniqueIds.splice(j,1);queueToBeSent.splice(j,1);}}}callback&&callback(queueToBeSent);}}});}else{callback&&callback([]);}}}else{callback&&callback([]);}},/**
-         * Get Chat Upload Queue
-         *
-         * This function checks if cache is enabled on client's
-         * machine, and if it is, retrieves uploadQueue from
-         * cache. Otherwise returns uploadQueue from RAM
-         *
-         * @access private
-         *
-         * @return {array}  An array of messages on uploadQueue
-         */getChatUploadQueue=function getChatUploadQueue(threadId,callback){var uploadQ=[];for(var i=0;i<chatUploadQueue.length;i++){if(parseInt(chatUploadQueue[i].message.subjectId)===threadId){uploadQ.push(chatUploadQueue[i]);}}callback&&callback(uploadQ);},/**
-         * Delete an Item from Chat Send Queue
-         *
-         * This function gets an item and deletes it
-         * from Chat Send Queue
-         *
-         * @access private
-         *
-         * @return {undefined}
-         */deleteFromChatSentQueue=function deleteFromChatSentQueue(item,callback){for(var i=0;i<chatSendQueue.length;i++){if(chatSendQueue[i].message.uniqueId===item.message.uniqueId){chatSendQueue.splice(i,1);}}callback&&callback();},/**
-         * Delete an Item from Chat Wait Queue
-         *
-         * This function gets an item and deletes it
-         * from Chat Wait Queue, from either cached
-         * queue or the queue on RAM memory
-         *
-         * @access private
-         *
-         * @return {undefined}
-         */deleteFromChatWaitQueue=function deleteFromChatWaitQueue(item,callback){if(hasCache&&(0,_typeof2["default"])(queueDb)=='object'&&!forceWaitQueueInMemory){queueDb.waitQ.where('uniqueId').equals(item.uniqueId).and(function(item){return item.owner===parseInt(chatMessaging.userInfo.id);})["delete"]().then(function(){callback&&callback();})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{for(var i=0;i<chatWaitQueue.length;i++){if(chatWaitQueue[i].uniqueId===item.uniqueId){chatWaitQueue.splice(i,1);}}callback&&callback();}},/**
-         * Delete an Item from Chat Upload Queue
-         *
-         * This function gets an item and deletes it
-         * from Chat Upload Queue
-         *
-         * @access private
-         *
-         * @return {undefined}
-         */deleteFromChatUploadQueue=function deleteFromChatUploadQueue(item,callback){for(var i=0;i<chatUploadQueue.length;i++){if(chatUploadQueue[i].message.uniqueId===item.message.uniqueId){chatUploadQueue.splice(i,1);}}callback&&callback();},deleteThreadFailedMessagesFromWaitQueue=function deleteThreadFailedMessagesFromWaitQueue(threadId,callback){if(hasCache&&(0,_typeof2["default"])(queueDb)=='object'&&!forceWaitQueueInMemory){queueDb.waitQ.where('threadId').equals(threadId).and(function(item){return item.owner===parseInt(chatMessaging.userInfo.id);})["delete"]().then(function(){callback&&callback();})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{for(var i=0;i<chatWaitQueue.length;i++){if(chatWaitQueue[i].uniqueId===item.uniqueId){chatWaitQueue.splice(i,1);}}callback&&callback();}},/**
-         * Push Message Into Send Queue
-         *
-         * This functions takes a message and puts it
-         * into chat's send queue
-         *
-         * @access private
-         *
-         * @param {object}    params    The Message and its callbacks to be enqueued
-         *
-         * @return {undefined}
-         */putInChatSendQueue=function putInChatSendQueue(params,callback,skip){chatSendQueue.push(params);if(!skip){var time=new Date().getTime();params.message.time=time;params.message.timeNanos=time%1000*1000000;putInChatWaitQueue(params.message,function(){callback&&callback();});}else{callback&&callback();}},/**
-         * Put an Item inside Chat Wait Queue
-         *
-         * This function takes an item and puts it
-         * inside Chat Wait Queue, either on cached
-         * wait queue or the wait queue on RAM memory
-         *
-         * @access private
-         *
-         * @return {undefined}
-         */putInChatWaitQueue=function putInChatWaitQueue(item,callback){if(item.uniqueId!==''){var waitQueueUniqueId=typeof item.uniqueId=='string'?item.uniqueId:Array.isArray(item.uniqueId)?item.uniqueId[0]:null;if(waitQueueUniqueId!=null){if(hasCache&&(0,_typeof2["default"])(queueDb)=='object'&&!forceWaitQueueInMemory){queueDb.waitQ.put({threadId:parseInt(item.subjectId),uniqueId:waitQueueUniqueId,owner:parseInt(chatMessaging.userInfo.id),message:_utility["default"].crypt(item,cacheSecret)}).then(function(){callback&&callback();})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{consoleLogging&&console.log('Forced to use in memory cache');item.uniqueId=waitQueueUniqueId;chatWaitQueue.push(item);callback&&callback();}}}},getItemFromChatWaitQueue=function getItemFromChatWaitQueue(uniqueId,callback){if(hasCache&&(0,_typeof2["default"])(queueDb)=='object'&&!forceWaitQueueInMemory){queueDb.waitQ.where('uniqueId').equals(uniqueId).and(function(item){return item.owner===parseInt(chatMessaging.userInfo.id);}).toArray().then(function(messages){var decryptedEnqueuedMessage=_utility["default"].jsonParser(chatDecrypt(messages[0].message,cacheSecret));if(decryptedEnqueuedMessage.uniqueId===uniqueId){var message=formatDataToMakeMessage(messages[0].threadId,{uniqueId:decryptedEnqueuedMessage.uniqueId,ownerId:chatMessaging.userInfo.id,message:decryptedEnqueuedMessage.content,metadata:decryptedEnqueuedMessage.metadata,systemMetadata:decryptedEnqueuedMessage.systemMetadata,replyInfo:decryptedEnqueuedMessage.replyInfo,forwardInfo:decryptedEnqueuedMessage.forwardInfo,participant:chatMessaging.userInfo,time:decryptedEnqueuedMessage.time,timeNanos:decryptedEnqueuedMessage.timeNanos});callback&&callback(message);}})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{for(var i=0;i<chatWaitQueue.length;i++){if(chatWaitQueue[i].uniqueId===uniqueId){var decryptedEnqueuedMessage=chatWaitQueue[i];var time=new Date().getTime();var message=formatDataToMakeMessage(decryptedEnqueuedMessage.threadId,{uniqueId:decryptedEnqueuedMessage.uniqueId,ownerId:chatMessaging.userInfo.id,message:decryptedEnqueuedMessage.content,metadata:decryptedEnqueuedMessage.metadata,systemMetadata:decryptedEnqueuedMessage.systemMetadata,replyInfo:decryptedEnqueuedMessage.replyInfo,forwardInfo:decryptedEnqueuedMessage.forwardInfo,participant:chatMessaging.userInfo,time:time,timeNanos:time%1000*1000000});callback&&callback(message);break;}}}},/**
-         * Put an Item inside Chat Upload Queue
-         *
-         * This function takes an item and puts it
-         * inside Chat upload Queue
-         *
-         * @access private
-         *
-         * @return {undefined}
-         */putInChatUploadQueue=function putInChatUploadQueue(params,callback){chatUploadQueue.push(params);callback&&callback();},/**
-         * Transfer an Item from uploadQueue to sendQueue
-         *
-         * This function takes an uniqueId, finds that item
-         * inside uploadQ. takes it's uploaded metadata and
-         * attaches them to the message. Finally removes item
-         * from uploadQueue and pushes it inside sendQueue
-         *
-         * @access private
-         *
-         * @return {undefined}
-         */transferFromUploadQToSendQ=function transferFromUploadQToSendQ(threadId,uniqueId,metadata,callback){getChatUploadQueue(threadId,function(uploadQueue){for(var i=0;i<uploadQueue.length;i++){if(uploadQueue[i].message.uniqueId===uniqueId){try{var message=uploadQueue[i].message,callbacks=uploadQueue[i].callbacks;var oldMetadata=JSON.parse(message.metadata),newMetadata=JSON.parse(metadata);var finalMetaData=objectDeepMerger(newMetadata,oldMetadata);if(typeof message!=='undefined'&&message&&typeof message.content!=='undefined'&&message.content&&message.content.hasOwnProperty('message')){message.content.message['metadata']=JSON.stringify(finalMetaData);}if(typeof message!=='undefined'&&message&&typeof message.content!=='undefined'&&message.content&&message.content.hasOwnProperty('metadata')){message.content['metadata']=JSON.stringify(finalMetaData);}if(message.chatMessageVOType===21){getImageDownloadLinkFromPodspace({hashCode:finalMetaData.fileHash},function(result){if(!result.hasError){message.content.image=result.downloadUrl;}});}message.metadata=JSON.stringify(finalMetaData);}catch(e){consoleLogging&&console.log(e);}deleteFromChatUploadQueue(uploadQueue[i],function(){putInChatSendQueue({message:message,callbacks:callbacks},function(){callback&&callback();},true);});break;}}});},/**
-         * Decrypt Encrypted strings using secret key and salt
-         *
-         * @param string    String to get decrypted
-         * @param secret    Cache Secret
-         * @param salt      Salt used while string was getting encrypted
-         *
-         * @return  string  Decrypted string
-         */chatDecrypt=function chatDecrypt(string,secret,salt){var decryptedString=_utility["default"].decrypt(string,secret,salt);if(!decryptedString.hasError){return decryptedString.result;}else{/**
-                 * If there is a problem with decrypting cache
-                 * Some body is trying to decrypt cache with wrong key
-                 * or cacheSecret has been expired, so we should truncate
-                 * cache databases to avoid attacks.
-                 *
-                 * But before deleting cache database we should make
-                 * sure that cacheSecret has been retrieved from server
-                 * and is ready. If so, and cache is still not decryptable,
-                 * there is definitely something wrong with the key; so we are
-                 * good to go and delete cache databases.
-                 */if(typeof secret!=='undefined'&&secret!==''){if(db){db.threads.where('owner').equals(parseInt(chatMessaging.userInfo.id)).count().then(function(threadsCount){if(threadsCount>0){clearCacheDatabasesOfUser(function(){consoleLogging&&console.log('All cache databases have been cleared.');});}})["catch"](function(e){consoleLogging&&console.log(e);});}}return'{}';}},objectDeepMerger=function objectDeepMerger(){var target={};var merger=function merger(obj){for(var prop in obj){if(obj.hasOwnProperty(prop)){if(Object.prototype.toString.call(obj[prop])==='[object Object]'){target[prop]=objectDeepMerger(target[prop],obj[prop]);}else{target[prop]=obj[prop];}}}};for(var i=0;i<arguments.length;i++){merger(i<0||arguments.length<=i?undefined:arguments[i]);}return target;},setRoleToUser=function setRoleToUser(params,callback){var setRoleData={chatMessageVOType:_constants.chatMessageVOTypes.SET_ROLE_TO_USER,typeCode:generalTypeCode,//params.typeCode,
+   * Get Chat Send Queue
+   *
+   * This function returns chat send queue
+   *
+   * @access private
+   *
+   * @return {array}  An array of messages on sendQueue
+   */getChatSendQueue=function getChatSendQueue(threadId,callback){if(threadId){var tempSendQueue=[];for(var i=0;i<chatSendQueue.length;i++){if(chatSendQueue[i].threadId===threadId){tempSendQueue.push(chatSendQueue[i]);}}callback&&callback(tempSendQueue);}else{callback&&callback(chatSendQueue);}},/**
+   * Get Chat Wait Queue
+   *
+   * This function checks if cache is enbled on client's
+   * machine, and if it is, retrieves WaitQueue from
+   * cache. Otherwise returns WaitQueue from RAM
+   * After getting failed messages from cache or RAM
+   * we should check them with server to be sure if
+   * they have been sent already or not?
+   *
+   * @access private
+   *
+   * @return {array}  An array of messages on Wait Queue
+   */getChatWaitQueue=function getChatWaitQueue(threadId,active,callback){if(active&&threadId>0){var uniqueIds=[],queueToBeSent=[];for(var i=0;i<chatWaitQueue.length;i++){if(chatWaitQueue[i].subjectId==threadId){queueToBeSent.push(chatWaitQueue[i]);uniqueIds.push(chatWaitQueue[i].uniqueId);}}if(uniqueIds.length){chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.GET_HISTORY,content:{uniqueIds:uniqueIds},subjectId:threadId},{onResult:function onResult(result){if(!result.hasError){var messageContent=result.result;for(var i=0;i<messageContent.length;i++){for(var j=0;j<uniqueIds.length;j++){if(uniqueIds[j]===messageContent[i].uniqueId){uniqueIds.splice(j,1);queueToBeSent.splice(j,1);}}}callback&&callback(queueToBeSent);}}});}else{callback&&callback([]);}}else{callback&&callback([]);}},/**
+   * Get Chat Upload Queue
+   *
+   * This function checks if cache is enabled on client's
+   * machine, and if it is, retrieves uploadQueue from
+   * cache. Otherwise returns uploadQueue from RAM
+   *
+   * @access private
+   *
+   * @return {array}  An array of messages on uploadQueue
+   */getChatUploadQueue=function getChatUploadQueue(threadId,callback){var uploadQ=[];for(var i=0;i<chatUploadQueue.length;i++){if(parseInt(chatUploadQueue[i].message.subjectId)===threadId){uploadQ.push(chatUploadQueue[i]);}}callback&&callback(uploadQ);},/**
+   * Delete an Item from Chat Send Queue
+   *
+   * This function gets an item and deletes it
+   * from Chat Send Queue
+   *
+   * @access private
+   *
+   * @return {undefined}
+   */deleteFromChatSentQueue=function deleteFromChatSentQueue(item,callback){for(var i=0;i<chatSendQueue.length;i++){if(chatSendQueue[i].message.uniqueId===item.message.uniqueId){chatSendQueue.splice(i,1);}}callback&&callback();},/**
+   * Delete an Item from Chat Wait Queue
+   *
+   * This function gets an item and deletes it
+   * from Chat Wait Queue, from either cached
+   * queue or the queue on RAM memory
+   *
+   * @access private
+   *
+   * @return {undefined}
+   */deleteFromChatWaitQueue=function deleteFromChatWaitQueue(item,callback){for(var i=0;i<chatWaitQueue.length;i++){if(chatWaitQueue[i].uniqueId===item.uniqueId){chatWaitQueue.splice(i,1);}}callback&&callback();},/**
+   * Delete an Item from Chat Upload Queue
+   *
+   * This function gets an item and deletes it
+   * from Chat Upload Queue
+   *
+   * @access private
+   *
+   * @return {undefined}
+   */deleteFromChatUploadQueue=function deleteFromChatUploadQueue(item,callback){for(var i=0;i<chatUploadQueue.length;i++){if(chatUploadQueue[i].message.uniqueId===item.message.uniqueId){chatUploadQueue.splice(i,1);}}callback&&callback();},deleteThreadFailedMessagesFromWaitQueue=function deleteThreadFailedMessagesFromWaitQueue(threadId,callback){for(var i=0;i<chatWaitQueue.length;i++){if(chatWaitQueue[i].uniqueId===item.uniqueId){chatWaitQueue.splice(i,1);}}callback&&callback();},/**
+   * Push Message Into Send Queue
+   *
+   * This functions takes a message and puts it
+   * into chat's send queue
+   *
+   * @access private
+   *
+   * @param {object}    params    The Message and its callbacks to be enqueued
+   *
+   * @return {undefined}
+   */putInChatSendQueue=function putInChatSendQueue(params,callback,skip){chatSendQueue.push(params);if(!skip){var time=new Date().getTime();params.message.time=time;params.message.timeNanos=time%1000*1000000;putInChatWaitQueue(params.message,function(){callback&&callback();});}else{callback&&callback();}},/**
+   * Put an Item inside Chat Wait Queue
+   *
+   * This function takes an item and puts it
+   * inside Chat Wait Queue, either on cached
+   * wait queue or the wait queue on RAM memory
+   *
+   * @access private
+   *
+   * @return {undefined}
+   */putInChatWaitQueue=function putInChatWaitQueue(item,callback){if(item.uniqueId!==''){var waitQueueUniqueId=typeof item.uniqueId=='string'?item.uniqueId:Array.isArray(item.uniqueId)?item.uniqueId[0]:null;if(waitQueueUniqueId!=null){consoleLogging&&console.log('Forced to use in memory cache');item.uniqueId=waitQueueUniqueId;chatWaitQueue.push(item);callback&&callback();}}},getItemFromChatWaitQueue=function getItemFromChatWaitQueue(uniqueId,callback){for(var i=0;i<chatWaitQueue.length;i++){if(chatWaitQueue[i].uniqueId===uniqueId){var decryptedEnqueuedMessage=chatWaitQueue[i];var time=new Date().getTime();var message=formatDataToMakeMessage(decryptedEnqueuedMessage.threadId,{uniqueId:decryptedEnqueuedMessage.uniqueId,ownerId:chatMessaging.userInfo.id,message:decryptedEnqueuedMessage.content,metadata:decryptedEnqueuedMessage.metadata,systemMetadata:decryptedEnqueuedMessage.systemMetadata,replyInfo:decryptedEnqueuedMessage.replyInfo,forwardInfo:decryptedEnqueuedMessage.forwardInfo,participant:chatMessaging.userInfo,time:time,timeNanos:time%1000*1000000});callback&&callback(message);break;}}},/**
+   * Put an Item inside Chat Upload Queue
+   *
+   * This function takes an item and puts it
+   * inside Chat upload Queue
+   *
+   * @access private
+   *
+   * @return {undefined}
+   */putInChatUploadQueue=function putInChatUploadQueue(params,callback){chatUploadQueue.push(params);callback&&callback();},/**
+   * Transfer an Item from uploadQueue to sendQueue
+   *
+   * This function takes an uniqueId, finds that item
+   * inside uploadQ. takes it's uploaded metadata and
+   * attaches them to the message. Finally removes item
+   * from uploadQueue and pushes it inside sendQueue
+   *
+   * @access private
+   *
+   * @return {undefined}
+   */transferFromUploadQToSendQ=function transferFromUploadQToSendQ(threadId,uniqueId,metadata,callback){getChatUploadQueue(threadId,function(uploadQueue){for(var i=0;i<uploadQueue.length;i++){if(uploadQueue[i].message.uniqueId===uniqueId){try{var message=uploadQueue[i].message,callbacks=uploadQueue[i].callbacks;var oldMetadata=JSON.parse(message.metadata),newMetadata=JSON.parse(metadata);var finalMetaData=objectDeepMerger(newMetadata,oldMetadata);if(typeof message!=='undefined'&&message&&typeof message.content!=='undefined'&&message.content&&message.content.hasOwnProperty('message')){message.content.message['metadata']=JSON.stringify(finalMetaData);}if(typeof message!=='undefined'&&message&&typeof message.content!=='undefined'&&message.content&&message.content.hasOwnProperty('metadata')){message.content['metadata']=JSON.stringify(finalMetaData);}if(message.chatMessageVOType===21){getImageDownloadLinkFromPodspace({hashCode:finalMetaData.fileHash},function(result){if(!result.hasError){message.content.image=result.downloadUrl;}});}message.metadata=JSON.stringify(finalMetaData);}catch(e){consoleLogging&&console.log(e);}deleteFromChatUploadQueue(uploadQueue[i],function(){putInChatSendQueue({message:message,callbacks:callbacks},function(){callback&&callback();},true);});break;}}});},/**
+   * Decrypt Encrypted strings using secret key and salt
+   *
+   * @param string    String to get decrypted
+   * @param secret    Cache Secret
+   * @param salt      Salt used while string was getting encrypted
+   *
+   * @return  string  Decrypted string
+   */chatDecrypt=function chatDecrypt(string,secret,salt){var decryptedString=_utility["default"].decrypt(string,secret,salt);if(!decryptedString.hasError){return decryptedString.result;}else{/**
+       * If there is a problem with decrypting cache
+       * Some body is trying to decrypt cache with wrong key
+       * or cacheSecret has been expired, so we should truncate
+       * cache databases to avoid attacks.
+       *
+       * But before deleting cache database we should make
+       * sure that cacheSecret has been retrieved from server
+       * and is ready. If so, and cache is still not decryptable,
+       * there is definitely something wrong with the key; so we are
+       * good to go and delete cache databases.
+       */if(typeof secret!=='undefined'&&secret!==''){}return'{}';}},objectDeepMerger=function objectDeepMerger(){var target={};var merger=function merger(obj){for(var prop in obj){if(obj.hasOwnProperty(prop)){if(Object.prototype.toString.call(obj[prop])==='[object Object]'){target[prop]=objectDeepMerger(target[prop],obj[prop]);}else{target[prop]=obj[prop];}}}};for(var i=0;i<arguments.length;i++){merger(i<0||arguments.length<=i?undefined:arguments[i]);}return target;},setRoleToUser=function setRoleToUser(params,callback){var setRoleData={chatMessageVOType:_constants.chatMessageVOTypes.SET_ROLE_TO_USER,typeCode:generalTypeCode,//params.typeCode,
 content:[],pushMsgType:3,token:token};if(params){if(parseInt(params.threadId)>0){setRoleData.subjectId=params.threadId;}if(params.admins&&Array.isArray(params.admins)){for(var i=0;i<params.admins.length;i++){var temp={};if(parseInt(params.admins[i].userId)>0){temp.userId=params.admins[i].userId;}if(Array.isArray(params.admins[i].roles)){temp.roles=params.admins[i].roles;}setRoleData.content.push(temp);}setRoleData.content=JSON.stringify(setRoleData.content);}}return chatMessaging.sendMessage(setRoleData,{onResult:function onResult(result){callback&&callback(result);}});},removeRoleFromUser=function removeRoleFromUser(params,callback){var setAdminData={chatMessageVOType:_constants.chatMessageVOTypes.REMOVE_ROLE_FROM_USER,typeCode:generalTypeCode,//params.typeCode,
 content:[],pushMsgType:3,token:token};if(params){if(parseInt(params.threadId)>0){setAdminData.subjectId=params.threadId;}if(params.admins&&Array.isArray(params.admins)){for(var i=0;i<params.admins.length;i++){var temp={};if(parseInt(params.admins[i].userId)>0){temp.userId=params.admins[i].userId;}if(Array.isArray(params.admins[i].roles)){temp.roles=params.admins[i].roles;}setAdminData.content.push(temp);}setAdminData.content=JSON.stringify(setAdminData.content);}}return chatMessaging.sendMessage(setAdminData,{onResult:function onResult(result){callback&&callback(result);}});},unPinMessage=function unPinMessage(params,callback){return chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.UNPIN_MESSAGE,typeCode:generalTypeCode,//params.typeCode,
 subjectId:params.messageId,content:JSON.stringify({'notifyAll':typeof params.notifyAll==='boolean'?params.notifyAll:false}),pushMsgType:3,token:token},{onResult:function onResult(result){callback&&callback(result);}});},chatUploadHandler=function chatUploadHandler(params,callbacks){if(typeof params.file!=='undefined'){var fileName,fileType,fileSize,fileExtension,chatUploadHandlerResult={},metadata={file:{}},fileUniqueId=params.fileUniqueId;fileName=params.file.name;fileType=params.file.type;fileSize=params.file.size;fileExtension=params.file.name.split('.').pop();_events.chatEvents.fireEvent('fileUploadEvents',{threadId:params.threadId,uniqueId:fileUniqueId,state:'NOT_STARTED',progress:0,fileInfo:{fileName:fileName,fileSize:fileSize},fileObject:params.file});/**
-                 * File is a valid Image
-                 * Should upload to image server
-                 */if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){chatUploadHandlerResult.image=params.file;if(params.xC>=0){fileUploadParams.xC=params.xC;}if(params.yC>=0){fileUploadParams.yC=params.yC;}if(params.hC>0){fileUploadParams.hC=params.hC;}if(params.wC>0){fileUploadParams.wC=params.wC;}}else{chatUploadHandlerResult.file=params.file;}metadata['file']['originalName']=fileName;metadata['file']['mimeType']=fileType;metadata['file']['size']=fileSize;chatUploadHandlerResult.threadId=params.threadId;chatUploadHandlerResult.uniqueId=fileUniqueId;chatUploadHandlerResult.fileObject=params.file;chatUploadHandlerResult.originalFileName=fileName;callbacks&&callbacks(chatUploadHandlerResult,metadata,fileType,fileExtension);}else{_events.chatEvents.fireEvent('error',{code:6302,message:CHAT_ERRORS[6302]});}return{uniqueId:fileUniqueId,threadId:params.threadId,participant:chatMessaging.userInfo,content:{caption:params.content,file:{uniqueId:fileUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},cancelFileDownload=function cancelFileDownload(params,callback){if(params){if(typeof params.uniqueId=='string'){var uniqueId=params.uniqueId;httpRequestObject[eval('uniqueId')]&&httpRequestObject[eval('uniqueId')].abort();httpRequestObject[eval('uniqueId')]&&delete httpRequestObject[eval('uniqueId')];callback&&callback(uniqueId);}}},cancelFileUpload=function cancelFileUpload(params,callback){if(params){if(typeof params.uniqueId=='string'){var uniqueId=params.uniqueId;httpRequestObject[eval('uniqueId')]&&httpRequestObject[eval('uniqueId')].abort();httpRequestObject[eval('uniqueId')]&&delete httpRequestObject[eval('uniqueId')];deleteFromChatUploadQueue({message:{uniqueId:uniqueId}},callback);}}},cancelMessage=function cancelMessage(uniqueId,callback){deleteFromChatSentQueue({message:{uniqueId:uniqueId}},function(){deleteFromChatWaitQueue({uniqueId:uniqueId},callback);});},mapReverse=function mapReverse(params,callback){var data={};if(params){if(parseFloat(params.lat)>0){data.lat=params.lat;}if(parseFloat(params.lng)>0){data.lng=params.lng;}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.REVERSE,method:'GET',data:data,headers:{'Api-Key':mapApiKey}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:result.hasError,cache:result.cache,errorMessage:result.message,errorCode:result.errorCode,result:responseData};callback&&callback(returnData);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});},mapSearch=function mapSearch(params,callback){var data={};if(params){if(typeof params.term==='string'){data.term=params.term;}if(parseFloat(params.lat)>0){data.lat=params.lat;}if(parseFloat(params.lng)>0){data.lng=params.lng;}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.SEARCH,method:'GET',data:data,headers:{'Api-Key':mapApiKey}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:result.hasError,cache:result.cache,errorMessage:result.message,errorCode:result.errorCode,result:responseData};callback&&callback(returnData);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});},mapRouting=function mapRouting(params,callback){var data={};if(params){if(typeof params.alternative==='boolean'){data.alternative=params.alternative;}else{data.alternative=true;}if((0,_typeof2["default"])(params.origin)==='object'){if(parseFloat(params.origin.lat)>0&&parseFloat(params.origin.lng)){data.origin=params.origin.lat+','+parseFloat(params.origin.lng);}else{consoleLogging&&console.log('No origin has been selected!');}}if((0,_typeof2["default"])(params.destination)==='object'){if(parseFloat(params.destination.lat)>0&&parseFloat(params.destination.lng)){data.destination=params.destination.lat+','+parseFloat(params.destination.lng);}else{consoleLogging&&console.log('No destination has been selected!');}}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.ROUTING,method:'GET',data:data,headers:{'Api-Key':mapApiKey}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:result.hasError,cache:result.cache,errorMessage:result.message,errorCode:result.errorCode,result:responseData};callback&&callback(returnData);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});},mapStaticImage=function mapStaticImage(params,callback){var data={},url=SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.STATIC_IMAGE,hasError=false;if(params){if(typeof params.type==='string'){data.type=params.type;}else{data.type='standard-night';}if(parseInt(params.zoom)>0){data.zoom=params.zoom;}else{data.zoom=15;}if(parseInt(params.width)>0){data.width=params.width;}else{data.width=800;}if(parseInt(params.height)>0){data.height=params.height;}else{data.height=600;}if((0,_typeof2["default"])(params.center)==='object'){if(parseFloat(params.center.lat)>0&&parseFloat(params.center.lng)){data.center=params.center.lat+','+parseFloat(params.center.lng);}else{hasError=true;_events.chatEvents.fireEvent('error',{code:6700,message:CHAT_ERRORS[6700],error:undefined});}}else{hasError=true;_events.chatEvents.fireEvent('error',{code:6700,message:CHAT_ERRORS[6700],error:undefined});}data.key=mapApiKey;}var keys=Object.keys(data);if(keys.length>0){url+='?';for(var i=0;i<keys.length;i++){var key=keys[i];url+=key+'='+data[key];if(i<keys.length-1){url+='&';}}}var returnData={hasError:hasError,cache:false,errorMessage:hasError?CHAT_ERRORS[6700]:'',errorCode:hasError?6700:undefined,result:{link:!hasError?url:''}};callback&&callback(returnData);},//TODO Change Node Version
+       * File is a valid Image
+       * Should upload to image server
+       */if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){chatUploadHandlerResult.image=params.file;if(params.xC>=0){fileUploadParams.xC=params.xC;}if(params.yC>=0){fileUploadParams.yC=params.yC;}if(params.hC>0){fileUploadParams.hC=params.hC;}if(params.wC>0){fileUploadParams.wC=params.wC;}}else{chatUploadHandlerResult.file=params.file;}metadata['file']['originalName']=fileName;metadata['file']['mimeType']=fileType;metadata['file']['size']=fileSize;chatUploadHandlerResult.threadId=params.threadId;chatUploadHandlerResult.uniqueId=fileUniqueId;chatUploadHandlerResult.fileObject=params.file;chatUploadHandlerResult.originalFileName=fileName;callbacks&&callbacks(chatUploadHandlerResult,metadata,fileType,fileExtension);}else{_events.chatEvents.fireEvent('error',{code:6302,message:CHAT_ERRORS[6302]});}return{uniqueId:fileUniqueId,threadId:params.threadId,participant:chatMessaging.userInfo,content:{caption:params.content,file:{uniqueId:fileUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},cancelFileDownload=function cancelFileDownload(params,callback){if(params){if(typeof params.uniqueId=='string'){var uniqueId=params.uniqueId;httpRequestObject[eval('uniqueId')]&&httpRequestObject[eval('uniqueId')].abort();httpRequestObject[eval('uniqueId')]&&delete httpRequestObject[eval('uniqueId')];callback&&callback(uniqueId);}}},cancelFileUpload=function cancelFileUpload(params,callback){if(params){if(typeof params.uniqueId=='string'){var uniqueId=params.uniqueId;httpRequestObject[eval('uniqueId')]&&httpRequestObject[eval('uniqueId')].abort();httpRequestObject[eval('uniqueId')]&&delete httpRequestObject[eval('uniqueId')];deleteFromChatUploadQueue({message:{uniqueId:uniqueId}},callback);}}},cancelMessage=function cancelMessage(uniqueId,callback){deleteFromChatSentQueue({message:{uniqueId:uniqueId}},function(){deleteFromChatWaitQueue({uniqueId:uniqueId},callback);});},mapReverse=function mapReverse(params,callback){var data={};if(params){if(parseFloat(params.lat)>0){data.lat=params.lat;}if(parseFloat(params.lng)>0){data.lng=params.lng;}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.REVERSE,method:'GET',data:data,headers:{'Api-Key':mapApiKey}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:result.hasError,cache:result.cache,errorMessage:result.message,errorCode:result.errorCode,result:responseData};callback&&callback(returnData);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});},mapSearch=function mapSearch(params,callback){var data={};if(params){if(typeof params.term==='string'){data.term=params.term;}if(parseFloat(params.lat)>0){data.lat=params.lat;}if(parseFloat(params.lng)>0){data.lng=params.lng;}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.SEARCH,method:'GET',data:data,headers:{'Api-Key':mapApiKey}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:result.hasError,cache:result.cache,errorMessage:result.message,errorCode:result.errorCode,result:responseData};callback&&callback(returnData);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});},mapRouting=function mapRouting(params,callback){var data={};if(params){if(typeof params.alternative==='boolean'){data.alternative=params.alternative;}else{data.alternative=true;}if((0,_typeof2["default"])(params.origin)==='object'){if(parseFloat(params.origin.lat)>0&&parseFloat(params.origin.lng)){data.origin=params.origin.lat+','+parseFloat(params.origin.lng);}else{consoleLogging&&console.log('No origin has been selected!');}}if((0,_typeof2["default"])(params.destination)==='object'){if(parseFloat(params.destination.lat)>0&&parseFloat(params.destination.lng)){data.destination=params.destination.lat+','+parseFloat(params.destination.lng);}else{consoleLogging&&console.log('No destination has been selected!');}}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.ROUTING,method:'GET',data:data,headers:{'Api-Key':mapApiKey}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:result.hasError,cache:result.cache,errorMessage:result.message,errorCode:result.errorCode,result:responseData};callback&&callback(returnData);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});},mapStaticImage=function mapStaticImage(params,callback){var data={},url=SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.STATIC_IMAGE,hasError=false;if(params){if(typeof params.type==='string'){data.type=params.type;}else{data.type='standard-night';}if(parseInt(params.zoom)>0){data.zoom=params.zoom;}else{data.zoom=15;}if(parseInt(params.width)>0){data.width=params.width;}else{data.width=800;}if(parseInt(params.height)>0){data.height=params.height;}else{data.height=600;}if((0,_typeof2["default"])(params.center)==='object'){if(parseFloat(params.center.lat)>0&&parseFloat(params.center.lng)){data.center=params.center.lat+','+parseFloat(params.center.lng);}else{hasError=true;_events.chatEvents.fireEvent('error',{code:6700,message:CHAT_ERRORS[6700],error:undefined});}}else{hasError=true;_events.chatEvents.fireEvent('error',{code:6700,message:CHAT_ERRORS[6700],error:undefined});}data.key=mapApiKey;}var keys=Object.keys(data);if(keys.length>0){url+='?';for(var i=0;i<keys.length;i++){var key=keys[i];url+=key+'='+data[key];if(i<keys.length-1){url+='&';}}}var returnData={hasError:hasError,cache:false,errorMessage:hasError?CHAT_ERRORS[6700]:'',errorCode:hasError?6700:undefined,result:{link:!hasError?url:''}};callback&&callback(returnData);},//TODO Change Node Version
 getImageFormUrl=function getImageFormUrl(url,uniqueId,callback){getImageFromLinkObjects[uniqueId]=new Image();getImageFromLinkObjects[uniqueId].setAttribute('crossOrigin','anonymous');getImageFromLinkObjects[uniqueId].onload=function(){var canvas=document.createElement("canvas");canvas.width=this.width;canvas.height=this.height;var ctx=canvas.getContext("2d");ctx.drawImage(this,0,0);var dataURI=canvas.toDataURL("image/jpg");var byteString;if(dataURI.split(',')[0].indexOf('base64')>=0)byteString=atob(dataURI.split(',')[1]);else byteString=unescape(dataURI.split(',')[1]);var mimeString=dataURI.split(',')[0].split(':')[1].split(';')[0];var ia=new Uint8Array(byteString.length);for(var i=0;i<byteString.length;i++){ia[i]=byteString.charCodeAt(i);}delete getImageFromLinkObjects[uniqueId];return callback(new Blob([ia],{type:mimeString}));};getImageFromLinkObjects[uniqueId].src=url;};/******************************************************
-     *             P U B L I C   M E T H O D S            *
-     ******************************************************/var publicized={};publicized.on=_events.chatEvents.on;publicized.off=_events.chatEvents.off;publicized.getPeerId=function(){return peerId;};publicized.getCurrentUser=function(){return chatMessaging.userInfo;};publicized.getUserInfo=function(callback){return chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.USER_INFO,typeCode:generalTypeCode},{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;var currentUser=formatDataToMakeUser(messageContent);returnData.result={user:currentUser};callback&&callback(returnData);}}});};publicized.getThreads=getThreads;publicized.getAllThreads=getAllThreads;publicized.getHistory=getHistory;publicized.getAllMentionedMessages=function(params,callback){return getHistory({threadId:params.threadId,allMentioned:true,typeCode:generalTypeCode,//params.typeCode,
+   *             P U B L I C   M E T H O D S            *
+   ******************************************************/var publicized={};publicized.on=_events.chatEvents.on;publicized.off=_events.chatEvents.off;publicized.getPeerId=function(){return peerId;};publicized.getCurrentUser=function(){return chatMessaging.userInfo;};publicized.getUserInfo=function(callback){return chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.USER_INFO,typeCode:generalTypeCode},{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;var currentUser=formatDataToMakeUser(messageContent);returnData.result={user:currentUser};callback&&callback(returnData);}}});};publicized.getThreads=getThreads;publicized.getAllThreads=getAllThreads;publicized.getHistory=getHistory;publicized.getAllMentionedMessages=function(params,callback){return getHistory({threadId:params.threadId,allMentioned:true,typeCode:generalTypeCode,//params.typeCode,
 count:params.count||50,offset:params.offset||0,cache:false,queues:{uploading:false,sending:false}},callback);};publicized.getUnreadMentionedMessages=function(params,callback){return getHistory({threadId:params.threadId,unreadMentioned:true,typeCode:generalTypeCode,//params.typeCode,
 count:params.count||50,offset:params.offset||0,cache:false,queues:{uploading:false,sending:false}},callback);};publicized.getAllUnreadMessagesCount=function(params,callback){return chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.ALL_UNREAD_MESSAGE_COUNT,typeCode:generalTypeCode,//params.typeCode,
 content:JSON.stringify({'mute':typeof params.countMuteThreads==='boolean'?params.countMuteThreads:false}),pushMsgType:3,token:token},{onResult:function onResult(result){callback&&callback(result);}});};/**
-     * Get Contacts
-     *
-     * Gets contacts list from chat server
-     *
-     * @access pubic
-     *
-     * @param {int}     count           Count of objects to get
-     * @param {int}     offset          Offset of select Query
-     * @param {string}  query           Search in contacts list to get (search LIKE firstName, lastName, email)
-     *
-     * @return {object} Instant Response
-     */publicized.getContacts=function(params,callback){var count=50,offset=0,content={},whereClause={},returnCache=false;if(params){if(parseInt(params.count)>0){count=parseInt(params.count);}if(parseInt(params.offset)>0){offset=parseInt(params.offset);}if(typeof params.query==='string'){content.query=whereClause.query=params.query;}if(typeof params.email==='string'){content.email=whereClause.email=params.email;}if(typeof params.cellphoneNumber==='string'){content.cellphoneNumber=whereClause.cellphoneNumber=params.cellphoneNumber;}if(parseInt(params.contactId)>0){content.id=whereClause.id=params.contactId;}if(typeof params.uniqueId==='string'){content.uniqueId=whereClause.uniqueId=params.uniqueId;}if(typeof params.username==='string'){content.username=params.username;}if(typeof params.coreUserId!=="undefined"){content.coreUserId=params.coreUserId;}var functionLevelCache=typeof params.cache=='boolean'?params.cache:true;}content.size=count;content.offset=offset;var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.GET_CONTACTS,typeCode:generalTypeCode,//params.typeCode,
+   * Get Contacts
+   *
+   * Gets contacts list from chat server
+   *
+   * @access pubic
+   *
+   * @param {int}     count           Count of objects to get
+   * @param {int}     offset          Offset of select Query
+   * @param {string}  query           Search in contacts list to get (search LIKE firstName, lastName, email)
+   *
+   * @return {object} Instant Response
+   */publicized.getContacts=function(params,callback){var count=50,offset=0,content={},returnCache=false;if(params){if(parseInt(params.count)>0){count=parseInt(params.count);}if(parseInt(params.offset)>0){offset=parseInt(params.offset);}if(typeof params.query==='string'){content.query=params.query;}if(typeof params.email==='string'){content.email=params.email;}if(typeof params.cellphoneNumber==='string'){content.cellphoneNumber=params.cellphoneNumber;}if(parseInt(params.contactId)>0){content.id=params.contactId;}if(typeof params.uniqueId==='string'){content.uniqueId=params.uniqueId;}if(typeof params.username==='string'){content.username=params.username;}if(typeof params.coreUserId!=="undefined"){content.coreUserId=params.coreUserId;}var functionLevelCache=typeof params.cache=='boolean'?params.cache:true;}content.size=count;content.offset=offset;var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.GET_CONTACTS,typeCode:generalTypeCode,//params.typeCode,
 content:content};/**
-         * Retrieve contacts from cache #cache
-         */if(functionLevelCache&&canUseCache&&cacheSecret.length>0){if(db){/**
-                 * First of all we delete all contacts those
-                 * expireTime has been expired. after that
-                 * we query our cache database to retrieve
-                 * what we wanted
-                 */db.contacts.where('expireTime').below(new Date().getTime())["delete"]().then(function(){/**
-                         * Query cache database to get contacts
-                         */var thenAble;if(Object.keys(whereClause).length===0){thenAble=db.contacts.where('owner').equals(parseInt(chatMessaging.userInfo.id));}else{if(whereClause.hasOwnProperty('query')){thenAble=db.contacts.where('owner').equals(parseInt(chatMessaging.userInfo.id)).filter(function(contact){var reg=new RegExp(whereClause.query);return reg.test(chatDecrypt(contact.firstName,cacheSecret,contact.salt)+' '+chatDecrypt(contact.lastName,cacheSecret,contact.salt)+' '+chatDecrypt(contact.email,cacheSecret,contact.salt));});}}thenAble.reverse().offset(offset).limit(count).toArray().then(function(contacts){db.contacts.where('owner').equals(parseInt(chatMessaging.userInfo.id)).count().then(function(contactsCount){var cacheData=[];for(var i=0;i<contacts.length;i++){try{cacheData.push(formatDataToMakeContact(JSON.parse(chatDecrypt(contacts[i].data,cacheSecret,contacts[i].salt))));}catch(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}var returnData={hasError:false,cache:true,errorCode:0,errorMessage:'',result:{contacts:cacheData,contentCount:contactsCount,hasNext:!(contacts.length<count),nextOffset:offset*1+contacts.length}};if(cacheData.length>0){callback&&callback(returnData);callback=undefined;returnCache=true;}});})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}/**
-         * Retrieve Contacts from server
-         */return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={contacts:[],contentCount:result.contentCount,hasNext:offset+count<result.contentCount&&messageLength>0,nextOffset:offset*1+messageLength*1},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;/**
-                     * Add Contacts into cache database #cache
-                     */if(canUseCache&&cacheSecret.length>0){if(db){var cacheData=[];for(var i=0;i<resultData.contacts.length;i++){try{var tempData={},salt=_utility["default"].generateUUID();tempData.id=resultData.contacts[i].id;tempData.owner=chatMessaging.userInfo.id;tempData.uniqueId=resultData.contacts[i].uniqueId;tempData.userId=_utility["default"].crypt(resultData.contacts[i].userId,cacheSecret,salt);tempData.cellphoneNumber=_utility["default"].crypt(resultData.contacts[i].cellphoneNumber,cacheSecret,salt);tempData.email=_utility["default"].crypt(resultData.contacts[i].email,cacheSecret,salt);tempData.firstName=_utility["default"].crypt(resultData.contacts[i].firstName,cacheSecret,salt);tempData.lastName=_utility["default"].crypt(resultData.contacts[i].lastName,cacheSecret,salt);tempData.expireTime=new Date().getTime()+cacheExpireTime;tempData.data=_utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(resultData.contacts[i])),cacheSecret,salt);tempData.salt=salt;cacheData.push(tempData);}catch(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}db.contacts.bulkPut(cacheData)["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}callback&&callback(returnData);/**
-                 * Delete callback so if server pushes response before
-                 * cache, cache won't send data again
-                 */callback=undefined;if(!returnData.hasError&&returnCache){_events.chatEvents.fireEvent('contactEvents',{type:'CONTACTS_LIST_CHANGE',result:returnData.result});}}});};publicized.getThreadParticipants=getThreadParticipants;/**
-     * Get Thread Admins
-     *
-     * Gets admins list of given thread
-     *
-     * @access pubic
-     *
-     * @param {int}     threadId        Id of thread which you want to get admins of
-     *
-     * @return {object} Instant Response
-     */publicized.getThreadAdmins=function(params,callback){getThreadParticipants({threadId:params.threadId,admin:true,cache:false},callback);};publicized.addParticipants=function(params,callback){/**
-         * + AddParticipantsRequest   {object}
-         *    - subjectId             {int}
-         *    + content               {list} List of CONTACT IDs or inviteeVO Objects
-         *    - uniqueId              {string}
-         */var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.ADD_PARTICIPANT,typeCode:generalTypeCode,//params.typeCode,
+     * Retrieve Contacts from server
+     */return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={contacts:[],contentCount:result.contentCount,hasNext:offset+count<result.contentCount&&messageLength>0,nextOffset:offset*1+messageLength*1},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;}callback&&callback(returnData);/**
+         * Delete callback so if server pushes response before
+         * cache, cache won't send data again
+         */callback=undefined;if(!returnData.hasError&&returnCache){_events.chatEvents.fireEvent('contactEvents',{type:'CONTACTS_LIST_CHANGE',result:returnData.result});}}});};publicized.getThreadParticipants=getThreadParticipants;/**
+   * Get Thread Admins
+   *
+   * Gets admins list of given thread
+   *
+   * @access pubic
+   *
+   * @param {int}     threadId        Id of thread which you want to get admins of
+   *
+   * @return {object} Instant Response
+   */publicized.getThreadAdmins=function(params,callback){getThreadParticipants({threadId:params.threadId,admin:true,cache:false},callback);};publicized.addParticipants=function(params,callback){/**
+     * + AddParticipantsRequest   {object}
+     *    - subjectId             {int}
+     *    + content               {list} List of CONTACT IDs or inviteeVO Objects
+     *    - uniqueId              {string}
+     */var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.ADD_PARTICIPANT,typeCode:generalTypeCode,//params.typeCode,
 content:[]};if(params){if(parseInt(params.threadId)>0){sendMessageParams.subjectId=params.threadId;}if(Array.isArray(params.contactIds)){sendMessageParams.content=params.contactIds;}if(Array.isArray(params.usernames)){sendMessageParams.content=[];for(var i=0;i<params.usernames.length;i++){sendMessageParams.content.push({id:params.usernames[i],idType:_constants.inviteeVOidTypes.TO_BE_USER_USERNAME});}}if(Array.isArray(params.coreUserids)){sendMessageParams.content=[];for(var i=0;i<params.coreUserids.length;i++){sendMessageParams.content.push({id:params.coreUserids[i],idType:_constants.inviteeVOidTypes.TO_BE_CORE_USER_ID});}}}return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}callback&&callback(returnData);}});};publicized.removeParticipants=function(params,callback){/**
-         * + RemoveParticipantsRequest    {object}
-         *    - subjectId                 {int}
-         *    + content                   {list} List of PARTICIPANT IDs from Thread's Participants object
-         *       -id                      {int}
-         *    - uniqueId                  {string}
-         */var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.REMOVE_PARTICIPANT,typeCode:generalTypeCode//params.typeCode
+     * + RemoveParticipantsRequest    {object}
+     *    - subjectId                 {int}
+     *    + content                   {list} List of PARTICIPANT IDs from Thread's Participants object
+     *       -id                      {int}
+     *    - uniqueId                  {string}
+     */var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.REMOVE_PARTICIPANT,typeCode:generalTypeCode//params.typeCode
 };if(params){if(parseInt(params.threadId)>0){sendMessageParams.subjectId=params.threadId;}if(Array.isArray(params.participantIds)){sendMessageParams.content=params.participantIds;}}return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}callback&&callback(returnData);}});};publicized.getCurrentUserRoles=getCurrentUserRoles;publicized.leaveThread=function(params,callback){/**
-         * + LeaveThreadRequest    {object}
-         *    - subjectId          {int}
-         *    - uniqueId           {string}
-         */var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.LEAVE_THREAD,typeCode:generalTypeCode//params.typeCode
+     * + LeaveThreadRequest    {object}
+     *    - subjectId          {int}
+     *    - uniqueId           {string}
+     */var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.LEAVE_THREAD,typeCode:generalTypeCode//params.typeCode
 };if(params){if(parseInt(params.threadId)>0){sendMessageParams.subjectId=params.threadId;}if(typeof params.clearHistory==='boolean'){sendMessageParams.content={clearHistory:params.clearHistory};}else{sendMessageParams.content={clearHistory:true};}}return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}callback&&callback(returnData);}});};publicized.createThread=function(params,callback){/**
-         * + CreateThreadRequest      {object}
-         *    + invitees              {object}
-         *       -id                  {string}
-         *       -idType              {int} ** inviteeVOidTypes
-         *    - title                 {string}
-         *    - type                  {int} ** createThreadTypes
-         *    - image                 {string}
-         *    - description           {string}
-         *    - metadata              {string}
-         *    - uniqueName            {string}
-         *    + message               {object}
-         *       -text                {string}
-         *       -type                {int}
-         *       -repliedTo           {int}
-         *       -uniqueId            {string}
-         *       -metadata            {string}
-         *       -systemMetadata      {string}
-         *       -forwardedMessageIds {string}
-         *       -forwardedUniqueIds  {string}
-         */var content={};if(params){if(typeof params.title==='string'){content.title=params.title;}if(typeof params.type==='string'){var threadType=params.type;content.type=_constants.createThreadTypes[threadType];}if(typeof params.uniqueName==='string'){content.uniqueName=params.uniqueName;}if(Array.isArray(params.invitees)){content.invitees=[];for(var i=0;i<params.invitees.length;i++){var tempInvitee=formatDataToMakeInvitee(params.invitees[i]);if(tempInvitee){content.invitees.push(tempInvitee);}}}if(typeof params.image==='string'){content.image=params.image;}if(typeof params.description==='string'){content.description=params.description;}if(typeof params.metadata==='string'){content.metadata=params.metadata;}else if((0,_typeof2["default"])(params.metadata)==='object'){try{content.metadata=JSON.stringify(params.metadata);}catch(e){consoleLogging&&console.log(e);}}if((0,_typeof2["default"])(params.message)=='object'){content.message={};if(typeof params.message.text==='string'){content.message.text=params.message.text;}if(typeof params.message.uniqueId==='string'){content.message.uniqueId=params.message.uniqueId;}if(params.message.type>0){content.message.messageType=params.message.type;}if(params.message.repliedTo>0){content.message.repliedTo=params.message.repliedTo;}if(typeof params.message.metadata==='string'){content.message.metadata=params.message.metadata;}else if((0,_typeof2["default"])(params.message.metadata)==='object'){content.message.metadata=JSON.stringify(params.message.metadata);}if(typeof params.message.systemMetadata==='string'){content.message.systemMetadata=params.message.systemMetadata;}else if((0,_typeof2["default"])(params.message.systemMetadata)==='object'){content.message.systemMetadata=JSON.stringify(params.message.systemMetadata);}if(Array.isArray(params.message.forwardedMessageIds)){content.message.forwardedMessageIds=params.message.forwardedMessageIds;content.message.forwardedUniqueIds=[];for(var i=0;i<params.message.forwardedMessageIds.length;i++){content.message.forwardedUniqueIds.push(_utility["default"].generateUUID());}}}}var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.CREATE_THREAD,typeCode:generalTypeCode,//params.typeCode,
+     * + CreateThreadRequest      {object}
+     *    + invitees              {object}
+     *       -id                  {string}
+     *       -idType              {int} ** inviteeVOidTypes
+     *    - title                 {string}
+     *    - type                  {int} ** createThreadTypes
+     *    - image                 {string}
+     *    - description           {string}
+     *    - metadata              {string}
+     *    - uniqueName            {string}
+     *    + message               {object}
+     *       -text                {string}
+     *       -type                {int}
+     *       -repliedTo           {int}
+     *       -uniqueId            {string}
+     *       -metadata            {string}
+     *       -systemMetadata      {string}
+     *       -forwardedMessageIds {string}
+     *       -forwardedUniqueIds  {string}
+     */var content={};if(params){if(typeof params.title==='string'){content.title=params.title;}if(typeof params.type==='string'){var threadType=params.type;content.type=_constants.createThreadTypes[threadType];}if(typeof params.uniqueName==='string'){content.uniqueName=params.uniqueName;}if(Array.isArray(params.invitees)){content.invitees=[];for(var i=0;i<params.invitees.length;i++){var tempInvitee=formatDataToMakeInvitee(params.invitees[i]);if(tempInvitee){content.invitees.push(tempInvitee);}}}if(typeof params.image==='string'){content.image=params.image;}if(typeof params.description==='string'){content.description=params.description;}if(typeof params.metadata==='string'){content.metadata=params.metadata;}else if((0,_typeof2["default"])(params.metadata)==='object'){try{content.metadata=JSON.stringify(params.metadata);}catch(e){consoleLogging&&console.log(e);}}if((0,_typeof2["default"])(params.message)=='object'){content.message={};if(typeof params.message.text==='string'){content.message.text=params.message.text;}if(typeof params.message.uniqueId==='string'){content.message.uniqueId=params.message.uniqueId;}if(params.message.type>0){content.message.messageType=params.message.type;}if(params.message.repliedTo>0){content.message.repliedTo=params.message.repliedTo;}if(typeof params.message.metadata==='string'){content.message.metadata=params.message.metadata;}else if((0,_typeof2["default"])(params.message.metadata)==='object'){content.message.metadata=JSON.stringify(params.message.metadata);}if(typeof params.message.systemMetadata==='string'){content.message.systemMetadata=params.message.systemMetadata;}else if((0,_typeof2["default"])(params.message.systemMetadata)==='object'){content.message.systemMetadata=JSON.stringify(params.message.systemMetadata);}if(Array.isArray(params.message.forwardedMessageIds)){content.message.forwardedMessageIds=params.message.forwardedMessageIds;content.message.forwardedUniqueIds=[];for(var i=0;i<params.message.forwardedMessageIds.length;i++){content.message.forwardedUniqueIds.push(_utility["default"].generateUUID());}}}}var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.CREATE_THREAD,typeCode:generalTypeCode,//params.typeCode,
 content:content};return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}callback&&callback(returnData);}});};publicized.createSelfThread=function(params,callback){var content={type:_constants.createThreadTypes['SELF']};if(params){if(typeof params.description==='string'){content.description=params.description;}if(typeof params.metadata==='string'){content.metadata=params.metadata;}else if((0,_typeof2["default"])(params.metadata)==='object'){try{content.metadata=JSON.stringify(params.metadata);}catch(e){consoleLogging&&console.log(e);}}if((0,_typeof2["default"])(params.message)=='object'){content.message={};if(typeof params.message.text==='string'){content.message.text=params.message.text;}if(typeof params.message.uniqueId==='string'){content.message.uniqueId=params.message.uniqueId;}if(params.message.type>0){content.message.messageType=params.message.type;}if(params.message.repliedTo>0){content.message.repliedTo=params.message.repliedTo;}if(typeof params.message.metadata==='string'){content.message.metadata=params.message.metadata;}else if((0,_typeof2["default"])(params.message.metadata)==='object'){content.message.metadata=JSON.stringify(params.message.metadata);}if(typeof params.message.systemMetadata==='string'){content.message.systemMetadata=params.message.systemMetadata;}else if((0,_typeof2["default"])(params.message.systemMetadata)==='object'){content.message.systemMetadata=JSON.stringify(params.message.systemMetadata);}if(Array.isArray(params.message.forwardedMessageIds)){content.message.forwardedMessageIds=params.message.forwardedMessageIds;content.message.forwardedUniqueIds=[];for(var i=0;i<params.message.forwardedMessageIds.length;i++){content.message.forwardedUniqueIds.push(_utility["default"].generateUUID());}}}}var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.CREATE_THREAD,typeCode:generalTypeCode,//params.typeCode,
 content:content};return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}callback&&callback(returnData);}});};publicized.sendTextMessage=function(params,callbacks){var metadata={},uniqueId;if(typeof params.uniqueId!=='undefined'){uniqueId=params.uniqueId;}else{uniqueId=_utility["default"].generateUUID();}putInChatSendQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.MESSAGE,typeCode:generalTypeCode,//params.typeCode,
 messageType:params.messageType&&typeof params.messageType.toUpperCase()!=='undefined'&&_constants.chatMessageTypes[params.messageType.toUpperCase()]>0?_constants.chatMessageTypes[params.messageType.toUpperCase()]:_constants.chatMessageTypes.TEXT,subjectId:params.threadId,repliedTo:params.repliedTo,content:params.textMessage,uniqueId:uniqueId,systemMetadata:JSON.stringify(params.systemMetadata),metadata:JSON.stringify(metadata),pushMsgType:3},callbacks:callbacks},function(){chatSendQueueHandler();});return{uniqueId:uniqueId,threadId:params.threadId,participant:chatMessaging.userInfo,content:params.content};};publicized.sendBotMessage=function(params,callbacks){var metadata={};return chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.BOT_MESSAGE,typeCode:generalTypeCode,//params.typeCode,
 subjectId:params.messageId,content:params.content,uniqueId:params.uniqueId,metadata:metadata,pushMsgType:3},callbacks);};publicized.sendFileMessage=sendFileMessage;publicized.createThreadWithFileMessage=function(params,createThreadCallback,sendFileMessageCallback){/**
-         * + CreateThreadRequest      {object}
-         *    + invitees              {object}
-         *       -id                  {string}
-         *       -idType              {int} ** inviteeVOidTypes
-         *    - title                 {string}
-         *    - type                  {int} ** createThreadTypes
-         *    - image                 {string}
-         *    - description           {string}
-         *    - metadata              {string}
-         *    - uniqueName            {string}
-         *    + message               {object}
-         *       -text                {string}
-         *       -type                {int}
-         *       -repliedTo           {int}
-         *       -uniqueId            {string}
-         *       -metadata            {string}
-         *       -systemMetadata      {string}
-         *       -forwardedMessageIds {string}
-         *       -forwardedUniqueIds  {string}
-         */var content={};if(params){if(typeof params.title==='string'){content.title=params.title;}if(typeof params.type==='string'){var threadType=params.type;content.type=_constants.createThreadTypes[threadType];}if(Array.isArray(params.invitees)){content.invitees=[];for(var i=0;i<params.invitees.length;i++){var tempInvitee=formatDataToMakeInvitee(params.invitees[i]);if(tempInvitee){content.invitees.push(tempInvitee);}}}if(typeof params.description==='string'){content.description=params.description;}if(typeof params.content==='string'){content.content=params.content;}if(typeof params.metadata==='string'){content.metadata=params.metadata;}else if((0,_typeof2["default"])(params.metadata)==='object'){try{content.metadata=JSON.stringify(params.metadata);}catch(e){consoleLogging&&console.log(e);}}}var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.CREATE_THREAD,typeCode:generalTypeCode,//params.typeCode,
-content:content};return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}createThreadCallback&&createThreadCallback(returnData);sendFileMessage({threadId:returnData.result.thread.id,file:params.file,content:params.caption,messageType:params.messageType,userGroupHash:returnData.result.thread.userGroupHash},sendFileMessageCallback);}});};publicized.sendLocationMessage=function(params,callbacks){var data={},url=SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.STATIC_IMAGE,hasError=false,fileUniqueId=_utility["default"].generateUUID();if(params){if(typeof params.mapType==='string'){data.type=params.mapType;}else{data.type='standard-night';}if(parseInt(params.mapZoom)>0){data.zoom=params.mapZoom;}else{data.zoom=15;}if(parseInt(params.mapWidth)>0){data.width=params.mapWidth;}else{data.width=800;}if(parseInt(params.mapHeight)>0){data.height=params.mapHeight;}else{data.height=600;}if((0,_typeof2["default"])(params.mapCenter)==='object'){if(parseFloat(params.mapCenter.lat)>0&&parseFloat(params.mapCenter.lng)){data.center=params.mapCenter.lat+','+parseFloat(params.mapCenter.lng);}else{hasError=true;_events.chatEvents.fireEvent('error',{code:6700,message:CHAT_ERRORS[6700],error:undefined});}}else{hasError=true;_events.chatEvents.fireEvent('error',{code:6700,message:CHAT_ERRORS[6700],error:undefined});}data.key=mapApiKey;data.marker='red';}var keys=Object.keys(data);if(keys.length>0){url+='?';for(var i=0;i<keys.length;i++){var key=keys[i];url+=key+'='+data[key];if(i<keys.length-1){url+='&';}}}if(!hasError){mapReverse({lng:parseFloat(params.mapCenter.lng),lat:parseFloat(params.mapCenter.lat)},function(address){getImageFormUrl(url,fileUniqueId,function(blobImage){sendFileMessage({threadId:params.threadId,fileUniqueId:fileUniqueId,file:new File([blobImage],"location.png",{type:"image/png",lastModified:new Date()}),content:address.result.formatted_address,messageType:'POD_SPACE_PICTURE',userGroupHash:params.userGroupHash,metadata:{mapLink:"https://maps.neshan.org/@".concat(data.center,",").concat(data.zoom,"z"),address:address}},callbacks);});});}return{uniqueId:fileUniqueId,threadId:params.threadId,participant:chatMessaging.userInfo,cancel:function cancel(){if(typeof getImageFromLinkObjects!=='undefined'&&getImageFromLinkObjects.hasOwnProperty(fileUniqueId)){getImageFromLinkObjects[fileUniqueId].onload=function(){};delete getImageFromLinkObjects[fileUniqueId];consoleLogging&&console.log("\"".concat(fileUniqueId,"\" - Downloading Location Map has been canceled!"));}cancelFileUpload({uniqueId:fileUniqueId},function(){consoleLogging&&console.log("\"".concat(fileUniqueId,"\" - Sending Location Message has been canceled!"));});}};};publicized.resendMessage=function(uniqueId,callbacks){if(hasCache&&(0,_typeof2["default"])(queueDb)=='object'&&!forceWaitQueueInMemory){queueDb.waitQ.where('uniqueId').equals(uniqueId).and(function(item){return item.owner===parseInt(chatMessaging.userInfo.id);}).toArray().then(function(messages){if(messages.length){putInChatSendQueue({message:_utility["default"].jsonParser(chatDecrypt(messages[0].message,cacheSecret)),callbacks:callbacks},function(){chatSendQueueHandler();});}})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{for(var i=0;i<chatWaitQueue.length;i++){if(chatWaitQueue[i].uniqueId===uniqueId){putInChatSendQueue({message:chatWaitQueue[i],callbacks:callbacks},function(){chatSendQueueHandler();},true);// break;
-}}}};publicized.cancelMessage=cancelMessage;publicized.clearHistory=function(params,callback){/**
-         * + Clear History Request Object    {object}
-         *    - subjectId                    {int}
-         */var clearHistoryParams={chatMessageVOType:_constants.chatMessageVOTypes.CLEAR_HISTORY,typeCode:generalTypeCode//params.typeCode
-};if(params){if(parseInt(params.threadId)>0){clearHistoryParams.subjectId=params.threadId;}}return chatMessaging.sendMessage(clearHistoryParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){returnData.result={thread:result.result};/**
-                     * Delete all messages of this thread from cache
-                     */if(canUseCache){if(db){db.messages.where('threadId').equals(parseInt(result.result)).and(function(message){return message.owner===chatMessaging.userInfo.id;})["delete"]()["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}callback&&callback(returnData);}});};publicized.getImage=getImage;publicized.getFile=getFile;publicized.getFileFromPodspace=getFileFromPodspaceNew;//getFileFromPodspace;
+     * + CreateThreadRequest      {object}
+     *    + invitees              {object}
+     *       -id                  {string}
+     *       -idType              {int} ** inviteeVOidTypes
+     *    - title                 {string}
+     *    - type                  {int} ** createThreadTypes
+     *    - image                 {string}
+     *    - description           {string}
+     *    - metadata              {string}
+     *    - uniqueName            {string}
+     *    + message               {object}
+     *       -text                {string}
+     *       -type                {int}
+     *       -repliedTo           {int}
+     *       -uniqueId            {string}
+     *       -metadata            {string}
+     *       -systemMetadata      {string}
+     *       -forwardedMessageIds {string}
+     *       -forwardedUniqueIds  {string}
+     */var content={};if(params){if(typeof params.title==='string'){content.title=params.title;}if(typeof params.type==='string'){var threadType=params.type;content.type=_constants.createThreadTypes[threadType];}if(Array.isArray(params.invitees)){content.invitees=[];for(var i=0;i<params.invitees.length;i++){var tempInvitee=formatDataToMakeInvitee(params.invitees[i]);if(tempInvitee){content.invitees.push(tempInvitee);}}}if(typeof params.description==='string'){content.description=params.description;}if(typeof params.content==='string'){content.content=params.content;}if(typeof params.metadata==='string'){content.metadata=params.metadata;}else if((0,_typeof2["default"])(params.metadata)==='object'){try{content.metadata=JSON.stringify(params.metadata);}catch(e){consoleLogging&&console.log(e);}}}var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.CREATE_THREAD,typeCode:generalTypeCode,//params.typeCode,
+content:content};return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}createThreadCallback&&createThreadCallback(returnData);sendFileMessage({threadId:returnData.result.thread.id,file:params.file,content:params.caption,messageType:params.messageType,userGroupHash:returnData.result.thread.userGroupHash},sendFileMessageCallback);}});};publicized.sendLocationMessage=function(params,callbacks){var data={},url=SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.STATIC_IMAGE,hasError=false,fileUniqueId=_utility["default"].generateUUID();if(params){if(typeof params.mapType==='string'){data.type=params.mapType;}else{data.type='standard-night';}if(parseInt(params.mapZoom)>0){data.zoom=params.mapZoom;}else{data.zoom=15;}if(parseInt(params.mapWidth)>0){data.width=params.mapWidth;}else{data.width=800;}if(parseInt(params.mapHeight)>0){data.height=params.mapHeight;}else{data.height=600;}if((0,_typeof2["default"])(params.mapCenter)==='object'){if(parseFloat(params.mapCenter.lat)>0&&parseFloat(params.mapCenter.lng)){data.center=params.mapCenter.lat+','+parseFloat(params.mapCenter.lng);}else{hasError=true;_events.chatEvents.fireEvent('error',{code:6700,message:CHAT_ERRORS[6700],error:undefined});}}else{hasError=true;_events.chatEvents.fireEvent('error',{code:6700,message:CHAT_ERRORS[6700],error:undefined});}data.key=mapApiKey;data.marker='red';}var keys=Object.keys(data);if(keys.length>0){url+='?';for(var i=0;i<keys.length;i++){var key=keys[i];url+=key+'='+data[key];if(i<keys.length-1){url+='&';}}}if(!hasError){mapReverse({lng:parseFloat(params.mapCenter.lng),lat:parseFloat(params.mapCenter.lat)},function(address){getImageFormUrl(url,fileUniqueId,function(blobImage){sendFileMessage({threadId:params.threadId,fileUniqueId:fileUniqueId,file:new File([blobImage],"location.png",{type:"image/png",lastModified:new Date()}),content:address.result.formatted_address,messageType:'POD_SPACE_PICTURE',userGroupHash:params.userGroupHash,metadata:{mapLink:"https://maps.neshan.org/@".concat(data.center,",").concat(data.zoom,"z"),address:address}},callbacks);});});}return{uniqueId:fileUniqueId,threadId:params.threadId,participant:chatMessaging.userInfo,cancel:function cancel(){if(typeof getImageFromLinkObjects!=='undefined'&&getImageFromLinkObjects.hasOwnProperty(fileUniqueId)){getImageFromLinkObjects[fileUniqueId].onload=function(){};delete getImageFromLinkObjects[fileUniqueId];consoleLogging&&console.log("\"".concat(fileUniqueId,"\" - Downloading Location Map has been canceled!"));}cancelFileUpload({uniqueId:fileUniqueId},function(){consoleLogging&&console.log("\"".concat(fileUniqueId,"\" - Sending Location Message has been canceled!"));});}};};publicized.resendMessage=function(uniqueId,callbacks){for(var i=0;i<chatWaitQueue.length;i++){if(chatWaitQueue[i].uniqueId===uniqueId){putInChatSendQueue({message:chatWaitQueue[i],callbacks:callbacks},function(){chatSendQueueHandler();},true);// break;
+}}};publicized.cancelMessage=cancelMessage;publicized.clearHistory=function(params,callback){/**
+     * + Clear History Request Object    {object}
+     *    - subjectId                    {int}
+     */var clearHistoryParams={chatMessageVOType:_constants.chatMessageVOTypes.CLEAR_HISTORY,typeCode:generalTypeCode//params.typeCode
+};if(params){if(parseInt(params.threadId)>0){clearHistoryParams.subjectId=params.threadId;}}return chatMessaging.sendMessage(clearHistoryParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){returnData.result={thread:result.result};}callback&&callback(returnData);}});};publicized.getImage=getImage;publicized.getFile=getFile;publicized.getFileFromPodspace=getFileFromPodspaceNew;//getFileFromPodspace;
 publicized.getImageFromPodspace=getImageFromPodspaceNew;//getImageFromPodspace;
 publicized.uploadFile=uploadFile;publicized.uploadImage=uploadImage;publicized.uploadFileToPodspace=uploadFileToPodspaceNew;publicized.uploadImageToPodspace=uploadImageToPodspaceNew;publicized.cancelFileUpload=cancelFileUpload;publicized.cancelFileDownload=cancelFileDownload;publicized.editMessage=function(params,callback){return chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.EDIT_MESSAGE,typeCode:generalTypeCode,//params.typeCode,
-messageType:params.messageType,subjectId:params.messageId,repliedTo:params.repliedTo,content:params.content,uniqueId:params.uniqueId,metadata:params.metadata,systemMetadata:params.systemMetadata,pushMsgType:3},{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result,resultData={editedMessage:formatDataToMakeMessage(undefined,messageContent)};returnData.result=resultData;/**
-                     * Update Message on cache
-                     */if(canUseCache&&cacheSecret.length>0){if(db){try{var tempData={},salt=_utility["default"].generateUUID();tempData.id=parseInt(resultData.editedMessage.id);tempData.owner=parseInt(chatMessaging.userInfo.id);tempData.threadId=parseInt(resultData.editedMessage.threadId);tempData.time=resultData.editedMessage.time;tempData.message=_utility["default"].crypt(resultData.editedMessage.message,cacheSecret,salt);tempData.data=_utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(resultData.editedMessage)),cacheSecret,salt);tempData.salt=salt;/**
-                                 * Insert Message into cache database
-                                 */db.messages.put(tempData)["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}catch(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}callback&&callback(returnData);}});};publicized.deleteMessage=function(params,callback){return chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.DELETE_MESSAGE,typeCode:generalTypeCode,//params.typeCode,
-subjectId:params.messageId,uniqueId:params.uniqueId,content:JSON.stringify({'deleteForAll':typeof params.deleteForAll==='boolean'?params.deleteForAll:false}),pushMsgType:3},{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){returnData.result={deletedMessage:{id:result.result.id,pinned:result.result.pinned,mentioned:result.result.mentioned,messageType:result.result.messageType,edited:result.result.edited,editable:result.result.editable,deletable:result.result.deletable}};/**
-                     * Remove Message from cache
-                     */if(canUseCache){if(db){db.messages.where('id').equals(parseInt(result.result))["delete"]()["catch"](function(error){_events.chatEvents.fireEvent('error',{code:6602,message:CHAT_ERRORS[6602],error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}callback&&callback(returnData);}});};publicized.deleteMultipleMessages=function(params,callback){var messageIdsList=params.messageIds,uniqueIdsList=[];for(var i in messageIdsList){var uniqueId=_utility["default"].generateUUID();uniqueIdsList.push(uniqueId);chatMessaging.messagesCallbacks[uniqueId]=function(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){returnData.result={deletedMessage:{id:result.result.id,pinned:result.result.pinned,mentioned:result.result.mentioned,messageType:result.result.messageType,edited:result.result.edited,editable:result.result.editable,deletable:result.result.deletable}};/**
-                     * Remove Message from cache
-                     */if(canUseCache){if(db){db.messages.where('id').equals(parseInt(result.result))["delete"]()["catch"](function(error){_events.chatEvents.fireEvent('error',{code:6602,message:CHAT_ERRORS[6602],error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}callback&&callback(returnData);};}return chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.DELETE_MESSAGE,typeCode:generalTypeCode,//params.typeCode,
+messageType:params.messageType,subjectId:params.messageId,repliedTo:params.repliedTo,content:params.content,uniqueId:params.uniqueId,metadata:params.metadata,systemMetadata:params.systemMetadata,pushMsgType:3},{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result,resultData={editedMessage:formatDataToMakeMessage(undefined,messageContent)};returnData.result=resultData;}callback&&callback(returnData);}});};publicized.deleteMessage=function(params,callback){return chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.DELETE_MESSAGE,typeCode:generalTypeCode,//params.typeCode,
+subjectId:params.messageId,uniqueId:params.uniqueId,content:JSON.stringify({'deleteForAll':typeof params.deleteForAll==='boolean'?params.deleteForAll:false}),pushMsgType:3},{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){returnData.result={deletedMessage:{id:result.result.id,pinned:result.result.pinned,mentioned:result.result.mentioned,messageType:result.result.messageType,edited:result.result.edited,editable:result.result.editable,deletable:result.result.deletable}};}callback&&callback(returnData);}});};publicized.deleteMultipleMessages=function(params,callback){var messageIdsList=params.messageIds,uniqueIdsList=[];for(var i in messageIdsList){var uniqueId=_utility["default"].generateUUID();uniqueIdsList.push(uniqueId);chatMessaging.messagesCallbacks[uniqueId]=function(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){returnData.result={deletedMessage:{id:result.result.id,pinned:result.result.pinned,mentioned:result.result.mentioned,messageType:result.result.messageType,edited:result.result.edited,editable:result.result.editable,deletable:result.result.deletable}};}callback&&callback(returnData);};}return chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.DELETE_MESSAGE,typeCode:generalTypeCode,//params.typeCode,
 content:{uniqueIds:uniqueIdsList,ids:messageIdsList,deleteForAll:typeof params.deleteForAll==='boolean'?params.deleteForAll:false},pushMsgType:3});};publicized.replyTextMessage=function(params,callbacks){var uniqueId;if(typeof params.uniqueId!=='undefined'){uniqueId=params.uniqueId;}else{uniqueId=_utility["default"].generateUUID();}putInChatSendQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.MESSAGE,typeCode:generalTypeCode,//params.typeCode,
 messageType:1,subjectId:params.threadId,repliedTo:params.repliedTo,content:params.textMessage,uniqueId:uniqueId,systemMetadata:JSON.stringify(params.systemMetadata),metadata:JSON.stringify(params.metadata),pushMsgType:3},callbacks:callbacks},function(){chatSendQueueHandler();});return{uniqueId:uniqueId,threadId:params.threadId,participant:chatMessaging.userInfo,content:params.content};};publicized.replyFileMessage=function(params,callbacks){var metadata={file:{}},fileUploadParams={},fileUniqueId=_utility["default"].generateUUID();if(!params.userGroupHash||params.userGroupHash.length===0||typeof params.userGroupHash!=='string'){_events.chatEvents.fireEvent('error',{code:6304,message:CHAT_ERRORS[6304]});return;}else{fileUploadParams.userGroupHash=params.userGroupHash;}return chatUploadHandler({threadId:params.threadId,file:params.file,fileUniqueId:fileUniqueId},function(uploadHandlerResult,uploadHandlerMetadata,fileType,fileExtension){fileUploadParams=Object.assign(fileUploadParams,uploadHandlerResult);putInChatUploadQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.MESSAGE,typeCode:generalTypeCode,//params.typeCode,
 messageType:params.messageType&&typeof params.messageType.toUpperCase()!=='undefined'&&_constants.chatMessageTypes[params.messageType.toUpperCase()]>0?_constants.chatMessageTypes[params.messageType.toUpperCase()]:1,subjectId:params.threadId,repliedTo:params.repliedTo,content:params.content,metadata:JSON.stringify(uploadHandlerMetadata),systemMetadata:JSON.stringify(params.systemMetadata),uniqueId:fileUniqueId,pushMsgType:3},callbacks:callbacks},function(){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){uploadImageToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){metadata['name']=result.result.name;metadata['fileHash']=result.result.hash;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['actualHeight']=result.result.actualHeight;metadata['file']['actualWidth']=result.result.actualWidth;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;metadata['file']['link']="".concat(SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS,"/api/images/").concat(result.result.hash,"?checkUserGroupAccess=true");transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}else{uploadFileToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){metadata['fileHash']=result.result.hash;metadata['name']=result.result.name;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}});});};publicized.forwardMessage=function(params,callbacks){var threadId=params.threadId,messageIdsList=params.messageIds,uniqueIdsList=[];for(var i in messageIdsList){if(!chatMessaging.threadCallbacks[threadId]){chatMessaging.threadCallbacks[threadId]={};}var uniqueId=_utility["default"].generateUUID();uniqueIdsList.push(uniqueId);chatMessaging.threadCallbacks[threadId][uniqueId]={};chatMessaging.sendMessageCallbacks[uniqueId]={};if(callbacks.onSent){chatMessaging.sendMessageCallbacks[uniqueId].onSent=callbacks.onSent;chatMessaging.threadCallbacks[threadId][uniqueId].onSent=false;chatMessaging.threadCallbacks[threadId][uniqueId].uniqueId=uniqueId;}if(callbacks.onSeen){chatMessaging.sendMessageCallbacks[uniqueId].onSeen=callbacks.onSeen;chatMessaging.threadCallbacks[threadId][uniqueId].onSeen=false;}if(callbacks.onDeliver){chatMessaging.sendMessageCallbacks[uniqueId].onDeliver=callbacks.onDeliver;chatMessaging.threadCallbacks[threadId][uniqueId].onDeliver=false;}}putInChatSendQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.FORWARD_MESSAGE,typeCode:generalTypeCode,//params.typeCode,
@@ -48353,9 +43580,7 @@ pushMsgType:3,token:token,timeout:params.timeout};if(params){if(parseInt(params.
 content:{},pushMsgType:3,token:token,timeout:params.timeout};if(params){if(parseInt(params.contactId)>0){blockData.content.contactId=params.contactId;}if(parseInt(params.threadId)>0){blockData.content.threadId=params.threadId;}if(parseInt(params.userId)>0){blockData.content.userId=params.userId;}}return chatMessaging.sendMessage(blockData,{onResult:function onResult(result){if((0,_typeof2["default"])(result.result)=='object'){result.result=formatDataToMakeBlockedUser(result.result);}callback&&callback(result);}});};publicized.unblock=function(params,callback){var unblockData={chatMessageVOType:_constants.chatMessageVOTypes.UNBLOCK,typeCode:generalTypeCode,//params.typeCode,
 pushMsgType:3,token:token,content:{},timeout:params.timeout};if(params){if(parseInt(params.blockId)>0){unblockData.subjectId=params.blockId;}if(parseInt(params.contactId)>0){unblockData.content.contactId=params.contactId;}if(parseInt(params.threadId)>0){unblockData.content.threadId=params.threadId;}if(parseInt(params.userId)>0){unblockData.content.userId=params.userId;}}return chatMessaging.sendMessage(unblockData,{onResult:function onResult(result){if((0,_typeof2["default"])(result.result)=='object'){result.result=formatDataToMakeBlockedUser(result.result);}callback&&callback(result);}});};publicized.getBlockedList=function(params,callback){var count=50,offset=0,content={};if(params){if(parseInt(params.count)>0){count=params.count;}if(parseInt(params.offset)>0){offset=params.offset;}}content.count=count;content.offset=offset;var getBlockedData={chatMessageVOType:_constants.chatMessageVOTypes.GET_BLOCKED,typeCode:generalTypeCode,//params.typeCode,
 content:content,pushMsgType:3,token:token,timeout:params.timeout};return chatMessaging.sendMessage(getBlockedData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={blockedUsers:[],contentCount:result.contentCount,hasNext:offset+count<result.contentCount&&messageLength>0,nextOffset:offset*1+messageLength*1},blockedUser;for(var i=0;i<messageLength;i++){blockedUser=formatDataToMakeBlockedUser(messageContent[i]);if(blockedUser){resultData.blockedUsers.push(blockedUser);}}returnData.result=resultData;}callback&&callback(returnData);}});};publicized.getUserNotSeenDuration=function(params,callback){var content={};if(params){if(Array.isArray(params.userIds)){content.userIds=params.userIds;}}var getNotSeenDurationData={chatMessageVOType:_constants.chatMessageVOTypes.GET_NOT_SEEN_DURATION,typeCode:generalTypeCode,//params.typeCode,
-content:content,pushMsgType:3,token:token,timeout:params.timeout};return chatMessaging.sendMessage(getNotSeenDurationData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){returnData.result=result.result;}callback&&callback(returnData);}});};publicized.addContacts=function(params,callback){var data={};if(params){if(typeof params.firstName==='string'){data.firstName=params.firstName;}else{data.firstName='';}if(typeof params.lastName==='string'){data.lastName=params.lastName;}else{data.lastName='';}if(typeof params.typeCode==='string'){data.typeCode=params.typeCode;}else if(generalTypeCode){data.typeCode=generalTypeCode;}data.ownerId=typeCodeOwnerId?typeCodeOwnerId:params.ownerId?params.ownerId:undefined;if(typeof params.cellphoneNumber==='string'){data.cellphoneNumber=params.cellphoneNumber;}else{data.cellphoneNumber='';}if(typeof params.email==='string'){data.email=params.email;}else{data.email='';}if(typeof params.username==='string'){data.username=params.username;}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.ADD_CONTACTS,method:'POST',data:data,headers:{'_token_':token,'_token_issuer_':1}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if(!responseData.hasError){var messageContent=responseData.result,messageLength=responseData.result.length,resultData={contacts:[],contentCount:messageLength},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;/**
-                     * Add Contacts into cache database #cache
-                     */if(canUseCache&&cacheSecret.length>0){if(db){var cacheData=[];for(var i=0;i<resultData.contacts.length;i++){try{var tempData={},salt=_utility["default"].generateUUID();tempData.id=resultData.contacts[i].id;tempData.owner=chatMessaging.userInfo.id;tempData.uniqueId=resultData.contacts[i].uniqueId;tempData.userId=_utility["default"].crypt(resultData.contacts[i].userId,cacheSecret,salt);tempData.cellphoneNumber=_utility["default"].crypt(resultData.contacts[i].cellphoneNumber,cacheSecret,salt);tempData.email=_utility["default"].crypt(resultData.contacts[i].email,cacheSecret,salt);tempData.firstName=_utility["default"].crypt(resultData.contacts[i].firstName,cacheSecret,salt);tempData.lastName=_utility["default"].crypt(resultData.contacts[i].lastName,cacheSecret,salt);tempData.expireTime=new Date().getTime()+cacheExpireTime;tempData.data=_utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(resultData.contacts[i])),cacheSecret,salt);tempData.salt=salt;cacheData.push(tempData);}catch(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}db.contacts.bulkPut(cacheData)["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}callback&&callback(returnData);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});};publicized.newAddContacts=function(params,callback){var addContactsData={chatMessageVOType:_constants.chatMessageVOTypes.ADD_CONTACTS,content:{},pushMsgType:3,token:token,typeCode:generalTypeCode},AddContactVO={},firstNameList=[],lastNameList=[],cellPhoneNumberList=[],emailList=[],userNameList=[],uniqueIdList=[];if(params){//for(var item in params.contacts) {
+content:content,pushMsgType:3,token:token,timeout:params.timeout};return chatMessaging.sendMessage(getNotSeenDurationData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){returnData.result=result.result;}callback&&callback(returnData);}});};publicized.addContacts=function(params,callback){var data={};if(params){if(typeof params.firstName==='string'){data.firstName=params.firstName;}else{data.firstName='';}if(typeof params.lastName==='string'){data.lastName=params.lastName;}else{data.lastName='';}if(typeof params.typeCode==='string'){data.typeCode=params.typeCode;}else if(generalTypeCode){data.typeCode=generalTypeCode;}data.ownerId=typeCodeOwnerId?typeCodeOwnerId:params.ownerId?params.ownerId:undefined;if(typeof params.cellphoneNumber==='string'){data.cellphoneNumber=params.cellphoneNumber;}else{data.cellphoneNumber='';}if(typeof params.email==='string'){data.email=params.email;}else{data.email='';}if(typeof params.username==='string'){data.username=params.username;}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.ADD_CONTACTS,method:'POST',data:data,headers:{'_token_':token,'_token_issuer_':1}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if(!responseData.hasError){var messageContent=responseData.result,messageLength=responseData.result.length,resultData={contacts:[],contentCount:messageLength},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;}callback&&callback(returnData);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});};publicized.newAddContacts=function(params,callback){var addContactsData={chatMessageVOType:_constants.chatMessageVOTypes.ADD_CONTACTS,content:{},pushMsgType:3,token:token,typeCode:generalTypeCode},AddContactVO={},firstNameList=[],lastNameList=[],cellPhoneNumberList=[],emailList=[],userNameList=[],uniqueIdList=[];if(params){//for(var item in params.contacts) {
 if(typeof params.firstName==='string'){firstNameList.push(params.firstName);}else{firstNameList.push('');}if(typeof params.lastName==='string'){lastNameList.push(params.lastName);}else{lastNameList.push('');}if(typeof params.cellphoneNumber==='string'){cellPhoneNumberList.push(params.cellphoneNumber);// data.cellphoneNumber = params.cellphoneNumber;
 }else{cellPhoneNumberList.push('');// data.cellphoneNumber = '';
 }if(typeof params.email==='string'){emailList.push(params.email);// data.email = params.email;
@@ -48364,134 +43589,84 @@ if(typeof params.firstName==='string'){firstNameList.push(params.firstName);}els
 }uniqueIdList.push(_utility["default"].generateUUID());// data.uniqueId = Utility.generateUUID();
 //}
 AddContactVO={uniqueIdList:uniqueIdList,emailList:emailList,userNameList:userNameList,firstNameList:firstNameList,lastNameList:lastNameList,cellphoneNumberList:cellPhoneNumberList};}addContactsData.content=AddContactVO;return chatMessaging.sendMessage(addContactsData,{onResult:function onResult(result){// var responseData = JSON.parse(result.result.responseText);
-var returnData={hasError:result.hasError,cache:false,errorMessage:result.message,errorCode:result.errorCode};if((0,_typeof2["default"])(result.result)=='object'){var _result$result,_result$result2,_result$result2$resul;var messageContent=result===null||result===void 0?void 0:(_result$result=result.result)===null||_result$result===void 0?void 0:_result$result.result,messageLength=result===null||result===void 0?void 0:(_result$result2=result.result)===null||_result$result2===void 0?void 0:(_result$result2$resul=_result$result2.result)===null||_result$result2$resul===void 0?void 0:_result$result2$resul.length,resultData={contacts:[],contentCount:messageLength},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;/**
-                     * Add Contacts into cache database #cache
-                     */if(canUseCache&&cacheSecret.length>0){if(db){var cacheData=[];for(var i=0;i<resultData.contacts.length;i++){try{var tempData={},salt=_utility["default"].generateUUID();tempData.id=resultData.contacts[i].id;tempData.owner=chatMessaging.userInfo.id;tempData.uniqueId=resultData.contacts[i].uniqueId;tempData.userId=_utility["default"].crypt(resultData.contacts[i].userId,cacheSecret,salt);tempData.cellphoneNumber=_utility["default"].crypt(resultData.contacts[i].cellphoneNumber,cacheSecret,salt);tempData.email=_utility["default"].crypt(resultData.contacts[i].email,cacheSecret,salt);tempData.firstName=_utility["default"].crypt(resultData.contacts[i].firstName,cacheSecret,salt);tempData.lastName=_utility["default"].crypt(resultData.contacts[i].lastName,cacheSecret,salt);tempData.expireTime=new Date().getTime()+cacheExpireTime;tempData.data=_utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(resultData.contacts[i])),cacheSecret,salt);tempData.salt=salt;cacheData.push(tempData);}catch(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}db.contacts.bulkPut(cacheData)["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}// }
+var returnData={hasError:result.hasError,cache:false,errorMessage:result.message,errorCode:result.errorCode};if((0,_typeof2["default"])(result.result)=='object'){var _result$result,_result$result2,_result$result2$resul;var messageContent=result===null||result===void 0?void 0:(_result$result=result.result)===null||_result$result===void 0?void 0:_result$result.result,messageLength=result===null||result===void 0?void 0:(_result$result2=result.result)===null||_result$result2===void 0?void 0:(_result$result2$resul=_result$result2.result)===null||_result$result2$resul===void 0?void 0:_result$result2$resul.length,resultData={contacts:[],contentCount:messageLength},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;// }
 callback&&callback(returnData);}//callback && callback(result);
 }});/* var requestParams = {
-            url: SERVICE_ADDRESSES.PLATFORM_ADDRESS + SERVICES_PATH.ADD_CONTACTS,
-            method: 'POST',
-            data: data,
-            headers: {
-                '_token_': token,
-                '_token_issuer_': 1
-            }
-        }; */ /*httpRequest(requestParams, function (result) {
-            if (!result.hasError) {
-                var responseData = JSON.parse(result.result.responseText);
-
-                var returnData = {
-                    hasError: responseData.hasError,
-                    cache: false,
-                    errorMessage: responseData.message,
-                    errorCode: responseData.errorCode
-                };
-
-                if (!responseData.hasError) {*/ //} else {
+        url: SERVICE_ADDRESSES.PLATFORM_ADDRESS + SERVICES_PATH.ADD_CONTACTS,
+        method: 'POST',
+        data: data,
+        headers: {
+            '_token_': token,
+            '_token_issuer_': 1
+        }
+    }; */ /*httpRequest(requestParams, function (result) {
+        if (!result.hasError) {
+            var responseData = JSON.parse(result.result.responseText);
+              var returnData = {
+                hasError: responseData.hasError,
+                cache: false,
+                errorMessage: responseData.message,
+                errorCode: responseData.errorCode
+            };
+              if (!responseData.hasError) {*/ //} else {
 /*  chatEvents.fireEvent('error', {
-                    code: result.errorCode,
-                    message: result.errorMessage,
-                    error: result
-                });
-                */ //}
+          code: result.errorCode,
+          message: result.errorMessage,
+          error: result
+      });
+      */ //}
 //});
 };/*
-    publicized.removeContacts = function ({id}, callback) {
-        var data = {
-                chatMessageVOType: chatMessageVOTypes.REMOVE_CONTACTS,
-                content: [
-                    parseInt(id)
-                ],
-                pushMsgType: 3,
-                token: token,
-                typeCode: generalTypeCode
-            }
-
-
-            if(!id) {
-                chatEvents.fireEvent('error', {
-                    code: 999,
-                    message: 'ID is required for Deleting Contact!',
-                    error: undefined
-                });
-            }
-
-
-        return chatMessaging.sendMessage(data, {
-            onResult: function (result) {
-            if (!result.hasError) {
-                // var responseData = JSON.parse(result.result.responseText);
-                //
-                /!*var returnData = {
-                    hasError: result.hasError,
-                    cache: false,
-                    errorMessage: result.errorMessage,
-                    errorCode: result.errorCode
-                };
-
-
-
-                if (!result.hasError) {
-                    returnData.result = result.result;
-                }*!/
-
-                /!**
-                 * Remove the contact from cache
-                 *!/
-                if (canUseCache) {
-                    if (db) {
-                        db.contacts.where('id')
-                            .equals(parseInt(params.id))
-                            .delete()
-                            .catch(function (error) {
-                                chatEvents.fireEvent('error', {
-                                    code: 6602,
-                                    message: CHAT_ERRORS[6602],
-                                    error: error
-                                });
-                            });
-                    } else {
-                        chatEvents.fireEvent('error', {
-                            code: 6601,
-                            message: CHAT_ERRORS[6601],
-                            error: null
-                        });
-                    }
-                }
-
-                result.result.uniqueId = result.uniqueId;
-                callback && callback(result.result);
-            } else {
-                chatEvents.fireEvent('error', {
-                    code: result.errorCode,
-                    message: result.errorMessage,
-                    error: result
-                });
-            }
-        }});
-    };
-*/publicized.updateContacts=function(params,callback){var data={};if(params){if(parseInt(params.id)>0){data.id=parseInt(params.id);}else{_events.chatEvents.fireEvent('error',{code:999,message:'ID is required for Updating Contact!',error:undefined});}if(typeof params.firstName==='string'){data.firstName=params.firstName;}else{_events.chatEvents.fireEvent('error',{code:999,message:'firstName is required for Updating Contact!'});}if(typeof params.lastName==='string'){data.lastName=params.lastName;}else{_events.chatEvents.fireEvent('error',{code:999,message:'lastName is required for Updating Contact!'});}if(typeof params.cellphoneNumber==='string'){data.cellphoneNumber=params.cellphoneNumber;}else{_events.chatEvents.fireEvent('error',{code:999,message:'cellphoneNumber is required for Updating Contact!'});}if(typeof params.email==='string'){data.email=params.email;}else{_events.chatEvents.fireEvent('error',{code:999,message:'email is required for Updating Contact!'});}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.UPDATE_CONTACTS,method:'GET',data:data,headers:{'_token_':token,'_token_issuer_':1}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if(!responseData.hasError){var messageContent=responseData.result,messageLength=responseData.result.length,resultData={contacts:[],contentCount:messageLength},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;/**
-                     * Add Contacts into cache database #cache
-                     */if(canUseCache&&cacheSecret.length>0){if(db){var cacheData=[];for(var i=0;i<resultData.contacts.length;i++){try{var tempData={},salt=_utility["default"].generateUUID();tempData.id=resultData.contacts[i].id;tempData.owner=chatMessaging.userInfo.id;tempData.uniqueId=resultData.contacts[i].uniqueId;tempData.userId=_utility["default"].crypt(resultData.contacts[i].userId,cacheSecret,salt);tempData.cellphoneNumber=_utility["default"].crypt(resultData.contacts[i].cellphoneNumber,cacheSecret,salt);tempData.email=_utility["default"].crypt(resultData.contacts[i].email,cacheSecret,salt);tempData.firstName=_utility["default"].crypt(resultData.contacts[i].firstName,cacheSecret,salt);tempData.lastName=_utility["default"].crypt(resultData.contacts[i].lastName,cacheSecret,salt);tempData.expireTime=new Date().getTime()+cacheExpireTime;tempData.data=_utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(resultData.contacts[i])),cacheSecret,salt);tempData.salt=salt;cacheData.push(tempData);}catch(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}db.contacts.bulkPut(cacheData)["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}callback&&callback(returnData);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});};publicized.removeContacts=function(params,callback){var data={};if(params){if(parseInt(params.id)>0){data.id=parseInt(params.id);}else{_events.chatEvents.fireEvent('error',{code:999,message:'ID is required for Deleting Contact!',error:undefined});}}data.ownerId=typeCodeOwnerId?typeCodeOwnerId:params.ownerId?params.ownerId:undefined;var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.REMOVE_CONTACTS,method:'POST',data:data,headers:{'_token_':token,'_token_issuer_':1}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if(!responseData.hasError){returnData.result=responseData.result;}/**
-                 * Remove the contact from cache
-                 */if(canUseCache){if(db){db.contacts.where('id').equals(parseInt(params.id))["delete"]()["catch"](function(error){_events.chatEvents.fireEvent('error',{code:6602,message:CHAT_ERRORS[6602],error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}callback&&callback(returnData);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});};publicized.searchContacts=function(params,callback){var data={size:50,offset:0},whereClause={},returnCache=false;if(params){if(typeof params.firstName==='string'){data.firstName=whereClause.firstName=params.firstName;}if(typeof params.lastName==='string'){data.lastName=whereClause.lastName=params.lastName;}if(parseInt(params.cellphoneNumber)>0){data.cellphoneNumber=whereClause.cellphoneNumber=params.cellphoneNumber;}if(typeof params.email==='string'){data.email=whereClause.email=params.email;}if(typeof params.query==='string'){data.q=whereClause.q=params.query;}if(typeof params.uniqueId==='string'){data.uniqueId=whereClause.uniqueId=params.uniqueId;}if(parseInt(params.id)>0){data.id=whereClause.id=params.id;}if(parseInt(params.typeCode)>0){data.typeCode=whereClause.typeCode=params.typeCode;}// data.typeCode = whereClause.typeCode = generalTypeCode;//params.typeCode;
+      publicized.removeContacts = function ({id}, callback) {
+          var data = {
+                  chatMessageVOType: chatMessageVOTypes.REMOVE_CONTACTS,
+                  content: [
+                      parseInt(id)
+                  ],
+                  pushMsgType: 3,
+                  token: token,
+                  typeCode: generalTypeCode
+              }
+                  if(!id) {
+                  chatEvents.fireEvent('error', {
+                      code: 999,
+                      message: 'ID is required for Deleting Contact!',
+                      error: undefined
+                  });
+              }
+              return chatMessaging.sendMessage(data, {
+              onResult: function (result) {
+              if (!result.hasError) {
+                  // var responseData = JSON.parse(result.result.responseText);
+                  //
+                  /!*var returnData = {
+                      hasError: result.hasError,
+                      cache: false,
+                      errorMessage: result.errorMessage,
+                      errorCode: result.errorCode
+                  };
+  
+                  if (!result.hasError) {
+                      returnData.result = result.result;
+                  }*!/
+                    result.result.uniqueId = result.uniqueId;
+                  callback && callback(result.result);
+              } else {
+                  chatEvents.fireEvent('error', {
+                      code: result.errorCode,
+                      message: result.errorMessage,
+                      error: result
+                  });
+              }
+          }});
+      };
+  */publicized.updateContacts=function(params,callback){var data={};if(params){if(parseInt(params.id)>0){data.id=parseInt(params.id);}else{_events.chatEvents.fireEvent('error',{code:999,message:'ID is required for Updating Contact!',error:undefined});}if(typeof params.firstName==='string'){data.firstName=params.firstName;}else{_events.chatEvents.fireEvent('error',{code:999,message:'firstName is required for Updating Contact!'});}if(typeof params.lastName==='string'){data.lastName=params.lastName;}else{_events.chatEvents.fireEvent('error',{code:999,message:'lastName is required for Updating Contact!'});}if(typeof params.cellphoneNumber==='string'){data.cellphoneNumber=params.cellphoneNumber;}else{_events.chatEvents.fireEvent('error',{code:999,message:'cellphoneNumber is required for Updating Contact!'});}if(typeof params.email==='string'){data.email=params.email;}else{_events.chatEvents.fireEvent('error',{code:999,message:'email is required for Updating Contact!'});}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.UPDATE_CONTACTS,method:'GET',data:data,headers:{'_token_':token,'_token_issuer_':1}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if(!responseData.hasError){var messageContent=responseData.result,messageLength=responseData.result.length,resultData={contacts:[],contentCount:messageLength},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;}callback&&callback(returnData);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});};publicized.removeContacts=function(params,callback){var data={};if(params){if(parseInt(params.id)>0){data.id=parseInt(params.id);}else{_events.chatEvents.fireEvent('error',{code:999,message:'ID is required for Deleting Contact!',error:undefined});}}data.ownerId=typeCodeOwnerId?typeCodeOwnerId:params.ownerId?params.ownerId:undefined;var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.REMOVE_CONTACTS,method:'POST',data:data,headers:{'_token_':token,'_token_issuer_':1}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if(!responseData.hasError){returnData.result=responseData.result;}callback&&callback(returnData);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});};publicized.searchContacts=function(params,callback){var data={size:50,offset:0},returnCache=false;if(params){if(typeof params.firstName==='string'){data.firstName=params.firstName;}if(typeof params.lastName==='string'){data.lastName=params.lastName;}if(parseInt(params.cellphoneNumber)>0){data.cellphoneNumber=params.cellphoneNumber;}if(typeof params.email==='string'){data.email=params.email;}if(typeof params.query==='string'){data.q=params.query;}if(typeof params.uniqueId==='string'){data.uniqueId=params.uniqueId;}if(parseInt(params.id)>0){data.id=params.id;}if(parseInt(params.typeCode)>0){data.typeCode=params.typeCode;}// data.typeCode = generalTypeCode;//params.typeCode;
 if(parseInt(params.size)>0){data.size=params.size;}if(parseInt(params.offset)>0){data.offset=params.offset;}var functionLevelCache=typeof params.cache=='boolean'?params.cache:true;}var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.SEARCH_CONTACTS,method:'POST',data:data,headers:{'_token_':token,'_token_issuer_':1}};/**
-         * Search contacts in cache #cache
-         */if(functionLevelCache&&canUseCache&&cacheSecret.length>0){if(db){/**
-                 * First of all we delete all contacts those
-                 * expireTime has been expired. after that
-                 * we query our cache database to retrieve
-                 * what we wanted
-                 */db.contacts.where('expireTime').below(new Date().getTime())["delete"]().then(function(){/**
-                         * Query cache database to get contacts
-                         */var thenAble;if(Object.keys(whereClause).length===0){thenAble=db.contacts.where('owner').equals(parseInt(chatMessaging.userInfo.id));}else{if(whereClause.hasOwnProperty('id')){thenAble=db.contacts.where('owner').equals(parseInt(chatMessaging.userInfo.id)).and(function(contact){return contact.id===whereClause.id;});}else if(whereClause.hasOwnProperty('uniqueId')){thenAble=db.contacts.where('owner').equals(parseInt(chatMessaging.userInfo.id)).and(function(contact){return contact.uniqueId===whereClause.uniqueId;});}else{if(whereClause.hasOwnProperty('firstName')){thenAble=db.contacts.where('owner').equals(parseInt(chatMessaging.userInfo.id)).filter(function(contact){var reg=new RegExp(whereClause.firstName);return reg.test(chatDecrypt(contact.firstName,cacheSecret,contact.salt));});}if(whereClause.hasOwnProperty('lastName')){thenAble=db.contacts.where('owner').equals(parseInt(chatMessaging.userInfo.id)).filter(function(contact){var reg=new RegExp(whereClause.lastName);return reg.test(chatDecrypt(contact.lastName,cacheSecret,contact.salt));});}if(whereClause.hasOwnProperty('email')){thenAble=db.contacts.where('owner').equals(parseInt(chatMessaging.userInfo.id)).filter(function(contact){var reg=new RegExp(whereClause.email);return reg.test(chatDecrypt(contact.email,cacheSecret,contact.salt));});}if(whereClause.hasOwnProperty('q')){thenAble=db.contacts.where('owner').equals(parseInt(chatMessaging.userInfo.id)).filter(function(contact){var reg=new RegExp(whereClause.q);return reg.test(chatDecrypt(contact.firstName,cacheSecret,contact.salt)+' '+chatDecrypt(contact.lastName,cacheSecret,contact.salt)+' '+chatDecrypt(contact.email,cacheSecret,contact.salt));});}}}thenAble.offset(data.offset).limit(data.size).toArray().then(function(contacts){db.contacts.where('owner').equals(parseInt(chatMessaging.userInfo.id)).count().then(function(contactsCount){var cacheData=[];for(var i=0;i<contacts.length;i++){try{cacheData.push(formatDataToMakeContact(JSON.parse(chatDecrypt(contacts[i].data,cacheSecret,ontacts[i].salt))));}catch(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}var returnData={hasError:false,cache:true,errorCode:0,errorMessage:'',result:{contacts:cacheData,contentCount:contactsCount,hasNext:!(contacts.length<data.size),nextOffset:data.offset*1+contacts.length}};if(cacheData.length>0){callback&&callback(returnData);callback=undefined;returnCache=true;}})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}/**
-         * Get Search Contacts Result From Server
-         */httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if(!responseData.hasError){var messageContent=responseData.result,messageLength=responseData.result.length,resultData={contacts:[],contentCount:messageLength},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;/**
-                     * Add Contacts into cache database #cache
-                     */if(canUseCache&&cacheSecret.length>0){if(db){var cacheData=[];for(var i=0;i<resultData.contacts.length;i++){try{var tempData={},salt=_utility["default"].generateUUID();tempData.id=resultData.contacts[i].id;tempData.owner=chatMessaging.userInfo.id;tempData.uniqueId=resultData.contacts[i].uniqueId;tempData.userId=_utility["default"].crypt(resultData.contacts[i].userId,cacheSecret,salt);tempData.cellphoneNumber=_utility["default"].crypt(resultData.contacts[i].cellphoneNumber,cacheSecret,salt);tempData.email=_utility["default"].crypt(resultData.contacts[i].email,cacheSecret,salt);tempData.firstName=_utility["default"].crypt(resultData.contacts[i].firstName,cacheSecret,salt);tempData.lastName=_utility["default"].crypt(resultData.contacts[i].lastName,cacheSecret,salt);tempData.expireTime=new Date().getTime()+cacheExpireTime;tempData.data=crypt(JSON.stringify(unsetNotSeenDuration(resultData.contacts[i])),cacheSecret,salt);tempData.salt=salt;cacheData.push(tempData);}catch(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});}}db.contacts.bulkPut(cacheData)["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}}callback&&callback(returnData);/**
-                 * Delete callback so if server pushes response before
-                 * cache, cache won't send data again
-                 */callback=undefined;if(!returnData.hasError&&returnCache){_events.chatEvents.fireEvent('contactEvents',{type:'CONTACTS_SEARCH_RESULT_CHANGE',result:returnData.result});}}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});};publicized.createBot=function(params,callback){var createBotData={chatMessageVOType:_constants.chatMessageVOTypes.CREATE_BOT,typeCode:generalTypeCode,//params.typeCode,
+     * Get Search Contacts Result From Server
+     */httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if(!responseData.hasError){var messageContent=responseData.result,messageLength=responseData.result.length,resultData={contacts:[],contentCount:messageLength},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;}callback&&callback(returnData);/**
+         * Delete callback so if server pushes response before
+         * cache, cache won't send data again
+         */callback=undefined;if(!returnData.hasError&&returnCache){_events.chatEvents.fireEvent('contactEvents',{type:'CONTACTS_SEARCH_RESULT_CHANGE',result:returnData.result});}}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});};publicized.createBot=function(params,callback){var createBotData={chatMessageVOType:_constants.chatMessageVOTypes.CREATE_BOT,typeCode:generalTypeCode,//params.typeCode,
 content:'',pushMsgType:3,token:token};if(params){if(typeof params.botName==='string'&&params.botName.length>0){if(params.botName.substr(-3)==="BOT"){createBotData.content=params.botName;}else{_events.chatEvents.fireEvent('error',{code:999,message:'Bot name should end in "BOT", ex. "testBOT"'});return;}}else{_events.chatEvents.fireEvent('error',{code:999,message:'Insert a bot name to create one!'});return;}}else{_events.chatEvents.fireEvent('error',{code:999,message:'Insert a bot name to create one!'});return;}return chatMessaging.sendMessage(createBotData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.defineBotCommand=function(params,callback){var defineBotCommandData={chatMessageVOType:_constants.chatMessageVOTypes.DEFINE_BOT_COMMAND,typeCode:generalTypeCode,//params.typeCode,
 content:{},pushMsgType:3,token:token},commandList=[];if(params){if(typeof params.botName!=='string'||params.botName.length===0){_events.chatEvents.fireEvent('error',{code:999,message:'You need to insert a botName!'});return;}if(!Array.isArray(params.commandList)||!params.commandList.length){_events.chatEvents.fireEvent('error',{code:999,message:'Bot Commands List has to be an array of strings.'});return;}else{for(var i=0;i<params.commandList.length;i++){commandList.push('/'+params.commandList[i].trim());}}defineBotCommandData.content={botName:params.botName.trim(),commandList:commandList};}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to create bot commands'});return;}return chatMessaging.sendMessage(defineBotCommandData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.removeBotCommand=function(params,callback){var defineBotCommandData={chatMessageVOType:_constants.chatMessageVOTypes.REMOVE_BOT_COMMANDS,typeCode:generalTypeCode,//params.typeCode,
 content:{},pushMsgType:3,token:token},commandList=[];if(params){if(typeof params.botName!=='string'||params.botName.length===0){_events.chatEvents.fireEvent('error',{code:999,message:'You need to insert a botName!'});return;}if(!Array.isArray(params.commandList)||!params.commandList.length){_events.chatEvents.fireEvent('error',{code:999,message:'Bot Commands List has to be an array of strings.'});return;}else{for(var i=0;i<params.commandList.length;i++){commandList.push('/'+params.commandList[i].trim());}}defineBotCommandData.content={botName:params.botName.trim(),commandList:commandList};}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to remove bot commands'});return;}return chatMessaging.sendMessage(defineBotCommandData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.startBot=function(params,callback){var startBotData={chatMessageVOType:_constants.chatMessageVOTypes.START_BOT,typeCode:generalTypeCode,//params.typeCode,
@@ -48512,8 +43687,8 @@ content:[]};if(params){if(Array.isArray(params.assistants)&&(0,_typeof2["default
 content:{},pushMsgType:3,token:token};if(params){if(typeof params.contactType==='string'&&params.contactType.length){sendData.content.contactType=params.contactType;}else{_events.chatEvents.fireEvent('error',{code:999,message:'Enter a ContactType to get all related Assistants!'});return;}sendData.content.count=!!params.count?+params.count:50;sendData.content.offset=!!params.offset?+params.offset:0;}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to get Assistants list!'});return;}return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.getBlockedAssistantsList=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.BLOCKED_ASSISTANTS,typeCode:generalTypeCode,//params.typeCode,
 content:{},pushMsgType:3,token:token};if(params){if(typeof params.contactType==='string'&&params.contactType.length){sendData.content.contactType=params.contactType;}else{_events.chatEvents.fireEvent('error',{code:999,message:'Enter a ContactType to get all Blocked Assistants!'});return;}sendData.content.count=!!params.count?+params.count:50;sendData.content.offset=!!params.offset?+params.offset:0;}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to get Blocked Assistants list!'});return;}return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.getAssistantsHistory=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.ASSISTANT_HISTORY,typeCode:generalTypeCode,//params.typeCode,
 content:{offset:+params.offset>0?+params.offset:0,count:+params.count>0?+params.count:config.getHistoryCount}};if(+params.fromTime>0&&+params.fromTime<9999999999999){sendData.content.fromTime=+params.fromTime;}if(+params.toTime>0&&+params.toTime<9999999999999){sendData.content.toTime=+params.toTime;}if(!!params.actionType&&_constants.assistantActionTypes.hasOwnProperty(params.actionType.toUpperCase())){sendData.content.actionType=_constants.assistantActionTypes[params.actionType.toUpperCase()];}return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={participants:formatDataToMakeAssistantHistoryList(messageContent),contentCount:result.contentCount,hasNext:sendData.content.offset+sendData.content.count<result.contentCount&&messageLength>0,nextOffset:sendData.content.offset*1+messageLength*1};returnData.result=resultData;}callback&&callback(returnData);callback=undefined;}});};publicized.mapReverse=mapReverse;publicized.mapSearch=mapSearch;publicized.mapRouting=mapRouting;publicized.mapStaticImage=mapStaticImage;publicized.setAdmin=function(params,callback){setRoleToUser(params,callback);};publicized.removeAdmin=function(params,callback){removeRoleFromUser(params,callback);};publicized.setAuditor=function(params,callback){setRoleToUser(params,callback);};publicized.removeAuditor=function(params,callback){removeRoleFromUser(params,callback);};function requestExportChat(stackArr,wantedCount,stepCount,offset,sendData){sendData.content.offset=offset;sendData.content.count=stepCount;return new Promise(function(resolve,reject){return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){/* for(var i in result.result) {
-                            stackArr.push(result.result[i]);
-                        } */stackArr.push.apply(stackArr,(0,_toConsumableArray2["default"])(result.result));consoleLogging&&console.log("[SDK][exportChat] a step passed...");// wantedCount = wantedCount > result.contentCount ? result.contentCount : wantedCount;
+                stackArr.push(result.result[i]);
+            } */stackArr.push.apply(stackArr,(0,_toConsumableArray2["default"])(result.result));consoleLogging&&console.log("[SDK][exportChat] a step passed...");// wantedCount = wantedCount > result.contentCount ? result.contentCount : wantedCount;
 if(result.result.length<stepCount){wantedCount=stackArr.length;}setTimeout(function(){_events.chatEvents.fireEvent('threadEvents',{type:'EXPORT_CHAT',subType:'IN_PROGRESS',threadId:sendData.subjectId,percent:Math.floor(stackArr.length/wantedCount*100)});if(stackArr.length<wantedCount){stepCount=wantedCount-stackArr.length<stepCount?wantedCount-stackArr.length:stepCount;//setTimeout(function () {
 resolve(requestExportChat(stackArr,wantedCount,stepCount,stackArr.length,sendData));//}, 1000)
 }else{resolve(stackArr);}});}else{if(result.errorCode!==21){consoleLogging&&console.log("[SDK][exportChat] Problem in one step... . Rerunning the request.",wantedCount,stepCount,stackArr.length,sendData,result);setTimeout(function(){resolve(requestExportChat(stackArr,wantedCount,stepCount,stackArr.length,sendData));},2000);}else{reject(result);}}}});});}publicized.exportChat=function(params,callback){var stackArr=[],wantedCount=10000,stepCount=500,offset=0;var sendData={chatMessageVOType:_constants.chatMessageVOTypes.EXPORT_CHAT,typeCode:generalTypeCode,//params.typeCode,
@@ -48528,39 +43703,41 @@ str+="\u0646\u0627\u0645 \u06A9\u0627\u0631\u0628\u0631\u06CC \u0641\u0631\u0633
 str+="\u0645\u062A\u0646 \u067E\u06CC\u0627\u0645"+',';//matne payam
 str+='\r\n';var line='',radif=1;for(var i=0;i<result.length;i++){line='';if(result[i].messageType!==1){continue;}var sender='';if(result[i].participant.contactName){sender=result[i].participant.contactName+',';}else{if(result[i].participant.firstName){sender=result[i].participant.firstName+' ';}if(result[i].participant.lastName){sender+=result[i].participant.lastName;}sender+=',';}line+=new Date(result[i].time).toLocaleDateString('fa-IR')+',';line+=new Date(result[i].time).toLocaleTimeString('fa-IR')+',';line+=sender;line+=result[i].participant.username+',';line+='"'+result[i].message.replaceAll(",","،").replaceAll('"','”')+'",';// line += result[i].message.replaceAll(",", ".").replace(/(\r\n|\n|\r)/gm, " ") + ',';
 str+=line+'\r\n';radif++;}var blob=new Blob([str],{type:'text/csv;charset=utf-8;'});_events.chatEvents.fireEvent('threadEvents',{type:'EXPORT_CHAT',subType:'DONE',threadId:sendData.subjectId,result:blob});/*if (navigator.msSaveBlob) { // IE 10+
-                if(params.autoStartDownload) {
-                    navigator.msSaveBlob(blob, exportedFilename);
-                }
-                callback && callback({
-                    hasError: false,
-                    type: 'blob',
-                    result: blob
-                });
-            } else {*/if(responseType==='link'){var link=document.createElement("a"),url=URL.createObjectURL(blob);//if (link.download !== undefined) { // feature detection
+          if(params.autoStartDownload) {
+              navigator.msSaveBlob(blob, exportedFilename);
+          }
+          callback && callback({
+              hasError: false,
+              type: 'blob',
+              result: blob
+          });
+      } else {*/if(responseType==='link'){var link=document.createElement("a"),url=URL.createObjectURL(blob);//if (link.download !== undefined) { // feature detection
 // Browsers that support HTML5 download attribute
 link.setAttribute("href",'data:text/csv; charset=utf-8,'+encodeURIComponent(universalBOM+str));link.setAttribute("download",exportedFilename);if(autoStartDownload){link.style.visibility='hidden';document.body.appendChild(link);link.click();document.body.removeChild(link);}//}
 callback&&callback({hasError:false,type:'link',result:link});}else{callback&&callback({hasError:false,type:'blob',result:blob});}//}
 callback=undefined;});/*.catch(function (result) {
-            consoleLogging && console.log(result);
-        });*/};publicized.startCall=callModule.startCall;publicized.startGroupCall=callModule.startGroupCall;publicized.callReceived=callModule.callReceived;publicized.terminateCall=callModule.terminateCall;publicized.acceptCall=callModule.acceptCall;publicized.rejectCall=publicized.cancelCall=callModule.rejectCall;publicized.endCall=callModule.endCall;publicized.startRecordingCall=callModule.startRecordingCall;publicized.stopRecordingCall=callModule.stopRecordingCall;publicized.startScreenShare=callModule.startScreenShare;publicized.resizeScreenShare=callModule.resizeScreenShare;publicized.endScreenShare=callModule.endScreenShare;publicized.getCallsList=callModule.getCallsList;publicized.getCallsToJoin=callModule.getCallsToJoin;publicized.deleteFromCallList=callModule.deleteFromCallList;publicized.getCallParticipants=callModule.getCallParticipants;publicized.addCallParticipants=callModule.addCallParticipants;publicized.removeCallParticipants=callModule.removeCallParticipants;publicized.muteCallParticipants=callModule.muteCallParticipants;publicized.unMuteCallParticipants=callModule.unMuteCallParticipants;publicized.turnOnVideoCall=callModule.turnOnVideoCall;publicized.turnOffVideoCall=callModule.turnOffVideoCall;publicized.disableParticipantsVideoReceive=callModule.disableParticipantsVideoReceive;publicized.enableParticipantsVideoReceive=callModule.enableParticipantsVideoReceive;publicized.pauseCamera=callModule.pauseCamera;publicized.resumeCamera=callModule.resumeCamera;publicized.pauseMice=callModule.pauseMice;publicized.resumeMice=callModule.resumeMice;publicized.resizeCallVideo=callModule.resizeCallVideo;publicized.restartMedia=callModule.restartMedia;publicized.callStop=callModule.callStop;publicized.sendCallMetaData=callModule.sendCallMetaData;publicized.sendCallSticker=callModule.sendCallSticker;publicized.callStickerTypes=_constants.callStickerTypes;publicized.recallThreadParticipant=callModule.recallThreadParticipant;publicized.deviceManager=callModule.deviceManager;publicized.resetCallStream=callModule.resetCallStream;publicized.getMutualGroups=function(params,callback){var count=+params.count?+params.count:50,offset=+params.offset?+params.offset:0;var sendData={chatMessageVOType:_constants.chatMessageVOTypes.MUTUAL_GROUPS,typeCode:generalTypeCode,//params.typeCode,
+      consoleLogging && console.log(result);
+    });*/};publicized.startCall=callModule.startCall;publicized.startGroupCall=callModule.startGroupCall;publicized.callReceived=callModule.callReceived;publicized.terminateCall=callModule.terminateCall;publicized.acceptCall=callModule.acceptCall;publicized.rejectCall=publicized.cancelCall=callModule.rejectCall;publicized.endCall=callModule.endCall;publicized.startRecordingCall=callModule.startRecordingCall;publicized.stopRecordingCall=callModule.stopRecordingCall;publicized.startScreenShare=callModule.startScreenShare;publicized.resizeScreenShare=callModule.resizeScreenShare;publicized.endScreenShare=callModule.endScreenShare;publicized.getCallsList=callModule.getCallsList;publicized.getCallsToJoin=callModule.getCallsToJoin;publicized.deleteFromCallList=callModule.deleteFromCallList;publicized.getCallParticipants=callModule.getCallParticipants;publicized.addCallParticipants=callModule.addCallParticipants;publicized.removeCallParticipants=callModule.removeCallParticipants;publicized.muteCallParticipants=callModule.muteCallParticipants;publicized.unMuteCallParticipants=callModule.unMuteCallParticipants;publicized.turnOnVideoCall=callModule.turnOnVideoCall;publicized.turnOffVideoCall=callModule.turnOffVideoCall;publicized.disableParticipantsVideoReceive=callModule.disableParticipantsVideoReceive;publicized.enableParticipantsVideoReceive=callModule.enableParticipantsVideoReceive;publicized.pauseCamera=callModule.pauseCamera;publicized.resumeCamera=callModule.resumeCamera;publicized.pauseMice=callModule.pauseMice;publicized.resumeMice=callModule.resumeMice;publicized.resizeCallVideo=callModule.resizeCallVideo;publicized.restartMedia=callModule.restartMedia;publicized.callStop=callModule.callStop;publicized.sendCallMetaData=callModule.sendCallMetaData;publicized.sendCallSticker=callModule.sendCallSticker;publicized.callStickerTypes=_constants.callStickerTypes;publicized.recallThreadParticipant=callModule.recallThreadParticipant;publicized.deviceManager=callModule.deviceManager;publicized.resetCallStream=callModule.resetCallStream;publicized.getMutualGroups=function(params,callback){var count=+params.count?+params.count:50,offset=+params.offset?+params.offset:0;var sendData={chatMessageVOType:_constants.chatMessageVOTypes.MUTUAL_GROUPS,typeCode:generalTypeCode,//params.typeCode,
 content:{count:count,offset:offset}};if(params){if((0,_typeof2["default"])(params.user)==='object'&&params.user.hasOwnProperty('id')&&params.user.hasOwnProperty('idType')&&params.user.id.length&&_constants.inviteeVOidTypes[params.user.idType]>0){sendData.content.toBeUserVO={id:params.user.id,idType:+_constants.inviteeVOidTypes[params.user.idType]};}else{_events.chatEvents.fireEvent('error',{code:999,message:'You should send an user object like {id: 92, idType: "TO_BE_USER_CONTACT_ID"}'});return;}}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Get Mutual Groups!'});return;}return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode,uniqueId:result.uniqueId};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={threads:[],contentCount:result.contentCount,hasNext:offset+count<result.contentCount&&messageLength>0,nextOffset:offset*1+messageLength*1},threadData;for(var i=0;i<messageLength;i++){threadData=createThread(messageContent[i],false);if(threadData){resultData.threads.push(threadData);}}returnData.result=resultData;}callback&&callback(returnData);/**
-                 * Delete callback so if server pushes response before
-                 * cache, cache won't send data again
-                 */callback=undefined;}});};publicized.sendLocationPing=function(params,callback){/**
-         * + locationPingRequest     {object}
-         *    + content              {list} A map of { location: string, locationId: int }
-         */var locationPingData={chatMessageVOType:_constants.chatMessageVOTypes.LOCATION_PING,typeCode:generalTypeCode,//params.typeCode,
-pushMsgType:3,token:token},content={};if(params){if(typeof params.location==='string'&&locationPingTypes.hasOwnProperty(params.location.toUpperCase())){content.location=locationPingTypes[params.location.toUpperCase()];if(params.location.toUpperCase()==='THREAD'){if(typeof params.threadId==='number'&&params.threadId>0){content.locationId=+params.threadId;}else{_events.chatEvents.fireEvent('error',{code:999,message:'You set the location to be a thread, you have to send a valid ThreadId'});return;}}}else{_events.chatEvents.fireEvent('error',{code:999,message:'Send a valid location type (CHAT / THREAD / CONTACTS)'});return;}locationPingData.content=JSON.stringify(content);}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to LocationPing!'});return;}return chatMessaging.sendMessage(locationPingData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.clearChatServerCaches=clearChatServerCaches;publicized.deleteCacheDatabases=deleteCacheDatabases;publicized.clearCacheDatabasesOfUser=clearCacheDatabasesOfUser;publicized.getChatState=function(){return chatFullStateObject;};publicized.reconnect=function(){asyncClient.reconnectSocket();};publicized.setToken=function(newToken){if(typeof newToken!=='undefined'){token=newToken;callModule.updateToken(token);chatMessaging.updateToken(token);_events.chatEvents.updateToken(token);}};publicized.generateUUID=_utility["default"].generateUUID;publicized.logout=function(){clearChatServerCaches();_events.chatEvents.clearEventCallbacks();chatMessaging.messagesCallbacks={};chatMessaging.sendMessageCallbacks={};chatMessaging.threadCallbacks={};chatMessaging.stopChatPing();asyncClient.logout();};publicized.inviteeIdTypes=_constants.inviteeVOidTypes;/**
-     * Check a turn server availability
-     *
-     * @param turnIp
-     * @param port
-     * @param useUDP
-     * @param username
-     * @param password
-     * @param timeout
-     * @return {Promise<boolean>}
-     */publicized.checkTURNServer=function(turnIp,port){var useUDP=arguments.length>2&&arguments[2]!==undefined?arguments[2]:false;var username=arguments.length>3&&arguments[3]!==undefined?arguments[3]:'mkhorrami';var password=arguments.length>4&&arguments[4]!==undefined?arguments[4]:'mkh_123456';var timeout=arguments.length>5?arguments[5]:undefined;var url='turn:'+turnIp+':'+port+'?transport='+(useUDP?'udp':'tcp');var turnConfig={urls:url,username:username,credential:password};if(navigator.userAgent.indexOf('firefox')!==-1&&navigator.userAgent.indexOf('92.0.5')!==-1){alert('Browser version is not suitable for video call. Upgrade or use another browser.');}console.log('turnConfig: ',turnConfig);return new Promise(function(resolve,reject){var promiseResolved;setTimeout(function(){if(promiseResolved)return;resolve(false);promiseResolved=true;},timeout||5000);promiseResolved=false;var myPeerConnection=window.RTCPeerConnection||window.mozRTCPeerConnection||window.webkitRTCPeerConnection//compatibility for firefox and chrome
+         * Delete callback so if server pushes response before
+         * cache, cache won't send data again
+         */callback=undefined;}});};publicized.sendLocationPing=function(params,callback){/**
+     * + locationPingRequest     {object}
+     *    + content              {list} A map of { location: string, locationId: int }
+     */var locationPingData={chatMessageVOType:_constants.chatMessageVOTypes.LOCATION_PING,typeCode:generalTypeCode,//params.typeCode,
+pushMsgType:3,token:token},content={};if(params){if(typeof params.location==='string'&&locationPingTypes.hasOwnProperty(params.location.toUpperCase())){content.location=locationPingTypes[params.location.toUpperCase()];if(params.location.toUpperCase()==='THREAD'){if(typeof params.threadId==='number'&&params.threadId>0){content.locationId=+params.threadId;}else{_events.chatEvents.fireEvent('error',{code:999,message:'You set the location to be a thread, you have to send a valid ThreadId'});return;}}}else{_events.chatEvents.fireEvent('error',{code:999,message:'Send a valid location type (CHAT / THREAD / CONTACTS)'});return;}locationPingData.content=JSON.stringify(content);}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to LocationPing!'});return;}return chatMessaging.sendMessage(locationPingData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.clearChatServerCaches=clearChatServerCaches;publicized.deleteCacheDatabases=function(){console.warn("Method deleteCacheDatabases has been deprecated and is removed from SDK");};//deleteCacheDatabases;
+publicized.clearCacheDatabasesOfUser=function(){console.warn("Method clearCacheDatabasesOfUser has been deprecated and is removed from SDK");};//clearCacheDatabasesOfUser;
+publicized.getChatState=function(){return chatFullStateObject;};publicized.reconnect=function(){asyncClient.reconnectSocket();};publicized.setToken=function(newToken){if(typeof newToken!=='undefined'){token=newToken;callModule.updateToken(token);chatMessaging.updateToken(token);_events.chatEvents.updateToken(token);}};publicized.generateUUID=_utility["default"].generateUUID;publicized.logout=function(){clearChatServerCaches();_events.chatEvents.clearEventCallbacks();chatMessaging.messagesCallbacks={};chatMessaging.sendMessageCallbacks={};chatMessaging.threadCallbacks={};chatMessaging.stopChatPing();asyncClient.logout();};publicized.inviteeIdTypes=_constants.inviteeVOidTypes;/**
+   * Check a turn server availability
+   *
+   * @param turnIp
+   * @param port
+   * @param useUDP
+   * @param username
+   * @param password
+   * @param timeout
+   * @return {Promise<boolean>}
+   */publicized.checkTURNServer=function(turnIp,port){var useUDP=arguments.length>2&&arguments[2]!==undefined?arguments[2]:false;var username=arguments.length>3&&arguments[3]!==undefined?arguments[3]:'mkhorrami';var password=arguments.length>4&&arguments[4]!==undefined?arguments[4]:'mkh_123456';var timeout=arguments.length>5?arguments[5]:undefined;var url='turn:'+turnIp+':'+port+'?transport='+(useUDP?'udp':'tcp');var turnConfig={urls:url,username:username,credential:password};if(navigator.userAgent.indexOf('firefox')!==-1&&navigator.userAgent.indexOf('92.0.5')!==-1){alert('Browser version is not suitable for video call. Upgrade or use another browser.');}console.log('turnConfig: ',turnConfig);return new Promise(function(resolve,reject){var promiseResolved;setTimeout(function(){if(promiseResolved)return;resolve(false);promiseResolved=true;},timeout||5000);promiseResolved=false;var myPeerConnection=window.RTCPeerConnection||window.mozRTCPeerConnection||window.webkitRTCPeerConnection//compatibility for firefox and chrome
 ,pc=new myPeerConnection({iceServers:[turnConfig]}),noop=function noop(){};pc.createDataChannel("");//create a bogus data channel
 pc.createOffer(function(sdp){if(sdp.sdp.indexOf('typ relay')>-1){// sometimes sdp contains the ice candidates...
 promiseResolved=true;resolve(true);}pc.setLocalDescription(sdp,noop,noop);},noop);// create offer and set local description
@@ -48568,11 +43745,11 @@ pc.onicecandidate=function(ice){//listen for candidate events
 if(promiseResolved||!ice||!ice.candidate||!ice.candidate.candidate||!(ice.candidate.candidate.indexOf('typ relay')>-1))return;promiseResolved=true;resolve(true);};});};publicized.getCustomerInfo=function(params,callback){var userId=params.userId||chatMessaging.userInfo.id,sendData={chatMessageVOType:_constants.chatMessageVOTypes.CUSTOMER_INFO,typeCode:generalTypeCode,//params.typeCode,
 content:[userId],token:token};return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.archiveThread=function(_ref,callback){var threadId=_ref.threadId;var sendData={chatMessageVOType:_constants.chatMessageVOTypes.ARCHIVE_THREAD,typeCode:generalTypeCode,//params.typeCode,
 token:token,subjectId:threadId};return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.unArchiveThread=function(_ref2,callback){var threadId=_ref2.threadId;var sendData={chatMessageVOType:_constants.chatMessageVOTypes.UNARCHIVE_THREAD,typeCode:generalTypeCode,//params.typeCode,
-token:token,subjectId:threadId};return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};_store.store.events.on(_store.store.threads.eventsList.UNREAD_COUNT_UPDATED,function(thread){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNREAD_COUNT_UPDATED',result:{thread:thread,unreadCount:thread.unreadCount||0}});});init();return publicized;}if(window){if(!window.POD){window.POD={};}window.POD.Chat=Chat;//For backward compatibility
+token:token,subjectId:threadId};return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};_store.store.events.on(_store.store.threads.eventsList.UNREAD_COUNT_UPDATED,function(thread){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNREAD_COUNT_UPDATED',result:{threadId:thread.id,thread:thread,unreadCount:thread.unreadCount||0}});});init();return publicized;}if(window){if(!window.POD){window.POD={};}window.POD.Chat=Chat;//For backward compatibility
 window.PodChat=Chat;}var _default=Chat;// })();
 exports["default"]=_default;
 
-},{"./call.module":266,"./events.module":268,"./lib/call/deviceManager.js":269,"./lib/constants":270,"./lib/errorHandler":271,"./lib/store":273,"./messaging.module":275,"./utility/utility":276,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/toConsumableArray":9,"@babel/runtime/helpers/typeof":10,"dexie":125,"podasync-ws-only":209}],268:[function(require,module,exports){
+},{"./call.module":264,"./events.module":266,"./lib/call/deviceManager.js":267,"./lib/constants":268,"./lib/errorHandler":269,"./lib/store":271,"./messaging.module":273,"./utility/utility":274,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/toConsumableArray":9,"@babel/runtime/helpers/typeof":10,"podasync-ws-only":208}],266:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -48698,7 +43875,7 @@ function initEventHandler(params) {
 var _default = ChatEvents;
 exports["default"] = _default;
 
-},{"./utility/utility":276,"@babel/runtime/helpers/interopRequireDefault":5}],269:[function(require,module,exports){
+},{"./utility/utility":274,"@babel/runtime/helpers/interopRequireDefault":5}],267:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -49063,7 +44240,7 @@ var deviceManager = {
 var _default = deviceManager;
 exports["default"] = _default;
 
-},{"../../events.module.js":268,"../constants.js":270,"../errorHandler.js":271,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":10,"@babel/runtime/regenerator":12}],270:[function(require,module,exports){
+},{"../../events.module.js":266,"../constants.js":268,"../errorHandler.js":269,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":10,"@babel/runtime/regenerator":12}],268:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -49273,7 +44450,7 @@ var callStickerTypes = {
 };
 exports.callStickerTypes = callStickerTypes;
 
-},{}],271:[function(require,module,exports){
+},{}],269:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -49447,7 +44624,7 @@ exports.raiseError = raiseError;
 var _default = handleError;
 exports["default"] = _default;
 
-},{"../events.module":268,"@babel/runtime/helpers/defineProperty":4,"@babel/runtime/helpers/interopRequireDefault":5}],272:[function(require,module,exports){
+},{"../events.module":266,"@babel/runtime/helpers/defineProperty":4,"@babel/runtime/helpers/interopRequireDefault":5}],270:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -49473,7 +44650,7 @@ var storeEvents = {
 };
 exports.storeEvents = storeEvents;
 
-},{"@babel/runtime/helpers/interopRequireDefault":5,"events":149}],273:[function(require,module,exports){
+},{"@babel/runtime/helpers/interopRequireDefault":5,"events":148}],271:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -49491,7 +44668,7 @@ var store = {
 };
 exports.store = store;
 
-},{"./eventEmitter":272,"./threads":274}],274:[function(require,module,exports){
+},{"./eventEmitter":270,"./threads":272}],272:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -49636,7 +44813,7 @@ function ThreadObject(thread) {
   };
 }
 
-},{"./eventEmitter":272,"@babel/runtime/helpers/defineProperty":4,"@babel/runtime/helpers/interopRequireDefault":5}],275:[function(require,module,exports){
+},{"./eventEmitter":270,"@babel/runtime/helpers/defineProperty":4,"@babel/runtime/helpers/interopRequireDefault":5}],273:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -49992,7 +45169,7 @@ function ChatMessaging(params) {
 var _default = ChatMessaging;
 exports["default"] = _default;
 
-},{"./lib/constants":270,"./lib/errorHandler":271,"./utility/utility":276,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":10,"dompurify":131}],276:[function(require,module,exports){
+},{"./lib/constants":268,"./lib/errorHandler":269,"./utility/utility":274,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":10,"dompurify":130}],274:[function(require,module,exports){
 (function (global){(function (){
 "use strict";
 
@@ -50590,4 +45767,4 @@ var _default = new ChatUtility();
 exports["default"] = _default;
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":10,"crypto-js":93}]},{},[267]);
+},{"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":10,"crypto-js":93}]},{},[265]);
