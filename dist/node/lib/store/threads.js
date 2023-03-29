@@ -73,11 +73,21 @@ exports.threadsList = threadsList;
 
 function ThreadObject(thread) {
   var config = {
-    thread: thread
+    thread: thread,
+    latestReceivedMessage: null
   };
+
+  function makeSureUnreadCountExists(thread) {
+    if (typeof thread.unreadCount != "number") thread.unreadCount = 0;
+  }
+
+  makeSureUnreadCountExists(config.thread);
   return {
     set: function set(thread) {
+      makeSureUnreadCountExists(thread);
+      console.log("ThreadObject.set, before:", thread, Object.keys(thread));
       config.thread = _objectSpread(_objectSpread({}, config.thread), thread);
+      console.log("ThreadObject.set, after:", config.thread);
     },
     get: function get() {
       return config.thread;
@@ -115,6 +125,17 @@ function ThreadObject(thread) {
       },
       get: function get() {
         return config.thread.lastSeenMessageTime;
+      }
+    },
+    latestReceivedMessage: {
+      getTime: function getTime() {
+        return config.latestReceivedMessage ? config.latestReceivedMessage.time : 0;
+      },
+      get: function get() {
+        return config.latestReceivedMessage;
+      },
+      set: function set(message) {
+        config.latestReceivedMessage = message;
       }
     }
   };

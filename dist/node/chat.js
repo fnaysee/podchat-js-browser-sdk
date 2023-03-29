@@ -3194,22 +3194,43 @@ function Chat(params) {
      */
     // putInMessagesDeliveryQueue(threadId, message.id);
 
-    if (message.conversation) {
-      delete message.conversation.unreadCount;
+    var storedThread = _store.store.threads.get(threadId);
 
-      _store.store.threads.save(message.conversation);
+    var lastMessageVoCopy;
+    var threadObject;
 
-      if (message.ownerId != chatMessaging.userInfo.id) {
-        if (message.time > _store.store.threads.get(threadId).lastSeenMessageTime.get()) {
-          _store.store.threads.get(threadId).unreadCount.increase();
-        }
+    if (storedThread) {
+      if (!storedThread.latestReceivedMessage.get() || storedThread.latestReceivedMessage.get() && storedThread.latestReceivedMessage.getTime() < message.time) {
+        lastMessageVoCopy = Object.assign({}, message);
+        lastMessageVoCopy.conversation && delete lastMessageVoCopy.conversation;
+        storedThread.latestReceivedMessage.set(lastMessageVoCopy);
       } else {
-        //If is my message set unread count to 0
-        _store.store.threads.get(threadId).unreadCount.set(0);
+        lastMessageVoCopy = storedThread.latestReceivedMessage.get();
       }
-
-      message.conversation.unreadCount = _store.store.threads.get(threadId).unreadCount.get();
+    } else {
+      lastMessageVoCopy = Object.assign({}, message);
+      lastMessageVoCopy.conversation && delete lastMessageVoCopy.conversation;
     }
+
+    threadObject = message.conversation;
+    threadObject.lastParticipantImage = !!message.participant && message.participant.hasOwnProperty('image') ? message.participant.image : '';
+    threadObject.lastMessageVO = lastMessageVoCopy;
+    threadObject.lastParticipantName = !!message.participant && message.participant.hasOwnProperty('name') ? message.participant.name : '';
+    threadObject.lastMessage = message.hasOwnProperty('message') ? message.message : '';
+    delete message.conversation.unreadCount;
+
+    _store.store.threads.save(message.conversation);
+
+    if (message.ownerId != chatMessaging.userInfo.id) {
+      if (message.time > _store.store.threads.get(threadId).lastSeenMessageTime.get()) {
+        _store.store.threads.get(threadId).unreadCount.increase();
+      }
+    } else {
+      //If is my message set unread count to 0
+      _store.store.threads.get(threadId).unreadCount.set(0);
+    }
+
+    message.conversation.unreadCount = _store.store.threads.get(threadId).unreadCount.get();
 
     _events.chatEvents.fireEvent('messageEvents', {
       type: 'MESSAGE_NEW',
@@ -3217,21 +3238,14 @@ function Chat(params) {
       result: {
         message: message
       }
-    });
-
-    var threadObject = message.conversation;
-    var lastMessageVoCopy = Object.assign({}, message);
-    lastMessageVoCopy.conversation && delete lastMessageVoCopy.conversation;
-    threadObject.lastParticipantImage = !!message.participant && message.participant.hasOwnProperty('image') ? message.participant.image : '';
-    threadObject.lastMessageVO = lastMessageVoCopy;
-    threadObject.lastParticipantName = !!message.participant && message.participant.hasOwnProperty('name') ? message.participant.name : '';
-    threadObject.lastMessage = message.hasOwnProperty('message') ? message.message : ''; // chatEvents.fireEvent('threadEvents', {
+    }); // chatEvents.fireEvent('threadEvents', {
     //     type: 'THREAD_UNREAD_COUNT_UPDATED',
     //     result: {
     //         thread: threadObject,
     //         unreadCount: (threadObject.unreadCount) ? threadObject.unreadCount : 0
     //     }
     // });
+
 
     _events.chatEvents.fireEvent('threadEvents', {
       type: 'THREAD_LAST_ACTIVITY_TIME',

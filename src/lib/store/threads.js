@@ -51,12 +51,22 @@ const threadsList = {
 }
 
 function ThreadObject(thread) {
-    const config = {
-        thread
+    let config = {
+        thread,
+        latestReceivedMessage: null
     };
+
+    function makeSureUnreadCountExists(thread){
+        if(typeof thread.unreadCount != "number")
+            thread.unreadCount = 0;
+    }
+
+    makeSureUnreadCountExists(config.thread);
+
     return {
         set(thread) {
-            config.thread = {...config.thread, ...thread};
+            makeSureUnreadCountExists(thread)
+            config.thread = {...config.thread, ...thread}
         },
         get() {
             return config.thread;
@@ -91,6 +101,17 @@ function ThreadObject(thread) {
             },
             get() {
                 return config.thread.lastSeenMessageTime
+            }
+        },
+        latestReceivedMessage: {
+            getTime() {
+                return (config.latestReceivedMessage ? config.latestReceivedMessage.time : 0)
+            },
+            get(){
+                return config.latestReceivedMessage
+            },
+            set(message) {
+                config.latestReceivedMessage = message
             }
         }
     };

@@ -42474,8 +42474,8 @@ break;/**
      * Send Message delivery for the last message
      * has been received while being online
      */ // putInMessagesDeliveryQueue(threadId, message.id);
-if(message.conversation){delete message.conversation.unreadCount;_store.store.threads.save(message.conversation);if(message.ownerId!=chatMessaging.userInfo.id){if(message.time>_store.store.threads.get(threadId).lastSeenMessageTime.get()){_store.store.threads.get(threadId).unreadCount.increase();}}else{//If is my message set unread count to 0
-_store.store.threads.get(threadId).unreadCount.set(0);}message.conversation.unreadCount=_store.store.threads.get(threadId).unreadCount.get();}_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_NEW',cache:false,result:{message:message}});var threadObject=message.conversation;var lastMessageVoCopy=Object.assign({},message);lastMessageVoCopy.conversation&&delete lastMessageVoCopy.conversation;threadObject.lastParticipantImage=!!message.participant&&message.participant.hasOwnProperty('image')?message.participant.image:'';threadObject.lastMessageVO=lastMessageVoCopy;threadObject.lastParticipantName=!!message.participant&&message.participant.hasOwnProperty('name')?message.participant.name:'';threadObject.lastMessage=message.hasOwnProperty('message')?message.message:'';// chatEvents.fireEvent('threadEvents', {
+var storedThread=_store.store.threads.get(threadId);var lastMessageVoCopy;var threadObject;if(storedThread){if(!storedThread.latestReceivedMessage.get()||storedThread.latestReceivedMessage.get()&&storedThread.latestReceivedMessage.getTime()<message.time){lastMessageVoCopy=Object.assign({},message);lastMessageVoCopy.conversation&&delete lastMessageVoCopy.conversation;storedThread.latestReceivedMessage.set(lastMessageVoCopy);}else{lastMessageVoCopy=storedThread.latestReceivedMessage.get();}}else{lastMessageVoCopy=Object.assign({},message);lastMessageVoCopy.conversation&&delete lastMessageVoCopy.conversation;}threadObject=message.conversation;threadObject.lastParticipantImage=!!message.participant&&message.participant.hasOwnProperty('image')?message.participant.image:'';threadObject.lastMessageVO=lastMessageVoCopy;threadObject.lastParticipantName=!!message.participant&&message.participant.hasOwnProperty('name')?message.participant.name:'';threadObject.lastMessage=message.hasOwnProperty('message')?message.message:'';delete message.conversation.unreadCount;_store.store.threads.save(message.conversation);if(message.ownerId!=chatMessaging.userInfo.id){if(message.time>_store.store.threads.get(threadId).lastSeenMessageTime.get()){_store.store.threads.get(threadId).unreadCount.increase();}}else{//If is my message set unread count to 0
+_store.store.threads.get(threadId).unreadCount.set(0);}message.conversation.unreadCount=_store.store.threads.get(threadId).unreadCount.get();_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_NEW',cache:false,result:{message:message}});// chatEvents.fireEvent('threadEvents', {
 //     type: 'THREAD_UNREAD_COUNT_UPDATED',
 //     result: {
 //         thread: threadObject,
@@ -44766,11 +44766,21 @@ exports.threadsList = threadsList;
 
 function ThreadObject(thread) {
   var config = {
-    thread: thread
+    thread: thread,
+    latestReceivedMessage: null
   };
+
+  function makeSureUnreadCountExists(thread) {
+    if (typeof thread.unreadCount != "number") thread.unreadCount = 0;
+  }
+
+  makeSureUnreadCountExists(config.thread);
   return {
     set: function set(thread) {
+      makeSureUnreadCountExists(thread);
+      console.log("ThreadObject.set, before:", thread, Object.keys(thread));
       config.thread = _objectSpread(_objectSpread({}, config.thread), thread);
+      console.log("ThreadObject.set, after:", config.thread);
     },
     get: function get() {
       return config.thread;
@@ -44808,6 +44818,17 @@ function ThreadObject(thread) {
       },
       get: function get() {
         return config.thread.lastSeenMessageTime;
+      }
+    },
+    latestReceivedMessage: {
+      getTime: function getTime() {
+        return config.latestReceivedMessage ? config.latestReceivedMessage.time : 0;
+      },
+      get: function get() {
+        return config.latestReceivedMessage;
+      },
+      set: function set(message) {
+        config.latestReceivedMessage = message;
       }
     }
   };
