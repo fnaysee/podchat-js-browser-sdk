@@ -43760,8 +43760,7 @@ Object.defineProperty(exports, "__esModule", {
 exports["default"] = exports.chatEvents = void 0;
 exports.initEventHandler = initEventHandler;
 
-var _utility = _interopRequireDefault(require("./utility/utility")); // import Sentry from "./lib/sentry.js"
-
+var _utility = _interopRequireDefault(require("./utility/utility"));
 
 var chatEvents = null;
 exports.chatEvents = chatEvents;

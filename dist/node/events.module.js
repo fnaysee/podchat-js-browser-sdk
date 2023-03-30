@@ -10,7 +10,6 @@ exports.initEventHandler = initEventHandler;
 
 var _utility = _interopRequireDefault(require("./utility/utility"));
 
-// import Sentry from "./lib/sentry.js"
 var chatEvents = null;
 exports.chatEvents = chatEvents;
 

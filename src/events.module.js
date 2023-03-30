@@ -1,5 +1,4 @@
 import Utility from "./utility/utility"
-// import Sentry from "./lib/sentry.js"
 
 let chatEvents = null;
 
