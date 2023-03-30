@@ -85,9 +85,7 @@ function ThreadObject(thread) {
   return {
     set: function set(thread) {
       makeSureUnreadCountExists(thread);
-      console.log("ThreadObject.set, before:", thread, Object.keys(thread));
       config.thread = _objectSpread(_objectSpread({}, config.thread), thread);
-      console.log("ThreadObject.set, after:", config.thread);
     },
     get: function get() {
       return config.thread;

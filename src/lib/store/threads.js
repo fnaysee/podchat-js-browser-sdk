@@ -91,7 +91,7 @@ function ThreadObject(thread) {
                     config.thread.unreadCount--;
                     storeEvents.emit(eventsList.UNREAD_COUNT_UPDATED, config.thread);
                 }
-            },
+            }
         },
         lastSeenMessageTime: {
             set(number) {
