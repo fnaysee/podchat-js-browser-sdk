@@ -5,6 +5,7 @@ import Utility from "./utility/utility"
 import ChatCall from "./call.module"
 import { initEventHandler, chatEvents } from "./events.module"
 import ChatMessaging from "./messaging.module"
+import buildConfig from "./buildConfig.json"
 
 import {
     chatMessageVOTypes,
@@ -2017,6 +2018,13 @@ function Chat(params) {
                         chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
+                    if(
+                        (Array.isArray(messageContent) && messageContent.indexOf("thread_admin") != -1)
+                        || (messageContent.roles && messageContent.roles.indexOf("thread_admin") != -1)
+                    ) {
+                        store.threads.get(threadId).update("admin", true);
+                    }
+
                     let srtuThread = store.threads.get(threadId);
                     chatEvents.fireEvent('threadEvents', {
                         type: 'THREAD_ADD_ADMIN',
@@ -2086,6 +2094,13 @@ function Chat(params) {
                 case chatMessageVOTypes.REMOVE_ROLE_FROM_USER:
                     if (chatMessaging.messagesCallbacks[uniqueId]) {
                         chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    }
+
+                    if (
+                        (Array.isArray(messageContent) && messageContent.indexOf("thread_admin") != -1)
+                        || (messageContent.roles && messageContent.roles.indexOf("thread_admin") != -1)
+                    ) {
+                        store.threads.get(threadId).update("admin", false);
                     }
 
                     let rrfuThread = store.threads.get(threadId);
@@ -2932,6 +2947,10 @@ function Chat(params) {
                     if (chatMessaging.messagesCallbacks[uniqueId]) {
                         chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
                     }
+                    let archiveThread = store.threads.get(threadId)
+                    if(archiveThread)
+                        archiveThread.update("archiveThread", true);
+
                     break;
 
                 /**
@@ -2942,6 +2961,9 @@ function Chat(params) {
                     if (chatMessaging.messagesCallbacks[uniqueId]) {
                         chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
                     }
+                    let unArchiveThread = store.threads.get(threadId)
+                    if(unArchiveThread)
+                        unArchiveThread.update("archiveThread", false);
                     break;
 
 
@@ -11588,6 +11610,13 @@ function Chat(params) {
         });
     };
 
+    publicized.version = function () {
+        console.log("%c[SDK] Version: podchat-browser@" + buildConfig.version, "color:green; font-size:13px")
+        console.log("%c[SDK] Build date:" + buildConfig.date, "color:green;font-size:13px")
+        console.log("%c[SDK] Additional info: " + buildConfig.VersionInfo, "color:green;font-size:13px")
+        return buildConfig;
+    };
+
     store.events.on(store.threads.eventsList.UNREAD_COUNT_UPDATED, (thread) => {
         chatEvents.fireEvent('threadEvents', {
             type: 'THREAD_UNREAD_COUNT_UPDATED',
@@ -11595,6 +11624,15 @@ function Chat(params) {
                 threadId: thread.id,
                 thread,
                 unreadCount: thread.unreadCount || 0
+            }
+        });
+    });
+    store.events.on(store.threads.eventsList.SINGLE_THREAD_UPDATE, (thread) => {
+        chatEvents.fireEvent('threadEvents', {
+            type: 'THREAD_INFO_UPDATED',
+            result: {
+                threadId: thread.id,
+                thread: thread
             }
         });
     })

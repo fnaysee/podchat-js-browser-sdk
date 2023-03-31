@@ -2,6 +2,7 @@ import {storeEvents} from "./eventEmitter";
 
 let list = [];
 const eventsList = {
+    SINGLE_THREAD_UPDATE: "singleThreadUpdate",
     UNREAD_COUNT_UPDATED: 'unreadCountUpdated',
     LAST_SEEN_MESSAGE_TIME_UPDATED: 'lastSeenMessageTimeUpdated',
 }
@@ -18,13 +19,17 @@ const threadsList = {
         return list.findIndex(item => item?.get().id == threadId);
     },
     save(thread) {
+        let localThread;
         let localThreadIndex = threadsList.findIndex(thread.id);
         if (localThreadIndex > -1) {
             list[localThreadIndex].set(thread)
-
+            localThread = list[localThreadIndex];
         } else {
-            list = [new ThreadObject(thread)].concat(list);
+            localThread = new ThreadObject(thread);
+            list = [localThread].concat(list);
+
         }
+        storeEvents.emit(eventsList.SINGLE_THREAD_UPDATE, localThread.get());
     },
     saveMany(newThreads) {
         if (Array.isArray(newThreads)) {
@@ -56,9 +61,14 @@ function ThreadObject(thread) {
         latestReceivedMessage: null
     };
 
+
     function makeSureUnreadCountExists(thread){
-        if(typeof thread.unreadCount != "number")
-            thread.unreadCount = 0;
+        if(!thread.unreadCount){
+            if(config.thread.unreadCount)
+                thread.unreadCount = config.thread.unreadCount;
+            else
+                thread.unreadCount = 0;
+        }
     }
 
     makeSureUnreadCountExists(config.thread);
@@ -73,6 +83,7 @@ function ThreadObject(thread) {
         },
         update(field, newValue) {
             config.thread[field] = newValue;
+            storeEvents.emit(eventsList.SINGLE_THREAD_UPDATE, config.thread)
         },
         unreadCount: {
             set(count) {
@@ -103,6 +114,9 @@ function ThreadObject(thread) {
                 return config.thread.lastSeenMessageTime
             }
         },
+        /**
+         * local helper to detect and always replace the correct lastMessageVO in thread
+         */
         latestReceivedMessage: {
             getTime() {
                 return (config.latestReceivedMessage ? config.latestReceivedMessage.time : 0)

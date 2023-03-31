@@ -21,6 +21,8 @@ var _events = require("./events.module");
 
 var _messaging = _interopRequireDefault(require("./messaging.module"));
 
+var _buildConfig = _interopRequireDefault(require("./buildConfig.json"));
+
 var _constants = require("./lib/constants");
 
 var _deviceManager = _interopRequireDefault(require("./lib/call/deviceManager.js"));
@@ -2026,6 +2028,10 @@ function Chat(params) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent));
         }
 
+        if (Array.isArray(messageContent) && messageContent.indexOf("thread_admin") != -1 || messageContent.roles && messageContent.roles.indexOf("thread_admin") != -1) {
+          _store.store.threads.get(threadId).update("admin", true);
+        }
+
         var srtuThread = _store.store.threads.get(threadId);
 
         _events.chatEvents.fireEvent('threadEvents', {
@@ -2096,6 +2102,10 @@ function Chat(params) {
       case _constants.chatMessageVOTypes.REMOVE_ROLE_FROM_USER:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent));
+        }
+
+        if (Array.isArray(messageContent) && messageContent.indexOf("thread_admin") != -1 || messageContent.roles && messageContent.roles.indexOf("thread_admin") != -1) {
+          _store.store.threads.get(threadId).update("admin", false);
         }
 
         var rrfuThread = _store.store.threads.get(threadId);
@@ -3014,6 +3024,9 @@ function Chat(params) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
         }
 
+        var archiveThread = _store.store.threads.get(threadId);
+
+        if (archiveThread) archiveThread.update("archiveThread", true);
         break;
 
       /**
@@ -3026,6 +3039,9 @@ function Chat(params) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
         }
 
+        var unArchiveThread = _store.store.threads.get(threadId);
+
+        if (unArchiveThread) unArchiveThread.update("archiveThread", false);
         break;
 
       /**
@@ -11697,6 +11713,13 @@ function Chat(params) {
     });
   };
 
+  publicized.version = function () {
+    console.log("%c[SDK] Version: podchat-browser@" + _buildConfig["default"].version, "color:green; font-size:13px");
+    console.log("%c[SDK] Build date:" + _buildConfig["default"].date, "color:green;font-size:13px");
+    console.log("%c[SDK] Additional info: " + _buildConfig["default"].VersionInfo, "color:green;font-size:13px");
+    return _buildConfig["default"];
+  };
+
   _store.store.events.on(_store.store.threads.eventsList.UNREAD_COUNT_UPDATED, function (thread) {
     _events.chatEvents.fireEvent('threadEvents', {
       type: 'THREAD_UNREAD_COUNT_UPDATED',
@@ -11704,6 +11727,16 @@ function Chat(params) {
         threadId: thread.id,
         thread: thread,
         unreadCount: thread.unreadCount || 0
+      }
+    });
+  });
+
+  _store.store.events.on(_store.store.threads.eventsList.SINGLE_THREAD_UPDATE, function (thread) {
+    _events.chatEvents.fireEvent('threadEvents', {
+      type: 'THREAD_INFO_UPDATED',
+      result: {
+        threadId: thread.id,
+        thread: thread
       }
     });
   });

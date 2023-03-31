@@ -17,6 +17,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 var list = [];
 var eventsList = {
+  SINGLE_THREAD_UPDATE: "singleThreadUpdate",
   UNREAD_COUNT_UPDATED: 'unreadCountUpdated',
   LAST_SEEN_MESSAGE_TIME_UPDATED: 'lastSeenMessageTimeUpdated'
 };
@@ -34,13 +35,18 @@ var threadsList = {
     });
   },
   save: function save(thread) {
+    var localThread;
     var localThreadIndex = threadsList.findIndex(thread.id);
 
     if (localThreadIndex > -1) {
       list[localThreadIndex].set(thread);
+      localThread = list[localThreadIndex];
     } else {
-      list = [new ThreadObject(thread)].concat(list);
+      localThread = new ThreadObject(thread);
+      list = [localThread].concat(list);
     }
+
+    _eventEmitter.storeEvents.emit(eventsList.SINGLE_THREAD_UPDATE, localThread.get());
   },
   saveMany: function saveMany(newThreads) {
     if (Array.isArray(newThreads)) {
@@ -78,7 +84,9 @@ function ThreadObject(thread) {
   };
 
   function makeSureUnreadCountExists(thread) {
-    if (typeof thread.unreadCount != "number") thread.unreadCount = 0;
+    if (!thread.unreadCount) {
+      if (config.thread.unreadCount) thread.unreadCount = config.thread.unreadCount;else thread.unreadCount = 0;
+    }
   }
 
   makeSureUnreadCountExists(config.thread);
@@ -92,6 +100,8 @@ function ThreadObject(thread) {
     },
     update: function update(field, newValue) {
       config.thread[field] = newValue;
+
+      _eventEmitter.storeEvents.emit(eventsList.SINGLE_THREAD_UPDATE, config.thread);
     },
     unreadCount: {
       set: function set(count) {
@@ -125,6 +135,10 @@ function ThreadObject(thread) {
         return config.thread.lastSeenMessageTime;
       }
     },
+
+    /**
+     * local helper to detect and always replace the correct lastMessageVO in thread
+     */
     latestReceivedMessage: {
       getTime: function getTime() {
         return config.latestReceivedMessage ? config.latestReceivedMessage.time : 0;

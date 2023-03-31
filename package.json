@@ -5,13 +5,13 @@
   "main": "./dist/node/chat.js",
   "scripts": {
     "test": "mocha --reporter spec --exit",
-    "publish:snapshot": "npm run version:snapshot && npm publish --tag snapshot",
+    "publish:snapshot": "npm run version:snapshot && npm run build && npm publish --tag snapshot",
     "version:snapshot": "npm version prerelease --preid snapshot",
     "publish:release": "npm run version:release && npm publish",
     "version:release": "npm version 12.8.1",
     "build:browser": "browserify -t [ babelify ] src/chat.js > dist/podchat-browser-bundle.js",
     "build:npm": "babel src -d dist/node --copy-files",
-    "build": "npm run build:browser && npm run build:npm",
+    "build": "node _buildInfo.js && node -e \"setTimeout(() => process.exit(0), 1000)\" && npm run build:browser && npm run build:npm",
     "watch": "npm-watch build"
   },
   "watch": {

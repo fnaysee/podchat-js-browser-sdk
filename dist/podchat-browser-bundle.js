@@ -40789,6 +40789,8 @@ WildEmitter.mixin = function (constructor) {
 WildEmitter.mixin(WildEmitter);
 
 },{}],264:[function(require,module,exports){
+module.exports={"version":"12.8.2-snapshot.5","date":"۱۴۰۲/۱/۱۱","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+},{}],265:[function(require,module,exports){
 "use strict";var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");var _typeof3=require("@babel/runtime/helpers/typeof");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _regenerator=_interopRequireDefault(require("@babel/runtime/regenerator"));var _asyncToGenerator2=_interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _constants=require("./lib/constants");var _kurentoUtils=_interopRequireDefault(require("kurento-utils"));var _utility=_interopRequireDefault(require("./utility/utility"));var _eventsModule=require("./events.module.js");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));var _errorHandler=_interopRequireWildcard(require("./lib/errorHandler"));function _getRequireWildcardCache(nodeInterop){if(typeof WeakMap!=="function")return null;var cacheBabelInterop=new WeakMap();var cacheNodeInterop=new WeakMap();return(_getRequireWildcardCache=function _getRequireWildcardCache(nodeInterop){return nodeInterop?cacheNodeInterop:cacheBabelInterop;})(nodeInterop);}function _interopRequireWildcard(obj,nodeInterop){if(!nodeInterop&&obj&&obj.__esModule){return obj;}if(obj===null||_typeof3(obj)!=="object"&&typeof obj!=="function"){return{"default":obj};}var cache=_getRequireWildcardCache(nodeInterop);if(cache&&cache.has(obj)){return cache.get(obj);}var newObj={};var hasPropertyDescriptor=Object.defineProperty&&Object.getOwnPropertyDescriptor;for(var key in obj){if(key!=="default"&&Object.prototype.hasOwnProperty.call(obj,key)){var desc=hasPropertyDescriptor?Object.getOwnPropertyDescriptor(obj,key):null;if(desc&&(desc.get||desc.set)){Object.defineProperty(newObj,key,desc);}else{newObj[key]=obj[key];}}}newObj["default"]=obj;if(cache){cache.set(obj,newObj);}return newObj;}function ChatCall(params){var _params$asyncLogging,_params$asyncLogging2,_params$asyncLogging3,_params$callOptions,_params$callOptions2;var//Utility = params.Utility,
 currentModuleInstance=this,asyncClient=params.asyncClient,//chatEvents = params.chatEvents,
 chatMessaging=params.chatMessaging,token=params.token,asyncRequestTimeouts={},callTypes={'VOICE':0x0,'VIDEO':0x1},generalTypeCode=params.typeCode,callOptions=params.callOptions,useInternalTurnAddress=!!(params.callOptions&&params.callOptions.useInternalTurnAddress),callTurnIp=params.callOptions&&params.callOptions.hasOwnProperty('callTurnIp')&&typeof params.callOptions.callTurnIp==='string'?params.callOptions.callTurnIp:'46.32.6.188',callDivId=params.callOptions&&params.callOptions.hasOwnProperty('callDivId')&&typeof params.callOptions.callDivId==='string'?params.callOptions.callDivId:'call-div',callAudioTagClassName=params.callOptions&&params.callOptions.hasOwnProperty('callAudioTagClassName')&&typeof params.callOptions.callAudioTagClassName==='string'?params.callOptions.callAudioTagClassName:'',callVideoTagClassName=params.callOptions&&params.callOptions.hasOwnProperty('callVideoTagClassName')&&typeof params.callOptions.callVideoTagClassName==='string'?params.callOptions.callVideoTagClassName:'',callVideoMinWidth=params.callOptions&&params.callOptions.hasOwnProperty('callVideo')&&(0,_typeof2["default"])(params.callOptions.callVideo)==='object'&&params.callOptions.callVideo.hasOwnProperty('minWidth')?params.callOptions.callVideo.minWidth:320,callVideoMinHeight=params.callOptions&&params.callOptions.hasOwnProperty('callVideo')&&(0,_typeof2["default"])(params.callOptions.callVideo)==='object'&&params.callOptions.callVideo.hasOwnProperty('minHeight')?params.callOptions.callVideo.minHeight:180,currentCallParams={},requestedCallId=null,acceptedCallId=null,currentCallId=null,latestCallRequestId=null,//shouldReconnectCallTimeout = null,
@@ -41528,8 +41530,8 @@ invitees.forEach(function(item){item.idType=_constants.inviteeVOidTypes[item.idT
          }
      }*/return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};this.deviceManager=_deviceManager["default"];this.resetCallStream=function(_ref9,callback){var userId=_ref9.userId,_ref9$streamType=_ref9.streamType,streamType=_ref9$streamType===void 0?'audio':_ref9$streamType;return new Promise(function(resolve,reject){if(userId==='screenShare'||streamType==='video'){if(callUsers[userId]){callUsers[userId].videoTopicManager.recreateTopic().then(function(){resolve();callback&&callback({hasError:false});})["catch"](function(){reject();callback&&callback({hasError:true});});}}else{callUsers[userId].audioTopicManager.recreateTopic().then(function(){resolve();callback&&callback({hasError:false});})["catch"](function(){reject();callback&&callback({hasError:true});});}});};this.callStop=callStop;this.restartMedia=restartMedia;}var _default=ChatCall;exports["default"]=_default;
 
-},{"./events.module.js":266,"./lib/call/deviceManager.js":267,"./lib/constants":268,"./lib/errorHandler":269,"./utility/utility":274,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/toConsumableArray":9,"@babel/runtime/helpers/typeof":10,"@babel/runtime/regenerator":12,"kurento-utils":189}],265:[function(require,module,exports){
-'use strict';var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _podasyncWsOnly=_interopRequireDefault(require("podasync-ws-only"));var _utility=_interopRequireDefault(require("./utility/utility"));var _call=_interopRequireDefault(require("./call.module"));var _events=require("./events.module");var _messaging=_interopRequireDefault(require("./messaging.module"));var _constants=require("./lib/constants");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));var _errorHandler=require("./lib/errorHandler");var _store=require("./lib/store");function Chat(params){/*******************************************************
+},{"./events.module.js":267,"./lib/call/deviceManager.js":268,"./lib/constants":269,"./lib/errorHandler":270,"./utility/utility":275,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/toConsumableArray":9,"@babel/runtime/helpers/typeof":10,"@babel/runtime/regenerator":12,"kurento-utils":189}],266:[function(require,module,exports){
+'use strict';var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _podasyncWsOnly=_interopRequireDefault(require("podasync-ws-only"));var _utility=_interopRequireDefault(require("./utility/utility"));var _call=_interopRequireDefault(require("./call.module"));var _events=require("./events.module");var _messaging=_interopRequireDefault(require("./messaging.module"));var _buildConfig=_interopRequireDefault(require("./buildConfig.json"));var _constants=require("./lib/constants");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));var _errorHandler=require("./lib/errorHandler");var _store=require("./lib/store");function Chat(params){/*******************************************************
    *          P R I V A T E   V A R I A B L E S          *
    *******************************************************/var asyncClient,peerId,oldPeerId,token=params.token,generalTypeCode=params.typeCode||'default',typeCodeOwnerId=params.typeCodeOwnerId||null,mapApiKey=params.mapApiKey||'8b77db18704aa646ee5aaea13e7370f4f88b9e8c',deviceId,productEnv=typeof navigator!='undefined'?navigator.product:'undefined',// queueDb,
 // forceWaitQueueInMemory = true,//(params.forceWaitQueueInMemory && typeof params.forceWaitQueueInMemory === 'boolean') ? params.forceWaitQueueInMemory : false,
@@ -42126,7 +42128,7 @@ break;/**
        * Type 41    Spam P2P Thread
        */case _constants.chatMessageVOTypes.SPAM_PV_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
        * Type 42    Set Role To User
-       */case _constants.chatMessageVOTypes.SET_ROLE_TO_USER:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}var srtuThread=_store.store.threads.get(threadId);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_ADD_ADMIN',result:{threadId:threadId,thread:srtuThread?srtuThread.get():null,admin:messageContent}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{threadId:threadId,thread:srtuThread?srtuThread.get():null,admin:messageContent}});// if (fullResponseObject) {
+       */case _constants.chatMessageVOTypes.SET_ROLE_TO_USER:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(Array.isArray(messageContent)&&messageContent.indexOf("thread_admin")!=-1||messageContent.roles&&messageContent.roles.indexOf("thread_admin")!=-1){_store.store.threads.get(threadId).update("admin",true);}var srtuThread=_store.store.threads.get(threadId);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_ADD_ADMIN',result:{threadId:threadId,thread:srtuThread?srtuThread.get():null,admin:messageContent}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{threadId:threadId,thread:srtuThread?srtuThread.get():null,admin:messageContent}});// if (fullResponseObject) {
 //     getThreads({
 //         threadIds: [messageContent.id]
 //     }, function (threadsResult) {
@@ -42169,7 +42171,7 @@ break;/**
 // }
 break;/**
        * Type 43    Remove Role From User
-       */case _constants.chatMessageVOTypes.REMOVE_ROLE_FROM_USER:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}var rrfuThread=_store.store.threads.get(threadId);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVE_ADMIN',result:{threadId:threadId,thread:rrfuThread?rrfuThread.get():null,admin:messageContent}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{threadId:threadId,thread:rrfuThread?rrfuThread.get():null,admin:messageContent}});// if (fullResponseObject) {
+       */case _constants.chatMessageVOTypes.REMOVE_ROLE_FROM_USER:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(Array.isArray(messageContent)&&messageContent.indexOf("thread_admin")!=-1||messageContent.roles&&messageContent.roles.indexOf("thread_admin")!=-1){_store.store.threads.get(threadId).update("admin",false);}var rrfuThread=_store.store.threads.get(threadId);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVE_ADMIN',result:{threadId:threadId,thread:rrfuThread?rrfuThread.get():null,admin:messageContent}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{threadId:threadId,thread:rrfuThread?rrfuThread.get():null,admin:messageContent}});// if (fullResponseObject) {
 //     getThreads({
 //         threadIds: [messageContent.id]
 //     }, function (threadsResult) {
@@ -42428,10 +42430,10 @@ break;/**
        */case _constants.chatMessageVOTypes.CONTACT_THREAD_UPDATE:messageContent.threadId=threadId;_events.chatEvents.fireEvent('threadEvents',{type:'CONTACT_THREAD_UPDATE',result:messageContent});break;/**
        /**
        * Type 223    ARCHIVE_THREAD
-       */case _constants.chatMessageVOTypes.ARCHIVE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+       */case _constants.chatMessageVOTypes.ARCHIVE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}var archiveThread=_store.store.threads.get(threadId);if(archiveThread)archiveThread.update("archiveThread",true);break;/**
        /**
        * Type 224    UNARCHIVE_THREAD
-       */case _constants.chatMessageVOTypes.UNARCHIVE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+       */case _constants.chatMessageVOTypes.UNARCHIVE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}var unArchiveThread=_store.store.threads.get(threadId);if(unArchiveThread)unArchiveThread.update("archiveThread",false);break;/**
        * Type 226    CUSTOMER_INFO
        */case _constants.chatMessageVOTypes.CUSTOMER_INFO:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
        * Type 999   All unknown errors
@@ -43745,11 +43747,11 @@ pc.onicecandidate=function(ice){//listen for candidate events
 if(promiseResolved||!ice||!ice.candidate||!ice.candidate.candidate||!(ice.candidate.candidate.indexOf('typ relay')>-1))return;promiseResolved=true;resolve(true);};});};publicized.getCustomerInfo=function(params,callback){var userId=params.userId||chatMessaging.userInfo.id,sendData={chatMessageVOType:_constants.chatMessageVOTypes.CUSTOMER_INFO,typeCode:generalTypeCode,//params.typeCode,
 content:[userId],token:token};return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.archiveThread=function(_ref,callback){var threadId=_ref.threadId;var sendData={chatMessageVOType:_constants.chatMessageVOTypes.ARCHIVE_THREAD,typeCode:generalTypeCode,//params.typeCode,
 token:token,subjectId:threadId};return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.unArchiveThread=function(_ref2,callback){var threadId=_ref2.threadId;var sendData={chatMessageVOType:_constants.chatMessageVOTypes.UNARCHIVE_THREAD,typeCode:generalTypeCode,//params.typeCode,
-token:token,subjectId:threadId};return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};_store.store.events.on(_store.store.threads.eventsList.UNREAD_COUNT_UPDATED,function(thread){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNREAD_COUNT_UPDATED',result:{threadId:thread.id,thread:thread,unreadCount:thread.unreadCount||0}});});init();return publicized;}if(window){if(!window.POD){window.POD={};}window.POD.Chat=Chat;//For backward compatibility
+token:token,subjectId:threadId};return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.version=function(){console.log("%c[SDK] Version: podchat-browser@"+_buildConfig["default"].version,"color:green; font-size:13px");console.log("%c[SDK] Build date:"+_buildConfig["default"].date,"color:green;font-size:13px");console.log("%c[SDK] Additional info: "+_buildConfig["default"].VersionInfo,"color:green;font-size:13px");return _buildConfig["default"];};_store.store.events.on(_store.store.threads.eventsList.UNREAD_COUNT_UPDATED,function(thread){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNREAD_COUNT_UPDATED',result:{threadId:thread.id,thread:thread,unreadCount:thread.unreadCount||0}});});_store.store.events.on(_store.store.threads.eventsList.SINGLE_THREAD_UPDATE,function(thread){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{threadId:thread.id,thread:thread}});});init();return publicized;}if(window){if(!window.POD){window.POD={};}window.POD.Chat=Chat;//For backward compatibility
 window.PodChat=Chat;}var _default=Chat;// })();
 exports["default"]=_default;
 
-},{"./call.module":264,"./events.module":266,"./lib/call/deviceManager.js":267,"./lib/constants":268,"./lib/errorHandler":269,"./lib/store":271,"./messaging.module":273,"./utility/utility":274,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/toConsumableArray":9,"@babel/runtime/helpers/typeof":10,"podasync-ws-only":208}],266:[function(require,module,exports){
+},{"./buildConfig.json":264,"./call.module":265,"./events.module":267,"./lib/call/deviceManager.js":268,"./lib/constants":269,"./lib/errorHandler":270,"./lib/store":272,"./messaging.module":274,"./utility/utility":275,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/toConsumableArray":9,"@babel/runtime/helpers/typeof":10,"podasync-ws-only":208}],267:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -43874,7 +43876,7 @@ function initEventHandler(params) {
 var _default = ChatEvents;
 exports["default"] = _default;
 
-},{"./utility/utility":274,"@babel/runtime/helpers/interopRequireDefault":5}],267:[function(require,module,exports){
+},{"./utility/utility":275,"@babel/runtime/helpers/interopRequireDefault":5}],268:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -44239,7 +44241,7 @@ var deviceManager = {
 var _default = deviceManager;
 exports["default"] = _default;
 
-},{"../../events.module.js":266,"../constants.js":268,"../errorHandler.js":269,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":10,"@babel/runtime/regenerator":12}],268:[function(require,module,exports){
+},{"../../events.module.js":267,"../constants.js":269,"../errorHandler.js":270,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":10,"@babel/runtime/regenerator":12}],269:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -44449,7 +44451,7 @@ var callStickerTypes = {
 };
 exports.callStickerTypes = callStickerTypes;
 
-},{}],269:[function(require,module,exports){
+},{}],270:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -44623,7 +44625,7 @@ exports.raiseError = raiseError;
 var _default = handleError;
 exports["default"] = _default;
 
-},{"../events.module":266,"@babel/runtime/helpers/defineProperty":4,"@babel/runtime/helpers/interopRequireDefault":5}],270:[function(require,module,exports){
+},{"../events.module":267,"@babel/runtime/helpers/defineProperty":4,"@babel/runtime/helpers/interopRequireDefault":5}],271:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -44649,7 +44651,7 @@ var storeEvents = {
 };
 exports.storeEvents = storeEvents;
 
-},{"@babel/runtime/helpers/interopRequireDefault":5,"events":148}],271:[function(require,module,exports){
+},{"@babel/runtime/helpers/interopRequireDefault":5,"events":148}],272:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -44667,7 +44669,7 @@ var store = {
 };
 exports.store = store;
 
-},{"./eventEmitter":270,"./threads":272}],272:[function(require,module,exports){
+},{"./eventEmitter":271,"./threads":273}],273:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -44709,6 +44711,7 @@ function _objectSpread(target) {
 
 var list = [];
 var eventsList = {
+  SINGLE_THREAD_UPDATE: "singleThreadUpdate",
   UNREAD_COUNT_UPDATED: 'unreadCountUpdated',
   LAST_SEEN_MESSAGE_TIME_UPDATED: 'lastSeenMessageTimeUpdated'
 };
@@ -44726,13 +44729,18 @@ var threadsList = {
     });
   },
   save: function save(thread) {
+    var localThread;
     var localThreadIndex = threadsList.findIndex(thread.id);
 
     if (localThreadIndex > -1) {
       list[localThreadIndex].set(thread);
+      localThread = list[localThreadIndex];
     } else {
-      list = [new ThreadObject(thread)].concat(list);
+      localThread = new ThreadObject(thread);
+      list = [localThread].concat(list);
     }
+
+    _eventEmitter.storeEvents.emit(eventsList.SINGLE_THREAD_UPDATE, localThread.get());
   },
   saveMany: function saveMany(newThreads) {
     if (Array.isArray(newThreads)) {
@@ -44770,7 +44778,9 @@ function ThreadObject(thread) {
   };
 
   function makeSureUnreadCountExists(thread) {
-    if (typeof thread.unreadCount != "number") thread.unreadCount = 0;
+    if (!thread.unreadCount) {
+      if (config.thread.unreadCount) thread.unreadCount = config.thread.unreadCount;else thread.unreadCount = 0;
+    }
   }
 
   makeSureUnreadCountExists(config.thread);
@@ -44784,6 +44794,8 @@ function ThreadObject(thread) {
     },
     update: function update(field, newValue) {
       config.thread[field] = newValue;
+
+      _eventEmitter.storeEvents.emit(eventsList.SINGLE_THREAD_UPDATE, config.thread);
     },
     unreadCount: {
       set: function set(count) {
@@ -44817,6 +44829,10 @@ function ThreadObject(thread) {
         return config.thread.lastSeenMessageTime;
       }
     },
+
+    /**
+     * local helper to detect and always replace the correct lastMessageVO in thread
+     */
     latestReceivedMessage: {
       getTime: function getTime() {
         return config.latestReceivedMessage ? config.latestReceivedMessage.time : 0;
@@ -44831,7 +44847,7 @@ function ThreadObject(thread) {
   };
 }
 
-},{"./eventEmitter":270,"@babel/runtime/helpers/defineProperty":4,"@babel/runtime/helpers/interopRequireDefault":5}],273:[function(require,module,exports){
+},{"./eventEmitter":271,"@babel/runtime/helpers/defineProperty":4,"@babel/runtime/helpers/interopRequireDefault":5}],274:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -45187,7 +45203,7 @@ function ChatMessaging(params) {
 var _default = ChatMessaging;
 exports["default"] = _default;
 
-},{"./lib/constants":268,"./lib/errorHandler":269,"./utility/utility":274,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":10,"dompurify":130}],274:[function(require,module,exports){
+},{"./lib/constants":269,"./lib/errorHandler":270,"./utility/utility":275,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":10,"dompurify":130}],275:[function(require,module,exports){
 (function (global){(function (){
 "use strict";
 
@@ -45785,4 +45801,4 @@ var _default = new ChatUtility();
 exports["default"] = _default;
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":10,"crypto-js":93}]},{},[265]);
+},{"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":10,"crypto-js":93}]},{},[266]);
