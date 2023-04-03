@@ -408,7 +408,7 @@ function ChatCall(params) {
                 }
                 //callUsers[config.userId].topicMetaData[config.topic].interval
                 metadataInstance.setIceCandidateInterval(setInterval(function () {
-                    if (callUsers[config.userId].topicMetaData[config.topic].sdpAnswerReceived === true) {
+                    if (callUsers[config.userId] && callUsers[config.userId].topicMetaData[config.topic] && callUsers[config.userId].topicMetaData[config.topic].sdpAnswerReceived === true) {
                         consoleLogging && console.log("[SDK][watchForIceCandidates][setInterval] sdpAnswerReceived, topic:", config.topic)
                         callUsers[config.userId].topicMetaData[config.topic].sdpAnswerReceived = false;
                         // manager.removeTopicIceCandidateInterval();
@@ -889,11 +889,12 @@ function ChatCall(params) {
             },
             shouldReconnectTopic: function () {
                 let manager = this,
+                    connectionState = config.peer.peerConnection.connectionState,
                     iceConnectionState = config.peer.peerConnection.iceConnectionState;
                 if (currentCallParams && Object.keys(currentCallParams).length) {
                     if (callUsers[config.userId]
                         && config.peer
-                        && iceConnectionState != 'connected') {
+                        && (iceConnectionState != 'connected' || connectionState != 'connected')) {
                         chatEvents.fireEvent('callEvents', {
                             type: 'CALL_STATUS',
                             errorCode: 7000,
@@ -1226,7 +1227,8 @@ function ChatCall(params) {
                 callStatus: messageContent.callStatus,
                 createTime: messageContent.createTime,
                 sendKey: messageContent.sendKey,
-                mute: messageContent.mute
+                mute: messageContent.mute,
+                video: (typeof messageContent.video === 'boolean' ? messageContent.video : undefined)
             };
 
             // Add Chat Participant if exist
@@ -1728,10 +1730,22 @@ function ChatCall(params) {
                 if(!callUsers || !Object.keys(callUsers).length) //|| !callRequestController.callEstablishedInMySide
                     return;
 
+                let types = ['videoTopicManager', 'audioTopicManager'];
                 for(let i in callUsers) {
                     // let videoTopic = callUsers[i].videoTopicName, audioTopic = callUsers[i].audioTopicName;
                     if(callUsers[i]) {
-                        if(callUsers[i].videoTopicManager
+                        for (let t of types) {
+                            if(callUsers[i][t]
+                                && callUsers[i][t].getPeer()
+                                && (
+                                    callUsers[i][t].getPeer().peerConnection.connectionState === 'failed'
+                                    || callUsers[i][t].getPeer().peerConnection.iceConnectionState === 'failed'
+                                )
+                            ) {
+                                callUsers[i][t].shouldReconnectTopic()
+                            }
+                        }
+                        /*if(callUsers[i].videoTopicManager
                             && callUsers[i].videoTopicManager.getPeer()
                             && callUsers[i].videoTopicManager.getPeer().peerConnection.connectionState === 'failed'
                         ) {
@@ -1742,7 +1756,7 @@ function ChatCall(params) {
                             && callUsers[i].audioTopicManager.getPeer().peerConnection.connectionState === 'failed'
                         ) {
                             callUsers[i].audioTopicManager.shouldReconnectTopic()
-                        }
+                        }*/
                     }
                 }
             },
@@ -1910,6 +1924,124 @@ function ChatCall(params) {
             },
         },
 
+        inquiryCallState = function () {
+            let data = {
+                chatMessageVOType: chatMessageVOTypes.INQUIRY_CALL,
+                typeCode: generalTypeCode, //params.typeCode,
+                pushMsgType: 3,
+                token: token,
+                subjectId: currentCallId
+            }, content = {};
+
+            return chatMessaging.sendMessage(data, {
+                onResult: function (result) {
+                    consoleLogging && console.log('[SDK] inquiryCallState', {result});
+
+                    if(!result.hasError) {
+                        result.result.callParticipantVOs.forEach(callUser => {
+                            let localUser = callUsers[callUser.userId];
+                            if(!localUser) {
+                                let correctedData = {
+                                    video: callUsers.video,
+                                    mute: callUsers.mute,
+                                    userId: callUsers.userId,
+                                    topicSend: callUsers.sendTopic
+                                };
+                                callStateController.removeParticipant(correctedData.userId);
+                                setTimeout(function (){
+                                    callStateController.setupCallParticipant(correctedData);
+                                    if(correctedData.video) {
+                                        callStateController.startParticipantVideo(correctedData.userId);
+                                    }
+                                    if(!correctedData.mute) {
+                                        callStateController.startParticipantAudio(correctedData.userId);
+                                    }
+                                }, 500);
+
+                                return;
+                            }
+
+                            if (callUser.video && !localUser.video) {
+                                    //Start video peer
+                                    callStateController.activateParticipantStream(
+                                        callUser.userId,
+                                        'video',
+                                        (callUser.userId === chatMessaging.userInfo.id ? 'send' : 'receive'),
+                                        'videoTopicName',
+                                        callUser.sendTopic,
+                                        'video'
+                                    );
+                            } else if(!callUser.video && localUser.video) {
+                                //Stop video peer
+                                callStateController.deactivateParticipantStream(
+                                    callUser.userId,
+                                    'video',
+                                    'video'
+                                );
+                            }
+                            if (callUser.mute && !localUser.mute) {
+                                callUsers[callUser.userId].audioStopManager.disableStream();
+
+                            } else if (!callUser.mute && localUser.mute) {
+                                //Start audio peer
+                                let cUserId = callUser.userId;
+
+                                if(callUsers[cUserId].audioStopManager.isStreamPaused()) {
+                                    if (callUsers[cUserId].audioStopManager.isStreamStopped()) {
+
+                                        callStateController.activateParticipantStream(
+                                            cUserId,
+                                            'audio',
+                                            (chatMessaging.userInfo.id === cUserId ? 'send' : 'receive'),
+                                            'audioTopicName',
+                                            callUsers[cUserId].topicSend,
+                                            'mute'
+                                        );
+                                    } else if(chatMessaging.userInfo.id === cUserId){
+                                        currentModuleInstance.resumeMice({});
+                                    }
+                                    callUsers[cUserId].audioStopManager.reset();
+                                }
+                            }
+
+                            setTimeout(function () {
+                                chatEvents.fireEvent('callEvents', {
+                                    type: 'CALL_DIVS',
+                                    result: generateCallUIList()
+                                });
+                            })
+                        })
+                    } else {
+
+                        // CALL_NOT_FOUND = 160
+                        // NOT_CALL_PAERTICIPANT = 162
+                        // CALL_PARTICIPANT_IS_NOT_ACTIVE_IN_CALL = 171
+                        // INQUIRY_CALL_KAFKA_EXCEPTION = 322
+
+                        if([163].includes(result.errorCode)) {
+                            chatEvents.fireEvent('callEvents', {
+                                type: 'CALL_ENDED',
+                                callId: data.subjectId
+                            });
+                            endCall({callId: data.subjectId});
+                        }
+
+                        if(result.errorCode === 171){
+                            //TODO: Not completed yet
+                            chatEvents.fireEvent('callEvents', {
+                                type: 'CALL_PARTICIPANT_LEFT',
+                                result: {
+                                    callId: currentCallId
+                                }
+                                //callId: currentCallId
+                            });
+                        }
+
+                    }
+                    //callback && callback(result);
+                }
+            });
+        },
         sendCallSocketError = function (message) {
             chatEvents.fireEvent('callEvents', {
                 type: 'CALL_ERROR',
@@ -2638,9 +2770,12 @@ function ChatCall(params) {
     this.asyncInitialized = function (async) {
         asyncClient = async;
 
-        asyncClient.on('asyncReady', function (){
-            callStateController.maybeReconnectAllTopics();
-        })
+        chatEvents.on('chatReady', function (){
+            if(currentCallId) {
+                callStateController.maybeReconnectAllTopics();
+                inquiryCallState();
+            }
+        });
     };
 
     /**
@@ -3435,6 +3570,16 @@ function ChatCall(params) {
                 if (chatMessaging.messagesCallbacks[uniqueId]) {
                     chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
                 }
+                break;
+
+             /**
+             * Type 228   INQUIRY_CALL
+             */
+            case chatMessageVOTypes.INQUIRY_CALL:
+                if (chatMessaging.messagesCallbacks[uniqueId]) {
+                    chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+                }
+
                 break;
 
             /**
@@ -4495,6 +4640,51 @@ function ChatCall(params) {
             });
             return;
         }
+    };
+
+    /**
+     * This method inquiries call participants from call servers
+     */
+    this.inquiryCallParticipants = function ({}, callback) {
+        let sendMessageParams = {
+            chatMessageVOType: chatMessageVOTypes.INQUIRY_CALL,
+            typeCode: generalTypeCode,//params.typeCode,
+            subjectId: currentCallId,
+            content: {}
+        };
+
+        return chatMessaging.sendMessage(sendMessageParams, {
+            onResult: function (result) {
+                let returnData = {
+                    hasError: result.hasError,
+                    cache: false,
+                    errorMessage: result.errorMessage,
+                    errorCode: result.errorCode
+                };
+
+                if (!returnData.hasError) {
+                    let messageContent = result.result,
+                        messageLength = messageContent.length,
+                        resultData = {
+                            participants: reformatCallParticipants(messageContent),
+                            contentCount: result.contentCount,
+                        };
+
+                    returnData.result = resultData;
+                }
+
+                callback && callback(returnData);
+
+                returnData.result.callId = currentCallId;
+
+                if (!returnData.hasError) {
+                    chatEvents.fireEvent('callEvents', {
+                        type: 'ACTIVE_CALL_PARTICIPANTS',
+                        result: returnData.result
+                    });
+                }
+            }
+        });
     };
 
     this.addCallParticipants = function (params, callback) {

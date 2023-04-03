@@ -11,6 +11,8 @@ exports["default"] = void 0;
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
+var _objectDestructuringEmpty2 = _interopRequireDefault(require("@babel/runtime/helpers/objectDestructuringEmpty"));
+
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 
 var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));
@@ -32,6 +34,12 @@ var _errorHandler = _interopRequireWildcard(require("./lib/errorHandler"));
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof3(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 function ChatCall(params) {
   var _params$asyncLogging, _params$asyncLogging2, _params$asyncLogging3, _params$callOptions, _params$callOptions2;
@@ -401,7 +409,7 @@ function ChatCall(params) {
 
 
         metadataInstance.setIceCandidateInterval(setInterval(function () {
-          if (callUsers[config.userId].topicMetaData[config.topic].sdpAnswerReceived === true) {
+          if (callUsers[config.userId] && callUsers[config.userId].topicMetaData[config.topic] && callUsers[config.userId].topicMetaData[config.topic].sdpAnswerReceived === true) {
             consoleLogging && console.log("[SDK][watchForIceCandidates][setInterval] sdpAnswerReceived, topic:", config.topic);
             callUsers[config.userId].topicMetaData[config.topic].sdpAnswerReceived = false; // manager.removeTopicIceCandidateInterval();
 
@@ -893,10 +901,11 @@ function ChatCall(params) {
       },
       shouldReconnectTopic: function shouldReconnectTopic() {
         var manager = this,
+            connectionState = config.peer.peerConnection.connectionState,
             iceConnectionState = config.peer.peerConnection.iceConnectionState;
 
         if (currentCallParams && Object.keys(currentCallParams).length) {
-          if (callUsers[config.userId] && config.peer && iceConnectionState != 'connected') {
+          if (callUsers[config.userId] && config.peer && (iceConnectionState != 'connected' || connectionState != 'connected')) {
             _eventsModule.chatEvents.fireEvent('callEvents', {
               type: 'CALL_STATUS',
               errorCode: 7000,
@@ -1221,7 +1230,8 @@ function ChatCall(params) {
       callStatus: messageContent.callStatus,
       createTime: messageContent.createTime,
       sendKey: messageContent.sendKey,
-      mute: messageContent.mute
+      mute: messageContent.mute,
+      video: typeof messageContent.video === 'boolean' ? messageContent.video : undefined
     }; // Add Chat Participant if exist
 
     if (messageContent.participantVO) {
@@ -1722,16 +1732,39 @@ function ChatCall(params) {
     maybeReconnectAllTopics: function maybeReconnectAllTopics() {
       if (!callUsers || !Object.keys(callUsers).length) //|| !callRequestController.callEstablishedInMySide
         return;
+      var types = ['videoTopicManager', 'audioTopicManager'];
 
       for (var i in callUsers) {
         // let videoTopic = callUsers[i].videoTopicName, audioTopic = callUsers[i].audioTopicName;
         if (callUsers[i]) {
-          if (callUsers[i].videoTopicManager && callUsers[i].videoTopicManager.getPeer() && callUsers[i].videoTopicManager.getPeer().peerConnection.connectionState === 'failed') {
-            callUsers[i].videoTopicManager.shouldReconnectTopic();
-          }
+          var _iterator = _createForOfIteratorHelper(types),
+              _step;
 
-          if (callUsers[i].audioTopicManager && callUsers[i].audioTopicManager.getPeer() && callUsers[i].audioTopicManager.getPeer().peerConnection.connectionState === 'failed') {
-            callUsers[i].audioTopicManager.shouldReconnectTopic();
+          try {
+            for (_iterator.s(); !(_step = _iterator.n()).done;) {
+              var t = _step.value;
+
+              if (callUsers[i][t] && callUsers[i][t].getPeer() && (callUsers[i][t].getPeer().peerConnection.connectionState === 'failed' || callUsers[i][t].getPeer().peerConnection.iceConnectionState === 'failed')) {
+                callUsers[i][t].shouldReconnectTopic();
+              }
+            }
+            /*if(callUsers[i].videoTopicManager
+                && callUsers[i].videoTopicManager.getPeer()
+                && callUsers[i].videoTopicManager.getPeer().peerConnection.connectionState === 'failed'
+            ) {
+                callUsers[i].videoTopicManager.shouldReconnectTopic()
+            }
+            if(callUsers[i].audioTopicManager
+                && callUsers[i].audioTopicManager.getPeer()
+                && callUsers[i].audioTopicManager.getPeer().peerConnection.connectionState === 'failed'
+            ) {
+                callUsers[i].audioTopicManager.shouldReconnectTopic()
+            }*/
+
+          } catch (err) {
+            _iterator.e(err);
+          } finally {
+            _iterator.f();
           }
         }
       }
@@ -1911,6 +1944,111 @@ function ChatCall(params) {
       consoleLogging && console.debug("[SDK][setMediaBitrate] output: ", newLines.join("\n"));
       return newLines.join("\n");
     }
+  },
+      inquiryCallState = function inquiryCallState() {
+    var data = {
+      chatMessageVOType: _constants.chatMessageVOTypes.INQUIRY_CALL,
+      typeCode: generalTypeCode,
+      //params.typeCode,
+      pushMsgType: 3,
+      token: token,
+      subjectId: currentCallId
+    },
+        content = {};
+    return chatMessaging.sendMessage(data, {
+      onResult: function onResult(result) {
+        consoleLogging && console.log('[SDK] inquiryCallState', {
+          result: result
+        });
+
+        if (!result.hasError) {
+          result.result.callParticipantVOs.forEach(function (callUser) {
+            var localUser = callUsers[callUser.userId];
+
+            if (!localUser) {
+              var correctedData = {
+                video: callUsers.video,
+                mute: callUsers.mute,
+                userId: callUsers.userId,
+                topicSend: callUsers.sendTopic
+              };
+              callStateController.removeParticipant(correctedData.userId);
+              setTimeout(function () {
+                callStateController.setupCallParticipant(correctedData);
+
+                if (correctedData.video) {
+                  callStateController.startParticipantVideo(correctedData.userId);
+                }
+
+                if (!correctedData.mute) {
+                  callStateController.startParticipantAudio(correctedData.userId);
+                }
+              }, 500);
+              return;
+            }
+
+            if (callUser.video && !localUser.video) {
+              //Start video peer
+              callStateController.activateParticipantStream(callUser.userId, 'video', callUser.userId === chatMessaging.userInfo.id ? 'send' : 'receive', 'videoTopicName', callUser.sendTopic, 'video');
+            } else if (!callUser.video && localUser.video) {
+              //Stop video peer
+              callStateController.deactivateParticipantStream(callUser.userId, 'video', 'video');
+            }
+
+            if (callUser.mute && !localUser.mute) {
+              callUsers[callUser.userId].audioStopManager.disableStream();
+            } else if (!callUser.mute && localUser.mute) {
+              //Start audio peer
+              var cUserId = callUser.userId;
+
+              if (callUsers[cUserId].audioStopManager.isStreamPaused()) {
+                if (callUsers[cUserId].audioStopManager.isStreamStopped()) {
+                  callStateController.activateParticipantStream(cUserId, 'audio', chatMessaging.userInfo.id === cUserId ? 'send' : 'receive', 'audioTopicName', callUsers[cUserId].topicSend, 'mute');
+                } else if (chatMessaging.userInfo.id === cUserId) {
+                  currentModuleInstance.resumeMice({});
+                }
+
+                callUsers[cUserId].audioStopManager.reset();
+              }
+            }
+
+            setTimeout(function () {
+              _eventsModule.chatEvents.fireEvent('callEvents', {
+                type: 'CALL_DIVS',
+                result: generateCallUIList()
+              });
+            });
+          });
+        } else {
+          // CALL_NOT_FOUND = 160
+          // NOT_CALL_PAERTICIPANT = 162
+          // CALL_PARTICIPANT_IS_NOT_ACTIVE_IN_CALL = 171
+          // INQUIRY_CALL_KAFKA_EXCEPTION = 322
+          if ([163].includes(result.errorCode)) {
+            _eventsModule.chatEvents.fireEvent('callEvents', {
+              type: 'CALL_ENDED',
+              callId: data.subjectId
+            });
+
+            endCall({
+              callId: data.subjectId
+            });
+          }
+
+          if (result.errorCode === 171) {
+            //TODO: Not completed yet
+            _eventsModule.chatEvents.fireEvent('callEvents', {
+              type: 'CALL_PARTICIPANT_LEFT',
+              result: {
+                callId: currentCallId
+              } //callId: currentCallId
+
+            });
+          }
+        } //callback && callback(result);
+
+      }
+    });
   },
       sendCallSocketError = function sendCallSocketError(message) {
     _eventsModule.chatEvents.fireEvent('callEvents', {
@@ -2641,8 +2779,12 @@ function ChatCall(params) {
 
   this.asyncInitialized = function (async) {
     asyncClient = async;
-    asyncClient.on('asyncReady', function () {
-      callStateController.maybeReconnectAllTopics();
+
+    _eventsModule.chatEvents.on('chatReady', function () {
+      if (currentCallId) {
+        callStateController.maybeReconnectAllTopics();
+        inquiryCallState();
+      }
     });
   };
   /**
@@ -3432,6 +3574,17 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.RECALL_THREAD_PARTICIPANT:
+        if (chatMessaging.messagesCallbacks[uniqueId]) {
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+        }
+
+        break;
+
+      /**
+      * Type 228   INQUIRY_CALL
+      */
+
+      case _constants.chatMessageVOTypes.INQUIRY_CALL:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
         }
@@ -4624,6 +4777,51 @@ function ChatCall(params) {
       return;
     }
   };
+  /**
+   * This method inquiries call participants from call servers
+   */
+
+
+  this.inquiryCallParticipants = function (_ref7, callback) {
+    (0, _objectDestructuringEmpty2["default"])(_ref7);
+    var sendMessageParams = {
+      chatMessageVOType: _constants.chatMessageVOTypes.INQUIRY_CALL,
+      typeCode: generalTypeCode,
+      //params.typeCode,
+      subjectId: currentCallId,
+      content: {}
+    };
+    return chatMessaging.sendMessage(sendMessageParams, {
+      onResult: function onResult(result) {
+        var returnData = {
+          hasError: result.hasError,
+          cache: false,
+          errorMessage: result.errorMessage,
+          errorCode: result.errorCode
+        };
+
+        if (!returnData.hasError) {
+          var messageContent = result.result,
+              messageLength = messageContent.length,
+              resultData = {
+            participants: reformatCallParticipants(messageContent),
+            contentCount: result.contentCount
+          };
+          returnData.result = resultData;
+        }
+
+        callback && callback(returnData);
+        returnData.result.callId = currentCallId;
+
+        if (!returnData.hasError) {
+          _eventsModule.chatEvents.fireEvent('callEvents', {
+            type: 'ACTIVE_CALL_PARTICIPANTS',
+            result: returnData.result
+          });
+        }
+      }
+    });
+  };
 
   this.addCallParticipants = function (params, callback) {
     /**
@@ -5040,9 +5238,9 @@ function ChatCall(params) {
     }
   };
 
-  this.sendCallSticker = function (_ref7, callback) {
-    var _ref7$sticker = _ref7.sticker,
-        sticker = _ref7$sticker === void 0 ? _constants.callStickerTypes.RAISE_HAND : _ref7$sticker;
+  this.sendCallSticker = function (_ref8, callback) {
+    var _ref8$sticker = _ref8.sticker,
+        sticker = _ref8$sticker === void 0 ? _constants.callStickerTypes.RAISE_HAND : _ref8$sticker;
     var sendMessageParams = {
       chatMessageVOType: _constants.chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE,
       typeCode: generalTypeCode,
@@ -5068,8 +5266,8 @@ function ChatCall(params) {
     });
   };
 
-  this.recallThreadParticipant = function (_ref8, callback) {
-    var invitees = _ref8.invitees;
+  this.recallThreadParticipant = function (_ref9, callback) {
+    var invitees = _ref9.invitees;
     var sendData = {
       chatMessageVOType: _constants.chatMessageVOTypes.RECALL_THREAD_PARTICIPANT,
       typeCode: generalTypeCode,
@@ -5106,10 +5304,10 @@ function ChatCall(params) {
 
   this.deviceManager = _deviceManager["default"];
 
-  this.resetCallStream = function (_ref9, callback) {
-    var userId = _ref9.userId,
-        _ref9$streamType = _ref9.streamType,
-        streamType = _ref9$streamType === void 0 ? 'audio' : _ref9$streamType;
+  this.resetCallStream = function (_ref10, callback) {
+    var userId = _ref10.userId,
+        _ref10$streamType = _ref10.streamType,
+        streamType = _ref10$streamType === void 0 ? 'audio' : _ref10$streamType;
     return new Promise(function (resolve, reject) {
       if (userId === 'screenShare' || streamType === 'video') {
         if (callUsers[userId]) {
