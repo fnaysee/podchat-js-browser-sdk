@@ -2631,6 +2631,7 @@ function Chat(params) {
       case _constants.chatMessageVOTypes.GET_CALLS_TO_JOIN:
       case _constants.chatMessageVOTypes.SWITCH_TO_GROUP_CALL_REQUEST:
       case _constants.chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE:
+      case _constants.chatMessageVOTypes.INQUIRY_CALL:
       case _constants.chatMessageVOTypes.CALL_RECORDING_FAILED:
         callModule.handleChatMessages(type, messageContent, contentCount, threadId, uniqueId);
         break;
@@ -11417,6 +11418,7 @@ function Chat(params) {
   publicized.callStickerTypes = _constants.callStickerTypes;
   publicized.recallThreadParticipant = callModule.recallThreadParticipant;
   publicized.deviceManager = callModule.deviceManager;
+  publicized.inquiryCallParticipants = callModule.inquiryCallParticipants;
   publicized.resetCallStream = callModule.resetCallStream;
 
   publicized.getMutualGroups = function (params, callback) {
