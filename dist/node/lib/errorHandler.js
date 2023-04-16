@@ -36,6 +36,10 @@ var errorList = {
     code: 12350,
     message: "Invitees list is required"
   },
+  INVITEES_LIST_OR_THREAD_ID_REQUIRED: {
+    code: 12351,
+    message: "Invitees list or threadId is required"
+  },
 
   /**
    * 12400-12499 Media devices

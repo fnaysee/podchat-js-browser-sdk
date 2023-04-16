@@ -3718,10 +3718,10 @@ function ChatCall(params) {
               break;
 
             case 15:
-              _eventsModule.chatEvents.fireEvent('error', {
-                code: 999,
-                message: 'Invitees list is empty! Send an array of invitees to start a call with, Or send a Thread Id to start a call with current participants'
-              });
+              (0, _errorHandler.raiseError)(_errorHandler.errorList.INVITEES_LIST_OR_THREAD_ID_REQUIRED, callback, true, {}); // chatEvents.fireEvent('error', {
+              //     code: 999,
+              //     message: 'Invitees list is empty! Send an array of invitees to start a call with, Or send a Thread Id to start a call with current participants'
+              // });
 
               return _context.abrupt("return");
 
@@ -3871,10 +3871,10 @@ function ChatCall(params) {
               break;
 
             case 14:
-              _eventsModule.chatEvents.fireEvent('error', {
-                code: 999,
-                message: 'Invitees list is empty! Send an array of invitees to start a call with, Or send a Thread Id to start a call with current participants'
-              });
+              (0, _errorHandler.raiseError)(_errorHandler.errorList.INVITEES_LIST_OR_THREAD_ID_REQUIRED, callback, true, {}); // chatEvents.fireEvent('error', {
+              //     code: 999,
+              //     message: 'Invitees list is empty! Send an array of invitees to start a call with, Or send a Thread Id to start a call with current participants'
+              // });
 
               return _context2.abrupt("return");
 
@@ -4518,8 +4518,7 @@ function ChatCall(params) {
       });
       result.hasError = false;
     } else {
-      result.hasError = true;
-      result.errorMessage = 'You can not apply size to others ScreenShare or ScreenShare is not started';
+      result.hasError = true; //result.errorMessage = 'You can not apply size to others ScreenShare or ScreenShare is not started'
     }
 
     callback && callback(result);
@@ -4716,10 +4715,10 @@ function ChatCall(params) {
 
     if (params) {
       if (isNaN(params.callId)) {
-        _eventsModule.chatEvents.fireEvent('error', {
-          code: 999,
-          message: 'Call Id should be a valid number!'
-        });
+        (0, _errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID, callback, true, {}); // chatEvents.fireEvent('error', {
+        //     code: 999,
+        //     message: 'Call Id should be a valid number!'
+        // });
 
         return;
       } else {
@@ -4840,6 +4839,8 @@ function ChatCall(params) {
     if (params) {
       if (typeof params.callId === 'number' && params.callId > 0) {
         sendMessageParams.subjectId = params.callId;
+      } else {
+        (0, _errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID, callback, true, {});
       }
 
       if (Array.isArray(params.contactIds)) {
@@ -4904,6 +4905,9 @@ function ChatCall(params) {
     if (params) {
       if (typeof params.callId === 'number' && params.callId > 0) {
         sendMessageParams.subjectId = params.callId;
+      } else {
+        (0, _errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID, callback, true, {});
+        return;
       }
 
       if (Array.isArray(params.userIds)) {
@@ -4946,6 +4950,9 @@ function ChatCall(params) {
     if (params) {
       if (typeof params.callId === 'number' && params.callId > 0) {
         sendMessageParams.subjectId = params.callId;
+      } else {
+        (0, _errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID, callback, true, {});
+        return;
       }
 
       if (Array.isArray(params.userIds)) {
@@ -4988,6 +4995,9 @@ function ChatCall(params) {
     if (params) {
       if (typeof params.callId === 'number' && params.callId > 0) {
         sendMessageParams.subjectId = params.callId;
+      } else {
+        (0, _errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID, callback, true, {});
+        return;
       }
 
       if (Array.isArray(params.userIds)) {
@@ -5278,6 +5288,11 @@ function ChatCall(params) {
 
     if (!invitees || !Array.isArray(invitees) || !invitees.length) {
       raiseCallError(_errorHandler.errorList.INVITEES_LIST_REQUIRED, callback, true, {});
+      return;
+    }
+
+    if (!sendData.subjectId) {
+      (0, _errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID, callback, true, {});
       return;
     }
 
