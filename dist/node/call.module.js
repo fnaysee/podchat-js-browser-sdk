@@ -21,8 +21,6 @@ var _typeof2 = _interopRequireDefault(require("@babel/runtime/helpers/typeof"));
 
 var _constants = require("./lib/constants");
 
-var _kurentoUtils = _interopRequireDefault(require("kurento-utils"));
-
 var _utility = _interopRequireDefault(require("./utility/utility"));
 
 var _eventsModule = require("./events.module.js");
@@ -111,8 +109,7 @@ function ChatCall(params) {
     callStarted: false
   },
       callServerController = new callServerManager(),
-      //callTopicHealthChecker = new peersHealthChecker(),
-  messageTtl = params.messageTtl || 10000,
+      messageTtl = params.messageTtl || 10000,
       config = {
     getHistoryCount: 50
   },
@@ -1976,10 +1973,10 @@ function ChatCall(params) {
 
             if (!localUser) {
               var correctedData = {
-                video: callUsers.video,
-                mute: callUsers.mute,
-                userId: callUsers.userId,
-                topicSend: callUsers.sendTopic
+                video: callUser.video,
+                mute: callUser.mute,
+                userId: callUser.userId,
+                topicSend: callUser.sendTopic
               };
               callStateController.removeParticipant(correctedData.userId);
               setTimeout(function () {
@@ -1997,17 +1994,21 @@ function ChatCall(params) {
             }
 
             if (callUser.video && !localUser.video) {
-              //Start video peer
+              callUsers[callUser.userId].video = true; //Start video peer
+
               callStateController.activateParticipantStream(callUser.userId, 'video', callUser.userId === chatMessaging.userInfo.id ? 'send' : 'receive', 'videoTopicName', callUser.sendTopic, 'video');
             } else if (!callUser.video && localUser.video) {
-              //Stop video peer
+              callUsers[callUser.userId].video = false; //Stop video peer
+
               callStateController.deactivateParticipantStream(callUser.userId, 'video', 'video');
             }
 
             if (callUser.mute && !localUser.mute) {
+              callUsers[callUser.userId].mute = true;
               callUsers[callUser.userId].audioStopManager.disableStream();
             } else if (!callUser.mute && localUser.mute) {
-              //Start audio peer
+              callUsers[callUser.userId].mute = false; //Start audio peer
+
               var cUserId = callUser.userId;
 
               if (callUsers[cUserId].audioStopManager.isStreamPaused()) {
@@ -3237,7 +3238,10 @@ function ChatCall(params) {
 
         if (Array.isArray(messageContent)) {
           for (var _i in messageContent) {
-            // pause = messageContent[i].userId == chatMessaging.userInfo.id;
+            var cUserId = messageContent[_i].userId; // pause = messageContent[i].userId == chatMessaging.userInfo.id;
+
+            callUsers[cUserId].mute = true;
+
             callUsers[messageContent[_i].userId].audioStopManager.disableStream(); // callStateController.deactivateParticipantStream(
             //     messageContent[i].userId,
             //     'audio',
@@ -3272,16 +3276,17 @@ function ChatCall(params) {
 
         if (Array.isArray(messageContent)) {
           for (var _i2 in messageContent) {
-            var cUserId = messageContent[_i2].userId;
+            var _cUserId = messageContent[_i2].userId;
+            callUsers[_cUserId].mute = false;
 
-            if (callUsers[cUserId].audioStopManager.isStreamPaused()) {
-              if (callUsers[cUserId].audioStopManager.isStreamStopped()) {
-                callStateController.activateParticipantStream(cUserId, 'audio', myId === cUserId ? 'send' : 'receive', 'audioTopicName', callUsers[cUserId].topicSend, 'mute');
-              } else if (myId === cUserId) {
+            if (callUsers[_cUserId].audioStopManager.isStreamPaused()) {
+              if (callUsers[_cUserId].audioStopManager.isStreamStopped()) {
+                callStateController.activateParticipantStream(_cUserId, 'audio', myId === _cUserId ? 'send' : 'receive', 'audioTopicName', callUsers[_cUserId].topicSend, 'mute');
+              } else if (myId === _cUserId) {
                 currentModuleInstance.resumeMice({});
               }
 
-              callUsers[cUserId].audioStopManager.reset();
+              callUsers[_cUserId].audioStopManager.reset();
             }
             /*                            callStateController.activateParticipantStream(
                                         messageContent[i].userId,
@@ -3365,6 +3370,8 @@ function ChatCall(params) {
 
         if (Array.isArray(messageContent)) {
           for (var _i3 in messageContent) {
+            var _cUserId2 = messageContent[_i3].userId;
+            callUsers[_cUserId2].video = true;
             callStateController.activateParticipantStream(messageContent[_i3].userId, 'video', messageContent[_i3].userId === chatMessaging.userInfo.id ? 'send' : 'receive', 'videoTopicName', messageContent[_i3].sendTopic, 'video');
           }
         }
@@ -3394,6 +3401,8 @@ function ChatCall(params) {
 
         if (Array.isArray(messageContent)) {
           for (var _i4 in messageContent) {
+            var _cUserId3 = messageContent[_i4].userId;
+            callUsers[_cUserId3].video = false;
             callStateController.deactivateParticipantStream(messageContent[_i4].userId, 'video', 'video');
           }
         }
@@ -5165,7 +5174,9 @@ function ChatCall(params) {
     if (params) {
       if (Array.isArray(params.userIds) && params.userIds.length) {
         for (var i in params.userIds) {
-          callStateController.activateParticipantStream(params.userIds[i], 'video', 'receive', 'videoTopicName', callUsers[params.userIds[i]].topicSend, 'video');
+          var user = callUsers[params.userIds[i]];
+          if (!user || !user.video) continue;
+          callStateController.activateParticipantStream(user.userId, 'video', 'receive', 'videoTopicName', callUsers[user.userId].topicSend, 'video');
         }
 
         callback && callback({

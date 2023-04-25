@@ -582,7 +582,7 @@ Entity.prototype.encode = function encode(data, enc, /* internal */ reporter) {
   return this._getEncoder(enc).encode(data, reporter);
 };
 
-},{"./decoders":23,"./encoders":26,"inherits":186}],16:[function(require,module,exports){
+},{"./decoders":23,"./encoders":26,"inherits":182}],16:[function(require,module,exports){
 'use strict';
 
 const inherits = require('inherits');
@@ -737,7 +737,7 @@ EncoderBuffer.prototype.join = function join(out, offset) {
   return out;
 };
 
-},{"../base/reporter":19,"inherits":186,"safer-buffer":226}],17:[function(require,module,exports){
+},{"../base/reporter":19,"inherits":182,"safer-buffer":216}],17:[function(require,module,exports){
 'use strict';
 
 const base = exports;
@@ -1387,7 +1387,7 @@ Node.prototype._isPrintstr = function isPrintstr(str) {
   return /^[A-Za-z0-9 '()+,-./:=?]*$/.test(str);
 };
 
-},{"../base/buffer":16,"../base/reporter":19,"minimalistic-assert":195}],19:[function(require,module,exports){
+},{"../base/buffer":16,"../base/reporter":19,"minimalistic-assert":187}],19:[function(require,module,exports){
 'use strict';
 
 const inherits = require('inherits');
@@ -1512,7 +1512,7 @@ ReporterError.prototype.rethrow = function rethrow(msg) {
   return this;
 };
 
-},{"inherits":186}],20:[function(require,module,exports){
+},{"inherits":182}],20:[function(require,module,exports){
 'use strict';
 
 // Helper
@@ -1932,7 +1932,7 @@ function derDecodeLen(buf, primitive, fail) {
   return len;
 }
 
-},{"../base/buffer":16,"../base/node":18,"../constants/der":20,"bn.js":28,"inherits":186}],23:[function(require,module,exports){
+},{"../base/buffer":16,"../base/node":18,"../constants/der":20,"bn.js":28,"inherits":182}],23:[function(require,module,exports){
 'use strict';
 
 const decoders = exports;
@@ -1993,7 +1993,7 @@ PEMDecoder.prototype.decode = function decode(data, options) {
   return DERDecoder.prototype.decode.call(this, input, options);
 };
 
-},{"./der":22,"inherits":186,"safer-buffer":226}],25:[function(require,module,exports){
+},{"./der":22,"inherits":182,"safer-buffer":216}],25:[function(require,module,exports){
 'use strict';
 
 const inherits = require('inherits');
@@ -2290,7 +2290,7 @@ function encodeTag(tag, primitive, cls, reporter) {
   return res;
 }
 
-},{"../base/node":18,"../constants/der":20,"inherits":186,"safer-buffer":226}],26:[function(require,module,exports){
+},{"../base/node":18,"../constants/der":20,"inherits":182,"safer-buffer":216}],26:[function(require,module,exports){
 'use strict';
 
 const encoders = exports;
@@ -2323,7 +2323,7 @@ PEMEncoder.prototype.encode = function encode(data, options) {
   return out.join('\n');
 };
 
-},{"./der":25,"inherits":186}],28:[function(require,module,exports){
+},{"./der":25,"inherits":182}],28:[function(require,module,exports){
 (function (module, exports) {
   'use strict';
 
@@ -9771,7 +9771,7 @@ AES.prototype.scrub = function () {
 
 module.exports.AES = AES
 
-},{"safe-buffer":225}],34:[function(require,module,exports){
+},{"safe-buffer":215}],34:[function(require,module,exports){
 var aes = require('./aes')
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('cipher-base')
@@ -9890,7 +9890,7 @@ StreamCipher.prototype.setAAD = function setAAD (buf) {
 
 module.exports = StreamCipher
 
-},{"./aes":33,"./ghash":38,"./incr32":39,"buffer-xor":76,"cipher-base":78,"inherits":186,"safe-buffer":225}],35:[function(require,module,exports){
+},{"./aes":33,"./ghash":38,"./incr32":39,"buffer-xor":76,"cipher-base":78,"inherits":182,"safe-buffer":215}],35:[function(require,module,exports){
 var ciphers = require('./encrypter')
 var deciphers = require('./decrypter')
 var modes = require('./modes/list.json')
@@ -10031,7 +10031,7 @@ function createDecipher (suite, password) {
 exports.createDecipher = createDecipher
 exports.createDecipheriv = createDecipheriv
 
-},{"./aes":33,"./authCipher":34,"./modes":46,"./streamCipher":49,"cipher-base":78,"evp_bytestokey":150,"inherits":186,"safe-buffer":225}],37:[function(require,module,exports){
+},{"./aes":33,"./authCipher":34,"./modes":46,"./streamCipher":49,"cipher-base":78,"evp_bytestokey":150,"inherits":182,"safe-buffer":215}],37:[function(require,module,exports){
 var MODES = require('./modes')
 var AuthCipher = require('./authCipher')
 var Buffer = require('safe-buffer').Buffer
@@ -10147,7 +10147,7 @@ function createCipher (suite, password) {
 exports.createCipheriv = createCipheriv
 exports.createCipher = createCipher
 
-},{"./aes":33,"./authCipher":34,"./modes":46,"./streamCipher":49,"cipher-base":78,"evp_bytestokey":150,"inherits":186,"safe-buffer":225}],38:[function(require,module,exports){
+},{"./aes":33,"./authCipher":34,"./modes":46,"./streamCipher":49,"cipher-base":78,"evp_bytestokey":150,"inherits":182,"safe-buffer":215}],38:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var ZEROES = Buffer.alloc(16, 0)
 
@@ -10238,7 +10238,7 @@ GHASH.prototype.final = function (abl, bl) {
 
 module.exports = GHASH
 
-},{"safe-buffer":225}],39:[function(require,module,exports){
+},{"safe-buffer":215}],39:[function(require,module,exports){
 function incr32 (iv) {
   var len = iv.length
   var item
@@ -10309,7 +10309,7 @@ exports.encrypt = function (self, data, decrypt) {
   return out
 }
 
-},{"buffer-xor":76,"safe-buffer":225}],42:[function(require,module,exports){
+},{"buffer-xor":76,"safe-buffer":215}],42:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 function encryptByte (self, byteParam, decrypt) {
@@ -10353,7 +10353,7 @@ exports.encrypt = function (self, chunk, decrypt) {
   return out
 }
 
-},{"safe-buffer":225}],43:[function(require,module,exports){
+},{"safe-buffer":215}],43:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 function encryptByte (self, byteParam, decrypt) {
@@ -10380,7 +10380,7 @@ exports.encrypt = function (self, chunk, decrypt) {
   return out
 }
 
-},{"safe-buffer":225}],44:[function(require,module,exports){
+},{"safe-buffer":215}],44:[function(require,module,exports){
 var xor = require('buffer-xor')
 var Buffer = require('safe-buffer').Buffer
 var incr32 = require('../incr32')
@@ -10412,7 +10412,7 @@ exports.encrypt = function (self, chunk) {
   return xor(chunk, pad)
 }
 
-},{"../incr32":39,"buffer-xor":76,"safe-buffer":225}],45:[function(require,module,exports){
+},{"../incr32":39,"buffer-xor":76,"safe-buffer":215}],45:[function(require,module,exports){
 exports.encrypt = function (self, block) {
   return self._cipher.encryptBlock(block)
 }
@@ -10683,7 +10683,7 @@ StreamCipher.prototype._final = function () {
 
 module.exports = StreamCipher
 
-},{"./aes":33,"cipher-base":78,"inherits":186,"safe-buffer":225}],50:[function(require,module,exports){
+},{"./aes":33,"cipher-base":78,"inherits":182,"safe-buffer":215}],50:[function(require,module,exports){
 var DES = require('browserify-des')
 var aes = require('browserify-aes/browser')
 var aesModes = require('browserify-aes/modes')
@@ -10804,7 +10804,7 @@ DES.prototype._final = function () {
   return Buffer.from(this._des.final())
 }
 
-},{"cipher-base":78,"des.js":120,"inherits":186,"safe-buffer":225}],52:[function(require,module,exports){
+},{"cipher-base":78,"des.js":120,"inherits":182,"safe-buffer":215}],52:[function(require,module,exports){
 exports['des-ecb'] = {
   key: 8,
   iv: 0
@@ -10869,7 +10869,7 @@ crt.getr = getr
 module.exports = crt
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"bn.js":30,"buffer":77,"randombytes":222}],54:[function(require,module,exports){
+},{"bn.js":30,"buffer":77,"randombytes":212}],54:[function(require,module,exports){
 module.exports = require('./browser/algorithms.json')
 
 },{"./browser/algorithms.json":55}],55:[function(require,module,exports){
@@ -11130,7 +11130,7 @@ module.exports = {
   createVerify: createVerify
 }
 
-},{"./algorithms.json":55,"./sign":58,"./verify":59,"create-hash":81,"inherits":186,"readable-stream":74,"safe-buffer":75}],58:[function(require,module,exports){
+},{"./algorithms.json":55,"./sign":58,"./verify":59,"create-hash":81,"inherits":182,"readable-stream":74,"safe-buffer":75}],58:[function(require,module,exports){
 // much of this based on https://github.com/indutny/self-signed/blob/gh-pages/lib/rsa.js
 var Buffer = require('safe-buffer').Buffer
 var createHmac = require('create-hmac')
@@ -11275,7 +11275,7 @@ module.exports = sign
 module.exports.getKey = getKey
 module.exports.makeKey = makeKey
 
-},{"./curves.json":56,"bn.js":30,"browserify-rsa":53,"create-hmac":83,"elliptic":132,"parse-asn1":202,"safe-buffer":75}],59:[function(require,module,exports){
+},{"./curves.json":56,"bn.js":30,"browserify-rsa":53,"create-hmac":83,"elliptic":132,"parse-asn1":193,"safe-buffer":75}],59:[function(require,module,exports){
 // much of this based on https://github.com/indutny/self-signed/blob/gh-pages/lib/rsa.js
 var Buffer = require('safe-buffer').Buffer
 var BN = require('bn.js')
@@ -11361,7 +11361,7 @@ function checkValue (b, q) {
 
 module.exports = verify
 
-},{"./curves.json":56,"bn.js":30,"elliptic":132,"parse-asn1":202,"safe-buffer":75}],60:[function(require,module,exports){
+},{"./curves.json":56,"bn.js":30,"elliptic":132,"parse-asn1":193,"safe-buffer":75}],60:[function(require,module,exports){
 'use strict';
 
 function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
@@ -11632,7 +11632,7 @@ Object.defineProperty(Duplex.prototype, 'destroyed', {
   }
 });
 }).call(this)}).call(this,require('_process'))
-},{"./_stream_readable":63,"./_stream_writable":65,"_process":214,"inherits":186}],62:[function(require,module,exports){
+},{"./_stream_readable":63,"./_stream_writable":65,"_process":204,"inherits":182}],62:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -11672,7 +11672,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":64,"inherits":186}],63:[function(require,module,exports){
+},{"./_stream_transform":64,"inherits":182}],63:[function(require,module,exports){
 (function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -12799,7 +12799,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":60,"./_stream_duplex":61,"./internal/streams/async_iterator":66,"./internal/streams/buffer_list":67,"./internal/streams/destroy":68,"./internal/streams/from":70,"./internal/streams/state":72,"./internal/streams/stream":73,"_process":214,"buffer":77,"events":149,"inherits":186,"string_decoder/":258,"util":32}],64:[function(require,module,exports){
+},{"../errors":60,"./_stream_duplex":61,"./internal/streams/async_iterator":66,"./internal/streams/buffer_list":67,"./internal/streams/destroy":68,"./internal/streams/from":70,"./internal/streams/state":72,"./internal/streams/stream":73,"_process":204,"buffer":77,"events":149,"inherits":182,"string_decoder/":240,"util":32}],64:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13001,7 +13001,7 @@ function done(stream, er, data) {
   if (stream._transformState.transforming) throw new ERR_TRANSFORM_ALREADY_TRANSFORMING();
   return stream.push(null);
 }
-},{"../errors":60,"./_stream_duplex":61,"inherits":186}],65:[function(require,module,exports){
+},{"../errors":60,"./_stream_duplex":61,"inherits":182}],65:[function(require,module,exports){
 (function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -13701,7 +13701,7 @@ Writable.prototype._destroy = function (err, cb) {
   cb(err);
 };
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":60,"./_stream_duplex":61,"./internal/streams/destroy":68,"./internal/streams/state":72,"./internal/streams/stream":73,"_process":214,"buffer":77,"inherits":186,"util-deprecate":261}],66:[function(require,module,exports){
+},{"../errors":60,"./_stream_duplex":61,"./internal/streams/destroy":68,"./internal/streams/state":72,"./internal/streams/stream":73,"_process":204,"buffer":77,"inherits":182,"util-deprecate":242}],66:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -13911,7 +13911,7 @@ var createReadableStreamAsyncIterator = function createReadableStreamAsyncIterat
 
 module.exports = createReadableStreamAsyncIterator;
 }).call(this)}).call(this,require('_process'))
-},{"./end-of-stream":69,"_process":214}],67:[function(require,module,exports){
+},{"./end-of-stream":69,"_process":204}],67:[function(require,module,exports){
 'use strict';
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -14230,7 +14230,7 @@ module.exports = {
   errorOrDestroy: errorOrDestroy
 };
 }).call(this)}).call(this,require('_process'))
-},{"_process":214}],69:[function(require,module,exports){
+},{"_process":204}],69:[function(require,module,exports){
 // Ported from https://github.com/mafintosh/end-of-stream with
 // permission from the author, Mathias Buus (@mafintosh).
 'use strict';
@@ -16342,7 +16342,7 @@ function numberIsNaN (obj) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"base64-js":29,"buffer":77,"ieee754":185}],78:[function(require,module,exports){
+},{"base64-js":29,"buffer":77,"ieee754":181}],78:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('stream').Transform
 var StringDecoder = require('string_decoder').StringDecoder
@@ -16443,7 +16443,7 @@ CipherBase.prototype._toString = function (value, enc, fin) {
 
 module.exports = CipherBase
 
-},{"inherits":186,"safe-buffer":225,"stream":243,"string_decoder":258}],79:[function(require,module,exports){
+},{"inherits":182,"safe-buffer":215,"stream":225,"string_decoder":240}],79:[function(require,module,exports){
 (function (Buffer){(function (){
 var elliptic = require('elliptic')
 var BN = require('bn.js')
@@ -16605,14 +16605,14 @@ module.exports = function createHash (alg) {
   return new Hash(sha(alg))
 }
 
-},{"cipher-base":78,"inherits":186,"md5.js":191,"ripemd160":224,"sha.js":236}],82:[function(require,module,exports){
+},{"cipher-base":78,"inherits":182,"md5.js":184,"ripemd160":214,"sha.js":218}],82:[function(require,module,exports){
 var MD5 = require('md5.js')
 
 module.exports = function (buffer) {
   return new MD5().update(buffer).digest()
 }
 
-},{"md5.js":191}],83:[function(require,module,exports){
+},{"md5.js":184}],83:[function(require,module,exports){
 'use strict'
 var inherits = require('inherits')
 var Legacy = require('./legacy')
@@ -16676,7 +16676,7 @@ module.exports = function createHmac (alg, key) {
   return new Hmac(alg, key)
 }
 
-},{"./legacy":84,"cipher-base":78,"create-hash/md5":82,"inherits":186,"ripemd160":224,"safe-buffer":225,"sha.js":236}],84:[function(require,module,exports){
+},{"./legacy":84,"cipher-base":78,"create-hash/md5":82,"inherits":182,"ripemd160":214,"safe-buffer":215,"sha.js":218}],84:[function(require,module,exports){
 'use strict'
 var inherits = require('inherits')
 var Buffer = require('safe-buffer').Buffer
@@ -16724,7 +16724,7 @@ Hmac.prototype._final = function () {
 }
 module.exports = Hmac
 
-},{"cipher-base":78,"inherits":186,"safe-buffer":225}],85:[function(require,module,exports){
+},{"cipher-base":78,"inherits":182,"safe-buffer":215}],85:[function(require,module,exports){
 'use strict'
 
 exports.randomBytes = exports.rng = exports.pseudoRandomBytes = exports.prng = require('randombytes')
@@ -16823,7 +16823,7 @@ exports.constants = {
   'POINT_CONVERSION_HYBRID': 6
 }
 
-},{"browserify-cipher":50,"browserify-sign":57,"browserify-sign/algos":54,"create-ecdh":79,"create-hash":81,"create-hmac":83,"diffie-hellman":126,"pbkdf2":203,"public-encrypt":215,"randombytes":222,"randomfill":223}],86:[function(require,module,exports){
+},{"browserify-cipher":50,"browserify-sign":57,"browserify-sign/algos":54,"create-ecdh":79,"create-hash":81,"create-hmac":83,"diffie-hellman":126,"pbkdf2":194,"public-encrypt":205,"randombytes":212,"randomfill":213}],86:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -23584,7 +23584,7 @@ proto._update = function _update(inp, inOff, out, outOff) {
   }
 };
 
-},{"inherits":186,"minimalistic-assert":195}],122:[function(require,module,exports){
+},{"inherits":182,"minimalistic-assert":187}],122:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -23727,7 +23727,7 @@ Cipher.prototype._finalDecrypt = function _finalDecrypt() {
   return this._unpad(out);
 };
 
-},{"minimalistic-assert":195}],123:[function(require,module,exports){
+},{"minimalistic-assert":187}],123:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -23871,7 +23871,7 @@ DES.prototype._decrypt = function _decrypt(state, lStart, rStart, out, off) {
   utils.rip(l, r, out, off);
 };
 
-},{"./cipher":122,"./utils":125,"inherits":186,"minimalistic-assert":195}],124:[function(require,module,exports){
+},{"./cipher":122,"./utils":125,"inherits":182,"minimalistic-assert":187}],124:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -23927,7 +23927,7 @@ EDE.prototype._update = function _update(inp, inOff, out, outOff) {
 EDE.prototype._pad = DES.prototype._pad;
 EDE.prototype._unpad = DES.prototype._unpad;
 
-},{"./cipher":122,"./des":123,"inherits":186,"minimalistic-assert":195}],125:[function(require,module,exports){
+},{"./cipher":122,"./des":123,"inherits":182,"minimalistic-assert":187}],125:[function(require,module,exports){
 'use strict';
 
 exports.readUInt32BE = function readUInt32BE(bytes, off) {
@@ -24399,7 +24399,7 @@ function formatReturnValue(bn, enc) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"./generatePrime":128,"bn.js":130,"buffer":77,"miller-rabin":193,"randombytes":222}],128:[function(require,module,exports){
+},{"./generatePrime":128,"bn.js":130,"buffer":77,"miller-rabin":185,"randombytes":212}],128:[function(require,module,exports){
 var randomBytes = require('randombytes');
 module.exports = findPrime;
 findPrime.simpleSieve = simpleSieve;
@@ -24506,7 +24506,7 @@ function findPrime(bits, gen) {
 
 }
 
-},{"bn.js":130,"miller-rabin":193,"randombytes":222}],129:[function(require,module,exports){
+},{"bn.js":130,"miller-rabin":185,"randombytes":212}],129:[function(require,module,exports){
 module.exports={
     "modp1": {
         "gen": "02",
@@ -26778,7 +26778,7 @@ Point.prototype.eqXToP = function eqXToP(x) {
 Point.prototype.toP = Point.prototype.normalize;
 Point.prototype.mixedAdd = Point.prototype.add;
 
-},{"../utils":146,"./base":133,"bn.js":147,"inherits":186}],135:[function(require,module,exports){
+},{"../utils":146,"./base":133,"bn.js":147,"inherits":182}],135:[function(require,module,exports){
 'use strict';
 
 var curve = exports;
@@ -26968,7 +26968,7 @@ Point.prototype.getX = function getX() {
   return this.x.fromRed();
 };
 
-},{"../utils":146,"./base":133,"bn.js":147,"inherits":186}],137:[function(require,module,exports){
+},{"../utils":146,"./base":133,"bn.js":147,"inherits":182}],137:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -27908,7 +27908,7 @@ JPoint.prototype.isInfinity = function isInfinity() {
   return this.z.cmpn(0) === 0;
 };
 
-},{"../utils":146,"./base":133,"bn.js":147,"inherits":186}],138:[function(require,module,exports){
+},{"../utils":146,"./base":133,"bn.js":147,"inherits":182}],138:[function(require,module,exports){
 'use strict';
 
 var curves = exports;
@@ -28116,7 +28116,7 @@ defineCurve('secp256k1', {
   ],
 });
 
-},{"./curve":135,"./precomputed/secp256k1":145,"./utils":146,"hash.js":172}],139:[function(require,module,exports){
+},{"./curve":135,"./precomputed/secp256k1":145,"./utils":146,"hash.js":168}],139:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -28361,7 +28361,7 @@ EC.prototype.getKeyRecoveryParam = function(e, signature, Q, enc) {
   throw new Error('Unable to find valid recovery factor');
 };
 
-},{"../curves":138,"../utils":146,"./key":140,"./signature":141,"bn.js":147,"brorand":31,"hmac-drbg":184}],140:[function(require,module,exports){
+},{"../curves":138,"../utils":146,"./key":140,"./signature":141,"bn.js":147,"brorand":31,"hmac-drbg":180}],140:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -28772,7 +28772,7 @@ EDDSA.prototype.isPoint = function isPoint(val) {
   return val instanceof this.pointClass;
 };
 
-},{"../curves":138,"../utils":146,"./key":143,"./signature":144,"hash.js":172}],143:[function(require,module,exports){
+},{"../curves":138,"../utils":146,"./key":143,"./signature":144,"hash.js":168}],143:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -29839,7 +29839,7 @@ function intFromLE(bytes) {
 utils.intFromLE = intFromLE;
 
 
-},{"bn.js":147,"minimalistic-assert":195,"minimalistic-crypto-utils":196}],147:[function(require,module,exports){
+},{"bn.js":147,"minimalistic-assert":187,"minimalistic-crypto-utils":188}],147:[function(require,module,exports){
 arguments[4][28][0].apply(exports,arguments)
 },{"buffer":32,"dup":28}],148:[function(require,module,exports){
 module.exports={
@@ -30478,280 +30478,7 @@ function EVP_BytesToKey (password, salt, keyBits, ivLen) {
 
 module.exports = EVP_BytesToKey
 
-},{"md5.js":191,"safe-buffer":225}],151:[function(require,module,exports){
-/* jshint node: true */
-'use strict';
-
-var normalice = require('normalice');
-
-/**
-  # freeice
-
-  The `freeice` module is a simple way of getting random STUN or TURN server
-  for your WebRTC application.  The list of servers (just STUN at this stage)
-  were sourced from this [gist](https://gist.github.com/zziuni/3741933).
-
-  ## Example Use
-
-  The following demonstrates how you can use `freeice` with
-  [rtc-quickconnect](https://github.com/rtc-io/rtc-quickconnect):
-
-  <<< examples/quickconnect.js
-
-  As the `freeice` module generates ice servers in a list compliant with the
-  WebRTC spec you will be able to use it with raw `RTCPeerConnection`
-  constructors and other WebRTC libraries.
-
-  ## Hey, don't use my STUN/TURN server!
-
-  If for some reason your free STUN or TURN server ends up in the
-  list of servers ([stun](https://github.com/DamonOehlman/freeice/blob/master/stun.json) or
-  [turn](https://github.com/DamonOehlman/freeice/blob/master/turn.json))
-  that is used in this module, you can feel
-  free to open an issue on this repository and those servers will be removed
-  within 24 hours (or sooner).  This is the quickest and probably the most
-  polite way to have something removed (and provides us some visibility
-  if someone opens a pull request requesting that a server is added).
-
-  ## Please add my server!
-
-  If you have a server that you wish to add to the list, that's awesome! I'm
-  sure I speak on behalf of a whole pile of WebRTC developers who say thanks.
-  To get it into the list, feel free to either open a pull request or if you
-  find that process a bit daunting then just create an issue requesting
-  the addition of the server (make sure you provide all the details, and if
-  you have a Terms of Service then including that in the PR/issue would be
-  awesome).
-
-  ## I know of a free server, can I add it?
-
-  Sure, if you do your homework and make sure it is ok to use (I'm currently
-  in the process of reviewing the terms of those STUN servers included from
-  the original list).  If it's ok to go, then please see the previous entry
-  for how to add it.
-
-  ## Current List of Servers
-
-  * current as at the time of last `README.md` file generation
-
-  ### STUN
-
-  <<< stun.json
-
-  ### TURN
-
-  <<< turn.json
-
-**/
-
-var freeice = function(opts) {
-  // if a list of servers has been provided, then use it instead of defaults
-  var servers = {
-    stun: (opts || {}).stun || require('./stun.json'),
-    turn: (opts || {}).turn || require('./turn.json')
-  };
-
-  var stunCount = (opts || {}).stunCount || 2;
-  var turnCount = (opts || {}).turnCount || 0;
-  var selected;
-
-  function getServers(type, count) {
-    var out = [];
-    var input = [].concat(servers[type]);
-    var idx;
-
-    while (input.length && out.length < count) {
-      idx = (Math.random() * input.length) | 0;
-      out = out.concat(input.splice(idx, 1));
-    }
-
-    return out.map(function(url) {
-        //If it's a not a string, don't try to "normalice" it otherwise using type:url will screw it up
-        if ((typeof url !== 'string') && (! (url instanceof String))) {
-            return url;
-        } else {
-            return normalice(type + ':' + url);
-        }
-    });
-  }
-
-  // add stun servers
-  selected = [].concat(getServers('stun', stunCount));
-
-  if (turnCount) {
-    selected = selected.concat(getServers('turn', turnCount));
-  }
-
-  return selected;
-};
-
-module.exports = freeice;
-},{"./stun.json":152,"./turn.json":153,"normalice":197}],152:[function(require,module,exports){
-module.exports=[
-  "stun.l.google.com:19302",
-  "stun1.l.google.com:19302",
-  "stun2.l.google.com:19302",
-  "stun3.l.google.com:19302",
-  "stun4.l.google.com:19302",
-  "stun.ekiga.net",
-  "stun.ideasip.com",
-  "stun.schlund.de",
-  "stun.stunprotocol.org:3478",
-  "stun.voiparound.com",
-  "stun.voipbuster.com",
-  "stun.voipstunt.com",
-  "stun.voxgratia.org"
-]
-
-},{}],153:[function(require,module,exports){
-module.exports=[]
-
-},{}],154:[function(require,module,exports){
-var WildEmitter = require('wildemitter');
-
-function getMaxVolume (analyser, fftBins) {
-  var maxVolume = -Infinity;
-  analyser.getFloatFrequencyData(fftBins);
-
-  for(var i=4, ii=fftBins.length; i < ii; i++) {
-    if (fftBins[i] > maxVolume && fftBins[i] < 0) {
-      maxVolume = fftBins[i];
-    }
-  };
-
-  return maxVolume;
-}
-
-
-var audioContextType;
-if (typeof window !== 'undefined') {
-  audioContextType = window.AudioContext || window.webkitAudioContext;
-}
-// use a single audio context due to hardware limits
-var audioContext = null;
-module.exports = function(stream, options) {
-  var harker = new WildEmitter();
-
-  // make it not break in non-supported browsers
-  if (!audioContextType) return harker;
-
-  //Config
-  var options = options || {},
-      smoothing = (options.smoothing || 0.1),
-      interval = (options.interval || 50),
-      threshold = options.threshold,
-      play = options.play,
-      history = options.history || 10,
-      running = true;
-
-  // Ensure that just a single AudioContext is internally created
-  audioContext = options.audioContext || audioContext || new audioContextType();
-
-  var sourceNode, fftBins, analyser;
-
-  analyser = audioContext.createAnalyser();
-  analyser.fftSize = 512;
-  analyser.smoothingTimeConstant = smoothing;
-  fftBins = new Float32Array(analyser.frequencyBinCount);
-
-  if (stream.jquery) stream = stream[0];
-  if (stream instanceof HTMLAudioElement || stream instanceof HTMLVideoElement) {
-    //Audio Tag
-    sourceNode = audioContext.createMediaElementSource(stream);
-    if (typeof play === 'undefined') play = true;
-    threshold = threshold || -50;
-  } else {
-    //WebRTC Stream
-    sourceNode = audioContext.createMediaStreamSource(stream);
-    threshold = threshold || -50;
-  }
-
-  sourceNode.connect(analyser);
-  if (play) analyser.connect(audioContext.destination);
-
-  harker.speaking = false;
-
-  harker.suspend = function() {
-    return audioContext.suspend();
-  }
-  harker.resume = function() {
-    return audioContext.resume();
-  }
-  Object.defineProperty(harker, 'state', { get: function() {
-    return audioContext.state;
-  }});
-  audioContext.onstatechange = function() {
-    harker.emit('state_change', audioContext.state);
-  }
-
-  harker.setThreshold = function(t) {
-    threshold = t;
-  };
-
-  harker.setInterval = function(i) {
-    interval = i;
-  };
-
-  harker.stop = function() {
-    running = false;
-    harker.emit('volume_change', -100, threshold);
-    if (harker.speaking) {
-      harker.speaking = false;
-      harker.emit('stopped_speaking');
-    }
-    analyser.disconnect();
-    sourceNode.disconnect();
-  };
-  harker.speakingHistory = [];
-  for (var i = 0; i < history; i++) {
-      harker.speakingHistory.push(0);
-  }
-
-  // Poll the analyser node to determine if speaking
-  // and emit events if changed
-  var looper = function() {
-    setTimeout(function() {
-
-      //check if stop has been called
-      if(!running) {
-        return;
-      }
-
-      var currentVolume = getMaxVolume(analyser, fftBins);
-
-      harker.emit('volume_change', currentVolume, threshold);
-
-      var history = 0;
-      if (currentVolume > threshold && !harker.speaking) {
-        // trigger quickly, short history
-        for (var i = harker.speakingHistory.length - 3; i < harker.speakingHistory.length; i++) {
-          history += harker.speakingHistory[i];
-        }
-        if (history >= 2) {
-          harker.speaking = true;
-          harker.emit('speaking');
-        }
-      } else if (currentVolume < threshold && harker.speaking) {
-        for (var i = 0; i < harker.speakingHistory.length; i++) {
-          history += harker.speakingHistory[i];
-        }
-        if (history == 0) {
-          harker.speaking = false;
-          harker.emit('stopped_speaking');
-        }
-      }
-      harker.speakingHistory.shift();
-      harker.speakingHistory.push(0 + (currentVolume > threshold));
-
-      looper();
-    }, interval);
-  };
-  looper();
-
-  return harker;
-}
-
-},{"wildemitter":265}],155:[function(require,module,exports){
+},{"md5.js":184,"safe-buffer":215}],151:[function(require,module,exports){
 'use strict'
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('readable-stream').Transform
@@ -30848,39 +30575,39 @@ HashBase.prototype._digest = function () {
 
 module.exports = HashBase
 
-},{"inherits":186,"readable-stream":170,"safe-buffer":171}],156:[function(require,module,exports){
+},{"inherits":182,"readable-stream":166,"safe-buffer":167}],152:[function(require,module,exports){
 arguments[4][60][0].apply(exports,arguments)
-},{"dup":60}],157:[function(require,module,exports){
+},{"dup":60}],153:[function(require,module,exports){
 arguments[4][61][0].apply(exports,arguments)
-},{"./_stream_readable":159,"./_stream_writable":161,"_process":214,"dup":61,"inherits":186}],158:[function(require,module,exports){
+},{"./_stream_readable":155,"./_stream_writable":157,"_process":204,"dup":61,"inherits":182}],154:[function(require,module,exports){
 arguments[4][62][0].apply(exports,arguments)
-},{"./_stream_transform":160,"dup":62,"inherits":186}],159:[function(require,module,exports){
+},{"./_stream_transform":156,"dup":62,"inherits":182}],155:[function(require,module,exports){
 arguments[4][63][0].apply(exports,arguments)
-},{"../errors":156,"./_stream_duplex":157,"./internal/streams/async_iterator":162,"./internal/streams/buffer_list":163,"./internal/streams/destroy":164,"./internal/streams/from":166,"./internal/streams/state":168,"./internal/streams/stream":169,"_process":214,"buffer":77,"dup":63,"events":149,"inherits":186,"string_decoder/":258,"util":32}],160:[function(require,module,exports){
+},{"../errors":152,"./_stream_duplex":153,"./internal/streams/async_iterator":158,"./internal/streams/buffer_list":159,"./internal/streams/destroy":160,"./internal/streams/from":162,"./internal/streams/state":164,"./internal/streams/stream":165,"_process":204,"buffer":77,"dup":63,"events":149,"inherits":182,"string_decoder/":240,"util":32}],156:[function(require,module,exports){
 arguments[4][64][0].apply(exports,arguments)
-},{"../errors":156,"./_stream_duplex":157,"dup":64,"inherits":186}],161:[function(require,module,exports){
+},{"../errors":152,"./_stream_duplex":153,"dup":64,"inherits":182}],157:[function(require,module,exports){
 arguments[4][65][0].apply(exports,arguments)
-},{"../errors":156,"./_stream_duplex":157,"./internal/streams/destroy":164,"./internal/streams/state":168,"./internal/streams/stream":169,"_process":214,"buffer":77,"dup":65,"inherits":186,"util-deprecate":261}],162:[function(require,module,exports){
+},{"../errors":152,"./_stream_duplex":153,"./internal/streams/destroy":160,"./internal/streams/state":164,"./internal/streams/stream":165,"_process":204,"buffer":77,"dup":65,"inherits":182,"util-deprecate":242}],158:[function(require,module,exports){
 arguments[4][66][0].apply(exports,arguments)
-},{"./end-of-stream":165,"_process":214,"dup":66}],163:[function(require,module,exports){
+},{"./end-of-stream":161,"_process":204,"dup":66}],159:[function(require,module,exports){
 arguments[4][67][0].apply(exports,arguments)
-},{"buffer":77,"dup":67,"util":32}],164:[function(require,module,exports){
+},{"buffer":77,"dup":67,"util":32}],160:[function(require,module,exports){
 arguments[4][68][0].apply(exports,arguments)
-},{"_process":214,"dup":68}],165:[function(require,module,exports){
+},{"_process":204,"dup":68}],161:[function(require,module,exports){
 arguments[4][69][0].apply(exports,arguments)
-},{"../../../errors":156,"dup":69}],166:[function(require,module,exports){
+},{"../../../errors":152,"dup":69}],162:[function(require,module,exports){
 arguments[4][70][0].apply(exports,arguments)
-},{"dup":70}],167:[function(require,module,exports){
+},{"dup":70}],163:[function(require,module,exports){
 arguments[4][71][0].apply(exports,arguments)
-},{"../../../errors":156,"./end-of-stream":165,"dup":71}],168:[function(require,module,exports){
+},{"../../../errors":152,"./end-of-stream":161,"dup":71}],164:[function(require,module,exports){
 arguments[4][72][0].apply(exports,arguments)
-},{"../../../errors":156,"dup":72}],169:[function(require,module,exports){
+},{"../../../errors":152,"dup":72}],165:[function(require,module,exports){
 arguments[4][73][0].apply(exports,arguments)
-},{"dup":73,"events":149}],170:[function(require,module,exports){
+},{"dup":73,"events":149}],166:[function(require,module,exports){
 arguments[4][74][0].apply(exports,arguments)
-},{"./lib/_stream_duplex.js":157,"./lib/_stream_passthrough.js":158,"./lib/_stream_readable.js":159,"./lib/_stream_transform.js":160,"./lib/_stream_writable.js":161,"./lib/internal/streams/end-of-stream.js":165,"./lib/internal/streams/pipeline.js":167,"dup":74}],171:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":153,"./lib/_stream_passthrough.js":154,"./lib/_stream_readable.js":155,"./lib/_stream_transform.js":156,"./lib/_stream_writable.js":157,"./lib/internal/streams/end-of-stream.js":161,"./lib/internal/streams/pipeline.js":163,"dup":74}],167:[function(require,module,exports){
 arguments[4][75][0].apply(exports,arguments)
-},{"buffer":77,"dup":75}],172:[function(require,module,exports){
+},{"buffer":77,"dup":75}],168:[function(require,module,exports){
 var hash = exports;
 
 hash.utils = require('./hash/utils');
@@ -30897,7 +30624,7 @@ hash.sha384 = hash.sha.sha384;
 hash.sha512 = hash.sha.sha512;
 hash.ripemd160 = hash.ripemd.ripemd160;
 
-},{"./hash/common":173,"./hash/hmac":174,"./hash/ripemd":175,"./hash/sha":176,"./hash/utils":183}],173:[function(require,module,exports){
+},{"./hash/common":169,"./hash/hmac":170,"./hash/ripemd":171,"./hash/sha":172,"./hash/utils":179}],169:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -30991,7 +30718,7 @@ BlockHash.prototype._pad = function pad() {
   return res;
 };
 
-},{"./utils":183,"minimalistic-assert":195}],174:[function(require,module,exports){
+},{"./utils":179,"minimalistic-assert":187}],170:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -31040,7 +30767,7 @@ Hmac.prototype.digest = function digest(enc) {
   return this.outer.digest(enc);
 };
 
-},{"./utils":183,"minimalistic-assert":195}],175:[function(require,module,exports){
+},{"./utils":179,"minimalistic-assert":187}],171:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -31188,7 +30915,7 @@ var sh = [
   8, 5, 12, 9, 12, 5, 14, 6, 8, 13, 6, 5, 15, 13, 11, 11
 ];
 
-},{"./common":173,"./utils":183}],176:[function(require,module,exports){
+},{"./common":169,"./utils":179}],172:[function(require,module,exports){
 'use strict';
 
 exports.sha1 = require('./sha/1');
@@ -31197,7 +30924,7 @@ exports.sha256 = require('./sha/256');
 exports.sha384 = require('./sha/384');
 exports.sha512 = require('./sha/512');
 
-},{"./sha/1":177,"./sha/224":178,"./sha/256":179,"./sha/384":180,"./sha/512":181}],177:[function(require,module,exports){
+},{"./sha/1":173,"./sha/224":174,"./sha/256":175,"./sha/384":176,"./sha/512":177}],173:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -31273,7 +31000,7 @@ SHA1.prototype._digest = function digest(enc) {
     return utils.split32(this.h, 'big');
 };
 
-},{"../common":173,"../utils":183,"./common":182}],178:[function(require,module,exports){
+},{"../common":169,"../utils":179,"./common":178}],174:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -31305,7 +31032,7 @@ SHA224.prototype._digest = function digest(enc) {
 };
 
 
-},{"../utils":183,"./256":179}],179:[function(require,module,exports){
+},{"../utils":179,"./256":175}],175:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -31412,7 +31139,7 @@ SHA256.prototype._digest = function digest(enc) {
     return utils.split32(this.h, 'big');
 };
 
-},{"../common":173,"../utils":183,"./common":182,"minimalistic-assert":195}],180:[function(require,module,exports){
+},{"../common":169,"../utils":179,"./common":178,"minimalistic-assert":187}],176:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -31449,7 +31176,7 @@ SHA384.prototype._digest = function digest(enc) {
     return utils.split32(this.h.slice(0, 12), 'big');
 };
 
-},{"../utils":183,"./512":181}],181:[function(require,module,exports){
+},{"../utils":179,"./512":177}],177:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -31781,7 +31508,7 @@ function g1_512_lo(xh, xl) {
   return r;
 }
 
-},{"../common":173,"../utils":183,"minimalistic-assert":195}],182:[function(require,module,exports){
+},{"../common":169,"../utils":179,"minimalistic-assert":187}],178:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -31832,7 +31559,7 @@ function g1_256(x) {
 }
 exports.g1_256 = g1_256;
 
-},{"../utils":183}],183:[function(require,module,exports){
+},{"../utils":179}],179:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -32112,7 +31839,7 @@ function shr64_lo(ah, al, num) {
 }
 exports.shr64_lo = shr64_lo;
 
-},{"inherits":186,"minimalistic-assert":195}],184:[function(require,module,exports){
+},{"inherits":182,"minimalistic-assert":187}],180:[function(require,module,exports){
 'use strict';
 
 var hash = require('hash.js');
@@ -32227,7 +31954,7 @@ HmacDRBG.prototype.generate = function generate(len, enc, add, addEnc) {
   return utils.encode(res, enc);
 };
 
-},{"hash.js":172,"minimalistic-assert":195,"minimalistic-crypto-utils":196}],185:[function(require,module,exports){
+},{"hash.js":168,"minimalistic-assert":187,"minimalistic-crypto-utils":188}],181:[function(require,module,exports){
 /*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
@@ -32314,7 +32041,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],186:[function(require,module,exports){
+},{}],182:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -32343,7 +32070,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],187:[function(require,module,exports){
+},{}],183:[function(require,module,exports){
 (function (global){(function (){
 // https://github.com/maxogden/websocket-stream/blob/48dc3ddf943e5ada668c31ccd94e9186f02fafbd/ws-fallback.js
 
@@ -32364,963 +32091,7 @@ if (typeof WebSocket !== 'undefined') {
 module.exports = ws
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],188:[function(require,module,exports){
-// Does nothing at all.
-
-},{}],189:[function(require,module,exports){
-/*
- * (C) Copyright 2014-2015 Kurento (http://kurento.org/)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-var freeice = require('freeice')
-var inherits = require('inherits')
-var UAParser = require('ua-parser-js')
-var uuidv4 = require('uuid/v4')
-var hark = require('hark')
-
-var EventEmitter = require('events').EventEmitter
-var recursive = require('merge').recursive.bind(undefined, true)
-var sdpTranslator = require('sdp-translator')
-var logger = (typeof window === 'undefined') ? console : window.Logger ||
-  console
-
-try {
-  require('kurento-browser-extensions')
-} catch (error) {
-  if (typeof getScreenConstraints === 'undefined') {
-    logger.warn('screen sharing is not available')
-
-    getScreenConstraints = function getScreenConstraints(sendSource, callback) {
-      callback(new Error("This library is not enabled for screen sharing"))
-    }
-  }
-}
-
-var MEDIA_CONSTRAINTS = {
-  audio: true,
-  video: {
-    width: 640,
-    framerate: 15
-  }
-}
-
-// Somehow, the UAParser constructor gets an empty window object.
-// We need to pass the user agent string in order to get information
-var ua = (typeof window !== 'undefined' && window.navigator) ? window.navigator
-  .userAgent : ''
-var parser = new UAParser(ua)
-var browser = parser.getBrowser()
-
-function insertScriptSrcInHtmlDom(scriptSrc) {
-  //Create a script tag
-  var script = document.createElement('script');
-  // Assign a URL to the script element
-  script.src = scriptSrc;
-  // Get the first script tag on the page (we'll insert our new one before it)
-  var ref = document.querySelector('script');
-  // Insert the new node before the reference node
-  ref.parentNode.insertBefore(script, ref);
-}
-
-function importScriptsDependsOnBrowser() {
-  if (browser.name === 'IE') {
-    insertScriptSrcInHtmlDom(
-      "https://cdn.temasys.io/adapterjs/0.15.x/adapter.debug.js");
-  }
-}
-
-importScriptsDependsOnBrowser();
-var usePlanB = false
-if (browser.name === 'Chrome' || browser.name === 'Chromium') {
-  logger.debug(browser.name + ": using SDP PlanB")
-  usePlanB = true
-}
-
-function noop(error) {
-  if (error) logger.error(error)
-}
-
-function trackStop(track) {
-  track.stop && track.stop()
-}
-
-function streamStop(stream) {
-  stream.getTracks().forEach(trackStop)
-}
-
-/**
- * Returns a string representation of a SessionDescription object.
- */
-var dumpSDP = function (description) {
-  if (typeof description === 'undefined' || description === null) {
-    return ''
-  }
-
-  return 'type: ' + description.type + '\r\n' + description.sdp
-}
-
-function bufferizeCandidates(pc, onerror) {
-  var candidatesQueue = []
-
-  function setSignalingstatechangeAccordingWwebBrowser(functionToExecute, pc) {
-    if (typeof AdapterJS !== 'undefined' && AdapterJS.webrtcDetectedBrowser ===
-      'IE' && AdapterJS.webrtcDetectedVersion >= 9) {
-      pc.onsignalingstatechange = functionToExecute;
-    } else {
-      pc.addEventListener('signalingstatechange', functionToExecute);
-    }
-
-  }
-
-  var signalingstatechangeFunction = function () {
-    if (pc.signalingState === 'stable') {
-      while (candidatesQueue.length) {
-        var entry = candidatesQueue.shift();
-        pc.addIceCandidate(entry.candidate, entry.callback, entry.callback);
-      }
-    }
-  };
-
-  setSignalingstatechangeAccordingWwebBrowser(signalingstatechangeFunction, pc);
-  return function (candidate, callback) {
-    callback = callback || onerror;
-    switch (pc.signalingState) {
-    case 'closed':
-      callback(new Error('PeerConnection object is closed'));
-      break;
-    case 'stable':
-      if (pc.remoteDescription) {
-        pc.addIceCandidate(candidate, callback, callback);
-        break;
-
-      }
-      default:
-        candidatesQueue.push({
-          candidate: candidate,
-          callback: callback
-
-        });
-    }
-  };
-}
-
-/* Simulcast utilities */
-
-function removeFIDFromOffer(sdp) {
-  var n = sdp.indexOf("a=ssrc-group:FID");
-
-  if (n > 0) {
-    return sdp.slice(0, n);
-  } else {
-    return sdp;
-  }
-}
-
-function getSimulcastInfo(videoStream) {
-  var videoTracks = videoStream.getVideoTracks();
-  if (!videoTracks.length) {
-    logger.warn('No video tracks available in the video stream')
-    return ''
-  }
-  var lines = [
-    'a=x-google-flag:conference',
-    'a=ssrc-group:SIM 1 2 3',
-    'a=ssrc:1 cname:localVideo',
-    'a=ssrc:1 msid:' + videoStream.id + ' ' + videoTracks[0].id,
-    'a=ssrc:1 mslabel:' + videoStream.id,
-    'a=ssrc:1 label:' + videoTracks[0].id,
-    'a=ssrc:2 cname:localVideo',
-    'a=ssrc:2 msid:' + videoStream.id + ' ' + videoTracks[0].id,
-    'a=ssrc:2 mslabel:' + videoStream.id,
-    'a=ssrc:2 label:' + videoTracks[0].id,
-    'a=ssrc:3 cname:localVideo',
-    'a=ssrc:3 msid:' + videoStream.id + ' ' + videoTracks[0].id,
-    'a=ssrc:3 mslabel:' + videoStream.id,
-    'a=ssrc:3 label:' + videoTracks[0].id
-  ];
-
-  lines.push('');
-
-  return lines.join('\n');
-}
-
-function sleep(milliseconds) {
-  var start = new Date().getTime();
-  for (var i = 0; i < 1e7; i++) {
-    if ((new Date().getTime() - start) > milliseconds) {
-      break;
-    }
-  }
-}
-
-function setIceCandidateAccordingWebBrowser(functionToExecute, pc) {
-  if (typeof AdapterJS !== 'undefined' && AdapterJS.webrtcDetectedBrowser ===
-    'IE' && AdapterJS.webrtcDetectedVersion >= 9) {
-    pc.onicecandidate = functionToExecute;
-  } else {
-    pc.addEventListener('icecandidate', functionToExecute);
-  }
-
-}
-
-/**
- * Wrapper object of an RTCPeerConnection. This object is aimed to simplify the
- * development of WebRTC-based applications.
- *
- * @constructor module:kurentoUtils.WebRtcPeer
- *
- * @param {String} mode Mode in which the PeerConnection will be configured.
- *  Valid values are: 'recvonly', 'sendonly', and 'sendrecv'
- * @param localVideo Video tag for the local stream
- * @param remoteVideo Video tag for the remote stream
- * @param {MediaStream} videoStream Stream to be used as primary source
- *  (typically video and audio, or only video if combined with audioStream) for
- *  localVideo and to be added as stream to the RTCPeerConnection
- * @param {MediaStream} audioStream Stream to be used as second source
- *  (typically for audio) for localVideo and to be added as stream to the
- *  RTCPeerConnection
- */
-function WebRtcPeer(mode, options, callback) {
-  if (!(this instanceof WebRtcPeer)) {
-    return new WebRtcPeer(mode, options, callback)
-  }
-
-  WebRtcPeer.super_.call(this)
-
-  if (options instanceof Function) {
-    callback = options
-    options = undefined
-  }
-
-  options = options || {}
-  callback = (callback || noop).bind(this)
-
-  var self = this
-  var localVideo = options.localVideo
-  var remoteVideo = options.remoteVideo
-  var videoStream = options.videoStream
-  var audioStream = options.audioStream
-  var mediaConstraints = options.mediaConstraints
-
-  var pc = options.peerConnection
-  var sendSource = options.sendSource || 'webcam'
-
-  var dataChannelConfig = options.dataChannelConfig
-  var useDataChannels = options.dataChannels || false
-  var dataChannel
-
-  var guid = uuidv4()
-  var configuration = recursive({
-      iceServers: freeice()
-    },
-    options.configuration)
-
-  var onicecandidate = options.onicecandidate
-  if (onicecandidate) this.on('icecandidate', onicecandidate)
-
-  var oncandidategatheringdone = options.oncandidategatheringdone
-  if (oncandidategatheringdone) {
-    this.on('candidategatheringdone', oncandidategatheringdone)
-  }
-
-  var simulcast = options.simulcast
-  var multistream = options.multistream
-  var interop = new sdpTranslator.Interop()
-  var candidatesQueueOut = []
-  var candidategatheringdone = false
-
-  Object.defineProperties(this, {
-    'peerConnection': {
-      get: function () {
-        return pc
-      }
-    },
-
-    'id': {
-      value: options.id || guid,
-      writable: false
-    },
-
-    'remoteVideo': {
-      get: function () {
-        return remoteVideo
-      }
-    },
-
-    'localVideo': {
-      get: function () {
-        return localVideo
-      }
-    },
-
-    'dataChannel': {
-      get: function () {
-        return dataChannel
-      }
-    },
-
-    /**
-     * @member {(external:ImageData|undefined)} currentFrame
-     */
-    'currentFrame': {
-      get: function () {
-        // [ToDo] Find solution when we have a remote stream but we didn't set
-        // a remoteVideo tag
-        if (!remoteVideo) return;
-
-        if (remoteVideo.readyState < remoteVideo.HAVE_CURRENT_DATA)
-          throw new Error('No video stream data available')
-
-        var canvas = document.createElement('canvas')
-        canvas.width = remoteVideo.videoWidth
-        canvas.height = remoteVideo.videoHeight
-
-        canvas.getContext('2d').drawImage(remoteVideo, 0, 0)
-
-        return canvas
-      }
-    }
-  })
-
-  // Init PeerConnection
-  if (!pc) {
-    pc = new RTCPeerConnection(configuration);
-    if (useDataChannels && !dataChannel) {
-      var dcId = 'WebRtcPeer-' + self.id
-      var dcOptions = undefined
-      if (dataChannelConfig) {
-        dcId = dataChannelConfig.id || dcId
-        dcOptions = dataChannelConfig.options
-      }
-      dataChannel = pc.createDataChannel(dcId, dcOptions);
-      if (dataChannelConfig) {
-        dataChannel.onopen = dataChannelConfig.onopen;
-        dataChannel.onclose = dataChannelConfig.onclose;
-        dataChannel.onmessage = dataChannelConfig.onmessage;
-        dataChannel.onbufferedamountlow = dataChannelConfig.onbufferedamountlow;
-        dataChannel.onerror = dataChannelConfig.onerror || noop;
-      }
-    }
-  }
-
-  // Shims over the now deprecated getLocalStreams() and getRemoteStreams()
-  // (usage of these methods should be dropped altogether)
-  if (!pc.getLocalStreams && pc.getSenders) {
-    pc.getLocalStreams = function () {
-      var stream = new MediaStream();
-      pc.getSenders().forEach(function (sender) {
-        stream.addTrack(sender.track);
-      });
-      return [stream];
-    };
-  }
-  if (!pc.getRemoteStreams && pc.getReceivers) {
-    pc.getRemoteStreams = function () {
-      var stream = new MediaStream();
-      pc.getReceivers().forEach(function (sender) {
-        stream.addTrack(sender.track);
-      });
-      return [stream];
-    };
-  }
-
-  // If event.candidate == null, it means that candidate gathering has finished
-  // and RTCPeerConnection.iceGatheringState == "complete".
-  // Such candidate does not need to be sent to the remote peer.
-  // https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/icecandidate_event#Indicating_that_ICE_gathering_is_complete
-  var iceCandidateFunction = function (event) {
-    var candidate = event.candidate;
-    if (EventEmitter.listenerCount(self, 'icecandidate') || EventEmitter
-      .listenerCount(self, 'candidategatheringdone')) {
-      if (candidate) {
-        var cand;
-        if (multistream && usePlanB) {
-          cand = interop.candidateToUnifiedPlan(candidate);
-        } else {
-          cand = candidate;
-        }
-        if (typeof AdapterJS === 'undefined') {
-          self.emit('icecandidate', cand);
-
-        }
-        candidategatheringdone = false;
-      } else if (!candidategatheringdone) {
-        if (typeof AdapterJS !== 'undefined' && AdapterJS
-          .webrtcDetectedBrowser === 'IE' && AdapterJS
-          .webrtcDetectedVersion >= 9) {
-          EventEmitter.prototype.emit('candidategatheringdone', cand);
-        } else {
-          self.emit('candidategatheringdone');
-        }
-        candidategatheringdone = true;
-      }
-    } else if (!candidategatheringdone) {
-      candidatesQueueOut.push(candidate);
-      if (!candidate)
-        candidategatheringdone = true;
-
-    }
-  };
-
-  setIceCandidateAccordingWebBrowser(iceCandidateFunction, pc);
-  pc.onaddstream = options.onaddstream
-  pc.onnegotiationneeded = options.onnegotiationneeded
-  this.on('newListener', function (event, listener) {
-    if (event === 'icecandidate' || event === 'candidategatheringdone') {
-      while (candidatesQueueOut.length) {
-        var candidate = candidatesQueueOut.shift()
-
-        if (!candidate === (event === 'candidategatheringdone')) {
-          listener(candidate)
-        }
-      }
-    }
-  })
-
-  var addIceCandidate = bufferizeCandidates(pc)
-
-  /**
-   * Callback function invoked when an ICE candidate is received. Developers are
-   * expected to invoke this function in order to complete the SDP negotiation.
-   *
-   * @function module:kurentoUtils.WebRtcPeer.prototype.addIceCandidate
-   *
-   * @param iceCandidate - Literal object with the ICE candidate description
-   * @param callback - Called when the ICE candidate has been added.
-   */
-  this.addIceCandidate = function (iceCandidate, callback) {
-    var candidate
-
-    if (multistream && usePlanB) {
-      candidate = interop.candidateToPlanB(iceCandidate)
-    } else {
-      candidate = new RTCIceCandidate(iceCandidate)
-    }
-
-    logger.debug('Remote ICE candidate received', iceCandidate)
-    callback = (callback || noop).bind(this)
-    addIceCandidate(candidate, callback)
-  }
-
-  this.generateOffer = function (callback) {
-    callback = callback.bind(this)
-
-    if (mode === 'recvonly') {
-      /* Add reception tracks on the RTCPeerConnection. Send tracks are
-       * unconditionally added to "sendonly" and "sendrecv" modes, in the
-       * constructor's "start()" method, but nothing is done for "recvonly".
-       *
-       * Here, we add new transceivers to receive audio and/or video, so the
-       * SDP Offer that will be generated by the PC includes these medias
-       * with the "a=recvonly" attribute.
-       */
-      var useAudio =
-        (mediaConstraints && typeof mediaConstraints.audio === 'boolean') ?
-        mediaConstraints.audio : true
-      var useVideo =
-        (mediaConstraints && typeof mediaConstraints.video === 'boolean') ?
-        mediaConstraints.video : true
-
-      if (useAudio) {
-        pc.addTransceiver('audio', {
-          direction: 'recvonly'
-        });
-      }
-
-      if (useVideo) {
-        pc.addTransceiver('video', {
-          direction: 'recvonly'
-        });
-      }
-    } else if (mode === 'sendonly') {
-      /* The constructor's "start()" method already added any available track,
-       * which by default creates Transceiver with "sendrecv" direction.
-       *
-       * Here, we set all transceivers to only send audio and/or video, so the
-       * SDP Offer that will be generated by the PC includes these medias
-       * with the "a=sendonly" attribute.
-       */
-      pc.getTransceivers().forEach(function (transceiver) {
-        transceiver.direction = "sendonly";
-      });
-    }
-
-    if (typeof AdapterJS !== 'undefined' && AdapterJS
-      .webrtcDetectedBrowser === 'IE' && AdapterJS.webrtcDetectedVersion >= 9
-    ) {
-      var setLocalDescriptionOnSuccess = function () {
-        sleep(1000);
-        var localDescription = pc.localDescription;
-        logger.debug('Local description set\n', localDescription.sdp);
-        if (multistream && usePlanB) {
-          localDescription = interop.toUnifiedPlan(localDescription);
-          logger.debug('offer::origPlanB->UnifiedPlan', dumpSDP(
-            localDescription));
-        }
-        callback(null, localDescription.sdp, self.processAnswer.bind(self));
-      };
-      var createOfferOnSuccess = function (offer) {
-        logger.debug('Created SDP offer');
-        logger.debug('Local description set\n', pc.localDescription);
-        pc.setLocalDescription(offer, setLocalDescriptionOnSuccess,
-          callback);
-      };
-      pc.createOffer(createOfferOnSuccess, callback);
-    } else {
-      pc.createOffer()
-        .then(function (offer) {
-          logger.debug('Created SDP offer');
-          offer = mangleSdpToAddSimulcast(offer);
-          return pc.setLocalDescription(offer);
-        })
-        .then(function () {
-          var localDescription = pc.localDescription;
-          logger.debug('Local description set\n', localDescription.sdp);
-          if (multistream && usePlanB) {
-            localDescription = interop.toUnifiedPlan(localDescription);
-            logger.debug('offer::origPlanB->UnifiedPlan', dumpSDP(
-              localDescription));
-          }
-          callback(null, localDescription.sdp, self.processAnswer.bind(
-            self));
-        })
-        .catch(callback);
-    }
-  }
-
-  this.getLocalSessionDescriptor = function () {
-    return pc.localDescription
-  }
-
-  this.getRemoteSessionDescriptor = function () {
-    return pc.remoteDescription
-  }
-
-  function setRemoteVideo() {
-    if (remoteVideo) {
-      remoteVideo.pause()
-
-      var stream = pc.getRemoteStreams()[0]
-      remoteVideo.srcObject = stream
-      logger.debug('Remote stream:', stream)
-
-      if (typeof AdapterJS !== 'undefined' && AdapterJS
-        .webrtcDetectedBrowser === 'IE' && AdapterJS.webrtcDetectedVersion >= 9
-      ) {
-        remoteVideo = attachMediaStream(remoteVideo, stream);
-      } else {
-        remoteVideo.load();
-      }
-    }
-  }
-
-  this.showLocalVideo = function () {
-    localVideo.srcObject = videoStream
-    localVideo.muted = true
-
-    if (typeof AdapterJS !== 'undefined' && AdapterJS
-      .webrtcDetectedBrowser === 'IE' && AdapterJS.webrtcDetectedVersion >= 9
-    ) {
-      localVideo = attachMediaStream(localVideo, videoStream);
-    }
-  };
-  this.send = function (data) {
-    if (dataChannel && dataChannel.readyState === 'open') {
-      dataChannel.send(data)
-    } else {
-      logger.warn(
-        'Trying to send data over a non-existing or closed data channel')
-    }
-  }
-
-  /**
-   * Callback function invoked when a SDP answer is received. Developers are
-   * expected to invoke this function in order to complete the SDP negotiation.
-   *
-   * @function module:kurentoUtils.WebRtcPeer.prototype.processAnswer
-   *
-   * @param sdpAnswer - Description of sdpAnswer
-   * @param callback -
-   *            Invoked after the SDP answer is processed, or there is an error.
-   */
-  this.processAnswer = function (sdpAnswer, callback) {
-    callback = (callback || noop).bind(this)
-
-    var answer = new RTCSessionDescription({
-      type: 'answer',
-      sdp: sdpAnswer
-    })
-
-    if (multistream && usePlanB) {
-      var planBAnswer = interop.toPlanB(answer)
-      logger.debug('asnwer::planB', dumpSDP(planBAnswer))
-      answer = planBAnswer
-    }
-
-    logger.debug('SDP answer received, setting remote description')
-
-    if (pc.signalingState === 'closed') {
-      return callback('PeerConnection is closed')
-    }
-
-    pc.setRemoteDescription(answer).then(function () {
-        setRemoteVideo()
-
-        callback()
-      },
-      callback)
-  }
-
-  /**
-   * Callback function invoked when a SDP offer is received. Developers are
-   * expected to invoke this function in order to complete the SDP negotiation.
-   *
-   * @function module:kurentoUtils.WebRtcPeer.prototype.processOffer
-   *
-   * @param sdpOffer - Description of sdpOffer
-   * @param callback - Called when the remote description has been set
-   *  successfully.
-   */
-  this.processOffer = function (sdpOffer, callback) {
-    callback = callback.bind(this)
-
-    var offer = new RTCSessionDescription({
-      type: 'offer',
-      sdp: sdpOffer
-    })
-
-    if (multistream && usePlanB) {
-      var planBOffer = interop.toPlanB(offer)
-      logger.debug('offer::planB', dumpSDP(planBOffer))
-      offer = planBOffer
-    }
-
-    logger.debug('SDP offer received, setting remote description')
-
-    if (pc.signalingState === 'closed') {
-      return callback('PeerConnection is closed')
-    }
-
-    pc.setRemoteDescription(offer).then(function () {
-      return setRemoteVideo()
-    }).then(function () {
-      return pc.createAnswer()
-    }).then(function (answer) {
-      answer = mangleSdpToAddSimulcast(answer)
-      logger.debug('Created SDP answer')
-      return pc.setLocalDescription(answer)
-    }).then(function () {
-      var localDescription = pc.localDescription
-      if (multistream && usePlanB) {
-        localDescription = interop.toUnifiedPlan(localDescription)
-        logger.debug('answer::origPlanB->UnifiedPlan', dumpSDP(
-          localDescription))
-      }
-      logger.debug('Local description set\n', localDescription.sdp)
-      callback(null, localDescription.sdp)
-    }).catch(callback)
-  }
-
-  function mangleSdpToAddSimulcast(answer) {
-    if (simulcast) {
-      if (browser.name === 'Chrome' || browser.name === 'Chromium') {
-        logger.debug('Adding multicast info')
-        answer = new RTCSessionDescription({
-          'type': answer.type,
-          'sdp': removeFIDFromOffer(answer.sdp) + getSimulcastInfo(
-            videoStream)
-        })
-      } else {
-        logger.warn('Simulcast is only available in Chrome browser.')
-      }
-    }
-
-    return answer
-  }
-
-  /**
-   * This function creates the RTCPeerConnection object taking into account the
-   * properties received in the constructor. It starts the SDP negotiation
-   * process: generates the SDP offer and invokes the onsdpoffer callback. This
-   * callback is expected to send the SDP offer, in order to obtain an SDP
-   * answer from another peer.
-   */
-  function start() {
-    if (pc.signalingState === 'closed') {
-      callback(
-        'The peer connection object is in "closed" state. This is most likely due to an invocation of the dispose method before accepting in the dialogue'
-      )
-    }
-
-    if (videoStream && localVideo) {
-      self.showLocalVideo()
-    }
-
-    if (videoStream) {
-      videoStream.getTracks().forEach(function (track) {
-        pc.addTrack(track, videoStream);
-      });
-    }
-
-    if (audioStream) {
-      audioStream.getTracks().forEach(function (track) {
-        pc.addTrack(track, audioStream);
-      });
-    }
-
-    callback()
-  }
-
-  if (mode !== 'recvonly' && !videoStream && !audioStream) {
-    function getMedia(constraints) {
-      if (constraints === undefined) {
-        constraints = MEDIA_CONSTRAINTS
-      }
-      if (typeof AdapterJS !== 'undefined' && AdapterJS
-        .webrtcDetectedBrowser === 'IE' && AdapterJS.webrtcDetectedVersion >= 9
-      ) {
-        navigator.getUserMedia(constraints, function (stream) {
-          videoStream = stream;
-          start();
-        }, callback);
-      } else {
-        navigator.mediaDevices.getUserMedia(constraints).then(function (
-          stream) {
-          videoStream = stream;
-
-          start();
-        }).catch(callback);
-      }
-    }
-    if (sendSource === 'webcam') {
-      getMedia(mediaConstraints)
-    } else {
-      getScreenConstraints(sendSource, function (error, constraints_) {
-        if (error)
-          return callback(error)
-
-        constraints = [mediaConstraints]
-        constraints.unshift(constraints_)
-        getMedia(recursive.apply(undefined, constraints))
-      }, guid)
-    }
-  } else {
-    setTimeout(start, 0)
-  }
-
-  this.on('_dispose', function () {
-    if (localVideo) {
-      localVideo.pause();
-      localVideo.srcObject = null;
-
-      if (typeof AdapterJS === 'undefined') {
-        localVideo.load();
-      }
-      localVideo.muted = false;
-
-    }
-    if (remoteVideo) {
-      remoteVideo.pause();
-      remoteVideo.srcObject = null;
-      if (typeof AdapterJS === 'undefined') {
-        remoteVideo.load();
-
-      }
-    }
-    self.removeAllListeners();
-
-    if (typeof window !== 'undefined' && window.cancelChooseDesktopMedia !==
-      undefined) {
-      window.cancelChooseDesktopMedia(guid)
-    }
-  })
-}
-inherits(WebRtcPeer, EventEmitter)
-
-function createEnableDescriptor(type) {
-  var method = 'get' + type + 'Tracks'
-
-  return {
-    enumerable: true,
-    get: function () {
-      // [ToDo] Should return undefined if not all tracks have the same value?
-
-      if (!this.peerConnection) return
-
-      var streams = this.peerConnection.getLocalStreams()
-      if (!streams.length) return
-
-      for (var i = 0, stream; stream = streams[i]; i++) {
-        var tracks = stream[method]()
-        for (var j = 0, track; track = tracks[j]; j++)
-          if (!track.enabled) return false
-      }
-
-      return true
-    },
-    set: function (value) {
-      function trackSetEnable(track) {
-        track.enabled = value
-      }
-
-      this.peerConnection.getLocalStreams().forEach(function (stream) {
-        stream[method]().forEach(trackSetEnable)
-      })
-    }
-  }
-}
-
-Object.defineProperties(WebRtcPeer.prototype, {
-  'enabled': {
-    enumerable: true,
-    get: function () {
-      return this.audioEnabled && this.videoEnabled
-    },
-    set: function (value) {
-      this.audioEnabled = this.videoEnabled = value
-    }
-  },
-  'audioEnabled': createEnableDescriptor('Audio'),
-  'videoEnabled': createEnableDescriptor('Video')
-})
-
-WebRtcPeer.prototype.getLocalStream = function (index) {
-  if (this.peerConnection) {
-    return this.peerConnection.getLocalStreams()[index || 0]
-  }
-}
-
-WebRtcPeer.prototype.getRemoteStream = function (index) {
-  if (this.peerConnection) {
-    return this.peerConnection.getRemoteStreams()[index || 0]
-  }
-}
-
-/**
- * @description This method frees the resources used by WebRtcPeer.
- *
- * @function module:kurentoUtils.WebRtcPeer.prototype.dispose
- */
-WebRtcPeer.prototype.dispose = function () {
-  logger.debug('Disposing WebRtcPeer')
-
-  var pc = this.peerConnection
-  var dc = this.dataChannel
-  try {
-    if (dc) {
-      if (dc.readyState === 'closed') return
-
-      dc.close()
-    }
-
-    if (pc) {
-      if (pc.signalingState === 'closed') return
-
-      pc.getLocalStreams().forEach(streamStop)
-
-      // FIXME This is not yet implemented in firefox
-      // if(videoStream) pc.removeStream(videoStream);
-      // if(audioStream) pc.removeStream(audioStream);
-
-      pc.close()
-    }
-  } catch (err) {
-    logger.warn('Exception disposing webrtc peer ' + err)
-  }
-
-  if (typeof AdapterJS === 'undefined') {
-    this.emit('_dispose');
-  }
-
-}
-
-//
-// Specialized child classes
-//
-
-function WebRtcPeerRecvonly(options, callback) {
-  if (!(this instanceof WebRtcPeerRecvonly)) {
-    return new WebRtcPeerRecvonly(options, callback)
-  }
-
-  WebRtcPeerRecvonly.super_.call(this, 'recvonly', options, callback)
-}
-inherits(WebRtcPeerRecvonly, WebRtcPeer)
-
-function WebRtcPeerSendonly(options, callback) {
-  if (!(this instanceof WebRtcPeerSendonly)) {
-    return new WebRtcPeerSendonly(options, callback)
-  }
-
-  WebRtcPeerSendonly.super_.call(this, 'sendonly', options, callback)
-}
-inherits(WebRtcPeerSendonly, WebRtcPeer)
-
-function WebRtcPeerSendrecv(options, callback) {
-  if (!(this instanceof WebRtcPeerSendrecv)) {
-    return new WebRtcPeerSendrecv(options, callback)
-  }
-
-  WebRtcPeerSendrecv.super_.call(this, 'sendrecv', options, callback)
-}
-inherits(WebRtcPeerSendrecv, WebRtcPeer)
-
-function harkUtils(stream, options) {
-  return hark(stream, options);
-}
-
-exports.bufferizeCandidates = bufferizeCandidates
-
-exports.WebRtcPeerRecvonly = WebRtcPeerRecvonly
-exports.WebRtcPeerSendonly = WebRtcPeerSendonly
-exports.WebRtcPeerSendrecv = WebRtcPeerSendrecv
-exports.hark = harkUtils
-
-},{"events":149,"freeice":151,"hark":154,"inherits":186,"kurento-browser-extensions":188,"merge":192,"sdp-translator":232,"ua-parser-js":260,"uuid/v4":264}],190:[function(require,module,exports){
-/*
- * (C) Copyright 2014 Kurento (http://kurento.org/)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
-
-/**
- * This module contains a set of reusable components that have been found useful
- * during the development of the WebRTC applications with Kurento.
- * 
- * @module kurentoUtils
- * 
- * @copyright 2014 Kurento (http://kurento.org/)
- * @license ALv2
- */
-
-var WebRtcPeer = require('./WebRtcPeer');
-
-exports.WebRtcPeer = WebRtcPeer;
-
-},{"./WebRtcPeer":189}],191:[function(require,module,exports){
+},{}],184:[function(require,module,exports){
 'use strict'
 var inherits = require('inherits')
 var HashBase = require('hash-base')
@@ -33468,185 +32239,7 @@ function fnI (a, b, c, d, m, k, s) {
 
 module.exports = MD5
 
-},{"hash-base":155,"inherits":186,"safe-buffer":225}],192:[function(require,module,exports){
-/*!
- * @name JavaScript/NodeJS Merge v1.2.1
- * @author yeikos
- * @repository https://github.com/yeikos/js.merge
-
- * Copyright 2014 yeikos - MIT license
- * https://raw.github.com/yeikos/js.merge/master/LICENSE
- */
-
-;(function(isNode) {
-
-	/**
-	 * Merge one or more objects 
-	 * @param bool? clone
-	 * @param mixed,... arguments
-	 * @return object
-	 */
-
-	var Public = function(clone) {
-
-		return merge(clone === true, false, arguments);
-
-	}, publicName = 'merge';
-
-	/**
-	 * Merge two or more objects recursively 
-	 * @param bool? clone
-	 * @param mixed,... arguments
-	 * @return object
-	 */
-
-	Public.recursive = function(clone) {
-
-		return merge(clone === true, true, arguments);
-
-	};
-
-	/**
-	 * Clone the input removing any reference
-	 * @param mixed input
-	 * @return mixed
-	 */
-
-	Public.clone = function(input) {
-
-		var output = input,
-			type = typeOf(input),
-			index, size;
-
-		if (type === 'array') {
-
-			output = [];
-			size = input.length;
-
-			for (index=0;index<size;++index)
-
-				output[index] = Public.clone(input[index]);
-
-		} else if (type === 'object') {
-
-			output = {};
-
-			for (index in input)
-
-				output[index] = Public.clone(input[index]);
-
-		}
-
-		return output;
-
-	};
-
-	/**
-	 * Merge two objects recursively
-	 * @param mixed input
-	 * @param mixed extend
-	 * @return mixed
-	 */
-
-	function merge_recursive(base, extend) {
-
-		if (typeOf(base) !== 'object')
-
-			return extend;
-
-		for (var key in extend) {
-
-			if (typeOf(base[key]) === 'object' && typeOf(extend[key]) === 'object') {
-
-				base[key] = merge_recursive(base[key], extend[key]);
-
-			} else {
-
-				base[key] = extend[key];
-
-			}
-
-		}
-
-		return base;
-
-	}
-
-	/**
-	 * Merge two or more objects
-	 * @param bool clone
-	 * @param bool recursive
-	 * @param array argv
-	 * @return object
-	 */
-
-	function merge(clone, recursive, argv) {
-
-		var result = argv[0],
-			size = argv.length;
-
-		if (clone || typeOf(result) !== 'object')
-
-			result = {};
-
-		for (var index=0;index<size;++index) {
-
-			var item = argv[index],
-
-				type = typeOf(item);
-
-			if (type !== 'object') continue;
-
-			for (var key in item) {
-
-				if (key === '__proto__') continue;
-
-				var sitem = clone ? Public.clone(item[key]) : item[key];
-
-				if (recursive) {
-
-					result[key] = merge_recursive(result[key], sitem);
-
-				} else {
-
-					result[key] = sitem;
-
-				}
-
-			}
-
-		}
-
-		return result;
-
-	}
-
-	/**
-	 * Get type of variable
-	 * @param mixed input
-	 * @return string
-	 *
-	 * @see http://jsperf.com/typeofvar
-	 */
-
-	function typeOf(input) {
-
-		return ({}).toString.call(input).slice(8, -1).toLowerCase();
-
-	}
-
-	if (isNode) {
-
-		module.exports = Public;
-
-	} else {
-
-		window[publicName] = Public;
-
-	}
-
-})(typeof module === 'object' && module && typeof module.exports === 'object' && module.exports);
-},{}],193:[function(require,module,exports){
+},{"hash-base":151,"inherits":182,"safe-buffer":215}],185:[function(require,module,exports){
 var bn = require('bn.js');
 var brorand = require('brorand');
 
@@ -33763,9 +32356,9 @@ MillerRabin.prototype.getDivisor = function getDivisor(n, k) {
   return false;
 };
 
-},{"bn.js":194,"brorand":31}],194:[function(require,module,exports){
+},{"bn.js":186,"brorand":31}],186:[function(require,module,exports){
 arguments[4][28][0].apply(exports,arguments)
-},{"buffer":32,"dup":28}],195:[function(require,module,exports){
+},{"buffer":32,"dup":28}],187:[function(require,module,exports){
 module.exports = assert;
 
 function assert(val, msg) {
@@ -33778,7 +32371,7 @@ assert.equal = function assertEqual(l, r, msg) {
     throw new Error(msg || ('Assertion failed: ' + l + ' != ' + r));
 };
 
-},{}],196:[function(require,module,exports){
+},{}],188:[function(require,module,exports){
 'use strict';
 
 var utils = exports;
@@ -33838,69 +32431,7 @@ utils.encode = function encode(arr, enc) {
     return arr;
 };
 
-},{}],197:[function(require,module,exports){
-/**
-  # normalice
-
-  Normalize an ice server configuration object (or plain old string) into a format
-  that is usable in all browsers supporting WebRTC.  Primarily this module is designed
-  to help with the transition of the `url` attribute of the configuration object to
-  the `urls` attribute.
-
-  ## Example Usage
-
-  <<< examples/simple.js
-
-**/
-
-var protocols = [
-  'stun:',
-  'turn:'
-];
-
-module.exports = function(input) {
-  var url = (input || {}).url || input;
-  var protocol;
-  var parts;
-  var output = {};
-
-  // if we don't have a string url, then allow the input to passthrough
-  if (typeof url != 'string' && (! (url instanceof String))) {
-    return input;
-  }
-
-  // trim the url string, and convert to an array
-  url = url.trim();
-
-  // if the protocol is not known, then passthrough
-  protocol = protocols[protocols.indexOf(url.slice(0, 5))];
-  if (! protocol) {
-    return input;
-  }
-
-  // now let's attack the remaining url parts
-  url = url.slice(5);
-  parts = url.split('@');
-
-  output.username = input.username;
-  output.credential = input.credential;
-  // if we have an authentication part, then set the credentials
-  if (parts.length > 1) {
-    url = parts[1];
-    parts = parts[0].split(':');
-
-    // add the output credential and username
-    output.username = parts[0];
-    output.credential = (input || {}).credential || parts[1] || '';
-  }
-
-  output.url = protocol + url;
-  output.urls = [ output.url ];
-
-  return output;
-};
-
-},{}],198:[function(require,module,exports){
+},{}],189:[function(require,module,exports){
 module.exports={"2.16.840.1.101.3.4.1.1": "aes-128-ecb",
 "2.16.840.1.101.3.4.1.2": "aes-128-cbc",
 "2.16.840.1.101.3.4.1.3": "aes-128-ofb",
@@ -33914,7 +32445,7 @@ module.exports={"2.16.840.1.101.3.4.1.1": "aes-128-ecb",
 "2.16.840.1.101.3.4.1.43": "aes-256-ofb",
 "2.16.840.1.101.3.4.1.44": "aes-256-cfb"
 }
-},{}],199:[function(require,module,exports){
+},{}],190:[function(require,module,exports){
 // from https://github.com/indutny/self-signed/blob/gh-pages/lib/asn1.js
 // Fedor, you are amazing.
 'use strict'
@@ -34038,7 +32569,7 @@ exports.signature = asn1.define('signature', function () {
   )
 })
 
-},{"./certificate":200,"asn1.js":14}],200:[function(require,module,exports){
+},{"./certificate":191,"asn1.js":14}],191:[function(require,module,exports){
 // from https://github.com/Rantanen/node-dtls/blob/25a7dc861bda38cfeac93a723500eea4f0ac2e86/Certificate.js
 // thanks to @Rantanen
 
@@ -34129,7 +32660,7 @@ var X509Certificate = asn.define('X509Certificate', function () {
 
 module.exports = X509Certificate
 
-},{"asn1.js":14}],201:[function(require,module,exports){
+},{"asn1.js":14}],192:[function(require,module,exports){
 // adapted from https://github.com/apatil/pemstrip
 var findProc = /Proc-Type: 4,ENCRYPTED[\n\r]+DEK-Info: AES-((?:128)|(?:192)|(?:256))-CBC,([0-9A-H]+)[\n\r]+([0-9A-z\n\r+/=]+)[\n\r]+/m
 var startRegex = /^-----BEGIN ((?:.*? KEY)|CERTIFICATE)-----/m
@@ -34162,7 +32693,7 @@ module.exports = function (okey, password) {
   }
 }
 
-},{"browserify-aes":35,"evp_bytestokey":150,"safe-buffer":225}],202:[function(require,module,exports){
+},{"browserify-aes":35,"evp_bytestokey":150,"safe-buffer":215}],193:[function(require,module,exports){
 var asn1 = require('./asn1')
 var aesid = require('./aesid.json')
 var fixProc = require('./fixProc')
@@ -34271,11 +32802,11 @@ function decrypt (data, password) {
   return Buffer.concat(out)
 }
 
-},{"./aesid.json":198,"./asn1":199,"./fixProc":201,"browserify-aes":35,"pbkdf2":203,"safe-buffer":225}],203:[function(require,module,exports){
+},{"./aesid.json":189,"./asn1":190,"./fixProc":192,"browserify-aes":35,"pbkdf2":194,"safe-buffer":215}],194:[function(require,module,exports){
 exports.pbkdf2 = require('./lib/async')
 exports.pbkdf2Sync = require('./lib/sync')
 
-},{"./lib/async":204,"./lib/sync":207}],204:[function(require,module,exports){
+},{"./lib/async":195,"./lib/sync":198}],195:[function(require,module,exports){
 (function (global){(function (){
 var Buffer = require('safe-buffer').Buffer
 
@@ -34397,7 +32928,7 @@ module.exports = function (password, salt, iterations, keylen, digest, callback)
 }
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./default-encoding":205,"./precondition":206,"./sync":207,"./to-buffer":208,"safe-buffer":225}],205:[function(require,module,exports){
+},{"./default-encoding":196,"./precondition":197,"./sync":198,"./to-buffer":199,"safe-buffer":215}],196:[function(require,module,exports){
 (function (process,global){(function (){
 var defaultEncoding
 /* istanbul ignore next */
@@ -34413,7 +32944,7 @@ if (global.process && global.process.browser) {
 module.exports = defaultEncoding
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":214}],206:[function(require,module,exports){
+},{"_process":204}],197:[function(require,module,exports){
 var MAX_ALLOC = Math.pow(2, 30) - 1 // default in iojs
 
 module.exports = function (iterations, keylen) {
@@ -34434,7 +32965,7 @@ module.exports = function (iterations, keylen) {
   }
 }
 
-},{}],207:[function(require,module,exports){
+},{}],198:[function(require,module,exports){
 var md5 = require('create-hash/md5')
 var RIPEMD160 = require('ripemd160')
 var sha = require('sha.js')
@@ -34541,7 +33072,7 @@ function pbkdf2 (password, salt, iterations, keylen, digest) {
 
 module.exports = pbkdf2
 
-},{"./default-encoding":205,"./precondition":206,"./to-buffer":208,"create-hash/md5":82,"ripemd160":224,"safe-buffer":225,"sha.js":236}],208:[function(require,module,exports){
+},{"./default-encoding":196,"./precondition":197,"./to-buffer":199,"create-hash/md5":82,"ripemd160":214,"safe-buffer":215,"sha.js":218}],199:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 module.exports = function (thing, encoding, name) {
@@ -34556,7 +33087,7 @@ module.exports = function (thing, encoding, name) {
   }
 }
 
-},{"safe-buffer":225}],209:[function(require,module,exports){
+},{"safe-buffer":215}],200:[function(require,module,exports){
 (function () {
     /*
      * Async module to handle async messaging
@@ -34572,12 +33103,10 @@ module.exports = function (thing, encoding, name) {
          *******************************************************/
 
         var PodSocketClass,
-            WebRTCClass,
             PodUtility,
             LogLevel
         if (typeof(require) !== 'undefined' && typeof(exports) !== 'undefined') {
             PodSocketClass = require('./socket.js');
-            WebRTCClass = require('./webrtc.js');
             PodUtility = require('../utility/utility.js');
             LogLevel = require('../utility/logger.js');
         }
@@ -34603,7 +33132,6 @@ module.exports = function (thing, encoding, name) {
             },
             ackCallback = {},
             socket,
-            webRTCClass,
             asyncMessageType = {
                 PING: 0,
                 SERVER_REGISTER: 1,
@@ -34652,8 +33180,7 @@ module.exports = function (thing, encoding, name) {
                 ? params.asyncLogging.onMessageReceive
                 : false,
             onSendLogging = (params.asyncLogging && typeof params.asyncLogging.onMessageSend === 'boolean') ? params.asyncLogging.onMessageSend : false,
-            workerId = (params.asyncLogging && typeof parseInt(params.asyncLogging.workerId) === 'number') ? params.asyncLogging.workerId : 0,
-            webrtcConfig = (params.webrtcConfig ? params.webrtcConfig : null);
+            workerId = (params.asyncLogging && typeof parseInt(params.asyncLogging.workerId) === 'number') ? params.asyncLogging.workerId : 0;
 
         // function setRetryStep(val){
         //     console.log("new retryStep value:", val);
@@ -34683,9 +33210,6 @@ module.exports = function (thing, encoding, name) {
                 switch (protocol) {
                     case 'websocket':
                         initSocket();
-                        break;
-                    case 'webrtc':
-                        initWebrtc();
                         break;
                 }
             },
@@ -34847,124 +33371,6 @@ module.exports = function (thing, encoding, name) {
                 });
 
                 socket.on('error', function (error) {
-                    fireEvent('error', {
-                        errorCode: '',
-                        errorMessage: '',
-                        errorEvent: error
-                    });
-                });
-            },
-            initWebrtc = function () {
-                webRTCClass = new WebRTCClass({
-                    baseUrl: (webrtcConfig ? webrtcConfig.baseUrl : null),
-                    configuration : (webrtcConfig ? webrtcConfig.configuration : null),
-                    connectionCheckTimeout: params.connectionCheckTimeout,
-                    logLevel: logLevel
-                });
-
-                checkIfSocketHasOpennedTimeoutId = setTimeout(function () {
-                    if (!isSocketOpen) {
-                        fireEvent('error', {
-                            errorCode: 4001,
-                            errorMessage: 'Can not open Socket!'
-                        });
-                    }
-                }, 65000);
-
-                webRTCClass.on('open', function () {
-                    checkIfSocketHasOpennedTimeoutId && clearTimeout(checkIfSocketHasOpennedTimeoutId);
-                    socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-                    socketReconnectCheck && clearTimeout(socketReconnectCheck);
-
-                    isSocketOpen = true;
-                    retryStep.set(4);
-
-                    socketState = socketStateType.OPEN;
-                    fireEvent('stateChange', {
-                        socketState: socketState,
-                        timeUntilReconnect: 0,
-                        deviceRegister: isDeviceRegister,
-                        serverRegister: isServerRegister,
-                        peerId: peerId
-                    });
-                });
-
-                webRTCClass.on('message', function (msg) {
-                    console.log({msg})
-                    handleSocketMessage(msg);
-                    if (onReceiveLogging) {
-                        asyncLogger('Receive', msg);
-                    }
-                });
-
-                webRTCClass.on('close', function (event) {
-                    isSocketOpen = false;
-                    isDeviceRegister = false;
-                    oldPeerId = peerId;
-
-                    fireEvent('disconnect', event);
-
-                    if (reconnectOnClose) {
-                        if (asyncLogging) {
-                            if (workerId > 0) {
-                                Utility.asyncStepLogger(workerId + '\t Reconnecting after ' + retryStep.get() + 's');
-                            }
-                            else {
-                                Utility.asyncStepLogger('Reconnecting after ' + retryStep.get() + 's');
-                            }
-                        }
-
-                        logLevel.debug && console.debug("[Async][async.js] on connection close, retryStep:", retryStep.get());
-
-                        socketState = socketStateType.CLOSED;
-                        fireEvent('stateChange', {
-                            socketState: socketState,
-                            timeUntilReconnect: 1000 * retryStep.get(),
-                            deviceRegister: isDeviceRegister,
-                            serverRegister: isServerRegister,
-                            peerId: peerId
-                        });
-
-                        socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-
-                        socketReconnectRetryInterval = setTimeout(function () {
-                            webRTCClass.connect();
-                        }, 1000 * retryStep.get());
-
-                        if (retryStep.get() < 64) {
-                            // retryStep += 3;
-                            retryStep.set(retryStep.get() + 3)
-                        }
-                    }
-                    else {
-                        socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-                        socketReconnectCheck && clearTimeout(socketReconnectCheck);
-                        fireEvent('error', {
-                            errorCode: 4005,
-                            errorMessage: 'Connection Closed!'
-                        });
-
-                        socketState = socketStateType.CLOSED;
-                        fireEvent('stateChange', {
-                            socketState: socketState,
-                            timeUntilReconnect: 0,
-                            deviceRegister: isDeviceRegister,
-                            serverRegister: isServerRegister,
-                            peerId: peerId
-                        });
-                    }
-
-                });
-
-                webRTCClass.on('customError', function (error) {
-                    fireEvent('error', {
-                        errorCode: error.errorCode,
-                        errorMessage: error.errorMessage,
-                        errorEvent: error.errorEvent
-                    });
-                });
-
-                webRTCClass.on('error', function (error) {
                     fireEvent('error', {
                         errorCode: '',
                         errorMessage: '',
@@ -35223,15 +33629,6 @@ module.exports = function (thing, encoding, name) {
                             pushSendDataQueue.push(msg);
                         }
                         break;
-                    case 'webrtc':
-                        if (socketState === socketStateType.OPEN) {
-                            webRTCClass.emit(msg);
-                        }
-                        else {
-                            pushSendDataQueue.push(msg);
-                        }
-
-                        break;
                 }
             },
 
@@ -35251,16 +33648,16 @@ module.exports = function (thing, encoding, name) {
 
             fireEvent = function (eventName, param, ack) {
                 // try {
-                if (ack) {
-                    for (var id in eventCallbacks[eventName]) {
-                        eventCallbacks[eventName][id](param, ack);
+                    if (ack) {
+                        for (var id in eventCallbacks[eventName]) {
+                            eventCallbacks[eventName][id](param, ack);
+                        }
                     }
-                }
-                else {
-                    for (var id in eventCallbacks[eventName]) {
-                        eventCallbacks[eventName][id](param);
+                    else {
+                        for (var id in eventCallbacks[eventName]) {
+                            eventCallbacks[eventName][id](param);
+                        }
                     }
-                }
                 // }
                 // catch (e) {
                 //     fireEvent('error', {
@@ -35362,20 +33759,6 @@ module.exports = function (thing, encoding, name) {
                     socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
                     socket.close();
                     break;
-                case 'webrtc':
-                    socketState = socketStateType.CLOSED;
-                    fireEvent('stateChange', {
-                        socketState: socketState,
-                        timeUntilReconnect: 0,
-                        deviceRegister: isDeviceRegister,
-                        serverRegister: isServerRegister,
-                        peerId: peerId
-                    });
-
-                    socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-                    webRTCClass.close();
-
-                    break;
             }
         };
 
@@ -35405,20 +33788,6 @@ module.exports = function (thing, encoding, name) {
 
                     socket.close();
                     break;
-                case 'webrtc':
-                    socketState = socketStateType.CLOSED;
-                    fireEvent('stateChange', {
-                        socketState: socketState,
-                        timeUntilReconnect: 0,
-                        deviceRegister: isDeviceRegister,
-                        serverRegister: isServerRegister,
-                        peerId: peerId
-                    });
-
-                    reconnectOnClose = false;
-                    webRTCClass.close();
-
-                    break;
             }
         };
 
@@ -35438,18 +33807,12 @@ module.exports = function (thing, encoding, name) {
             });
 
             socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-            if(protocol === "websocket")
-                socket.close();
-            else if(protocol == "webrtc")
-                webRTCClass.close()
+            socket.close();
 
             socketReconnectRetryInterval = setTimeout(function () {
                 // retryStep = 4;
                 retryStep.set(4);
-                if(protocol === "websocket")
-                    socket.close();
-                else if(protocol == "webrtc")
-                    webRTCClass.close()
+                socket.connect();
             }, 2000);
         };
 
@@ -35469,7 +33832,7 @@ module.exports = function (thing, encoding, name) {
     }
 })();
 
-},{"../utility/logger.js":212,"../utility/utility.js":213,"./socket.js":210,"./webrtc.js":211}],210:[function(require,module,exports){
+},{"../utility/logger.js":202,"../utility/utility.js":203,"./socket.js":201}],201:[function(require,module,exports){
 (function() {
   /*
    * Socket Module to connect and handle Socket functionalities
@@ -35489,15 +33852,15 @@ module.exports = function (thing, encoding, name) {
      *******************************************************/
 
     var address = params.socketAddress,
-        wsConnectionWaitTime = params.wsConnectionWaitTime || 500,
-        connectionCheckTimeout = params.connectionCheckTimeout || 10000,
-        eventCallback = {},
-        socket,
-        waitForSocketToConnectTimeoutId,
-        socketRealTimeStatusInterval,
-        logLevel = params.logLevel,
-        pingController = new PingManager({waitTime: connectionCheckTimeout}),
-        socketWatchTimeout;
+      wsConnectionWaitTime = params.wsConnectionWaitTime || 500,
+      connectionCheckTimeout = params.connectionCheckTimeout || 10000,
+      eventCallback = {},
+      socket,
+      waitForSocketToConnectTimeoutId,
+      socketRealTimeStatusInterval,
+      logLevel = params.logLevel,
+      pingController = new PingManager({waitTime: connectionCheckTimeout}),
+      socketWatchTimeout;
 
 
     function PingManager(params) {
@@ -35511,7 +33874,7 @@ module.exports = function (thing, encoding, name) {
           first: null,
           second: null,
           third: null,
-          //fourth: null
+          fourth: null
         }
       }
 
@@ -35523,13 +33886,13 @@ module.exports = function (thing, encoding, name) {
         setPingTimeout() {
           config.timeoutIds.first = setTimeout(()=>{
             ping();
-            config.timeoutIds.second = setTimeout(()=>{
+            config.timeoutIds.first = setTimeout(()=>{
               ping();
-              config.timeoutIds.third = setTimeout(()=>{
-                logLevel.debug && console.debug("[Async][Socket.js] Force closing socket.");
-                onCloseHandler(null);
-                socket.close();
-              }, 2000);
+                config.timeoutIds.fourth = setTimeout(()=>{
+                  logLevel.debug && console.debug("[Async][Socket.js] Force closing socket.");
+                  onCloseHandler(null);
+                  socket.close();
+                }, 2000);
             }, 2000);
           }, 8000);
         },
@@ -35537,7 +33900,7 @@ module.exports = function (thing, encoding, name) {
           clearTimeout(config.timeoutIds.first);
           clearTimeout(config.timeoutIds.second);
           clearTimeout(config.timeoutIds.third);
-          // clearTimeout(config.timeoutIds.fourth);
+          clearTimeout(config.timeoutIds.fourth);
         },
       }
     }
@@ -35547,135 +33910,135 @@ module.exports = function (thing, encoding, name) {
      *******************************************************/
 
     var init = function() {
-          connect();
-        },
+        connect();
+      },
 
-        connect = function() {
-          try {
-            if (socket && socket.readyState == 1) {
-              return;
-            }
+      connect = function() {
+        try {
+          if (socket && socket.readyState == 1) {
+            return;
+          }
 
-            socket = new WebSocket(address, []);
+          socket = new WebSocket(address, []);
 
-            // socketRealTimeStatusInterval && clearInterval(socketRealTimeStatusInterval);
-            // socketRealTimeStatusInterval = setInterval(function() {
-            //   switch (socket.readyState) {
-            //     case 2:
-            //       onCloseHandler(null);
-            //       socketRealTimeStatusInterval && clearInterval(socketRealTimeStatusInterval);
-            //       break;
-            //     case 3:
-            //
-            //       break;
-            //   }
-            // }, 5000);
+          // socketRealTimeStatusInterval && clearInterval(socketRealTimeStatusInterval);
+          // socketRealTimeStatusInterval = setInterval(function() {
+          //   switch (socket.readyState) {
+          //     case 2:
+          //       onCloseHandler(null);
+          //       socketRealTimeStatusInterval && clearInterval(socketRealTimeStatusInterval);
+          //       break;
+          //     case 3:
+          //
+          //       break;
+          //   }
+          // }, 5000);
 
-            /**
-             * Watches the socket to make sure it's state changes to 1 in 5 seconds
-             */
-            socketWatchTimeout && clearTimeout(socketWatchTimeout);
-            socketWatchTimeout = setTimeout(() => {
-              // if(socket.readyState !== 1) {
-              logLevel.debug && console.debug("[Async][Socket.js] socketWatchTimeout triggered.");
-              onCloseHandler(null);
-              socket.close();
-              // }
-            }, 5000);
+          /**
+           * Watches the socket to make sure it's state changes to 1 in 5 seconds
+           */
+          socketWatchTimeout && clearTimeout(socketWatchTimeout);
+          socketWatchTimeout = setTimeout(() => {
+            // if(socket.readyState !== 1) {
+            logLevel.debug && console.debug("[Async][Socket.js] socketWatchTimeout triggered.");
+            onCloseHandler(null);
+            socket.close();
+            // }
+          }, 5000);
 
-            socket.onopen = function(event) {
-              waitForSocketToConnect(function() {
-                pingController.resetPingLoop();
-                eventCallback["open"]();
-                socketWatchTimeout && clearTimeout(socketWatchTimeout);
-              });
-            }
-
-            socket.onmessage = function(event) {
+          socket.onopen = function(event) {
+            waitForSocketToConnect(function() {
               pingController.resetPingLoop();
-
-              var messageData = JSON.parse(event.data);
-              eventCallback["message"](messageData);
-            }
-
-            socket.onclose = function(event) {
-              pingController.stopPingLoop();
-              logLevel.debug && console.debug("[Async][Socket.js] socket.onclose happened. EventData:", event);
-              onCloseHandler(event);
+              eventCallback["open"]();
               socketWatchTimeout && clearTimeout(socketWatchTimeout);
-            }
-
-            socket.onerror = function(event) {
-              logLevel.debug && console.debug("[Async][Socket.js] socket.onerror happened. EventData:", event);
-              eventCallback["error"](event);
-              socketWatchTimeout && clearTimeout(socketWatchTimeout);
-            }
-          } catch (error) {
-            eventCallback["customError"]({
-              errorCode: 4000,
-              errorMessage: "ERROR in WEBSOCKET!",
-              errorEvent: error
             });
           }
-        },
 
-        onCloseHandler = function(event) {
-          pingController.stopPingLoop();
-          socket.onclose = null;
-          socket.onmessage = null;
-          socket.onerror = null;
-          socket.onopen = null;
-          eventCallback["close"](event);
-        },
+          socket.onmessage = function(event) {
+            pingController.resetPingLoop();
 
-        ping = function() {
-          sendData({
-            type: 0
+            var messageData = JSON.parse(event.data);
+            eventCallback["message"](messageData);
+          }
+
+          socket.onclose = function(event) {
+            pingController.stopPingLoop();
+            logLevel.debug && console.debug("[Async][Socket.js] socket.onclose happened. EventData:", event);
+            onCloseHandler(event);
+            socketWatchTimeout && clearTimeout(socketWatchTimeout);
+          }
+
+          socket.onerror = function(event) {
+            logLevel.debug && console.debug("[Async][Socket.js] socket.onerror happened. EventData:", event);
+            eventCallback["error"](event);
+            socketWatchTimeout && clearTimeout(socketWatchTimeout);
+          }
+        } catch (error) {
+          eventCallback["customError"]({
+            errorCode: 4000,
+            errorMessage: "ERROR in WEBSOCKET!",
+            errorEvent: error
           });
-        },
+        }
+      },
 
-        waitForSocketToConnect = function(callback) {
-          waitForSocketToConnectTimeoutId && clearTimeout(waitForSocketToConnectTimeoutId);
+      onCloseHandler = function(event) {
+        pingController.stopPingLoop();
+        socket.onclose = null;
+        socket.onmessage = null;
+        socket.onerror = null;
+        socket.onopen = null;
+        eventCallback["close"](event);
+      },
+
+      ping = function() {
+        sendData({
+          type: 0
+        });
+      },
+
+      waitForSocketToConnect = function(callback) {
+        waitForSocketToConnectTimeoutId && clearTimeout(waitForSocketToConnectTimeoutId);
+
+        if (socket.readyState === 1) {
+          callback();
+        } else {
+          waitForSocketToConnectTimeoutId = setTimeout(function() {
+            if (socket.readyState === 1) {
+              callback();
+            } else {
+              waitForSocketToConnect(callback);
+            }
+          }, wsConnectionWaitTime);
+        }
+      },
+
+      sendData = function(params) {
+        var data = {
+          type: params.type,
+          uniqueId: params.uniqueId
+        };
+
+        if (params.trackerId) {
+          data.trackerId = params.trackerId;
+        }
+
+        try {
+          if (params.content) {
+            data.content = JSON.stringify(params.content);
+          }
 
           if (socket.readyState === 1) {
-            callback();
-          } else {
-            waitForSocketToConnectTimeoutId = setTimeout(function() {
-              if (socket.readyState === 1) {
-                callback();
-              } else {
-                waitForSocketToConnect(callback);
-              }
-            }, wsConnectionWaitTime);
+            socket.send(JSON.stringify(data));
           }
-        },
-
-        sendData = function(params) {
-          var data = {
-            type: params.type,
-            uniqueId: params.uniqueId
-          };
-
-          if (params.trackerId) {
-            data.trackerId = params.trackerId;
-          }
-
-          try {
-            if (params.content) {
-              data.content = JSON.stringify(params.content);
-            }
-
-            if (socket.readyState === 1) {
-              socket.send(JSON.stringify(data));
-            }
-          } catch (error) {
-            eventCallback["customError"]({
-              errorCode: 4004,
-              errorMessage: "Error in Socket sendData!",
-              errorEvent: error
-            });
-          }
-        };
+        } catch (error) {
+          eventCallback["customError"]({
+            errorCode: 4004,
+            errorMessage: "Error in Socket sendData!",
+            errorEvent: error
+          });
+        }
+      };
 
     /*******************************************************
      *             P U B L I C   M E T H O D S             *
@@ -35712,467 +34075,7 @@ module.exports = function (thing, encoding, name) {
 
 })();
 
-},{"isomorphic-ws":187}],211:[function(require,module,exports){
-let defaultConfig = {
-        baseUrl: "http://109.201.0.97/webrtc/",
-        registerEndpoint: "register/",
-        addICEEndpoint: "add-ice/",
-        getICEEndpoint: "get-ice/?",
-        configuration: {
-            bundlePolicy: "balanced",
-            iceTransportPolicy: "relay",
-            iceServers: [{
-                "urls": "turn:turnsandbox.podstream.ir:3478", "username": "mkhorrami", "credential": "mkh_123456"
-            }]
-        },
-        connectionCheckTimeout: 10000,
-        logLevel: null
-    },
-    variables = {
-        peerConnection: null,
-        dataChannel: null,
-        pingController: new PingManager({waitTime: defaultConfig.connectionCheckTimeout}),
-        candidatesQueue: [],
-        // candidatesSendQueue: [],
-        candidateManager: new CandidatesSendQueueManager(),
-        clientId: null,
-        deviceId: null,
-        apiCallRetries: {
-            register: 3,
-            getIce: 3,
-            addIce: 5
-        }
-    };
-
-function CandidatesSendQueueManager() {
-    let config = {
-        candidatesToSend: [],
-        alreadyReceivedServerCandidates: false,
-        reCheckTimeout: null
-    }
-
-    function trySendingCandidates() {
-        timoutCallback();
-        function timoutCallback() {
-            if(variables.peerConnection.signalingState === 'stable') {
-                config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
-                if (config.candidatesToSend.length) {
-                    let entry = config.candidatesToSend.shift();
-                    handshakingFunctions
-                        .sendCandidate(entry)
-                        .then(function (result) {
-                            if (result.length) {
-                                addServerCandidates(result);
-
-                                config.alreadyReceivedServerCandidates = true;
-                            }
-                            trySendingCandidates();
-                        });
-
-                } else if (!config.alreadyReceivedServerCandidates) {
-                    handshakingFunctions.getCandidates(variables.clientId).then(function (result) {
-                        addServerCandidates(result)
-                    }).catch();
-                }
-            } else {
-                config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
-                config.reCheckTimeout = setTimeout(timoutCallback, 1000);
-            }
-        }
-    }
-
-    function addServerCandidates(candidates) {
-        for(let i in candidates) {
-            webrtcFunctions.putCandidateToQueue(candidates[i]);
-        }
-    }
-
-    return {
-        add: function (candidate) {
-            config.candidatesToSend.push(candidate);
-            trySendingCandidates();
-        },
-        destroy: function (){
-            config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
-        }
-    }
-}
-
-function PingManager(params) {
-    const config = {
-        normalWaitTime: params.waitTime,
-
-        lastRequestTimeoutId: null,
-        lastReceivedMessageTime: 0,
-        totalNoMessageCount: 0,
-        timeoutIds: {
-            first: null,
-            second: null,
-            third: null,
-            fourth: null
-        }
-    }
-
-    return {
-        resetPingLoop() {
-            this.stopPingLoop();
-            this.setPingTimeout();
-        },
-        setPingTimeout() {
-            config.timeoutIds.first = setTimeout(() => {
-                ping();
-                config.timeoutIds.second = setTimeout(() => {
-                    ping();
-                    config.timeoutIds.third = setTimeout(() => {
-                        defaultConfig.logLevel.debug && console.debug("[Async][Webrtc.js] Force closing connection.");
-                        publicized.close();
-                    }, 2000);
-                }, 2000);
-            }, 8000);
-        },
-        stopPingLoop() {
-            clearTimeout(config.timeoutIds.first);
-            clearTimeout(config.timeoutIds.second);
-            clearTimeout(config.timeoutIds.third);
-            // clearTimeout(config.timeoutIds.fourth);
-        },
-    }
-}
-
-function connect() {
-    webrtcFunctions.createPeerConnection();
-    webrtcFunctions.createDataChannel();
-    webrtcFunctions.generateSdpOffer()
-        .then(sendOfferToServer);
-
-    function sendOfferToServer(offer) {
-        handshakingFunctions
-            .register(offer.sdp)
-            .then(processRegisterResult).catch();
-
-        variables
-            .peerConnection.setLocalDescription(offer)
-            .catch(error => console.error(error));
-    }
-
-    function processRegisterResult(result) {
-        variables.clientId = result.clientId;
-        variables.deviceId = result.deviceId;
-        webrtcFunctions.processAnswer(result.sdpAnswer);
-    }
-}
-
-let webrtcFunctions = {
-    createPeerConnection: function () {
-        variables.peerConnection = new RTCPeerConnection(defaultConfig.configuration);
-        variables.peerConnection.addEventListener('signalingstatechange', webrtcFunctions.signalingStateChangeCallback);
-        variables.peerConnection.onicecandidate = function (event) {
-            if (event.candidate) {
-                variables.candidateManager.add(event.candidate);
-                webrtcFunctions.putCandidateToQueue(event.candidate);
-            }
-        };
-    },
-    signalingStateChangeCallback: function () {
-        if (variables.peerConnection.signalingState === 'stable') {
-            // handshakingFunctions.getCandidates().catch()
-            webrtcFunctions.addTheCandidates();
-        }
-    },
-    createDataChannel: function () {
-        variables.dataChannel = variables.peerConnection.createDataChannel("dataChannel", {ordered: false});
-        variables.dataChannel.onopen = dataChannelCallbacks.onopen;
-        variables.dataChannel.onmessage = dataChannelCallbacks.onmessage;
-        variables.dataChannel.onerror = dataChannelCallbacks.onerror;
-        variables.dataChannel.onclose = dataChannelCallbacks.onclose;
-    },
-    generateSdpOffer: function () {
-        return new Promise(function (resolve, reject) {
-            variables.peerConnection.createOffer(function (offer) {
-                resolve(offer)
-            }, function (error) {
-                reject(error);
-                console.error(error);
-            }).then(r => console.log(r));
-        })
-    },
-    processAnswer: function (answer) {
-        let remoteDesc = {
-            type: "answer", sdp: answer
-        };
-        variables
-            .peerConnection
-            .setRemoteDescription(new RTCSessionDescription(remoteDesc))
-            .catch(function (error) {
-                console.error(error)
-            });
-    },
-    addTheCandidates: function () {
-        while (variables.candidatesQueue.length) {
-            let entry = variables.candidatesQueue.shift();
-            variables.peerConnection.addIceCandidate(entry.candidate);
-        }
-    },
-    putCandidateToQueue: function (candidate) {
-        variables.candidatesQueue.push({
-            candidate: new RTCIceCandidate(candidate)
-        });
-        if (variables.peerConnection.signalingState === 'stable') {
-            webrtcFunctions.addTheCandidates();
-        }
-    },
-    sendData: function(params) {
-        if(!variables.dataChannel) {
-            console.error("Connection is closed, do not send messages.")
-            return;
-        }
-        var data = {
-            type: params.type,
-            uniqueId: params.uniqueId
-        };
-
-        if (params.trackerId) {
-            data.trackerId = params.trackerId;
-        }
-
-        try {
-            if (params.content) {
-                data.content = JSON.stringify(params.content);
-            }
-
-            if (variables.peerConnection.signalingState === 'stable') {
-                //defaultConfig.logLevel.debug &&
-                console.log("[Async][WebRTC] Send ", data);
-                variables.dataChannel.send(JSON.stringify(data));
-            }
-        } catch (error) {
-            eventCallback["customError"]({
-                errorCode: 4004,
-                errorMessage: "Error in Socket sendData!",
-                errorEvent: error
-            });
-        }
-    }
-}
-
-let dataChannelCallbacks = {
-    onopen: function (event) {
-        console.log("********* dataChannel open *********");
-        variables.pingController.resetPingLoop();
-        eventCallback["open"]();
-
-        const deviceRegister = {
-            "type": "2",
-            "content": {"deviceId": variables.deviceId, "appId": "PodChat", "refresh": false, "renew": true}
-        };
-        deviceRegister.content = JSON.stringify(deviceRegister.content)
-        variables.dataChannel.send(JSON.stringify(deviceRegister));
-    },
-
-    onmessage: function (event) {
-
-        variables.pingController.resetPingLoop();
-        var messageData = JSON.parse(event.data);
-        console.log("[Async][WebRTC] Receive ", event.data);
-        eventCallback["message"](messageData);
-    },
-
-    onerror: function (error) {
-        logLevel.debug && console.debug("[Async][Socket.js] dataChannel.onerror happened. EventData:", event);
-        eventCallback["error"](event);
-    },
-    onclose: function (event) {
-        resetVariables();
-        eventCallback["close"](event);
-    }
-}
-
-let handshakingFunctions = {
-    register: function (offer) {
-        let retries = variables.apiCallRetries.register;
-        return new Promise(promiseHandler);
-        function promiseHandler(resolve, reject) {
-            let registerEndPoint = defaultConfig.baseUrl + defaultConfig.registerEndpoint
-            fetch(registerEndPoint, {
-                method: "POST",
-                body: JSON.stringify({
-                    offer: offer
-                })
-            })
-                .then(function (response) {
-                    if(response.ok)
-                        return response.json();
-                    else if(retries){
-                        retryTheRequest(resolve, reject);
-                        retries--;
-                    } else reject();
-                })
-                .then(result => resolve(result))
-                .catch(err => {
-                    if(retries){
-                        retryTheRequest(resolve, reject);
-                        retries--;
-                    } else {
-                        publicized.close();
-                    }
-                    console.error(err);
-                });
-        }
-        function retryTheRequest(resolve, reject){
-            setTimeout(function (){promiseHandler(resolve, reject)}, 1000);
-        }
-    },
-    getCandidates: function (clientId) {
-        let addIceCandidateEndPoint = defaultConfig.baseUrl + defaultConfig.getICEEndpoint
-        addIceCandidateEndPoint += "clientId=" + clientId;
-
-        let retries = variables.apiCallRetries.getIce;
-        return new Promise(promiseHandler);
-        function promiseHandler(resolve, reject) {
-            fetch(addIceCandidateEndPoint, {
-                method: "GET"
-            })
-                .then(function (response) {
-                    if(response.ok)
-                        return response.json();
-                    else if(retries){
-                        retryTheRequest(resolve, reject);
-                        retries--;
-                    } else reject();
-                })
-                .then(function (result) {
-                    resolve(result.iceCandidates)
-                    // if(result.iceCandidates && result.iceCandidates.length) {
-                    //     // result.iceCandidates.forEach((item) => {
-                    //     //     webrtcFunctions.putCandidateToQueue(item);
-                    //     // });
-                    //     resolve(result.iceCandidates)
-                    // }
-                    // else {
-                    //     if(retries){
-                    //         retryTheRequest(resolve, reject);
-                    //         retries--;
-                    //     } else reject();
-                    // }
-                })
-                .catch(function (err) {
-                    if(retries){
-                        retryTheRequest(resolve, reject);
-                        retries--;
-                    } else reject(err);
-                    console.error(err);
-                });
-        }
-
-        function retryTheRequest(resolve, reject){
-            setTimeout(function (){promiseHandler(resolve, reject)}, 1000);
-        }
-
-    },
-    sendCandidate: function (candidate) {
-        let addIceCandidateEndPoint = defaultConfig.baseUrl + defaultConfig.addICEEndpoint
-            , retries = variables.apiCallRetries.addIce;
-
-        return new Promise(promiseHandler);
-        function promiseHandler(resolve, reject) {
-            fetch(addIceCandidateEndPoint, {
-                method: "POST",
-                body: JSON.stringify({
-                    "clientId": variables.clientId,
-                    "candidate": candidate
-                })
-            })
-                .then(function (response) {
-                    if(response.ok)
-                        return response.json();
-                    else if(retries){
-                        retryTheRequest(resolve, reject);
-                        retries--;
-                    } else reject();
-                })
-                .then(function (result) {
-                    resolve(result.iceCandidates);
-                })
-                .catch(err => {
-                    if(retries){
-                        retryTheRequest(resolve, reject);
-                        retries--;
-                    } else reject(err);
-                    console.error(err);
-                });
-        }
-
-        function retryTheRequest(resolve, reject){
-            setTimeout(function (){promiseHandler(resolve, reject)}, 2000);
-        }
-    }
-}
-
-eventCallback = {};
-
-function resetVariables() {
-    console.log("resetVariables");
-    eventCallback["close"]();
-    variables.pingController.stopPingLoop();
-    variables.dataChannel.close();
-    variables.dataChannel = null;
-    variables.peerConnection.close();
-    variables.peerConnection = null;
-    variables.candidatesQueue = [];
-    variables.clientId = null;
-    variables.deviceId = null;
-    variables.candidateManager.destroy();
-    variables.candidateManager = new CandidatesSendQueueManager()
-}
-
-function ping() {
-    webrtcFunctions.sendData({
-        type: 0
-    });
-}
-function removeCallbacks(){
-    variables.peerConnection.onicecandidate = null;
-    variables.dataChannel.onclose = null;
-    variables.dataChannel.onmessage = null;
-    variables.dataChannel.onerror = null;
-    variables.dataChannel.onopen = null;
-}
-
-function WebRTCClass({
-    baseUrl,
-    configuration,
-    connectionCheckTimeout = 10000,
-    logLevel
-}) {
-    let config = {}
-    if (baseUrl)
-        config.baseUrl = baseUrl;
-    if (configuration)
-        config.configuration = configuration;
-    if (connectionCheckTimeout)
-        config.connectionCheckTimeout = connectionCheckTimeout;
-    if (logLevel)
-        config.logLevel = logLevel;
-
-    defaultConfig = Object.assign(defaultConfig, config);
-    connect();
-    return publicized;
-}
-
-let publicized = {
-    on: function (messageName, callback) {
-        eventCallback[messageName] = callback;
-    },
-    emit: webrtcFunctions.sendData,
-    connect: connect,
-    close: function () {
-        removeCallbacks();
-        resetVariables();
-    }
-};
-
-module.exports = WebRTCClass;
-},{}],212:[function(require,module,exports){
+},{"isomorphic-ws":183}],202:[function(require,module,exports){
 function LogLevel(logLevel){
     let ll = logLevel || 2;
     switch (ll) {
@@ -36208,7 +34111,7 @@ else {
     window.POD.LogLevel = LogLevel;
 }
 
-},{}],213:[function(require,module,exports){
+},{}],203:[function(require,module,exports){
 (function (global){(function (){
 (function() {
   /**
@@ -36436,7 +34339,7 @@ else {
 })();
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],214:[function(require,module,exports){
+},{}],204:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -36622,7 +34525,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],215:[function(require,module,exports){
+},{}],205:[function(require,module,exports){
 exports.publicEncrypt = require('./publicEncrypt')
 exports.privateDecrypt = require('./privateDecrypt')
 
@@ -36634,7 +34537,7 @@ exports.publicDecrypt = function publicDecrypt (key, buf) {
   return exports.privateDecrypt(key, buf, true)
 }
 
-},{"./privateDecrypt":218,"./publicEncrypt":219}],216:[function(require,module,exports){
+},{"./privateDecrypt":208,"./publicEncrypt":209}],206:[function(require,module,exports){
 var createHash = require('create-hash')
 var Buffer = require('safe-buffer').Buffer
 
@@ -36655,9 +34558,9 @@ function i2ops (c) {
   return out
 }
 
-},{"create-hash":81,"safe-buffer":225}],217:[function(require,module,exports){
+},{"create-hash":81,"safe-buffer":215}],207:[function(require,module,exports){
 arguments[4][28][0].apply(exports,arguments)
-},{"buffer":32,"dup":28}],218:[function(require,module,exports){
+},{"buffer":32,"dup":28}],208:[function(require,module,exports){
 var parseKeys = require('parse-asn1')
 var mgf = require('./mgf')
 var xor = require('./xor')
@@ -36764,7 +34667,7 @@ function compare (a, b) {
   return dif
 }
 
-},{"./mgf":216,"./withPublic":220,"./xor":221,"bn.js":217,"browserify-rsa":53,"create-hash":81,"parse-asn1":202,"safe-buffer":225}],219:[function(require,module,exports){
+},{"./mgf":206,"./withPublic":210,"./xor":211,"bn.js":207,"browserify-rsa":53,"create-hash":81,"parse-asn1":193,"safe-buffer":215}],209:[function(require,module,exports){
 var parseKeys = require('parse-asn1')
 var randomBytes = require('randombytes')
 var createHash = require('create-hash')
@@ -36854,7 +34757,7 @@ function nonZero (len) {
   return out
 }
 
-},{"./mgf":216,"./withPublic":220,"./xor":221,"bn.js":217,"browserify-rsa":53,"create-hash":81,"parse-asn1":202,"randombytes":222,"safe-buffer":225}],220:[function(require,module,exports){
+},{"./mgf":206,"./withPublic":210,"./xor":211,"bn.js":207,"browserify-rsa":53,"create-hash":81,"parse-asn1":193,"randombytes":212,"safe-buffer":215}],210:[function(require,module,exports){
 var BN = require('bn.js')
 var Buffer = require('safe-buffer').Buffer
 
@@ -36868,7 +34771,7 @@ function withPublic (paddedMsg, key) {
 
 module.exports = withPublic
 
-},{"bn.js":217,"safe-buffer":225}],221:[function(require,module,exports){
+},{"bn.js":207,"safe-buffer":215}],211:[function(require,module,exports){
 module.exports = function xor (a, b) {
   var len = a.length
   var i = -1
@@ -36878,7 +34781,7 @@ module.exports = function xor (a, b) {
   return a
 }
 
-},{}],222:[function(require,module,exports){
+},{}],212:[function(require,module,exports){
 (function (process,global){(function (){
 'use strict'
 
@@ -36932,7 +34835,7 @@ function randomBytes (size, cb) {
 }
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":214,"safe-buffer":225}],223:[function(require,module,exports){
+},{"_process":204,"safe-buffer":215}],213:[function(require,module,exports){
 (function (process,global){(function (){
 'use strict'
 
@@ -37044,7 +34947,7 @@ function randomFillSync (buf, offset, size) {
 }
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":214,"randombytes":222,"safe-buffer":225}],224:[function(require,module,exports){
+},{"_process":204,"randombytes":212,"safe-buffer":215}],214:[function(require,module,exports){
 'use strict'
 var Buffer = require('buffer').Buffer
 var inherits = require('inherits')
@@ -37209,7 +35112,7 @@ function fn5 (a, b, c, d, e, m, k, s) {
 
 module.exports = RIPEMD160
 
-},{"buffer":77,"hash-base":155,"inherits":186}],225:[function(require,module,exports){
+},{"buffer":77,"hash-base":151,"inherits":182}],215:[function(require,module,exports){
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
 var Buffer = buffer.Buffer
@@ -37273,7 +35176,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-},{"buffer":77}],226:[function(require,module,exports){
+},{"buffer":77}],216:[function(require,module,exports){
 (function (process){(function (){
 /* eslint-disable node/no-deprecated-api */
 
@@ -37354,1545 +35257,7 @@ if (!safer.constants) {
 module.exports = safer
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":214,"buffer":77}],227:[function(require,module,exports){
-var grammar = module.exports = {
-  v: [{
-      name: 'version',
-      reg: /^(\d*)$/
-  }],
-  o: [{ //o=- 20518 0 IN IP4 203.0.113.1
-    // NB: sessionId will be a String in most cases because it is huge
-    name: 'origin',
-    reg: /^(\S*) (\d*) (\d*) (\S*) IP(\d) (\S*)/,
-    names: ['username', 'sessionId', 'sessionVersion', 'netType', 'ipVer', 'address'],
-    format: "%s %s %d %s IP%d %s"
-  }],
-  // default parsing of these only (though some of these feel outdated)
-  s: [{ name: 'name' }],
-  i: [{ name: 'description' }],
-  u: [{ name: 'uri' }],
-  e: [{ name: 'email' }],
-  p: [{ name: 'phone' }],
-  z: [{ name: 'timezones' }], // TODO: this one can actually be parsed properly..
-  r: [{ name: 'repeats' }],   // TODO: this one can also be parsed properly
-  //k: [{}], // outdated thing ignored
-  t: [{ //t=0 0
-    name: 'timing',
-    reg: /^(\d*) (\d*)/,
-    names: ['start', 'stop'],
-    format: "%d %d"
-  }],
-  c: [{ //c=IN IP4 10.47.197.26
-      name: 'connection',
-      reg: /^IN IP(\d) (\S*)/,
-      names: ['version', 'ip'],
-      format: "IN IP%d %s"
-  }],
-  b: [{ //b=AS:4000
-      push: 'bandwidth',
-      reg: /^(TIAS|AS|CT|RR|RS):(\d*)/,
-      names: ['type', 'limit'],
-      format: "%s:%s"
-  }],
-  m: [{ //m=video 51744 RTP/AVP 126 97 98 34 31
-      // NB: special - pushes to session
-      // TODO: rtp/fmtp should be filtered by the payloads found here?
-      reg: /^(\w*) (\d*) ([\w\/]*)(?: (.*))?/,
-      names: ['type', 'port', 'protocol', 'payloads'],
-      format: "%s %d %s %s"
-  }],
-  a: [
-    { //a=rtpmap:110 opus/48000/2
-      push: 'rtp',
-      reg: /^rtpmap:(\d*) ([\w\-]*)(?:\s*\/(\d*)(?:\s*\/(\S*))?)?/,
-      names: ['payload', 'codec', 'rate', 'encoding'],
-      format: function (o) {
-        return (o.encoding) ?
-          "rtpmap:%d %s/%s/%s":
-          o.rate ?
-          "rtpmap:%d %s/%s":
-          "rtpmap:%d %s";
-      }
-    },
-    {
-      //a=fmtp:108 profile-level-id=24;object=23;bitrate=64000
-      //a=fmtp:111 minptime=10; useinbandfec=1
-      push: 'fmtp',
-      reg: /^fmtp:(\d*) ([\S| ]*)/,
-      names: ['payload', 'config'],
-      format: "fmtp:%d %s"
-    },
-    { //a=control:streamid=0
-        name: 'control',
-        reg: /^control:(.*)/,
-        format: "control:%s"
-    },
-    { //a=rtcp:65179 IN IP4 193.84.77.194
-      name: 'rtcp',
-      reg: /^rtcp:(\d*)(?: (\S*) IP(\d) (\S*))?/,
-      names: ['port', 'netType', 'ipVer', 'address'],
-      format: function (o) {
-        return (o.address != null) ?
-          "rtcp:%d %s IP%d %s":
-          "rtcp:%d";
-      }
-    },
-    { //a=rtcp-fb:98 trr-int 100
-      push: 'rtcpFbTrrInt',
-      reg: /^rtcp-fb:(\*|\d*) trr-int (\d*)/,
-      names: ['payload', 'value'],
-      format: "rtcp-fb:%d trr-int %d"
-    },
-    { //a=rtcp-fb:98 nack rpsi
-      push: 'rtcpFb',
-      reg: /^rtcp-fb:(\*|\d*) ([\w-_]*)(?: ([\w-_]*))?/,
-      names: ['payload', 'type', 'subtype'],
-      format: function (o) {
-        return (o.subtype != null) ?
-          "rtcp-fb:%s %s %s":
-          "rtcp-fb:%s %s";
-      }
-    },
-    { //a=extmap:2 urn:ietf:params:rtp-hdrext:toffset
-      //a=extmap:1/recvonly URI-gps-string
-      push: 'ext',
-      reg: /^extmap:([\w_\/]*) (\S*)(?: (\S*))?/,
-      names: ['value', 'uri', 'config'], // value may include "/direction" suffix
-      format: function (o) {
-        return (o.config != null) ?
-          "extmap:%s %s %s":
-          "extmap:%s %s";
-      }
-    },
-    {
-      //a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:PS1uQCVeeCFCanVmcjkpPywjNWhcYD0mXXtxaVBR|2^20|1:32
-      push: 'crypto',
-      reg: /^crypto:(\d*) ([\w_]*) (\S*)(?: (\S*))?/,
-      names: ['id', 'suite', 'config', 'sessionConfig'],
-      format: function (o) {
-        return (o.sessionConfig != null) ?
-          "crypto:%d %s %s %s":
-          "crypto:%d %s %s";
-      }
-    },
-    { //a=setup:actpass
-      name: 'setup',
-      reg: /^setup:(\w*)/,
-      format: "setup:%s"
-    },
-    { //a=mid:1
-      name: 'mid',
-      reg: /^mid:([^\s]*)/,
-      format: "mid:%s"
-    },
-    { //a=msid:0c8b064d-d807-43b4-b434-f92a889d8587 98178685-d409-46e0-8e16-7ef0db0db64a
-      name: 'msid',
-      reg: /^msid:(.*)/,
-      format: "msid:%s"
-    },
-    { //a=ptime:20
-      name: 'ptime',
-      reg: /^ptime:(\d*)/,
-      format: "ptime:%d"
-    },
-    { //a=maxptime:60
-      name: 'maxptime',
-      reg: /^maxptime:(\d*)/,
-      format: "maxptime:%d"
-    },
-    { //a=sendrecv
-      name: 'direction',
-      reg: /^(sendrecv|recvonly|sendonly|inactive)/
-    },
-    { //a=ice-lite
-      name: 'icelite',
-      reg: /^(ice-lite)/
-    },
-    { //a=ice-ufrag:F7gI
-      name: 'iceUfrag',
-      reg: /^ice-ufrag:(\S*)/,
-      format: "ice-ufrag:%s"
-    },
-    { //a=ice-pwd:x9cml/YzichV2+XlhiMu8g
-      name: 'icePwd',
-      reg: /^ice-pwd:(\S*)/,
-      format: "ice-pwd:%s"
-    },
-    { //a=fingerprint:SHA-1 00:11:22:33:44:55:66:77:88:99:AA:BB:CC:DD:EE:FF:00:11:22:33
-      name: 'fingerprint',
-      reg: /^fingerprint:(\S*) (\S*)/,
-      names: ['type', 'hash'],
-      format: "fingerprint:%s %s"
-    },
-    {
-      //a=candidate:0 1 UDP 2113667327 203.0.113.1 54400 typ host
-      //a=candidate:1162875081 1 udp 2113937151 192.168.34.75 60017 typ host generation 0
-      //a=candidate:3289912957 2 udp 1845501695 193.84.77.194 60017 typ srflx raddr 192.168.34.75 rport 60017 generation 0
-      //a=candidate:229815620 1 tcp 1518280447 192.168.150.19 60017 typ host tcptype active generation 0
-      //a=candidate:3289912957 2 tcp 1845501695 193.84.77.194 60017 typ srflx raddr 192.168.34.75 rport 60017 tcptype passive generation 0
-      push:'candidates',
-      reg: /^candidate:(\S*) (\d*) (\S*) (\d*) (\S*) (\d*) typ (\S*)(?: raddr (\S*) rport (\d*))?(?: tcptype (\S*))?(?: generation (\d*))?/,
-      names: ['foundation', 'component', 'transport', 'priority', 'ip', 'port', 'type', 'raddr', 'rport', 'tcptype', 'generation'],
-      format: function (o) {
-        var str = "candidate:%s %d %s %d %s %d typ %s";
-
-        str += (o.raddr != null) ? " raddr %s rport %d" : "%v%v";
-
-        // NB: candidate has three optional chunks, so %void middles one if it's missing
-        str += (o.tcptype != null) ? " tcptype %s" : "%v";
-
-        if (o.generation != null) {
-          str += " generation %d";
-        }
-        return str;
-      }
-    },
-    { //a=end-of-candidates (keep after the candidates line for readability)
-      name: 'endOfCandidates',
-      reg: /^(end-of-candidates)/
-    },
-    { //a=remote-candidates:1 203.0.113.1 54400 2 203.0.113.1 54401 ...
-      name: 'remoteCandidates',
-      reg: /^remote-candidates:(.*)/,
-      format: "remote-candidates:%s"
-    },
-    { //a=ice-options:google-ice
-      name: 'iceOptions',
-      reg: /^ice-options:(\S*)/,
-      format: "ice-options:%s"
-    },
-    { //a=ssrc:2566107569 cname:t9YU8M1UxTF8Y1A1
-      push: "ssrcs",
-      reg: /^ssrc:(\d*) ([\w_]*):(.*)/,
-      names: ['id', 'attribute', 'value'],
-      format: "ssrc:%d %s:%s"
-    },
-    { //a=ssrc-group:FEC 1 2
-      push: "ssrcGroups",
-      reg: /^ssrc-group:(\w*) (.*)/,
-      names: ['semantics', 'ssrcs'],
-      format: "ssrc-group:%s %s"
-    },
-    { //a=msid-semantic: WMS Jvlam5X3SX1OP6pn20zWogvaKJz5Hjf9OnlV
-      name: "msidSemantic",
-      reg: /^msid-semantic:\s?(\w*) (\S*)/,
-      names: ['semantic', 'token'],
-      format: "msid-semantic: %s %s" // space after ":" is not accidental
-    },
-    { //a=group:BUNDLE audio video
-      push: 'groups',
-      reg: /^group:(\w*) (.*)/,
-      names: ['type', 'mids'],
-      format: "group:%s %s"
-    },
-    { //a=rtcp-mux
-      name: 'rtcpMux',
-      reg: /^(rtcp-mux)/
-    },
-    { //a=rtcp-rsize
-      name: 'rtcpRsize',
-      reg: /^(rtcp-rsize)/
-    },
-    { // any a= that we don't understand is kepts verbatim on media.invalid
-      push: 'invalid',
-      names: ["value"]
-    }
-  ]
-};
-
-// set sensible defaults to avoid polluting the grammar with boring details
-Object.keys(grammar).forEach(function (key) {
-  var objs = grammar[key];
-  objs.forEach(function (obj) {
-    if (!obj.reg) {
-      obj.reg = /(.*)/;
-    }
-    if (!obj.format) {
-      obj.format = "%s";
-    }
-  });
-});
-
-},{}],228:[function(require,module,exports){
-var parser = require('./parser');
-var writer = require('./writer');
-
-exports.write = writer;
-exports.parse = parser.parse;
-exports.parseFmtpConfig = parser.parseFmtpConfig;
-exports.parsePayloads = parser.parsePayloads;
-exports.parseRemoteCandidates = parser.parseRemoteCandidates;
-
-},{"./parser":229,"./writer":230}],229:[function(require,module,exports){
-var toIntIfInt = function (v) {
-  return String(Number(v)) === v ? Number(v) : v;
-};
-
-var attachProperties = function (match, location, names, rawName) {
-  if (rawName && !names) {
-    location[rawName] = toIntIfInt(match[1]);
-  }
-  else {
-    for (var i = 0; i < names.length; i += 1) {
-      if (match[i+1] != null) {
-        location[names[i]] = toIntIfInt(match[i+1]);
-      }
-    }
-  }
-};
-
-var parseReg = function (obj, location, content) {
-  var needsBlank = obj.name && obj.names;
-  if (obj.push && !location[obj.push]) {
-    location[obj.push] = [];
-  }
-  else if (needsBlank && !location[obj.name]) {
-    location[obj.name] = {};
-  }
-  var keyLocation = obj.push ?
-    {} :  // blank object that will be pushed
-    needsBlank ? location[obj.name] : location; // otherwise, named location or root
-
-  attachProperties(content.match(obj.reg), keyLocation, obj.names, obj.name);
-
-  if (obj.push) {
-    location[obj.push].push(keyLocation);
-  }
-};
-
-var grammar = require('./grammar');
-var validLine = RegExp.prototype.test.bind(/^([a-z])=(.*)/);
-
-exports.parse = function (sdp) {
-  var session = {}
-    , media = []
-    , location = session; // points at where properties go under (one of the above)
-
-  // parse lines we understand
-  sdp.split(/(\r\n|\r|\n)/).filter(validLine).forEach(function (l) {
-    var type = l[0];
-    var content = l.slice(2);
-    if (type === 'm') {
-      media.push({rtp: [], fmtp: []});
-      location = media[media.length-1]; // point at latest media line
-    }
-
-    for (var j = 0; j < (grammar[type] || []).length; j += 1) {
-      var obj = grammar[type][j];
-      if (obj.reg.test(content)) {
-        return parseReg(obj, location, content);
-      }
-    }
-  });
-
-  session.media = media; // link it up
-  return session;
-};
-
-var fmtpReducer = function (acc, expr) {
-  var s = expr.split('=');
-  if (s.length === 2) {
-    acc[s[0]] = toIntIfInt(s[1]);
-  }
-  return acc;
-};
-
-exports.parseFmtpConfig = function (str) {
-  return str.split(/\;\s?/).reduce(fmtpReducer, {});
-};
-
-exports.parsePayloads = function (str) {
-  return str.split(' ').map(Number);
-};
-
-exports.parseRemoteCandidates = function (str) {
-  var candidates = [];
-  var parts = str.split(' ').map(toIntIfInt);
-  for (var i = 0; i < parts.length; i += 3) {
-    candidates.push({
-      component: parts[i],
-      ip: parts[i + 1],
-      port: parts[i + 2]
-    });
-  }
-  return candidates;
-};
-
-},{"./grammar":227}],230:[function(require,module,exports){
-var grammar = require('./grammar');
-
-// customized util.format - discards excess arguments and can void middle ones
-var formatRegExp = /%[sdv%]/g;
-var format = function (formatStr) {
-  var i = 1;
-  var args = arguments;
-  var len = args.length;
-  return formatStr.replace(formatRegExp, function (x) {
-    if (i >= len) {
-      return x; // missing argument
-    }
-    var arg = args[i];
-    i += 1;
-    switch (x) {
-      case '%%':
-        return '%';
-      case '%s':
-        return String(arg);
-      case '%d':
-        return Number(arg);
-      case '%v':
-        return '';
-    }
-  });
-  // NB: we discard excess arguments - they are typically undefined from makeLine
-};
-
-var makeLine = function (type, obj, location) {
-  var str = obj.format instanceof Function ?
-    (obj.format(obj.push ? location : location[obj.name])) :
-    obj.format;
-
-  var args = [type + '=' + str];
-  if (obj.names) {
-    for (var i = 0; i < obj.names.length; i += 1) {
-      var n = obj.names[i];
-      if (obj.name) {
-        args.push(location[obj.name][n]);
-      }
-      else { // for mLine and push attributes
-        args.push(location[obj.names[i]]);
-      }
-    }
-  }
-  else {
-    args.push(location[obj.name]);
-  }
-  return format.apply(null, args);
-};
-
-// RFC specified order
-// TODO: extend this with all the rest
-var defaultOuterOrder = [
-  'v', 'o', 's', 'i',
-  'u', 'e', 'p', 'c',
-  'b', 't', 'r', 'z', 'a'
-];
-var defaultInnerOrder = ['i', 'c', 'b', 'a'];
-
-
-module.exports = function (session, opts) {
-  opts = opts || {};
-  // ensure certain properties exist
-  if (session.version == null) {
-    session.version = 0; // "v=0" must be there (only defined version atm)
-  }
-  if (session.name == null) {
-    session.name = " "; // "s= " must be there if no meaningful name set
-  }
-  session.media.forEach(function (mLine) {
-    if (mLine.payloads == null) {
-      mLine.payloads = "";
-    }
-  });
-
-  var outerOrder = opts.outerOrder || defaultOuterOrder;
-  var innerOrder = opts.innerOrder || defaultInnerOrder;
-  var sdp = [];
-
-  // loop through outerOrder for matching properties on session
-  outerOrder.forEach(function (type) {
-    grammar[type].forEach(function (obj) {
-      if (obj.name in session && session[obj.name] != null) {
-        sdp.push(makeLine(type, obj, session));
-      }
-      else if (obj.push in session && session[obj.push] != null) {
-        session[obj.push].forEach(function (el) {
-          sdp.push(makeLine(type, obj, el));
-        });
-      }
-    });
-  });
-
-  // then for each media line, follow the innerOrder
-  session.media.forEach(function (mLine) {
-    sdp.push(makeLine('m', grammar.m[0], mLine));
-
-    innerOrder.forEach(function (type) {
-      grammar[type].forEach(function (obj) {
-        if (obj.name in mLine && mLine[obj.name] != null) {
-          sdp.push(makeLine(type, obj, mLine));
-        }
-        else if (obj.push in mLine && mLine[obj.push] != null) {
-          mLine[obj.push].forEach(function (el) {
-            sdp.push(makeLine(type, obj, el));
-          });
-        }
-      });
-    });
-  });
-
-  return sdp.join('\r\n') + '\r\n';
-};
-
-},{"./grammar":227}],231:[function(require,module,exports){
-/* Copyright @ 2015 Atlassian Pty Ltd
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-module.exports = function arrayEquals(array) {
-    // if the other array is a falsy value, return
-    if (!array)
-        return false;
-
-    // compare lengths - can save a lot of time
-    if (this.length != array.length)
-        return false;
-
-    for (var i = 0, l = this.length; i < l; i++) {
-        // Check if we have nested arrays
-        if (this[i] instanceof Array && array[i] instanceof Array) {
-            // recurse into the nested arrays
-            if (!arrayEquals.apply(this[i], [array[i]]))
-                return false;
-        } else if (this[i] != array[i]) {
-            // Warning - two different object instances will never be equal:
-            // {x:20} != {x:20}
-            return false;
-        }
-    }
-    return true;
-};
-
-
-},{}],232:[function(require,module,exports){
-/* Copyright @ 2015 Atlassian Pty Ltd
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-exports.Interop = require('./interop');
-
-},{"./interop":233}],233:[function(require,module,exports){
-/* Copyright @ 2015 Atlassian Pty Ltd
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-/* global RTCSessionDescription */
-/* global RTCIceCandidate */
-/* jshint -W097 */
-"use strict";
-
-var transform = require('./transform');
-var arrayEquals = require('./array-equals');
-
-function Interop() {
-
-    /**
-     * This map holds the most recent Unified Plan offer/answer SDP that was
-     * converted to Plan B, with the SDP type ('offer' or 'answer') as keys and
-     * the SDP string as values.
-     *
-     * @type {{}}
-     */
-    this.cache = {
-        mlB2UMap : {},
-        mlU2BMap : {}
-    };
-}
-
-module.exports = Interop;
-
-/**
- * Changes the candidate args to match with the related Unified Plan
- */
-Interop.prototype.candidateToUnifiedPlan = function(candidate) {
-    var cand = new RTCIceCandidate(candidate);
-
-    cand.sdpMLineIndex = this.cache.mlB2UMap[cand.sdpMLineIndex];
-    /* TODO: change sdpMid to (audio|video)-SSRC */
-
-    return cand;
-};
-
-/**
- * Changes the candidate args to match with the related Plan B
- */
-Interop.prototype.candidateToPlanB = function(candidate) {
-    var cand = new RTCIceCandidate(candidate);
-
-    if (cand.sdpMid.indexOf('audio') === 0) {
-      cand.sdpMid = 'audio';
-    } else if (cand.sdpMid.indexOf('video') === 0) {
-      cand.sdpMid = 'video';
-    } else {
-      throw new Error('candidate with ' + cand.sdpMid + ' not allowed');
-    }
-
-    cand.sdpMLineIndex = this.cache.mlU2BMap[cand.sdpMLineIndex];
-
-    return cand;
-};
-
-/**
- * Returns the index of the first m-line with the given media type and with a
- * direction which allows sending, in the last Unified Plan description with
- * type "answer" converted to Plan B. Returns {null} if there is no saved
- * answer, or if none of its m-lines with the given type allow sending.
- * @param type the media type ("audio" or "video").
- * @returns {*}
- */
-Interop.prototype.getFirstSendingIndexFromAnswer = function(type) {
-    if (!this.cache.answer) {
-        return null;
-    }
-
-    var session = transform.parse(this.cache.answer);
-    if (session && session.media && Array.isArray(session.media)){
-        for (var i = 0; i < session.media.length; i++) {
-            if (session.media[i].type == type &&
-                (!session.media[i].direction /* default to sendrecv */ ||
-                    session.media[i].direction === 'sendrecv' ||
-                    session.media[i].direction === 'sendonly')){
-                return i;
-            }
-        }
-    }
-
-    return null;
-};
-
-/**
- * This method transforms a Unified Plan SDP to an equivalent Plan B SDP. A
- * PeerConnection wrapper transforms the SDP to Plan B before passing it to the
- * application.
- *
- * @param desc
- * @returns {*}
- */
-Interop.prototype.toPlanB = function(desc) {
-    var self = this;
-    //#region Preliminary input validation.
-
-    if (typeof desc !== 'object' || desc === null ||
-        typeof desc.sdp !== 'string') {
-        console.warn('An empty description was passed as an argument.');
-        return desc;
-    }
-
-    // Objectify the SDP for easier manipulation.
-    var session = transform.parse(desc.sdp);
-
-    // If the SDP contains no media, there's nothing to transform.
-    if (typeof session.media === 'undefined' ||
-        !Array.isArray(session.media) || session.media.length === 0) {
-        console.warn('The description has no media.');
-        return desc;
-    }
-
-    // Try some heuristics to "make sure" this is a Unified Plan SDP. Plan B
-    // SDP has a video, an audio and a data "channel" at most.
-    if (session.media.length <= 3 && session.media.every(function(m) {
-            return ['video', 'audio', 'data'].indexOf(m.mid) !== -1;
-        })) {
-        console.warn('This description does not look like Unified Plan.');
-        return desc;
-    }
-
-    //#endregion
-
-    // HACK https://bugzilla.mozilla.org/show_bug.cgi?id=1113443
-    var sdp = desc.sdp;
-    var rewrite = false;
-    for (var i = 0; i < session.media.length; i++) {
-        var uLine = session.media[i];
-        uLine.rtp.forEach(function(rtp) {
-            if (rtp.codec === 'NULL')
-            {
-                rewrite = true;
-                var offer = transform.parse(self.cache.offer);
-                rtp.codec = offer.media[i].rtp[0].codec;
-            }
-        });
-    }
-    if (rewrite) {
-        sdp = transform.write(session);
-    }
-
-    // Unified Plan SDP is our "precious". Cache it for later use in the Plan B
-    // -> Unified Plan transformation.
-    this.cache[desc.type] = sdp;
-
-    //#region Convert from Unified Plan to Plan B.
-
-    // We rebuild the session.media array.
-    var media = session.media;
-    session.media = [];
-
-    // Associative array that maps channel types to channel objects for fast
-    // access to channel objects by their type, e.g. type2bl['audio']->channel
-    // obj.
-    var type2bl = {};
-
-    // Used to build the group:BUNDLE value after the channels construction
-    // loop.
-    var types = [];
-
-    media.forEach(function(uLine) {
-        // rtcp-mux is required in the Plan B SDP.
-        if ((typeof uLine.rtcpMux !== 'string' ||
-            uLine.rtcpMux !== 'rtcp-mux') &&
-            uLine.direction !== 'inactive') {
-            throw new Error('Cannot convert to Plan B because m-lines ' +
-                'without the rtcp-mux attribute were found.');
-        }
-
-        // If we don't have a channel for this uLine.type OR the selected is
-        // inactive, then select this uLine as the channel basis.
-        if (typeof type2bl[uLine.type] === 'undefined' ||
-            type2bl[uLine.type].direction === 'inactive') {
-            type2bl[uLine.type] = uLine;
-        }
-
-        if (uLine.protocol != type2bl[uLine.type].protocol) {
-          throw new Error('Cannot convert to Plan B because m-lines ' +
-              'have different protocols and this library does not have ' +
-              'support for that');
-        }
-
-        if (uLine.payloads != type2bl[uLine.type].payloads) {
-          throw new Error('Cannot convert to Plan B because m-lines ' +
-              'have different payloads and this library does not have ' +
-              'support for that');
-        }
-
-    });
-
-    // Implode the Unified Plan m-lines/tracks into Plan B channels.
-    media.forEach(function(uLine) {
-        if (uLine.type === 'application') {
-            session.media.push(uLine);
-            types.push(uLine.mid);
-            return;
-        }
-
-        // Add sources to the channel and handle a=msid.
-        if (typeof uLine.sources === 'object') {
-            Object.keys(uLine.sources).forEach(function(ssrc) {
-                if (typeof type2bl[uLine.type].sources !== 'object')
-                    type2bl[uLine.type].sources = {};
-
-                // Assign the sources to the channel.
-                type2bl[uLine.type].sources[ssrc] =
-                    uLine.sources[ssrc];
-
-                if (typeof uLine.msid !== 'undefined') {
-                    // In Plan B the msid is an SSRC attribute. Also, we don't
-                    // care about the obsolete label and mslabel attributes.
-                    //
-                    // Note that it is not guaranteed that the uLine will
-                    // have an msid. recvonly channels in particular don't have
-                    // one.
-                    type2bl[uLine.type].sources[ssrc].msid =
-                        uLine.msid;
-                }
-                // NOTE ssrcs in ssrc groups will share msids, as
-                // draft-uberti-rtcweb-plan-00 mandates.
-            });
-        }
-
-        // Add ssrc groups to the channel.
-        if (typeof uLine.ssrcGroups !== 'undefined' &&
-                Array.isArray(uLine.ssrcGroups)) {
-
-            // Create the ssrcGroups array, if it's not defined.
-            if (typeof type2bl[uLine.type].ssrcGroups === 'undefined' ||
-                    !Array.isArray(type2bl[uLine.type].ssrcGroups)) {
-                type2bl[uLine.type].ssrcGroups = [];
-            }
-
-            type2bl[uLine.type].ssrcGroups =
-                type2bl[uLine.type].ssrcGroups.concat(
-                    uLine.ssrcGroups);
-        }
-
-        if (type2bl[uLine.type] === uLine) {
-            // Plan B mids are in ['audio', 'video', 'data']
-            uLine.mid = uLine.type;
-
-            // Plan B doesn't support/need the bundle-only attribute.
-            delete uLine.bundleOnly;
-
-            // In Plan B the msid is an SSRC attribute.
-            delete uLine.msid;
-
-	    if (uLine.type == media[0].type) {
-	      types.unshift(uLine.type);
-	      // Add the channel to the new media array.
-	      session.media.unshift(uLine);
-	    } else {
-	      types.push(uLine.type);
-	      // Add the channel to the new media array.
-	      session.media.push(uLine);
-	    }
-        }
-    });
-
-    if (typeof session.groups !== 'undefined') {
-      // We regenerate the BUNDLE group with the new mids.
-      session.groups.some(function(group) {
-	  if (group.type === 'BUNDLE') {
-	      group.mids = types.join(' ');
-	      return true;
-	  }
-      });
-    }
-
-    // msid semantic
-    session.msidSemantic = {
-        semantic: 'WMS',
-        token: '*'
-    };
-
-    var resStr = transform.write(session);
-
-    return new RTCSessionDescription({
-        type: desc.type,
-        sdp: resStr
-    });
-
-    //#endregion
-};
-
-/* follow rules defined in RFC4145 */
-function addSetupAttr(uLine) {
-    if (typeof uLine.setup === 'undefined') {
-        return;
-    }
-
-    if (uLine.setup === "active") {
-            uLine.setup = "passive";
-    } else if (uLine.setup === "passive") {
-        uLine.setup = "active";
-    }
-}
-
-/**
- * This method transforms a Plan B SDP to an equivalent Unified Plan SDP. A
- * PeerConnection wrapper transforms the SDP to Unified Plan before passing it
- * to FF.
- *
- * @param desc
- * @returns {*}
- */
-Interop.prototype.toUnifiedPlan = function(desc) {
-    var self = this;
-    //#region Preliminary input validation.
-
-    if (typeof desc !== 'object' || desc === null ||
-        typeof desc.sdp !== 'string') {
-        console.warn('An empty description was passed as an argument.');
-        return desc;
-    }
-
-    var session = transform.parse(desc.sdp);
-
-    // If the SDP contains no media, there's nothing to transform.
-    if (typeof session.media === 'undefined' ||
-        !Array.isArray(session.media) || session.media.length === 0) {
-        console.warn('The description has no media.');
-        return desc;
-    }
-
-    // Try some heuristics to "make sure" this is a Plan B SDP. Plan B SDP has
-    // a video, an audio and a data "channel" at most.
-    if (session.media.length > 3 || !session.media.every(function(m) {
-            return ['video', 'audio', 'data'].indexOf(m.mid) !== -1;
-        })) {
-        console.warn('This description does not look like Plan B.');
-        return desc;
-    }
-
-    // Make sure this Plan B SDP can be converted to a Unified Plan SDP.
-    var mids = [];
-    session.media.forEach(function(m) {
-        mids.push(m.mid);
-    });
-
-    var hasBundle = false;
-    if (typeof session.groups !== 'undefined' &&
-        Array.isArray(session.groups)) {
-        hasBundle = session.groups.every(function(g) {
-            return g.type !== 'BUNDLE' ||
-                arrayEquals.apply(g.mids.sort(), [mids.sort()]);
-        });
-    }
-
-    if (!hasBundle) {
-        var mustBeBundle = false;
-
-        session.media.forEach(function(m) {
-            if (m.direction !== 'inactive') {
-                mustBeBundle = true;
-            }
-        });
-
-        if (mustBeBundle) {
-            throw new Error("Cannot convert to Unified Plan because m-lines that" +
-              " are not bundled were found.");
-        }
-    }
-
-    //#endregion
-
-
-    //#region Convert from Plan B to Unified Plan.
-
-    // Unfortunately, a Plan B offer/answer doesn't have enough information to
-    // rebuild an equivalent Unified Plan offer/answer.
-    //
-    // For example, if this is a local answer (in Unified Plan style) that we
-    // convert to Plan B prior to handing it over to the application (the
-    // PeerConnection wrapper called us, for instance, after a successful
-    // createAnswer), we want to remember the m-line at which we've seen the
-    // (local) SSRC. That's because when the application wants to do call the
-    // SLD method, forcing us to do the inverse transformation (from Plan B to
-    // Unified Plan), we need to know to which m-line to assign the (local)
-    // SSRC. We also need to know all the other m-lines that the original
-    // answer had and include them in the transformed answer as well.
-    //
-    // Another example is if this is a remote offer that we convert to Plan B
-    // prior to giving it to the application, we want to remember the mid at
-    // which we've seen the (remote) SSRC.
-    //
-    // In the iteration that follows, we use the cached Unified Plan (if it
-    // exists) to assign mids to ssrcs.
-
-    var type;
-    if (desc.type === 'answer') {
-        type = 'offer';
-    } else if (desc.type === 'offer') {
-        type = 'answer';
-    } else {
-        throw new Error("Type '" + desc.type + "' not supported.");
-    }
-
-    var cached;
-    if (typeof this.cache[type] !== 'undefined') {
-        cached = transform.parse(this.cache[type]);
-    }
-
-    var recvonlySsrcs = {
-        audio: {},
-        video: {}
-    };
-
-    // A helper map that sends mids to m-line objects. We use it later to
-    // rebuild the Unified Plan style session.media array.
-    var mid2ul = {};
-    var bIdx = 0;
-    var uIdx = 0;
-
-    var sources2ul = {};
-
-    var candidates;
-    var iceUfrag;
-    var icePwd;
-    var fingerprint;
-    var payloads = {};
-    var rtcpFb = {};
-    var rtp = {};
-
-    session.media.forEach(function(bLine) {
-        if ((typeof bLine.rtcpMux !== 'string' ||
-            bLine.rtcpMux !== 'rtcp-mux') &&
-            bLine.direction !== 'inactive') {
-            throw new Error("Cannot convert to Unified Plan because m-lines " +
-                "without the rtcp-mux attribute were found.");
-        }
-
-        if (bLine.type === 'application') {
-            mid2ul[bLine.mid] = bLine;
-            return;
-        }
-
-        // With rtcp-mux and bundle all the channels should have the same ICE
-        // stuff.
-        var sources = bLine.sources;
-        var ssrcGroups = bLine.ssrcGroups;
-        var port = bLine.port;
-
-        /* Chrome adds different candidates even using bundle, so we concat the candidates list */
-        if (typeof bLine.candidates != 'undefined') {
-            if (typeof candidates != 'undefined') {
-                candidates = candidates.concat(bLine.candidates);
-            } else {
-                candidates = bLine.candidates;
-            }
-        }
-
-        if ((typeof iceUfrag != 'undefined') && (typeof bLine.iceUfrag != 'undefined') && (iceUfrag != bLine.iceUfrag)) {
-            throw new Error("Only BUNDLE supported, iceUfrag must be the same for all m-lines.\n" +
-                            "\tLast iceUfrag: " + iceUfrag + "\n" +
-                            "\tNew iceUfrag: " + bLine.iceUfrag
-            );
-        }
-
-        if (typeof bLine.iceUfrag != 'undefined') {
-                iceUfrag = bLine.iceUfrag;
-        }
-
-        if ((typeof icePwd != 'undefined') && (typeof bLine.icePwd != 'undefined') && (icePwd != bLine.icePwd)) {
-            throw new Error("Only BUNDLE supported, icePwd must be the same for all m-lines.\n" +
-                            "\tLast icePwd: " + icePwd + "\n" +
-                            "\tNew icePwd: " + bLine.icePwd
-            );
-        }
-
-        if (typeof bLine.icePwd != 'undefined') {
-                icePwd = bLine.icePwd;
-        }
-
-        if ((typeof fingerprint != 'undefined') && (typeof bLine.fingerprint != 'undefined') &&
-            (fingerprint.type != bLine.fingerprint.type || fingerprint.hash != bLine.fingerprint.hash)) {
-            throw new Error("Only BUNDLE supported, fingerprint must be the same for all m-lines.\n" +
-                            "\tLast fingerprint: " + JSON.stringify(fingerprint) + "\n" +
-                            "\tNew fingerprint: " + JSON.stringify(bLine.fingerprint)
-            );
-        }
-
-        if (typeof bLine.fingerprint != 'undefined') {
-                fingerprint = bLine.fingerprint;
-        }
-
-        payloads[bLine.type] = bLine.payloads;
-        rtcpFb[bLine.type] = bLine.rtcpFb;
-        rtp[bLine.type] = bLine.rtp;
-
-        // inverted ssrc group map
-        var ssrc2group = {};
-        if (typeof ssrcGroups !== 'undefined' && Array.isArray(ssrcGroups)) {
-            ssrcGroups.forEach(function (ssrcGroup) {
-                // XXX This might brake if an SSRC is in more than one group
-                // for some reason.
-                if (typeof ssrcGroup.ssrcs !== 'undefined' &&
-                    Array.isArray(ssrcGroup.ssrcs)) {
-                    ssrcGroup.ssrcs.forEach(function (ssrc) {
-                        if (typeof ssrc2group[ssrc] === 'undefined') {
-                            ssrc2group[ssrc] = [];
-                        }
-
-                        ssrc2group[ssrc].push(ssrcGroup);
-                    });
-                }
-            });
-        }
-
-        // ssrc to m-line index.
-        var ssrc2ml = {};
-
-        if (typeof sources === 'object') {
-
-            // We'll use the "bLine" object as a prototype for each new "mLine"
-            // that we create, but first we need to clean it up a bit.
-            delete bLine.sources;
-            delete bLine.ssrcGroups;
-            delete bLine.candidates;
-            delete bLine.iceUfrag;
-            delete bLine.icePwd;
-            delete bLine.fingerprint;
-            delete bLine.port;
-            delete bLine.mid;
-
-            // Explode the Plan B channel sources with one m-line per source.
-            Object.keys(sources).forEach(function(ssrc) {
-
-                // The (unified) m-line for this SSRC. We either create it from
-                // scratch or, if it's a grouped SSRC, we re-use a related
-                // mline. In other words, if the source is grouped with another
-                // source, put the two together in the same m-line.
-                var uLine;
-
-                // We assume here that we are the answerer in the O/A, so any
-                // offers which we translate come from the remote side, while
-                // answers are local. So the check below is to make that we
-                // handle receive-only SSRCs in a special way only if they come
-                // from the remote side.
-                if (desc.type==='offer') {
-                    // We want to detect SSRCs which are used by a remote peer
-                    // in an m-line with direction=recvonly (i.e. they are
-                    // being used for RTCP only).
-                    // This information would have gotten lost if the remote
-                    // peer used Unified Plan and their local description was
-                    // translated to Plan B. So we use the lack of an MSID
-                    // attribute to deduce a "receive only" SSRC.
-                    if (!sources[ssrc].msid) {
-                        recvonlySsrcs[bLine.type][ssrc] = sources[ssrc];
-                        // Receive-only SSRCs must not create new m-lines. We
-                        // will assign them to an existing m-line later.
-                        return;
-                    }
-                }
-
-                if (typeof ssrc2group[ssrc] !== 'undefined' &&
-                    Array.isArray(ssrc2group[ssrc])) {
-                    ssrc2group[ssrc].some(function (ssrcGroup) {
-                        // ssrcGroup.ssrcs *is* an Array, no need to check
-                        // again here.
-                        return ssrcGroup.ssrcs.some(function (related) {
-                            if (typeof ssrc2ml[related] === 'object') {
-                                uLine = ssrc2ml[related];
-                                return true;
-                            }
-                        });
-                    });
-                }
-
-                if (typeof uLine === 'object') {
-                    // the m-line already exists. Just add the source.
-                    uLine.sources[ssrc] = sources[ssrc];
-                    delete sources[ssrc].msid;
-                } else {
-                    // Use the "bLine" as a prototype for the "uLine".
-                    uLine = Object.create(bLine);
-                    ssrc2ml[ssrc] = uLine;
-
-                    if (typeof sources[ssrc].msid !== 'undefined') {
-                        // Assign the msid of the source to the m-line. Note
-                        // that it is not guaranteed that the source will have
-                        // msid. In particular "recvonly" sources don't have an
-                        // msid. Note that "recvonly" is a term only defined
-                        // for m-lines.
-                        uLine.msid = sources[ssrc].msid;
-                        delete sources[ssrc].msid;
-                    }
-
-                    // We assign one SSRC per media line.
-                    uLine.sources = {};
-                    uLine.sources[ssrc] = sources[ssrc];
-                    uLine.ssrcGroups = ssrc2group[ssrc];
-
-                    // Use the cached Unified Plan SDP (if it exists) to assign
-                    // SSRCs to mids.
-                    if (typeof cached !== 'undefined' &&
-                        typeof cached.media !== 'undefined' &&
-                        Array.isArray(cached.media)) {
-
-                        cached.media.forEach(function (m) {
-                            if (typeof m.sources === 'object') {
-                                Object.keys(m.sources).forEach(function (s) {
-                                    if (s === ssrc) {
-                                        uLine.mid = m.mid;
-                                    }
-                                });
-                            }
-                        });
-                    }
-
-                    if (typeof uLine.mid === 'undefined') {
-
-                        // If this is an SSRC that we see for the first time
-                        // assign it a new mid. This is typically the case when
-                        // this method is called to transform a remote
-                        // description for the first time or when there is a
-                        // new SSRC in the remote description because a new
-                        // peer has joined the conference. Local SSRCs should
-                        // have already been added to the map in the toPlanB
-                        // method.
-                        //
-                        // Because FF generates answers in Unified Plan style,
-                        // we MUST already have a cached answer with all the
-                        // local SSRCs mapped to some m-line/mid.
-
-                        uLine.mid = [bLine.type, '-', ssrc].join('');
-                    }
-
-                    // Include the candidates in the 1st media line.
-                    uLine.candidates = candidates;
-                    uLine.iceUfrag = iceUfrag;
-                    uLine.icePwd = icePwd;
-                    uLine.fingerprint = fingerprint;
-                    uLine.port = port;
-
-                    mid2ul[uLine.mid] = uLine;
-                    sources2ul[uIdx] = uLine.sources;
-
-                    self.cache.mlU2BMap[uIdx] = bIdx;
-                    if (typeof self.cache.mlB2UMap[bIdx] === 'undefined') {
-                      self.cache.mlB2UMap[bIdx] = uIdx;
-                    }
-                    uIdx++;
-                }
-            });
-        } else {
-          var uLine = bLine;
-
-          uLine.candidates = candidates;
-          uLine.iceUfrag = iceUfrag;
-          uLine.icePwd = icePwd;
-          uLine.fingerprint = fingerprint;
-          uLine.port = port;
-
-          mid2ul[uLine.mid] = uLine;
-
-          self.cache.mlU2BMap[uIdx] = bIdx;
-          if (typeof self.cache.mlB2UMap[bIdx] === 'undefined') {
-            self.cache.mlB2UMap[bIdx] = uIdx;
-          }
-        }
-
-        bIdx++;
-    });
-
-    // Rebuild the media array in the right order and add the missing mLines
-    // (missing from the Plan B SDP).
-    session.media = [];
-    mids = []; // reuse
-
-    if (desc.type === 'answer') {
-
-        // The media lines in the answer must match the media lines in the
-        // offer. The order is important too. Here we assume that Firefox is
-        // the answerer, so we merely have to use the reconstructed (unified)
-        // answer to update the cached (unified) answer accordingly.
-        //
-        // In the general case, one would have to use the cached (unified)
-        // offer to find the m-lines that are missing from the reconstructed
-        // answer, potentially grabbing them from the cached (unified) answer.
-        // One has to be careful with this approach because inactive m-lines do
-        // not always have an mid, making it tricky (impossible?) to find where
-        // exactly and which m-lines are missing from the reconstructed answer.
-
-        for (var i = 0; i < cached.media.length; i++) {
-            var uLine = cached.media[i];
-
-            delete uLine.msid;
-            delete uLine.sources;
-            delete uLine.ssrcGroups;
-
-            if (typeof sources2ul[i] === 'undefined') {
-              if (!uLine.direction
-                  || uLine.direction === 'sendrecv')
-                  uLine.direction = 'recvonly';
-              else if (uLine.direction === 'sendonly')
-                  uLine.direction = 'inactive';
-            } else {
-              if (!uLine.direction
-                  || uLine.direction === 'sendrecv')
-                  uLine.direction = 'sendrecv';
-              else if (uLine.direction === 'recvonly')
-                  uLine.direction = 'sendonly';
-            }
-
-            uLine.sources = sources2ul[i];
-            uLine.candidates = candidates;
-            uLine.iceUfrag = iceUfrag;
-            uLine.icePwd = icePwd;
-            uLine.fingerprint = fingerprint;
-
-            uLine.rtp = rtp[uLine.type];
-            uLine.payloads = payloads[uLine.type];
-            uLine.rtcpFb = rtcpFb[uLine.type];
-
-            session.media.push(uLine);
-
-            if (typeof uLine.mid === 'string') {
-                // inactive lines don't/may not have an mid.
-                mids.push(uLine.mid);
-            }
-        }
-    } else {
-
-        // SDP offer/answer (and the JSEP spec) forbids removing an m-section
-        // under any circumstances. If we are no longer interested in sending a
-        // track, we just remove the msid and ssrc attributes and set it to
-        // either a=recvonly (as the reofferer, we must use recvonly if the
-        // other side was previously sending on the m-section, but we can also
-        // leave the possibility open if it wasn't previously in use), or
-        // a=inactive.
-
-        if (typeof cached !== 'undefined' &&
-            typeof cached.media !== 'undefined' &&
-            Array.isArray(cached.media)) {
-            cached.media.forEach(function(uLine) {
-                mids.push(uLine.mid);
-                if (typeof mid2ul[uLine.mid] !== 'undefined') {
-                    session.media.push(mid2ul[uLine.mid]);
-                } else {
-                    delete uLine.msid;
-                    delete uLine.sources;
-                    delete uLine.ssrcGroups;
-
-                    if (!uLine.direction
-                        || uLine.direction === 'sendrecv') {
-                        uLine.direction = 'sendonly';
-                    }
-                    if (!uLine.direction
-                        || uLine.direction === 'recvonly') {
-                        uLine.direction = 'inactive';
-                    }
-
-                    addSetupAttr (uLine);
-                    session.media.push(uLine);
-                }
-            });
-        }
-
-        // Add all the remaining (new) m-lines of the transformed SDP.
-        Object.keys(mid2ul).forEach(function(mid) {
-            if (mids.indexOf(mid) === -1) {
-                mids.push(mid);
-                if (mid2ul[mid].direction === 'recvonly') {
-                    // This is a remote recvonly channel. Add its SSRC to the
-                    // appropriate sendrecv or sendonly channel.
-                    // TODO(gp) what if we don't have sendrecv/sendonly
-                    // channel?
-
-                    var done = false;
-
-                    session.media.some(function (uLine) {
-                        if ((uLine.direction === 'sendrecv' ||
-                            uLine.direction === 'sendonly') &&
-                            uLine.type === mid2ul[mid].type) {
-                            // mid2ul[mid] shouldn't have any ssrc-groups
-                            Object.keys(mid2ul[mid].sources).forEach(
-                                function (ssrc) {
-                                uLine.sources[ssrc] =
-                                    mid2ul[mid].sources[ssrc];
-                            });
-
-                            done = true;
-                            return true;
-                        }
-                    });
-
-                    if (!done) {
-                        session.media.push(mid2ul[mid]);
-                    }
-                } else {
-                    session.media.push(mid2ul[mid]);
-                }
-            }
-        });
-    }
-
-    // After we have constructed the Plan Unified m-lines we can figure out
-    // where (in which m-line) to place the 'recvonly SSRCs'.
-    // Note: we assume here that we are the answerer in the O/A, so any offers
-    // which we translate come from the remote side, while answers are local
-    // (and so our last local description is cached as an 'answer').
-    ["audio", "video"].forEach(function (type) {
-        if (!session || !session.media || !Array.isArray(session.media))
-            return;
-
-        var idx = null;
-        if (Object.keys(recvonlySsrcs[type]).length > 0) {
-            idx = self.getFirstSendingIndexFromAnswer(type);
-            if (idx === null){
-                // If this is the first offer we receive, we don't have a
-                // cached answer. Assume that we will be sending media using
-                // the first m-line for each media type.
-
-                for (var i = 0; i < session.media.length; i++) {
-                    if (session.media[i].type === type) {
-                        idx = i;
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (idx && session.media.length > idx) {
-            var mLine = session.media[idx];
-            Object.keys(recvonlySsrcs[type]).forEach(function(ssrc) {
-                if (mLine.sources && mLine.sources[ssrc]) {
-                    console.warn("Replacing an existing SSRC.");
-                }
-                if (!mLine.sources) {
-                    mLine.sources = {};
-                }
-
-                mLine.sources[ssrc] = recvonlySsrcs[type][ssrc];
-            });
-        }
-    });
-
-    if (typeof session.groups !== 'undefined') {
-      // We regenerate the BUNDLE group (since we regenerated the mids)
-      session.groups.some(function(group) {
-	  if (group.type === 'BUNDLE') {
-	      group.mids = mids.join(' ');
-	      return true;
-	  }
-      });
-    }
-
-    // msid semantic
-    session.msidSemantic = {
-        semantic: 'WMS',
-        token: '*'
-    };
-
-    var resStr = transform.write(session);
-
-    // Cache the transformed SDP (Unified Plan) for later re-use in this
-    // function.
-    this.cache[desc.type] = resStr;
-
-    return new RTCSessionDescription({
-        type: desc.type,
-        sdp: resStr
-    });
-
-    //#endregion
-};
-
-},{"./array-equals":231,"./transform":234}],234:[function(require,module,exports){
-/* Copyright @ 2015 Atlassian Pty Ltd
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-var transform = require('sdp-transform');
-
-exports.write = function(session, opts) {
-
-  if (typeof session !== 'undefined' &&
-      typeof session.media !== 'undefined' &&
-      Array.isArray(session.media)) {
-
-    session.media.forEach(function (mLine) {
-      // expand sources to ssrcs
-      if (typeof mLine.sources !== 'undefined' &&
-        Object.keys(mLine.sources).length !== 0) {
-          mLine.ssrcs = [];
-          Object.keys(mLine.sources).forEach(function (ssrc) {
-            var source = mLine.sources[ssrc];
-            Object.keys(source).forEach(function (attribute) {
-              mLine.ssrcs.push({
-                id: ssrc,
-                attribute: attribute,
-                value: source[attribute]
-              });
-            });
-          });
-          delete mLine.sources;
-        }
-
-      // join ssrcs in ssrc groups
-      if (typeof mLine.ssrcGroups !== 'undefined' &&
-        Array.isArray(mLine.ssrcGroups)) {
-          mLine.ssrcGroups.forEach(function (ssrcGroup) {
-            if (typeof ssrcGroup.ssrcs !== 'undefined' &&
-                Array.isArray(ssrcGroup.ssrcs)) {
-              ssrcGroup.ssrcs = ssrcGroup.ssrcs.join(' ');
-            }
-          });
-        }
-    });
-  }
-
-  // join group mids
-  if (typeof session !== 'undefined' &&
-      typeof session.groups !== 'undefined' && Array.isArray(session.groups)) {
-
-    session.groups.forEach(function (g) {
-      if (typeof g.mids !== 'undefined' && Array.isArray(g.mids)) {
-        g.mids = g.mids.join(' ');
-      }
-    });
-  }
-
-  return transform.write(session, opts);
-};
-
-exports.parse = function(sdp) {
-  var session = transform.parse(sdp);
-
-  if (typeof session !== 'undefined' && typeof session.media !== 'undefined' &&
-      Array.isArray(session.media)) {
-
-    session.media.forEach(function (mLine) {
-      // group sources attributes by ssrc
-      if (typeof mLine.ssrcs !== 'undefined' && Array.isArray(mLine.ssrcs)) {
-        mLine.sources = {};
-        mLine.ssrcs.forEach(function (ssrc) {
-          if (!mLine.sources[ssrc.id])
-          mLine.sources[ssrc.id] = {};
-        mLine.sources[ssrc.id][ssrc.attribute] = ssrc.value;
-        });
-
-        delete mLine.ssrcs;
-      }
-
-      // split ssrcs in ssrc groups
-      if (typeof mLine.ssrcGroups !== 'undefined' &&
-        Array.isArray(mLine.ssrcGroups)) {
-          mLine.ssrcGroups.forEach(function (ssrcGroup) {
-            if (typeof ssrcGroup.ssrcs === 'string') {
-              ssrcGroup.ssrcs = ssrcGroup.ssrcs.split(' ');
-            }
-          });
-        }
-    });
-  }
-  // split group mids
-  if (typeof session !== 'undefined' &&
-      typeof session.groups !== 'undefined' && Array.isArray(session.groups)) {
-
-    session.groups.forEach(function (g) {
-      if (typeof g.mids === 'string') {
-        g.mids = g.mids.split(' ');
-      }
-    });
-  }
-
-  return session;
-};
-
-
-},{"sdp-transform":228}],235:[function(require,module,exports){
+},{"_process":204,"buffer":77}],217:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 // prototype class for hash functions
@@ -38975,7 +35340,7 @@ Hash.prototype._update = function () {
 
 module.exports = Hash
 
-},{"safe-buffer":225}],236:[function(require,module,exports){
+},{"safe-buffer":215}],218:[function(require,module,exports){
 var exports = module.exports = function SHA (algorithm) {
   algorithm = algorithm.toLowerCase()
 
@@ -38992,7 +35357,7 @@ exports.sha256 = require('./sha256')
 exports.sha384 = require('./sha384')
 exports.sha512 = require('./sha512')
 
-},{"./sha":237,"./sha1":238,"./sha224":239,"./sha256":240,"./sha384":241,"./sha512":242}],237:[function(require,module,exports){
+},{"./sha":219,"./sha1":220,"./sha224":221,"./sha256":222,"./sha384":223,"./sha512":224}],219:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-0, as defined
  * in FIPS PUB 180-1
@@ -39088,7 +35453,7 @@ Sha.prototype._hash = function () {
 
 module.exports = Sha
 
-},{"./hash":235,"inherits":186,"safe-buffer":225}],238:[function(require,module,exports){
+},{"./hash":217,"inherits":182,"safe-buffer":215}],220:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
  * in FIPS PUB 180-1
@@ -39189,7 +35554,7 @@ Sha1.prototype._hash = function () {
 
 module.exports = Sha1
 
-},{"./hash":235,"inherits":186,"safe-buffer":225}],239:[function(require,module,exports){
+},{"./hash":217,"inherits":182,"safe-buffer":215}],221:[function(require,module,exports){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
  * in FIPS 180-2
@@ -39244,7 +35609,7 @@ Sha224.prototype._hash = function () {
 
 module.exports = Sha224
 
-},{"./hash":235,"./sha256":240,"inherits":186,"safe-buffer":225}],240:[function(require,module,exports){
+},{"./hash":217,"./sha256":222,"inherits":182,"safe-buffer":215}],222:[function(require,module,exports){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
  * in FIPS 180-2
@@ -39381,7 +35746,7 @@ Sha256.prototype._hash = function () {
 
 module.exports = Sha256
 
-},{"./hash":235,"inherits":186,"safe-buffer":225}],241:[function(require,module,exports){
+},{"./hash":217,"inherits":182,"safe-buffer":215}],223:[function(require,module,exports){
 var inherits = require('inherits')
 var SHA512 = require('./sha512')
 var Hash = require('./hash')
@@ -39440,7 +35805,7 @@ Sha384.prototype._hash = function () {
 
 module.exports = Sha384
 
-},{"./hash":235,"./sha512":242,"inherits":186,"safe-buffer":225}],242:[function(require,module,exports){
+},{"./hash":217,"./sha512":224,"inherits":182,"safe-buffer":215}],224:[function(require,module,exports){
 var inherits = require('inherits')
 var Hash = require('./hash')
 var Buffer = require('safe-buffer').Buffer
@@ -39702,7 +36067,7 @@ Sha512.prototype._hash = function () {
 
 module.exports = Sha512
 
-},{"./hash":235,"inherits":186,"safe-buffer":225}],243:[function(require,module,exports){
+},{"./hash":217,"inherits":182,"safe-buffer":215}],225:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -39833,35 +36198,35 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":149,"inherits":186,"readable-stream/lib/_stream_duplex.js":245,"readable-stream/lib/_stream_passthrough.js":246,"readable-stream/lib/_stream_readable.js":247,"readable-stream/lib/_stream_transform.js":248,"readable-stream/lib/_stream_writable.js":249,"readable-stream/lib/internal/streams/end-of-stream.js":253,"readable-stream/lib/internal/streams/pipeline.js":255}],244:[function(require,module,exports){
+},{"events":149,"inherits":182,"readable-stream/lib/_stream_duplex.js":227,"readable-stream/lib/_stream_passthrough.js":228,"readable-stream/lib/_stream_readable.js":229,"readable-stream/lib/_stream_transform.js":230,"readable-stream/lib/_stream_writable.js":231,"readable-stream/lib/internal/streams/end-of-stream.js":235,"readable-stream/lib/internal/streams/pipeline.js":237}],226:[function(require,module,exports){
 arguments[4][60][0].apply(exports,arguments)
-},{"dup":60}],245:[function(require,module,exports){
+},{"dup":60}],227:[function(require,module,exports){
 arguments[4][61][0].apply(exports,arguments)
-},{"./_stream_readable":247,"./_stream_writable":249,"_process":214,"dup":61,"inherits":186}],246:[function(require,module,exports){
+},{"./_stream_readable":229,"./_stream_writable":231,"_process":204,"dup":61,"inherits":182}],228:[function(require,module,exports){
 arguments[4][62][0].apply(exports,arguments)
-},{"./_stream_transform":248,"dup":62,"inherits":186}],247:[function(require,module,exports){
+},{"./_stream_transform":230,"dup":62,"inherits":182}],229:[function(require,module,exports){
 arguments[4][63][0].apply(exports,arguments)
-},{"../errors":244,"./_stream_duplex":245,"./internal/streams/async_iterator":250,"./internal/streams/buffer_list":251,"./internal/streams/destroy":252,"./internal/streams/from":254,"./internal/streams/state":256,"./internal/streams/stream":257,"_process":214,"buffer":77,"dup":63,"events":149,"inherits":186,"string_decoder/":258,"util":32}],248:[function(require,module,exports){
+},{"../errors":226,"./_stream_duplex":227,"./internal/streams/async_iterator":232,"./internal/streams/buffer_list":233,"./internal/streams/destroy":234,"./internal/streams/from":236,"./internal/streams/state":238,"./internal/streams/stream":239,"_process":204,"buffer":77,"dup":63,"events":149,"inherits":182,"string_decoder/":240,"util":32}],230:[function(require,module,exports){
 arguments[4][64][0].apply(exports,arguments)
-},{"../errors":244,"./_stream_duplex":245,"dup":64,"inherits":186}],249:[function(require,module,exports){
+},{"../errors":226,"./_stream_duplex":227,"dup":64,"inherits":182}],231:[function(require,module,exports){
 arguments[4][65][0].apply(exports,arguments)
-},{"../errors":244,"./_stream_duplex":245,"./internal/streams/destroy":252,"./internal/streams/state":256,"./internal/streams/stream":257,"_process":214,"buffer":77,"dup":65,"inherits":186,"util-deprecate":261}],250:[function(require,module,exports){
+},{"../errors":226,"./_stream_duplex":227,"./internal/streams/destroy":234,"./internal/streams/state":238,"./internal/streams/stream":239,"_process":204,"buffer":77,"dup":65,"inherits":182,"util-deprecate":242}],232:[function(require,module,exports){
 arguments[4][66][0].apply(exports,arguments)
-},{"./end-of-stream":253,"_process":214,"dup":66}],251:[function(require,module,exports){
+},{"./end-of-stream":235,"_process":204,"dup":66}],233:[function(require,module,exports){
 arguments[4][67][0].apply(exports,arguments)
-},{"buffer":77,"dup":67,"util":32}],252:[function(require,module,exports){
+},{"buffer":77,"dup":67,"util":32}],234:[function(require,module,exports){
 arguments[4][68][0].apply(exports,arguments)
-},{"_process":214,"dup":68}],253:[function(require,module,exports){
+},{"_process":204,"dup":68}],235:[function(require,module,exports){
 arguments[4][69][0].apply(exports,arguments)
-},{"../../../errors":244,"dup":69}],254:[function(require,module,exports){
+},{"../../../errors":226,"dup":69}],236:[function(require,module,exports){
 arguments[4][70][0].apply(exports,arguments)
-},{"dup":70}],255:[function(require,module,exports){
+},{"dup":70}],237:[function(require,module,exports){
 arguments[4][71][0].apply(exports,arguments)
-},{"../../../errors":244,"./end-of-stream":253,"dup":71}],256:[function(require,module,exports){
+},{"../../../errors":226,"./end-of-stream":235,"dup":71}],238:[function(require,module,exports){
 arguments[4][72][0].apply(exports,arguments)
-},{"../../../errors":244,"dup":72}],257:[function(require,module,exports){
+},{"../../../errors":226,"dup":72}],239:[function(require,module,exports){
 arguments[4][73][0].apply(exports,arguments)
-},{"dup":73,"events":149}],258:[function(require,module,exports){
+},{"dup":73,"events":149}],240:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -40158,943 +36523,9 @@ function simpleWrite(buf) {
 function simpleEnd(buf) {
   return buf && buf.length ? this.write(buf) : '';
 }
-},{"safe-buffer":259}],259:[function(require,module,exports){
+},{"safe-buffer":241}],241:[function(require,module,exports){
 arguments[4][75][0].apply(exports,arguments)
-},{"buffer":77,"dup":75}],260:[function(require,module,exports){
-/////////////////////////////////////////////////////////////////////////////////
-/* UAParser.js v0.7.35
-   Copyright © 2012-2021 Faisal Salman <f@faisalman.com>
-   MIT License *//*
-   Detect Browser, Engine, OS, CPU, and Device type/model from User-Agent data.
-   Supports browser & node.js environment. 
-   Demo   : https://faisalman.github.io/ua-parser-js
-   Source : https://github.com/faisalman/ua-parser-js */
-/////////////////////////////////////////////////////////////////////////////////
-
-(function (window, undefined) {
-
-    'use strict';
-
-    //////////////
-    // Constants
-    /////////////
-
-
-    var LIBVERSION  = '0.7.35',
-        EMPTY       = '',
-        UNKNOWN     = '?',
-        FUNC_TYPE   = 'function',
-        UNDEF_TYPE  = 'undefined',
-        OBJ_TYPE    = 'object',
-        STR_TYPE    = 'string',
-        MAJOR       = 'major',
-        MODEL       = 'model',
-        NAME        = 'name',
-        TYPE        = 'type',
-        VENDOR      = 'vendor',
-        VERSION     = 'version',
-        ARCHITECTURE= 'architecture',
-        CONSOLE     = 'console',
-        MOBILE      = 'mobile',
-        TABLET      = 'tablet',
-        SMARTTV     = 'smarttv',
-        WEARABLE    = 'wearable',
-        EMBEDDED    = 'embedded',
-        UA_MAX_LENGTH = 350;
-
-    var AMAZON  = 'Amazon',
-        APPLE   = 'Apple',
-        ASUS    = 'ASUS',
-        BLACKBERRY = 'BlackBerry',
-        BROWSER = 'Browser',
-        CHROME  = 'Chrome',
-        EDGE    = 'Edge',
-        FIREFOX = 'Firefox',
-        GOOGLE  = 'Google',
-        HUAWEI  = 'Huawei',
-        LG      = 'LG',
-        MICROSOFT = 'Microsoft',
-        MOTOROLA  = 'Motorola',
-        OPERA   = 'Opera',
-        SAMSUNG = 'Samsung',
-        SHARP   = 'Sharp',
-        SONY    = 'Sony',
-        VIERA   = 'Viera',
-        XIAOMI  = 'Xiaomi',
-        ZEBRA   = 'Zebra',
-        FACEBOOK    = 'Facebook',
-        CHROMIUM_OS = 'Chromium OS',
-        MAC_OS  = 'Mac OS';
-
-    ///////////
-    // Helper
-    //////////
-
-    var extend = function (regexes, extensions) {
-            var mergedRegexes = {};
-            for (var i in regexes) {
-                if (extensions[i] && extensions[i].length % 2 === 0) {
-                    mergedRegexes[i] = extensions[i].concat(regexes[i]);
-                } else {
-                    mergedRegexes[i] = regexes[i];
-                }
-            }
-            return mergedRegexes;
-        },
-        enumerize = function (arr) {
-            var enums = {};
-            for (var i=0; i<arr.length; i++) {
-                enums[arr[i].toUpperCase()] = arr[i];
-            }
-            return enums;
-        },
-        has = function (str1, str2) {
-            return typeof str1 === STR_TYPE ? lowerize(str2).indexOf(lowerize(str1)) !== -1 : false;
-        },
-        lowerize = function (str) {
-            return str.toLowerCase();
-        },
-        majorize = function (version) {
-            return typeof(version) === STR_TYPE ? version.replace(/[^\d\.]/g, EMPTY).split('.')[0] : undefined;
-        },
-        trim = function (str, len) {
-            if (typeof(str) === STR_TYPE) {
-                str = str.replace(/^\s\s*/, EMPTY);
-                return typeof(len) === UNDEF_TYPE ? str : str.substring(0, UA_MAX_LENGTH);
-            }
-    };
-
-    ///////////////
-    // Map helper
-    //////////////
-
-    var rgxMapper = function (ua, arrays) {
-
-            var i = 0, j, k, p, q, matches, match;
-
-            // loop through all regexes maps
-            while (i < arrays.length && !matches) {
-
-                var regex = arrays[i],       // even sequence (0,2,4,..)
-                    props = arrays[i + 1];   // odd sequence (1,3,5,..)
-                j = k = 0;
-
-                // try matching uastring with regexes
-                while (j < regex.length && !matches) {
-
-                    if (!regex[j]) { break; }
-                    matches = regex[j++].exec(ua);
-
-                    if (!!matches) {
-                        for (p = 0; p < props.length; p++) {
-                            match = matches[++k];
-                            q = props[p];
-                            // check if given property is actually array
-                            if (typeof q === OBJ_TYPE && q.length > 0) {
-                                if (q.length === 2) {
-                                    if (typeof q[1] == FUNC_TYPE) {
-                                        // assign modified match
-                                        this[q[0]] = q[1].call(this, match);
-                                    } else {
-                                        // assign given value, ignore regex match
-                                        this[q[0]] = q[1];
-                                    }
-                                } else if (q.length === 3) {
-                                    // check whether function or regex
-                                    if (typeof q[1] === FUNC_TYPE && !(q[1].exec && q[1].test)) {
-                                        // call function (usually string mapper)
-                                        this[q[0]] = match ? q[1].call(this, match, q[2]) : undefined;
-                                    } else {
-                                        // sanitize match using given regex
-                                        this[q[0]] = match ? match.replace(q[1], q[2]) : undefined;
-                                    }
-                                } else if (q.length === 4) {
-                                        this[q[0]] = match ? q[3].call(this, match.replace(q[1], q[2])) : undefined;
-                                }
-                            } else {
-                                this[q] = match ? match : undefined;
-                            }
-                        }
-                    }
-                }
-                i += 2;
-            }
-        },
-
-        strMapper = function (str, map) {
-
-            for (var i in map) {
-                // check if current value is array
-                if (typeof map[i] === OBJ_TYPE && map[i].length > 0) {
-                    for (var j = 0; j < map[i].length; j++) {
-                        if (has(map[i][j], str)) {
-                            return (i === UNKNOWN) ? undefined : i;
-                        }
-                    }
-                } else if (has(map[i], str)) {
-                    return (i === UNKNOWN) ? undefined : i;
-                }
-            }
-            return str;
-    };
-
-    ///////////////
-    // String map
-    //////////////
-
-    // Safari < 3.0
-    var oldSafariMap = {
-            '1.0'   : '/8',
-            '1.2'   : '/1',
-            '1.3'   : '/3',
-            '2.0'   : '/412',
-            '2.0.2' : '/416',
-            '2.0.3' : '/417',
-            '2.0.4' : '/419',
-            '?'     : '/'
-        },
-        windowsVersionMap = {
-            'ME'        : '4.90',
-            'NT 3.11'   : 'NT3.51',
-            'NT 4.0'    : 'NT4.0',
-            '2000'      : 'NT 5.0',
-            'XP'        : ['NT 5.1', 'NT 5.2'],
-            'Vista'     : 'NT 6.0',
-            '7'         : 'NT 6.1',
-            '8'         : 'NT 6.2',
-            '8.1'       : 'NT 6.3',
-            '10'        : ['NT 6.4', 'NT 10.0'],
-            'RT'        : 'ARM'
-    };
-
-    //////////////
-    // Regex map
-    /////////////
-
-    var regexes = {
-
-        browser : [[
-
-            /\b(?:crmo|crios)\/([\w\.]+)/i                                      // Chrome for Android/iOS
-            ], [VERSION, [NAME, 'Chrome']], [
-            /edg(?:e|ios|a)?\/([\w\.]+)/i                                       // Microsoft Edge
-            ], [VERSION, [NAME, 'Edge']], [
-
-            // Presto based
-            /(opera mini)\/([-\w\.]+)/i,                                        // Opera Mini
-            /(opera [mobiletab]{3,6})\b.+version\/([-\w\.]+)/i,                 // Opera Mobi/Tablet
-            /(opera)(?:.+version\/|[\/ ]+)([\w\.]+)/i                           // Opera
-            ], [NAME, VERSION], [
-            /opios[\/ ]+([\w\.]+)/i                                             // Opera mini on iphone >= 8.0
-            ], [VERSION, [NAME, OPERA+' Mini']], [
-            /\bopr\/([\w\.]+)/i                                                 // Opera Webkit
-            ], [VERSION, [NAME, OPERA]], [
-
-            // Mixed
-            /(kindle)\/([\w\.]+)/i,                                             // Kindle
-            /(lunascape|maxthon|netfront|jasmine|blazer)[\/ ]?([\w\.]*)/i,      // Lunascape/Maxthon/Netfront/Jasmine/Blazer
-            // Trident based
-            /(avant |iemobile|slim)(?:browser)?[\/ ]?([\w\.]*)/i,               // Avant/IEMobile/SlimBrowser
-            /(ba?idubrowser)[\/ ]?([\w\.]+)/i,                                  // Baidu Browser
-            /(?:ms|\()(ie) ([\w\.]+)/i,                                         // Internet Explorer
-
-            // Webkit/KHTML based                                               // Flock/RockMelt/Midori/Epiphany/Silk/Skyfire/Bolt/Iron/Iridium/PhantomJS/Bowser/QupZilla/Falkon
-            /(flock|rockmelt|midori|epiphany|silk|skyfire|bolt|iron|vivaldi|iridium|phantomjs|bowser|quark|qupzilla|falkon|rekonq|puffin|brave|whale(?!.+naver)|qqbrowserlite|qq|duckduckgo)\/([-\w\.]+)/i,
-                                                                                // Rekonq/Puffin/Brave/Whale/QQBrowserLite/QQ, aka ShouQ
-            /(heytap|ovi)browser\/([\d\.]+)/i,                                  // Heytap/Ovi
-            /(weibo)__([\d\.]+)/i                                               // Weibo
-            ], [NAME, VERSION], [
-            /(?:\buc? ?browser|(?:juc.+)ucweb)[\/ ]?([\w\.]+)/i                 // UCBrowser
-            ], [VERSION, [NAME, 'UC'+BROWSER]], [
-            /microm.+\bqbcore\/([\w\.]+)/i,                                     // WeChat Desktop for Windows Built-in Browser
-            /\bqbcore\/([\w\.]+).+microm/i
-            ], [VERSION, [NAME, 'WeChat(Win) Desktop']], [
-            /micromessenger\/([\w\.]+)/i                                        // WeChat
-            ], [VERSION, [NAME, 'WeChat']], [
-            /konqueror\/([\w\.]+)/i                                             // Konqueror
-            ], [VERSION, [NAME, 'Konqueror']], [
-            /trident.+rv[: ]([\w\.]{1,9})\b.+like gecko/i                       // IE11
-            ], [VERSION, [NAME, 'IE']], [
-            /ya(?:search)?browser\/([\w\.]+)/i                                  // Yandex
-            ], [VERSION, [NAME, 'Yandex']], [
-            /(avast|avg)\/([\w\.]+)/i                                           // Avast/AVG Secure Browser
-            ], [[NAME, /(.+)/, '$1 Secure '+BROWSER], VERSION], [
-            /\bfocus\/([\w\.]+)/i                                               // Firefox Focus
-            ], [VERSION, [NAME, FIREFOX+' Focus']], [
-            /\bopt\/([\w\.]+)/i                                                 // Opera Touch
-            ], [VERSION, [NAME, OPERA+' Touch']], [
-            /coc_coc\w+\/([\w\.]+)/i                                            // Coc Coc Browser
-            ], [VERSION, [NAME, 'Coc Coc']], [
-            /dolfin\/([\w\.]+)/i                                                // Dolphin
-            ], [VERSION, [NAME, 'Dolphin']], [
-            /coast\/([\w\.]+)/i                                                 // Opera Coast
-            ], [VERSION, [NAME, OPERA+' Coast']], [
-            /miuibrowser\/([\w\.]+)/i                                           // MIUI Browser
-            ], [VERSION, [NAME, 'MIUI '+BROWSER]], [
-            /fxios\/([-\w\.]+)/i                                                // Firefox for iOS
-            ], [VERSION, [NAME, FIREFOX]], [
-            /\bqihu|(qi?ho?o?|360)browser/i                                     // 360
-            ], [[NAME, '360 '+BROWSER]], [
-            /(oculus|samsung|sailfish|huawei)browser\/([\w\.]+)/i
-            ], [[NAME, /(.+)/, '$1 '+BROWSER], VERSION], [                      // Oculus/Samsung/Sailfish/Huawei Browser
-            /(comodo_dragon)\/([\w\.]+)/i                                       // Comodo Dragon
-            ], [[NAME, /_/g, ' '], VERSION], [
-            /(electron)\/([\w\.]+) safari/i,                                    // Electron-based App
-            /(tesla)(?: qtcarbrowser|\/(20\d\d\.[-\w\.]+))/i,                   // Tesla
-            /m?(qqbrowser|baiduboxapp|2345Explorer)[\/ ]?([\w\.]+)/i            // QQBrowser/Baidu App/2345 Browser
-            ], [NAME, VERSION], [
-            /(metasr)[\/ ]?([\w\.]+)/i,                                         // SouGouBrowser
-            /(lbbrowser)/i,                                                     // LieBao Browser
-            /\[(linkedin)app\]/i                                                // LinkedIn App for iOS & Android
-            ], [NAME], [
-
-            // WebView
-            /((?:fban\/fbios|fb_iab\/fb4a)(?!.+fbav)|;fbav\/([\w\.]+);)/i       // Facebook App for iOS & Android
-            ], [[NAME, FACEBOOK], VERSION], [
-            /(kakao(?:talk|story))[\/ ]([\w\.]+)/i,                             // Kakao App
-            /(naver)\(.*?(\d+\.[\w\.]+).*\)/i,                                  // Naver InApp
-            /safari (line)\/([\w\.]+)/i,                                        // Line App for iOS
-            /\b(line)\/([\w\.]+)\/iab/i,                                        // Line App for Android
-            /(chromium|instagram)[\/ ]([-\w\.]+)/i                              // Chromium/Instagram
-            ], [NAME, VERSION], [
-            /\bgsa\/([\w\.]+) .*safari\//i                                      // Google Search Appliance on iOS
-            ], [VERSION, [NAME, 'GSA']], [
-            /musical_ly(?:.+app_?version\/|_)([\w\.]+)/i                        // TikTok
-            ], [VERSION, [NAME, 'TikTok']], [
-
-            /headlesschrome(?:\/([\w\.]+)| )/i                                  // Chrome Headless
-            ], [VERSION, [NAME, CHROME+' Headless']], [
-
-            / wv\).+(chrome)\/([\w\.]+)/i                                       // Chrome WebView
-            ], [[NAME, CHROME+' WebView'], VERSION], [
-
-            /droid.+ version\/([\w\.]+)\b.+(?:mobile safari|safari)/i           // Android Browser
-            ], [VERSION, [NAME, 'Android '+BROWSER]], [
-
-            /(chrome|omniweb|arora|[tizenoka]{5} ?browser)\/v?([\w\.]+)/i       // Chrome/OmniWeb/Arora/Tizen/Nokia
-            ], [NAME, VERSION], [
-
-            /version\/([\w\.\,]+) .*mobile\/\w+ (safari)/i                      // Mobile Safari
-            ], [VERSION, [NAME, 'Mobile Safari']], [
-            /version\/([\w(\.|\,)]+) .*(mobile ?safari|safari)/i                // Safari & Safari Mobile
-            ], [VERSION, NAME], [
-            /webkit.+?(mobile ?safari|safari)(\/[\w\.]+)/i                      // Safari < 3.0
-            ], [NAME, [VERSION, strMapper, oldSafariMap]], [
-
-            /(webkit|khtml)\/([\w\.]+)/i
-            ], [NAME, VERSION], [
-
-            // Gecko based
-            /(navigator|netscape\d?)\/([-\w\.]+)/i                              // Netscape
-            ], [[NAME, 'Netscape'], VERSION], [
-            /mobile vr; rv:([\w\.]+)\).+firefox/i                               // Firefox Reality
-            ], [VERSION, [NAME, FIREFOX+' Reality']], [
-            /ekiohf.+(flow)\/([\w\.]+)/i,                                       // Flow
-            /(swiftfox)/i,                                                      // Swiftfox
-            /(icedragon|iceweasel|camino|chimera|fennec|maemo browser|minimo|conkeror|klar)[\/ ]?([\w\.\+]+)/i,
-                                                                                // IceDragon/Iceweasel/Camino/Chimera/Fennec/Maemo/Minimo/Conkeror/Klar
-            /(seamonkey|k-meleon|icecat|iceape|firebird|phoenix|palemoon|basilisk|waterfox)\/([-\w\.]+)$/i,
-                                                                                // Firefox/SeaMonkey/K-Meleon/IceCat/IceApe/Firebird/Phoenix
-            /(firefox)\/([\w\.]+)/i,                                            // Other Firefox-based
-            /(mozilla)\/([\w\.]+) .+rv\:.+gecko\/\d+/i,                         // Mozilla
-
-            // Other
-            /(polaris|lynx|dillo|icab|doris|amaya|w3m|netsurf|sleipnir|obigo|mosaic|(?:go|ice|up)[\. ]?browser)[-\/ ]?v?([\w\.]+)/i,
-                                                                                // Polaris/Lynx/Dillo/iCab/Doris/Amaya/w3m/NetSurf/Sleipnir/Obigo/Mosaic/Go/ICE/UP.Browser
-            /(links) \(([\w\.]+)/i,                                             // Links
-            /panasonic;(viera)/i                                                // Panasonic Viera
-            ], [NAME, VERSION], [
-            
-            /(cobalt)\/([\w\.]+)/i                                              // Cobalt
-            ], [NAME, [VERSION, /master.|lts./, ""]]
-        ],
-
-        cpu : [[
-
-            /(?:(amd|x(?:(?:86|64)[-_])?|wow|win)64)[;\)]/i                     // AMD64 (x64)
-            ], [[ARCHITECTURE, 'amd64']], [
-
-            /(ia32(?=;))/i                                                      // IA32 (quicktime)
-            ], [[ARCHITECTURE, lowerize]], [
-
-            /((?:i[346]|x)86)[;\)]/i                                            // IA32 (x86)
-            ], [[ARCHITECTURE, 'ia32']], [
-
-            /\b(aarch64|arm(v?8e?l?|_?64))\b/i                                 // ARM64
-            ], [[ARCHITECTURE, 'arm64']], [
-
-            /\b(arm(?:v[67])?ht?n?[fl]p?)\b/i                                   // ARMHF
-            ], [[ARCHITECTURE, 'armhf']], [
-
-            // PocketPC mistakenly identified as PowerPC
-            /windows (ce|mobile); ppc;/i
-            ], [[ARCHITECTURE, 'arm']], [
-
-            /((?:ppc|powerpc)(?:64)?)(?: mac|;|\))/i                            // PowerPC
-            ], [[ARCHITECTURE, /ower/, EMPTY, lowerize]], [
-
-            /(sun4\w)[;\)]/i                                                    // SPARC
-            ], [[ARCHITECTURE, 'sparc']], [
-
-            /((?:avr32|ia64(?=;))|68k(?=\))|\barm(?=v(?:[1-7]|[5-7]1)l?|;|eabi)|(?=atmel )avr|(?:irix|mips|sparc)(?:64)?\b|pa-risc)/i
-                                                                                // IA64, 68K, ARM/64, AVR/32, IRIX/64, MIPS/64, SPARC/64, PA-RISC
-            ], [[ARCHITECTURE, lowerize]]
-        ],
-
-        device : [[
-
-            //////////////////////////
-            // MOBILES & TABLETS
-            /////////////////////////
-
-            // Samsung
-            /\b(sch-i[89]0\d|shw-m380s|sm-[ptx]\w{2,4}|gt-[pn]\d{2,4}|sgh-t8[56]9|nexus 10)/i
-            ], [MODEL, [VENDOR, SAMSUNG], [TYPE, TABLET]], [
-            /\b((?:s[cgp]h|gt|sm)-\w+|sc[g-]?[\d]+a?|galaxy nexus)/i,
-            /samsung[- ]([-\w]+)/i,
-            /sec-(sgh\w+)/i
-            ], [MODEL, [VENDOR, SAMSUNG], [TYPE, MOBILE]], [
-
-            // Apple
-            /(?:\/|\()(ip(?:hone|od)[\w, ]*)(?:\/|;)/i                          // iPod/iPhone
-            ], [MODEL, [VENDOR, APPLE], [TYPE, MOBILE]], [
-            /\((ipad);[-\w\),; ]+apple/i,                                       // iPad
-            /applecoremedia\/[\w\.]+ \((ipad)/i,
-            /\b(ipad)\d\d?,\d\d?[;\]].+ios/i
-            ], [MODEL, [VENDOR, APPLE], [TYPE, TABLET]], [
-            /(macintosh);/i
-            ], [MODEL, [VENDOR, APPLE]], [
-
-            // Sharp
-            /\b(sh-?[altvz]?\d\d[a-ekm]?)/i
-            ], [MODEL, [VENDOR, SHARP], [TYPE, MOBILE]], [
-
-            // Huawei
-            /\b((?:ag[rs][23]?|bah2?|sht?|btv)-a?[lw]\d{2})\b(?!.+d\/s)/i
-            ], [MODEL, [VENDOR, HUAWEI], [TYPE, TABLET]], [
-            /(?:huawei|honor)([-\w ]+)[;\)]/i,
-            /\b(nexus 6p|\w{2,4}e?-[atu]?[ln][\dx][012359c][adn]?)\b(?!.+d\/s)/i
-            ], [MODEL, [VENDOR, HUAWEI], [TYPE, MOBILE]], [
-
-            // Xiaomi
-            /\b(poco[\w ]+)(?: bui|\))/i,                                       // Xiaomi POCO
-            /\b; (\w+) build\/hm\1/i,                                           // Xiaomi Hongmi 'numeric' models
-            /\b(hm[-_ ]?note?[_ ]?(?:\d\w)?) bui/i,                             // Xiaomi Hongmi
-            /\b(redmi[\-_ ]?(?:note|k)?[\w_ ]+)(?: bui|\))/i,                   // Xiaomi Redmi
-            /\b(mi[-_ ]?(?:a\d|one|one[_ ]plus|note lte|max|cc)?[_ ]?(?:\d?\w?)[_ ]?(?:plus|se|lite)?)(?: bui|\))/i // Xiaomi Mi
-            ], [[MODEL, /_/g, ' '], [VENDOR, XIAOMI], [TYPE, MOBILE]], [
-            /\b(mi[-_ ]?(?:pad)(?:[\w_ ]+))(?: bui|\))/i                        // Mi Pad tablets
-            ],[[MODEL, /_/g, ' '], [VENDOR, XIAOMI], [TYPE, TABLET]], [
-
-            // OPPO
-            /; (\w+) bui.+ oppo/i,
-            /\b(cph[12]\d{3}|p(?:af|c[al]|d\w|e[ar])[mt]\d0|x9007|a101op)\b/i
-            ], [MODEL, [VENDOR, 'OPPO'], [TYPE, MOBILE]], [
-
-            // Vivo
-            /vivo (\w+)(?: bui|\))/i,
-            /\b(v[12]\d{3}\w?[at])(?: bui|;)/i
-            ], [MODEL, [VENDOR, 'Vivo'], [TYPE, MOBILE]], [
-
-            // Realme
-            /\b(rmx[12]\d{3})(?: bui|;|\))/i
-            ], [MODEL, [VENDOR, 'Realme'], [TYPE, MOBILE]], [
-
-            // Motorola
-            /\b(milestone|droid(?:[2-4x]| (?:bionic|x2|pro|razr))?:?( 4g)?)\b[\w ]+build\//i,
-            /\bmot(?:orola)?[- ](\w*)/i,
-            /((?:moto[\w\(\) ]+|xt\d{3,4}|nexus 6)(?= bui|\)))/i
-            ], [MODEL, [VENDOR, MOTOROLA], [TYPE, MOBILE]], [
-            /\b(mz60\d|xoom[2 ]{0,2}) build\//i
-            ], [MODEL, [VENDOR, MOTOROLA], [TYPE, TABLET]], [
-
-            // LG
-            /((?=lg)?[vl]k\-?\d{3}) bui| 3\.[-\w; ]{10}lg?-([06cv9]{3,4})/i
-            ], [MODEL, [VENDOR, LG], [TYPE, TABLET]], [
-            /(lm(?:-?f100[nv]?|-[\w\.]+)(?= bui|\))|nexus [45])/i,
-            /\blg[-e;\/ ]+((?!browser|netcast|android tv)\w+)/i,
-            /\blg-?([\d\w]+) bui/i
-            ], [MODEL, [VENDOR, LG], [TYPE, MOBILE]], [
-
-            // Lenovo
-            /(ideatab[-\w ]+)/i,
-            /lenovo ?(s[56]000[-\w]+|tab(?:[\w ]+)|yt[-\d\w]{6}|tb[-\d\w]{6})/i
-            ], [MODEL, [VENDOR, 'Lenovo'], [TYPE, TABLET]], [
-
-            // Nokia
-            /(?:maemo|nokia).*(n900|lumia \d+)/i,
-            /nokia[-_ ]?([-\w\.]*)/i
-            ], [[MODEL, /_/g, ' '], [VENDOR, 'Nokia'], [TYPE, MOBILE]], [
-
-            // Google
-            /(pixel c)\b/i                                                      // Google Pixel C
-            ], [MODEL, [VENDOR, GOOGLE], [TYPE, TABLET]], [
-            /droid.+; (pixel[\daxl ]{0,6})(?: bui|\))/i                         // Google Pixel
-            ], [MODEL, [VENDOR, GOOGLE], [TYPE, MOBILE]], [
-
-            // Sony
-            /droid.+ (a?\d[0-2]{2}so|[c-g]\d{4}|so[-gl]\w+|xq-a\w[4-7][12])(?= bui|\).+chrome\/(?![1-6]{0,1}\d\.))/i
-            ], [MODEL, [VENDOR, SONY], [TYPE, MOBILE]], [
-            /sony tablet [ps]/i,
-            /\b(?:sony)?sgp\w+(?: bui|\))/i
-            ], [[MODEL, 'Xperia Tablet'], [VENDOR, SONY], [TYPE, TABLET]], [
-
-            // OnePlus
-            / (kb2005|in20[12]5|be20[12][59])\b/i,
-            /(?:one)?(?:plus)? (a\d0\d\d)(?: b|\))/i
-            ], [MODEL, [VENDOR, 'OnePlus'], [TYPE, MOBILE]], [
-
-            // Amazon
-            /(alexa)webm/i,
-            /(kf[a-z]{2}wi|aeo[c-r]{2})( bui|\))/i,                             // Kindle Fire without Silk / Echo Show
-            /(kf[a-z]+)( bui|\)).+silk\//i                                      // Kindle Fire HD
-            ], [MODEL, [VENDOR, AMAZON], [TYPE, TABLET]], [
-            /((?:sd|kf)[0349hijorstuw]+)( bui|\)).+silk\//i                     // Fire Phone
-            ], [[MODEL, /(.+)/g, 'Fire Phone $1'], [VENDOR, AMAZON], [TYPE, MOBILE]], [
-
-            // BlackBerry
-            /(playbook);[-\w\),; ]+(rim)/i                                      // BlackBerry PlayBook
-            ], [MODEL, VENDOR, [TYPE, TABLET]], [
-            /\b((?:bb[a-f]|st[hv])100-\d)/i,
-            /\(bb10; (\w+)/i                                                    // BlackBerry 10
-            ], [MODEL, [VENDOR, BLACKBERRY], [TYPE, MOBILE]], [
-
-            // Asus
-            /(?:\b|asus_)(transfo[prime ]{4,10} \w+|eeepc|slider \w+|nexus 7|padfone|p00[cj])/i
-            ], [MODEL, [VENDOR, ASUS], [TYPE, TABLET]], [
-            / (z[bes]6[027][012][km][ls]|zenfone \d\w?)\b/i
-            ], [MODEL, [VENDOR, ASUS], [TYPE, MOBILE]], [
-
-            // HTC
-            /(nexus 9)/i                                                        // HTC Nexus 9
-            ], [MODEL, [VENDOR, 'HTC'], [TYPE, TABLET]], [
-            /(htc)[-;_ ]{1,2}([\w ]+(?=\)| bui)|\w+)/i,                         // HTC
-
-            // ZTE
-            /(zte)[- ]([\w ]+?)(?: bui|\/|\))/i,
-            /(alcatel|geeksphone|nexian|panasonic(?!(?:;|\.))|sony(?!-bra))[-_ ]?([-\w]*)/i         // Alcatel/GeeksPhone/Nexian/Panasonic/Sony
-            ], [VENDOR, [MODEL, /_/g, ' '], [TYPE, MOBILE]], [
-
-            // Acer
-            /droid.+; ([ab][1-7]-?[0178a]\d\d?)/i
-            ], [MODEL, [VENDOR, 'Acer'], [TYPE, TABLET]], [
-
-            // Meizu
-            /droid.+; (m[1-5] note) bui/i,
-            /\bmz-([-\w]{2,})/i
-            ], [MODEL, [VENDOR, 'Meizu'], [TYPE, MOBILE]], [
-
-            // MIXED
-            /(blackberry|benq|palm(?=\-)|sonyericsson|acer|asus|dell|meizu|motorola|polytron)[-_ ]?([-\w]*)/i,
-                                                                                // BlackBerry/BenQ/Palm/Sony-Ericsson/Acer/Asus/Dell/Meizu/Motorola/Polytron
-            /(hp) ([\w ]+\w)/i,                                                 // HP iPAQ
-            /(asus)-?(\w+)/i,                                                   // Asus
-            /(microsoft); (lumia[\w ]+)/i,                                      // Microsoft Lumia
-            /(lenovo)[-_ ]?([-\w]+)/i,                                          // Lenovo
-            /(jolla)/i,                                                         // Jolla
-            /(oppo) ?([\w ]+) bui/i                                             // OPPO
-            ], [VENDOR, MODEL, [TYPE, MOBILE]], [
-
-            /(kobo)\s(ereader|touch)/i,                                         // Kobo
-            /(archos) (gamepad2?)/i,                                            // Archos
-            /(hp).+(touchpad(?!.+tablet)|tablet)/i,                             // HP TouchPad
-            /(kindle)\/([\w\.]+)/i,                                             // Kindle
-            /(nook)[\w ]+build\/(\w+)/i,                                        // Nook
-            /(dell) (strea[kpr\d ]*[\dko])/i,                                   // Dell Streak
-            /(le[- ]+pan)[- ]+(\w{1,9}) bui/i,                                  // Le Pan Tablets
-            /(trinity)[- ]*(t\d{3}) bui/i,                                      // Trinity Tablets
-            /(gigaset)[- ]+(q\w{1,9}) bui/i,                                    // Gigaset Tablets
-            /(vodafone) ([\w ]+)(?:\)| bui)/i                                   // Vodafone
-            ], [VENDOR, MODEL, [TYPE, TABLET]], [
-
-            /(surface duo)/i                                                    // Surface Duo
-            ], [MODEL, [VENDOR, MICROSOFT], [TYPE, TABLET]], [
-            /droid [\d\.]+; (fp\du?)(?: b|\))/i                                 // Fairphone
-            ], [MODEL, [VENDOR, 'Fairphone'], [TYPE, MOBILE]], [
-            /(u304aa)/i                                                         // AT&T
-            ], [MODEL, [VENDOR, 'AT&T'], [TYPE, MOBILE]], [
-            /\bsie-(\w*)/i                                                      // Siemens
-            ], [MODEL, [VENDOR, 'Siemens'], [TYPE, MOBILE]], [
-            /\b(rct\w+) b/i                                                     // RCA Tablets
-            ], [MODEL, [VENDOR, 'RCA'], [TYPE, TABLET]], [
-            /\b(venue[\d ]{2,7}) b/i                                            // Dell Venue Tablets
-            ], [MODEL, [VENDOR, 'Dell'], [TYPE, TABLET]], [
-            /\b(q(?:mv|ta)\w+) b/i                                              // Verizon Tablet
-            ], [MODEL, [VENDOR, 'Verizon'], [TYPE, TABLET]], [
-            /\b(?:barnes[& ]+noble |bn[rt])([\w\+ ]*) b/i                       // Barnes & Noble Tablet
-            ], [MODEL, [VENDOR, 'Barnes & Noble'], [TYPE, TABLET]], [
-            /\b(tm\d{3}\w+) b/i
-            ], [MODEL, [VENDOR, 'NuVision'], [TYPE, TABLET]], [
-            /\b(k88) b/i                                                        // ZTE K Series Tablet
-            ], [MODEL, [VENDOR, 'ZTE'], [TYPE, TABLET]], [
-            /\b(nx\d{3}j) b/i                                                   // ZTE Nubia
-            ], [MODEL, [VENDOR, 'ZTE'], [TYPE, MOBILE]], [
-            /\b(gen\d{3}) b.+49h/i                                              // Swiss GEN Mobile
-            ], [MODEL, [VENDOR, 'Swiss'], [TYPE, MOBILE]], [
-            /\b(zur\d{3}) b/i                                                   // Swiss ZUR Tablet
-            ], [MODEL, [VENDOR, 'Swiss'], [TYPE, TABLET]], [
-            /\b((zeki)?tb.*\b) b/i                                              // Zeki Tablets
-            ], [MODEL, [VENDOR, 'Zeki'], [TYPE, TABLET]], [
-            /\b([yr]\d{2}) b/i,
-            /\b(dragon[- ]+touch |dt)(\w{5}) b/i                                // Dragon Touch Tablet
-            ], [[VENDOR, 'Dragon Touch'], MODEL, [TYPE, TABLET]], [
-            /\b(ns-?\w{0,9}) b/i                                                // Insignia Tablets
-            ], [MODEL, [VENDOR, 'Insignia'], [TYPE, TABLET]], [
-            /\b((nxa|next)-?\w{0,9}) b/i                                        // NextBook Tablets
-            ], [MODEL, [VENDOR, 'NextBook'], [TYPE, TABLET]], [
-            /\b(xtreme\_)?(v(1[045]|2[015]|[3469]0|7[05])) b/i                  // Voice Xtreme Phones
-            ], [[VENDOR, 'Voice'], MODEL, [TYPE, MOBILE]], [
-            /\b(lvtel\-)?(v1[12]) b/i                                           // LvTel Phones
-            ], [[VENDOR, 'LvTel'], MODEL, [TYPE, MOBILE]], [
-            /\b(ph-1) /i                                                        // Essential PH-1
-            ], [MODEL, [VENDOR, 'Essential'], [TYPE, MOBILE]], [
-            /\b(v(100md|700na|7011|917g).*\b) b/i                               // Envizen Tablets
-            ], [MODEL, [VENDOR, 'Envizen'], [TYPE, TABLET]], [
-            /\b(trio[-\w\. ]+) b/i                                              // MachSpeed Tablets
-            ], [MODEL, [VENDOR, 'MachSpeed'], [TYPE, TABLET]], [
-            /\btu_(1491) b/i                                                    // Rotor Tablets
-            ], [MODEL, [VENDOR, 'Rotor'], [TYPE, TABLET]], [
-            /(shield[\w ]+) b/i                                                 // Nvidia Shield Tablets
-            ], [MODEL, [VENDOR, 'Nvidia'], [TYPE, TABLET]], [
-            /(sprint) (\w+)/i                                                   // Sprint Phones
-            ], [VENDOR, MODEL, [TYPE, MOBILE]], [
-            /(kin\.[onetw]{3})/i                                                // Microsoft Kin
-            ], [[MODEL, /\./g, ' '], [VENDOR, MICROSOFT], [TYPE, MOBILE]], [
-            /droid.+; (cc6666?|et5[16]|mc[239][23]x?|vc8[03]x?)\)/i             // Zebra
-            ], [MODEL, [VENDOR, ZEBRA], [TYPE, TABLET]], [
-            /droid.+; (ec30|ps20|tc[2-8]\d[kx])\)/i
-            ], [MODEL, [VENDOR, ZEBRA], [TYPE, MOBILE]], [
-
-            ///////////////////
-            // SMARTTVS
-            ///////////////////
-
-            /smart-tv.+(samsung)/i                                              // Samsung
-            ], [VENDOR, [TYPE, SMARTTV]], [
-            /hbbtv.+maple;(\d+)/i
-            ], [[MODEL, /^/, 'SmartTV'], [VENDOR, SAMSUNG], [TYPE, SMARTTV]], [
-            /(nux; netcast.+smarttv|lg (netcast\.tv-201\d|android tv))/i        // LG SmartTV
-            ], [[VENDOR, LG], [TYPE, SMARTTV]], [
-            /(apple) ?tv/i                                                      // Apple TV
-            ], [VENDOR, [MODEL, APPLE+' TV'], [TYPE, SMARTTV]], [
-            /crkey/i                                                            // Google Chromecast
-            ], [[MODEL, CHROME+'cast'], [VENDOR, GOOGLE], [TYPE, SMARTTV]], [
-            /droid.+aft(\w)( bui|\))/i                                          // Fire TV
-            ], [MODEL, [VENDOR, AMAZON], [TYPE, SMARTTV]], [
-            /\(dtv[\);].+(aquos)/i,
-            /(aquos-tv[\w ]+)\)/i                                               // Sharp
-            ], [MODEL, [VENDOR, SHARP], [TYPE, SMARTTV]],[
-            /(bravia[\w ]+)( bui|\))/i                                              // Sony
-            ], [MODEL, [VENDOR, SONY], [TYPE, SMARTTV]], [
-            /(mitv-\w{5}) bui/i                                                 // Xiaomi
-            ], [MODEL, [VENDOR, XIAOMI], [TYPE, SMARTTV]], [
-            /Hbbtv.*(technisat) (.*);/i                                         // TechniSAT
-            ], [VENDOR, MODEL, [TYPE, SMARTTV]], [
-            /\b(roku)[\dx]*[\)\/]((?:dvp-)?[\d\.]*)/i,                          // Roku
-            /hbbtv\/\d+\.\d+\.\d+ +\([\w\+ ]*; *([\w\d][^;]*);([^;]*)/i         // HbbTV devices
-            ], [[VENDOR, trim], [MODEL, trim], [TYPE, SMARTTV]], [
-            /\b(android tv|smart[- ]?tv|opera tv|tv; rv:)\b/i                   // SmartTV from Unidentified Vendors
-            ], [[TYPE, SMARTTV]], [
-
-            ///////////////////
-            // CONSOLES
-            ///////////////////
-
-            /(ouya)/i,                                                          // Ouya
-            /(nintendo) ([wids3utch]+)/i                                        // Nintendo
-            ], [VENDOR, MODEL, [TYPE, CONSOLE]], [
-            /droid.+; (shield) bui/i                                            // Nvidia
-            ], [MODEL, [VENDOR, 'Nvidia'], [TYPE, CONSOLE]], [
-            /(playstation [345portablevi]+)/i                                   // Playstation
-            ], [MODEL, [VENDOR, SONY], [TYPE, CONSOLE]], [
-            /\b(xbox(?: one)?(?!; xbox))[\); ]/i                                // Microsoft Xbox
-            ], [MODEL, [VENDOR, MICROSOFT], [TYPE, CONSOLE]], [
-
-            ///////////////////
-            // WEARABLES
-            ///////////////////
-
-            /((pebble))app/i                                                    // Pebble
-            ], [VENDOR, MODEL, [TYPE, WEARABLE]], [
-            /(watch)(?: ?os[,\/]|\d,\d\/)[\d\.]+/i                              // Apple Watch
-            ], [MODEL, [VENDOR, APPLE], [TYPE, WEARABLE]], [
-            /droid.+; (glass) \d/i                                              // Google Glass
-            ], [MODEL, [VENDOR, GOOGLE], [TYPE, WEARABLE]], [
-            /droid.+; (wt63?0{2,3})\)/i
-            ], [MODEL, [VENDOR, ZEBRA], [TYPE, WEARABLE]], [
-            /(quest( 2| pro)?)/i                                                // Oculus Quest
-            ], [MODEL, [VENDOR, FACEBOOK], [TYPE, WEARABLE]], [
-
-            ///////////////////
-            // EMBEDDED
-            ///////////////////
-
-            /(tesla)(?: qtcarbrowser|\/[-\w\.]+)/i                              // Tesla
-            ], [VENDOR, [TYPE, EMBEDDED]], [
-            /(aeobc)\b/i                                                        // Echo Dot
-            ], [MODEL, [VENDOR, AMAZON], [TYPE, EMBEDDED]], [
-
-            ////////////////////
-            // MIXED (GENERIC)
-            ///////////////////
-
-            /droid .+?; ([^;]+?)(?: bui|\) applew).+? mobile safari/i           // Android Phones from Unidentified Vendors
-            ], [MODEL, [TYPE, MOBILE]], [
-            /droid .+?; ([^;]+?)(?: bui|\) applew).+?(?! mobile) safari/i       // Android Tablets from Unidentified Vendors
-            ], [MODEL, [TYPE, TABLET]], [
-            /\b((tablet|tab)[;\/]|focus\/\d(?!.+mobile))/i                      // Unidentifiable Tablet
-            ], [[TYPE, TABLET]], [
-            /(phone|mobile(?:[;\/]| [ \w\/\.]*safari)|pda(?=.+windows ce))/i    // Unidentifiable Mobile
-            ], [[TYPE, MOBILE]], [
-            /(android[-\w\. ]{0,9});.+buil/i                                    // Generic Android Device
-            ], [MODEL, [VENDOR, 'Generic']]
-        ],
-
-        engine : [[
-
-            /windows.+ edge\/([\w\.]+)/i                                       // EdgeHTML
-            ], [VERSION, [NAME, EDGE+'HTML']], [
-
-            /webkit\/537\.36.+chrome\/(?!27)([\w\.]+)/i                         // Blink
-            ], [VERSION, [NAME, 'Blink']], [
-
-            /(presto)\/([\w\.]+)/i,                                             // Presto
-            /(webkit|trident|netfront|netsurf|amaya|lynx|w3m|goanna)\/([\w\.]+)/i, // WebKit/Trident/NetFront/NetSurf/Amaya/Lynx/w3m/Goanna
-            /ekioh(flow)\/([\w\.]+)/i,                                          // Flow
-            /(khtml|tasman|links)[\/ ]\(?([\w\.]+)/i,                           // KHTML/Tasman/Links
-            /(icab)[\/ ]([23]\.[\d\.]+)/i,                                      // iCab
-            /\b(libweb)/i
-            ], [NAME, VERSION], [
-
-            /rv\:([\w\.]{1,9})\b.+(gecko)/i                                     // Gecko
-            ], [VERSION, NAME]
-        ],
-
-        os : [[
-
-            // Windows
-            /microsoft (windows) (vista|xp)/i                                   // Windows (iTunes)
-            ], [NAME, VERSION], [
-            /(windows) nt 6\.2; (arm)/i,                                        // Windows RT
-            /(windows (?:phone(?: os)?|mobile))[\/ ]?([\d\.\w ]*)/i,            // Windows Phone
-            /(windows)[\/ ]?([ntce\d\. ]+\w)(?!.+xbox)/i
-            ], [NAME, [VERSION, strMapper, windowsVersionMap]], [
-            /(win(?=3|9|n)|win 9x )([nt\d\.]+)/i
-            ], [[NAME, 'Windows'], [VERSION, strMapper, windowsVersionMap]], [
-
-            // iOS/macOS
-            /ip[honead]{2,4}\b(?:.*os ([\w]+) like mac|; opera)/i,              // iOS
-            /ios;fbsv\/([\d\.]+)/i,
-            /cfnetwork\/.+darwin/i
-            ], [[VERSION, /_/g, '.'], [NAME, 'iOS']], [
-            /(mac os x) ?([\w\. ]*)/i,
-            /(macintosh|mac_powerpc\b)(?!.+haiku)/i                             // Mac OS
-            ], [[NAME, MAC_OS], [VERSION, /_/g, '.']], [
-
-            // Mobile OSes
-            /droid ([\w\.]+)\b.+(android[- ]x86|harmonyos)/i                    // Android-x86/HarmonyOS
-            ], [VERSION, NAME], [                                               // Android/WebOS/QNX/Bada/RIM/Maemo/MeeGo/Sailfish OS
-            /(android|webos|qnx|bada|rim tablet os|maemo|meego|sailfish)[-\/ ]?([\w\.]*)/i,
-            /(blackberry)\w*\/([\w\.]*)/i,                                      // Blackberry
-            /(tizen|kaios)[\/ ]([\w\.]+)/i,                                     // Tizen/KaiOS
-            /\((series40);/i                                                    // Series 40
-            ], [NAME, VERSION], [
-            /\(bb(10);/i                                                        // BlackBerry 10
-            ], [VERSION, [NAME, BLACKBERRY]], [
-            /(?:symbian ?os|symbos|s60(?=;)|series60)[-\/ ]?([\w\.]*)/i         // Symbian
-            ], [VERSION, [NAME, 'Symbian']], [
-            /mozilla\/[\d\.]+ \((?:mobile|tablet|tv|mobile; [\w ]+); rv:.+ gecko\/([\w\.]+)/i // Firefox OS
-            ], [VERSION, [NAME, FIREFOX+' OS']], [
-            /web0s;.+rt(tv)/i,
-            /\b(?:hp)?wos(?:browser)?\/([\w\.]+)/i                              // WebOS
-            ], [VERSION, [NAME, 'webOS']], [
-            /watch(?: ?os[,\/]|\d,\d\/)([\d\.]+)/i                              // watchOS
-            ], [VERSION, [NAME, 'watchOS']], [
-
-            // Google Chromecast
-            /crkey\/([\d\.]+)/i                                                 // Google Chromecast
-            ], [VERSION, [NAME, CHROME+'cast']], [
-            /(cros) [\w]+(?:\)| ([\w\.]+)\b)/i                                  // Chromium OS
-            ], [[NAME, CHROMIUM_OS], VERSION],[
-
-            // Smart TVs
-            /panasonic;(viera)/i,                                               // Panasonic Viera
-            /(netrange)mmh/i,                                                   // Netrange
-            /(nettv)\/(\d+\.[\w\.]+)/i,                                         // NetTV
-
-            // Console
-            /(nintendo|playstation) ([wids345portablevuch]+)/i,                 // Nintendo/Playstation
-            /(xbox); +xbox ([^\);]+)/i,                                         // Microsoft Xbox (360, One, X, S, Series X, Series S)
-
-            // Other
-            /\b(joli|palm)\b ?(?:os)?\/?([\w\.]*)/i,                            // Joli/Palm
-            /(mint)[\/\(\) ]?(\w*)/i,                                           // Mint
-            /(mageia|vectorlinux)[; ]/i,                                        // Mageia/VectorLinux
-            /([kxln]?ubuntu|debian|suse|opensuse|gentoo|arch(?= linux)|slackware|fedora|mandriva|centos|pclinuxos|red ?hat|zenwalk|linpus|raspbian|plan 9|minix|risc os|contiki|deepin|manjaro|elementary os|sabayon|linspire)(?: gnu\/linux)?(?: enterprise)?(?:[- ]linux)?(?:-gnu)?[-\/ ]?(?!chrom|package)([-\w\.]*)/i,
-                                                                                // Ubuntu/Debian/SUSE/Gentoo/Arch/Slackware/Fedora/Mandriva/CentOS/PCLinuxOS/RedHat/Zenwalk/Linpus/Raspbian/Plan9/Minix/RISCOS/Contiki/Deepin/Manjaro/elementary/Sabayon/Linspire
-            /(hurd|linux) ?([\w\.]*)/i,                                         // Hurd/Linux
-            /(gnu) ?([\w\.]*)/i,                                                // GNU
-            /\b([-frentopcghs]{0,5}bsd|dragonfly)[\/ ]?(?!amd|[ix346]{1,2}86)([\w\.]*)/i, // FreeBSD/NetBSD/OpenBSD/PC-BSD/GhostBSD/DragonFly
-            /(haiku) (\w+)/i                                                    // Haiku
-            ], [NAME, VERSION], [
-            /(sunos) ?([\w\.\d]*)/i                                             // Solaris
-            ], [[NAME, 'Solaris'], VERSION], [
-            /((?:open)?solaris)[-\/ ]?([\w\.]*)/i,                              // Solaris
-            /(aix) ((\d)(?=\.|\)| )[\w\.])*/i,                                  // AIX
-            /\b(beos|os\/2|amigaos|morphos|openvms|fuchsia|hp-ux|serenityos)/i, // BeOS/OS2/AmigaOS/MorphOS/OpenVMS/Fuchsia/HP-UX/SerenityOS
-            /(unix) ?([\w\.]*)/i                                                // UNIX
-            ], [NAME, VERSION]
-        ]
-    };
-
-    /////////////////
-    // Constructor
-    ////////////////
-
-    var UAParser = function (ua, extensions) {
-
-        if (typeof ua === OBJ_TYPE) {
-            extensions = ua;
-            ua = undefined;
-        }
-
-        if (!(this instanceof UAParser)) {
-            return new UAParser(ua, extensions).getResult();
-        }
-
-        var _navigator = (typeof window !== UNDEF_TYPE && window.navigator) ? window.navigator : undefined;
-        var _ua = ua || ((_navigator && _navigator.userAgent) ? _navigator.userAgent : EMPTY);
-        var _uach = (_navigator && _navigator.userAgentData) ? _navigator.userAgentData : undefined;
-        var _rgxmap = extensions ? extend(regexes, extensions) : regexes;
-        var _isSelfNav = _navigator && _navigator.userAgent == _ua;
-
-        this.getBrowser = function () {
-            var _browser = {};
-            _browser[NAME] = undefined;
-            _browser[VERSION] = undefined;
-            rgxMapper.call(_browser, _ua, _rgxmap.browser);
-            _browser[MAJOR] = majorize(_browser[VERSION]);
-            // Brave-specific detection
-            if (_isSelfNav && _navigator && _navigator.brave && typeof _navigator.brave.isBrave == FUNC_TYPE) {
-                _browser[NAME] = 'Brave';
-            }
-            return _browser;
-        };
-        this.getCPU = function () {
-            var _cpu = {};
-            _cpu[ARCHITECTURE] = undefined;
-            rgxMapper.call(_cpu, _ua, _rgxmap.cpu);
-            return _cpu;
-        };
-        this.getDevice = function () {
-            var _device = {};
-            _device[VENDOR] = undefined;
-            _device[MODEL] = undefined;
-            _device[TYPE] = undefined;
-            rgxMapper.call(_device, _ua, _rgxmap.device);
-            if (_isSelfNav && !_device[TYPE] && _uach && _uach.mobile) {
-                _device[TYPE] = MOBILE;
-            }
-            // iPadOS-specific detection: identified as Mac, but has some iOS-only properties
-            if (_isSelfNav && _device[MODEL] == 'Macintosh' && _navigator && typeof _navigator.standalone !== UNDEF_TYPE && _navigator.maxTouchPoints && _navigator.maxTouchPoints > 2) {
-                _device[MODEL] = 'iPad';
-                _device[TYPE] = TABLET;
-            }
-            return _device;
-        };
-        this.getEngine = function () {
-            var _engine = {};
-            _engine[NAME] = undefined;
-            _engine[VERSION] = undefined;
-            rgxMapper.call(_engine, _ua, _rgxmap.engine);
-            return _engine;
-        };
-        this.getOS = function () {
-            var _os = {};
-            _os[NAME] = undefined;
-            _os[VERSION] = undefined;
-            rgxMapper.call(_os, _ua, _rgxmap.os);
-            if (_isSelfNav && !_os[NAME] && _uach && _uach.platform != 'Unknown') {
-                _os[NAME] = _uach.platform  
-                                    .replace(/chrome os/i, CHROMIUM_OS)
-                                    .replace(/macos/i, MAC_OS);           // backward compatibility
-            }
-            return _os;
-        };
-        this.getResult = function () {
-            return {
-                ua      : this.getUA(),
-                browser : this.getBrowser(),
-                engine  : this.getEngine(),
-                os      : this.getOS(),
-                device  : this.getDevice(),
-                cpu     : this.getCPU()
-            };
-        };
-        this.getUA = function () {
-            return _ua;
-        };
-        this.setUA = function (ua) {
-            _ua = (typeof ua === STR_TYPE && ua.length > UA_MAX_LENGTH) ? trim(ua, UA_MAX_LENGTH) : ua;
-            return this;
-        };
-        this.setUA(_ua);
-        return this;
-    };
-
-    UAParser.VERSION = LIBVERSION;
-    UAParser.BROWSER =  enumerize([NAME, VERSION, MAJOR]);
-    UAParser.CPU = enumerize([ARCHITECTURE]);
-    UAParser.DEVICE = enumerize([MODEL, VENDOR, TYPE, CONSOLE, MOBILE, SMARTTV, TABLET, WEARABLE, EMBEDDED]);
-    UAParser.ENGINE = UAParser.OS = enumerize([NAME, VERSION]);
-
-    ///////////
-    // Export
-    //////////
-
-    // check js environment
-    if (typeof(exports) !== UNDEF_TYPE) {
-        // nodejs env
-        if (typeof module !== UNDEF_TYPE && module.exports) {
-            exports = module.exports = UAParser;
-        }
-        exports.UAParser = UAParser;
-    } else {
-        // requirejs env (optional)
-        if (typeof(define) === FUNC_TYPE && define.amd) {
-            define(function () {
-                return UAParser;
-            });
-        } else if (typeof window !== UNDEF_TYPE) {
-            // browser env
-            window.UAParser = UAParser;
-        }
-    }
-
-    // jQuery/Zepto specific (optional)
-    // Note:
-    //   In AMD env the global scope should be kept clean, but jQuery is an exception.
-    //   jQuery always exports to global scope, unless jQuery.noConflict(true) is used,
-    //   and we should catch that.
-    var $ = typeof window !== UNDEF_TYPE && (window.jQuery || window.Zepto);
-    if ($ && !$.ua) {
-        var parser = new UAParser();
-        $.ua = parser.getResult();
-        $.ua.get = function () {
-            return parser.getUA();
-        };
-        $.ua.set = function (ua) {
-            parser.setUA(ua);
-            var result = parser.getResult();
-            for (var prop in result) {
-                $.ua[prop] = result[prop];
-            }
-        };
-    }
-
-})(typeof window === 'object' ? window : this);
-
-},{}],261:[function(require,module,exports){
+},{"buffer":77,"dup":75}],242:[function(require,module,exports){
 (function (global){(function (){
 
 /**
@@ -41165,267 +36596,14 @@ function config (name) {
 }
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],262:[function(require,module,exports){
-/**
- * Convert array of 16 byte values to UUID string format of the form:
- * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
- */
-var byteToHex = [];
-for (var i = 0; i < 256; ++i) {
-  byteToHex[i] = (i + 0x100).toString(16).substr(1);
-}
-
-function bytesToUuid(buf, offset) {
-  var i = offset || 0;
-  var bth = byteToHex;
-  // join used to fix memory issue caused by concatenation: https://bugs.chromium.org/p/v8/issues/detail?id=3175#c4
-  return ([
-    bth[buf[i++]], bth[buf[i++]],
-    bth[buf[i++]], bth[buf[i++]], '-',
-    bth[buf[i++]], bth[buf[i++]], '-',
-    bth[buf[i++]], bth[buf[i++]], '-',
-    bth[buf[i++]], bth[buf[i++]], '-',
-    bth[buf[i++]], bth[buf[i++]],
-    bth[buf[i++]], bth[buf[i++]],
-    bth[buf[i++]], bth[buf[i++]]
-  ]).join('');
-}
-
-module.exports = bytesToUuid;
-
-},{}],263:[function(require,module,exports){
-// Unique ID creation requires a high quality random # generator.  In the
-// browser this is a little complicated due to unknown quality of Math.random()
-// and inconsistent support for the `crypto` API.  We do the best we can via
-// feature-detection
-
-// getRandomValues needs to be invoked in a context where "this" is a Crypto
-// implementation. Also, find the complete implementation of crypto on IE11.
-var getRandomValues = (typeof(crypto) != 'undefined' && crypto.getRandomValues && crypto.getRandomValues.bind(crypto)) ||
-                      (typeof(msCrypto) != 'undefined' && typeof window.msCrypto.getRandomValues == 'function' && msCrypto.getRandomValues.bind(msCrypto));
-
-if (getRandomValues) {
-  // WHATWG crypto RNG - http://wiki.whatwg.org/wiki/Crypto
-  var rnds8 = new Uint8Array(16); // eslint-disable-line no-undef
-
-  module.exports = function whatwgRNG() {
-    getRandomValues(rnds8);
-    return rnds8;
-  };
-} else {
-  // Math.random()-based (RNG)
-  //
-  // If all else fails, use Math.random().  It's fast, but is of unspecified
-  // quality.
-  var rnds = new Array(16);
-
-  module.exports = function mathRNG() {
-    for (var i = 0, r; i < 16; i++) {
-      if ((i & 0x03) === 0) r = Math.random() * 0x100000000;
-      rnds[i] = r >>> ((i & 0x03) << 3) & 0xff;
-    }
-
-    return rnds;
-  };
-}
-
-},{}],264:[function(require,module,exports){
-var rng = require('./lib/rng');
-var bytesToUuid = require('./lib/bytesToUuid');
-
-function v4(options, buf, offset) {
-  var i = buf && offset || 0;
-
-  if (typeof(options) == 'string') {
-    buf = options === 'binary' ? new Array(16) : null;
-    options = null;
-  }
-  options = options || {};
-
-  var rnds = options.random || (options.rng || rng)();
-
-  // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
-  rnds[6] = (rnds[6] & 0x0f) | 0x40;
-  rnds[8] = (rnds[8] & 0x3f) | 0x80;
-
-  // Copy bytes to buffer, if provided
-  if (buf) {
-    for (var ii = 0; ii < 16; ++ii) {
-      buf[i + ii] = rnds[ii];
-    }
-  }
-
-  return buf || bytesToUuid(rnds);
-}
-
-module.exports = v4;
-
-},{"./lib/bytesToUuid":262,"./lib/rng":263}],265:[function(require,module,exports){
-/*
-WildEmitter.js is a slim little event emitter by @henrikjoreteg largely based
-on @visionmedia's Emitter from UI Kit.
-
-Why? I wanted it standalone.
-
-I also wanted support for wildcard emitters like this:
-
-emitter.on('*', function (eventName, other, event, payloads) {
-
-});
-
-emitter.on('somenamespace*', function (eventName, payloads) {
-
-});
-
-Please note that callbacks triggered by wildcard registered events also get
-the event name as the first argument.
-*/
-
-module.exports = WildEmitter;
-
-function WildEmitter() { }
-
-WildEmitter.mixin = function (constructor) {
-    var prototype = constructor.prototype || constructor;
-
-    prototype.isWildEmitter= true;
-
-    // Listen on the given `event` with `fn`. Store a group name if present.
-    prototype.on = function (event, groupName, fn) {
-        this.callbacks = this.callbacks || {};
-        var hasGroup = (arguments.length === 3),
-            group = hasGroup ? arguments[1] : undefined,
-            func = hasGroup ? arguments[2] : arguments[1];
-        func._groupName = group;
-        (this.callbacks[event] = this.callbacks[event] || []).push(func);
-        return this;
-    };
-
-    // Adds an `event` listener that will be invoked a single
-    // time then automatically removed.
-    prototype.once = function (event, groupName, fn) {
-        var self = this,
-            hasGroup = (arguments.length === 3),
-            group = hasGroup ? arguments[1] : undefined,
-            func = hasGroup ? arguments[2] : arguments[1];
-        function on() {
-            self.off(event, on);
-            func.apply(this, arguments);
-        }
-        this.on(event, group, on);
-        return this;
-    };
-
-    // Unbinds an entire group
-    prototype.releaseGroup = function (groupName) {
-        this.callbacks = this.callbacks || {};
-        var item, i, len, handlers;
-        for (item in this.callbacks) {
-            handlers = this.callbacks[item];
-            for (i = 0, len = handlers.length; i < len; i++) {
-                if (handlers[i]._groupName === groupName) {
-                    //console.log('removing');
-                    // remove it and shorten the array we're looping through
-                    handlers.splice(i, 1);
-                    i--;
-                    len--;
-                }
-            }
-        }
-        return this;
-    };
-
-    // Remove the given callback for `event` or all
-    // registered callbacks.
-    prototype.off = function (event, fn) {
-        this.callbacks = this.callbacks || {};
-        var callbacks = this.callbacks[event],
-            i;
-
-        if (!callbacks) return this;
-
-        // remove all handlers
-        if (arguments.length === 1) {
-            delete this.callbacks[event];
-            return this;
-        }
-
-        // remove specific handler
-        i = callbacks.indexOf(fn);
-        if (i !== -1) {
-            callbacks.splice(i, 1);
-            if (callbacks.length === 0) {
-                delete this.callbacks[event];
-            }
-        }
-        return this;
-    };
-
-    /// Emit `event` with the given args.
-    // also calls any `*` handlers
-    prototype.emit = function (event) {
-        this.callbacks = this.callbacks || {};
-        var args = [].slice.call(arguments, 1),
-            callbacks = this.callbacks[event],
-            specialCallbacks = this.getWildcardCallbacks(event),
-            i,
-            len,
-            item,
-            listeners;
-
-        if (callbacks) {
-            listeners = callbacks.slice();
-            for (i = 0, len = listeners.length; i < len; ++i) {
-                if (!listeners[i]) {
-                    break;
-                }
-                listeners[i].apply(this, args);
-            }
-        }
-
-        if (specialCallbacks) {
-            len = specialCallbacks.length;
-            listeners = specialCallbacks.slice();
-            for (i = 0, len = listeners.length; i < len; ++i) {
-                if (!listeners[i]) {
-                    break;
-                }
-                listeners[i].apply(this, [event].concat(args));
-            }
-        }
-
-        return this;
-    };
-
-    // Helper for for finding special wildcard event handlers that match the event
-    prototype.getWildcardCallbacks = function (eventName) {
-        this.callbacks = this.callbacks || {};
-        var item,
-            split,
-            result = [];
-
-        for (item in this.callbacks) {
-            split = item.split('*');
-            if (item === '*' || (split.length === 2 && eventName.slice(0, split[0].length) === split[0])) {
-                result = result.concat(this.callbacks[item]);
-            }
-        }
-        return result;
-    };
-
-};
-
-WildEmitter.mixin(WildEmitter);
-
-},{}],266:[function(require,module,exports){
+},{}],243:[function(require,module,exports){
 module.exports={"version":"13.0.0-snapshot.1","date":"۱۴۰۲/۲/۵","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
-},{}],267:[function(require,module,exports){
-"use strict";var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");var _typeof3=require("@babel/runtime/helpers/typeof");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _regenerator=_interopRequireDefault(require("@babel/runtime/regenerator"));var _objectDestructuringEmpty2=_interopRequireDefault(require("@babel/runtime/helpers/objectDestructuringEmpty"));var _asyncToGenerator2=_interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _constants=require("./lib/constants");var _kurentoUtils=_interopRequireDefault(require("kurento-utils"));var _utility=_interopRequireDefault(require("./utility/utility"));var _eventsModule=require("./events.module.js");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));var _errorHandler=_interopRequireWildcard(require("./lib/errorHandler"));var _webrtcPeer=require("./lib/call/webrtcPeer");function _getRequireWildcardCache(nodeInterop){if(typeof WeakMap!=="function")return null;var cacheBabelInterop=new WeakMap();var cacheNodeInterop=new WeakMap();return(_getRequireWildcardCache=function _getRequireWildcardCache(nodeInterop){return nodeInterop?cacheNodeInterop:cacheBabelInterop;})(nodeInterop);}function _interopRequireWildcard(obj,nodeInterop){if(!nodeInterop&&obj&&obj.__esModule){return obj;}if(obj===null||_typeof3(obj)!=="object"&&typeof obj!=="function"){return{"default":obj};}var cache=_getRequireWildcardCache(nodeInterop);if(cache&&cache.has(obj)){return cache.get(obj);}var newObj={};var hasPropertyDescriptor=Object.defineProperty&&Object.getOwnPropertyDescriptor;for(var key in obj){if(key!=="default"&&Object.prototype.hasOwnProperty.call(obj,key)){var desc=hasPropertyDescriptor?Object.getOwnPropertyDescriptor(obj,key):null;if(desc&&(desc.get||desc.set)){Object.defineProperty(newObj,key,desc);}else{newObj[key]=obj[key];}}}newObj["default"]=obj;if(cache){cache.set(obj,newObj);}return newObj;}function _createForOfIteratorHelper(o,allowArrayLike){var it=typeof Symbol!=="undefined"&&o[Symbol.iterator]||o["@@iterator"];if(!it){if(Array.isArray(o)||(it=_unsupportedIterableToArray(o))||allowArrayLike&&o&&typeof o.length==="number"){if(it)o=it;var i=0;var F=function F(){};return{s:F,n:function n(){if(i>=o.length)return{done:true};return{done:false,value:o[i++]};},e:function e(_e){throw _e;},f:F};}throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}var normalCompletion=true,didErr=false,err;return{s:function s(){it=it.call(o);},n:function n(){var step=it.next();normalCompletion=step.done;return step;},e:function e(_e2){didErr=true;err=_e2;},f:function f(){try{if(!normalCompletion&&it["return"]!=null)it["return"]();}finally{if(didErr)throw err;}}};}function _unsupportedIterableToArray(o,minLen){if(!o)return;if(typeof o==="string")return _arrayLikeToArray(o,minLen);var n=Object.prototype.toString.call(o).slice(8,-1);if(n==="Object"&&o.constructor)n=o.constructor.name;if(n==="Map"||n==="Set")return Array.from(o);if(n==="Arguments"||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n))return _arrayLikeToArray(o,minLen);}function _arrayLikeToArray(arr,len){if(len==null||len>arr.length)len=arr.length;for(var i=0,arr2=new Array(len);i<len;i++){arr2[i]=arr[i];}return arr2;}function ChatCall(params){var _params$asyncLogging,_params$asyncLogging2,_params$asyncLogging3,_params$callOptions,_params$callOptions2;var//Utility = params.Utility,
+},{}],244:[function(require,module,exports){
+"use strict";var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");var _typeof3=require("@babel/runtime/helpers/typeof");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _regenerator=_interopRequireDefault(require("@babel/runtime/regenerator"));var _objectDestructuringEmpty2=_interopRequireDefault(require("@babel/runtime/helpers/objectDestructuringEmpty"));var _asyncToGenerator2=_interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _constants=require("./lib/constants");var _utility=_interopRequireDefault(require("./utility/utility"));var _eventsModule=require("./events.module.js");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));var _errorHandler=_interopRequireWildcard(require("./lib/errorHandler"));var _webrtcPeer=require("./lib/call/webrtcPeer");function _getRequireWildcardCache(nodeInterop){if(typeof WeakMap!=="function")return null;var cacheBabelInterop=new WeakMap();var cacheNodeInterop=new WeakMap();return(_getRequireWildcardCache=function _getRequireWildcardCache(nodeInterop){return nodeInterop?cacheNodeInterop:cacheBabelInterop;})(nodeInterop);}function _interopRequireWildcard(obj,nodeInterop){if(!nodeInterop&&obj&&obj.__esModule){return obj;}if(obj===null||_typeof3(obj)!=="object"&&typeof obj!=="function"){return{"default":obj};}var cache=_getRequireWildcardCache(nodeInterop);if(cache&&cache.has(obj)){return cache.get(obj);}var newObj={};var hasPropertyDescriptor=Object.defineProperty&&Object.getOwnPropertyDescriptor;for(var key in obj){if(key!=="default"&&Object.prototype.hasOwnProperty.call(obj,key)){var desc=hasPropertyDescriptor?Object.getOwnPropertyDescriptor(obj,key):null;if(desc&&(desc.get||desc.set)){Object.defineProperty(newObj,key,desc);}else{newObj[key]=obj[key];}}}newObj["default"]=obj;if(cache){cache.set(obj,newObj);}return newObj;}function _createForOfIteratorHelper(o,allowArrayLike){var it=typeof Symbol!=="undefined"&&o[Symbol.iterator]||o["@@iterator"];if(!it){if(Array.isArray(o)||(it=_unsupportedIterableToArray(o))||allowArrayLike&&o&&typeof o.length==="number"){if(it)o=it;var i=0;var F=function F(){};return{s:F,n:function n(){if(i>=o.length)return{done:true};return{done:false,value:o[i++]};},e:function e(_e){throw _e;},f:F};}throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}var normalCompletion=true,didErr=false,err;return{s:function s(){it=it.call(o);},n:function n(){var step=it.next();normalCompletion=step.done;return step;},e:function e(_e2){didErr=true;err=_e2;},f:function f(){try{if(!normalCompletion&&it["return"]!=null)it["return"]();}finally{if(didErr)throw err;}}};}function _unsupportedIterableToArray(o,minLen){if(!o)return;if(typeof o==="string")return _arrayLikeToArray(o,minLen);var n=Object.prototype.toString.call(o).slice(8,-1);if(n==="Object"&&o.constructor)n=o.constructor.name;if(n==="Map"||n==="Set")return Array.from(o);if(n==="Arguments"||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n))return _arrayLikeToArray(o,minLen);}function _arrayLikeToArray(arr,len){if(len==null||len>arr.length)len=arr.length;for(var i=0,arr2=new Array(len);i<len;i++){arr2[i]=arr[i];}return arr2;}function ChatCall(params){var _params$asyncLogging,_params$asyncLogging2,_params$asyncLogging3,_params$callOptions,_params$callOptions2;var//Utility = params.Utility,
 currentModuleInstance=this,asyncClient=params.asyncClient,//chatEvents = params.chatEvents,
 chatMessaging=params.chatMessaging,token=params.token,asyncRequestTimeouts={},callTypes={'VOICE':0x0,'VIDEO':0x1},generalTypeCode=params.typeCode,callOptions=params.callOptions,useInternalTurnAddress=!!(params.callOptions&&params.callOptions.useInternalTurnAddress),callTurnIp=params.callOptions&&params.callOptions.hasOwnProperty('callTurnIp')&&typeof params.callOptions.callTurnIp==='string'?params.callOptions.callTurnIp:'46.32.6.188',callDivId=params.callOptions&&params.callOptions.hasOwnProperty('callDivId')&&typeof params.callOptions.callDivId==='string'?params.callOptions.callDivId:'call-div',callAudioTagClassName=params.callOptions&&params.callOptions.hasOwnProperty('callAudioTagClassName')&&typeof params.callOptions.callAudioTagClassName==='string'?params.callOptions.callAudioTagClassName:'',callVideoTagClassName=params.callOptions&&params.callOptions.hasOwnProperty('callVideoTagClassName')&&typeof params.callOptions.callVideoTagClassName==='string'?params.callOptions.callVideoTagClassName:'',callVideoMinWidth=params.callOptions&&params.callOptions.hasOwnProperty('callVideo')&&(0,_typeof2["default"])(params.callOptions.callVideo)==='object'&&params.callOptions.callVideo.hasOwnProperty('minWidth')?params.callOptions.callVideo.minWidth:320,callVideoMinHeight=params.callOptions&&params.callOptions.hasOwnProperty('callVideo')&&(0,_typeof2["default"])(params.callOptions.callVideo)==='object'&&params.callOptions.callVideo.hasOwnProperty('minHeight')?params.callOptions.callVideo.minHeight:180,currentCallParams={},requestedCallId=null,acceptedCallId=null,currentCallId=null,latestCallRequestId=null,//shouldReconnectCallTimeout = null,
 callMetaDataTypes={POORCONNECTION:1,POORCONNECTIONRESOLVED:2,CUSTOMUSERMETADATA:3,SCREENSHAREMETADATA:4},screenShareState={started:false,imOwner:false},screenShareInfo=new screenShareStateManager(),callClientType={WEB:1,ANDROID:2,DESKTOP:3},callUsers={},callRequestController={imCallOwner:false,callRequestReceived:false,callEstablishedInMySide:false,callRequestTimeout:null,iRequestedCall:false,iAcceptedCall:false,canProcessStartCall:function canProcessStartCall(callId){consoleLogging&&console.log("[SDK] canProcessStartCall:",{callId:callId},{acceptedCallId:acceptedCallId},callRequestController.iAcceptedCall,callRequestController.iAcceptedCall&&acceptedCallId==callId);if(callRequestController.iAcceptedCall&&acceptedCallId==callId||callRequestController.iRequestedCall&&requestedCallId==callId)return true;return false;//callRequestController.callRequestReceived && callRequestController.callEstablishedInMySide;
-},cameraPaused:true},callStopQueue={callStarted:false},callServerController=new callServerManager(),//callTopicHealthChecker = new peersHealthChecker(),
-messageTtl=params.messageTtl||10000,config={getHistoryCount:50},globalCallRequestTimeout=typeof params.callRequestTimeout==='number'&&params.callRequestTimeout>=0?params.callRequestTimeout:10000,consoleLogging=(_params$asyncLogging=params.asyncLogging)!==null&&_params$asyncLogging!==void 0&&_params$asyncLogging.consoleLogging&&typeof((_params$asyncLogging2=params.asyncLogging)===null||_params$asyncLogging2===void 0?void 0:_params$asyncLogging2.consoleLogging)==='boolean'?(_params$asyncLogging3=params.asyncLogging)===null||_params$asyncLogging3===void 0?void 0:_params$asyncLogging3.consoleLogging:false,callNoAnswerTimeout=((_params$callOptions=params.callOptions)===null||_params$callOptions===void 0?void 0:_params$callOptions.callNoAnswerTimeout)||0,callStreamCloseTimeout=((_params$callOptions2=params.callOptions)===null||_params$callOptions2===void 0?void 0:_params$callOptions2.streamCloseTimeout)||10000;function screenShareStateManager(){var config={ownerId:0,imOwner:false,isStarted:false,width:callVideoMinWidth,height:callVideoMinHeight};return{setOwner:function setOwner(ownerId){config.ownerId=+ownerId;},setIsStarted:function setIsStarted(isStarted){config.isStarted=isStarted;},isStarted:function isStarted(){return config.isStarted;},iAmOwner:function iAmOwner(){return config.ownerId===chatMessaging.userInfo.id;},setWidth:function setWidth(width){config.width=width;},setHeight:function setHeight(height){config.height=height;},getWidth:function getWidth(width){return config.width;},getHeight:function getHeight(height){return config.height;},getOwner:function getOwner(){return config.ownerId;},setDimension:function setDimension(dimension){if(dimension&&dimension.width&&+dimension.width>0&&dimension.height&&+dimension.height>0){screenShareInfo.setHeight(dimension.height);screenShareInfo.setWidth(dimension.width);}else{screenShareInfo.setHeight(callVideoMinHeight);screenShareInfo.setWidth(callVideoMinWidth);}}};}function callServerManager(){var config={servers:[],currentServerIndex:0};return{setServers:function setServers(serversList){config.servers=serversList;config.currentServerIndex=0;},// setCurrentServer: function (query) {
+},cameraPaused:true},callStopQueue={callStarted:false},callServerController=new callServerManager(),messageTtl=params.messageTtl||10000,config={getHistoryCount:50},globalCallRequestTimeout=typeof params.callRequestTimeout==='number'&&params.callRequestTimeout>=0?params.callRequestTimeout:10000,consoleLogging=(_params$asyncLogging=params.asyncLogging)!==null&&_params$asyncLogging!==void 0&&_params$asyncLogging.consoleLogging&&typeof((_params$asyncLogging2=params.asyncLogging)===null||_params$asyncLogging2===void 0?void 0:_params$asyncLogging2.consoleLogging)==='boolean'?(_params$asyncLogging3=params.asyncLogging)===null||_params$asyncLogging3===void 0?void 0:_params$asyncLogging3.consoleLogging:false,callNoAnswerTimeout=((_params$callOptions=params.callOptions)===null||_params$callOptions===void 0?void 0:_params$callOptions.callNoAnswerTimeout)||0,callStreamCloseTimeout=((_params$callOptions2=params.callOptions)===null||_params$callOptions2===void 0?void 0:_params$callOptions2.streamCloseTimeout)||10000;function screenShareStateManager(){var config={ownerId:0,imOwner:false,isStarted:false,width:callVideoMinWidth,height:callVideoMinHeight};return{setOwner:function setOwner(ownerId){config.ownerId=+ownerId;},setIsStarted:function setIsStarted(isStarted){config.isStarted=isStarted;},isStarted:function isStarted(){return config.isStarted;},iAmOwner:function iAmOwner(){return config.ownerId===chatMessaging.userInfo.id;},setWidth:function setWidth(width){config.width=width;},setHeight:function setHeight(height){config.height=height;},getWidth:function getWidth(width){return config.width;},getHeight:function getHeight(height){return config.height;},getOwner:function getOwner(){return config.ownerId;},setDimension:function setDimension(dimension){if(dimension&&dimension.width&&+dimension.width>0&&dimension.height&&+dimension.height>0){screenShareInfo.setHeight(dimension.height);screenShareInfo.setWidth(dimension.width);}else{screenShareInfo.setHeight(callVideoMinHeight);screenShareInfo.setWidth(callVideoMinWidth);}}};}function callServerManager(){var config={servers:[],currentServerIndex:0};return{setServers:function setServers(serversList){config.servers=serversList;config.currentServerIndex=0;},// setCurrentServer: function (query) {
 //     for(let i in config.servers) {
 //         if(config.servers[i].indexOf(query) !== -1) {
 //             config.currentServerIndex = i;
@@ -41783,9 +36961,9 @@ line++;// Skip i and c lines
       }*/ // If we're on a b line, replace it
 if(lines[line].indexOf("b")===0){consoleLogging&&console.debug("[SDK][setMediaBitrate] Replaced b line at line",line);lines[line]="b=AS:"+bitrate;return lines.join("\n");}// Add a new b line
 consoleLogging&&console.debug("[SDK][setMediaBitrate] Adding new b line before line",line);var newLines=lines.slice(0,line);newLines.push("b=AS:"+bitrate+"\r");newLines=newLines.concat(lines.slice(line,lines.length));consoleLogging&&console.debug("[SDK][setMediaBitrate] output: ",newLines.join("\n"));return newLines.join("\n");}},inquiryCallState=function inquiryCallState(){var data={chatMessageVOType:_constants.chatMessageVOTypes.INQUIRY_CALL,typeCode:generalTypeCode,//params.typeCode,
-pushMsgType:3,token:token,subjectId:currentCallId},content={};return chatMessaging.sendMessage(data,{onResult:function onResult(result){consoleLogging&&console.log('[SDK] inquiryCallState',{result:result});if(!result.hasError){result.result.callParticipantVOs.forEach(function(callUser){var localUser=callUsers[callUser.userId];if(!localUser){var correctedData={video:callUsers.video,mute:callUsers.mute,userId:callUsers.userId,topicSend:callUsers.sendTopic};callStateController.removeParticipant(correctedData.userId);setTimeout(function(){callStateController.setupCallParticipant(correctedData);if(correctedData.video){callStateController.startParticipantVideo(correctedData.userId);}if(!correctedData.mute){callStateController.startParticipantAudio(correctedData.userId);}},500);return;}if(callUser.video&&!localUser.video){//Start video peer
-callStateController.activateParticipantStream(callUser.userId,'video',callUser.userId===chatMessaging.userInfo.id?'send':'receive','videoTopicName',callUser.sendTopic,'video');}else if(!callUser.video&&localUser.video){//Stop video peer
-callStateController.deactivateParticipantStream(callUser.userId,'video','video');}if(callUser.mute&&!localUser.mute){callUsers[callUser.userId].audioStopManager.disableStream();}else if(!callUser.mute&&localUser.mute){//Start audio peer
+pushMsgType:3,token:token,subjectId:currentCallId},content={};return chatMessaging.sendMessage(data,{onResult:function onResult(result){consoleLogging&&console.log('[SDK] inquiryCallState',{result:result});if(!result.hasError){result.result.callParticipantVOs.forEach(function(callUser){var localUser=callUsers[callUser.userId];if(!localUser){var correctedData={video:callUser.video,mute:callUser.mute,userId:callUser.userId,topicSend:callUser.sendTopic};callStateController.removeParticipant(correctedData.userId);setTimeout(function(){callStateController.setupCallParticipant(correctedData);if(correctedData.video){callStateController.startParticipantVideo(correctedData.userId);}if(!correctedData.mute){callStateController.startParticipantAudio(correctedData.userId);}},500);return;}if(callUser.video&&!localUser.video){callUsers[callUser.userId].video=true;//Start video peer
+callStateController.activateParticipantStream(callUser.userId,'video',callUser.userId===chatMessaging.userInfo.id?'send':'receive','videoTopicName',callUser.sendTopic,'video');}else if(!callUser.video&&localUser.video){callUsers[callUser.userId].video=false;//Stop video peer
+callStateController.deactivateParticipantStream(callUser.userId,'video','video');}if(callUser.mute&&!localUser.mute){callUsers[callUser.userId].mute=true;callUsers[callUser.userId].audioStopManager.disableStream();}else if(!callUser.mute&&localUser.mute){callUsers[callUser.userId].mute=false;//Start audio peer
 var cUserId=callUser.userId;if(callUsers[cUserId].audioStopManager.isStreamPaused()){if(callUsers[cUserId].audioStopManager.isStreamStopped()){callStateController.activateParticipantStream(cUserId,'audio',chatMessaging.userInfo.id===cUserId?'send':'receive','audioTopicName',callUsers[cUserId].topicSend,'mute');}else if(chatMessaging.userInfo.id===cUserId){currentModuleInstance.resumeMice({});}callUsers[cUserId].audioStopManager.reset();}}setTimeout(function(){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_DIVS',result:generateCallUIList()});});});}else{// CALL_NOT_FOUND = 160
 // NOT_CALL_PAERTICIPANT = 162
 // CALL_PARTICIPANT_IS_NOT_ACTIVE_IN_CALL = 171
@@ -41942,15 +37120,15 @@ if(messageContent[0].userId==chatMessaging.userInfo.id){callStop();}else{callSta
        * Type 96    Terminate Call
        */case _constants.chatMessageVOTypes.TERMINATE_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}_eventsModule.chatEvents.fireEvent('callEvents',{type:'TERMINATE_CALL',result:messageContent});callStop();break;/**
        * Type 97    Mute Call Participant
-       */case _constants.chatMessageVOTypes.MUTE_CALL_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(Array.isArray(messageContent)){for(var _i in messageContent){// pause = messageContent[i].userId == chatMessaging.userInfo.id;
-callUsers[messageContent[_i].userId].audioStopManager.disableStream();// callStateController.deactivateParticipantStream(
+       */case _constants.chatMessageVOTypes.MUTE_CALL_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(Array.isArray(messageContent)){for(var _i in messageContent){var cUserId=messageContent[_i].userId;// pause = messageContent[i].userId == chatMessaging.userInfo.id;
+callUsers[cUserId].mute=true;callUsers[messageContent[_i].userId].audioStopManager.disableStream();// callStateController.deactivateParticipantStream(
 //     messageContent[i].userId,
 //     'audio',
 //     'mute'
 // )
 }}_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_DIVS',result:generateCallUIList()});_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_PARTICIPANT_MUTE',result:messageContent});break;/**
        * Type 98    UnMute Call Participant
-       */case _constants.chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}var myId=chatMessaging.userInfo.id;if(Array.isArray(messageContent)){for(var _i2 in messageContent){var cUserId=messageContent[_i2].userId;if(callUsers[cUserId].audioStopManager.isStreamPaused()){if(callUsers[cUserId].audioStopManager.isStreamStopped()){callStateController.activateParticipantStream(cUserId,'audio',myId===cUserId?'send':'receive','audioTopicName',callUsers[cUserId].topicSend,'mute');}else if(myId===cUserId){currentModuleInstance.resumeMice({});}callUsers[cUserId].audioStopManager.reset();}/*                            callStateController.activateParticipantStream(
+       */case _constants.chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}var myId=chatMessaging.userInfo.id;if(Array.isArray(messageContent)){for(var _i2 in messageContent){var _cUserId=messageContent[_i2].userId;callUsers[_cUserId].mute=false;if(callUsers[_cUserId].audioStopManager.isStreamPaused()){if(callUsers[_cUserId].audioStopManager.isStreamStopped()){callStateController.activateParticipantStream(_cUserId,'audio',myId===_cUserId?'send':'receive','audioTopicName',callUsers[_cUserId].topicSend,'mute');}else if(myId===_cUserId){currentModuleInstance.resumeMice({});}callUsers[_cUserId].audioStopManager.reset();}/*                            callStateController.activateParticipantStream(
                                         messageContent[i].userId,
                                         'audio',
                                         //TODO: Should send in here when chat server fixes the bug
@@ -41970,9 +37148,9 @@ if(!callRequestController.iRequestedCall)return;_eventsModule.chatEvents.fireEve
 requestedCallId=messageContent.callId;// }
 break;/**
        * Type 113    Turn On Video Call
-       */case _constants.chatMessageVOTypes.TURN_ON_VIDEO_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(Array.isArray(messageContent)){for(var _i3 in messageContent){callStateController.activateParticipantStream(messageContent[_i3].userId,'video',messageContent[_i3].userId===chatMessaging.userInfo.id?'send':'receive','videoTopicName',messageContent[_i3].sendTopic,'video');}}setTimeout(function(){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_DIVS',result:generateCallUIList()});});_eventsModule.chatEvents.fireEvent('callEvents',{type:'TURN_ON_VIDEO_CALL',result:messageContent});break;/**
+       */case _constants.chatMessageVOTypes.TURN_ON_VIDEO_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(Array.isArray(messageContent)){for(var _i3 in messageContent){var _cUserId2=messageContent[_i3].userId;callUsers[_cUserId2].video=true;callStateController.activateParticipantStream(messageContent[_i3].userId,'video',messageContent[_i3].userId===chatMessaging.userInfo.id?'send':'receive','videoTopicName',messageContent[_i3].sendTopic,'video');}}setTimeout(function(){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_DIVS',result:generateCallUIList()});});_eventsModule.chatEvents.fireEvent('callEvents',{type:'TURN_ON_VIDEO_CALL',result:messageContent});break;/**
        * Type 114    Turn Off Video Call
-       */case _constants.chatMessageVOTypes.TURN_OFF_VIDEO_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(Array.isArray(messageContent)){for(var _i4 in messageContent){callStateController.deactivateParticipantStream(messageContent[_i4].userId,'video','video');}}setTimeout(function(){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_DIVS',result:generateCallUIList()});});_eventsModule.chatEvents.fireEvent('callEvents',{type:'TURN_OFF_VIDEO_CALL',result:messageContent});break;/**
+       */case _constants.chatMessageVOTypes.TURN_OFF_VIDEO_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(Array.isArray(messageContent)){for(var _i4 in messageContent){var _cUserId3=messageContent[_i4].userId;callUsers[_cUserId3].video=false;callStateController.deactivateParticipantStream(messageContent[_i4].userId,'video','video');}}setTimeout(function(){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_DIVS',result:generateCallUIList()});});_eventsModule.chatEvents.fireEvent('callEvents',{type:'TURN_OFF_VIDEO_CALL',result:messageContent});break;/**
        * Type 121    Record Call Request
        */case _constants.chatMessageVOTypes.RECORD_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}_eventsModule.chatEvents.fireEvent('callEvents',{type:'START_RECORDING_CALL',result:messageContent});restartMediaOnKeyFrame(chatMessaging.userInfo.id,[4000,8000,12000,25000]);restartMediaOnKeyFrame("screenShare",[4000,8000,12000,25000]);break;/**
        * Type 122   End Record Call Request
@@ -42227,7 +37405,7 @@ pushMsgType:3,token:token,uniqueId:_utility["default"].generateUUID()};if(params
 pushMsgType:3,token:token,uniqueId:_utility["default"].generateUUID()};if(params){if(typeof+params.callId==='number'&&params.callId>0){turnOffVideoData.subjectId=+params.callId;}else{(0,_errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID,callback,true,{});/* chatEvents.fireEvent('error', {
             code: 999,
             message: 'Invalid call id!'
-        }); */return;}}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to turn off the video call!'});return;}var user=callUsers[chatMessaging.userInfo.id];if(user&&user.videoTopicManager&&user.videoTopicManager.getPeer()&&(user.videoTopicManager.isPeerConnecting()||user.videoTopicManager.isPeerFailed()||user.videoTopicManager.isPeerDisconnected())){_eventsModule.chatEvents.fireEvent('error',{code:999,message:'Can not stop stream in current state'});return;}return chatMessaging.sendMessage(turnOffVideoData,{onResult:function onResult(result){callback&&callback(result);}});};this.disableParticipantsVideoReceive=function(params,callback){if(params){if(Array.isArray(params.userIds)&&params.userIds.length){for(var i in params.userIds){callStateController.deactivateParticipantStream(params.userIds[i],'video','video');}callback&&callback({hasError:false});}}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to closeOthersVideoReceive'});return;}};this.enableParticipantsVideoReceive=function(params,callback){if(params){if(Array.isArray(params.userIds)&&params.userIds.length){for(var i in params.userIds){callStateController.activateParticipantStream(params.userIds[i],'video','receive','videoTopicName',callUsers[params.userIds[i]].topicSend,'video');}callback&&callback({hasError:false});}}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to closeOthersVideoReceive'});}};/**
+        }); */return;}}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to turn off the video call!'});return;}var user=callUsers[chatMessaging.userInfo.id];if(user&&user.videoTopicManager&&user.videoTopicManager.getPeer()&&(user.videoTopicManager.isPeerConnecting()||user.videoTopicManager.isPeerFailed()||user.videoTopicManager.isPeerDisconnected())){_eventsModule.chatEvents.fireEvent('error',{code:999,message:'Can not stop stream in current state'});return;}return chatMessaging.sendMessage(turnOffVideoData,{onResult:function onResult(result){callback&&callback(result);}});};this.disableParticipantsVideoReceive=function(params,callback){if(params){if(Array.isArray(params.userIds)&&params.userIds.length){for(var i in params.userIds){callStateController.deactivateParticipantStream(params.userIds[i],'video','video');}callback&&callback({hasError:false});}}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to closeOthersVideoReceive'});return;}};this.enableParticipantsVideoReceive=function(params,callback){if(params){if(Array.isArray(params.userIds)&&params.userIds.length){for(var i in params.userIds){var user=callUsers[params.userIds[i]];if(!user||!user.video)continue;callStateController.activateParticipantStream(user.userId,'video','receive','videoTopicName',callUsers[user.userId].topicSend,'video');}callback&&callback({hasError:false});}}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to closeOthersVideoReceive'});}};/**
    * Pauses camera-send without closing its topic
    * @param params
    * @param callback
@@ -42255,7 +37433,7 @@ invitees.forEach(function(item){item.idType=_constants.inviteeVOidTypes[item.idT
          }
      }*/return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};this.deviceManager=_deviceManager["default"];this.resetCallStream=function(_ref10,callback){var userId=_ref10.userId,_ref10$streamType=_ref10.streamType,streamType=_ref10$streamType===void 0?'audio':_ref10$streamType;return new Promise(function(resolve,reject){if(userId==='screenShare'||streamType==='video'){if(callUsers[userId]){callUsers[userId].videoTopicManager.recreateTopic().then(function(){resolve();callback&&callback({hasError:false});})["catch"](function(){reject();callback&&callback({hasError:true});});}}else{callUsers[userId].audioTopicManager.recreateTopic().then(function(){resolve();callback&&callback({hasError:false});})["catch"](function(){reject();callback&&callback({hasError:true});});}});};this.callStop=callStop;this.restartMedia=restartMedia;}var _default=ChatCall;exports["default"]=_default;
 
-},{"./events.module.js":269,"./lib/call/deviceManager.js":270,"./lib/call/webrtcPeer":271,"./lib/constants":272,"./lib/errorHandler":273,"./utility/utility":278,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/objectDestructuringEmpty":8,"@babel/runtime/helpers/toConsumableArray":10,"@babel/runtime/helpers/typeof":11,"@babel/runtime/regenerator":13,"kurento-utils":190}],268:[function(require,module,exports){
+},{"./events.module.js":246,"./lib/call/deviceManager.js":247,"./lib/call/webrtcPeer":248,"./lib/constants":249,"./lib/errorHandler":250,"./utility/utility":255,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/objectDestructuringEmpty":8,"@babel/runtime/helpers/toConsumableArray":10,"@babel/runtime/helpers/typeof":11,"@babel/runtime/regenerator":13}],245:[function(require,module,exports){
 'use strict';var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _podasyncWsOnly=_interopRequireDefault(require("podasync-ws-only"));var _utility=_interopRequireDefault(require("./utility/utility"));var _call=_interopRequireDefault(require("./call.module"));var _events=require("./events.module");var _messaging=_interopRequireDefault(require("./messaging.module"));var _buildConfig=_interopRequireDefault(require("./buildConfig.json"));var _constants=require("./lib/constants");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));var _errorHandler=require("./lib/errorHandler");var _store=require("./lib/store");function Chat(params){/*******************************************************
    *          P R I V A T E   V A R I A B L E S          *
    *******************************************************/var asyncClient,peerId,oldPeerId,token=params.token,generalTypeCode=params.typeCode||'default',typeCodeOwnerId=params.typeCodeOwnerId||null,mapApiKey=params.mapApiKey||'8b77db18704aa646ee5aaea13e7370f4f88b9e8c',deviceId,productEnv=typeof navigator!='undefined'?navigator.product:'undefined',// queueDb,
@@ -44476,7 +39654,7 @@ token:token,subjectId:threadId};return chatMessaging.sendMessage(sendData,{onRes
 window.PodChat=Chat;}var _default=Chat;// })();
 exports["default"]=_default;
 
-},{"./buildConfig.json":266,"./call.module":267,"./events.module":269,"./lib/call/deviceManager.js":270,"./lib/constants":272,"./lib/errorHandler":273,"./lib/store":275,"./messaging.module":277,"./utility/utility":278,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/toConsumableArray":10,"@babel/runtime/helpers/typeof":11,"podasync-ws-only":209}],269:[function(require,module,exports){
+},{"./buildConfig.json":243,"./call.module":244,"./events.module":246,"./lib/call/deviceManager.js":247,"./lib/constants":249,"./lib/errorHandler":250,"./lib/store":252,"./messaging.module":254,"./utility/utility":255,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/toConsumableArray":10,"@babel/runtime/helpers/typeof":11,"podasync-ws-only":200}],246:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -44601,7 +39779,7 @@ function initEventHandler(params) {
 var _default = ChatEvents;
 exports["default"] = _default;
 
-},{"./utility/utility":278,"@babel/runtime/helpers/interopRequireDefault":5}],270:[function(require,module,exports){
+},{"./utility/utility":255,"@babel/runtime/helpers/interopRequireDefault":5}],247:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -44966,7 +40144,7 @@ var deviceManager = {
 var _default = deviceManager;
 exports["default"] = _default;
 
-},{"../../events.module.js":269,"../constants.js":272,"../errorHandler.js":273,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":11,"@babel/runtime/regenerator":13}],271:[function(require,module,exports){
+},{"../../events.module.js":246,"../constants.js":249,"../errorHandler.js":250,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":11,"@babel/runtime/regenerator":13}],248:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -45202,7 +40380,7 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
   };
 }
 
-},{}],272:[function(require,module,exports){
+},{}],249:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -45413,7 +40591,7 @@ var callStickerTypes = {
 };
 exports.callStickerTypes = callStickerTypes;
 
-},{}],273:[function(require,module,exports){
+},{}],250:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -45591,7 +40769,7 @@ exports.raiseError = raiseError;
 var _default = handleError;
 exports["default"] = _default;
 
-},{"../events.module":269,"@babel/runtime/helpers/defineProperty":4,"@babel/runtime/helpers/interopRequireDefault":5}],274:[function(require,module,exports){
+},{"../events.module":246,"@babel/runtime/helpers/defineProperty":4,"@babel/runtime/helpers/interopRequireDefault":5}],251:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -45617,7 +40795,7 @@ var storeEvents = {
 };
 exports.storeEvents = storeEvents;
 
-},{"@babel/runtime/helpers/interopRequireDefault":5,"events":149}],275:[function(require,module,exports){
+},{"@babel/runtime/helpers/interopRequireDefault":5,"events":149}],252:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -45635,7 +40813,7 @@ var store = {
 };
 exports.store = store;
 
-},{"./eventEmitter":274,"./threads":276}],276:[function(require,module,exports){
+},{"./eventEmitter":251,"./threads":253}],253:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -45813,7 +40991,7 @@ function ThreadObject(thread) {
   };
 }
 
-},{"./eventEmitter":274,"@babel/runtime/helpers/defineProperty":4,"@babel/runtime/helpers/interopRequireDefault":5}],277:[function(require,module,exports){
+},{"./eventEmitter":251,"@babel/runtime/helpers/defineProperty":4,"@babel/runtime/helpers/interopRequireDefault":5}],254:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -46169,7 +41347,7 @@ function ChatMessaging(params) {
 var _default = ChatMessaging;
 exports["default"] = _default;
 
-},{"./lib/constants":272,"./lib/errorHandler":273,"./utility/utility":278,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":11,"dompurify":131}],278:[function(require,module,exports){
+},{"./lib/constants":249,"./lib/errorHandler":250,"./utility/utility":255,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":11,"dompurify":131}],255:[function(require,module,exports){
 (function (global){(function (){
 "use strict";
 
@@ -46767,4 +41945,4 @@ var _default = new ChatUtility();
 exports["default"] = _default;
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":11,"crypto-js":94}]},{},[268]);
+},{"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":11,"crypto-js":94}]},{},[245]);

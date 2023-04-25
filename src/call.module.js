@@ -1,5 +1,4 @@
 import { chatMessageVOTypes, inviteeVOidTypes, callStickerTypes } from "./lib/constants"
-import KurentoUtils from 'kurento-utils'
 import Utility from "./utility/utility"
 import {chatEvents} from "./events.module.js";
 import deviceManager from "./lib/call/deviceManager.js";
@@ -108,7 +107,6 @@ function ChatCall(params) {
             callStarted: false,
         },
         callServerController = new callServerManager(),
-        //callTopicHealthChecker = new peersHealthChecker(),
         messageTtl = params.messageTtl || 10000,
         config = {
             getHistoryCount: 50
@@ -1958,10 +1956,10 @@ function ChatCall(params) {
                             let localUser = callUsers[callUser.userId];
                             if(!localUser) {
                                 let correctedData = {
-                                    video: callUsers.video,
-                                    mute: callUsers.mute,
-                                    userId: callUsers.userId,
-                                    topicSend: callUsers.sendTopic
+                                    video: callUser.video,
+                                    mute: callUser.mute,
+                                    userId: callUser.userId,
+                                    topicSend: callUser.sendTopic
                                 };
                                 callStateController.removeParticipant(correctedData.userId);
                                 setTimeout(function (){
@@ -1978,16 +1976,18 @@ function ChatCall(params) {
                             }
 
                             if (callUser.video && !localUser.video) {
-                                    //Start video peer
-                                    callStateController.activateParticipantStream(
-                                        callUser.userId,
-                                        'video',
-                                        (callUser.userId === chatMessaging.userInfo.id ? 'send' : 'receive'),
-                                        'videoTopicName',
-                                        callUser.sendTopic,
-                                        'video'
-                                    );
+                                callUsers[callUser.userId].video = true;
+                                //Start video peer
+                                callStateController.activateParticipantStream(
+                                    callUser.userId,
+                                    'video',
+                                    (callUser.userId === chatMessaging.userInfo.id ? 'send' : 'receive'),
+                                    'videoTopicName',
+                                    callUser.sendTopic,
+                                    'video'
+                                );
                             } else if(!callUser.video && localUser.video) {
+                                callUsers[callUser.userId].video = false;
                                 //Stop video peer
                                 callStateController.deactivateParticipantStream(
                                     callUser.userId,
@@ -1996,9 +1996,11 @@ function ChatCall(params) {
                                 );
                             }
                             if (callUser.mute && !localUser.mute) {
+                                callUsers[callUser.userId].mute = true;
                                 callUsers[callUser.userId].audioStopManager.disableStream();
 
                             } else if (!callUser.mute && localUser.mute) {
+                                callUsers[callUser.userId].mute = false;
                                 //Start audio peer
                                 let cUserId = callUser.userId;
 
@@ -3234,7 +3236,9 @@ function ChatCall(params) {
                 }
                 if(Array.isArray(messageContent)){
                     for(let i in messageContent) {
+                        let cUserId = messageContent[i].userId;
                         // pause = messageContent[i].userId == chatMessaging.userInfo.id;
+                        callUsers[cUserId].mute = true;
                         callUsers[messageContent[i].userId].audioStopManager.disableStream();
                         // callStateController.deactivateParticipantStream(
                         //     messageContent[i].userId,
@@ -3270,6 +3274,7 @@ function ChatCall(params) {
                     for(let i in messageContent) {
                         let cUserId = messageContent[i].userId;
 
+                        callUsers[cUserId].mute = false;
                         if(callUsers[cUserId].audioStopManager.isStreamPaused()) {
                             if (callUsers[cUserId].audioStopManager.isStreamStopped()) {
 
@@ -3366,6 +3371,8 @@ function ChatCall(params) {
 
                 if(Array.isArray(messageContent)) {
                     for(let i in messageContent) {
+                        let cUserId = messageContent[i].userId;
+                        callUsers[cUserId].video = true;
                         callStateController.activateParticipantStream(
                             messageContent[i].userId,
                             'video',
@@ -3401,6 +3408,8 @@ function ChatCall(params) {
 
                 if(Array.isArray(messageContent)) {
                     for(let i in messageContent) {
+                        let cUserId = messageContent[i].userId;
+                        callUsers[cUserId].video = false;
                         callStateController.deactivateParticipantStream(
                             messageContent[i].userId,
                             'video',
@@ -5043,12 +5052,17 @@ function ChatCall(params) {
         if (params) {
             if (Array.isArray(params.userIds) && params.userIds.length) {
                 for( let i in params.userIds) {
+                    let user = callUsers[params.userIds[i]];
+
+                    if(!user || !user.video)
+                        continue;
+
                     callStateController.activateParticipantStream(
-                        params.userIds[i],
+                        user.userId,
                         'video',
                         'receive',
                         'videoTopicName',
-                        callUsers[params.userIds[i]].topicSend,
+                        callUsers[user.userId].topicSend,
                         'video'
                     );
                 }
