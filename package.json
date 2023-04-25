@@ -47,7 +47,6 @@
   "dependencies": {
     "crypto-js": "^4.0.0",
     "dompurify": "^2.3.3",
-    "kurento-utils": "^6.16.0",
     "node-rsa": "^1.1.1",
     "podasync-ws-only": "^2.7.11",
     "webrtc-adapter": "^8.0.0"

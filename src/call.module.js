@@ -4,6 +4,7 @@ import Utility from "./utility/utility"
 import {chatEvents} from "./events.module.js";
 import deviceManager from "./lib/call/deviceManager.js";
 import errorHandler, {errorList, raiseError} from "./lib/errorHandler";
+import {WebrtcPeerConnection} from "./lib/call/webrtcPeer";
 
 function ChatCall(params) {
 
@@ -324,28 +325,28 @@ function ChatCall(params) {
             generateSdpOfferOptions: function () {
                 let topicManager = this;
                 return new Promise(function (resolve, reject) {
-                    let mediaConstraints = {audio: (config.mediaType === 'audio'), video: (config.mediaType === 'video')};
+                    // let mediaConstraints = {audio: (config.mediaType === 'audio'), video: (config.mediaType === 'video')};
 
-                    if(config.direction === 'send' && config.mediaType === 'video') {
-                        mediaConstraints.video = {
-                            width: callVideoMinWidth,
-                            height: callVideoMinHeight,
-                            framerate: 15
-                        }
-                    }
+                    // if(config.direction === 'send' && config.mediaType === 'video') {
+                    //     mediaConstraints.video = {
+                    //         width: callVideoMinWidth,
+                    //         height: callVideoMinHeight,
+                    //         framerate: 15
+                    //     }
+                    // }
 
                     let options = {
-                        mediaConstraints: mediaConstraints,
-                        iceTransportPolicy: 'relay',
-                        onicecandidate: (candidate) => {
-                            topicManager.watchForIceCandidates(candidate)
-                        },
+                        // mediaConstraints: mediaConstraints,
+                        // onicecandidate: (candidate) => {
+                        //     topicManager.watchForIceCandidates(candidate)
+                        // },
                         configuration: {
-                            iceServers: callStateController.getTurnServer(currentCallParams)
+                            iceServers: callStateController.getTurnServer(currentCallParams),
+                            // iceTransportPolicy: 'relay',
                         }
                     };
 
-                    options[(config.direction === 'send' ? 'localVideo' : 'remoteVideo')] = callUsers[config.userId].htmlElements[config.topic];
+                    options.streamElement = callUsers[config.userId].htmlElements[config.topic];
 
                     if(config.direction === 'send') {
                         if(config.mediaType === 'video') {
@@ -359,8 +360,8 @@ function ChatCall(params) {
                                             });
                                         }
                                     })
-                                    options.videoStream = stream;
-                                    options.sendSource = 'screen';
+                                    options.stream = stream;
+                                    // options.sendSource = 'screen';
                                     resolve(options);
                                 }).catch(function (error) {
                                     let errorString = "[SDK][grantScreenSharePermission][catch] " + JSON.stringify(error)
@@ -377,21 +378,23 @@ function ChatCall(params) {
                                 });
                             } else {
                                 deviceManager.grantUserMediaDevicesPermissions({video: true}).then(() => {
-                                    options.videoStream = deviceManager.mediaStreams().getVideoInput();
+                                    options.stream = deviceManager.mediaStreams().getVideoInput();
                                     resolve(options);
                                 }).catch(error => {
                                     reject(error)
                                 })
                             }
                         } else if(config.mediaType === 'audio') {
-                            deviceManager.grantUserMediaDevicesPermissions({audio: true}).then(() => {
-                                let audioInput = deviceManager.mediaStreams().getAudioInput();
-                                deviceManager.watchAudioInputStream(raiseCallError)
-                                options.audioStream = audioInput
-                                resolve(options);
-                            }).catch(error => {
-                                reject(error)
-                            })
+                            deviceManager
+                                .grantUserMediaDevicesPermissions({audio: true})
+                                .then(() => {
+                                    let audioInput = deviceManager.mediaStreams().getAudioInput();
+                                    deviceManager.watchAudioInputStream(raiseCallError)
+                                    options.stream = audioInput
+                                    resolve(options);
+                                }).catch(error => {
+                                    reject(error)
+                                })
                         }
                     } else {
                         resolve(options)
@@ -400,27 +403,27 @@ function ChatCall(params) {
                     consoleLogging && console.log("[SDK][getSdpOfferOptions] ", "topic: ", config.topic, "mediaType: ", config.mediaType, "direction: ", config.direction, "options: ", options);
                 });
             },
-            watchForIceCandidates: function (candidate) {
-                let manager = this;
-
-                if (metadataInstance.isIceCandidateIntervalSet()) {
-                    return;
-                }
-                //callUsers[config.userId].topicMetaData[config.topic].interval
-                metadataInstance.setIceCandidateInterval(setInterval(function () {
-                    if (callUsers[config.userId] && callUsers[config.userId].topicMetaData[config.topic] && callUsers[config.userId].topicMetaData[config.topic].sdpAnswerReceived === true) {
-                        consoleLogging && console.log("[SDK][watchForIceCandidates][setInterval] sdpAnswerReceived, topic:", config.topic)
-                        callUsers[config.userId].topicMetaData[config.topic].sdpAnswerReceived = false;
-                        // manager.removeTopicIceCandidateInterval();
-                        metadataInstance.clearIceCandidateInterval();
-                        sendCallMessage({
-                            id: 'ADD_ICE_CANDIDATE',
-                            topic: config.topic,
-                            candidateDto: candidate
-                        }, null, {})
-                    }
-                }, 500, {candidate: candidate}));
-            },
+            // watchForIceCandidates: function (candidate) {
+            //     let manager = this;
+            //
+            //     if (metadataInstance.isIceCandidateIntervalSet()) {
+            //         return;
+            //     }
+            //     //callUsers[config.userId].topicMetaData[config.topic].interval
+            //     metadataInstance.setIceCandidateInterval(setInterval(function () {
+            //         if (callUsers[config.userId] && callUsers[config.userId].topicMetaData[config.topic] && callUsers[config.userId].topicMetaData[config.topic].sdpAnswerReceived === true) {
+            //             consoleLogging && console.log("[SDK][watchForIceCandidates][setInterval] sdpAnswerReceived, topic:", config.topic)
+            //             callUsers[config.userId].topicMetaData[config.topic].sdpAnswerReceived = false;
+            //             // manager.removeTopicIceCandidateInterval();
+            //             metadataInstance.clearIceCandidateInterval();
+            //             sendCallMessage({
+            //                 id: 'ADD_ICE_CANDIDATE',
+            //                 topic: config.topic,
+            //                 candidateDto: candidate
+            //             }, null, {})
+            //         }
+            //     }, 500, {candidate: candidate}));
+            // },
             establishPeerConnection: function (options) {
                 let WebRtcFunction = config.direction === 'send' ? 'WebRtcPeerSendonly' : 'WebRtcPeerRecvonly',
                     manager = this,
@@ -429,9 +432,18 @@ function ChatCall(params) {
                     //topicMetaData = user.topicMetaData[config.topic];
 
                 config.state = peerStates.CONNECTING;
-                config.peer = new KurentoUtils.WebRtcPeer[WebRtcFunction](options, function (err) {
-                    consoleLogging && console.debug("[SDK][establishPeerConnection][KurentoUtils.WebRtcPeer][WebRtcFunction]: ", {options}, "userId: ", config.userId, "topic: ", config.topic, "direction: ", config.direction);
 
+                // if(config.mediaType != 'video' || config.direction != 'send')
+                //     return;
+                // config.peer = new KurentoUtils.WebRtcPeer[WebRtcFunction](options, function (err) {
+                config.peer = new WebrtcPeerConnection({
+                    direction: config.direction,
+                    mediaType: config.mediaType,
+                    stream: options.stream,
+                    streamElement: options.streamElement,
+                    rtcPeerConfig: options.configuration
+                }, err => {
+                    consoleLogging && console.debug("[SDK][establishPeerConnection][KurentoUtils.WebRtcPeer][WebRtcFunction]: ", {options}, "userId: ", config.userId, "topic: ", config.topic, "direction: ", config.direction);
                     if (err) {
                         let errorString = "[SDK][start/webRtc " + config.direction + "  " + config.mediaType + " Peer] Error: " + explainUserMediaError(err, config.mediaType);
                         console.error(errorString);
@@ -446,14 +458,14 @@ function ChatCall(params) {
 
                     manager.watchRTCPeerConnection();
 
-                    if(config.direction === 'send') {
+                    if (config.direction === 'send') {
                         startMedia(topicElement);
-                        if(callRequestController.cameraPaused) {
+                        if (callRequestController.cameraPaused) {
                             currentModuleInstance.pauseCamera();
                         }
                     }
 
-                    if(callServerController.isJanus() && config.direction === 'receive') {
+                    if (callServerController.isJanus() && config.direction === 'receive') {
                         let msgParams = {
                             id: 'REGISTER_RECV_NOTIFICATION',
                             topic: config.topic,
@@ -480,7 +492,7 @@ function ChatCall(params) {
                                 });
                                 return;
                             }
-                            if(!config.sdpOfferRequestSent) {
+                            if (!config.sdpOfferRequestSent) {
                                 config.sdpOfferRequestSent = true;
                                 manager.sendSDPOfferRequestMessage(sdpOffer, 1);
                             }
@@ -695,8 +707,6 @@ function ChatCall(params) {
                     }
                 }
 */
-
-
 
                 let user = callUsers[config.userId],
                     topicMetadata = user.topicMetaData[config.topic]
@@ -1086,21 +1096,21 @@ function ChatCall(params) {
             setReceivedSdpAnswer: function (state) {
                 config.receivedSdpAnswer = state;
             },
-            setIceCandidateInterval: function (id) {
-                config.interval = id
-            },
+            // setIceCandidateInterval: function (id) {
+            //     config.interval = id
+            // },
             isConnectionPoor: function () {
                 return config.isConnectionPoor;
             },
             isReceivedSdpAnswer: function () {
                 return config.receivedSdpAnswer;
             },
-            isIceCandidateIntervalSet: function () {
-                return config.interval !== null;
-            },
-            clearIceCandidateInterval: function () {
-                clearInterval(config.interval);
-            }
+            // isIceCandidateIntervalSet: function () {
+            //     return config.interval !== null;
+            // },
+            // clearIceCandidateInterval: function () {
+            //     clearInterval(config.interval);
+            // }
         }
     }
 
@@ -1515,8 +1525,8 @@ function ChatCall(params) {
             setupCallParticipant: function (participant) {
                 let user = participant;
                 user.topicMetaData = {};
-                // user.peers = {};
-
+                user.videoTopicName = 'Vi-' + user.topicSend;
+                user.audioTopicName = 'Vo-' + user.topicSend;
                 user.videoTopicManager = new callTopicManager({
                     userId: user.userId,
                     topic: 'Vi-' + user.topicSend,
@@ -1535,8 +1545,6 @@ function ChatCall(params) {
                 } else {
                     user.direction = 'receive';
                 }
-                user.videoTopicName = 'Vi-' + user.topicSend;
-                user.audioTopicName = 'Vo-' + user.topicSend;
                 user.audioStopManager = new devicePauseStopManager({
                     userId: user.userId,
                     mediaType: 'audio',
@@ -1546,6 +1554,12 @@ function ChatCall(params) {
                     user.audioStopManager.pauseStream();
                     user.audioStopManager.stopStream();
                 }
+                user.localAudioEnabled = !user.mute;
+                user.localAudioStreamCreated = false;
+                user.localVideoEnabled = !user.video;
+                user.localVideoStreamCreated = false;
+                user.lockUnmuting = false;
+                user.lockVideoStart = false;
                 user.videoStopManager = new devicePauseStopManager({
                     userId: user.userId,
                     mediaType: 'video',
@@ -1693,11 +1707,9 @@ function ChatCall(params) {
             },
             startParticipantAudio: function (userId) {
                 callUsers[userId].audioTopicManager.createTopic()
-                // this.createTopic(userId, callUsers[userId].audioTopicName, 'audio', callUsers[userId].direction);
             },
             startParticipantVideo: function (userId) {
                 callUsers[userId].videoTopicManager.createTopic()
-                // this.createTopic(userId, callUsers[userId].videoTopicName, 'video', callUsers[userId].direction);
             },
             getTurnServer: function (params) {
 
@@ -1864,7 +1876,11 @@ function ChatCall(params) {
             },
             activateParticipantStream: function (userId, mediaType, direction, topicNameKey, sendTopic, mediaKey) {
                 if(callUsers[userId]) {
-                    callUsers[userId][mediaKey] = (mediaKey !== 'mute');
+                    // callUsers[userId][mediaKey] = (mediaKey !== 'mute');
+                    if(mediaType == 'video')
+                        callUsers[userId].localVideoEnabled = true;
+                    else if(mediaType === 'audio')
+                        callUsers[userId].localAudioEnabled = true;
                     callUsers[userId][topicNameKey] = (mediaType === 'audio'?  'Vo-':  'Vi-') + sendTopic;
 
                     callStateController.appendUserToCallDiv(userId, callStateController.generateHTMLElements(userId));
@@ -2132,13 +2148,13 @@ function ChatCall(params) {
                         environmentDetails: getSDKCallDetails()
                     });
                 } else {
-                    if(callStopQueue.callStarted)
-                        chatEvents.fireEvent('callEvents', {
-                            type: 'CALL_ERROR',
-                            code: 7000,
-                            message: "[startMedia] Error in media.play(): " + err,
-                            environmentDetails: getSDKCallDetails()
-                        });
+                    // if(callStopQueue.callStarted)
+                    //     chatEvents.fireEvent('callEvents', {
+                    //         type: 'CALL_ERROR',
+                    //         code: 7000,
+                    //         message: "[startMedia] Error in media.play(): " + err,
+                    //         environmentDetails: getSDKCallDetails()
+                    //     });
                 }
             });
         },
@@ -2318,13 +2334,18 @@ function ChatCall(params) {
 
                 consoleLogging && console.log("[SDK][handleProcessSdpAnswer]", jsonMessage, jsonMessage.topic, topicManager.metadata().isIceCandidateIntervalSet().toString());
 
-                if (topicManager.metadata().isIceCandidateIntervalSet()){
-                    callUsers[userId].topicMetaData[jsonMessage.topic].sdpAnswerReceived = true;
-                    startMedia(callUsers[userId].htmlElements[jsonMessage.topic]);
-                    if (userId == 'screenShare' || userId == chatMessaging.userInfo.id) {
-                        restartMediaOnKeyFrame(userId, [2000, 4000, 8000, 12000, 20000]);
-                    }
+                startMedia(callUsers[userId].htmlElements[jsonMessage.topic]);
+                if (userId == 'screenShare' || userId == chatMessaging.userInfo.id) {
+                    restartMediaOnKeyFrame(userId, [2000, 4000, 8000, 12000, 20000]);
                 }
+
+                // if (topicManager.metadata().isIceCandidateIntervalSet()){
+                //     callUsers[userId].topicMetaData[jsonMessage.topic].sdpAnswerReceived = true;
+                //     startMedia(callUsers[userId].htmlElements[jsonMessage.topic]);
+                //     if (userId == 'screenShare' || userId == chatMessaging.userInfo.id) {
+                //         restartMediaOnKeyFrame(userId, [2000, 4000, 8000, 12000, 20000]);
+                //     }
+                // }
             });
         },
 
@@ -2332,6 +2353,9 @@ function ChatCall(params) {
             let userId = callStateController.findUserIdByTopic(jsonMessage.topic);
 
             let peer; //= callUsers[userId].peers[jsonMessage.topic];
+
+            if(jsonMessage.done === 'FALSE')
+                return;
 
             if(jsonMessage.topic.indexOf('Vi-') > -1 || jsonMessage.topic.indexOf('screen-Share') !== -1) {
                 peer = callUsers[userId].videoTopicManager.getPeer();
@@ -3147,7 +3171,6 @@ function ChatCall(params) {
 
                 if(callUsers && callUsers[chatMessaging.userInfo.id] && callUsers[chatMessaging.userInfo.id].video) {
                     restartMediaOnKeyFrame(chatMessaging.userInfo.id, [2000, 4000, 8000, 12000, 16000, 24000]);
-
                 }
                 if(callUsers && callUsers['screenShare']
                     && callUsers['screenShare'].video
@@ -3210,7 +3233,6 @@ function ChatCall(params) {
                     chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                 }
                 if(Array.isArray(messageContent)){
-                    let pause;
                     for(let i in messageContent) {
                         // pause = messageContent[i].userId == chatMessaging.userInfo.id;
                         callUsers[messageContent[i].userId].audioStopManager.disableStream();
@@ -3648,11 +3670,12 @@ function ChatCall(params) {
     }
 
     this.startCall = async function (params, callback) {
-        let startCallData = {
+        let messageData = {
             chatMessageVOType: chatMessageVOTypes.CALL_REQUEST,
             typeCode: generalTypeCode, //params.typeCode,
             pushMsgType: 3,
-            token: token
+            token: token,
+            uniqueId: Utility.generateUUID()
         }, content = {
             creatorClientDto: {}
         };
@@ -3705,7 +3728,7 @@ function ChatCall(params) {
                 content.createCallThreadRequest = params.threadInfo
             }
 
-            startCallData.content = JSON.stringify(content);
+            messageData.content = JSON.stringify(content);
         } else {
             chatEvents.fireEvent('error', {
                 code: 999,
@@ -3754,7 +3777,7 @@ function ChatCall(params) {
                 }, callNoAnswerTimeout, {callInstance: currentModuleInstance, currentCallId: currentCallId});
             }
 
-            chatMessaging.sendMessage(startCallData, {
+            chatMessaging.sendMessage(messageData, {
                 onResult: function (result) {
                     callback && callback(result);
                 }
@@ -3763,11 +3786,12 @@ function ChatCall(params) {
     };
 
     this.startGroupCall = async function (params, callback) {
-        let startCallData = {
+        let messageData = {
             chatMessageVOType: chatMessageVOTypes.GROUP_CALL_REQUEST,
             typeCode: generalTypeCode, //params.typeCode,
             pushMsgType: 3,
-            token: token
+            token,
+            uniqueId: Utility.generateUUID()
         }, content = {
             creatorClientDto: {}
         };
@@ -3820,7 +3844,7 @@ function ChatCall(params) {
                 content.createCallThreadRequest = params.threadInfo
             }
 
-            startCallData.content = JSON.stringify(content);
+            messageData.content = JSON.stringify(content);
         } else {
             chatEvents.fireEvent('error', {
                 code: 999,
@@ -3869,7 +3893,7 @@ function ChatCall(params) {
                 }, callNoAnswerTimeout, {callInstance: currentModuleInstance, currentCallId: currentCallId});
             }
 
-            chatMessaging.sendMessage(startCallData, {
+            chatMessaging.sendMessage(messageData, {
                 onResult: function (result) {
                     callback && callback(result);
                 }
@@ -3928,7 +3952,8 @@ function ChatCall(params) {
             chatMessageVOType: chatMessageVOTypes.ACCEPT_CALL,
             typeCode: generalTypeCode, //params.typeCode,
             pushMsgType: 3,
-            token: token
+            token: token,
+            uniqueId: Utility.generateUUID()
         }, content = {};
 
         if (params) {
@@ -4808,7 +4833,8 @@ function ChatCall(params) {
         let sendMessageParams = {
             chatMessageVOType: chatMessageVOTypes.MUTE_CALL_PARTICIPANT,
             typeCode: generalTypeCode, //params.typeCode,
-            content: []
+            content: [],
+            uniqueId: Utility.generateUUID()
         };
 
         if (params) {
@@ -4852,7 +4878,8 @@ function ChatCall(params) {
         let sendMessageParams = {
             chatMessageVOType: chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT,
             typeCode: generalTypeCode, //params.typeCode,
-            content: []
+            content: [],
+            uniqueId: Utility.generateUUID()
         };
 
         if (params) {
@@ -4892,7 +4919,8 @@ function ChatCall(params) {
             chatMessageVOType: chatMessageVOTypes.TURN_ON_VIDEO_CALL,
             typeCode: generalTypeCode,//params.typeCode,
             pushMsgType: 3,
-            token: token
+            token: token,
+            uniqueId: Utility.generateUUID()
         };
 
         if (params) {
@@ -4942,7 +4970,8 @@ function ChatCall(params) {
             chatMessageVOType: chatMessageVOTypes.TURN_OFF_VIDEO_CALL,
             typeCode: generalTypeCode,//params.typeCode,
             pushMsgType: 3,
-            token: token
+            token: token,
+            uniqueId: Utility.generateUUID()
         };
 
         if (params) {

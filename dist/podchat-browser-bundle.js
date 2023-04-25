@@ -737,7 +737,7 @@ EncoderBuffer.prototype.join = function join(out, offset) {
   return out;
 };
 
-},{"../base/reporter":19,"inherits":186,"safer-buffer":225}],17:[function(require,module,exports){
+},{"../base/reporter":19,"inherits":186,"safer-buffer":226}],17:[function(require,module,exports){
 'use strict';
 
 const base = exports;
@@ -1993,7 +1993,7 @@ PEMDecoder.prototype.decode = function decode(data, options) {
   return DERDecoder.prototype.decode.call(this, input, options);
 };
 
-},{"./der":22,"inherits":186,"safer-buffer":225}],25:[function(require,module,exports){
+},{"./der":22,"inherits":186,"safer-buffer":226}],25:[function(require,module,exports){
 'use strict';
 
 const inherits = require('inherits');
@@ -2290,7 +2290,7 @@ function encodeTag(tag, primitive, cls, reporter) {
   return res;
 }
 
-},{"../base/node":18,"../constants/der":20,"inherits":186,"safer-buffer":225}],26:[function(require,module,exports){
+},{"../base/node":18,"../constants/der":20,"inherits":186,"safer-buffer":226}],26:[function(require,module,exports){
 'use strict';
 
 const encoders = exports;
@@ -9771,7 +9771,7 @@ AES.prototype.scrub = function () {
 
 module.exports.AES = AES
 
-},{"safe-buffer":224}],34:[function(require,module,exports){
+},{"safe-buffer":225}],34:[function(require,module,exports){
 var aes = require('./aes')
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('cipher-base')
@@ -9890,7 +9890,7 @@ StreamCipher.prototype.setAAD = function setAAD (buf) {
 
 module.exports = StreamCipher
 
-},{"./aes":33,"./ghash":38,"./incr32":39,"buffer-xor":76,"cipher-base":78,"inherits":186,"safe-buffer":224}],35:[function(require,module,exports){
+},{"./aes":33,"./ghash":38,"./incr32":39,"buffer-xor":76,"cipher-base":78,"inherits":186,"safe-buffer":225}],35:[function(require,module,exports){
 var ciphers = require('./encrypter')
 var deciphers = require('./decrypter')
 var modes = require('./modes/list.json')
@@ -10031,7 +10031,7 @@ function createDecipher (suite, password) {
 exports.createDecipher = createDecipher
 exports.createDecipheriv = createDecipheriv
 
-},{"./aes":33,"./authCipher":34,"./modes":46,"./streamCipher":49,"cipher-base":78,"evp_bytestokey":150,"inherits":186,"safe-buffer":224}],37:[function(require,module,exports){
+},{"./aes":33,"./authCipher":34,"./modes":46,"./streamCipher":49,"cipher-base":78,"evp_bytestokey":150,"inherits":186,"safe-buffer":225}],37:[function(require,module,exports){
 var MODES = require('./modes')
 var AuthCipher = require('./authCipher')
 var Buffer = require('safe-buffer').Buffer
@@ -10147,7 +10147,7 @@ function createCipher (suite, password) {
 exports.createCipheriv = createCipheriv
 exports.createCipher = createCipher
 
-},{"./aes":33,"./authCipher":34,"./modes":46,"./streamCipher":49,"cipher-base":78,"evp_bytestokey":150,"inherits":186,"safe-buffer":224}],38:[function(require,module,exports){
+},{"./aes":33,"./authCipher":34,"./modes":46,"./streamCipher":49,"cipher-base":78,"evp_bytestokey":150,"inherits":186,"safe-buffer":225}],38:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var ZEROES = Buffer.alloc(16, 0)
 
@@ -10238,7 +10238,7 @@ GHASH.prototype.final = function (abl, bl) {
 
 module.exports = GHASH
 
-},{"safe-buffer":224}],39:[function(require,module,exports){
+},{"safe-buffer":225}],39:[function(require,module,exports){
 function incr32 (iv) {
   var len = iv.length
   var item
@@ -10309,7 +10309,7 @@ exports.encrypt = function (self, data, decrypt) {
   return out
 }
 
-},{"buffer-xor":76,"safe-buffer":224}],42:[function(require,module,exports){
+},{"buffer-xor":76,"safe-buffer":225}],42:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 function encryptByte (self, byteParam, decrypt) {
@@ -10353,7 +10353,7 @@ exports.encrypt = function (self, chunk, decrypt) {
   return out
 }
 
-},{"safe-buffer":224}],43:[function(require,module,exports){
+},{"safe-buffer":225}],43:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 function encryptByte (self, byteParam, decrypt) {
@@ -10380,7 +10380,7 @@ exports.encrypt = function (self, chunk, decrypt) {
   return out
 }
 
-},{"safe-buffer":224}],44:[function(require,module,exports){
+},{"safe-buffer":225}],44:[function(require,module,exports){
 var xor = require('buffer-xor')
 var Buffer = require('safe-buffer').Buffer
 var incr32 = require('../incr32')
@@ -10412,7 +10412,7 @@ exports.encrypt = function (self, chunk) {
   return xor(chunk, pad)
 }
 
-},{"../incr32":39,"buffer-xor":76,"safe-buffer":224}],45:[function(require,module,exports){
+},{"../incr32":39,"buffer-xor":76,"safe-buffer":225}],45:[function(require,module,exports){
 exports.encrypt = function (self, block) {
   return self._cipher.encryptBlock(block)
 }
@@ -10683,7 +10683,7 @@ StreamCipher.prototype._final = function () {
 
 module.exports = StreamCipher
 
-},{"./aes":33,"cipher-base":78,"inherits":186,"safe-buffer":224}],50:[function(require,module,exports){
+},{"./aes":33,"cipher-base":78,"inherits":186,"safe-buffer":225}],50:[function(require,module,exports){
 var DES = require('browserify-des')
 var aes = require('browserify-aes/browser')
 var aesModes = require('browserify-aes/modes')
@@ -10804,7 +10804,7 @@ DES.prototype._final = function () {
   return Buffer.from(this._des.final())
 }
 
-},{"cipher-base":78,"des.js":120,"inherits":186,"safe-buffer":224}],52:[function(require,module,exports){
+},{"cipher-base":78,"des.js":120,"inherits":186,"safe-buffer":225}],52:[function(require,module,exports){
 exports['des-ecb'] = {
   key: 8,
   iv: 0
@@ -10869,7 +10869,7 @@ crt.getr = getr
 module.exports = crt
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"bn.js":30,"buffer":77,"randombytes":221}],54:[function(require,module,exports){
+},{"bn.js":30,"buffer":77,"randombytes":222}],54:[function(require,module,exports){
 module.exports = require('./browser/algorithms.json')
 
 },{"./browser/algorithms.json":55}],55:[function(require,module,exports){
@@ -11632,7 +11632,7 @@ Object.defineProperty(Duplex.prototype, 'destroyed', {
   }
 });
 }).call(this)}).call(this,require('_process'))
-},{"./_stream_readable":63,"./_stream_writable":65,"_process":213,"inherits":186}],62:[function(require,module,exports){
+},{"./_stream_readable":63,"./_stream_writable":65,"_process":214,"inherits":186}],62:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12799,7 +12799,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":60,"./_stream_duplex":61,"./internal/streams/async_iterator":66,"./internal/streams/buffer_list":67,"./internal/streams/destroy":68,"./internal/streams/from":70,"./internal/streams/state":72,"./internal/streams/stream":73,"_process":213,"buffer":77,"events":149,"inherits":186,"string_decoder/":257,"util":32}],64:[function(require,module,exports){
+},{"../errors":60,"./_stream_duplex":61,"./internal/streams/async_iterator":66,"./internal/streams/buffer_list":67,"./internal/streams/destroy":68,"./internal/streams/from":70,"./internal/streams/state":72,"./internal/streams/stream":73,"_process":214,"buffer":77,"events":149,"inherits":186,"string_decoder/":258,"util":32}],64:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13701,7 +13701,7 @@ Writable.prototype._destroy = function (err, cb) {
   cb(err);
 };
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":60,"./_stream_duplex":61,"./internal/streams/destroy":68,"./internal/streams/state":72,"./internal/streams/stream":73,"_process":213,"buffer":77,"inherits":186,"util-deprecate":260}],66:[function(require,module,exports){
+},{"../errors":60,"./_stream_duplex":61,"./internal/streams/destroy":68,"./internal/streams/state":72,"./internal/streams/stream":73,"_process":214,"buffer":77,"inherits":186,"util-deprecate":261}],66:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -13911,7 +13911,7 @@ var createReadableStreamAsyncIterator = function createReadableStreamAsyncIterat
 
 module.exports = createReadableStreamAsyncIterator;
 }).call(this)}).call(this,require('_process'))
-},{"./end-of-stream":69,"_process":213}],67:[function(require,module,exports){
+},{"./end-of-stream":69,"_process":214}],67:[function(require,module,exports){
 'use strict';
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -14230,7 +14230,7 @@ module.exports = {
   errorOrDestroy: errorOrDestroy
 };
 }).call(this)}).call(this,require('_process'))
-},{"_process":213}],69:[function(require,module,exports){
+},{"_process":214}],69:[function(require,module,exports){
 // Ported from https://github.com/mafintosh/end-of-stream with
 // permission from the author, Mathias Buus (@mafintosh).
 'use strict';
@@ -16443,7 +16443,7 @@ CipherBase.prototype._toString = function (value, enc, fin) {
 
 module.exports = CipherBase
 
-},{"inherits":186,"safe-buffer":224,"stream":242,"string_decoder":257}],79:[function(require,module,exports){
+},{"inherits":186,"safe-buffer":225,"stream":243,"string_decoder":258}],79:[function(require,module,exports){
 (function (Buffer){(function (){
 var elliptic = require('elliptic')
 var BN = require('bn.js')
@@ -16605,7 +16605,7 @@ module.exports = function createHash (alg) {
   return new Hash(sha(alg))
 }
 
-},{"cipher-base":78,"inherits":186,"md5.js":191,"ripemd160":223,"sha.js":235}],82:[function(require,module,exports){
+},{"cipher-base":78,"inherits":186,"md5.js":191,"ripemd160":224,"sha.js":236}],82:[function(require,module,exports){
 var MD5 = require('md5.js')
 
 module.exports = function (buffer) {
@@ -16676,7 +16676,7 @@ module.exports = function createHmac (alg, key) {
   return new Hmac(alg, key)
 }
 
-},{"./legacy":84,"cipher-base":78,"create-hash/md5":82,"inherits":186,"ripemd160":223,"safe-buffer":224,"sha.js":235}],84:[function(require,module,exports){
+},{"./legacy":84,"cipher-base":78,"create-hash/md5":82,"inherits":186,"ripemd160":224,"safe-buffer":225,"sha.js":236}],84:[function(require,module,exports){
 'use strict'
 var inherits = require('inherits')
 var Buffer = require('safe-buffer').Buffer
@@ -16724,7 +16724,7 @@ Hmac.prototype._final = function () {
 }
 module.exports = Hmac
 
-},{"cipher-base":78,"inherits":186,"safe-buffer":224}],85:[function(require,module,exports){
+},{"cipher-base":78,"inherits":186,"safe-buffer":225}],85:[function(require,module,exports){
 'use strict'
 
 exports.randomBytes = exports.rng = exports.pseudoRandomBytes = exports.prng = require('randombytes')
@@ -16823,7 +16823,7 @@ exports.constants = {
   'POINT_CONVERSION_HYBRID': 6
 }
 
-},{"browserify-cipher":50,"browserify-sign":57,"browserify-sign/algos":54,"create-ecdh":79,"create-hash":81,"create-hmac":83,"diffie-hellman":126,"pbkdf2":203,"public-encrypt":214,"randombytes":221,"randomfill":222}],86:[function(require,module,exports){
+},{"browserify-cipher":50,"browserify-sign":57,"browserify-sign/algos":54,"create-ecdh":79,"create-hash":81,"create-hmac":83,"diffie-hellman":126,"pbkdf2":203,"public-encrypt":215,"randombytes":222,"randomfill":223}],86:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -24399,7 +24399,7 @@ function formatReturnValue(bn, enc) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"./generatePrime":128,"bn.js":130,"buffer":77,"miller-rabin":193,"randombytes":221}],128:[function(require,module,exports){
+},{"./generatePrime":128,"bn.js":130,"buffer":77,"miller-rabin":193,"randombytes":222}],128:[function(require,module,exports){
 var randomBytes = require('randombytes');
 module.exports = findPrime;
 findPrime.simpleSieve = simpleSieve;
@@ -24506,7 +24506,7 @@ function findPrime(bits, gen) {
 
 }
 
-},{"bn.js":130,"miller-rabin":193,"randombytes":221}],129:[function(require,module,exports){
+},{"bn.js":130,"miller-rabin":193,"randombytes":222}],129:[function(require,module,exports){
 module.exports={
     "modp1": {
         "gen": "02",
@@ -30478,7 +30478,7 @@ function EVP_BytesToKey (password, salt, keyBits, ivLen) {
 
 module.exports = EVP_BytesToKey
 
-},{"md5.js":191,"safe-buffer":224}],151:[function(require,module,exports){
+},{"md5.js":191,"safe-buffer":225}],151:[function(require,module,exports){
 /* jshint node: true */
 'use strict';
 
@@ -30751,7 +30751,7 @@ module.exports = function(stream, options) {
   return harker;
 }
 
-},{"wildemitter":264}],155:[function(require,module,exports){
+},{"wildemitter":265}],155:[function(require,module,exports){
 'use strict'
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('readable-stream').Transform
@@ -30852,21 +30852,21 @@ module.exports = HashBase
 arguments[4][60][0].apply(exports,arguments)
 },{"dup":60}],157:[function(require,module,exports){
 arguments[4][61][0].apply(exports,arguments)
-},{"./_stream_readable":159,"./_stream_writable":161,"_process":213,"dup":61,"inherits":186}],158:[function(require,module,exports){
+},{"./_stream_readable":159,"./_stream_writable":161,"_process":214,"dup":61,"inherits":186}],158:[function(require,module,exports){
 arguments[4][62][0].apply(exports,arguments)
 },{"./_stream_transform":160,"dup":62,"inherits":186}],159:[function(require,module,exports){
 arguments[4][63][0].apply(exports,arguments)
-},{"../errors":156,"./_stream_duplex":157,"./internal/streams/async_iterator":162,"./internal/streams/buffer_list":163,"./internal/streams/destroy":164,"./internal/streams/from":166,"./internal/streams/state":168,"./internal/streams/stream":169,"_process":213,"buffer":77,"dup":63,"events":149,"inherits":186,"string_decoder/":257,"util":32}],160:[function(require,module,exports){
+},{"../errors":156,"./_stream_duplex":157,"./internal/streams/async_iterator":162,"./internal/streams/buffer_list":163,"./internal/streams/destroy":164,"./internal/streams/from":166,"./internal/streams/state":168,"./internal/streams/stream":169,"_process":214,"buffer":77,"dup":63,"events":149,"inherits":186,"string_decoder/":258,"util":32}],160:[function(require,module,exports){
 arguments[4][64][0].apply(exports,arguments)
 },{"../errors":156,"./_stream_duplex":157,"dup":64,"inherits":186}],161:[function(require,module,exports){
 arguments[4][65][0].apply(exports,arguments)
-},{"../errors":156,"./_stream_duplex":157,"./internal/streams/destroy":164,"./internal/streams/state":168,"./internal/streams/stream":169,"_process":213,"buffer":77,"dup":65,"inherits":186,"util-deprecate":260}],162:[function(require,module,exports){
+},{"../errors":156,"./_stream_duplex":157,"./internal/streams/destroy":164,"./internal/streams/state":168,"./internal/streams/stream":169,"_process":214,"buffer":77,"dup":65,"inherits":186,"util-deprecate":261}],162:[function(require,module,exports){
 arguments[4][66][0].apply(exports,arguments)
-},{"./end-of-stream":165,"_process":213,"dup":66}],163:[function(require,module,exports){
+},{"./end-of-stream":165,"_process":214,"dup":66}],163:[function(require,module,exports){
 arguments[4][67][0].apply(exports,arguments)
 },{"buffer":77,"dup":67,"util":32}],164:[function(require,module,exports){
 arguments[4][68][0].apply(exports,arguments)
-},{"_process":213,"dup":68}],165:[function(require,module,exports){
+},{"_process":214,"dup":68}],165:[function(require,module,exports){
 arguments[4][69][0].apply(exports,arguments)
 },{"../../../errors":156,"dup":69}],166:[function(require,module,exports){
 arguments[4][70][0].apply(exports,arguments)
@@ -33288,7 +33288,7 @@ exports.WebRtcPeerSendonly = WebRtcPeerSendonly
 exports.WebRtcPeerSendrecv = WebRtcPeerSendrecv
 exports.hark = harkUtils
 
-},{"events":149,"freeice":151,"hark":154,"inherits":186,"kurento-browser-extensions":188,"merge":192,"sdp-translator":231,"ua-parser-js":259,"uuid/v4":263}],190:[function(require,module,exports){
+},{"events":149,"freeice":151,"hark":154,"inherits":186,"kurento-browser-extensions":188,"merge":192,"sdp-translator":232,"ua-parser-js":260,"uuid/v4":264}],190:[function(require,module,exports){
 /*
  * (C) Copyright 2014 Kurento (http://kurento.org/)
  *
@@ -33468,7 +33468,7 @@ function fnI (a, b, c, d, m, k, s) {
 
 module.exports = MD5
 
-},{"hash-base":155,"inherits":186,"safe-buffer":224}],192:[function(require,module,exports){
+},{"hash-base":155,"inherits":186,"safe-buffer":225}],192:[function(require,module,exports){
 /*!
  * @name JavaScript/NodeJS Merge v1.2.1
  * @author yeikos
@@ -34162,7 +34162,7 @@ module.exports = function (okey, password) {
   }
 }
 
-},{"browserify-aes":35,"evp_bytestokey":150,"safe-buffer":224}],202:[function(require,module,exports){
+},{"browserify-aes":35,"evp_bytestokey":150,"safe-buffer":225}],202:[function(require,module,exports){
 var asn1 = require('./asn1')
 var aesid = require('./aesid.json')
 var fixProc = require('./fixProc')
@@ -34271,7 +34271,7 @@ function decrypt (data, password) {
   return Buffer.concat(out)
 }
 
-},{"./aesid.json":198,"./asn1":199,"./fixProc":201,"browserify-aes":35,"pbkdf2":203,"safe-buffer":224}],203:[function(require,module,exports){
+},{"./aesid.json":198,"./asn1":199,"./fixProc":201,"browserify-aes":35,"pbkdf2":203,"safe-buffer":225}],203:[function(require,module,exports){
 exports.pbkdf2 = require('./lib/async')
 exports.pbkdf2Sync = require('./lib/sync')
 
@@ -34397,7 +34397,7 @@ module.exports = function (password, salt, iterations, keylen, digest, callback)
 }
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./default-encoding":205,"./precondition":206,"./sync":207,"./to-buffer":208,"safe-buffer":224}],205:[function(require,module,exports){
+},{"./default-encoding":205,"./precondition":206,"./sync":207,"./to-buffer":208,"safe-buffer":225}],205:[function(require,module,exports){
 (function (process,global){(function (){
 var defaultEncoding
 /* istanbul ignore next */
@@ -34413,7 +34413,7 @@ if (global.process && global.process.browser) {
 module.exports = defaultEncoding
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":213}],206:[function(require,module,exports){
+},{"_process":214}],206:[function(require,module,exports){
 var MAX_ALLOC = Math.pow(2, 30) - 1 // default in iojs
 
 module.exports = function (iterations, keylen) {
@@ -34541,7 +34541,7 @@ function pbkdf2 (password, salt, iterations, keylen, digest) {
 
 module.exports = pbkdf2
 
-},{"./default-encoding":205,"./precondition":206,"./to-buffer":208,"create-hash/md5":82,"ripemd160":223,"safe-buffer":224,"sha.js":235}],208:[function(require,module,exports){
+},{"./default-encoding":205,"./precondition":206,"./to-buffer":208,"create-hash/md5":82,"ripemd160":224,"safe-buffer":225,"sha.js":236}],208:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 module.exports = function (thing, encoding, name) {
@@ -34556,7 +34556,7 @@ module.exports = function (thing, encoding, name) {
   }
 }
 
-},{"safe-buffer":224}],209:[function(require,module,exports){
+},{"safe-buffer":225}],209:[function(require,module,exports){
 (function () {
     /*
      * Async module to handle async messaging
@@ -34572,10 +34572,12 @@ module.exports = function (thing, encoding, name) {
          *******************************************************/
 
         var PodSocketClass,
+            WebRTCClass,
             PodUtility,
             LogLevel
         if (typeof(require) !== 'undefined' && typeof(exports) !== 'undefined') {
             PodSocketClass = require('./socket.js');
+            WebRTCClass = require('./webrtc.js');
             PodUtility = require('../utility/utility.js');
             LogLevel = require('../utility/logger.js');
         }
@@ -34601,6 +34603,7 @@ module.exports = function (thing, encoding, name) {
             },
             ackCallback = {},
             socket,
+            webRTCClass,
             asyncMessageType = {
                 PING: 0,
                 SERVER_REGISTER: 1,
@@ -34649,7 +34652,8 @@ module.exports = function (thing, encoding, name) {
                 ? params.asyncLogging.onMessageReceive
                 : false,
             onSendLogging = (params.asyncLogging && typeof params.asyncLogging.onMessageSend === 'boolean') ? params.asyncLogging.onMessageSend : false,
-            workerId = (params.asyncLogging && typeof parseInt(params.asyncLogging.workerId) === 'number') ? params.asyncLogging.workerId : 0;
+            workerId = (params.asyncLogging && typeof parseInt(params.asyncLogging.workerId) === 'number') ? params.asyncLogging.workerId : 0,
+            webrtcConfig = (params.webrtcConfig ? params.webrtcConfig : null);
 
         // function setRetryStep(val){
         //     console.log("new retryStep value:", val);
@@ -34679,6 +34683,9 @@ module.exports = function (thing, encoding, name) {
                 switch (protocol) {
                     case 'websocket':
                         initSocket();
+                        break;
+                    case 'webrtc':
+                        initWebrtc();
                         break;
                 }
             },
@@ -34840,6 +34847,124 @@ module.exports = function (thing, encoding, name) {
                 });
 
                 socket.on('error', function (error) {
+                    fireEvent('error', {
+                        errorCode: '',
+                        errorMessage: '',
+                        errorEvent: error
+                    });
+                });
+            },
+            initWebrtc = function () {
+                webRTCClass = new WebRTCClass({
+                    baseUrl: (webrtcConfig ? webrtcConfig.baseUrl : null),
+                    configuration : (webrtcConfig ? webrtcConfig.configuration : null),
+                    connectionCheckTimeout: params.connectionCheckTimeout,
+                    logLevel: logLevel
+                });
+
+                checkIfSocketHasOpennedTimeoutId = setTimeout(function () {
+                    if (!isSocketOpen) {
+                        fireEvent('error', {
+                            errorCode: 4001,
+                            errorMessage: 'Can not open Socket!'
+                        });
+                    }
+                }, 65000);
+
+                webRTCClass.on('open', function () {
+                    checkIfSocketHasOpennedTimeoutId && clearTimeout(checkIfSocketHasOpennedTimeoutId);
+                    socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+                    socketReconnectCheck && clearTimeout(socketReconnectCheck);
+
+                    isSocketOpen = true;
+                    retryStep.set(4);
+
+                    socketState = socketStateType.OPEN;
+                    fireEvent('stateChange', {
+                        socketState: socketState,
+                        timeUntilReconnect: 0,
+                        deviceRegister: isDeviceRegister,
+                        serverRegister: isServerRegister,
+                        peerId: peerId
+                    });
+                });
+
+                webRTCClass.on('message', function (msg) {
+                    console.log({msg})
+                    handleSocketMessage(msg);
+                    if (onReceiveLogging) {
+                        asyncLogger('Receive', msg);
+                    }
+                });
+
+                webRTCClass.on('close', function (event) {
+                    isSocketOpen = false;
+                    isDeviceRegister = false;
+                    oldPeerId = peerId;
+
+                    fireEvent('disconnect', event);
+
+                    if (reconnectOnClose) {
+                        if (asyncLogging) {
+                            if (workerId > 0) {
+                                Utility.asyncStepLogger(workerId + '\t Reconnecting after ' + retryStep.get() + 's');
+                            }
+                            else {
+                                Utility.asyncStepLogger('Reconnecting after ' + retryStep.get() + 's');
+                            }
+                        }
+
+                        logLevel.debug && console.debug("[Async][async.js] on connection close, retryStep:", retryStep.get());
+
+                        socketState = socketStateType.CLOSED;
+                        fireEvent('stateChange', {
+                            socketState: socketState,
+                            timeUntilReconnect: 1000 * retryStep.get(),
+                            deviceRegister: isDeviceRegister,
+                            serverRegister: isServerRegister,
+                            peerId: peerId
+                        });
+
+                        socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+
+                        socketReconnectRetryInterval = setTimeout(function () {
+                            webRTCClass.connect();
+                        }, 1000 * retryStep.get());
+
+                        if (retryStep.get() < 64) {
+                            // retryStep += 3;
+                            retryStep.set(retryStep.get() + 3)
+                        }
+                    }
+                    else {
+                        socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+                        socketReconnectCheck && clearTimeout(socketReconnectCheck);
+                        fireEvent('error', {
+                            errorCode: 4005,
+                            errorMessage: 'Connection Closed!'
+                        });
+
+                        socketState = socketStateType.CLOSED;
+                        fireEvent('stateChange', {
+                            socketState: socketState,
+                            timeUntilReconnect: 0,
+                            deviceRegister: isDeviceRegister,
+                            serverRegister: isServerRegister,
+                            peerId: peerId
+                        });
+                    }
+
+                });
+
+                webRTCClass.on('customError', function (error) {
+                    fireEvent('error', {
+                        errorCode: error.errorCode,
+                        errorMessage: error.errorMessage,
+                        errorEvent: error.errorEvent
+                    });
+                });
+
+                webRTCClass.on('error', function (error) {
                     fireEvent('error', {
                         errorCode: '',
                         errorMessage: '',
@@ -35098,6 +35223,15 @@ module.exports = function (thing, encoding, name) {
                             pushSendDataQueue.push(msg);
                         }
                         break;
+                    case 'webrtc':
+                        if (socketState === socketStateType.OPEN) {
+                            webRTCClass.emit(msg);
+                        }
+                        else {
+                            pushSendDataQueue.push(msg);
+                        }
+
+                        break;
                 }
             },
 
@@ -35117,16 +35251,16 @@ module.exports = function (thing, encoding, name) {
 
             fireEvent = function (eventName, param, ack) {
                 // try {
-                    if (ack) {
-                        for (var id in eventCallbacks[eventName]) {
-                            eventCallbacks[eventName][id](param, ack);
-                        }
+                if (ack) {
+                    for (var id in eventCallbacks[eventName]) {
+                        eventCallbacks[eventName][id](param, ack);
                     }
-                    else {
-                        for (var id in eventCallbacks[eventName]) {
-                            eventCallbacks[eventName][id](param);
-                        }
+                }
+                else {
+                    for (var id in eventCallbacks[eventName]) {
+                        eventCallbacks[eventName][id](param);
                     }
+                }
                 // }
                 // catch (e) {
                 //     fireEvent('error', {
@@ -35228,6 +35362,20 @@ module.exports = function (thing, encoding, name) {
                     socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
                     socket.close();
                     break;
+                case 'webrtc':
+                    socketState = socketStateType.CLOSED;
+                    fireEvent('stateChange', {
+                        socketState: socketState,
+                        timeUntilReconnect: 0,
+                        deviceRegister: isDeviceRegister,
+                        serverRegister: isServerRegister,
+                        peerId: peerId
+                    });
+
+                    socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+                    webRTCClass.close();
+
+                    break;
             }
         };
 
@@ -35257,6 +35405,20 @@ module.exports = function (thing, encoding, name) {
 
                     socket.close();
                     break;
+                case 'webrtc':
+                    socketState = socketStateType.CLOSED;
+                    fireEvent('stateChange', {
+                        socketState: socketState,
+                        timeUntilReconnect: 0,
+                        deviceRegister: isDeviceRegister,
+                        serverRegister: isServerRegister,
+                        peerId: peerId
+                    });
+
+                    reconnectOnClose = false;
+                    webRTCClass.close();
+
+                    break;
             }
         };
 
@@ -35276,12 +35438,18 @@ module.exports = function (thing, encoding, name) {
             });
 
             socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-            socket.close();
+            if(protocol === "websocket")
+                socket.close();
+            else if(protocol == "webrtc")
+                webRTCClass.close()
 
             socketReconnectRetryInterval = setTimeout(function () {
                 // retryStep = 4;
                 retryStep.set(4);
-                socket.connect();
+                if(protocol === "websocket")
+                    socket.close();
+                else if(protocol == "webrtc")
+                    webRTCClass.close()
             }, 2000);
         };
 
@@ -35301,7 +35469,7 @@ module.exports = function (thing, encoding, name) {
     }
 })();
 
-},{"../utility/logger.js":211,"../utility/utility.js":212,"./socket.js":210}],210:[function(require,module,exports){
+},{"../utility/logger.js":212,"../utility/utility.js":213,"./socket.js":210,"./webrtc.js":211}],210:[function(require,module,exports){
 (function() {
   /*
    * Socket Module to connect and handle Socket functionalities
@@ -35321,15 +35489,15 @@ module.exports = function (thing, encoding, name) {
      *******************************************************/
 
     var address = params.socketAddress,
-      wsConnectionWaitTime = params.wsConnectionWaitTime || 500,
-      connectionCheckTimeout = params.connectionCheckTimeout || 10000,
-      eventCallback = {},
-      socket,
-      waitForSocketToConnectTimeoutId,
-      socketRealTimeStatusInterval,
-      logLevel = params.logLevel,
-      pingController = new PingManager({waitTime: connectionCheckTimeout}),
-      socketWatchTimeout;
+        wsConnectionWaitTime = params.wsConnectionWaitTime || 500,
+        connectionCheckTimeout = params.connectionCheckTimeout || 10000,
+        eventCallback = {},
+        socket,
+        waitForSocketToConnectTimeoutId,
+        socketRealTimeStatusInterval,
+        logLevel = params.logLevel,
+        pingController = new PingManager({waitTime: connectionCheckTimeout}),
+        socketWatchTimeout;
 
 
     function PingManager(params) {
@@ -35343,7 +35511,7 @@ module.exports = function (thing, encoding, name) {
           first: null,
           second: null,
           third: null,
-          fourth: null
+          //fourth: null
         }
       }
 
@@ -35355,13 +35523,13 @@ module.exports = function (thing, encoding, name) {
         setPingTimeout() {
           config.timeoutIds.first = setTimeout(()=>{
             ping();
-            config.timeoutIds.first = setTimeout(()=>{
+            config.timeoutIds.second = setTimeout(()=>{
               ping();
-                config.timeoutIds.fourth = setTimeout(()=>{
-                  logLevel.debug && console.debug("[Async][Socket.js] Force closing socket.");
-                  onCloseHandler(null);
-                  socket.close();
-                }, 2000);
+              config.timeoutIds.third = setTimeout(()=>{
+                logLevel.debug && console.debug("[Async][Socket.js] Force closing socket.");
+                onCloseHandler(null);
+                socket.close();
+              }, 2000);
             }, 2000);
           }, 8000);
         },
@@ -35369,7 +35537,7 @@ module.exports = function (thing, encoding, name) {
           clearTimeout(config.timeoutIds.first);
           clearTimeout(config.timeoutIds.second);
           clearTimeout(config.timeoutIds.third);
-          clearTimeout(config.timeoutIds.fourth);
+          // clearTimeout(config.timeoutIds.fourth);
         },
       }
     }
@@ -35379,135 +35547,135 @@ module.exports = function (thing, encoding, name) {
      *******************************************************/
 
     var init = function() {
-        connect();
-      },
+          connect();
+        },
 
-      connect = function() {
-        try {
-          if (socket && socket.readyState == 1) {
-            return;
-          }
+        connect = function() {
+          try {
+            if (socket && socket.readyState == 1) {
+              return;
+            }
 
-          socket = new WebSocket(address, []);
+            socket = new WebSocket(address, []);
 
-          // socketRealTimeStatusInterval && clearInterval(socketRealTimeStatusInterval);
-          // socketRealTimeStatusInterval = setInterval(function() {
-          //   switch (socket.readyState) {
-          //     case 2:
-          //       onCloseHandler(null);
-          //       socketRealTimeStatusInterval && clearInterval(socketRealTimeStatusInterval);
-          //       break;
-          //     case 3:
-          //
-          //       break;
-          //   }
-          // }, 5000);
+            // socketRealTimeStatusInterval && clearInterval(socketRealTimeStatusInterval);
+            // socketRealTimeStatusInterval = setInterval(function() {
+            //   switch (socket.readyState) {
+            //     case 2:
+            //       onCloseHandler(null);
+            //       socketRealTimeStatusInterval && clearInterval(socketRealTimeStatusInterval);
+            //       break;
+            //     case 3:
+            //
+            //       break;
+            //   }
+            // }, 5000);
 
-          /**
-           * Watches the socket to make sure it's state changes to 1 in 5 seconds
-           */
-          socketWatchTimeout && clearTimeout(socketWatchTimeout);
-          socketWatchTimeout = setTimeout(() => {
-            // if(socket.readyState !== 1) {
-            logLevel.debug && console.debug("[Async][Socket.js] socketWatchTimeout triggered.");
-            onCloseHandler(null);
-            socket.close();
-            // }
-          }, 5000);
+            /**
+             * Watches the socket to make sure it's state changes to 1 in 5 seconds
+             */
+            socketWatchTimeout && clearTimeout(socketWatchTimeout);
+            socketWatchTimeout = setTimeout(() => {
+              // if(socket.readyState !== 1) {
+              logLevel.debug && console.debug("[Async][Socket.js] socketWatchTimeout triggered.");
+              onCloseHandler(null);
+              socket.close();
+              // }
+            }, 5000);
 
-          socket.onopen = function(event) {
-            waitForSocketToConnect(function() {
+            socket.onopen = function(event) {
+              waitForSocketToConnect(function() {
+                pingController.resetPingLoop();
+                eventCallback["open"]();
+                socketWatchTimeout && clearTimeout(socketWatchTimeout);
+              });
+            }
+
+            socket.onmessage = function(event) {
               pingController.resetPingLoop();
-              eventCallback["open"]();
+
+              var messageData = JSON.parse(event.data);
+              eventCallback["message"](messageData);
+            }
+
+            socket.onclose = function(event) {
+              pingController.stopPingLoop();
+              logLevel.debug && console.debug("[Async][Socket.js] socket.onclose happened. EventData:", event);
+              onCloseHandler(event);
               socketWatchTimeout && clearTimeout(socketWatchTimeout);
+            }
+
+            socket.onerror = function(event) {
+              logLevel.debug && console.debug("[Async][Socket.js] socket.onerror happened. EventData:", event);
+              eventCallback["error"](event);
+              socketWatchTimeout && clearTimeout(socketWatchTimeout);
+            }
+          } catch (error) {
+            eventCallback["customError"]({
+              errorCode: 4000,
+              errorMessage: "ERROR in WEBSOCKET!",
+              errorEvent: error
             });
           }
+        },
 
-          socket.onmessage = function(event) {
-            pingController.resetPingLoop();
+        onCloseHandler = function(event) {
+          pingController.stopPingLoop();
+          socket.onclose = null;
+          socket.onmessage = null;
+          socket.onerror = null;
+          socket.onopen = null;
+          eventCallback["close"](event);
+        },
 
-            var messageData = JSON.parse(event.data);
-            eventCallback["message"](messageData);
-          }
-
-          socket.onclose = function(event) {
-            pingController.stopPingLoop();
-            logLevel.debug && console.debug("[Async][Socket.js] socket.onclose happened. EventData:", event);
-            onCloseHandler(event);
-            socketWatchTimeout && clearTimeout(socketWatchTimeout);
-          }
-
-          socket.onerror = function(event) {
-            logLevel.debug && console.debug("[Async][Socket.js] socket.onerror happened. EventData:", event);
-            eventCallback["error"](event);
-            socketWatchTimeout && clearTimeout(socketWatchTimeout);
-          }
-        } catch (error) {
-          eventCallback["customError"]({
-            errorCode: 4000,
-            errorMessage: "ERROR in WEBSOCKET!",
-            errorEvent: error
+        ping = function() {
+          sendData({
+            type: 0
           });
-        }
-      },
+        },
 
-      onCloseHandler = function(event) {
-        pingController.stopPingLoop();
-        socket.onclose = null;
-        socket.onmessage = null;
-        socket.onerror = null;
-        socket.onopen = null;
-        eventCallback["close"](event);
-      },
-
-      ping = function() {
-        sendData({
-          type: 0
-        });
-      },
-
-      waitForSocketToConnect = function(callback) {
-        waitForSocketToConnectTimeoutId && clearTimeout(waitForSocketToConnectTimeoutId);
-
-        if (socket.readyState === 1) {
-          callback();
-        } else {
-          waitForSocketToConnectTimeoutId = setTimeout(function() {
-            if (socket.readyState === 1) {
-              callback();
-            } else {
-              waitForSocketToConnect(callback);
-            }
-          }, wsConnectionWaitTime);
-        }
-      },
-
-      sendData = function(params) {
-        var data = {
-          type: params.type,
-          uniqueId: params.uniqueId
-        };
-
-        if (params.trackerId) {
-          data.trackerId = params.trackerId;
-        }
-
-        try {
-          if (params.content) {
-            data.content = JSON.stringify(params.content);
-          }
+        waitForSocketToConnect = function(callback) {
+          waitForSocketToConnectTimeoutId && clearTimeout(waitForSocketToConnectTimeoutId);
 
           if (socket.readyState === 1) {
-            socket.send(JSON.stringify(data));
+            callback();
+          } else {
+            waitForSocketToConnectTimeoutId = setTimeout(function() {
+              if (socket.readyState === 1) {
+                callback();
+              } else {
+                waitForSocketToConnect(callback);
+              }
+            }, wsConnectionWaitTime);
           }
-        } catch (error) {
-          eventCallback["customError"]({
-            errorCode: 4004,
-            errorMessage: "Error in Socket sendData!",
-            errorEvent: error
-          });
-        }
-      };
+        },
+
+        sendData = function(params) {
+          var data = {
+            type: params.type,
+            uniqueId: params.uniqueId
+          };
+
+          if (params.trackerId) {
+            data.trackerId = params.trackerId;
+          }
+
+          try {
+            if (params.content) {
+              data.content = JSON.stringify(params.content);
+            }
+
+            if (socket.readyState === 1) {
+              socket.send(JSON.stringify(data));
+            }
+          } catch (error) {
+            eventCallback["customError"]({
+              errorCode: 4004,
+              errorMessage: "Error in Socket sendData!",
+              errorEvent: error
+            });
+          }
+        };
 
     /*******************************************************
      *             P U B L I C   M E T H O D S             *
@@ -35545,6 +35713,466 @@ module.exports = function (thing, encoding, name) {
 })();
 
 },{"isomorphic-ws":187}],211:[function(require,module,exports){
+let defaultConfig = {
+        baseUrl: "http://109.201.0.97/webrtc/",
+        registerEndpoint: "register/",
+        addICEEndpoint: "add-ice/",
+        getICEEndpoint: "get-ice/?",
+        configuration: {
+            bundlePolicy: "balanced",
+            iceTransportPolicy: "relay",
+            iceServers: [{
+                "urls": "turn:turnsandbox.podstream.ir:3478", "username": "mkhorrami", "credential": "mkh_123456"
+            }]
+        },
+        connectionCheckTimeout: 10000,
+        logLevel: null
+    },
+    variables = {
+        peerConnection: null,
+        dataChannel: null,
+        pingController: new PingManager({waitTime: defaultConfig.connectionCheckTimeout}),
+        candidatesQueue: [],
+        // candidatesSendQueue: [],
+        candidateManager: new CandidatesSendQueueManager(),
+        clientId: null,
+        deviceId: null,
+        apiCallRetries: {
+            register: 3,
+            getIce: 3,
+            addIce: 5
+        }
+    };
+
+function CandidatesSendQueueManager() {
+    let config = {
+        candidatesToSend: [],
+        alreadyReceivedServerCandidates: false,
+        reCheckTimeout: null
+    }
+
+    function trySendingCandidates() {
+        timoutCallback();
+        function timoutCallback() {
+            if(variables.peerConnection.signalingState === 'stable') {
+                config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
+                if (config.candidatesToSend.length) {
+                    let entry = config.candidatesToSend.shift();
+                    handshakingFunctions
+                        .sendCandidate(entry)
+                        .then(function (result) {
+                            if (result.length) {
+                                addServerCandidates(result);
+
+                                config.alreadyReceivedServerCandidates = true;
+                            }
+                            trySendingCandidates();
+                        });
+
+                } else if (!config.alreadyReceivedServerCandidates) {
+                    handshakingFunctions.getCandidates(variables.clientId).then(function (result) {
+                        addServerCandidates(result)
+                    }).catch();
+                }
+            } else {
+                config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
+                config.reCheckTimeout = setTimeout(timoutCallback, 1000);
+            }
+        }
+    }
+
+    function addServerCandidates(candidates) {
+        for(let i in candidates) {
+            webrtcFunctions.putCandidateToQueue(candidates[i]);
+        }
+    }
+
+    return {
+        add: function (candidate) {
+            config.candidatesToSend.push(candidate);
+            trySendingCandidates();
+        },
+        destroy: function (){
+            config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
+        }
+    }
+}
+
+function PingManager(params) {
+    const config = {
+        normalWaitTime: params.waitTime,
+
+        lastRequestTimeoutId: null,
+        lastReceivedMessageTime: 0,
+        totalNoMessageCount: 0,
+        timeoutIds: {
+            first: null,
+            second: null,
+            third: null,
+            fourth: null
+        }
+    }
+
+    return {
+        resetPingLoop() {
+            this.stopPingLoop();
+            this.setPingTimeout();
+        },
+        setPingTimeout() {
+            config.timeoutIds.first = setTimeout(() => {
+                ping();
+                config.timeoutIds.second = setTimeout(() => {
+                    ping();
+                    config.timeoutIds.third = setTimeout(() => {
+                        defaultConfig.logLevel.debug && console.debug("[Async][Webrtc.js] Force closing connection.");
+                        publicized.close();
+                    }, 2000);
+                }, 2000);
+            }, 8000);
+        },
+        stopPingLoop() {
+            clearTimeout(config.timeoutIds.first);
+            clearTimeout(config.timeoutIds.second);
+            clearTimeout(config.timeoutIds.third);
+            // clearTimeout(config.timeoutIds.fourth);
+        },
+    }
+}
+
+function connect() {
+    webrtcFunctions.createPeerConnection();
+    webrtcFunctions.createDataChannel();
+    webrtcFunctions.generateSdpOffer()
+        .then(sendOfferToServer);
+
+    function sendOfferToServer(offer) {
+        handshakingFunctions
+            .register(offer.sdp)
+            .then(processRegisterResult).catch();
+
+        variables
+            .peerConnection.setLocalDescription(offer)
+            .catch(error => console.error(error));
+    }
+
+    function processRegisterResult(result) {
+        variables.clientId = result.clientId;
+        variables.deviceId = result.deviceId;
+        webrtcFunctions.processAnswer(result.sdpAnswer);
+    }
+}
+
+let webrtcFunctions = {
+    createPeerConnection: function () {
+        variables.peerConnection = new RTCPeerConnection(defaultConfig.configuration);
+        variables.peerConnection.addEventListener('signalingstatechange', webrtcFunctions.signalingStateChangeCallback);
+        variables.peerConnection.onicecandidate = function (event) {
+            if (event.candidate) {
+                variables.candidateManager.add(event.candidate);
+                webrtcFunctions.putCandidateToQueue(event.candidate);
+            }
+        };
+    },
+    signalingStateChangeCallback: function () {
+        if (variables.peerConnection.signalingState === 'stable') {
+            // handshakingFunctions.getCandidates().catch()
+            webrtcFunctions.addTheCandidates();
+        }
+    },
+    createDataChannel: function () {
+        variables.dataChannel = variables.peerConnection.createDataChannel("dataChannel", {ordered: false});
+        variables.dataChannel.onopen = dataChannelCallbacks.onopen;
+        variables.dataChannel.onmessage = dataChannelCallbacks.onmessage;
+        variables.dataChannel.onerror = dataChannelCallbacks.onerror;
+        variables.dataChannel.onclose = dataChannelCallbacks.onclose;
+    },
+    generateSdpOffer: function () {
+        return new Promise(function (resolve, reject) {
+            variables.peerConnection.createOffer(function (offer) {
+                resolve(offer)
+            }, function (error) {
+                reject(error);
+                console.error(error);
+            }).then(r => console.log(r));
+        })
+    },
+    processAnswer: function (answer) {
+        let remoteDesc = {
+            type: "answer", sdp: answer
+        };
+        variables
+            .peerConnection
+            .setRemoteDescription(new RTCSessionDescription(remoteDesc))
+            .catch(function (error) {
+                console.error(error)
+            });
+    },
+    addTheCandidates: function () {
+        while (variables.candidatesQueue.length) {
+            let entry = variables.candidatesQueue.shift();
+            variables.peerConnection.addIceCandidate(entry.candidate);
+        }
+    },
+    putCandidateToQueue: function (candidate) {
+        variables.candidatesQueue.push({
+            candidate: new RTCIceCandidate(candidate)
+        });
+        if (variables.peerConnection.signalingState === 'stable') {
+            webrtcFunctions.addTheCandidates();
+        }
+    },
+    sendData: function(params) {
+        if(!variables.dataChannel) {
+            console.error("Connection is closed, do not send messages.")
+            return;
+        }
+        var data = {
+            type: params.type,
+            uniqueId: params.uniqueId
+        };
+
+        if (params.trackerId) {
+            data.trackerId = params.trackerId;
+        }
+
+        try {
+            if (params.content) {
+                data.content = JSON.stringify(params.content);
+            }
+
+            if (variables.peerConnection.signalingState === 'stable') {
+                //defaultConfig.logLevel.debug &&
+                console.log("[Async][WebRTC] Send ", data);
+                variables.dataChannel.send(JSON.stringify(data));
+            }
+        } catch (error) {
+            eventCallback["customError"]({
+                errorCode: 4004,
+                errorMessage: "Error in Socket sendData!",
+                errorEvent: error
+            });
+        }
+    }
+}
+
+let dataChannelCallbacks = {
+    onopen: function (event) {
+        console.log("********* dataChannel open *********");
+        variables.pingController.resetPingLoop();
+        eventCallback["open"]();
+
+        const deviceRegister = {
+            "type": "2",
+            "content": {"deviceId": variables.deviceId, "appId": "PodChat", "refresh": false, "renew": true}
+        };
+        deviceRegister.content = JSON.stringify(deviceRegister.content)
+        variables.dataChannel.send(JSON.stringify(deviceRegister));
+    },
+
+    onmessage: function (event) {
+
+        variables.pingController.resetPingLoop();
+        var messageData = JSON.parse(event.data);
+        console.log("[Async][WebRTC] Receive ", event.data);
+        eventCallback["message"](messageData);
+    },
+
+    onerror: function (error) {
+        logLevel.debug && console.debug("[Async][Socket.js] dataChannel.onerror happened. EventData:", event);
+        eventCallback["error"](event);
+    },
+    onclose: function (event) {
+        resetVariables();
+        eventCallback["close"](event);
+    }
+}
+
+let handshakingFunctions = {
+    register: function (offer) {
+        let retries = variables.apiCallRetries.register;
+        return new Promise(promiseHandler);
+        function promiseHandler(resolve, reject) {
+            let registerEndPoint = defaultConfig.baseUrl + defaultConfig.registerEndpoint
+            fetch(registerEndPoint, {
+                method: "POST",
+                body: JSON.stringify({
+                    offer: offer
+                })
+            })
+                .then(function (response) {
+                    if(response.ok)
+                        return response.json();
+                    else if(retries){
+                        retryTheRequest(resolve, reject);
+                        retries--;
+                    } else reject();
+                })
+                .then(result => resolve(result))
+                .catch(err => {
+                    if(retries){
+                        retryTheRequest(resolve, reject);
+                        retries--;
+                    } else {
+                        publicized.close();
+                    }
+                    console.error(err);
+                });
+        }
+        function retryTheRequest(resolve, reject){
+            setTimeout(function (){promiseHandler(resolve, reject)}, 1000);
+        }
+    },
+    getCandidates: function (clientId) {
+        let addIceCandidateEndPoint = defaultConfig.baseUrl + defaultConfig.getICEEndpoint
+        addIceCandidateEndPoint += "clientId=" + clientId;
+
+        let retries = variables.apiCallRetries.getIce;
+        return new Promise(promiseHandler);
+        function promiseHandler(resolve, reject) {
+            fetch(addIceCandidateEndPoint, {
+                method: "GET"
+            })
+                .then(function (response) {
+                    if(response.ok)
+                        return response.json();
+                    else if(retries){
+                        retryTheRequest(resolve, reject);
+                        retries--;
+                    } else reject();
+                })
+                .then(function (result) {
+                    resolve(result.iceCandidates)
+                    // if(result.iceCandidates && result.iceCandidates.length) {
+                    //     // result.iceCandidates.forEach((item) => {
+                    //     //     webrtcFunctions.putCandidateToQueue(item);
+                    //     // });
+                    //     resolve(result.iceCandidates)
+                    // }
+                    // else {
+                    //     if(retries){
+                    //         retryTheRequest(resolve, reject);
+                    //         retries--;
+                    //     } else reject();
+                    // }
+                })
+                .catch(function (err) {
+                    if(retries){
+                        retryTheRequest(resolve, reject);
+                        retries--;
+                    } else reject(err);
+                    console.error(err);
+                });
+        }
+
+        function retryTheRequest(resolve, reject){
+            setTimeout(function (){promiseHandler(resolve, reject)}, 1000);
+        }
+
+    },
+    sendCandidate: function (candidate) {
+        let addIceCandidateEndPoint = defaultConfig.baseUrl + defaultConfig.addICEEndpoint
+            , retries = variables.apiCallRetries.addIce;
+
+        return new Promise(promiseHandler);
+        function promiseHandler(resolve, reject) {
+            fetch(addIceCandidateEndPoint, {
+                method: "POST",
+                body: JSON.stringify({
+                    "clientId": variables.clientId,
+                    "candidate": candidate
+                })
+            })
+                .then(function (response) {
+                    if(response.ok)
+                        return response.json();
+                    else if(retries){
+                        retryTheRequest(resolve, reject);
+                        retries--;
+                    } else reject();
+                })
+                .then(function (result) {
+                    resolve(result.iceCandidates);
+                })
+                .catch(err => {
+                    if(retries){
+                        retryTheRequest(resolve, reject);
+                        retries--;
+                    } else reject(err);
+                    console.error(err);
+                });
+        }
+
+        function retryTheRequest(resolve, reject){
+            setTimeout(function (){promiseHandler(resolve, reject)}, 2000);
+        }
+    }
+}
+
+eventCallback = {};
+
+function resetVariables() {
+    console.log("resetVariables");
+    eventCallback["close"]();
+    variables.pingController.stopPingLoop();
+    variables.dataChannel.close();
+    variables.dataChannel = null;
+    variables.peerConnection.close();
+    variables.peerConnection = null;
+    variables.candidatesQueue = [];
+    variables.clientId = null;
+    variables.deviceId = null;
+    variables.candidateManager.destroy();
+    variables.candidateManager = new CandidatesSendQueueManager()
+}
+
+function ping() {
+    webrtcFunctions.sendData({
+        type: 0
+    });
+}
+function removeCallbacks(){
+    variables.peerConnection.onicecandidate = null;
+    variables.dataChannel.onclose = null;
+    variables.dataChannel.onmessage = null;
+    variables.dataChannel.onerror = null;
+    variables.dataChannel.onopen = null;
+}
+
+function WebRTCClass({
+    baseUrl,
+    configuration,
+    connectionCheckTimeout = 10000,
+    logLevel
+}) {
+    let config = {}
+    if (baseUrl)
+        config.baseUrl = baseUrl;
+    if (configuration)
+        config.configuration = configuration;
+    if (connectionCheckTimeout)
+        config.connectionCheckTimeout = connectionCheckTimeout;
+    if (logLevel)
+        config.logLevel = logLevel;
+
+    defaultConfig = Object.assign(defaultConfig, config);
+    connect();
+    return publicized;
+}
+
+let publicized = {
+    on: function (messageName, callback) {
+        eventCallback[messageName] = callback;
+    },
+    emit: webrtcFunctions.sendData,
+    connect: connect,
+    close: function () {
+        removeCallbacks();
+        resetVariables();
+    }
+};
+
+module.exports = WebRTCClass;
+},{}],212:[function(require,module,exports){
 function LogLevel(logLevel){
     let ll = logLevel || 2;
     switch (ll) {
@@ -35580,7 +36208,7 @@ else {
     window.POD.LogLevel = LogLevel;
 }
 
-},{}],212:[function(require,module,exports){
+},{}],213:[function(require,module,exports){
 (function (global){(function (){
 (function() {
   /**
@@ -35808,7 +36436,7 @@ else {
 })();
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],213:[function(require,module,exports){
+},{}],214:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -35994,7 +36622,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],214:[function(require,module,exports){
+},{}],215:[function(require,module,exports){
 exports.publicEncrypt = require('./publicEncrypt')
 exports.privateDecrypt = require('./privateDecrypt')
 
@@ -36006,7 +36634,7 @@ exports.publicDecrypt = function publicDecrypt (key, buf) {
   return exports.privateDecrypt(key, buf, true)
 }
 
-},{"./privateDecrypt":217,"./publicEncrypt":218}],215:[function(require,module,exports){
+},{"./privateDecrypt":218,"./publicEncrypt":219}],216:[function(require,module,exports){
 var createHash = require('create-hash')
 var Buffer = require('safe-buffer').Buffer
 
@@ -36027,9 +36655,9 @@ function i2ops (c) {
   return out
 }
 
-},{"create-hash":81,"safe-buffer":224}],216:[function(require,module,exports){
+},{"create-hash":81,"safe-buffer":225}],217:[function(require,module,exports){
 arguments[4][28][0].apply(exports,arguments)
-},{"buffer":32,"dup":28}],217:[function(require,module,exports){
+},{"buffer":32,"dup":28}],218:[function(require,module,exports){
 var parseKeys = require('parse-asn1')
 var mgf = require('./mgf')
 var xor = require('./xor')
@@ -36136,7 +36764,7 @@ function compare (a, b) {
   return dif
 }
 
-},{"./mgf":215,"./withPublic":219,"./xor":220,"bn.js":216,"browserify-rsa":53,"create-hash":81,"parse-asn1":202,"safe-buffer":224}],218:[function(require,module,exports){
+},{"./mgf":216,"./withPublic":220,"./xor":221,"bn.js":217,"browserify-rsa":53,"create-hash":81,"parse-asn1":202,"safe-buffer":225}],219:[function(require,module,exports){
 var parseKeys = require('parse-asn1')
 var randomBytes = require('randombytes')
 var createHash = require('create-hash')
@@ -36226,7 +36854,7 @@ function nonZero (len) {
   return out
 }
 
-},{"./mgf":215,"./withPublic":219,"./xor":220,"bn.js":216,"browserify-rsa":53,"create-hash":81,"parse-asn1":202,"randombytes":221,"safe-buffer":224}],219:[function(require,module,exports){
+},{"./mgf":216,"./withPublic":220,"./xor":221,"bn.js":217,"browserify-rsa":53,"create-hash":81,"parse-asn1":202,"randombytes":222,"safe-buffer":225}],220:[function(require,module,exports){
 var BN = require('bn.js')
 var Buffer = require('safe-buffer').Buffer
 
@@ -36240,7 +36868,7 @@ function withPublic (paddedMsg, key) {
 
 module.exports = withPublic
 
-},{"bn.js":216,"safe-buffer":224}],220:[function(require,module,exports){
+},{"bn.js":217,"safe-buffer":225}],221:[function(require,module,exports){
 module.exports = function xor (a, b) {
   var len = a.length
   var i = -1
@@ -36250,7 +36878,7 @@ module.exports = function xor (a, b) {
   return a
 }
 
-},{}],221:[function(require,module,exports){
+},{}],222:[function(require,module,exports){
 (function (process,global){(function (){
 'use strict'
 
@@ -36304,7 +36932,7 @@ function randomBytes (size, cb) {
 }
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":213,"safe-buffer":224}],222:[function(require,module,exports){
+},{"_process":214,"safe-buffer":225}],223:[function(require,module,exports){
 (function (process,global){(function (){
 'use strict'
 
@@ -36416,7 +37044,7 @@ function randomFillSync (buf, offset, size) {
 }
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":213,"randombytes":221,"safe-buffer":224}],223:[function(require,module,exports){
+},{"_process":214,"randombytes":222,"safe-buffer":225}],224:[function(require,module,exports){
 'use strict'
 var Buffer = require('buffer').Buffer
 var inherits = require('inherits')
@@ -36581,7 +37209,7 @@ function fn5 (a, b, c, d, e, m, k, s) {
 
 module.exports = RIPEMD160
 
-},{"buffer":77,"hash-base":155,"inherits":186}],224:[function(require,module,exports){
+},{"buffer":77,"hash-base":155,"inherits":186}],225:[function(require,module,exports){
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
 var Buffer = buffer.Buffer
@@ -36645,7 +37273,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-},{"buffer":77}],225:[function(require,module,exports){
+},{"buffer":77}],226:[function(require,module,exports){
 (function (process){(function (){
 /* eslint-disable node/no-deprecated-api */
 
@@ -36726,7 +37354,7 @@ if (!safer.constants) {
 module.exports = safer
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":213,"buffer":77}],226:[function(require,module,exports){
+},{"_process":214,"buffer":77}],227:[function(require,module,exports){
 var grammar = module.exports = {
   v: [{
       name: 'version',
@@ -36985,7 +37613,7 @@ Object.keys(grammar).forEach(function (key) {
   });
 });
 
-},{}],227:[function(require,module,exports){
+},{}],228:[function(require,module,exports){
 var parser = require('./parser');
 var writer = require('./writer');
 
@@ -36995,7 +37623,7 @@ exports.parseFmtpConfig = parser.parseFmtpConfig;
 exports.parsePayloads = parser.parsePayloads;
 exports.parseRemoteCandidates = parser.parseRemoteCandidates;
 
-},{"./parser":228,"./writer":229}],228:[function(require,module,exports){
+},{"./parser":229,"./writer":230}],229:[function(require,module,exports){
 var toIntIfInt = function (v) {
   return String(Number(v)) === v ? Number(v) : v;
 };
@@ -37090,7 +37718,7 @@ exports.parseRemoteCandidates = function (str) {
   return candidates;
 };
 
-},{"./grammar":226}],229:[function(require,module,exports){
+},{"./grammar":227}],230:[function(require,module,exports){
 var grammar = require('./grammar');
 
 // customized util.format - discards excess arguments and can void middle ones
@@ -37206,7 +37834,7 @@ module.exports = function (session, opts) {
   return sdp.join('\r\n') + '\r\n';
 };
 
-},{"./grammar":226}],230:[function(require,module,exports){
+},{"./grammar":227}],231:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -37247,7 +37875,7 @@ module.exports = function arrayEquals(array) {
 };
 
 
-},{}],231:[function(require,module,exports){
+},{}],232:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -37265,7 +37893,7 @@ module.exports = function arrayEquals(array) {
 
 exports.Interop = require('./interop');
 
-},{"./interop":232}],232:[function(require,module,exports){
+},{"./interop":233}],233:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -38150,7 +38778,7 @@ Interop.prototype.toUnifiedPlan = function(desc) {
     //#endregion
 };
 
-},{"./array-equals":230,"./transform":233}],233:[function(require,module,exports){
+},{"./array-equals":231,"./transform":234}],234:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -38264,7 +38892,7 @@ exports.parse = function(sdp) {
 };
 
 
-},{"sdp-transform":227}],234:[function(require,module,exports){
+},{"sdp-transform":228}],235:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 // prototype class for hash functions
@@ -38347,7 +38975,7 @@ Hash.prototype._update = function () {
 
 module.exports = Hash
 
-},{"safe-buffer":224}],235:[function(require,module,exports){
+},{"safe-buffer":225}],236:[function(require,module,exports){
 var exports = module.exports = function SHA (algorithm) {
   algorithm = algorithm.toLowerCase()
 
@@ -38364,7 +38992,7 @@ exports.sha256 = require('./sha256')
 exports.sha384 = require('./sha384')
 exports.sha512 = require('./sha512')
 
-},{"./sha":236,"./sha1":237,"./sha224":238,"./sha256":239,"./sha384":240,"./sha512":241}],236:[function(require,module,exports){
+},{"./sha":237,"./sha1":238,"./sha224":239,"./sha256":240,"./sha384":241,"./sha512":242}],237:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-0, as defined
  * in FIPS PUB 180-1
@@ -38460,7 +39088,7 @@ Sha.prototype._hash = function () {
 
 module.exports = Sha
 
-},{"./hash":234,"inherits":186,"safe-buffer":224}],237:[function(require,module,exports){
+},{"./hash":235,"inherits":186,"safe-buffer":225}],238:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
  * in FIPS PUB 180-1
@@ -38561,7 +39189,7 @@ Sha1.prototype._hash = function () {
 
 module.exports = Sha1
 
-},{"./hash":234,"inherits":186,"safe-buffer":224}],238:[function(require,module,exports){
+},{"./hash":235,"inherits":186,"safe-buffer":225}],239:[function(require,module,exports){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
  * in FIPS 180-2
@@ -38616,7 +39244,7 @@ Sha224.prototype._hash = function () {
 
 module.exports = Sha224
 
-},{"./hash":234,"./sha256":239,"inherits":186,"safe-buffer":224}],239:[function(require,module,exports){
+},{"./hash":235,"./sha256":240,"inherits":186,"safe-buffer":225}],240:[function(require,module,exports){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
  * in FIPS 180-2
@@ -38753,7 +39381,7 @@ Sha256.prototype._hash = function () {
 
 module.exports = Sha256
 
-},{"./hash":234,"inherits":186,"safe-buffer":224}],240:[function(require,module,exports){
+},{"./hash":235,"inherits":186,"safe-buffer":225}],241:[function(require,module,exports){
 var inherits = require('inherits')
 var SHA512 = require('./sha512')
 var Hash = require('./hash')
@@ -38812,7 +39440,7 @@ Sha384.prototype._hash = function () {
 
 module.exports = Sha384
 
-},{"./hash":234,"./sha512":241,"inherits":186,"safe-buffer":224}],241:[function(require,module,exports){
+},{"./hash":235,"./sha512":242,"inherits":186,"safe-buffer":225}],242:[function(require,module,exports){
 var inherits = require('inherits')
 var Hash = require('./hash')
 var Buffer = require('safe-buffer').Buffer
@@ -39074,7 +39702,7 @@ Sha512.prototype._hash = function () {
 
 module.exports = Sha512
 
-},{"./hash":234,"inherits":186,"safe-buffer":224}],242:[function(require,module,exports){
+},{"./hash":235,"inherits":186,"safe-buffer":225}],243:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -39205,35 +39833,35 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":149,"inherits":186,"readable-stream/lib/_stream_duplex.js":244,"readable-stream/lib/_stream_passthrough.js":245,"readable-stream/lib/_stream_readable.js":246,"readable-stream/lib/_stream_transform.js":247,"readable-stream/lib/_stream_writable.js":248,"readable-stream/lib/internal/streams/end-of-stream.js":252,"readable-stream/lib/internal/streams/pipeline.js":254}],243:[function(require,module,exports){
+},{"events":149,"inherits":186,"readable-stream/lib/_stream_duplex.js":245,"readable-stream/lib/_stream_passthrough.js":246,"readable-stream/lib/_stream_readable.js":247,"readable-stream/lib/_stream_transform.js":248,"readable-stream/lib/_stream_writable.js":249,"readable-stream/lib/internal/streams/end-of-stream.js":253,"readable-stream/lib/internal/streams/pipeline.js":255}],244:[function(require,module,exports){
 arguments[4][60][0].apply(exports,arguments)
-},{"dup":60}],244:[function(require,module,exports){
+},{"dup":60}],245:[function(require,module,exports){
 arguments[4][61][0].apply(exports,arguments)
-},{"./_stream_readable":246,"./_stream_writable":248,"_process":213,"dup":61,"inherits":186}],245:[function(require,module,exports){
+},{"./_stream_readable":247,"./_stream_writable":249,"_process":214,"dup":61,"inherits":186}],246:[function(require,module,exports){
 arguments[4][62][0].apply(exports,arguments)
-},{"./_stream_transform":247,"dup":62,"inherits":186}],246:[function(require,module,exports){
+},{"./_stream_transform":248,"dup":62,"inherits":186}],247:[function(require,module,exports){
 arguments[4][63][0].apply(exports,arguments)
-},{"../errors":243,"./_stream_duplex":244,"./internal/streams/async_iterator":249,"./internal/streams/buffer_list":250,"./internal/streams/destroy":251,"./internal/streams/from":253,"./internal/streams/state":255,"./internal/streams/stream":256,"_process":213,"buffer":77,"dup":63,"events":149,"inherits":186,"string_decoder/":257,"util":32}],247:[function(require,module,exports){
+},{"../errors":244,"./_stream_duplex":245,"./internal/streams/async_iterator":250,"./internal/streams/buffer_list":251,"./internal/streams/destroy":252,"./internal/streams/from":254,"./internal/streams/state":256,"./internal/streams/stream":257,"_process":214,"buffer":77,"dup":63,"events":149,"inherits":186,"string_decoder/":258,"util":32}],248:[function(require,module,exports){
 arguments[4][64][0].apply(exports,arguments)
-},{"../errors":243,"./_stream_duplex":244,"dup":64,"inherits":186}],248:[function(require,module,exports){
+},{"../errors":244,"./_stream_duplex":245,"dup":64,"inherits":186}],249:[function(require,module,exports){
 arguments[4][65][0].apply(exports,arguments)
-},{"../errors":243,"./_stream_duplex":244,"./internal/streams/destroy":251,"./internal/streams/state":255,"./internal/streams/stream":256,"_process":213,"buffer":77,"dup":65,"inherits":186,"util-deprecate":260}],249:[function(require,module,exports){
+},{"../errors":244,"./_stream_duplex":245,"./internal/streams/destroy":252,"./internal/streams/state":256,"./internal/streams/stream":257,"_process":214,"buffer":77,"dup":65,"inherits":186,"util-deprecate":261}],250:[function(require,module,exports){
 arguments[4][66][0].apply(exports,arguments)
-},{"./end-of-stream":252,"_process":213,"dup":66}],250:[function(require,module,exports){
+},{"./end-of-stream":253,"_process":214,"dup":66}],251:[function(require,module,exports){
 arguments[4][67][0].apply(exports,arguments)
-},{"buffer":77,"dup":67,"util":32}],251:[function(require,module,exports){
+},{"buffer":77,"dup":67,"util":32}],252:[function(require,module,exports){
 arguments[4][68][0].apply(exports,arguments)
-},{"_process":213,"dup":68}],252:[function(require,module,exports){
+},{"_process":214,"dup":68}],253:[function(require,module,exports){
 arguments[4][69][0].apply(exports,arguments)
-},{"../../../errors":243,"dup":69}],253:[function(require,module,exports){
+},{"../../../errors":244,"dup":69}],254:[function(require,module,exports){
 arguments[4][70][0].apply(exports,arguments)
-},{"dup":70}],254:[function(require,module,exports){
+},{"dup":70}],255:[function(require,module,exports){
 arguments[4][71][0].apply(exports,arguments)
-},{"../../../errors":243,"./end-of-stream":252,"dup":71}],255:[function(require,module,exports){
+},{"../../../errors":244,"./end-of-stream":253,"dup":71}],256:[function(require,module,exports){
 arguments[4][72][0].apply(exports,arguments)
-},{"../../../errors":243,"dup":72}],256:[function(require,module,exports){
+},{"../../../errors":244,"dup":72}],257:[function(require,module,exports){
 arguments[4][73][0].apply(exports,arguments)
-},{"dup":73,"events":149}],257:[function(require,module,exports){
+},{"dup":73,"events":149}],258:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -39530,17 +40158,18 @@ function simpleWrite(buf) {
 function simpleEnd(buf) {
   return buf && buf.length ? this.write(buf) : '';
 }
-},{"safe-buffer":258}],258:[function(require,module,exports){
+},{"safe-buffer":259}],259:[function(require,module,exports){
 arguments[4][75][0].apply(exports,arguments)
-},{"buffer":77,"dup":75}],259:[function(require,module,exports){
-/*!
- * UAParser.js v0.7.24
- * Lightweight JavaScript-based User-Agent string parser
- * https://github.com/faisalman/ua-parser-js
- *
- * Copyright © 2012-2021 Faisal Salman <f@faisalman.com>
- * Licensed under MIT License
- */
+},{"buffer":77,"dup":75}],260:[function(require,module,exports){
+/////////////////////////////////////////////////////////////////////////////////
+/* UAParser.js v0.7.35
+   Copyright © 2012-2021 Faisal Salman <f@faisalman.com>
+   MIT License *//*
+   Detect Browser, Engine, OS, CPU, and Device type/model from User-Agent data.
+   Supports browser & node.js environment. 
+   Demo   : https://faisalman.github.io/ua-parser-js
+   Source : https://github.com/faisalman/ua-parser-js */
+/////////////////////////////////////////////////////////////////////////////////
 
 (function (window, undefined) {
 
@@ -39551,14 +40180,14 @@ arguments[4][75][0].apply(exports,arguments)
     /////////////
 
 
-    var LIBVERSION  = '0.7.24',
+    var LIBVERSION  = '0.7.35',
         EMPTY       = '',
         UNKNOWN     = '?',
         FUNC_TYPE   = 'function',
         UNDEF_TYPE  = 'undefined',
         OBJ_TYPE    = 'object',
         STR_TYPE    = 'string',
-        MAJOR       = 'major', // deprecated
+        MAJOR       = 'major',
         MODEL       = 'model',
         NAME        = 'name',
         TYPE        = 'type',
@@ -39570,16 +40199,38 @@ arguments[4][75][0].apply(exports,arguments)
         TABLET      = 'tablet',
         SMARTTV     = 'smarttv',
         WEARABLE    = 'wearable',
-        EMBEDDED    = 'embedded';
+        EMBEDDED    = 'embedded',
+        UA_MAX_LENGTH = 350;
 
+    var AMAZON  = 'Amazon',
+        APPLE   = 'Apple',
+        ASUS    = 'ASUS',
+        BLACKBERRY = 'BlackBerry',
+        BROWSER = 'Browser',
+        CHROME  = 'Chrome',
+        EDGE    = 'Edge',
+        FIREFOX = 'Firefox',
+        GOOGLE  = 'Google',
+        HUAWEI  = 'Huawei',
+        LG      = 'LG',
+        MICROSOFT = 'Microsoft',
+        MOTOROLA  = 'Motorola',
+        OPERA   = 'Opera',
+        SAMSUNG = 'Samsung',
+        SHARP   = 'Sharp',
+        SONY    = 'Sony',
+        VIERA   = 'Viera',
+        XIAOMI  = 'Xiaomi',
+        ZEBRA   = 'Zebra',
+        FACEBOOK    = 'Facebook',
+        CHROMIUM_OS = 'Chromium OS',
+        MAC_OS  = 'Mac OS';
 
     ///////////
     // Helper
     //////////
 
-
-    var util = {
-        extend : function (regexes, extensions) {
+    var extend = function (regexes, extensions) {
             var mergedRegexes = {};
             for (var i in regexes) {
                 if (extensions[i] && extensions[i].length % 2 === 0) {
@@ -39590,33 +40241,34 @@ arguments[4][75][0].apply(exports,arguments)
             }
             return mergedRegexes;
         },
-        has : function (str1, str2) {
-          if (typeof str1 === "string") {
-            return str2.toLowerCase().indexOf(str1.toLowerCase()) !== -1;
-          } else {
-            return false;
-          }
+        enumerize = function (arr) {
+            var enums = {};
+            for (var i=0; i<arr.length; i++) {
+                enums[arr[i].toUpperCase()] = arr[i];
+            }
+            return enums;
         },
-        lowerize : function (str) {
+        has = function (str1, str2) {
+            return typeof str1 === STR_TYPE ? lowerize(str2).indexOf(lowerize(str1)) !== -1 : false;
+        },
+        lowerize = function (str) {
             return str.toLowerCase();
         },
-        major : function (version) {
-            return typeof(version) === STR_TYPE ? version.replace(/[^\d\.]/g,'').split(".")[0] : undefined;
+        majorize = function (version) {
+            return typeof(version) === STR_TYPE ? version.replace(/[^\d\.]/g, EMPTY).split('.')[0] : undefined;
         },
-        trim : function (str) {
-          return str.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
-        }
+        trim = function (str, len) {
+            if (typeof(str) === STR_TYPE) {
+                str = str.replace(/^\s\s*/, EMPTY);
+                return typeof(len) === UNDEF_TYPE ? str : str.substring(0, UA_MAX_LENGTH);
+            }
     };
-
 
     ///////////////
     // Map helper
     //////////////
 
-
-    var mapper = {
-
-        rgx : function (ua, arrays) {
+    var rgxMapper = function (ua, arrays) {
 
             var i = 0, j, k, p, q, matches, match;
 
@@ -39630,6 +40282,7 @@ arguments[4][75][0].apply(exports,arguments)
                 // try matching uastring with regexes
                 while (j < regex.length && !matches) {
 
+                    if (!regex[j]) { break; }
                     matches = regex[j++].exec(ua);
 
                     if (!!matches) {
@@ -39638,7 +40291,7 @@ arguments[4][75][0].apply(exports,arguments)
                             q = props[p];
                             // check if given property is actually array
                             if (typeof q === OBJ_TYPE && q.length > 0) {
-                                if (q.length == 2) {
+                                if (q.length === 2) {
                                     if (typeof q[1] == FUNC_TYPE) {
                                         // assign modified match
                                         this[q[0]] = q[1].call(this, match);
@@ -39646,7 +40299,7 @@ arguments[4][75][0].apply(exports,arguments)
                                         // assign given value, ignore regex match
                                         this[q[0]] = q[1];
                                     }
-                                } else if (q.length == 3) {
+                                } else if (q.length === 3) {
                                     // check whether function or regex
                                     if (typeof q[1] === FUNC_TYPE && !(q[1].exec && q[1].test)) {
                                         // call function (usually string mapper)
@@ -39655,7 +40308,7 @@ arguments[4][75][0].apply(exports,arguments)
                                         // sanitize match using given regex
                                         this[q[0]] = match ? match.replace(q[1], q[2]) : undefined;
                                     }
-                                } else if (q.length == 4) {
+                                } else if (q.length === 4) {
                                         this[q[0]] = match ? q[3].call(this, match.replace(q[1], q[2])) : undefined;
                                 }
                             } else {
@@ -39668,712 +40321,705 @@ arguments[4][75][0].apply(exports,arguments)
             }
         },
 
-        str : function (str, map) {
+        strMapper = function (str, map) {
 
             for (var i in map) {
-                // check if array
+                // check if current value is array
                 if (typeof map[i] === OBJ_TYPE && map[i].length > 0) {
                     for (var j = 0; j < map[i].length; j++) {
-                        if (util.has(map[i][j], str)) {
+                        if (has(map[i][j], str)) {
                             return (i === UNKNOWN) ? undefined : i;
                         }
                     }
-                } else if (util.has(map[i], str)) {
+                } else if (has(map[i], str)) {
                     return (i === UNKNOWN) ? undefined : i;
                 }
             }
             return str;
-        }
     };
-
 
     ///////////////
     // String map
     //////////////
 
-
-    var maps = {
-
-        browser : {
-            oldsafari : {
-                version : {
-                    '1.0'   : '/8',
-                    '1.2'   : '/1',
-                    '1.3'   : '/3',
-                    '2.0'   : '/412',
-                    '2.0.2' : '/416',
-                    '2.0.3' : '/417',
-                    '2.0.4' : '/419',
-                    '?'     : '/'
-                }
-            }
+    // Safari < 3.0
+    var oldSafariMap = {
+            '1.0'   : '/8',
+            '1.2'   : '/1',
+            '1.3'   : '/3',
+            '2.0'   : '/412',
+            '2.0.2' : '/416',
+            '2.0.3' : '/417',
+            '2.0.4' : '/419',
+            '?'     : '/'
         },
-
-        device : {
-            amazon : {
-                model : {
-                    'Fire Phone' : ['SD', 'KF']
-                }
-            },
-            sprint : {
-                model : {
-                    'Evo Shift 4G' : '7373KT'
-                },
-                vendor : {
-                    'HTC'       : 'APA',
-                    'Sprint'    : 'Sprint'
-                }
-            }
-        },
-
-        os : {
-            windows : {
-                version : {
-                    'ME'        : '4.90',
-                    'NT 3.11'   : 'NT3.51',
-                    'NT 4.0'    : 'NT4.0',
-                    '2000'      : 'NT 5.0',
-                    'XP'        : ['NT 5.1', 'NT 5.2'],
-                    'Vista'     : 'NT 6.0',
-                    '7'         : 'NT 6.1',
-                    '8'         : 'NT 6.2',
-                    '8.1'       : 'NT 6.3',
-                    '10'        : ['NT 6.4', 'NT 10.0'],
-                    'RT'        : 'ARM'
-                }
-            }
-        }
+        windowsVersionMap = {
+            'ME'        : '4.90',
+            'NT 3.11'   : 'NT3.51',
+            'NT 4.0'    : 'NT4.0',
+            '2000'      : 'NT 5.0',
+            'XP'        : ['NT 5.1', 'NT 5.2'],
+            'Vista'     : 'NT 6.0',
+            '7'         : 'NT 6.1',
+            '8'         : 'NT 6.2',
+            '8.1'       : 'NT 6.3',
+            '10'        : ['NT 6.4', 'NT 10.0'],
+            'RT'        : 'ARM'
     };
-
 
     //////////////
     // Regex map
     /////////////
 
-
     var regexes = {
 
         browser : [[
 
+            /\b(?:crmo|crios)\/([\w\.]+)/i                                      // Chrome for Android/iOS
+            ], [VERSION, [NAME, 'Chrome']], [
+            /edg(?:e|ios|a)?\/([\w\.]+)/i                                       // Microsoft Edge
+            ], [VERSION, [NAME, 'Edge']], [
+
             // Presto based
-            /(opera\smini)\/([\w\.-]+)/i,                                       // Opera Mini
-            /(opera\s[mobiletab]{3,6}).+version\/([\w\.-]+)/i,                  // Opera Mobi/Tablet
-            /(opera).+version\/([\w\.]+)/i,                                     // Opera > 9.80
-            /(opera)[\/\s]+([\w\.]+)/i                                          // Opera < 9.80
+            /(opera mini)\/([-\w\.]+)/i,                                        // Opera Mini
+            /(opera [mobiletab]{3,6})\b.+version\/([-\w\.]+)/i,                 // Opera Mobi/Tablet
+            /(opera)(?:.+version\/|[\/ ]+)([\w\.]+)/i                           // Opera
             ], [NAME, VERSION], [
-
-            /(opios)[\/\s]+([\w\.]+)/i                                          // Opera mini on iphone >= 8.0
-            ], [[NAME, 'Opera Mini'], VERSION], [
-
-            /\s(opr)\/([\w\.]+)/i                                               // Opera Webkit
-            ], [[NAME, 'Opera'], VERSION], [
+            /opios[\/ ]+([\w\.]+)/i                                             // Opera mini on iphone >= 8.0
+            ], [VERSION, [NAME, OPERA+' Mini']], [
+            /\bopr\/([\w\.]+)/i                                                 // Opera Webkit
+            ], [VERSION, [NAME, OPERA]], [
 
             // Mixed
             /(kindle)\/([\w\.]+)/i,                                             // Kindle
-            /(lunascape|maxthon|netfront|jasmine|blazer)[\/\s]?([\w\.]*)/i,
-                                                                                // Lunascape/Maxthon/Netfront/Jasmine/Blazer
+            /(lunascape|maxthon|netfront|jasmine|blazer)[\/ ]?([\w\.]*)/i,      // Lunascape/Maxthon/Netfront/Jasmine/Blazer
             // Trident based
-            /(avant\s|iemobile|slim)(?:browser)?[\/\s]?([\w\.]*)/i,
-                                                                                // Avant/IEMobile/SlimBrowser
-            /(bidubrowser|baidubrowser)[\/\s]?([\w\.]+)/i,                      // Baidu Browser
-            /(?:ms|\()(ie)\s([\w\.]+)/i,                                        // Internet Explorer
+            /(avant |iemobile|slim)(?:browser)?[\/ ]?([\w\.]*)/i,               // Avant/IEMobile/SlimBrowser
+            /(ba?idubrowser)[\/ ]?([\w\.]+)/i,                                  // Baidu Browser
+            /(?:ms|\()(ie) ([\w\.]+)/i,                                         // Internet Explorer
 
-            // Webkit/KHTML based
-            /(rekonq)\/([\w\.]*)/i,                                             // Rekonq
-            /(chromium|flock|rockmelt|midori|epiphany|silk|skyfire|ovibrowser|bolt|iron|vivaldi|iridium|phantomjs|bowser|quark|qupzilla|falkon)\/([\w\.-]+)/i
-                                                                                // Chromium/Flock/RockMelt/Midori/Epiphany/Silk/Skyfire/Bolt/Iron/Iridium/PhantomJS/Bowser/QupZilla/Falkon
+            // Webkit/KHTML based                                               // Flock/RockMelt/Midori/Epiphany/Silk/Skyfire/Bolt/Iron/Iridium/PhantomJS/Bowser/QupZilla/Falkon
+            /(flock|rockmelt|midori|epiphany|silk|skyfire|bolt|iron|vivaldi|iridium|phantomjs|bowser|quark|qupzilla|falkon|rekonq|puffin|brave|whale(?!.+naver)|qqbrowserlite|qq|duckduckgo)\/([-\w\.]+)/i,
+                                                                                // Rekonq/Puffin/Brave/Whale/QQBrowserLite/QQ, aka ShouQ
+            /(heytap|ovi)browser\/([\d\.]+)/i,                                  // Heytap/Ovi
+            /(weibo)__([\d\.]+)/i                                               // Weibo
             ], [NAME, VERSION], [
-
-            /(konqueror)\/([\w\.]+)/i                                           // Konqueror
-            ], [[NAME, 'Konqueror'], VERSION], [
-
-            /(trident).+rv[:\s]([\w\.]{1,9}).+like\sgecko/i                     // IE11
-            ], [[NAME, 'IE'], VERSION], [
-
-            /(edge|edgios|edga|edg)\/((\d+)?[\w\.]+)/i                          // Microsoft Edge
-            ], [[NAME, 'Edge'], VERSION], [
-
-            /(yabrowser)\/([\w\.]+)/i                                           // Yandex
-            ], [[NAME, 'Yandex'], VERSION], [
-
-            /(Avast)\/([\w\.]+)/i                                               // Avast Secure Browser
-            ], [[NAME, 'Avast Secure Browser'], VERSION], [
-
-            /(AVG)\/([\w\.]+)/i                                                 // AVG Secure Browser
-            ], [[NAME, 'AVG Secure Browser'], VERSION], [
-
-            /(puffin)\/([\w\.]+)/i                                              // Puffin
-            ], [[NAME, 'Puffin'], VERSION], [
-
-            /(focus)\/([\w\.]+)/i                                               // Firefox Focus
-            ], [[NAME, 'Firefox Focus'], VERSION], [
-
-            /(opt)\/([\w\.]+)/i                                                 // Opera Touch
-            ], [[NAME, 'Opera Touch'], VERSION], [
-
-            /((?:[\s\/])uc?\s?browser|(?:juc.+)ucweb)[\/\s]?([\w\.]+)/i         // UCBrowser
-            ], [[NAME, 'UCBrowser'], VERSION], [
-
+            /(?:\buc? ?browser|(?:juc.+)ucweb)[\/ ]?([\w\.]+)/i                 // UCBrowser
+            ], [VERSION, [NAME, 'UC'+BROWSER]], [
+            /microm.+\bqbcore\/([\w\.]+)/i,                                     // WeChat Desktop for Windows Built-in Browser
+            /\bqbcore\/([\w\.]+).+microm/i
+            ], [VERSION, [NAME, 'WeChat(Win) Desktop']], [
+            /micromessenger\/([\w\.]+)/i                                        // WeChat
+            ], [VERSION, [NAME, 'WeChat']], [
+            /konqueror\/([\w\.]+)/i                                             // Konqueror
+            ], [VERSION, [NAME, 'Konqueror']], [
+            /trident.+rv[: ]([\w\.]{1,9})\b.+like gecko/i                       // IE11
+            ], [VERSION, [NAME, 'IE']], [
+            /ya(?:search)?browser\/([\w\.]+)/i                                  // Yandex
+            ], [VERSION, [NAME, 'Yandex']], [
+            /(avast|avg)\/([\w\.]+)/i                                           // Avast/AVG Secure Browser
+            ], [[NAME, /(.+)/, '$1 Secure '+BROWSER], VERSION], [
+            /\bfocus\/([\w\.]+)/i                                               // Firefox Focus
+            ], [VERSION, [NAME, FIREFOX+' Focus']], [
+            /\bopt\/([\w\.]+)/i                                                 // Opera Touch
+            ], [VERSION, [NAME, OPERA+' Touch']], [
+            /coc_coc\w+\/([\w\.]+)/i                                            // Coc Coc Browser
+            ], [VERSION, [NAME, 'Coc Coc']], [
+            /dolfin\/([\w\.]+)/i                                                // Dolphin
+            ], [VERSION, [NAME, 'Dolphin']], [
+            /coast\/([\w\.]+)/i                                                 // Opera Coast
+            ], [VERSION, [NAME, OPERA+' Coast']], [
+            /miuibrowser\/([\w\.]+)/i                                           // MIUI Browser
+            ], [VERSION, [NAME, 'MIUI '+BROWSER]], [
+            /fxios\/([-\w\.]+)/i                                                // Firefox for iOS
+            ], [VERSION, [NAME, FIREFOX]], [
+            /\bqihu|(qi?ho?o?|360)browser/i                                     // 360
+            ], [[NAME, '360 '+BROWSER]], [
+            /(oculus|samsung|sailfish|huawei)browser\/([\w\.]+)/i
+            ], [[NAME, /(.+)/, '$1 '+BROWSER], VERSION], [                      // Oculus/Samsung/Sailfish/Huawei Browser
             /(comodo_dragon)\/([\w\.]+)/i                                       // Comodo Dragon
             ], [[NAME, /_/g, ' '], VERSION], [
-
-            /(windowswechat qbcore)\/([\w\.]+)/i                                // WeChat Desktop for Windows Built-in Browser
-            ], [[NAME, 'WeChat(Win) Desktop'], VERSION], [
-
-            /(micromessenger)\/([\w\.]+)/i                                      // WeChat
-            ], [[NAME, 'WeChat'], VERSION], [
-
-            /(brave)\/([\w\.]+)/i                                               // Brave browser
-            ], [[NAME, 'Brave'], VERSION], [
-
-            /(whale)\/([\w\.]+)/i                                               // Whale browser
-            ], [[NAME, 'Whale'], VERSION], [
-
-            /(qqbrowserlite)\/([\w\.]+)/i                                       // QQBrowserLite
+            /(electron)\/([\w\.]+) safari/i,                                    // Electron-based App
+            /(tesla)(?: qtcarbrowser|\/(20\d\d\.[-\w\.]+))/i,                   // Tesla
+            /m?(qqbrowser|baiduboxapp|2345Explorer)[\/ ]?([\w\.]+)/i            // QQBrowser/Baidu App/2345 Browser
             ], [NAME, VERSION], [
-
-            /(QQ)\/([\d\.]+)/i                                                  // QQ, aka ShouQ
-            ], [NAME, VERSION], [
-
-            /m?(qqbrowser)[\/\s]?([\w\.]+)/i                                    // QQBrowser
-            ], [NAME, VERSION], [
-
-            /(baiduboxapp)[\/\s]?([\w\.]+)/i                                    // Baidu App
-            ], [NAME, VERSION], [
-
-            /(2345Explorer)[\/\s]?([\w\.]+)/i                                   // 2345 Browser
-            ], [NAME, VERSION], [
-
-            /(MetaSr)[\/\s]?([\w\.]+)/i                                         // SouGouBrowser
+            /(metasr)[\/ ]?([\w\.]+)/i,                                         // SouGouBrowser
+            /(lbbrowser)/i,                                                     // LieBao Browser
+            /\[(linkedin)app\]/i                                                // LinkedIn App for iOS & Android
             ], [NAME], [
 
-            /(LBBROWSER)/i                                                      // LieBao Browser
-            ], [NAME], [
+            // WebView
+            /((?:fban\/fbios|fb_iab\/fb4a)(?!.+fbav)|;fbav\/([\w\.]+);)/i       // Facebook App for iOS & Android
+            ], [[NAME, FACEBOOK], VERSION], [
+            /(kakao(?:talk|story))[\/ ]([\w\.]+)/i,                             // Kakao App
+            /(naver)\(.*?(\d+\.[\w\.]+).*\)/i,                                  // Naver InApp
+            /safari (line)\/([\w\.]+)/i,                                        // Line App for iOS
+            /\b(line)\/([\w\.]+)\/iab/i,                                        // Line App for Android
+            /(chromium|instagram)[\/ ]([-\w\.]+)/i                              // Chromium/Instagram
+            ], [NAME, VERSION], [
+            /\bgsa\/([\w\.]+) .*safari\//i                                      // Google Search Appliance on iOS
+            ], [VERSION, [NAME, 'GSA']], [
+            /musical_ly(?:.+app_?version\/|_)([\w\.]+)/i                        // TikTok
+            ], [VERSION, [NAME, 'TikTok']], [
 
-            /xiaomi\/miuibrowser\/([\w\.]+)/i                                   // MIUI Browser
-            ], [VERSION, [NAME, 'MIUI Browser']], [
+            /headlesschrome(?:\/([\w\.]+)| )/i                                  // Chrome Headless
+            ], [VERSION, [NAME, CHROME+' Headless']], [
 
-            /;fbav\/([\w\.]+);/i                                                // Facebook App for iOS & Android with version
-            ], [VERSION, [NAME, 'Facebook']], [
-            
-            /FBAN\/FBIOS|FB_IAB\/FB4A/i                                         // Facebook App for iOS & Android without version
-            ], [[NAME, 'Facebook']], [
+            / wv\).+(chrome)\/([\w\.]+)/i                                       // Chrome WebView
+            ], [[NAME, CHROME+' WebView'], VERSION], [
 
-            /safari\s(line)\/([\w\.]+)/i,                                       // Line App for iOS
-            /android.+(line)\/([\w\.]+)\/iab/i                                  // Line App for Android
+            /droid.+ version\/([\w\.]+)\b.+(?:mobile safari|safari)/i           // Android Browser
+            ], [VERSION, [NAME, 'Android '+BROWSER]], [
+
+            /(chrome|omniweb|arora|[tizenoka]{5} ?browser)\/v?([\w\.]+)/i       // Chrome/OmniWeb/Arora/Tizen/Nokia
             ], [NAME, VERSION], [
 
-            /headlesschrome(?:\/([\w\.]+)|\s)/i                                 // Chrome Headless
-            ], [VERSION, [NAME, 'Chrome Headless']], [
-
-            /\swv\).+(chrome)\/([\w\.]+)/i                                      // Chrome WebView
-            ], [[NAME, /(.+)/, '$1 WebView'], VERSION], [
-
-            /((?:oculus|samsung)browser)\/([\w\.]+)/i
-            ], [[NAME, /(.+(?:g|us))(.+)/, '$1 $2'], VERSION], [                // Oculus / Samsung Browser
-
-            /android.+version\/([\w\.]+)\s+(?:mobile\s?safari|safari)*/i        // Android Browser
-            ], [VERSION, [NAME, 'Android Browser']], [
-
-            /(coc_coc_browser)\/([\w\.]+)/i                                     // Coc Coc Browser
-            ], [[NAME, 'Coc Coc'], VERSION], [
-
-              /(sailfishbrowser)\/([\w\.]+)/i                                     // Sailfish Browser
-            ], [[NAME, 'Sailfish Browser'], VERSION], [
-
-            /(chrome|omniweb|arora|[tizenoka]{5}\s?browser)\/v?([\w\.]+)/i
-                                                                                // Chrome/OmniWeb/Arora/Tizen/Nokia
-            ], [NAME, VERSION], [
-
-            /(dolfin)\/([\w\.]+)/i                                              // Dolphin
-            ], [[NAME, 'Dolphin'], VERSION], [
-
-            /(qihu|qhbrowser|qihoobrowser|360browser)/i                         // 360
-            ], [[NAME, '360 Browser']], [
-
-            /((?:android.+)crmo|crios)\/([\w\.]+)/i                             // Chrome for Android/iOS
-            ], [[NAME, 'Chrome'], VERSION], [
-
-            /(coast)\/([\w\.]+)/i                                               // Opera Coast
-            ], [[NAME, 'Opera Coast'], VERSION], [
-
-            /fxios\/([\w\.-]+)/i                                                // Firefox for iOS
-            ], [VERSION, [NAME, 'Firefox']], [
-
-            /version\/([\w\.]+)\s.*mobile\/\w+\s(safari)/i                      // Mobile Safari
+            /version\/([\w\.\,]+) .*mobile\/\w+ (safari)/i                      // Mobile Safari
             ], [VERSION, [NAME, 'Mobile Safari']], [
-
-            /version\/([\w\.]+)\s.*(mobile\s?safari|safari)/i                   // Safari & Safari Mobile
+            /version\/([\w(\.|\,)]+) .*(mobile ?safari|safari)/i                // Safari & Safari Mobile
             ], [VERSION, NAME], [
-
-            /webkit.+?(gsa)\/([\w\.]+)\s.*(mobile\s?safari|safari)(\/[\w\.]+)/i // Google Search Appliance on iOS
-            ], [[NAME, 'GSA'], VERSION], [
-
-            /webkit.+?(mobile\s?safari|safari)(\/[\w\.]+)/i                     // Safari < 3.0
-            ], [NAME, [VERSION, mapper.str, maps.browser.oldsafari.version]], [
+            /webkit.+?(mobile ?safari|safari)(\/[\w\.]+)/i                      // Safari < 3.0
+            ], [NAME, [VERSION, strMapper, oldSafariMap]], [
 
             /(webkit|khtml)\/([\w\.]+)/i
             ], [NAME, VERSION], [
 
             // Gecko based
-            /(navigator|netscape)\/([\w\.-]+)/i                                 // Netscape
+            /(navigator|netscape\d?)\/([-\w\.]+)/i                              // Netscape
             ], [[NAME, 'Netscape'], VERSION], [
+            /mobile vr; rv:([\w\.]+)\).+firefox/i                               // Firefox Reality
+            ], [VERSION, [NAME, FIREFOX+' Reality']], [
+            /ekiohf.+(flow)\/([\w\.]+)/i,                                       // Flow
             /(swiftfox)/i,                                                      // Swiftfox
-            /(icedragon|iceweasel|camino|chimera|fennec|maemo\sbrowser|minimo|conkeror)[\/\s]?([\w\.\+]+)/i,
-                                                                                // IceDragon/Iceweasel/Camino/Chimera/Fennec/Maemo/Minimo/Conkeror
-            /(firefox|seamonkey|k-meleon|icecat|iceape|firebird|phoenix|palemoon|basilisk|waterfox)\/([\w\.-]+)$/i,
-
+            /(icedragon|iceweasel|camino|chimera|fennec|maemo browser|minimo|conkeror|klar)[\/ ]?([\w\.\+]+)/i,
+                                                                                // IceDragon/Iceweasel/Camino/Chimera/Fennec/Maemo/Minimo/Conkeror/Klar
+            /(seamonkey|k-meleon|icecat|iceape|firebird|phoenix|palemoon|basilisk|waterfox)\/([-\w\.]+)$/i,
                                                                                 // Firefox/SeaMonkey/K-Meleon/IceCat/IceApe/Firebird/Phoenix
-            /(firefox)\/([\w\.]+)\s[\w\s\-]+\/[\w\.]+$/i,                       // Other Firefox-based
-            /(mozilla)\/([\w\.]+)\s.+rv\:.+gecko\/\d+/i,                        // Mozilla
+            /(firefox)\/([\w\.]+)/i,                                            // Other Firefox-based
+            /(mozilla)\/([\w\.]+) .+rv\:.+gecko\/\d+/i,                         // Mozilla
 
             // Other
-            /(polaris|lynx|dillo|icab|doris|amaya|w3m|netsurf|sleipnir)[\/\s]?([\w\.]+)/i,
-                                                                                // Polaris/Lynx/Dillo/iCab/Doris/Amaya/w3m/NetSurf/Sleipnir
-            /(links)\s\(([\w\.]+)/i,                                            // Links
-            /(gobrowser)\/?([\w\.]*)/i,                                         // GoBrowser
-            /(ice\s?browser)\/v?([\w\._]+)/i,                                   // ICE Browser
-            /(mosaic)[\/\s]([\w\.]+)/i                                          // Mosaic
-            ], [NAME, VERSION]
+            /(polaris|lynx|dillo|icab|doris|amaya|w3m|netsurf|sleipnir|obigo|mosaic|(?:go|ice|up)[\. ]?browser)[-\/ ]?v?([\w\.]+)/i,
+                                                                                // Polaris/Lynx/Dillo/iCab/Doris/Amaya/w3m/NetSurf/Sleipnir/Obigo/Mosaic/Go/ICE/UP.Browser
+            /(links) \(([\w\.]+)/i,                                             // Links
+            /panasonic;(viera)/i                                                // Panasonic Viera
+            ], [NAME, VERSION], [
+            
+            /(cobalt)\/([\w\.]+)/i                                              // Cobalt
+            ], [NAME, [VERSION, /master.|lts./, ""]]
         ],
 
         cpu : [[
 
-            /(?:(amd|x(?:(?:86|64)[_-])?|wow|win)64)[;\)]/i                     // AMD64
+            /(?:(amd|x(?:(?:86|64)[-_])?|wow|win)64)[;\)]/i                     // AMD64 (x64)
             ], [[ARCHITECTURE, 'amd64']], [
 
             /(ia32(?=;))/i                                                      // IA32 (quicktime)
-            ], [[ARCHITECTURE, util.lowerize]], [
+            ], [[ARCHITECTURE, lowerize]], [
 
-            /((?:i[346]|x)86)[;\)]/i                                            // IA32
+            /((?:i[346]|x)86)[;\)]/i                                            // IA32 (x86)
             ], [[ARCHITECTURE, 'ia32']], [
 
+            /\b(aarch64|arm(v?8e?l?|_?64))\b/i                                 // ARM64
+            ], [[ARCHITECTURE, 'arm64']], [
+
+            /\b(arm(?:v[67])?ht?n?[fl]p?)\b/i                                   // ARMHF
+            ], [[ARCHITECTURE, 'armhf']], [
+
             // PocketPC mistakenly identified as PowerPC
-            /windows\s(ce|mobile);\sppc;/i
+            /windows (ce|mobile); ppc;/i
             ], [[ARCHITECTURE, 'arm']], [
 
-            /((?:ppc|powerpc)(?:64)?)(?:\smac|;|\))/i                           // PowerPC
-            ], [[ARCHITECTURE, /ower/, '', util.lowerize]], [
+            /((?:ppc|powerpc)(?:64)?)(?: mac|;|\))/i                            // PowerPC
+            ], [[ARCHITECTURE, /ower/, EMPTY, lowerize]], [
 
             /(sun4\w)[;\)]/i                                                    // SPARC
             ], [[ARCHITECTURE, 'sparc']], [
 
-            /((?:avr32|ia64(?=;))|68k(?=\))|arm(?:64|(?=v\d+[;l]))|(?=atmel\s)avr|(?:irix|mips|sparc)(?:64)?(?=;)|pa-risc)/i
+            /((?:avr32|ia64(?=;))|68k(?=\))|\barm(?=v(?:[1-7]|[5-7]1)l?|;|eabi)|(?=atmel )avr|(?:irix|mips|sparc)(?:64)?\b|pa-risc)/i
                                                                                 // IA64, 68K, ARM/64, AVR/32, IRIX/64, MIPS/64, SPARC/64, PA-RISC
-            ], [[ARCHITECTURE, util.lowerize]]
+            ], [[ARCHITECTURE, lowerize]]
         ],
 
         device : [[
 
-            /\((ipad|playbook);[\w\s\),;-]+(rim|apple)/i                        // iPad/PlayBook
-            ], [MODEL, VENDOR, [TYPE, TABLET]], [
+            //////////////////////////
+            // MOBILES & TABLETS
+            /////////////////////////
 
-            /applecoremedia\/[\w\.]+ \((ipad)/                                  // iPad
-            ], [MODEL, [VENDOR, 'Apple'], [TYPE, TABLET]], [
+            // Samsung
+            /\b(sch-i[89]0\d|shw-m380s|sm-[ptx]\w{2,4}|gt-[pn]\d{2,4}|sgh-t8[56]9|nexus 10)/i
+            ], [MODEL, [VENDOR, SAMSUNG], [TYPE, TABLET]], [
+            /\b((?:s[cgp]h|gt|sm)-\w+|sc[g-]?[\d]+a?|galaxy nexus)/i,
+            /samsung[- ]([-\w]+)/i,
+            /sec-(sgh\w+)/i
+            ], [MODEL, [VENDOR, SAMSUNG], [TYPE, MOBILE]], [
 
-            /(apple\s{0,1}tv)/i                                                 // Apple TV
-            ], [[MODEL, 'Apple TV'], [VENDOR, 'Apple'], [TYPE, SMARTTV]], [
+            // Apple
+            /(?:\/|\()(ip(?:hone|od)[\w, ]*)(?:\/|;)/i                          // iPod/iPhone
+            ], [MODEL, [VENDOR, APPLE], [TYPE, MOBILE]], [
+            /\((ipad);[-\w\),; ]+apple/i,                                       // iPad
+            /applecoremedia\/[\w\.]+ \((ipad)/i,
+            /\b(ipad)\d\d?,\d\d?[;\]].+ios/i
+            ], [MODEL, [VENDOR, APPLE], [TYPE, TABLET]], [
+            /(macintosh);/i
+            ], [MODEL, [VENDOR, APPLE]], [
 
-            /(archos)\s(gamepad2?)/i,                                           // Archos
-            /(hp).+(touchpad)/i,                                                // HP TouchPad
-            /(hp).+(tablet)/i,                                                  // HP Tablet
-            /(kindle)\/([\w\.]+)/i,                                             // Kindle
-            /\s(nook)[\w\s]+build\/(\w+)/i,                                     // Nook
-            /(dell)\s(strea[kpr\s\d]*[\dko])/i                                  // Dell Streak
-            ], [VENDOR, MODEL, [TYPE, TABLET]], [
+            // Sharp
+            /\b(sh-?[altvz]?\d\d[a-ekm]?)/i
+            ], [MODEL, [VENDOR, SHARP], [TYPE, MOBILE]], [
 
-            /(kf[A-z]+)(\sbuild\/|\)).+silk\//i                                 // Kindle Fire HD
-            ], [MODEL, [VENDOR, 'Amazon'], [TYPE, TABLET]], [
-            /(sd|kf)[0349hijorstuw]+(\sbuild\/|\)).+silk\//i                    // Fire Phone
-            ], [[MODEL, mapper.str, maps.device.amazon.model], [VENDOR, 'Amazon'], [TYPE, MOBILE]], [
-            /android.+aft([\w])(\sbuild\/|\))/i                                 // Fire TV
-            ], [MODEL, [VENDOR, 'Amazon'], [TYPE, SMARTTV]], [
+            // Huawei
+            /\b((?:ag[rs][23]?|bah2?|sht?|btv)-a?[lw]\d{2})\b(?!.+d\/s)/i
+            ], [MODEL, [VENDOR, HUAWEI], [TYPE, TABLET]], [
+            /(?:huawei|honor)([-\w ]+)[;\)]/i,
+            /\b(nexus 6p|\w{2,4}e?-[atu]?[ln][\dx][012359c][adn]?)\b(?!.+d\/s)/i
+            ], [MODEL, [VENDOR, HUAWEI], [TYPE, MOBILE]], [
 
-            /\((ip[honed|\s\w*]+);.+(apple)/i                                   // iPod/iPhone
-            ], [MODEL, VENDOR, [TYPE, MOBILE]], [
-            /\((ip[honed|\s\w*]+);/i                                            // iPod/iPhone
-            ], [MODEL, [VENDOR, 'Apple'], [TYPE, MOBILE]], [
+            // Xiaomi
+            /\b(poco[\w ]+)(?: bui|\))/i,                                       // Xiaomi POCO
+            /\b; (\w+) build\/hm\1/i,                                           // Xiaomi Hongmi 'numeric' models
+            /\b(hm[-_ ]?note?[_ ]?(?:\d\w)?) bui/i,                             // Xiaomi Hongmi
+            /\b(redmi[\-_ ]?(?:note|k)?[\w_ ]+)(?: bui|\))/i,                   // Xiaomi Redmi
+            /\b(mi[-_ ]?(?:a\d|one|one[_ ]plus|note lte|max|cc)?[_ ]?(?:\d?\w?)[_ ]?(?:plus|se|lite)?)(?: bui|\))/i // Xiaomi Mi
+            ], [[MODEL, /_/g, ' '], [VENDOR, XIAOMI], [TYPE, MOBILE]], [
+            /\b(mi[-_ ]?(?:pad)(?:[\w_ ]+))(?: bui|\))/i                        // Mi Pad tablets
+            ],[[MODEL, /_/g, ' '], [VENDOR, XIAOMI], [TYPE, TABLET]], [
 
-            /(blackberry)[\s-]?(\w+)/i,                                         // BlackBerry
-            /(blackberry|benq|palm(?=\-)|sonyericsson|acer|asus|dell|meizu|motorola|polytron)[\s_-]?([\w-]*)/i,
-                                                                                // BenQ/Palm/Sony-Ericsson/Acer/Asus/Dell/Meizu/Motorola/Polytron
-            /(hp)\s([\w\s]+\w)/i,                                               // HP iPAQ
-            /(asus)-?(\w+)/i                                                    // Asus
-            ], [VENDOR, MODEL, [TYPE, MOBILE]], [
-            /\(bb10;\s(\w+)/i                                                   // BlackBerry 10
-            ], [MODEL, [VENDOR, 'BlackBerry'], [TYPE, MOBILE]], [
-                                                                                // Asus Tablets
-            /android.+(transfo[prime\s]{4,10}\s\w+|eeepc|slider\s\w+|nexus 7|padfone|p00c)/i
-            ], [MODEL, [VENDOR, 'Asus'], [TYPE, TABLET]], [
+            // OPPO
+            /; (\w+) bui.+ oppo/i,
+            /\b(cph[12]\d{3}|p(?:af|c[al]|d\w|e[ar])[mt]\d0|x9007|a101op)\b/i
+            ], [MODEL, [VENDOR, 'OPPO'], [TYPE, MOBILE]], [
 
-            /(sony)\s(tablet\s[ps])\sbuild\//i,                                  // Sony
-            /(sony)?(?:sgp.+)\sbuild\//i
-            ], [[VENDOR, 'Sony'], [MODEL, 'Xperia Tablet'], [TYPE, TABLET]], [
-            /android.+\s([c-g]\d{4}|so[-l]\w+)(?=\sbuild\/|\).+chrome\/(?![1-6]{0,1}\d\.))/i
-            ], [MODEL, [VENDOR, 'Sony'], [TYPE, MOBILE]], [
+            // Vivo
+            /vivo (\w+)(?: bui|\))/i,
+            /\b(v[12]\d{3}\w?[at])(?: bui|;)/i
+            ], [MODEL, [VENDOR, 'Vivo'], [TYPE, MOBILE]], [
 
-            /\s(ouya)\s/i,                                                      // Ouya
-            /(nintendo)\s([wids3u]+)/i                                          // Nintendo
-            ], [VENDOR, MODEL, [TYPE, CONSOLE]], [
+            // Realme
+            /\b(rmx[12]\d{3})(?: bui|;|\))/i
+            ], [MODEL, [VENDOR, 'Realme'], [TYPE, MOBILE]], [
 
-            /android.+;\s(shield)\sbuild/i                                      // Nvidia
-            ], [MODEL, [VENDOR, 'Nvidia'], [TYPE, CONSOLE]], [
+            // Motorola
+            /\b(milestone|droid(?:[2-4x]| (?:bionic|x2|pro|razr))?:?( 4g)?)\b[\w ]+build\//i,
+            /\bmot(?:orola)?[- ](\w*)/i,
+            /((?:moto[\w\(\) ]+|xt\d{3,4}|nexus 6)(?= bui|\)))/i
+            ], [MODEL, [VENDOR, MOTOROLA], [TYPE, MOBILE]], [
+            /\b(mz60\d|xoom[2 ]{0,2}) build\//i
+            ], [MODEL, [VENDOR, MOTOROLA], [TYPE, TABLET]], [
 
-            /(playstation\s[34portablevi]+)/i                                   // Playstation
-            ], [MODEL, [VENDOR, 'Sony'], [TYPE, CONSOLE]], [
+            // LG
+            /((?=lg)?[vl]k\-?\d{3}) bui| 3\.[-\w; ]{10}lg?-([06cv9]{3,4})/i
+            ], [MODEL, [VENDOR, LG], [TYPE, TABLET]], [
+            /(lm(?:-?f100[nv]?|-[\w\.]+)(?= bui|\))|nexus [45])/i,
+            /\blg[-e;\/ ]+((?!browser|netcast|android tv)\w+)/i,
+            /\blg-?([\d\w]+) bui/i
+            ], [MODEL, [VENDOR, LG], [TYPE, MOBILE]], [
 
-            /(sprint\s(\w+))/i                                                  // Sprint Phones
-            ], [[VENDOR, mapper.str, maps.device.sprint.vendor], [MODEL, mapper.str, maps.device.sprint.model], [TYPE, MOBILE]], [
-
-            /(htc)[;_\s-]{1,2}([\w\s]+(?=\)|\sbuild)|\w+)/i,                    // HTC
-            /(zte)-(\w*)/i,                                                     // ZTE
-            /(alcatel|geeksphone|nexian|panasonic|(?=;\s)sony)[_\s-]?([\w-]*)/i
-                                                                                // Alcatel/GeeksPhone/Nexian/Panasonic/Sony
-            ], [VENDOR, [MODEL, /_/g, ' '], [TYPE, MOBILE]], [
-
-            /(nexus\s9)/i                                                       // HTC Nexus 9
-            ], [MODEL, [VENDOR, 'HTC'], [TYPE, TABLET]], [
-
-            /d\/huawei([\w\s-]+)[;\)]/i,                                        // Huawei
-            /android.+\s(nexus\s6p|vog-[at]?l\d\d|ane-[at]?l[x\d]\d|eml-a?l\d\da?|lya-[at]?l\d[\dc]|clt-a?l\d\di?)/i
-
-            ], [MODEL, [VENDOR, 'Huawei'], [TYPE, MOBILE]], [
-
-            /android.+(bah2?-a?[lw]\d{2})/i                                     // Huawei MediaPad
-            ], [MODEL, [VENDOR, 'Huawei'], [TYPE, TABLET]], [
-
-            /(microsoft);\s(lumia[\s\w]+)/i                                     // Microsoft Lumia
-            ], [VENDOR, MODEL, [TYPE, MOBILE]], [
-
-            /[\s\(;](xbox(?:\sone)?)[\s\);]/i                                   // Microsoft Xbox
-            ], [MODEL, [VENDOR, 'Microsoft'], [TYPE, CONSOLE]], [
-            /(kin\.[onetw]{3})/i                                                // Microsoft Kin
-            ], [[MODEL, /\./g, ' '], [VENDOR, 'Microsoft'], [TYPE, MOBILE]], [
-
-                                                                                // Motorola
-            /\s(milestone|droid(?:[2-4x]|\s(?:bionic|x2|pro|razr))?:?(\s4g)?)[\w\s]+build\//i,
-            /mot[\s-]?(\w*)/i,
-            /(XT\d{3,4}) build\//i,
-            /(nexus\s6)/i
-            ], [MODEL, [VENDOR, 'Motorola'], [TYPE, MOBILE]], [
-            /android.+\s(mz60\d|xoom[\s2]{0,2})\sbuild\//i
-            ], [MODEL, [VENDOR, 'Motorola'], [TYPE, TABLET]], [
-
-            /hbbtv\/\d+\.\d+\.\d+\s+\([\w\s]*;\s*(\w[^;]*);([^;]*)/i            // HbbTV devices
-            ], [[VENDOR, util.trim], [MODEL, util.trim], [TYPE, SMARTTV]], [
-
-            /hbbtv.+maple;(\d+)/i
-            ], [[MODEL, /^/, 'SmartTV'], [VENDOR, 'Samsung'], [TYPE, SMARTTV]], [
-
-            /\(dtv[\);].+(aquos)/i                                              // Sharp
-            ], [MODEL, [VENDOR, 'Sharp'], [TYPE, SMARTTV]], [
-
-            /android.+((sch-i[89]0\d|shw-m380s|SM-P605|SM-P610|SM-P587|gt-p\d{4}|gt-n\d+|sgh-t8[56]9|nexus 10))/i,
-            /((SM-T\w+))/i
-            ], [[VENDOR, 'Samsung'], MODEL, [TYPE, TABLET]], [                  // Samsung
-            /smart-tv.+(samsung)/i
-            ], [VENDOR, [TYPE, SMARTTV], MODEL], [
-            /((s[cgp]h-\w+|gt-\w+|galaxy\snexus|sm-\w[\w\d]+))/i,
-            /(sam[sung]*)[\s-]*(\w+-?[\w-]*)/i,
-            /sec-((sgh\w+))/i
-            ], [[VENDOR, 'Samsung'], MODEL, [TYPE, MOBILE]], [
-
-            /sie-(\w*)/i                                                        // Siemens
-            ], [MODEL, [VENDOR, 'Siemens'], [TYPE, MOBILE]], [
-
-            /(maemo|nokia).*(n900|lumia\s\d+)/i,                                // Nokia
-            /(nokia)[\s_-]?([\w-]*)/i
-            ], [[VENDOR, 'Nokia'], MODEL, [TYPE, MOBILE]], [
-
-            /android[x\d\.\s;]+\s([ab][1-7]\-?[0178a]\d\d?)/i                   // Acer
-            ], [MODEL, [VENDOR, 'Acer'], [TYPE, TABLET]], [
-
-            /android.+([vl]k\-?\d{3})\s+build/i                                 // LG Tablet
-            ], [MODEL, [VENDOR, 'LG'], [TYPE, TABLET]], [
-            /android\s3\.[\s\w;-]{10}(lg?)-([06cv9]{3,4})/i                     // LG Tablet
-            ], [[VENDOR, 'LG'], MODEL, [TYPE, TABLET]], [
-            /linux;\snetcast.+smarttv/i,                                        // LG SmartTV
-            /lg\snetcast\.tv-201\d/i
-            ], [[VENDOR, 'LG'], MODEL, [TYPE, SMARTTV]], [
-            /(nexus\s[45])/i,                                                   // LG
-            /lg[e;\s\/-]+(\w*)/i,
-            /android.+lg(\-?[\d\w]+)\s+build/i
-            ], [MODEL, [VENDOR, 'LG'], [TYPE, MOBILE]], [
-
-            /(lenovo)\s?(s(?:5000|6000)(?:[\w-]+)|tab(?:[\s\w]+))/i             // Lenovo tablets
-            ], [VENDOR, MODEL, [TYPE, TABLET]], [
-            /android.+(ideatab[a-z0-9\-\s]+)/i                                  // Lenovo
+            // Lenovo
+            /(ideatab[-\w ]+)/i,
+            /lenovo ?(s[56]000[-\w]+|tab(?:[\w ]+)|yt[-\d\w]{6}|tb[-\d\w]{6})/i
             ], [MODEL, [VENDOR, 'Lenovo'], [TYPE, TABLET]], [
-            /(lenovo)[_\s-]?([\w-]+)/i
-            ], [VENDOR, MODEL, [TYPE, MOBILE]], [
 
-            /linux;.+((jolla));/i                                               // Jolla
-            ], [VENDOR, MODEL, [TYPE, MOBILE]], [
+            // Nokia
+            /(?:maemo|nokia).*(n900|lumia \d+)/i,
+            /nokia[-_ ]?([-\w\.]*)/i
+            ], [[MODEL, /_/g, ' '], [VENDOR, 'Nokia'], [TYPE, MOBILE]], [
 
-            /((pebble))app\/[\d\.]+\s/i                                         // Pebble
-            ], [VENDOR, MODEL, [TYPE, WEARABLE]], [
+            // Google
+            /(pixel c)\b/i                                                      // Google Pixel C
+            ], [MODEL, [VENDOR, GOOGLE], [TYPE, TABLET]], [
+            /droid.+; (pixel[\daxl ]{0,6})(?: bui|\))/i                         // Google Pixel
+            ], [MODEL, [VENDOR, GOOGLE], [TYPE, MOBILE]], [
 
-            /android.+;\s(oppo)\s?([\w\s]+)\sbuild/i                            // OPPO
-            ], [VENDOR, MODEL, [TYPE, MOBILE]], [
+            // Sony
+            /droid.+ (a?\d[0-2]{2}so|[c-g]\d{4}|so[-gl]\w+|xq-a\w[4-7][12])(?= bui|\).+chrome\/(?![1-6]{0,1}\d\.))/i
+            ], [MODEL, [VENDOR, SONY], [TYPE, MOBILE]], [
+            /sony tablet [ps]/i,
+            /\b(?:sony)?sgp\w+(?: bui|\))/i
+            ], [[MODEL, 'Xperia Tablet'], [VENDOR, SONY], [TYPE, TABLET]], [
 
-            /crkey/i                                                            // Google Chromecast
-            ], [[MODEL, 'Chromecast'], [VENDOR, 'Google'], [TYPE, SMARTTV]], [
-
-            /android.+;\s(glass)\s\d/i                                          // Google Glass
-            ], [MODEL, [VENDOR, 'Google'], [TYPE, WEARABLE]], [
-
-            /android.+;\s(pixel c)[\s)]/i                                       // Google Pixel C
-            ], [MODEL, [VENDOR, 'Google'], [TYPE, TABLET]], [
-
-            /android.+;\s(pixel( [2-9]a?)?( xl)?)[\s)]/i                        // Google Pixel
-            ], [MODEL, [VENDOR, 'Google'], [TYPE, MOBILE]], [
-
-            /android.+;\s(\w+)\s+build\/hm\1/i,                                 // Xiaomi Hongmi 'numeric' models
-            /android.+(hm[\s\-_]?note?[\s_]?(?:\d\w)?)\sbuild/i,                // Xiaomi Hongmi
-            /android.+(redmi[\s\-_]?(?:note|k)?(?:[\s_]?[\w\s]+))(?:\sbuild|\))/i,      
-                                                                                // Xiaomi Redmi
-            /android.+(mi[\s\-_]?(?:a\d|one|one[\s_]plus|note lte)?[\s_]?(?:\d?\w?)[\s_]?(?:plus)?)\sbuild/i    
-                                                                                // Xiaomi Mi
-            ], [[MODEL, /_/g, ' '], [VENDOR, 'Xiaomi'], [TYPE, MOBILE]], [
-            /android.+(mi[\s\-_]?(?:pad)(?:[\s_]?[\w\s]+))(?:\sbuild|\))/i     // Mi Pad tablets
-            ],[[MODEL, /_/g, ' '], [VENDOR, 'Xiaomi'], [TYPE, TABLET]], [
-            /android.+;\s(m[1-5]\snote)\sbuild/i                                // Meizu
-            ], [MODEL, [VENDOR, 'Meizu'], [TYPE, MOBILE]], [
-            /(mz)-([\w-]{2,})/i
-            ], [[VENDOR, 'Meizu'], MODEL, [TYPE, MOBILE]], [
-
-            /android.+a000(1)\s+build/i,                                        // OnePlus
-            /android.+oneplus\s(a\d{4})[\s)]/i
+            // OnePlus
+            / (kb2005|in20[12]5|be20[12][59])\b/i,
+            /(?:one)?(?:plus)? (a\d0\d\d)(?: b|\))/i
             ], [MODEL, [VENDOR, 'OnePlus'], [TYPE, MOBILE]], [
 
-            /android.+[;\/]\s*(RCT[\d\w]+)\s+build/i                            // RCA Tablets
+            // Amazon
+            /(alexa)webm/i,
+            /(kf[a-z]{2}wi|aeo[c-r]{2})( bui|\))/i,                             // Kindle Fire without Silk / Echo Show
+            /(kf[a-z]+)( bui|\)).+silk\//i                                      // Kindle Fire HD
+            ], [MODEL, [VENDOR, AMAZON], [TYPE, TABLET]], [
+            /((?:sd|kf)[0349hijorstuw]+)( bui|\)).+silk\//i                     // Fire Phone
+            ], [[MODEL, /(.+)/g, 'Fire Phone $1'], [VENDOR, AMAZON], [TYPE, MOBILE]], [
+
+            // BlackBerry
+            /(playbook);[-\w\),; ]+(rim)/i                                      // BlackBerry PlayBook
+            ], [MODEL, VENDOR, [TYPE, TABLET]], [
+            /\b((?:bb[a-f]|st[hv])100-\d)/i,
+            /\(bb10; (\w+)/i                                                    // BlackBerry 10
+            ], [MODEL, [VENDOR, BLACKBERRY], [TYPE, MOBILE]], [
+
+            // Asus
+            /(?:\b|asus_)(transfo[prime ]{4,10} \w+|eeepc|slider \w+|nexus 7|padfone|p00[cj])/i
+            ], [MODEL, [VENDOR, ASUS], [TYPE, TABLET]], [
+            / (z[bes]6[027][012][km][ls]|zenfone \d\w?)\b/i
+            ], [MODEL, [VENDOR, ASUS], [TYPE, MOBILE]], [
+
+            // HTC
+            /(nexus 9)/i                                                        // HTC Nexus 9
+            ], [MODEL, [VENDOR, 'HTC'], [TYPE, TABLET]], [
+            /(htc)[-;_ ]{1,2}([\w ]+(?=\)| bui)|\w+)/i,                         // HTC
+
+            // ZTE
+            /(zte)[- ]([\w ]+?)(?: bui|\/|\))/i,
+            /(alcatel|geeksphone|nexian|panasonic(?!(?:;|\.))|sony(?!-bra))[-_ ]?([-\w]*)/i         // Alcatel/GeeksPhone/Nexian/Panasonic/Sony
+            ], [VENDOR, [MODEL, /_/g, ' '], [TYPE, MOBILE]], [
+
+            // Acer
+            /droid.+; ([ab][1-7]-?[0178a]\d\d?)/i
+            ], [MODEL, [VENDOR, 'Acer'], [TYPE, TABLET]], [
+
+            // Meizu
+            /droid.+; (m[1-5] note) bui/i,
+            /\bmz-([-\w]{2,})/i
+            ], [MODEL, [VENDOR, 'Meizu'], [TYPE, MOBILE]], [
+
+            // MIXED
+            /(blackberry|benq|palm(?=\-)|sonyericsson|acer|asus|dell|meizu|motorola|polytron)[-_ ]?([-\w]*)/i,
+                                                                                // BlackBerry/BenQ/Palm/Sony-Ericsson/Acer/Asus/Dell/Meizu/Motorola/Polytron
+            /(hp) ([\w ]+\w)/i,                                                 // HP iPAQ
+            /(asus)-?(\w+)/i,                                                   // Asus
+            /(microsoft); (lumia[\w ]+)/i,                                      // Microsoft Lumia
+            /(lenovo)[-_ ]?([-\w]+)/i,                                          // Lenovo
+            /(jolla)/i,                                                         // Jolla
+            /(oppo) ?([\w ]+) bui/i                                             // OPPO
+            ], [VENDOR, MODEL, [TYPE, MOBILE]], [
+
+            /(kobo)\s(ereader|touch)/i,                                         // Kobo
+            /(archos) (gamepad2?)/i,                                            // Archos
+            /(hp).+(touchpad(?!.+tablet)|tablet)/i,                             // HP TouchPad
+            /(kindle)\/([\w\.]+)/i,                                             // Kindle
+            /(nook)[\w ]+build\/(\w+)/i,                                        // Nook
+            /(dell) (strea[kpr\d ]*[\dko])/i,                                   // Dell Streak
+            /(le[- ]+pan)[- ]+(\w{1,9}) bui/i,                                  // Le Pan Tablets
+            /(trinity)[- ]*(t\d{3}) bui/i,                                      // Trinity Tablets
+            /(gigaset)[- ]+(q\w{1,9}) bui/i,                                    // Gigaset Tablets
+            /(vodafone) ([\w ]+)(?:\)| bui)/i                                   // Vodafone
+            ], [VENDOR, MODEL, [TYPE, TABLET]], [
+
+            /(surface duo)/i                                                    // Surface Duo
+            ], [MODEL, [VENDOR, MICROSOFT], [TYPE, TABLET]], [
+            /droid [\d\.]+; (fp\du?)(?: b|\))/i                                 // Fairphone
+            ], [MODEL, [VENDOR, 'Fairphone'], [TYPE, MOBILE]], [
+            /(u304aa)/i                                                         // AT&T
+            ], [MODEL, [VENDOR, 'AT&T'], [TYPE, MOBILE]], [
+            /\bsie-(\w*)/i                                                      // Siemens
+            ], [MODEL, [VENDOR, 'Siemens'], [TYPE, MOBILE]], [
+            /\b(rct\w+) b/i                                                     // RCA Tablets
             ], [MODEL, [VENDOR, 'RCA'], [TYPE, TABLET]], [
-
-            /android.+[;\/\s](Venue[\d\s]{2,7})\s+build/i                       // Dell Venue Tablets
+            /\b(venue[\d ]{2,7}) b/i                                            // Dell Venue Tablets
             ], [MODEL, [VENDOR, 'Dell'], [TYPE, TABLET]], [
-
-            /android.+[;\/]\s*(Q[T|M][\d\w]+)\s+build/i                         // Verizon Tablet
+            /\b(q(?:mv|ta)\w+) b/i                                              // Verizon Tablet
             ], [MODEL, [VENDOR, 'Verizon'], [TYPE, TABLET]], [
-
-            /android.+[;\/]\s+(Barnes[&\s]+Noble\s+|BN[RT])(\S(?:.*\S)?)\s+build/i     // Barnes & Noble Tablet
-            ], [[VENDOR, 'Barnes & Noble'], MODEL, [TYPE, TABLET]], [
-
-            /android.+[;\/]\s+(TM\d{3}.*\b)\s+build/i                           // Barnes & Noble Tablet
+            /\b(?:barnes[& ]+noble |bn[rt])([\w\+ ]*) b/i                       // Barnes & Noble Tablet
+            ], [MODEL, [VENDOR, 'Barnes & Noble'], [TYPE, TABLET]], [
+            /\b(tm\d{3}\w+) b/i
             ], [MODEL, [VENDOR, 'NuVision'], [TYPE, TABLET]], [
-
-            /android.+;\s(k88)\sbuild/i                                         // ZTE K Series Tablet
+            /\b(k88) b/i                                                        // ZTE K Series Tablet
             ], [MODEL, [VENDOR, 'ZTE'], [TYPE, TABLET]], [
-
-            /android.+[;\/]\s*(gen\d{3})\s+build.*49h/i                         // Swiss GEN Mobile
+            /\b(nx\d{3}j) b/i                                                   // ZTE Nubia
+            ], [MODEL, [VENDOR, 'ZTE'], [TYPE, MOBILE]], [
+            /\b(gen\d{3}) b.+49h/i                                              // Swiss GEN Mobile
             ], [MODEL, [VENDOR, 'Swiss'], [TYPE, MOBILE]], [
-
-            /android.+[;\/]\s*(zur\d{3})\s+build/i                              // Swiss ZUR Tablet
+            /\b(zur\d{3}) b/i                                                   // Swiss ZUR Tablet
             ], [MODEL, [VENDOR, 'Swiss'], [TYPE, TABLET]], [
-
-            /android.+[;\/]\s*((Zeki)?TB.*\b)\s+build/i                         // Zeki Tablets
+            /\b((zeki)?tb.*\b) b/i                                              // Zeki Tablets
             ], [MODEL, [VENDOR, 'Zeki'], [TYPE, TABLET]], [
-
-            /(android).+[;\/]\s+([YR]\d{2})\s+build/i,
-            /android.+[;\/]\s+(Dragon[\-\s]+Touch\s+|DT)(\w{5})\sbuild/i        // Dragon Touch Tablet
+            /\b([yr]\d{2}) b/i,
+            /\b(dragon[- ]+touch |dt)(\w{5}) b/i                                // Dragon Touch Tablet
             ], [[VENDOR, 'Dragon Touch'], MODEL, [TYPE, TABLET]], [
-
-            /android.+[;\/]\s*(NS-?\w{0,9})\sbuild/i                            // Insignia Tablets
+            /\b(ns-?\w{0,9}) b/i                                                // Insignia Tablets
             ], [MODEL, [VENDOR, 'Insignia'], [TYPE, TABLET]], [
-
-            /android.+[;\/]\s*((NX|Next)-?\w{0,9})\s+build/i                    // NextBook Tablets
+            /\b((nxa|next)-?\w{0,9}) b/i                                        // NextBook Tablets
             ], [MODEL, [VENDOR, 'NextBook'], [TYPE, TABLET]], [
-
-            /android.+[;\/]\s*(Xtreme\_)?(V(1[045]|2[015]|30|40|60|7[05]|90))\s+build/i
-            ], [[VENDOR, 'Voice'], MODEL, [TYPE, MOBILE]], [                    // Voice Xtreme Phones
-
-            /android.+[;\/]\s*(LVTEL\-)?(V1[12])\s+build/i                     // LvTel Phones
+            /\b(xtreme\_)?(v(1[045]|2[015]|[3469]0|7[05])) b/i                  // Voice Xtreme Phones
+            ], [[VENDOR, 'Voice'], MODEL, [TYPE, MOBILE]], [
+            /\b(lvtel\-)?(v1[12]) b/i                                           // LvTel Phones
             ], [[VENDOR, 'LvTel'], MODEL, [TYPE, MOBILE]], [
-
-            /android.+;\s(PH-1)\s/i
-            ], [MODEL, [VENDOR, 'Essential'], [TYPE, MOBILE]], [                // Essential PH-1
-
-            /android.+[;\/]\s*(V(100MD|700NA|7011|917G).*\b)\s+build/i          // Envizen Tablets
+            /\b(ph-1) /i                                                        // Essential PH-1
+            ], [MODEL, [VENDOR, 'Essential'], [TYPE, MOBILE]], [
+            /\b(v(100md|700na|7011|917g).*\b) b/i                               // Envizen Tablets
             ], [MODEL, [VENDOR, 'Envizen'], [TYPE, TABLET]], [
-
-            /android.+[;\/]\s*(Le[\s\-]+Pan)[\s\-]+(\w{1,9})\s+build/i          // Le Pan Tablets
-            ], [VENDOR, MODEL, [TYPE, TABLET]], [
-
-            /android.+[;\/]\s*(Trio[\s\w\-\.]+)\s+build/i                       // MachSpeed Tablets
+            /\b(trio[-\w\. ]+) b/i                                              // MachSpeed Tablets
             ], [MODEL, [VENDOR, 'MachSpeed'], [TYPE, TABLET]], [
-
-            /android.+[;\/]\s*(Trinity)[\-\s]*(T\d{3})\s+build/i                // Trinity Tablets
-            ], [VENDOR, MODEL, [TYPE, TABLET]], [
-
-            /android.+[;\/]\s*TU_(1491)\s+build/i                               // Rotor Tablets
+            /\btu_(1491) b/i                                                    // Rotor Tablets
             ], [MODEL, [VENDOR, 'Rotor'], [TYPE, TABLET]], [
+            /(shield[\w ]+) b/i                                                 // Nvidia Shield Tablets
+            ], [MODEL, [VENDOR, 'Nvidia'], [TYPE, TABLET]], [
+            /(sprint) (\w+)/i                                                   // Sprint Phones
+            ], [VENDOR, MODEL, [TYPE, MOBILE]], [
+            /(kin\.[onetw]{3})/i                                                // Microsoft Kin
+            ], [[MODEL, /\./g, ' '], [VENDOR, MICROSOFT], [TYPE, MOBILE]], [
+            /droid.+; (cc6666?|et5[16]|mc[239][23]x?|vc8[03]x?)\)/i             // Zebra
+            ], [MODEL, [VENDOR, ZEBRA], [TYPE, TABLET]], [
+            /droid.+; (ec30|ps20|tc[2-8]\d[kx])\)/i
+            ], [MODEL, [VENDOR, ZEBRA], [TYPE, MOBILE]], [
 
-            //android.+(KS(.+))\s+build/i                                        // Amazon Kindle Tablets
-            //], [MODEL, [VENDOR, 'Amazon'], [TYPE, TABLET]], [
+            ///////////////////
+            // SMARTTVS
+            ///////////////////
 
-            /android.+(Gigaset)[\s\-]+(Q\w{1,9})\s+build/i                      // Gigaset Tablets
-            ], [VENDOR, MODEL, [TYPE, TABLET]], [
-                                                                                // Android Phones from Unidentified Vendors
-            /android .+?; ([^;]+?)(?: build|\) applewebkit).+? mobile safari/i
-            ], [MODEL, [TYPE, MOBILE]], [
-                                                                                // Android Tablets from Unidentified Vendors
-            /android .+?;\s([^;]+?)(?: build|\) applewebkit).+?(?! mobile) safari/i
-            ], [MODEL, [TYPE, TABLET]], [
-
-            /\s(tablet|tab)[;\/]/i,                                             // Unidentifiable Tablet
-            /\s(mobile)(?:[;\/]|\ssafari)/i                                     // Unidentifiable Mobile
-            ], [[TYPE, util.lowerize], VENDOR, MODEL], [
-
-            /[\s\/\(](smart-?tv)[;\)]/i                                         // SmartTV
+            /smart-tv.+(samsung)/i                                              // Samsung
+            ], [VENDOR, [TYPE, SMARTTV]], [
+            /hbbtv.+maple;(\d+)/i
+            ], [[MODEL, /^/, 'SmartTV'], [VENDOR, SAMSUNG], [TYPE, SMARTTV]], [
+            /(nux; netcast.+smarttv|lg (netcast\.tv-201\d|android tv))/i        // LG SmartTV
+            ], [[VENDOR, LG], [TYPE, SMARTTV]], [
+            /(apple) ?tv/i                                                      // Apple TV
+            ], [VENDOR, [MODEL, APPLE+' TV'], [TYPE, SMARTTV]], [
+            /crkey/i                                                            // Google Chromecast
+            ], [[MODEL, CHROME+'cast'], [VENDOR, GOOGLE], [TYPE, SMARTTV]], [
+            /droid.+aft(\w)( bui|\))/i                                          // Fire TV
+            ], [MODEL, [VENDOR, AMAZON], [TYPE, SMARTTV]], [
+            /\(dtv[\);].+(aquos)/i,
+            /(aquos-tv[\w ]+)\)/i                                               // Sharp
+            ], [MODEL, [VENDOR, SHARP], [TYPE, SMARTTV]],[
+            /(bravia[\w ]+)( bui|\))/i                                              // Sony
+            ], [MODEL, [VENDOR, SONY], [TYPE, SMARTTV]], [
+            /(mitv-\w{5}) bui/i                                                 // Xiaomi
+            ], [MODEL, [VENDOR, XIAOMI], [TYPE, SMARTTV]], [
+            /Hbbtv.*(technisat) (.*);/i                                         // TechniSAT
+            ], [VENDOR, MODEL, [TYPE, SMARTTV]], [
+            /\b(roku)[\dx]*[\)\/]((?:dvp-)?[\d\.]*)/i,                          // Roku
+            /hbbtv\/\d+\.\d+\.\d+ +\([\w\+ ]*; *([\w\d][^;]*);([^;]*)/i         // HbbTV devices
+            ], [[VENDOR, trim], [MODEL, trim], [TYPE, SMARTTV]], [
+            /\b(android tv|smart[- ]?tv|opera tv|tv; rv:)\b/i                   // SmartTV from Unidentified Vendors
             ], [[TYPE, SMARTTV]], [
 
-            /(android[\w\.\s\-]{0,9});.+build/i                                 // Generic Android Device
-            ], [MODEL, [VENDOR, 'Generic']], [
+            ///////////////////
+            // CONSOLES
+            ///////////////////
 
-            /(phone)/i
-            ], [[TYPE, MOBILE]]
+            /(ouya)/i,                                                          // Ouya
+            /(nintendo) ([wids3utch]+)/i                                        // Nintendo
+            ], [VENDOR, MODEL, [TYPE, CONSOLE]], [
+            /droid.+; (shield) bui/i                                            // Nvidia
+            ], [MODEL, [VENDOR, 'Nvidia'], [TYPE, CONSOLE]], [
+            /(playstation [345portablevi]+)/i                                   // Playstation
+            ], [MODEL, [VENDOR, SONY], [TYPE, CONSOLE]], [
+            /\b(xbox(?: one)?(?!; xbox))[\); ]/i                                // Microsoft Xbox
+            ], [MODEL, [VENDOR, MICROSOFT], [TYPE, CONSOLE]], [
+
+            ///////////////////
+            // WEARABLES
+            ///////////////////
+
+            /((pebble))app/i                                                    // Pebble
+            ], [VENDOR, MODEL, [TYPE, WEARABLE]], [
+            /(watch)(?: ?os[,\/]|\d,\d\/)[\d\.]+/i                              // Apple Watch
+            ], [MODEL, [VENDOR, APPLE], [TYPE, WEARABLE]], [
+            /droid.+; (glass) \d/i                                              // Google Glass
+            ], [MODEL, [VENDOR, GOOGLE], [TYPE, WEARABLE]], [
+            /droid.+; (wt63?0{2,3})\)/i
+            ], [MODEL, [VENDOR, ZEBRA], [TYPE, WEARABLE]], [
+            /(quest( 2| pro)?)/i                                                // Oculus Quest
+            ], [MODEL, [VENDOR, FACEBOOK], [TYPE, WEARABLE]], [
+
+            ///////////////////
+            // EMBEDDED
+            ///////////////////
+
+            /(tesla)(?: qtcarbrowser|\/[-\w\.]+)/i                              // Tesla
+            ], [VENDOR, [TYPE, EMBEDDED]], [
+            /(aeobc)\b/i                                                        // Echo Dot
+            ], [MODEL, [VENDOR, AMAZON], [TYPE, EMBEDDED]], [
+
+            ////////////////////
+            // MIXED (GENERIC)
+            ///////////////////
+
+            /droid .+?; ([^;]+?)(?: bui|\) applew).+? mobile safari/i           // Android Phones from Unidentified Vendors
+            ], [MODEL, [TYPE, MOBILE]], [
+            /droid .+?; ([^;]+?)(?: bui|\) applew).+?(?! mobile) safari/i       // Android Tablets from Unidentified Vendors
+            ], [MODEL, [TYPE, TABLET]], [
+            /\b((tablet|tab)[;\/]|focus\/\d(?!.+mobile))/i                      // Unidentifiable Tablet
+            ], [[TYPE, TABLET]], [
+            /(phone|mobile(?:[;\/]| [ \w\/\.]*safari)|pda(?=.+windows ce))/i    // Unidentifiable Mobile
+            ], [[TYPE, MOBILE]], [
+            /(android[-\w\. ]{0,9});.+buil/i                                    // Generic Android Device
+            ], [MODEL, [VENDOR, 'Generic']]
         ],
 
         engine : [[
 
-            /windows.+\sedge\/([\w\.]+)/i                                       // EdgeHTML
-            ], [VERSION, [NAME, 'EdgeHTML']], [
+            /windows.+ edge\/([\w\.]+)/i                                       // EdgeHTML
+            ], [VERSION, [NAME, EDGE+'HTML']], [
 
             /webkit\/537\.36.+chrome\/(?!27)([\w\.]+)/i                         // Blink
             ], [VERSION, [NAME, 'Blink']], [
 
             /(presto)\/([\w\.]+)/i,                                             // Presto
-            /(webkit|trident|netfront|netsurf|amaya|lynx|w3m|goanna)\/([\w\.]+)/i,
-                                                                                // WebKit/Trident/NetFront/NetSurf/Amaya/Lynx/w3m/Goanna
-            /(khtml|tasman|links)[\/\s]\(?([\w\.]+)/i,                          // KHTML/Tasman/Links
-            /(icab)[\/\s]([23]\.[\d\.]+)/i                                      // iCab
+            /(webkit|trident|netfront|netsurf|amaya|lynx|w3m|goanna)\/([\w\.]+)/i, // WebKit/Trident/NetFront/NetSurf/Amaya/Lynx/w3m/Goanna
+            /ekioh(flow)\/([\w\.]+)/i,                                          // Flow
+            /(khtml|tasman|links)[\/ ]\(?([\w\.]+)/i,                           // KHTML/Tasman/Links
+            /(icab)[\/ ]([23]\.[\d\.]+)/i,                                      // iCab
+            /\b(libweb)/i
             ], [NAME, VERSION], [
 
-            /rv\:([\w\.]{1,9}).+(gecko)/i                                       // Gecko
+            /rv\:([\w\.]{1,9})\b.+(gecko)/i                                     // Gecko
             ], [VERSION, NAME]
         ],
 
         os : [[
 
-            // Xbox, consider this before other Windows-based devices
-            /(xbox);\s+xbox\s([^\);]+)/i,                                       // Microsoft Xbox (360, One, X, S, Series X, Series S)
-
-            // Windows based
-            /microsoft\s(windows)\s(vista|xp)/i                                 // Windows (iTunes)
+            // Windows
+            /microsoft (windows) (vista|xp)/i                                   // Windows (iTunes)
             ], [NAME, VERSION], [
-            /(windows)\snt\s6\.2;\s(arm)/i,                                     // Windows RT
-            /(windows\sphone(?:\sos)*)[\s\/]?([\d\.\s\w]*)/i,                   // Windows Phone
-            /(windows\smobile|windows)[\s\/]?([ntce\d\.\s]+\w)/i
-            ], [NAME, [VERSION, mapper.str, maps.os.windows.version]], [
-            /(win(?=3|9|n)|win\s9x\s)([nt\d\.]+)/i
-            ], [[NAME, 'Windows'], [VERSION, mapper.str, maps.os.windows.version]], [
+            /(windows) nt 6\.2; (arm)/i,                                        // Windows RT
+            /(windows (?:phone(?: os)?|mobile))[\/ ]?([\d\.\w ]*)/i,            // Windows Phone
+            /(windows)[\/ ]?([ntce\d\. ]+\w)(?!.+xbox)/i
+            ], [NAME, [VERSION, strMapper, windowsVersionMap]], [
+            /(win(?=3|9|n)|win 9x )([nt\d\.]+)/i
+            ], [[NAME, 'Windows'], [VERSION, strMapper, windowsVersionMap]], [
 
-            // Mobile/Embedded OS
-            /\((bb)(10);/i                                                      // BlackBerry 10
-            ], [[NAME, 'BlackBerry'], VERSION], [
-            /(blackberry)\w*\/?([\w\.]*)/i,                                     // Blackberry
-            /(tizen|kaios)[\/\s]([\w\.]+)/i,                                    // Tizen/KaiOS
-            /(android|webos|palm\sos|qnx|bada|rim\stablet\sos|meego|sailfish|contiki)[\/\s-]?([\w\.]*)/i
-                                                                                // Android/WebOS/Palm/QNX/Bada/RIM/MeeGo/Contiki/Sailfish OS
-            ], [NAME, VERSION], [
-            /(symbian\s?os|symbos|s60(?=;))[\/\s-]?([\w\.]*)/i                  // Symbian
-            ], [[NAME, 'Symbian'], VERSION], [
+            // iOS/macOS
+            /ip[honead]{2,4}\b(?:.*os ([\w]+) like mac|; opera)/i,              // iOS
+            /ios;fbsv\/([\d\.]+)/i,
+            /cfnetwork\/.+darwin/i
+            ], [[VERSION, /_/g, '.'], [NAME, 'iOS']], [
+            /(mac os x) ?([\w\. ]*)/i,
+            /(macintosh|mac_powerpc\b)(?!.+haiku)/i                             // Mac OS
+            ], [[NAME, MAC_OS], [VERSION, /_/g, '.']], [
+
+            // Mobile OSes
+            /droid ([\w\.]+)\b.+(android[- ]x86|harmonyos)/i                    // Android-x86/HarmonyOS
+            ], [VERSION, NAME], [                                               // Android/WebOS/QNX/Bada/RIM/Maemo/MeeGo/Sailfish OS
+            /(android|webos|qnx|bada|rim tablet os|maemo|meego|sailfish)[-\/ ]?([\w\.]*)/i,
+            /(blackberry)\w*\/([\w\.]*)/i,                                      // Blackberry
+            /(tizen|kaios)[\/ ]([\w\.]+)/i,                                     // Tizen/KaiOS
             /\((series40);/i                                                    // Series 40
-            ], [NAME], [
-            /mozilla.+\(mobile;.+gecko.+firefox/i                               // Firefox OS
-            ], [[NAME, 'Firefox OS'], VERSION], [
+            ], [NAME, VERSION], [
+            /\(bb(10);/i                                                        // BlackBerry 10
+            ], [VERSION, [NAME, BLACKBERRY]], [
+            /(?:symbian ?os|symbos|s60(?=;)|series60)[-\/ ]?([\w\.]*)/i         // Symbian
+            ], [VERSION, [NAME, 'Symbian']], [
+            /mozilla\/[\d\.]+ \((?:mobile|tablet|tv|mobile; [\w ]+); rv:.+ gecko\/([\w\.]+)/i // Firefox OS
+            ], [VERSION, [NAME, FIREFOX+' OS']], [
+            /web0s;.+rt(tv)/i,
+            /\b(?:hp)?wos(?:browser)?\/([\w\.]+)/i                              // WebOS
+            ], [VERSION, [NAME, 'webOS']], [
+            /watch(?: ?os[,\/]|\d,\d\/)([\d\.]+)/i                              // watchOS
+            ], [VERSION, [NAME, 'watchOS']], [
 
             // Google Chromecast
             /crkey\/([\d\.]+)/i                                                 // Google Chromecast
-            ], [VERSION, [NAME, 'Chromecast']], [
+            ], [VERSION, [NAME, CHROME+'cast']], [
+            /(cros) [\w]+(?:\)| ([\w\.]+)\b)/i                                  // Chromium OS
+            ], [[NAME, CHROMIUM_OS], VERSION],[
+
+            // Smart TVs
+            /panasonic;(viera)/i,                                               // Panasonic Viera
+            /(netrange)mmh/i,                                                   // Netrange
+            /(nettv)\/(\d+\.[\w\.]+)/i,                                         // NetTV
 
             // Console
-            /(nintendo|playstation)\s([wids34portablevu]+)/i,                   // Nintendo/Playstation
-
-            // GNU/Linux based
-            /(mint)[\/\s\(]?(\w*)/i,                                            // Mint
-            /(mageia|vectorlinux)[;\s]/i,                                       // Mageia/VectorLinux
-            /(joli|[kxln]?ubuntu|debian|suse|opensuse|gentoo|(?=\s)arch|slackware|fedora|mandriva|centos|pclinuxos|redhat|zenwalk|linpus)[\/\s-]?(?!chrom)([\w\.-]*)/i,
-                                                                                // Joli/Ubuntu/Debian/SUSE/Gentoo/Arch/Slackware
-                                                                                // Fedora/Mandriva/CentOS/PCLinuxOS/RedHat/Zenwalk/Linpus
-            /(hurd|linux)\s?([\w\.]*)/i,                                        // Hurd/Linux
-            /(gnu)\s?([\w\.]*)/i                                                // GNU
-            ], [NAME, VERSION], [
-
-            /(cros)\s[\w]+\s([\w\.]+\w)/i                                       // Chromium OS
-            ], [[NAME, 'Chromium OS'], VERSION],[
-
-            // Solaris
-            /(sunos)\s?([\w\.\d]*)/i                                            // Solaris
-            ], [[NAME, 'Solaris'], VERSION], [
-
-            // BSD based
-            /\s([frentopc-]{0,4}bsd|dragonfly)\s?([\w\.]*)/i                    // FreeBSD/NetBSD/OpenBSD/PC-BSD/DragonFly
-            ], [NAME, VERSION],[
-
-            /(haiku)\s(\w+)/i                                                   // Haiku
-            ], [NAME, VERSION],[
-
-            /cfnetwork\/.+darwin/i,
-            /ip[honead]{2,4}(?:.*os\s([\w]+)\slike\smac|;\sopera)/i             // iOS
-            ], [[VERSION, /_/g, '.'], [NAME, 'iOS']], [
-
-            /(mac\sos\sx)\s?([\w\s\.]*)/i,
-            /(macintosh|mac(?=_powerpc)\s)/i                                    // Mac OS
-            ], [[NAME, 'Mac OS'], [VERSION, /_/g, '.']], [
+            /(nintendo|playstation) ([wids345portablevuch]+)/i,                 // Nintendo/Playstation
+            /(xbox); +xbox ([^\);]+)/i,                                         // Microsoft Xbox (360, One, X, S, Series X, Series S)
 
             // Other
-            /((?:open)?solaris)[\/\s-]?([\w\.]*)/i,                             // Solaris
-            /(aix)\s((\d)(?=\.|\)|\s)[\w\.])*/i,                                // AIX
-            /(plan\s9|minix|beos|os\/2|amigaos|morphos|risc\sos|openvms|fuchsia)/i,
-                                                                                // Plan9/Minix/BeOS/OS2/AmigaOS/MorphOS/RISCOS/OpenVMS/Fuchsia
-            /(unix)\s?([\w\.]*)/i                                               // UNIX
+            /\b(joli|palm)\b ?(?:os)?\/?([\w\.]*)/i,                            // Joli/Palm
+            /(mint)[\/\(\) ]?(\w*)/i,                                           // Mint
+            /(mageia|vectorlinux)[; ]/i,                                        // Mageia/VectorLinux
+            /([kxln]?ubuntu|debian|suse|opensuse|gentoo|arch(?= linux)|slackware|fedora|mandriva|centos|pclinuxos|red ?hat|zenwalk|linpus|raspbian|plan 9|minix|risc os|contiki|deepin|manjaro|elementary os|sabayon|linspire)(?: gnu\/linux)?(?: enterprise)?(?:[- ]linux)?(?:-gnu)?[-\/ ]?(?!chrom|package)([-\w\.]*)/i,
+                                                                                // Ubuntu/Debian/SUSE/Gentoo/Arch/Slackware/Fedora/Mandriva/CentOS/PCLinuxOS/RedHat/Zenwalk/Linpus/Raspbian/Plan9/Minix/RISCOS/Contiki/Deepin/Manjaro/elementary/Sabayon/Linspire
+            /(hurd|linux) ?([\w\.]*)/i,                                         // Hurd/Linux
+            /(gnu) ?([\w\.]*)/i,                                                // GNU
+            /\b([-frentopcghs]{0,5}bsd|dragonfly)[\/ ]?(?!amd|[ix346]{1,2}86)([\w\.]*)/i, // FreeBSD/NetBSD/OpenBSD/PC-BSD/GhostBSD/DragonFly
+            /(haiku) (\w+)/i                                                    // Haiku
+            ], [NAME, VERSION], [
+            /(sunos) ?([\w\.\d]*)/i                                             // Solaris
+            ], [[NAME, 'Solaris'], VERSION], [
+            /((?:open)?solaris)[-\/ ]?([\w\.]*)/i,                              // Solaris
+            /(aix) ((\d)(?=\.|\)| )[\w\.])*/i,                                  // AIX
+            /\b(beos|os\/2|amigaos|morphos|openvms|fuchsia|hp-ux|serenityos)/i, // BeOS/OS2/AmigaOS/MorphOS/OpenVMS/Fuchsia/HP-UX/SerenityOS
+            /(unix) ?([\w\.]*)/i                                                // UNIX
             ], [NAME, VERSION]
         ]
     };
 
-
     /////////////////
     // Constructor
     ////////////////
-    var UAParser = function (uastring, extensions) {
 
-        if (typeof uastring === 'object') {
-            extensions = uastring;
-            uastring = undefined;
+    var UAParser = function (ua, extensions) {
+
+        if (typeof ua === OBJ_TYPE) {
+            extensions = ua;
+            ua = undefined;
         }
 
         if (!(this instanceof UAParser)) {
-            return new UAParser(uastring, extensions).getResult();
+            return new UAParser(ua, extensions).getResult();
         }
 
-        var ua = uastring || ((window && window.navigator && window.navigator.userAgent) ? window.navigator.userAgent : EMPTY);
-        var rgxmap = extensions ? util.extend(regexes, extensions) : regexes;
+        var _navigator = (typeof window !== UNDEF_TYPE && window.navigator) ? window.navigator : undefined;
+        var _ua = ua || ((_navigator && _navigator.userAgent) ? _navigator.userAgent : EMPTY);
+        var _uach = (_navigator && _navigator.userAgentData) ? _navigator.userAgentData : undefined;
+        var _rgxmap = extensions ? extend(regexes, extensions) : regexes;
+        var _isSelfNav = _navigator && _navigator.userAgent == _ua;
 
         this.getBrowser = function () {
-            var browser = { name: undefined, version: undefined };
-            mapper.rgx.call(browser, ua, rgxmap.browser);
-            browser.major = util.major(browser.version); // deprecated
-            return browser;
+            var _browser = {};
+            _browser[NAME] = undefined;
+            _browser[VERSION] = undefined;
+            rgxMapper.call(_browser, _ua, _rgxmap.browser);
+            _browser[MAJOR] = majorize(_browser[VERSION]);
+            // Brave-specific detection
+            if (_isSelfNav && _navigator && _navigator.brave && typeof _navigator.brave.isBrave == FUNC_TYPE) {
+                _browser[NAME] = 'Brave';
+            }
+            return _browser;
         };
         this.getCPU = function () {
-            var cpu = { architecture: undefined };
-            mapper.rgx.call(cpu, ua, rgxmap.cpu);
-            return cpu;
+            var _cpu = {};
+            _cpu[ARCHITECTURE] = undefined;
+            rgxMapper.call(_cpu, _ua, _rgxmap.cpu);
+            return _cpu;
         };
         this.getDevice = function () {
-            var device = { vendor: undefined, model: undefined, type: undefined };
-            mapper.rgx.call(device, ua, rgxmap.device);
-            return device;
+            var _device = {};
+            _device[VENDOR] = undefined;
+            _device[MODEL] = undefined;
+            _device[TYPE] = undefined;
+            rgxMapper.call(_device, _ua, _rgxmap.device);
+            if (_isSelfNav && !_device[TYPE] && _uach && _uach.mobile) {
+                _device[TYPE] = MOBILE;
+            }
+            // iPadOS-specific detection: identified as Mac, but has some iOS-only properties
+            if (_isSelfNav && _device[MODEL] == 'Macintosh' && _navigator && typeof _navigator.standalone !== UNDEF_TYPE && _navigator.maxTouchPoints && _navigator.maxTouchPoints > 2) {
+                _device[MODEL] = 'iPad';
+                _device[TYPE] = TABLET;
+            }
+            return _device;
         };
         this.getEngine = function () {
-            var engine = { name: undefined, version: undefined };
-            mapper.rgx.call(engine, ua, rgxmap.engine);
-            return engine;
+            var _engine = {};
+            _engine[NAME] = undefined;
+            _engine[VERSION] = undefined;
+            rgxMapper.call(_engine, _ua, _rgxmap.engine);
+            return _engine;
         };
         this.getOS = function () {
-            var os = { name: undefined, version: undefined };
-            mapper.rgx.call(os, ua, rgxmap.os);
-            return os;
+            var _os = {};
+            _os[NAME] = undefined;
+            _os[VERSION] = undefined;
+            rgxMapper.call(_os, _ua, _rgxmap.os);
+            if (_isSelfNav && !_os[NAME] && _uach && _uach.platform != 'Unknown') {
+                _os[NAME] = _uach.platform  
+                                    .replace(/chrome os/i, CHROMIUM_OS)
+                                    .replace(/macos/i, MAC_OS);           // backward compatibility
+            }
+            return _os;
         };
         this.getResult = function () {
             return {
@@ -40386,48 +41032,25 @@ arguments[4][75][0].apply(exports,arguments)
             };
         };
         this.getUA = function () {
-            return ua;
+            return _ua;
         };
-        this.setUA = function (uastring) {
-            ua = uastring;
+        this.setUA = function (ua) {
+            _ua = (typeof ua === STR_TYPE && ua.length > UA_MAX_LENGTH) ? trim(ua, UA_MAX_LENGTH) : ua;
             return this;
         };
+        this.setUA(_ua);
         return this;
     };
 
     UAParser.VERSION = LIBVERSION;
-    UAParser.BROWSER = {
-        NAME    : NAME,
-        MAJOR   : MAJOR, // deprecated
-        VERSION : VERSION
-    };
-    UAParser.CPU = {
-        ARCHITECTURE : ARCHITECTURE
-    };
-    UAParser.DEVICE = {
-        MODEL   : MODEL,
-        VENDOR  : VENDOR,
-        TYPE    : TYPE,
-        CONSOLE : CONSOLE,
-        MOBILE  : MOBILE,
-        SMARTTV : SMARTTV,
-        TABLET  : TABLET,
-        WEARABLE: WEARABLE,
-        EMBEDDED: EMBEDDED
-    };
-    UAParser.ENGINE = {
-        NAME    : NAME,
-        VERSION : VERSION
-    };
-    UAParser.OS = {
-        NAME    : NAME,
-        VERSION : VERSION
-    };
+    UAParser.BROWSER =  enumerize([NAME, VERSION, MAJOR]);
+    UAParser.CPU = enumerize([ARCHITECTURE]);
+    UAParser.DEVICE = enumerize([MODEL, VENDOR, TYPE, CONSOLE, MOBILE, SMARTTV, TABLET, WEARABLE, EMBEDDED]);
+    UAParser.ENGINE = UAParser.OS = enumerize([NAME, VERSION]);
 
     ///////////
     // Export
     //////////
-
 
     // check js environment
     if (typeof(exports) !== UNDEF_TYPE) {
@@ -40438,11 +41061,11 @@ arguments[4][75][0].apply(exports,arguments)
         exports.UAParser = UAParser;
     } else {
         // requirejs env (optional)
-        if (typeof(define) === 'function' && define.amd) {
+        if (typeof(define) === FUNC_TYPE && define.amd) {
             define(function () {
                 return UAParser;
             });
-        } else if (window) {
+        } else if (typeof window !== UNDEF_TYPE) {
             // browser env
             window.UAParser = UAParser;
         }
@@ -40453,15 +41076,15 @@ arguments[4][75][0].apply(exports,arguments)
     //   In AMD env the global scope should be kept clean, but jQuery is an exception.
     //   jQuery always exports to global scope, unless jQuery.noConflict(true) is used,
     //   and we should catch that.
-    var $ = window && (window.jQuery || window.Zepto);
+    var $ = typeof window !== UNDEF_TYPE && (window.jQuery || window.Zepto);
     if ($ && !$.ua) {
         var parser = new UAParser();
         $.ua = parser.getResult();
         $.ua.get = function () {
             return parser.getUA();
         };
-        $.ua.set = function (uastring) {
-            parser.setUA(uastring);
+        $.ua.set = function (ua) {
+            parser.setUA(ua);
             var result = parser.getResult();
             for (var prop in result) {
                 $.ua[prop] = result[prop];
@@ -40471,7 +41094,7 @@ arguments[4][75][0].apply(exports,arguments)
 
 })(typeof window === 'object' ? window : this);
 
-},{}],260:[function(require,module,exports){
+},{}],261:[function(require,module,exports){
 (function (global){(function (){
 
 /**
@@ -40542,7 +41165,7 @@ function config (name) {
 }
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],261:[function(require,module,exports){
+},{}],262:[function(require,module,exports){
 /**
  * Convert array of 16 byte values to UUID string format of the form:
  * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
@@ -40570,7 +41193,7 @@ function bytesToUuid(buf, offset) {
 
 module.exports = bytesToUuid;
 
-},{}],262:[function(require,module,exports){
+},{}],263:[function(require,module,exports){
 // Unique ID creation requires a high quality random # generator.  In the
 // browser this is a little complicated due to unknown quality of Math.random()
 // and inconsistent support for the `crypto` API.  We do the best we can via
@@ -40606,7 +41229,7 @@ if (getRandomValues) {
   };
 }
 
-},{}],263:[function(require,module,exports){
+},{}],264:[function(require,module,exports){
 var rng = require('./lib/rng');
 var bytesToUuid = require('./lib/bytesToUuid');
 
@@ -40637,7 +41260,7 @@ function v4(options, buf, offset) {
 
 module.exports = v4;
 
-},{"./lib/bytesToUuid":261,"./lib/rng":262}],264:[function(require,module,exports){
+},{"./lib/bytesToUuid":262,"./lib/rng":263}],265:[function(require,module,exports){
 /*
 WildEmitter.js is a slim little event emitter by @henrikjoreteg largely based
 on @visionmedia's Emitter from UI Kit.
@@ -40794,10 +41417,10 @@ WildEmitter.mixin = function (constructor) {
 
 WildEmitter.mixin(WildEmitter);
 
-},{}],265:[function(require,module,exports){
-module.exports={"version":"13.0.0-snapshot.1","date":"۱۴۰۲/۱/۲۷","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],266:[function(require,module,exports){
-"use strict";var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");var _typeof3=require("@babel/runtime/helpers/typeof");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _regenerator=_interopRequireDefault(require("@babel/runtime/regenerator"));var _objectDestructuringEmpty2=_interopRequireDefault(require("@babel/runtime/helpers/objectDestructuringEmpty"));var _asyncToGenerator2=_interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _constants=require("./lib/constants");var _kurentoUtils=_interopRequireDefault(require("kurento-utils"));var _utility=_interopRequireDefault(require("./utility/utility"));var _eventsModule=require("./events.module.js");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));var _errorHandler=_interopRequireWildcard(require("./lib/errorHandler"));function _getRequireWildcardCache(nodeInterop){if(typeof WeakMap!=="function")return null;var cacheBabelInterop=new WeakMap();var cacheNodeInterop=new WeakMap();return(_getRequireWildcardCache=function _getRequireWildcardCache(nodeInterop){return nodeInterop?cacheNodeInterop:cacheBabelInterop;})(nodeInterop);}function _interopRequireWildcard(obj,nodeInterop){if(!nodeInterop&&obj&&obj.__esModule){return obj;}if(obj===null||_typeof3(obj)!=="object"&&typeof obj!=="function"){return{"default":obj};}var cache=_getRequireWildcardCache(nodeInterop);if(cache&&cache.has(obj)){return cache.get(obj);}var newObj={};var hasPropertyDescriptor=Object.defineProperty&&Object.getOwnPropertyDescriptor;for(var key in obj){if(key!=="default"&&Object.prototype.hasOwnProperty.call(obj,key)){var desc=hasPropertyDescriptor?Object.getOwnPropertyDescriptor(obj,key):null;if(desc&&(desc.get||desc.set)){Object.defineProperty(newObj,key,desc);}else{newObj[key]=obj[key];}}}newObj["default"]=obj;if(cache){cache.set(obj,newObj);}return newObj;}function _createForOfIteratorHelper(o,allowArrayLike){var it=typeof Symbol!=="undefined"&&o[Symbol.iterator]||o["@@iterator"];if(!it){if(Array.isArray(o)||(it=_unsupportedIterableToArray(o))||allowArrayLike&&o&&typeof o.length==="number"){if(it)o=it;var i=0;var F=function F(){};return{s:F,n:function n(){if(i>=o.length)return{done:true};return{done:false,value:o[i++]};},e:function e(_e){throw _e;},f:F};}throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}var normalCompletion=true,didErr=false,err;return{s:function s(){it=it.call(o);},n:function n(){var step=it.next();normalCompletion=step.done;return step;},e:function e(_e2){didErr=true;err=_e2;},f:function f(){try{if(!normalCompletion&&it["return"]!=null)it["return"]();}finally{if(didErr)throw err;}}};}function _unsupportedIterableToArray(o,minLen){if(!o)return;if(typeof o==="string")return _arrayLikeToArray(o,minLen);var n=Object.prototype.toString.call(o).slice(8,-1);if(n==="Object"&&o.constructor)n=o.constructor.name;if(n==="Map"||n==="Set")return Array.from(o);if(n==="Arguments"||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n))return _arrayLikeToArray(o,minLen);}function _arrayLikeToArray(arr,len){if(len==null||len>arr.length)len=arr.length;for(var i=0,arr2=new Array(len);i<len;i++){arr2[i]=arr[i];}return arr2;}function ChatCall(params){var _params$asyncLogging,_params$asyncLogging2,_params$asyncLogging3,_params$callOptions,_params$callOptions2;var//Utility = params.Utility,
+module.exports={"version":"13.0.0-snapshot.1","date":"۱۴۰۲/۲/۵","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+},{}],267:[function(require,module,exports){
+"use strict";var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");var _typeof3=require("@babel/runtime/helpers/typeof");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _regenerator=_interopRequireDefault(require("@babel/runtime/regenerator"));var _objectDestructuringEmpty2=_interopRequireDefault(require("@babel/runtime/helpers/objectDestructuringEmpty"));var _asyncToGenerator2=_interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _constants=require("./lib/constants");var _kurentoUtils=_interopRequireDefault(require("kurento-utils"));var _utility=_interopRequireDefault(require("./utility/utility"));var _eventsModule=require("./events.module.js");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));var _errorHandler=_interopRequireWildcard(require("./lib/errorHandler"));var _webrtcPeer=require("./lib/call/webrtcPeer");function _getRequireWildcardCache(nodeInterop){if(typeof WeakMap!=="function")return null;var cacheBabelInterop=new WeakMap();var cacheNodeInterop=new WeakMap();return(_getRequireWildcardCache=function _getRequireWildcardCache(nodeInterop){return nodeInterop?cacheNodeInterop:cacheBabelInterop;})(nodeInterop);}function _interopRequireWildcard(obj,nodeInterop){if(!nodeInterop&&obj&&obj.__esModule){return obj;}if(obj===null||_typeof3(obj)!=="object"&&typeof obj!=="function"){return{"default":obj};}var cache=_getRequireWildcardCache(nodeInterop);if(cache&&cache.has(obj)){return cache.get(obj);}var newObj={};var hasPropertyDescriptor=Object.defineProperty&&Object.getOwnPropertyDescriptor;for(var key in obj){if(key!=="default"&&Object.prototype.hasOwnProperty.call(obj,key)){var desc=hasPropertyDescriptor?Object.getOwnPropertyDescriptor(obj,key):null;if(desc&&(desc.get||desc.set)){Object.defineProperty(newObj,key,desc);}else{newObj[key]=obj[key];}}}newObj["default"]=obj;if(cache){cache.set(obj,newObj);}return newObj;}function _createForOfIteratorHelper(o,allowArrayLike){var it=typeof Symbol!=="undefined"&&o[Symbol.iterator]||o["@@iterator"];if(!it){if(Array.isArray(o)||(it=_unsupportedIterableToArray(o))||allowArrayLike&&o&&typeof o.length==="number"){if(it)o=it;var i=0;var F=function F(){};return{s:F,n:function n(){if(i>=o.length)return{done:true};return{done:false,value:o[i++]};},e:function e(_e){throw _e;},f:F};}throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}var normalCompletion=true,didErr=false,err;return{s:function s(){it=it.call(o);},n:function n(){var step=it.next();normalCompletion=step.done;return step;},e:function e(_e2){didErr=true;err=_e2;},f:function f(){try{if(!normalCompletion&&it["return"]!=null)it["return"]();}finally{if(didErr)throw err;}}};}function _unsupportedIterableToArray(o,minLen){if(!o)return;if(typeof o==="string")return _arrayLikeToArray(o,minLen);var n=Object.prototype.toString.call(o).slice(8,-1);if(n==="Object"&&o.constructor)n=o.constructor.name;if(n==="Map"||n==="Set")return Array.from(o);if(n==="Arguments"||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n))return _arrayLikeToArray(o,minLen);}function _arrayLikeToArray(arr,len){if(len==null||len>arr.length)len=arr.length;for(var i=0,arr2=new Array(len);i<len;i++){arr2[i]=arr[i];}return arr2;}function ChatCall(params){var _params$asyncLogging,_params$asyncLogging2,_params$asyncLogging3,_params$callOptions,_params$callOptions2;var//Utility = params.Utility,
 currentModuleInstance=this,asyncClient=params.asyncClient,//chatEvents = params.chatEvents,
 chatMessaging=params.chatMessaging,token=params.token,asyncRequestTimeouts={},callTypes={'VOICE':0x0,'VIDEO':0x1},generalTypeCode=params.typeCode,callOptions=params.callOptions,useInternalTurnAddress=!!(params.callOptions&&params.callOptions.useInternalTurnAddress),callTurnIp=params.callOptions&&params.callOptions.hasOwnProperty('callTurnIp')&&typeof params.callOptions.callTurnIp==='string'?params.callOptions.callTurnIp:'46.32.6.188',callDivId=params.callOptions&&params.callOptions.hasOwnProperty('callDivId')&&typeof params.callOptions.callDivId==='string'?params.callOptions.callDivId:'call-div',callAudioTagClassName=params.callOptions&&params.callOptions.hasOwnProperty('callAudioTagClassName')&&typeof params.callOptions.callAudioTagClassName==='string'?params.callOptions.callAudioTagClassName:'',callVideoTagClassName=params.callOptions&&params.callOptions.hasOwnProperty('callVideoTagClassName')&&typeof params.callOptions.callVideoTagClassName==='string'?params.callOptions.callVideoTagClassName:'',callVideoMinWidth=params.callOptions&&params.callOptions.hasOwnProperty('callVideo')&&(0,_typeof2["default"])(params.callOptions.callVideo)==='object'&&params.callOptions.callVideo.hasOwnProperty('minWidth')?params.callOptions.callVideo.minWidth:320,callVideoMinHeight=params.callOptions&&params.callOptions.hasOwnProperty('callVideo')&&(0,_typeof2["default"])(params.callOptions.callVideo)==='object'&&params.callOptions.callVideo.hasOwnProperty('minHeight')?params.callOptions.callVideo.minHeight:180,currentCallParams={},requestedCallId=null,acceptedCallId=null,currentCallId=null,latestCallRequestId=null,//shouldReconnectCallTimeout = null,
 callMetaDataTypes={POORCONNECTION:1,POORCONNECTIONRESOLVED:2,CUSTOMUSERMETADATA:3,SCREENSHAREMETADATA:4},screenShareState={started:false,imOwner:false},screenShareInfo=new screenShareStateManager(),callClientType={WEB:1,ANDROID:2,DESKTOP:3},callUsers={},callRequestController={imCallOwner:false,callRequestReceived:false,callEstablishedInMySide:false,callRequestTimeout:null,iRequestedCall:false,iAcceptedCall:false,canProcessStartCall:function canProcessStartCall(callId){consoleLogging&&console.log("[SDK] canProcessStartCall:",{callId:callId},{acceptedCallId:acceptedCallId},callRequestController.iAcceptedCall,callRequestController.iAcceptedCall&&acceptedCallId==callId);if(callRequestController.iAcceptedCall&&acceptedCallId==callId||callRequestController.iRequestedCall&&requestedCallId==callId)return true;return false;//callRequestController.callRequestReceived && callRequestController.callEstablishedInMySide;
@@ -40818,18 +41441,54 @@ paused:false,stopped:false,timeoutHandler:null,timeout:params.timeout};var priva
 if(config.paused){config.stopped=true;callStateController.deactivateParticipantStream(config.userId,config.mediaType,config.mediaType==='video'?'video':'mute');}//}, config.timeout);
 },removeTimeout:function removeTimeout(){clearTimeout(config.timeoutHandler);}};return{pauseStream:function pauseStream(){config.paused=true;},stopStream:function stopStream(){config.stopped=true;},isStreamPaused:function isStreamPaused(){return config.paused;},isStreamStopped:function isStreamStopped(){return config.stopped;},disableStream:function disableStream(){//if(pause)
 this.pauseStream();privateFunctions.setTimeout();},reset:function reset(){config.paused=false;config.stopped=false;privateFunctions.removeTimeout();}};}function callTopicManager(params){var config={userId:params.userId,state:0,//0: disconnected, 1: connecting, 2: failed, 3: connected, 4: disconnected
-peer:null,topic:params.topic,mediaType:params.mediaType,direction:params.direction,isScreenShare:false,sdpOfferRequestSent:false};var metadataInstance=new topicMetaDataManager({userId:params.userId,topic:params.topic});var peerStates={DISCONNECTED:0,CONNECTING:1,FAILED:3,CONNECTED:4};return{setPeerState:function setPeerState(state){config.state=state;},setIsScreenShare:function setIsScreenShare(){config.isScreenShare=true;},setDirection:function setDirection(direction){config.direction=direction;},getPeer:function getPeer(){return config.peer;},metadata:function metadata(){return metadataInstance;},isPeerConnecting:function isPeerConnecting(){return config.state===peerStates.CONNECTING;},isPeerFailed:function isPeerFailed(){return config.state===peerStates.FAILED;},isPeerConnected:function isPeerConnected(){return config.state===peerStates.CONNECTED;},isPeerDisconnected:function isPeerDisconnected(){return config.state===peerStates.DISCONNECTED;},generateSdpOfferOptions:function generateSdpOfferOptions(){var topicManager=this;return new Promise(function(resolve,reject){var mediaConstraints={audio:config.mediaType==='audio',video:config.mediaType==='video'};if(config.direction==='send'&&config.mediaType==='video'){mediaConstraints.video={width:callVideoMinWidth,height:callVideoMinHeight,framerate:15};}var options={mediaConstraints:mediaConstraints,iceTransportPolicy:'relay',onicecandidate:function onicecandidate(candidate){topicManager.watchForIceCandidates(candidate);},configuration:{iceServers:callStateController.getTurnServer(currentCallParams)}};options[config.direction==='send'?'localVideo':'remoteVideo']=callUsers[config.userId].htmlElements[config.topic];if(config.direction==='send'){if(config.mediaType==='video'){if(config.isScreenShare){_deviceManager["default"].grantScreenSharePermission({closeStream:false}).then(function(stream){stream.getVideoTracks()[0].addEventListener("ended",function(event){// Click on browser UI stop sharing button
-_deviceManager["default"].mediaStreams().stopScreenShareInput();if(callUsers['screenShare']&&config.peer){currentModuleInstance.endScreenShare({callId:currentCallId});}});options.videoStream=stream;options.sendSource='screen';resolve(options);})["catch"](function(error){var errorString="[SDK][grantScreenSharePermission][catch] "+JSON.stringify(error);console.error(errorString);raiseCallError(_errorHandler.errorList.SCREENSHARE_PERMISSION_ERROR,null,true);// chatEvents.fireEvent('callEvents', {
+peer:null,topic:params.topic,mediaType:params.mediaType,direction:params.direction,isScreenShare:false,sdpOfferRequestSent:false};var metadataInstance=new topicMetaDataManager({userId:params.userId,topic:params.topic});var peerStates={DISCONNECTED:0,CONNECTING:1,FAILED:3,CONNECTED:4};return{setPeerState:function setPeerState(state){config.state=state;},setIsScreenShare:function setIsScreenShare(){config.isScreenShare=true;},setDirection:function setDirection(direction){config.direction=direction;},getPeer:function getPeer(){return config.peer;},metadata:function metadata(){return metadataInstance;},isPeerConnecting:function isPeerConnecting(){return config.state===peerStates.CONNECTING;},isPeerFailed:function isPeerFailed(){return config.state===peerStates.FAILED;},isPeerConnected:function isPeerConnected(){return config.state===peerStates.CONNECTED;},isPeerDisconnected:function isPeerDisconnected(){return config.state===peerStates.DISCONNECTED;},generateSdpOfferOptions:function generateSdpOfferOptions(){var topicManager=this;return new Promise(function(resolve,reject){// let mediaConstraints = {audio: (config.mediaType === 'audio'), video: (config.mediaType === 'video')};
+// if(config.direction === 'send' && config.mediaType === 'video') {
+//     mediaConstraints.video = {
+//         width: callVideoMinWidth,
+//         height: callVideoMinHeight,
+//         framerate: 15
+//     }
+// }
+var options={// mediaConstraints: mediaConstraints,
+// onicecandidate: (candidate) => {
+//     topicManager.watchForIceCandidates(candidate)
+// },
+configuration:{iceServers:callStateController.getTurnServer(currentCallParams)// iceTransportPolicy: 'relay',
+}};options.streamElement=callUsers[config.userId].htmlElements[config.topic];if(config.direction==='send'){if(config.mediaType==='video'){if(config.isScreenShare){_deviceManager["default"].grantScreenSharePermission({closeStream:false}).then(function(stream){stream.getVideoTracks()[0].addEventListener("ended",function(event){// Click on browser UI stop sharing button
+_deviceManager["default"].mediaStreams().stopScreenShareInput();if(callUsers['screenShare']&&config.peer){currentModuleInstance.endScreenShare({callId:currentCallId});}});options.stream=stream;// options.sendSource = 'screen';
+resolve(options);})["catch"](function(error){var errorString="[SDK][grantScreenSharePermission][catch] "+JSON.stringify(error);console.error(errorString);raiseCallError(_errorHandler.errorList.SCREENSHARE_PERMISSION_ERROR,null,true);// chatEvents.fireEvent('callEvents', {
 //     type: 'CALL_ERROR',
 //     code: 7000,
 //     message: errorString,
 //     environmentDetails: getSDKCallDetails()
 // });
 explainUserMediaError(error,'video','screen');//resolve(options);
-});}else{_deviceManager["default"].grantUserMediaDevicesPermissions({video:true}).then(function(){options.videoStream=_deviceManager["default"].mediaStreams().getVideoInput();resolve(options);})["catch"](function(error){reject(error);});}}else if(config.mediaType==='audio'){_deviceManager["default"].grantUserMediaDevicesPermissions({audio:true}).then(function(){var audioInput=_deviceManager["default"].mediaStreams().getAudioInput();_deviceManager["default"].watchAudioInputStream(raiseCallError);options.audioStream=audioInput;resolve(options);})["catch"](function(error){reject(error);});}}else{resolve(options);}consoleLogging&&console.log("[SDK][getSdpOfferOptions] ","topic: ",config.topic,"mediaType: ",config.mediaType,"direction: ",config.direction,"options: ",options);});},watchForIceCandidates:function watchForIceCandidates(candidate){var manager=this;if(metadataInstance.isIceCandidateIntervalSet()){return;}//callUsers[config.userId].topicMetaData[config.topic].interval
-metadataInstance.setIceCandidateInterval(setInterval(function(){if(callUsers[config.userId]&&callUsers[config.userId].topicMetaData[config.topic]&&callUsers[config.userId].topicMetaData[config.topic].sdpAnswerReceived===true){consoleLogging&&console.log("[SDK][watchForIceCandidates][setInterval] sdpAnswerReceived, topic:",config.topic);callUsers[config.userId].topicMetaData[config.topic].sdpAnswerReceived=false;// manager.removeTopicIceCandidateInterval();
-metadataInstance.clearIceCandidateInterval();sendCallMessage({id:'ADD_ICE_CANDIDATE',topic:config.topic,candidateDto:candidate},null,{});}},500,{candidate:candidate}));},establishPeerConnection:function establishPeerConnection(options){var WebRtcFunction=config.direction==='send'?'WebRtcPeerSendonly':'WebRtcPeerRecvonly',manager=this,user=callUsers[config.userId],topicElement=user.htmlElements[config.topic];//topicMetaData = user.topicMetaData[config.topic];
-config.state=peerStates.CONNECTING;config.peer=new _kurentoUtils["default"].WebRtcPeer[WebRtcFunction](options,function(err){consoleLogging&&console.debug("[SDK][establishPeerConnection][KurentoUtils.WebRtcPeer][WebRtcFunction]: ",{options:options},"userId: ",config.userId,"topic: ",config.topic,"direction: ",config.direction);if(err){var errorString="[SDK][start/webRtc "+config.direction+"  "+config.mediaType+" Peer] Error: "+explainUserMediaError(err,config.mediaType);console.error(errorString);_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:errorString,environmentDetails:getSDKCallDetails()});return;}manager.watchRTCPeerConnection();if(config.direction==='send'){startMedia(topicElement);if(callRequestController.cameraPaused){currentModuleInstance.pauseCamera();}}if(callServerController.isJanus()&&config.direction==='receive'){var msgParams={id:'REGISTER_RECV_NOTIFICATION',topic:config.topic,mediaType:config.mediaType==='video'?2:1};sendCallMessage(msgParams,null,{timeoutTime:4000,timeoutRetriesCount:5// timeoutCallback(){
+});}else{_deviceManager["default"].grantUserMediaDevicesPermissions({video:true}).then(function(){options.stream=_deviceManager["default"].mediaStreams().getVideoInput();resolve(options);})["catch"](function(error){reject(error);});}}else if(config.mediaType==='audio'){_deviceManager["default"].grantUserMediaDevicesPermissions({audio:true}).then(function(){var audioInput=_deviceManager["default"].mediaStreams().getAudioInput();_deviceManager["default"].watchAudioInputStream(raiseCallError);options.stream=audioInput;resolve(options);})["catch"](function(error){reject(error);});}}else{resolve(options);}consoleLogging&&console.log("[SDK][getSdpOfferOptions] ","topic: ",config.topic,"mediaType: ",config.mediaType,"direction: ",config.direction,"options: ",options);});},// watchForIceCandidates: function (candidate) {
+//     let manager = this;
+//
+//     if (metadataInstance.isIceCandidateIntervalSet()) {
+//         return;
+//     }
+//     //callUsers[config.userId].topicMetaData[config.topic].interval
+//     metadataInstance.setIceCandidateInterval(setInterval(function () {
+//         if (callUsers[config.userId] && callUsers[config.userId].topicMetaData[config.topic] && callUsers[config.userId].topicMetaData[config.topic].sdpAnswerReceived === true) {
+//             consoleLogging && console.log("[SDK][watchForIceCandidates][setInterval] sdpAnswerReceived, topic:", config.topic)
+//             callUsers[config.userId].topicMetaData[config.topic].sdpAnswerReceived = false;
+//             // manager.removeTopicIceCandidateInterval();
+//             metadataInstance.clearIceCandidateInterval();
+//             sendCallMessage({
+//                 id: 'ADD_ICE_CANDIDATE',
+//                 topic: config.topic,
+//                 candidateDto: candidate
+//             }, null, {})
+//         }
+//     }, 500, {candidate: candidate}));
+// },
+establishPeerConnection:function establishPeerConnection(options){var WebRtcFunction=config.direction==='send'?'WebRtcPeerSendonly':'WebRtcPeerRecvonly',manager=this,user=callUsers[config.userId],topicElement=user.htmlElements[config.topic];//topicMetaData = user.topicMetaData[config.topic];
+config.state=peerStates.CONNECTING;// if(config.mediaType != 'video' || config.direction != 'send')
+//     return;
+// config.peer = new KurentoUtils.WebRtcPeer[WebRtcFunction](options, function (err) {
+config.peer=new _webrtcPeer.WebrtcPeerConnection({direction:config.direction,mediaType:config.mediaType,stream:options.stream,streamElement:options.streamElement,rtcPeerConfig:options.configuration},function(err){consoleLogging&&console.debug("[SDK][establishPeerConnection][KurentoUtils.WebRtcPeer][WebRtcFunction]: ",{options:options},"userId: ",config.userId,"topic: ",config.topic,"direction: ",config.direction);if(err){var errorString="[SDK][start/webRtc "+config.direction+"  "+config.mediaType+" Peer] Error: "+explainUserMediaError(err,config.mediaType);console.error(errorString);_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:errorString,environmentDetails:getSDKCallDetails()});return;}manager.watchRTCPeerConnection();if(config.direction==='send'){startMedia(topicElement);if(callRequestController.cameraPaused){currentModuleInstance.pauseCamera();}}if(callServerController.isJanus()&&config.direction==='receive'){var msgParams={id:'REGISTER_RECV_NOTIFICATION',topic:config.topic,mediaType:config.mediaType==='video'?2:1};sendCallMessage(msgParams,null,{timeoutTime:4000,timeoutRetriesCount:5// timeoutCallback(){
 //     sendCallMessage(msgParams, null, {});
 // }
 });}else{config.peer.generateOffer(function(err,sdpOffer){consoleLogging&&console.debug("[SDK][establishPeerConnection][generateOffer] GenerateOffer:: "," sdpOffer: ",sdpOffer," err: ",err);if(err){var _errorString="[SDK][start/WebRc "+config.direction+"  "+config.mediaType+" Peer/generateOffer] "+err;console.error(_errorString);_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:_errorString,environmentDetails:getSDKCallDetails()});return;}if(!config.sdpOfferRequestSent){config.sdpOfferRequestSent=true;manager.sendSDPOfferRequestMessage(sdpOffer,1);}});}});},sendSDPOfferRequestMessage:function sendSDPOfferRequestMessage(sdpOffer,retries){var manager=this;sendCallMessage({id:config.direction==='send'?'SEND_SDP_OFFER':'RECIVE_SDP_OFFER',sdpOffer:sdpOffer,useComedia:true,useSrtp:false,topic:config.topic,mediaType:config.mediaType==='video'?2:1},function(result){if(result.done==='FALSE'&&retries>0){retries-=1;manager.sendSDPOfferRequestMessage(sdpOffer);}},{timeoutTime:4000,timeoutRetriesCount:5});},watchRTCPeerConnection:function watchRTCPeerConnection(){consoleLogging&&console.log("[SDK][watchRTCPeerConnection] called with: ","userId: ",config.userId,"topic: ",config.topic,"mediaType: ",config.mediaType,"direction: ",config.direction);var manager=this,user=callUsers[config.userId];config.peer.peerConnection.onconnectionstatechange=function(){if(!user||!config.peer){return;//avoid log errors
@@ -40981,7 +41640,16 @@ metadataInstance.clearIceCandidateInterval();manager.removeConnectionQualityInte
               }).catch(error => {
                   console.error("Could not free up some resources", error);
                   resolve(true);
-              });*/resolve(true);}else{callStateController.removeStreamHTML(config.userId,config.topic);config.peer.dispose();config.peer=null;config.state=peerStates.DISCONNECTED;resolve(true);}}});}};}function peersHealthChecker(){var config={healthCheckerInterval:null};function checkHealth(){var foundProblem=false;if(!callUsers||!callUsers.length)return;callUsers.forEach(function(user){if(user.video){if(user.videoTopicManager&&(user.videoTopicManager.isPeerFailed()||user.videoTopicManager.isPeerDisconnected())){user.videoTopicManager.removeTopic().then(function(){user.videoTopicManager.createTopic();});foundProblem=true;consoleLogging&&console.debug("[SDK][HealthChecker] userId:",user.id,"topic:",user.videoTopicName);}}if(!user.mute){if(user.audioTopicManager&&(user.audioTopicManager.isPeerFailed()||user.audioTopicManager.isPeerDisconnected())){user.audioTopicManager.removeTopic().then(function(){user.audioTopicManager.createTopic();});foundProblem=true;consoleLogging&&console.debug("[SDK][HealthChecker] userId:",user.id,"topic:",user.audioTopicName);}}});if(foundProblem){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_DIVS',result:generateCallUIList()});}}return{startTopicsHealthCheck:function startTopicsHealthCheck(){config.healthCheckerInterval=setInterval(function(){checkHealth();},20000);},stopTopicsHealthCheck:function stopTopicsHealthCheck(){clearInterval(config.healthCheckerInterval);}};}function topicMetaDataManager(params){var config={userId:params.userId,topic:params.topic,interval:null,receivedSdpAnswer:false,connectionQualityInterval:null,poorConnectionCount:0,poorConnectionResolvedCount:0,isConnectionPoor:false};return{setIsConnectionPoor:function setIsConnectionPoor(state){config.isConnectionPoor=state;},setReceivedSdpAnswer:function setReceivedSdpAnswer(state){config.receivedSdpAnswer=state;},setIceCandidateInterval:function setIceCandidateInterval(id){config.interval=id;},isConnectionPoor:function isConnectionPoor(){return config.isConnectionPoor;},isReceivedSdpAnswer:function isReceivedSdpAnswer(){return config.receivedSdpAnswer;},isIceCandidateIntervalSet:function isIceCandidateIntervalSet(){return config.interval!==null;},clearIceCandidateInterval:function clearIceCandidateInterval(){clearInterval(config.interval);}};}var init=function init(){},raiseCallError=function raiseCallError(errorObject,callBack,fireEvent){(0,_errorHandler.raiseError)(errorObject,callBack,fireEvent,{eventName:'callEvents',eventType:'CALL_ERROR',environmentDetails:getSDKCallDetails()});},sendCallMessage=function sendCallMessage(message,callback,_ref){var _ref$timeoutTime=_ref.timeoutTime,timeoutTime=_ref$timeoutTime===void 0?0:_ref$timeoutTime,_ref$timeoutRetriesCo=_ref.timeoutRetriesCount,timeoutRetriesCount=_ref$timeoutRetriesCo===void 0?0:_ref$timeoutRetriesCo;message.token=token;var uniqueId;if(typeof params.uniqueId!='undefined'){uniqueId=params.uniqueId;}else{uniqueId=_utility["default"].generateUUID();}message.uniqueId=uniqueId;message.chatId=currentCallId;var data={type:3,content:{peerName:callServerController.getCurrentServer(),// callServerName,
+              });*/resolve(true);}else{callStateController.removeStreamHTML(config.userId,config.topic);config.peer.dispose();config.peer=null;config.state=peerStates.DISCONNECTED;resolve(true);}}});}};}function peersHealthChecker(){var config={healthCheckerInterval:null};function checkHealth(){var foundProblem=false;if(!callUsers||!callUsers.length)return;callUsers.forEach(function(user){if(user.video){if(user.videoTopicManager&&(user.videoTopicManager.isPeerFailed()||user.videoTopicManager.isPeerDisconnected())){user.videoTopicManager.removeTopic().then(function(){user.videoTopicManager.createTopic();});foundProblem=true;consoleLogging&&console.debug("[SDK][HealthChecker] userId:",user.id,"topic:",user.videoTopicName);}}if(!user.mute){if(user.audioTopicManager&&(user.audioTopicManager.isPeerFailed()||user.audioTopicManager.isPeerDisconnected())){user.audioTopicManager.removeTopic().then(function(){user.audioTopicManager.createTopic();});foundProblem=true;consoleLogging&&console.debug("[SDK][HealthChecker] userId:",user.id,"topic:",user.audioTopicName);}}});if(foundProblem){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_DIVS',result:generateCallUIList()});}}return{startTopicsHealthCheck:function startTopicsHealthCheck(){config.healthCheckerInterval=setInterval(function(){checkHealth();},20000);},stopTopicsHealthCheck:function stopTopicsHealthCheck(){clearInterval(config.healthCheckerInterval);}};}function topicMetaDataManager(params){var config={userId:params.userId,topic:params.topic,interval:null,receivedSdpAnswer:false,connectionQualityInterval:null,poorConnectionCount:0,poorConnectionResolvedCount:0,isConnectionPoor:false};return{setIsConnectionPoor:function setIsConnectionPoor(state){config.isConnectionPoor=state;},setReceivedSdpAnswer:function setReceivedSdpAnswer(state){config.receivedSdpAnswer=state;},// setIceCandidateInterval: function (id) {
+//     config.interval = id
+// },
+isConnectionPoor:function isConnectionPoor(){return config.isConnectionPoor;},isReceivedSdpAnswer:function isReceivedSdpAnswer(){return config.receivedSdpAnswer;}// isIceCandidateIntervalSet: function () {
+//     return config.interval !== null;
+// },
+// clearIceCandidateInterval: function () {
+//     clearInterval(config.interval);
+// }
+};}var init=function init(){},raiseCallError=function raiseCallError(errorObject,callBack,fireEvent){(0,_errorHandler.raiseError)(errorObject,callBack,fireEvent,{eventName:'callEvents',eventType:'CALL_ERROR',environmentDetails:getSDKCallDetails()});},sendCallMessage=function sendCallMessage(message,callback,_ref){var _ref$timeoutTime=_ref.timeoutTime,timeoutTime=_ref$timeoutTime===void 0?0:_ref$timeoutTime,_ref$timeoutRetriesCo=_ref.timeoutRetriesCount,timeoutRetriesCount=_ref$timeoutRetriesCo===void 0?0:_ref$timeoutRetriesCo;message.token=token;var uniqueId;if(typeof params.uniqueId!='undefined'){uniqueId=params.uniqueId;}else{uniqueId=_utility["default"].generateUUID();}message.uniqueId=uniqueId;message.chatId=currentCallId;var data={type:3,content:{peerName:callServerController.getCurrentServer(),// callServerName,
 priority:1,content:JSON.stringify(message),ttl:messageTtl}};if(typeof callback=='function'){chatMessaging.messagesCallbacks[uniqueId]=callback;}asyncClient.send(data,function(res){if(!res.hasError&&callback){// if (typeof callback == 'function') {
 //     callback(res);
 // }
@@ -41086,14 +41754,11 @@ sendCallMessage(message,onResultCallback,{timeoutTime:4000,timeoutRetriesCount:5
 },startCall:function startCall(params){var callController=this;for(var i in callUsers){if(i==="screenShare"){if(screenShareInfo.isStarted())callStateController.addScreenShareToCall('receive',false);continue;}if(callUsers[i].video){callController.startParticipantVideo(i);}if(callUsers[i].mute!==undefined&&!callUsers[i].mute){callController.startParticipantAudio(i);}}// setTimeout(()=>{
 //     callTopicHealthChecker.startTopicsHealthCheck();
 // }, 20000);
-},setupCallParticipant:function setupCallParticipant(participant){var user=participant;user.topicMetaData={};// user.peers = {};
-user.videoTopicManager=new callTopicManager({userId:user.userId,topic:'Vi-'+user.topicSend,mediaType:'video',direction:user.userId===chatMessaging.userInfo.id?'send':'receive'});user.audioTopicManager=new callTopicManager({userId:user.userId,topic:'Vo-'+user.topicSend,mediaType:'audio',direction:user.userId===chatMessaging.userInfo.id?'send':'receive'});if(user.userId===chatMessaging.userInfo.id){user.direction='send';}else{user.direction='receive';}user.videoTopicName='Vi-'+user.topicSend;user.audioTopicName='Vo-'+user.topicSend;user.audioStopManager=new devicePauseStopManager({userId:user.userId,mediaType:'audio',timeout:callStreamCloseTimeout});if(user.mute){user.audioStopManager.pauseStream();user.audioStopManager.stopStream();}user.videoStopManager=new devicePauseStopManager({userId:user.userId,mediaType:'video',timeout:callStreamCloseTimeout});if(!user.video){user.videoStopManager.pauseStream();user.videoStopManager.stopStream();}user.topicMetaData[user.videoTopicName]={interval:null,receivedSdpAnswer:false,connectionQualityInterval:null,poorConnectionCount:0,poorConnectionResolvedCount:0,isConnectionPoor:false,audioLevelInterval:null};user.topicMetaData[user.audioTopicName]={interval:null,receivedSdpAnswer:false,connectionQualityInterval:null,poorConnectionCount:0,poorConnectionResolvedCount:0,isConnectionPoor:false};callUsers[user.userId]=user;this.appendUserToCallDiv(user.userId,this.generateHTMLElements(user.userId));},setupScreenSharingObject:function setupScreenSharingObject(topic){var obj={video:true};obj.topicMetaData={};obj.direction=screenShareInfo.iAmOwner()?'send':'receive';obj.videoTopicManager=new callTopicManager({userId:'screenShare',topic:topic,mediaType:'video',direction:obj.direction,isScreenShare:true});obj.videoTopicName=topic;obj.topicMetaData[obj.videoTopicName]={interval:null,receivedSdpAnswer:false,connectionQualityInterval:null,poorConnectionCount:0,poorConnectionResolvedCount:0,isConnectionPoor:false};callUsers['screenShare']=obj;// if(screenShareInfo.isStarted())
+},setupCallParticipant:function setupCallParticipant(participant){var user=participant;user.topicMetaData={};user.videoTopicName='Vi-'+user.topicSend;user.audioTopicName='Vo-'+user.topicSend;user.videoTopicManager=new callTopicManager({userId:user.userId,topic:'Vi-'+user.topicSend,mediaType:'video',direction:user.userId===chatMessaging.userInfo.id?'send':'receive'});user.audioTopicManager=new callTopicManager({userId:user.userId,topic:'Vo-'+user.topicSend,mediaType:'audio',direction:user.userId===chatMessaging.userInfo.id?'send':'receive'});if(user.userId===chatMessaging.userInfo.id){user.direction='send';}else{user.direction='receive';}user.audioStopManager=new devicePauseStopManager({userId:user.userId,mediaType:'audio',timeout:callStreamCloseTimeout});if(user.mute){user.audioStopManager.pauseStream();user.audioStopManager.stopStream();}user.localAudioEnabled=!user.mute;user.localAudioStreamCreated=false;user.localVideoEnabled=!user.video;user.localVideoStreamCreated=false;user.lockUnmuting=false;user.lockVideoStart=false;user.videoStopManager=new devicePauseStopManager({userId:user.userId,mediaType:'video',timeout:callStreamCloseTimeout});if(!user.video){user.videoStopManager.pauseStream();user.videoStopManager.stopStream();}user.topicMetaData[user.videoTopicName]={interval:null,receivedSdpAnswer:false,connectionQualityInterval:null,poorConnectionCount:0,poorConnectionResolvedCount:0,isConnectionPoor:false,audioLevelInterval:null};user.topicMetaData[user.audioTopicName]={interval:null,receivedSdpAnswer:false,connectionQualityInterval:null,poorConnectionCount:0,poorConnectionResolvedCount:0,isConnectionPoor:false};callUsers[user.userId]=user;this.appendUserToCallDiv(user.userId,this.generateHTMLElements(user.userId));},setupScreenSharingObject:function setupScreenSharingObject(topic){var obj={video:true};obj.topicMetaData={};obj.direction=screenShareInfo.iAmOwner()?'send':'receive';obj.videoTopicManager=new callTopicManager({userId:'screenShare',topic:topic,mediaType:'video',direction:obj.direction,isScreenShare:true});obj.videoTopicName=topic;obj.topicMetaData[obj.videoTopicName]={interval:null,receivedSdpAnswer:false,connectionQualityInterval:null,poorConnectionCount:0,poorConnectionResolvedCount:0,isConnectionPoor:false};callUsers['screenShare']=obj;// if(screenShareInfo.isStarted())
 //     this.appendUserToCallDiv('screenShare', this.generateHTMLElements('screenShare'));
 // else
 this.generateHTMLElements('screenShare');},appendUserToCallDiv:function appendUserToCallDiv(userId){if(!callDivId){consoleLogging&&console.log('No Call DIV has been declared!');return;}var user=callUsers[userId];var callParentDiv=document.getElementById(callDivId);if(user.video){if(!document.getElementById("callParticipantWrapper-"+userId)){if(!document.getElementById("uiRemoteVideo-"+user.videoTopicName)){user.htmlElements.container.appendChild(user.htmlElements[user.videoTopicName]);}}else{document.getElementById("callParticipantWrapper-"+userId).append(user.htmlElements[user.videoTopicName]);}}if(typeof user.mute!=="undefined"&&!user.mute){if(!document.getElementById("callParticipantWrapper-"+userId)){if(!document.getElementById("uiRemoteAudio-"+user.videoTopicName)){user.htmlElements.container.appendChild(user.htmlElements[user.audioTopicName]);}}else{document.getElementById("callParticipantWrapper-"+userId).append(user.htmlElements[user.audioTopicName]);}}if(!document.getElementById("callParticipantWrapper-"+userId))callParentDiv.appendChild(user.htmlElements.container);},generateHTMLElements:function generateHTMLElements(userId){var user=callUsers[userId];if(!user.htmlElements){user.htmlElements={container:document.createElement('div')};var el=user.htmlElements.container;el.setAttribute('id','callParticipantWrapper-'+userId);el.classList.add('participant');el.classList.add('wrapper');el.classList.add('user-'+userId);el.classList.add(userId===chatMessaging.userInfo.id?'local':'remote');}if(user.video&&!user.htmlElements[user.videoTopicName]){user.htmlElements[user.videoTopicName]=document.createElement('video');var _el=user.htmlElements[user.videoTopicName];_el.setAttribute('id','uiRemoteVideo-'+user.videoTopicName);_el.setAttribute('class',callVideoTagClassName);_el.setAttribute('playsinline','');_el.setAttribute('muted','');_el.setAttribute('width',callVideoMinWidth+'px');_el.setAttribute('height',callVideoMinHeight+'px');}if(typeof user.mute!=='undefined'&&!user.mute&&!user.htmlElements[user.audioTopicName]){user.htmlElements[user.audioTopicName]=document.createElement('audio');var _el2=user.htmlElements[user.audioTopicName];_el2.setAttribute('id','uiRemoteAudio-'+user.audioTopicName);_el2.setAttribute('class',callAudioTagClassName);_el2.setAttribute('autoplay','');if(user.direction==='send')_el2.setAttribute('muted','');_el2.setAttribute('controls','');}return user.htmlElements;},removeParticipant:function removeParticipant(userId){var user=callUsers[userId];if(!user)return;if(user.videoTopicManager&&user.videoTopicManager.getPeer()){user.videoTopicManager.removeTopic();}if(user.audioTopicManager&&user.audioTopicManager.getPeer()){user.audioTopicManager.removeTopic();}if(callUsers[userId]){// callUsers[userId].peers = {};
-callUsers[userId].topicMetaData={};callUsers[userId].htmlElements={};callUsers[userId]=null;}},startParticipantAudio:function startParticipantAudio(userId){callUsers[userId].audioTopicManager.createTopic();// this.createTopic(userId, callUsers[userId].audioTopicName, 'audio', callUsers[userId].direction);
-},startParticipantVideo:function startParticipantVideo(userId){callUsers[userId].videoTopicManager.createTopic();// this.createTopic(userId, callUsers[userId].videoTopicName, 'video', callUsers[userId].direction);
-},getTurnServer:function getTurnServer(params){if(!!params.turnAddress&&params.turnAddress.length>0||useInternalTurnAddress&&!!params.internalTurnAddress&&params.turnAddress.length>0){var serversTemp=useInternalTurnAddress?params.internalTurnAddress.split(','):params.turnAddress.split(','),turnsList=[];for(var i in serversTemp){turnsList.push({"urls":"turn:"+serversTemp[i],"username":"mkhorrami","credential":"mkh_123456"});}return turnsList;}else{return[{"urls":"turn:"+callTurnIp+":3478","username":"mkhorrami","credential":"mkh_123456"}];}},maybeReconnectAllTopics:function maybeReconnectAllTopics(){if(!callUsers||!Object.keys(callUsers).length)//|| !callRequestController.callEstablishedInMySide
+callUsers[userId].topicMetaData={};callUsers[userId].htmlElements={};callUsers[userId]=null;}},startParticipantAudio:function startParticipantAudio(userId){callUsers[userId].audioTopicManager.createTopic();},startParticipantVideo:function startParticipantVideo(userId){callUsers[userId].videoTopicManager.createTopic();},getTurnServer:function getTurnServer(params){if(!!params.turnAddress&&params.turnAddress.length>0||useInternalTurnAddress&&!!params.internalTurnAddress&&params.turnAddress.length>0){var serversTemp=useInternalTurnAddress?params.internalTurnAddress.split(','):params.turnAddress.split(','),turnsList=[];for(var i in serversTemp){turnsList.push({"urls":"turn:"+serversTemp[i],"username":"mkhorrami","credential":"mkh_123456"});}return turnsList;}else{return[{"urls":"turn:"+callTurnIp+":3478","username":"mkhorrami","credential":"mkh_123456"}];}},maybeReconnectAllTopics:function maybeReconnectAllTopics(){if(!callUsers||!Object.keys(callUsers).length)//|| !callRequestController.callEstablishedInMySide
 return;var types=['videoTopicManager','audioTopicManager'];for(var i in callUsers){// let videoTopic = callUsers[i].videoTopicName, audioTopic = callUsers[i].audioTopicName;
 if(callUsers[i]){var _iterator=_createForOfIteratorHelper(types),_step;try{for(_iterator.s();!(_step=_iterator.n()).done;){var t=_step.value;if(callUsers[i][t]&&callUsers[i][t].getPeer()&&(callUsers[i][t].getPeer().peerConnection.connectionState==='failed'||callUsers[i][t].getPeer().peerConnection.iceConnectionState==='failed')){callUsers[i][t].shouldReconnectTopic();}}/*if(callUsers[i].videoTopicManager
                 && callUsers[i].videoTopicManager.getPeer()
@@ -41108,7 +41773,8 @@ if(callUsers[i]){var _iterator=_createForOfIteratorHelper(types),_step;try{for(_
                 callUsers[i].audioTopicManager.shouldReconnectTopic()
             }*/}catch(err){_iterator.e(err);}finally{_iterator.f();}}}},removeStreamHTML:function removeStreamHTML(userId,topic){if(callUsers[userId]&&callUsers[userId].htmlElements&&callUsers[userId].htmlElements[topic]){var stream=callUsers[userId].htmlElements[topic].srcObject;if(!!stream){var tracks=stream.getTracks();if(!!tracks){tracks.forEach(function(track){track.stop();});}callUsers[userId].htmlElements[topic].srcObject=null;}callUsers[userId].htmlElements[topic].remove();delete callUsers[userId].htmlElements[topic];}},addScreenShareToCall:function addScreenShareToCall(direction,shareScreen){if(direction!==callUsers["screenShare"].direction){callUsers['screenShare'].direction=direction;callUsers['screenShare'].videoTopicManager.setDirection(direction);}callUsers['screenShare'].videoTopicManager.setIsScreenShare(shareScreen);var callController=this,screenShare=callUsers["screenShare"];if(!screenShare.videoTopicManager.getPeer()){if(!screenShare.htmlElements[screenShare.videoTopicName]){callStateController.generateHTMLElements('screenShare');}setTimeout(function(){callStateController.appendUserToCallDiv('screenShare');screenShare.videoTopicManager.createTopic();});_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_DIVS',result:generateCallUIList()});}else{screenShare.videoTopicManager.removeTopic();if(!screenShare.htmlElements[screenShare.videoTopicName]){callStateController.generateHTMLElements('screenShare');}callStateController.appendUserToCallDiv('screenShare');screenShare.videoTopicManager.createTopic();startMedia(screenShare.htmlElements[screenShare.videoTopicName]);}},removeScreenShareFromCall:function removeScreenShareFromCall(){var screenShare=callUsers["screenShare"];if(screenShare&&screenShareInfo.isStarted()){screenShareInfo.setIsStarted(false);screenShare.videoTopicManager.removeTopic();_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_DIVS',result:generateCallUIList()});}},removeAllCallParticipants:function removeAllCallParticipants(){var removeAllUsersPromise=new Promise(function(resolve,reject){var index=0;var _loop=function _loop(i){index++;var user=callUsers[i];if(user){if(user.videoTopicManager&&user.videoTopicManager.getPeer()){user.videoTopicManager.removeTopic();}if(user.audioTopicManager&&user.audioTopicManager.getPeer()){user.audioTopicManager.removeTopic();}setTimeout(function(){if(callUsers[i]){// callUsers[i].peers = {};
 callUsers[i].topicMetaData={};callUsers[i].htmlElements={};callUsers[i]=null;}if(index===Object.keys(callUsers).length)resolve();},200);}};for(var i in callUsers){_loop(i);}});removeAllUsersPromise.then(function(){callUsers={};});},findUserIdByTopic:function findUserIdByTopic(topic){for(var i in callUsers){if(callUsers[i]&&(callUsers[i].videoTopicName===topic||callUsers[i].audioTopicName===topic)){//peer = callUsers[i].peers[jsonMessage.topic];
-return i;}}},activateParticipantStream:function activateParticipantStream(userId,mediaType,direction,topicNameKey,sendTopic,mediaKey){if(callUsers[userId]){callUsers[userId][mediaKey]=mediaKey!=='mute';callUsers[userId][topicNameKey]=(mediaType==='audio'?'Vo-':'Vi-')+sendTopic;callStateController.appendUserToCallDiv(userId,callStateController.generateHTMLElements(userId));setTimeout(function(){callUsers[userId][mediaType+'TopicManager'].createTopic();});}},deactivateParticipantStream:function deactivateParticipantStream(userId,mediaType,mediaKey){if(callUsers[userId]){callUsers[userId][mediaKey]=mediaKey==='mute'?true:false;// var user = callUsers[userId];
+return i;}}},activateParticipantStream:function activateParticipantStream(userId,mediaType,direction,topicNameKey,sendTopic,mediaKey){if(callUsers[userId]){// callUsers[userId][mediaKey] = (mediaKey !== 'mute');
+if(mediaType=='video')callUsers[userId].localVideoEnabled=true;else if(mediaType==='audio')callUsers[userId].localAudioEnabled=true;callUsers[userId][topicNameKey]=(mediaType==='audio'?'Vo-':'Vi-')+sendTopic;callStateController.appendUserToCallDiv(userId,callStateController.generateHTMLElements(userId));setTimeout(function(){callUsers[userId][mediaType+'TopicManager'].createTopic();});}},deactivateParticipantStream:function deactivateParticipantStream(userId,mediaType,mediaKey){if(callUsers[userId]){callUsers[userId][mediaKey]=mediaKey==='mute'?true:false;// var user = callUsers[userId];
 // var topicNameKey = mediaType === 'audio' ? 'audioTopicName' : 'videoTopicName';
 callUsers[userId][mediaType+'TopicManager'].removeTopic();}},setMediaBitrates:function setMediaBitrates(sdp){return this.setMediaBitrate(this.setMediaBitrate(sdp,"video",400),"audio",50);},setMediaBitrate:function setMediaBitrate(sdp,media,bitrate){var lines=sdp.split("\n");var line=-1;for(var i=0;i<lines.length;i++){if(lines[i].indexOf("m="+media)===0){line=i;break;}}if(line===-1){consoleLogging&&console.debug("[SDK][setMediaBitrate] Could not find the m line for",media);return sdp;}consoleLogging&&console.debug("[SDK][setMediaBitrate] Found the m line for",media,"at line",line);// Pass the m line
 line++;// Skip i and c lines
@@ -41132,7 +41798,14 @@ _eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_PARTICIPANT_LEFT',re
         code: 7000,
         message: err,
         environmentDetails: getSDKCallDetails()
-    });*/var n=err.name;if(n==='NotFoundError'||n==='DevicesNotFoundError'){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"Missing "+(deviceType==='video'?'webcam':'mice')+" for required tracks",environmentDetails:getSDKCallDetails()});alert("Missing "+(deviceType==='video'?'webcam':'mice')+" for required tracks");return"Missing "+(deviceType==='video'?'webcam':'mice')+" for required tracks";}else if(n==='NotReadableError'||n==='TrackStartError'){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:(deviceType==='video'?'Webcam':'Mice')+" is already in use",environmentDetails:getSDKCallDetails()});alert((deviceType==='video'?'Webcam':'Mice')+" is already in use");return(deviceType==='video'?'Webcam':'Mice')+" is already in use";}else if(n==='OverconstrainedError'||n==='ConstraintNotSatisfiedError'){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:(deviceType==='video'?'Webcam':'Mice')+" doesn't provide required tracks",environmentDetails:getSDKCallDetails()});alert((deviceType==='video'?'Webcam':'Mice')+" doesn't provide required tracks");return(deviceType==='video'?'Webcam':'Mice')+" doesn't provide required tracks";}else if(n==='NotAllowedError'||n==='PermissionDeniedError'){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:(deviceType==='video'?deviceSource==='screen'?'ScreenShare':'Webcam':'Mice')+" permission has been denied by the user",environmentDetails:getSDKCallDetails()});alert((deviceType==='video'?deviceSource==='screen'?'ScreenShare':'Webcam':'Mice')+" permission has been denied by the user");return(deviceType==='video'?deviceSource==='screen'?'ScreenShare':'Webcam':'Mice')+" permission has been denied by the user";}else if(n==='TypeError'){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"No media tracks have been requested",environmentDetails:getSDKCallDetails()});return"No media tracks have been requested";}else{_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"Unknown error: "+err,environmentDetails:getSDKCallDetails()});return"Unknown error: "+err;}},startMedia=function startMedia(media){consoleLogging&&console.log("[SDK][startMedia] called with: ",media);media.play()["catch"](function(err){if(err.name==='NotAllowedError'){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"[startMedia] Browser doesn't allow playing media: "+err,environmentDetails:getSDKCallDetails()});}else{if(callStopQueue.callStarted)_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"[startMedia] Error in media.play(): "+err,environmentDetails:getSDKCallDetails()});}});},restartMedia=function restartMedia(videoTopicName,userId){if(currentCallParams&&Object.keys(currentCallParams).length&&!callRequestController.cameraPaused){consoleLogging&&console.log('[SDK] Sending Key Frame ...');var videoTopic=!!videoTopicName?videoTopicName:callUsers[chatMessaging.userInfo.id].videoTopicName;var videoElement=document.getElementById("uiRemoteVideo-".concat(videoTopic));var isScreenShare=userId==='screenShare';if(videoElement){var videoTrack=videoElement.srcObject.getTracks()[0];var width=isScreenShare?screenShareInfo.getWidth():callVideoMinWidth,height=isScreenShare?screenShareInfo.getHeight():callVideoMinHeight,rand=Math.random(),newWidth=width-5,newHeight=height-5;if(navigator&&!!navigator.userAgent.match(/firefox/gi)){// videoTrack.enable = false;
+    });*/var n=err.name;if(n==='NotFoundError'||n==='DevicesNotFoundError'){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"Missing "+(deviceType==='video'?'webcam':'mice')+" for required tracks",environmentDetails:getSDKCallDetails()});alert("Missing "+(deviceType==='video'?'webcam':'mice')+" for required tracks");return"Missing "+(deviceType==='video'?'webcam':'mice')+" for required tracks";}else if(n==='NotReadableError'||n==='TrackStartError'){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:(deviceType==='video'?'Webcam':'Mice')+" is already in use",environmentDetails:getSDKCallDetails()});alert((deviceType==='video'?'Webcam':'Mice')+" is already in use");return(deviceType==='video'?'Webcam':'Mice')+" is already in use";}else if(n==='OverconstrainedError'||n==='ConstraintNotSatisfiedError'){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:(deviceType==='video'?'Webcam':'Mice')+" doesn't provide required tracks",environmentDetails:getSDKCallDetails()});alert((deviceType==='video'?'Webcam':'Mice')+" doesn't provide required tracks");return(deviceType==='video'?'Webcam':'Mice')+" doesn't provide required tracks";}else if(n==='NotAllowedError'||n==='PermissionDeniedError'){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:(deviceType==='video'?deviceSource==='screen'?'ScreenShare':'Webcam':'Mice')+" permission has been denied by the user",environmentDetails:getSDKCallDetails()});alert((deviceType==='video'?deviceSource==='screen'?'ScreenShare':'Webcam':'Mice')+" permission has been denied by the user");return(deviceType==='video'?deviceSource==='screen'?'ScreenShare':'Webcam':'Mice')+" permission has been denied by the user";}else if(n==='TypeError'){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"No media tracks have been requested",environmentDetails:getSDKCallDetails()});return"No media tracks have been requested";}else{_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"Unknown error: "+err,environmentDetails:getSDKCallDetails()});return"Unknown error: "+err;}},startMedia=function startMedia(media){consoleLogging&&console.log("[SDK][startMedia] called with: ",media);media.play()["catch"](function(err){if(err.name==='NotAllowedError'){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"[startMedia] Browser doesn't allow playing media: "+err,environmentDetails:getSDKCallDetails()});}else{// if(callStopQueue.callStarted)
+//     chatEvents.fireEvent('callEvents', {
+//         type: 'CALL_ERROR',
+//         code: 7000,
+//         message: "[startMedia] Error in media.play(): " + err,
+//         environmentDetails: getSDKCallDetails()
+//     });
+}});},restartMedia=function restartMedia(videoTopicName,userId){if(currentCallParams&&Object.keys(currentCallParams).length&&!callRequestController.cameraPaused){consoleLogging&&console.log('[SDK] Sending Key Frame ...');var videoTopic=!!videoTopicName?videoTopicName:callUsers[chatMessaging.userInfo.id].videoTopicName;var videoElement=document.getElementById("uiRemoteVideo-".concat(videoTopic));var isScreenShare=userId==='screenShare';if(videoElement){var videoTrack=videoElement.srcObject.getTracks()[0];var width=isScreenShare?screenShareInfo.getWidth():callVideoMinWidth,height=isScreenShare?screenShareInfo.getHeight():callVideoMinHeight,rand=Math.random(),newWidth=width-5,newHeight=height-5;if(navigator&&!!navigator.userAgent.match(/firefox/gi)){// videoTrack.enable = false;
 newWidth=width-80;newHeight=height-80;videoTrack.applyConstraints({// width: {
 //     min: newWidth,
 //     ideal: 1280
@@ -41145,8 +41818,15 @@ width:newWidth,height:newHeight,advanced:[{aspectRatio:1.77}]}).then(function(re
 sendCallMessage({id:'SUBSCRIBE',useComedia:true,useSrtp:false,topic:jsonMessage.topic,mediaType:jsonMessage.topic.indexOf('screen-Share')!==-1||jsonMessage.topic.indexOf('Vi-')!==-1?2:1//brokerAddress:brkrAddr
 },null,{timeoutTime:4000,timeoutRetriesCount:5});}},handleProcessSdpOffer=function handleProcessSdpOffer(jsonMessage){var userId=callStateController.findUserIdByTopic(jsonMessage.topic),topicManager,peer;//callUsers[userId].peers[jsonMessage.topic];
 if(jsonMessage.topic.indexOf('Vi-')!==-1||jsonMessage.topic.indexOf('screen-Share')!==-1){topicManager=callUsers[userId].videoTopicManager;peer=callUsers[userId].videoTopicManager.getPeer();}else if(jsonMessage.topic.indexOf('Vo-')!==-1){topicManager=callUsers[userId].audioTopicManager;peer=callUsers[userId].audioTopicManager.getPeer();}if(peer==null){console.warn("[handleProcessSdpAnswer] Skip, no WebRTC Peer");return;}peer.processOffer(jsonMessage.sdpOffer,function(err,sdpAnswer){if(err){console.error("[SDK][handleProcessSdpOffer] Error: "+err);stop();return;}sendCallMessage({id:'RECIVE_SDP_ANSWER',sdpAnswer:sdpAnswer,useComedia:true,useSrtp:false,topic:jsonMessage.topic,mediaType:jsonMessage.topic.indexOf('screen-Share')!==-1||jsonMessage.topic.indexOf('Vi-')!==-1?2:1},null,{timeoutTime:4000,timeoutRetriesCount:5});callUsers[userId].topicMetaData[jsonMessage.topic].sdpAnswerReceived=true;startMedia(callUsers[userId].htmlElements[jsonMessage.topic]);if(userId=='screenShare'||userId==chatMessaging.userInfo.id){restartMediaOnKeyFrame(userId,[2000,4000,8000,12000]);}});},handleProcessSdpAnswer=function handleProcessSdpAnswer(jsonMessage){var userId=callStateController.findUserIdByTopic(jsonMessage.topic),topicManager,peer;// = callUsers[userId].peers[jsonMessage.topic];
-if(userId&&callUsers[userId]){if(jsonMessage.topic.indexOf('Vi-')!==-1||jsonMessage.topic.indexOf('screen-Share')!==-1){topicManager=callUsers[userId].videoTopicManager;peer=callUsers[userId].videoTopicManager.getPeer();}else if(jsonMessage.topic.indexOf('Vo-')!==-1){topicManager=callUsers[userId].audioTopicManager;peer=callUsers[userId].audioTopicManager.getPeer();}}if(peer==null){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"[handleProcessSdpAnswer] Skip, no WebRTC Peer",error:peer,environmentDetails:getSDKCallDetails()});return;}peer.processAnswer(jsonMessage.sdpAnswer,function(err){if(err){sendCallSocketError("[handleProcessSdpAnswer] Error: "+err);_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"[handleProcessSdpAnswer] Error: "+err,environmentDetails:getSDKCallDetails()});return;}consoleLogging&&console.log("[SDK][handleProcessSdpAnswer]",jsonMessage,jsonMessage.topic,topicManager.metadata().isIceCandidateIntervalSet().toString());if(topicManager.metadata().isIceCandidateIntervalSet()){callUsers[userId].topicMetaData[jsonMessage.topic].sdpAnswerReceived=true;startMedia(callUsers[userId].htmlElements[jsonMessage.topic]);if(userId=='screenShare'||userId==chatMessaging.userInfo.id){restartMediaOnKeyFrame(userId,[2000,4000,8000,12000,20000]);}}});},handleAddIceCandidate=function handleAddIceCandidate(jsonMessage){var userId=callStateController.findUserIdByTopic(jsonMessage.topic);var peer;//= callUsers[userId].peers[jsonMessage.topic];
-if(jsonMessage.topic.indexOf('Vi-')>-1||jsonMessage.topic.indexOf('screen-Share')!==-1){peer=callUsers[userId].videoTopicManager.getPeer();}else if(jsonMessage.topic.indexOf('Vo-')>-1){peer=callUsers[userId].audioTopicManager.getPeer();}if(peer==null){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"[handleAddIceCandidate] Skip, no WebRTC Peer",error:JSON.stringify(peer),environmentDetails:getSDKCallDetails()});return;}peer.addIceCandidate(jsonMessage.candidate,function(err){if(err){console.error("[handleAddIceCandidate] "+err);_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"[handleAddIceCandidate] "+err,error:JSON.stringify(jsonMessage.candidate),environmentDetails:getSDKCallDetails()});return;}});},handlePartnerFreeze=function handlePartnerFreeze(jsonMessage){if(!!jsonMessage&&!!jsonMessage.topic&&jsonMessage.topic.substring(0,2)==='Vi'){restartMedia(jsonMessage.topic);setTimeout(function(){restartMedia(jsonMessage.topic);},4000);setTimeout(function(){restartMedia(jsonMessage.topic);},8000);}},handleError=function handleError(jsonMessage,sendingTopic,receiveTopic){var errMessage=jsonMessage.message;_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"Kurento error: "+errMessage,environmentDetails:getSDKCallDetails()});},/*
+if(userId&&callUsers[userId]){if(jsonMessage.topic.indexOf('Vi-')!==-1||jsonMessage.topic.indexOf('screen-Share')!==-1){topicManager=callUsers[userId].videoTopicManager;peer=callUsers[userId].videoTopicManager.getPeer();}else if(jsonMessage.topic.indexOf('Vo-')!==-1){topicManager=callUsers[userId].audioTopicManager;peer=callUsers[userId].audioTopicManager.getPeer();}}if(peer==null){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"[handleProcessSdpAnswer] Skip, no WebRTC Peer",error:peer,environmentDetails:getSDKCallDetails()});return;}peer.processAnswer(jsonMessage.sdpAnswer,function(err){if(err){sendCallSocketError("[handleProcessSdpAnswer] Error: "+err);_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"[handleProcessSdpAnswer] Error: "+err,environmentDetails:getSDKCallDetails()});return;}consoleLogging&&console.log("[SDK][handleProcessSdpAnswer]",jsonMessage,jsonMessage.topic,topicManager.metadata().isIceCandidateIntervalSet().toString());startMedia(callUsers[userId].htmlElements[jsonMessage.topic]);if(userId=='screenShare'||userId==chatMessaging.userInfo.id){restartMediaOnKeyFrame(userId,[2000,4000,8000,12000,20000]);}// if (topicManager.metadata().isIceCandidateIntervalSet()){
+//     callUsers[userId].topicMetaData[jsonMessage.topic].sdpAnswerReceived = true;
+//     startMedia(callUsers[userId].htmlElements[jsonMessage.topic]);
+//     if (userId == 'screenShare' || userId == chatMessaging.userInfo.id) {
+//         restartMediaOnKeyFrame(userId, [2000, 4000, 8000, 12000, 20000]);
+//     }
+// }
+});},handleAddIceCandidate=function handleAddIceCandidate(jsonMessage){var userId=callStateController.findUserIdByTopic(jsonMessage.topic);var peer;//= callUsers[userId].peers[jsonMessage.topic];
+if(jsonMessage.done==='FALSE')return;if(jsonMessage.topic.indexOf('Vi-')>-1||jsonMessage.topic.indexOf('screen-Share')!==-1){peer=callUsers[userId].videoTopicManager.getPeer();}else if(jsonMessage.topic.indexOf('Vo-')>-1){peer=callUsers[userId].audioTopicManager.getPeer();}if(peer==null){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"[handleAddIceCandidate] Skip, no WebRTC Peer",error:JSON.stringify(peer),environmentDetails:getSDKCallDetails()});return;}peer.addIceCandidate(jsonMessage.candidate,function(err){if(err){console.error("[handleAddIceCandidate] "+err);_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"[handleAddIceCandidate] "+err,error:JSON.stringify(jsonMessage.candidate),environmentDetails:getSDKCallDetails()});return;}});},handlePartnerFreeze=function handlePartnerFreeze(jsonMessage){if(!!jsonMessage&&!!jsonMessage.topic&&jsonMessage.topic.substring(0,2)==='Vi'){restartMedia(jsonMessage.topic);setTimeout(function(){restartMedia(jsonMessage.topic);},4000);setTimeout(function(){restartMedia(jsonMessage.topic);},8000);}},handleError=function handleError(jsonMessage,sendingTopic,receiveTopic){var errMessage=jsonMessage.message;_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:"Kurento error: "+errMessage,environmentDetails:getSDKCallDetails()});},/*
           releaseResource = function (mediaType) {
               let constraint = {
                   audio: mediaType === 'audio',
@@ -41262,7 +41942,7 @@ if(messageContent[0].userId==chatMessaging.userInfo.id){callStop();}else{callSta
        * Type 96    Terminate Call
        */case _constants.chatMessageVOTypes.TERMINATE_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}_eventsModule.chatEvents.fireEvent('callEvents',{type:'TERMINATE_CALL',result:messageContent});callStop();break;/**
        * Type 97    Mute Call Participant
-       */case _constants.chatMessageVOTypes.MUTE_CALL_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(Array.isArray(messageContent)){var pause;for(var _i in messageContent){// pause = messageContent[i].userId == chatMessaging.userInfo.id;
+       */case _constants.chatMessageVOTypes.MUTE_CALL_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(Array.isArray(messageContent)){for(var _i in messageContent){// pause = messageContent[i].userId == chatMessaging.userInfo.id;
 callUsers[messageContent[_i].userId].audioStopManager.disableStream();// callStateController.deactivateParticipantStream(
 //     messageContent[i].userId,
 //     'audio',
@@ -41324,39 +42004,39 @@ if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[un
       * Type 228   INQUIRY_CALL
       */case _constants.chatMessageVOTypes.INQUIRY_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
        * Type 230    CALL_RECORDING_FAILED
-       */case _constants.chatMessageVOTypes.CALL_RECORDING_FAILED:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_RECORDING_FAILED',result:messageContent});break;}};function processChatStartCallEvent(type,messageContent,contentCount,threadId,uniqueId){if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}messageContent.callId=threadId;_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_STARTED',result:messageContent});if((0,_typeof2["default"])(messageContent)==='object'&&messageContent.hasOwnProperty('chatDataDto')&&!!messageContent.chatDataDto.kurentoAddress){callServerController.setServers(messageContent.chatDataDto.kurentoAddress.split(','));startCallWebRTCFunctions({video:messageContent.clientDTO.video,mute:messageContent.clientDTO.mute,sendingTopic:messageContent.clientDTO.topicSend,receiveTopic:messageContent.clientDTO.topicReceive,screenShare:messageContent.chatDataDto.screenShare,brokerAddress:messageContent.chatDataDto.brokerAddressWeb,turnAddress:messageContent.chatDataDto.turnAddress,internalTurnAddress:messageContent.chatDataDto.internalTurnAddress,selfData:messageContent.clientDTO,clientsList:messageContent.otherClientDtoList,screenShareOwner:+messageContent.chatDataDto.screenShareUser,recordingOwner:+messageContent.chatDataDto.recordingUser},function(callDivs){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_DIVS',result:callDivs});});}else{_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',message:'Chat Data DTO is not present!',environmentDetails:getSDKCallDetails()});}}this.startCall=/*#__PURE__*/function(){var _ref3=(0,_asyncToGenerator2["default"])(/*#__PURE__*/_regenerator["default"].mark(function _callee(params,callback){var startCallData,content,i,tempInvitee;return _regenerator["default"].wrap(function _callee$(_context){while(1){switch(_context.prev=_context.next){case 0:startCallData={chatMessageVOType:_constants.chatMessageVOTypes.CALL_REQUEST,typeCode:generalTypeCode,//params.typeCode,
-pushMsgType:3,token:token},content={creatorClientDto:{}};if(!params){_context.next=21;break;}if(typeof params.type==='string'&&callTypes.hasOwnProperty(params.type.toUpperCase())){content.type=callTypes[params.type.toUpperCase()];}else{content.type=0x0;// Defaults to AUDIO Call
+       */case _constants.chatMessageVOTypes.CALL_RECORDING_FAILED:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_RECORDING_FAILED',result:messageContent});break;}};function processChatStartCallEvent(type,messageContent,contentCount,threadId,uniqueId){if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}messageContent.callId=threadId;_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_STARTED',result:messageContent});if((0,_typeof2["default"])(messageContent)==='object'&&messageContent.hasOwnProperty('chatDataDto')&&!!messageContent.chatDataDto.kurentoAddress){callServerController.setServers(messageContent.chatDataDto.kurentoAddress.split(','));startCallWebRTCFunctions({video:messageContent.clientDTO.video,mute:messageContent.clientDTO.mute,sendingTopic:messageContent.clientDTO.topicSend,receiveTopic:messageContent.clientDTO.topicReceive,screenShare:messageContent.chatDataDto.screenShare,brokerAddress:messageContent.chatDataDto.brokerAddressWeb,turnAddress:messageContent.chatDataDto.turnAddress,internalTurnAddress:messageContent.chatDataDto.internalTurnAddress,selfData:messageContent.clientDTO,clientsList:messageContent.otherClientDtoList,screenShareOwner:+messageContent.chatDataDto.screenShareUser,recordingOwner:+messageContent.chatDataDto.recordingUser},function(callDivs){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_DIVS',result:callDivs});});}else{_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',message:'Chat Data DTO is not present!',environmentDetails:getSDKCallDetails()});}}this.startCall=/*#__PURE__*/function(){var _ref3=(0,_asyncToGenerator2["default"])(/*#__PURE__*/_regenerator["default"].mark(function _callee(params,callback){var messageData,content,i,tempInvitee;return _regenerator["default"].wrap(function _callee$(_context){while(1){switch(_context.prev=_context.next){case 0:messageData={chatMessageVOType:_constants.chatMessageVOTypes.CALL_REQUEST,typeCode:generalTypeCode,//params.typeCode,
+pushMsgType:3,token:token,uniqueId:_utility["default"].generateUUID()},content={creatorClientDto:{}};if(!params){_context.next=21;break;}if(typeof params.type==='string'&&callTypes.hasOwnProperty(params.type.toUpperCase())){content.type=callTypes[params.type.toUpperCase()];}else{content.type=0x0;// Defaults to AUDIO Call
 }content.creatorClientDto.mute=params.mute&&typeof params.mute==='boolean'?params.mute:false;content.mute=params.mute&&typeof params.mute==='boolean'?params.mute:false;if(params.clientType&&typeof params.clientType==='string'&&callClientType[params.clientType.toUpperCase()]>0){content.creatorClientDto.clientType=callClientType[params.clientType.toUpperCase()];}else{content.creatorClientDto.clientType=callClientType.WEB;}if(!(typeof+params.threadId==='number'&&+params.threadId>0)){_context.next=10;break;}content.threadId=+params.threadId;_context.next=17;break;case 10:if(!(Array.isArray(params.invitees)&&params.invitees.length)){_context.next=15;break;}content.invitees=[];//params.invitees;
 for(i=0;i<params.invitees.length;i++){tempInvitee=params.invitees[i];if(tempInvitee&&typeof tempInvitee.idType==="string"){tempInvitee.idType=_constants.inviteeVOidTypes[tempInvitee.idType];content.invitees.push(tempInvitee);}}_context.next=17;break;case 15:(0,_errorHandler.raiseError)(_errorHandler.errorList.INVITEES_LIST_OR_THREAD_ID_REQUIRED,callback,true,{});// chatEvents.fireEvent('error', {
 //     code: 999,
 //     message: 'Invitees list is empty! Send an array of invitees to start a call with, Or send a Thread Id to start a call with current participants'
 // });
-return _context.abrupt("return");case 17:if(params.threadInfo&&(params.threadInfo.metadata||params.threadInfo.uniqueName)){content.createCallThreadRequest=params.threadInfo;}startCallData.content=JSON.stringify(content);_context.next=23;break;case 21:_eventsModule.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to start call!'});return _context.abrupt("return");case 23:// if(currentCallId) {
+return _context.abrupt("return");case 17:if(params.threadInfo&&(params.threadInfo.metadata||params.threadInfo.uniqueName)){content.createCallThreadRequest=params.threadInfo;}messageData.content=JSON.stringify(content);_context.next=23;break;case 21:_eventsModule.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to start call!'});return _context.abrupt("return");case 23:// if(currentCallId) {
 //     await callStop();
 // }
 callRequestController.cameraPaused=typeof params.cameraPaused==='boolean'?params.cameraPaused:false;// callRequestController.callRequestReceived = true;
 // callRequestController.callEstablishedInMySide = true;
 // callRequestController.imCallOwner = true;
 callRequestController.iRequestedCall=true;_deviceManager["default"].grantUserMediaDevicesPermissions({video:params.type=='video',audio:!params.mute,closeStream:true},function(result){if(result.hasError){callback&&callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});return;}if(callNoAnswerTimeout){callRequestController.callRequestTimeout=setTimeout(function(metaData){//Reject the call if participant didn't answer
-if(!callStopQueue.callStarted){_eventsModule.chatEvents.fireEvent("callEvents",{type:"CALL_NO_ANSWER_TIMEOUT",message:"[CALL_SESSION_CREATED] Call request timed out, No answer"});metaData.callInstance.rejectCall({callId:metaData.currentCallId});}},callNoAnswerTimeout,{callInstance:currentModuleInstance,currentCallId:currentCallId});}chatMessaging.sendMessage(startCallData,{onResult:function onResult(result){callback&&callback(result);}});});case 26:case"end":return _context.stop();}}},_callee);}));return function(_x,_x2){return _ref3.apply(this,arguments);};}();this.startGroupCall=/*#__PURE__*/function(){var _ref4=(0,_asyncToGenerator2["default"])(/*#__PURE__*/_regenerator["default"].mark(function _callee2(params,callback){var startCallData,content,i,tempInvitee;return _regenerator["default"].wrap(function _callee2$(_context2){while(1){switch(_context2.prev=_context2.next){case 0:startCallData={chatMessageVOType:_constants.chatMessageVOTypes.GROUP_CALL_REQUEST,typeCode:generalTypeCode,//params.typeCode,
-pushMsgType:3,token:token},content={creatorClientDto:{}};if(!params){_context2.next=20;break;}if(typeof params.type==='string'&&callTypes.hasOwnProperty(params.type.toUpperCase())){content.type=callTypes[params.type.toUpperCase()];}else{content.type=0x0;// Defaults to AUDIO Call
+if(!callStopQueue.callStarted){_eventsModule.chatEvents.fireEvent("callEvents",{type:"CALL_NO_ANSWER_TIMEOUT",message:"[CALL_SESSION_CREATED] Call request timed out, No answer"});metaData.callInstance.rejectCall({callId:metaData.currentCallId});}},callNoAnswerTimeout,{callInstance:currentModuleInstance,currentCallId:currentCallId});}chatMessaging.sendMessage(messageData,{onResult:function onResult(result){callback&&callback(result);}});});case 26:case"end":return _context.stop();}}},_callee);}));return function(_x,_x2){return _ref3.apply(this,arguments);};}();this.startGroupCall=/*#__PURE__*/function(){var _ref4=(0,_asyncToGenerator2["default"])(/*#__PURE__*/_regenerator["default"].mark(function _callee2(params,callback){var messageData,content,i,tempInvitee;return _regenerator["default"].wrap(function _callee2$(_context2){while(1){switch(_context2.prev=_context2.next){case 0:messageData={chatMessageVOType:_constants.chatMessageVOTypes.GROUP_CALL_REQUEST,typeCode:generalTypeCode,//params.typeCode,
+pushMsgType:3,token:token,uniqueId:_utility["default"].generateUUID()},content={creatorClientDto:{}};if(!params){_context2.next=20;break;}if(typeof params.type==='string'&&callTypes.hasOwnProperty(params.type.toUpperCase())){content.type=callTypes[params.type.toUpperCase()];}else{content.type=0x0;// Defaults to AUDIO Call
 }content.creatorClientDto.mute=typeof params.mute==='boolean'?params.mute:false;if(params.clientType&&typeof params.clientType==='string'&&callClientType[params.clientType.toUpperCase()]>0){content.creatorClientDto.clientType=callClientType[params.clientType.toUpperCase()];}else{content.creatorClientDto.clientType=callClientType.WEB;}if(!(typeof+params.threadId==='number'&&params.threadId>0)){_context2.next=9;break;}content.threadId=+params.threadId;_context2.next=16;break;case 9:if(!Array.isArray(params.invitees)){_context2.next=14;break;}content.invitees=[];for(i=0;i<params.invitees.length;i++){tempInvitee=params.invitees[i];if(tempInvitee&&typeof tempInvitee.idType==="string"){tempInvitee.idType=_constants.inviteeVOidTypes[tempInvitee.idType];content.invitees.push(tempInvitee);}}_context2.next=16;break;case 14:(0,_errorHandler.raiseError)(_errorHandler.errorList.INVITEES_LIST_OR_THREAD_ID_REQUIRED,callback,true,{});// chatEvents.fireEvent('error', {
 //     code: 999,
 //     message: 'Invitees list is empty! Send an array of invitees to start a call with, Or send a Thread Id to start a call with current participants'
 // });
-return _context2.abrupt("return");case 16:if(params.threadInfo&&(params.threadInfo.title||params.threadInfo.description||params.threadInfo.metadata||params.threadInfo.uniqueName)){content.createCallThreadRequest=params.threadInfo;}startCallData.content=JSON.stringify(content);_context2.next=22;break;case 20:_eventsModule.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to start call!'});return _context2.abrupt("return");case 22:// if(currentCallId) {
+return _context2.abrupt("return");case 16:if(params.threadInfo&&(params.threadInfo.title||params.threadInfo.description||params.threadInfo.metadata||params.threadInfo.uniqueName)){content.createCallThreadRequest=params.threadInfo;}messageData.content=JSON.stringify(content);_context2.next=22;break;case 20:_eventsModule.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to start call!'});return _context2.abrupt("return");case 22:// if(currentCallId) {
 //     await callStop();
 // }
 callRequestController.cameraPaused=typeof params.cameraPaused==='boolean'?params.cameraPaused:false;// callRequestController.callRequestReceived = true;
 // callRequestController.callEstablishedInMySide = true;
 // callRequestController.imCallOwner = true;
 callRequestController.iRequestedCall=true;_deviceManager["default"].grantUserMediaDevicesPermissions({video:params.type=='video',audio:!params.mute,closeStream:true},function(result){if(result.hasError){callback&&callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});return;}if(callNoAnswerTimeout){callRequestController.callRequestTimeout=setTimeout(function(metaData){//Reject the call if participant didn't answer
-if(!callStopQueue.callStarted){_eventsModule.chatEvents.fireEvent("callEvents",{type:"CALL_NO_ANSWER_TIMEOUT",message:"[CALL_SESSION_CREATED] Call request timed out, No answer"});metaData.callInstance.rejectCall({callId:metaData.currentCallId});}},callNoAnswerTimeout,{callInstance:currentModuleInstance,currentCallId:currentCallId});}chatMessaging.sendMessage(startCallData,{onResult:function onResult(result){callback&&callback(result);}});});case 25:case"end":return _context2.stop();}}},_callee2);}));return function(_x3,_x4){return _ref4.apply(this,arguments);};}();this.sendCallMetaData=function(params){sendCallMetaData({id:callMetaDataTypes.CUSTOMUSERMETADATA,userid:chatMessaging.userInfo.id,content:params.content});};this.callReceived=callReceived;this.terminateCall=function(params,callback){var terminateCallData={chatMessageVOType:_constants.chatMessageVOTypes.TERMINATE_CALL,typeCode:generalTypeCode,//params.typeCode,
+if(!callStopQueue.callStarted){_eventsModule.chatEvents.fireEvent("callEvents",{type:"CALL_NO_ANSWER_TIMEOUT",message:"[CALL_SESSION_CREATED] Call request timed out, No answer"});metaData.callInstance.rejectCall({callId:metaData.currentCallId});}},callNoAnswerTimeout,{callInstance:currentModuleInstance,currentCallId:currentCallId});}chatMessaging.sendMessage(messageData,{onResult:function onResult(result){callback&&callback(result);}});});case 25:case"end":return _context2.stop();}}},_callee2);}));return function(_x3,_x4){return _ref4.apply(this,arguments);};}();this.sendCallMetaData=function(params){sendCallMetaData({id:callMetaDataTypes.CUSTOMUSERMETADATA,userid:chatMessaging.userInfo.id,content:params.content});};this.callReceived=callReceived;this.terminateCall=function(params,callback){var terminateCallData={chatMessageVOType:_constants.chatMessageVOTypes.TERMINATE_CALL,typeCode:generalTypeCode,//params.typeCode,
 pushMsgType:3,token:token},content={};if(params){if(typeof+params.callId==='number'&&params.callId>0){terminateCallData.subjectId=+params.callId;}else{(0,_errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID,callback,true,{});/*chatEvents.fireEvent('error', {
             code: 999,
             message: 'Invalid call id!'
         });*/return;}terminateCallData.content=JSON.stringify(content);}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to terminate the call!'});return;}return chatMessaging.sendMessage(terminateCallData,{onResult:function onResult(result){callback&&callback(result);}});};this.acceptCall=/*#__PURE__*/function(){var _ref5=(0,_asyncToGenerator2["default"])(/*#__PURE__*/_regenerator["default"].mark(function _callee3(params,callback){var acceptCallData,content;return _regenerator["default"].wrap(function _callee3$(_context3){while(1){switch(_context3.prev=_context3.next){case 0:acceptCallData={chatMessageVOType:_constants.chatMessageVOTypes.ACCEPT_CALL,typeCode:generalTypeCode,//params.typeCode,
-pushMsgType:3,token:token},content={};if(!params){_context3.next=17;break;}if(!(typeof+params.callId==='number'&&params.callId>0)){_context3.next=6;break;}acceptCallData.subjectId=+params.callId;_context3.next=8;break;case 6:(0,_errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID,callback,true,{});/*chatEvents.fireEvent('error', {
+pushMsgType:3,token:token,uniqueId:_utility["default"].generateUUID()},content={};if(!params){_context3.next=17;break;}if(!(typeof+params.callId==='number'&&params.callId>0)){_context3.next=6;break;}acceptCallData.subjectId=+params.callId;_context3.next=8;break;case 6:(0,_errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID,callback,true,{});/*chatEvents.fireEvent('error', {
                   code: 999,
                   message: 'Invalid call id!'
               });*/return _context3.abrupt("return");case 8:content.mute=typeof params.mute==='boolean'?params.mute:false;content.video=typeof params.video==='boolean'?params.video:false;content.videoCall=content.video;callRequestController.cameraPaused=typeof params.cameraPaused==='boolean'?params.cameraPaused:callRequestController.cameraPaused;if(params.clientType&&typeof params.clientType==='string'&&callClientType[params.clientType.toUpperCase()]>0){content.clientType=callClientType[params.clientType.toUpperCase()];}else{content.clientType=callClientType.WEB;}acceptCallData.content=JSON.stringify(content);if(params.joinCall){// callRequestController.callRequestReceived = true;
@@ -41505,8 +42185,7 @@ pushMsgType:3,subjectId:currentCallId,token:token};if(!sendData.subjectId){raise
 return;}return chatMessaging.sendMessage(sendData,function(result){consoleLogging&&console.log("[sdk][startScreenShare][onResult]: ",result);if(result.hasError){_deviceManager["default"].mediaStreams().stopScreenShareInput();}else{var direction='send',shareScreen=true;if(screenShareInfo.isStarted()&&!screenShareInfo.iAmOwner()){direction='receive';shareScreen=false;}if(screenShareInfo.isStarted()&&screenShareInfo.iAmOwner()){var qualityObject=calculateScreenSize({quality:params.quality});screenShareInfo.setWidth(qualityObject.width);screenShareInfo.setHeight(qualityObject.height);sendCallMetaData({id:callMetaDataTypes.SCREENSHAREMETADATA,userid:chatMessaging.userInfo.id,content:{dimension:{width:screenShareInfo.getWidth(),height:screenShareInfo.getHeight()}}});}callStateController.addScreenShareToCall(direction,shareScreen);}callback&&callback(result);});});};this.endScreenShare=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.END_SCREEN_SHARE,typeCode:generalTypeCode,//params.typeCode,
 pushMsgType:3,token:token,subjectId:currentCallId};if(!sendData.subjectId){raiseCallError(_errorHandler.errorList.INVALID_CALLID,callback,true,{});return;}if(!screenShareInfo.isStarted()){raiseCallError(_errorHandler.errorList.SCREENSHARE_NOT_STARTED,callback,true);return;}if(!screenShareInfo.iAmOwner()){raiseCallError(_errorHandler.errorList.NOT_SCREENSHARE_OWNER,callback,true);return;}if(!callUsers['screenShare'].videoTopicManager.getPeer()){//.peers[callUsers['screenShare'].videoTopicName]
 consoleLogging&&console.log('[SDK][endScreenShare] No screenShare connection available');}else{callStateController.removeScreenShareFromCall();}return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};function calculateScreenSize(_ref6){var _ref6$quality=_ref6.quality,quality=_ref6$quality===void 0?3:_ref6$quality;var screenSize=window.screen,qualities=[{width:Math.round(screenSize.width/3),height:Math.round(window.screen.height/3)},{width:Math.round(screenSize.width/2),height:Math.round(screenSize.height/2)},{width:screenSize.width,height:screenSize.height},{width:Math.round(screenSize.width*1.6),height:Math.round(screenSize.height*1.6)}],selectedQuality=quality?+quality-1:3,qualityObj=qualities[selectedQuality];return qualityObj;}this.resizeScreenShare=function(params,callback){var result={};if(screenShareInfo.isStarted()&&screenShareInfo.iAmOwner()){var qualityObj=calculateScreenSize({quality:params.quality});screenShareInfo.setWidth(qualityObj.width);screenShareInfo.setHeight(qualityObj.height);// applyScreenShareSizeToElement()
-restartMediaOnKeyFrame('screenShare',[10,1000,2000]);sendCallMetaData({id:callMetaDataTypes.SCREENSHAREMETADATA,userid:chatMessaging.userInfo.id,content:{dimension:{width:screenShareInfo.getWidth(),height:screenShareInfo.getHeight()}}});result.hasError=false;}else{result.hasError=true;//result.errorMessage = 'You can not apply size to others ScreenShare or ScreenShare is not started'
-}callback&&callback(result);};this.getCallsList=function(params,callback){var getCallListData={chatMessageVOType:_constants.chatMessageVOTypes.GET_CALLS,typeCode:generalTypeCode,//params.typeCode,
+restartMediaOnKeyFrame('screenShare',[10,1000,2000]);sendCallMetaData({id:callMetaDataTypes.SCREENSHAREMETADATA,userid:chatMessaging.userInfo.id,content:{dimension:{width:screenShareInfo.getWidth(),height:screenShareInfo.getHeight()}}});result.hasError=false;}else{result.hasError=true;result.errorMessage='You can not apply size to others ScreenShare or ScreenShare is not started';}callback&&callback(result);};this.getCallsList=function(params,callback){var getCallListData={chatMessageVOType:_constants.chatMessageVOTypes.GET_CALLS,typeCode:generalTypeCode,//params.typeCode,
 pushMsgType:3,token:token},content={};if(params){if(typeof params.count==='number'&&params.count>=0){content.count=+params.count;}else{content.count=50;}if(typeof params.offset==='number'&&params.offset>=0){content.offset=+params.offset;}else{content.offset=0;}if(typeof params.creatorCoreUserId==='number'&&params.creatorCoreUserId>0){content.creatorCoreUserId=+params.creatorCoreUserId;}if(typeof params.creatorSsoId==='number'&&params.creatorSsoId>0){content.creatorSsoId=+params.creatorSsoId;}if(typeof params.name==='string'){content.name=params.name;}if(typeof params.type==='string'&&callTypes.hasOwnProperty(params.type.toUpperCase())){content.type=callTypes[params.type.toUpperCase()];}if(Array.isArray(params.callIds)){content.callIds=params.callIds;}if(typeof params.threadId==='number'&&+params.threadId>0){content.threadId=+params.threadId;}if(typeof params.contactType==='string'){content.contactType=params.contactType;}if(typeof params.uniqueId==='string'){content.uniqueId=params.uniqueId;}getCallListData.content=JSON.stringify(content);}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to End the call!'});return;}return chatMessaging.sendMessage(getCallListData,{onResult:function onResult(result){callback&&callback(result);}});};this.getCallsToJoin=function(params,callback){var getCallListData={chatMessageVOType:_constants.chatMessageVOTypes.GET_CALLS_TO_JOIN,pushMsgType:3,token:token},content={};if(params){if(typeof params.count==='number'&&params.count>=0){content.count=+params.count;}else{content.count=50;}if(typeof params.offset==='number'&&params.offset>=0){content.offset=+params.offset;}else{content.offset=0;}if(typeof params.creatorSsoId==='number'&&params.creatorSsoId>0){content.creatorSsoId=+params.creatorSsoId;}if(typeof params.name==='string'){content.name=params.name;}if(typeof params.type==='string'&&callTypes.hasOwnProperty(params.type.toUpperCase())){content.type=callTypes[params.type.toUpperCase()];}if(Array.isArray(params.threadIds)){content.threadIds=params.threadIds;}if(typeof params.uniqueId==='string'){content.uniqueId=params.uniqueId;}getCallListData.content=JSON.stringify(content);}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'Invalid params'});return;}return chatMessaging.sendMessage(getCallListData,{onResult:function onResult(result){callback&&callback(result);}});};this.deleteFromCallList=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.DELETE_FROM_CALL_HISTORY,typeCode:generalTypeCode,//params.typeCode,
 content:[]};if(params){if(typeof params.contactType==='string'&&params.contactType.length){sendData.content.contactType=params.contactType;}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'You should enter a contactType!'});return;}if(Array.isArray(params.callIds)){sendData.content=params.callIds;}}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Delete a call from Call History!'});return;}return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result=messageContent;}callback&&callback(returnData);}});};this.getCallParticipants=function(params,callback){var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.ACTIVE_CALL_PARTICIPANTS,typeCode:generalTypeCode,//params.typeCode,
 content:{}};if(params){if(isNaN(params.callId)){(0,_errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID,callback,true,{});// chatEvents.fireEvent('error', {
@@ -41535,17 +42214,17 @@ content:[]};if(params){if(typeof params.callId==='number'&&params.callId>0){send
      *    - subjectId                   {int}
      *    + content                     {list} List of Participants UserIds
      */var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.MUTE_CALL_PARTICIPANT,typeCode:generalTypeCode,//params.typeCode,
-content:[]};if(params){if(typeof params.callId==='number'&&params.callId>0){sendMessageParams.subjectId=params.callId;}else{(0,_errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID,callback,true,{});return;}if(Array.isArray(params.userIds)){sendMessageParams.content=params.userIds;}}return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result=messageContent;}callback&&callback(returnData);}});};this.unMuteCallParticipants=function(params,callback){/**
+content:[],uniqueId:_utility["default"].generateUUID()};if(params){if(typeof params.callId==='number'&&params.callId>0){sendMessageParams.subjectId=params.callId;}else{(0,_errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID,callback,true,{});return;}if(Array.isArray(params.userIds)){sendMessageParams.content=params.userIds;}}return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result=messageContent;}callback&&callback(returnData);}});};this.unMuteCallParticipants=function(params,callback){/**
      * + unMuteCallParticipantsRequest     {object}
      *    - subjectId                   {int}
      *    + content                     {list} List of Participants UserIds
      */var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT,typeCode:generalTypeCode,//params.typeCode,
-content:[]};if(params){if(typeof params.callId==='number'&&params.callId>0){sendMessageParams.subjectId=params.callId;}else{(0,_errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID,callback,true,{});return;}if(Array.isArray(params.userIds)){sendMessageParams.content=params.userIds;}}return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result=messageContent;}callback&&callback(returnData);}});};this.turnOnVideoCall=function(params,callback){var turnOnVideoData={chatMessageVOType:_constants.chatMessageVOTypes.TURN_ON_VIDEO_CALL,typeCode:generalTypeCode,//params.typeCode,
-pushMsgType:3,token:token};if(params){if(typeof+params.callId==='number'&&params.callId>0){turnOnVideoData.subjectId=+params.callId;}else{(0,_errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID,callback,true,{});/*chatEvents.fireEvent('error', {
+content:[],uniqueId:_utility["default"].generateUUID()};if(params){if(typeof params.callId==='number'&&params.callId>0){sendMessageParams.subjectId=params.callId;}else{(0,_errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID,callback,true,{});return;}if(Array.isArray(params.userIds)){sendMessageParams.content=params.userIds;}}return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result=messageContent;}callback&&callback(returnData);}});};this.turnOnVideoCall=function(params,callback){var turnOnVideoData={chatMessageVOType:_constants.chatMessageVOTypes.TURN_ON_VIDEO_CALL,typeCode:generalTypeCode,//params.typeCode,
+pushMsgType:3,token:token,uniqueId:_utility["default"].generateUUID()};if(params){if(typeof+params.callId==='number'&&params.callId>0){turnOnVideoData.subjectId=+params.callId;}else{(0,_errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID,callback,true,{});/*chatEvents.fireEvent('error', {
             code: 999,
             message: 'Invalid call id!'
         });*/return;}}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to turn on the video call!'});return;}var user=callUsers[chatMessaging.userInfo.id];if(user&&user.videoTopicManager&&user.videoTopicManager.getPeer()&&(user.videoTopicManager.isPeerConnecting()||user.videoTopicManager.isPeerConnected())){_eventsModule.chatEvents.fireEvent('error',{code:999,message:'Video stream is already open!'});return;}return chatMessaging.sendMessage(turnOnVideoData,{onResult:function onResult(result){callback&&callback(result);}});};this.turnOffVideoCall=function(params,callback){var turnOffVideoData={chatMessageVOType:_constants.chatMessageVOTypes.TURN_OFF_VIDEO_CALL,typeCode:generalTypeCode,//params.typeCode,
-pushMsgType:3,token:token};if(params){if(typeof+params.callId==='number'&&params.callId>0){turnOffVideoData.subjectId=+params.callId;}else{(0,_errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID,callback,true,{});/* chatEvents.fireEvent('error', {
+pushMsgType:3,token:token,uniqueId:_utility["default"].generateUUID()};if(params){if(typeof+params.callId==='number'&&params.callId>0){turnOffVideoData.subjectId=+params.callId;}else{(0,_errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID,callback,true,{});/* chatEvents.fireEvent('error', {
             code: 999,
             message: 'Invalid call id!'
         }); */return;}}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to turn off the video call!'});return;}var user=callUsers[chatMessaging.userInfo.id];if(user&&user.videoTopicManager&&user.videoTopicManager.getPeer()&&(user.videoTopicManager.isPeerConnecting()||user.videoTopicManager.isPeerFailed()||user.videoTopicManager.isPeerDisconnected())){_eventsModule.chatEvents.fireEvent('error',{code:999,message:'Can not stop stream in current state'});return;}return chatMessaging.sendMessage(turnOffVideoData,{onResult:function onResult(result){callback&&callback(result);}});};this.disableParticipantsVideoReceive=function(params,callback){if(params){if(Array.isArray(params.userIds)&&params.userIds.length){for(var i in params.userIds){callStateController.deactivateParticipantStream(params.userIds[i],'video','video');}callback&&callback({hasError:false});}}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to closeOthersVideoReceive'});return;}};this.enableParticipantsVideoReceive=function(params,callback){if(params){if(Array.isArray(params.userIds)&&params.userIds.length){for(var i in params.userIds){callStateController.activateParticipantStream(params.userIds[i],'video','receive','videoTopicName',callUsers[params.userIds[i]].topicSend,'video');}callback&&callback({hasError:false});}}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to closeOthersVideoReceive'});}};/**
@@ -41576,7 +42255,7 @@ invitees.forEach(function(item){item.idType=_constants.inviteeVOidTypes[item.idT
          }
      }*/return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};this.deviceManager=_deviceManager["default"];this.resetCallStream=function(_ref10,callback){var userId=_ref10.userId,_ref10$streamType=_ref10.streamType,streamType=_ref10$streamType===void 0?'audio':_ref10$streamType;return new Promise(function(resolve,reject){if(userId==='screenShare'||streamType==='video'){if(callUsers[userId]){callUsers[userId].videoTopicManager.recreateTopic().then(function(){resolve();callback&&callback({hasError:false});})["catch"](function(){reject();callback&&callback({hasError:true});});}}else{callUsers[userId].audioTopicManager.recreateTopic().then(function(){resolve();callback&&callback({hasError:false});})["catch"](function(){reject();callback&&callback({hasError:true});});}});};this.callStop=callStop;this.restartMedia=restartMedia;}var _default=ChatCall;exports["default"]=_default;
 
-},{"./events.module.js":268,"./lib/call/deviceManager.js":269,"./lib/constants":270,"./lib/errorHandler":271,"./utility/utility":276,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/objectDestructuringEmpty":8,"@babel/runtime/helpers/toConsumableArray":10,"@babel/runtime/helpers/typeof":11,"@babel/runtime/regenerator":13,"kurento-utils":190}],267:[function(require,module,exports){
+},{"./events.module.js":269,"./lib/call/deviceManager.js":270,"./lib/call/webrtcPeer":271,"./lib/constants":272,"./lib/errorHandler":273,"./utility/utility":278,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/objectDestructuringEmpty":8,"@babel/runtime/helpers/toConsumableArray":10,"@babel/runtime/helpers/typeof":11,"@babel/runtime/regenerator":13,"kurento-utils":190}],268:[function(require,module,exports){
 'use strict';var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _podasyncWsOnly=_interopRequireDefault(require("podasync-ws-only"));var _utility=_interopRequireDefault(require("./utility/utility"));var _call=_interopRequireDefault(require("./call.module"));var _events=require("./events.module");var _messaging=_interopRequireDefault(require("./messaging.module"));var _buildConfig=_interopRequireDefault(require("./buildConfig.json"));var _constants=require("./lib/constants");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));var _errorHandler=require("./lib/errorHandler");var _store=require("./lib/store");function Chat(params){/*******************************************************
    *          P R I V A T E   V A R I A B L E S          *
    *******************************************************/var asyncClient,peerId,oldPeerId,token=params.token,generalTypeCode=params.typeCode||'default',typeCodeOwnerId=params.typeCodeOwnerId||null,mapApiKey=params.mapApiKey||'8b77db18704aa646ee5aaea13e7370f4f88b9e8c',deviceId,productEnv=typeof navigator!='undefined'?navigator.product:'undefined',// queueDb,
@@ -43797,7 +44476,7 @@ token:token,subjectId:threadId};return chatMessaging.sendMessage(sendData,{onRes
 window.PodChat=Chat;}var _default=Chat;// })();
 exports["default"]=_default;
 
-},{"./buildConfig.json":265,"./call.module":266,"./events.module":268,"./lib/call/deviceManager.js":269,"./lib/constants":270,"./lib/errorHandler":271,"./lib/store":273,"./messaging.module":275,"./utility/utility":276,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/toConsumableArray":10,"@babel/runtime/helpers/typeof":11,"podasync-ws-only":209}],268:[function(require,module,exports){
+},{"./buildConfig.json":266,"./call.module":267,"./events.module":269,"./lib/call/deviceManager.js":270,"./lib/constants":272,"./lib/errorHandler":273,"./lib/store":275,"./messaging.module":277,"./utility/utility":278,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/toConsumableArray":10,"@babel/runtime/helpers/typeof":11,"podasync-ws-only":209}],269:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -43922,7 +44601,7 @@ function initEventHandler(params) {
 var _default = ChatEvents;
 exports["default"] = _default;
 
-},{"./utility/utility":276,"@babel/runtime/helpers/interopRequireDefault":5}],269:[function(require,module,exports){
+},{"./utility/utility":278,"@babel/runtime/helpers/interopRequireDefault":5}],270:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -44287,7 +44966,243 @@ var deviceManager = {
 var _default = deviceManager;
 exports["default"] = _default;
 
-},{"../../events.module.js":268,"../constants.js":270,"../errorHandler.js":271,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":11,"@babel/runtime/regenerator":13}],270:[function(require,module,exports){
+},{"../../events.module.js":269,"../constants.js":272,"../errorHandler.js":273,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":11,"@babel/runtime/regenerator":13}],271:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.WebrtcPeerConnection = WebrtcPeerConnection;
+
+function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
+  var _ref$direction = _ref.direction,
+      direction = _ref$direction === void 0 ? 'send' : _ref$direction,
+      _ref$mediaType = _ref.mediaType,
+      mediaType = _ref$mediaType === void 0 ? 'video' : _ref$mediaType,
+      rtcPeerConfig = _ref.rtcPeerConfig,
+      stream = _ref.stream,
+      streamElement = _ref.streamElement,
+      _ref$connectionStateC = _ref.connectionStateChange,
+      connectionStateChange = _ref$connectionStateC === void 0 ? null : _ref$connectionStateC,
+      _ref$iceConnectionSta = _ref.iceConnectionStateChange,
+      iceConnectionStateChange = _ref$iceConnectionSta === void 0 ? null : _ref$iceConnectionSta;
+  var config = {
+    rtcPeerConfig: rtcPeerConfig,
+    direction: direction,
+    mediaType: mediaType,
+    offer: null,
+    peerConnection: null,
+    dataChannel: null,
+    stream: stream,
+    streamElement: streamElement,
+    candidatesQueue: []
+  };
+
+  function createPeer() {
+    try {
+      config.peerConnection = new RTCPeerConnection(config.rtcPeerConfig);
+    } catch (err) {
+      console.error("[SDK][WebrtcPeerConnection][createPeer]", err);
+      onCreatePeerCallback && onCreatePeerCallback(err);
+    } // config.peerConnection.onicecandidate = handleicecandidate(lasticecandidate);
+
+
+    config.peerConnection.onconnectionstatechange = connectionStateChange;
+    config.peerConnection.oniceconnectionstatechange = iceConnectionStateChange;
+    config.peerConnection.addEventListener('signalingstatechange', signalingStateChangeCallback);
+
+    if (!config.peerConnection.getLocalStreams && config.peerConnection.getSenders) {
+      config.peerConnection.getLocalStreams = function () {
+        var stream = new MediaStream();
+        config.peerConnection.getSenders().forEach(function (sender) {
+          stream.addTrack(sender.track);
+        });
+        return [stream];
+      };
+    }
+
+    if (!config.peerConnection.getRemoteStreams && config.peerConnection.getReceivers) {
+      config.peerConnection.getRemoteStreams = function () {
+        var stream = new MediaStream();
+        config.peerConnection.getReceivers().forEach(function (sender) {
+          stream.addTrack(sender.track);
+        });
+        return [stream];
+      };
+    }
+
+    if (config.peerConnection.signalingState === 'closed') {
+      onCreatePeerCallback && onCreatePeerCallback('[SDK][WebRtcModule] The peer connection object is in "closed" state. This is most likely due to an invocation of the dispose method before accepting in the dialogue');
+    }
+
+    if (mediaType == 'video') streamElement.mute = true;
+
+    if (direction === 'send') {
+      if (config.mediaType === "video") streamElement.srcObject = stream; // config.streamElement.mute = true;
+
+      stream.getTracks().forEach(function (track) {
+        config.peerConnection.addTrack(track, stream);
+      });
+    }
+
+    setTimeout(function () {
+      onCreatePeerCallback && onCreatePeerCallback(null);
+    });
+  }
+
+  createPeer();
+
+  function signalingStateChangeCallback() {
+    if (config.peerConnection.signalingState === 'stable') {
+      addTheCandidates();
+    }
+  }
+
+  function addTheCandidates() {
+    // console.log("[SDK][WebRtcModule][addTheCandidates] adding the candidates")
+    while (config.candidatesQueue.length) {
+      var entry = config.candidatesQueue.shift();
+      config.peerConnection.addIceCandidate(entry.candidate, entry.callback, entry.callback);
+    }
+  }
+
+  function setRemoteStream() {
+    if (config.direction != 'send') {
+      config.streamElement.pause();
+      var _stream = config.peerConnection.getRemoteStreams()[0];
+      config.streamElement.srcObject = _stream;
+      config.streamElement.load();
+    }
+  }
+
+  return {
+    peerConnection: config.peerConnection,
+    dispose: function dispose() {
+      if (config.peerConnection) {
+        if (config.peerConnection.signalingState === 'closed') return;
+        config.peerConnection.getLocalStreams().forEach(function (stream) {
+          return stream.getTracks().forEach(function (track) {
+            return track.stop && track.stop();
+          });
+        });
+        config.peerConnection.close();
+      }
+    },
+    generateOffer: function generateOffer(callback) {
+      if (config.direction == 'send') {
+        config.peerConnection.getTransceivers().forEach(function (transceiver) {
+          transceiver.direction = "sendonly";
+        });
+      } else {
+        config.peerConnection.addTransceiver(config.mediaType, {
+          direction: 'recvonly'
+        }); // if (config.mediaType == 'audio') {
+        //     config.peerConnection.addTransceiver('audio', {
+        //         direction: 'recvonly'
+        //     });
+        // }
+        //
+        // if (config.mediaType == 'video') {
+        //     config.peerConnection.addTransceiver('video', {
+        //         direction: 'recvonly'
+        //     });
+        // }
+      }
+
+      config.peerConnection.createOffer().then(function (offer) {
+        return config.peerConnection.setLocalDescription(offer);
+      }, function (error) {
+        callback && callback(error, null);
+      }).then(function (result) {
+        //TODO: handle set offer result
+        // console.debug("[SDK][WebRtcModule] Set offer done. result: ", result);
+        callback && callback(null, config.peerConnection.localDescription.sdp);
+      }, function (error) {
+        //TODO: handle set offer failed
+        // console.debug("[SDK][WebRtcModule] Set offer failed. Error:", error);
+        callback && callback(error, null);
+      });
+    },
+    processOffer: function processOffer(sdpOffer, callback) {
+      callback = callback.bind(this);
+      var offer = new RTCSessionDescription({
+        type: 'offer',
+        sdp: sdpOffer
+      }); // console.debug('[SDK][WebRtcModule] SDP offer received, setting remote description')
+
+      if (config.peerConnection.signalingState === 'closed') {
+        return callback('[SDK][WebRtcModule] PeerConnection is closed');
+      }
+
+      config.peerConnection.setRemoteDescription(offer).then(function () {
+        return setRemoteStream();
+      }).then(function () {
+        return config.peerConnection.createAnswer();
+      }).then(function (answer) {
+        console.debug('[SDK][WebRtcModule] Created SDP answer');
+        return config.peerConnection.setLocalDescription(answer);
+      }).then(function () {
+        var localDescription = config.peerConnection.localDescription; // console.debug('[SDK][WebRtcModule] Local description set\n', localDescription.sdp)
+
+        callback(null, localDescription.sdp);
+      })["catch"](callback);
+    },
+    processAnswer: function processAnswer(sdpAnswer, callback) {
+      var answer = new RTCSessionDescription({
+        type: 'answer',
+        sdp: sdpAnswer
+      });
+
+      if (config.peerConnection.signalingState === 'closed') {
+        return callback('[SDK][WebRtcModule] PeerConnection is closed');
+      }
+
+      config.peerConnection.setRemoteDescription(answer).then(function () {
+        if (config.direction != 'send') {
+          setRemoteStream();
+        }
+
+        callback && callback();
+      }, function (error) {
+        // console.log("config.peerConnection.setRemoteDescription",
+        //     config.peerConnection.signalingState,
+        //     config.peerConnection.mediaType,
+        //     config.peerConnection.direction,
+        // )
+        callback && callback(error);
+      });
+    },
+    addIceCandidate: function addIceCandidate(candidate, callback) {
+      config.candidatesQueue.push({
+        candidate: new RTCIceCandidate(candidate),
+        callback: callback
+      }); // console.log("[SDK][WebRtcModule] Remote ICE candidate received", candidate)
+
+      if (config.peerConnection.signalingState === 'stable') {
+        addTheCandidates();
+      }
+    },
+    getRemoteStream: function getRemoteStream(index) {
+      if (config.peerConnection) {
+        return config.peerConnection.getRemoteStreams()[index || 0];
+      }
+    },
+    getLocalStream: function getLocalStream(index) {
+      if (config.peerConnection) {
+        return config.peerConnection.getLocalStreams()[index || 0];
+      }
+    },
+    onConnectionStable: function onConnectionStable(callback) {
+      config.peerConnection.addEventListener('signalingstatechange', function () {
+        if (config.peerConnection.signalingState === 'stable') {
+          callback && callback();
+        }
+      });
+    }
+  };
+}
+
+},{}],272:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -44498,7 +45413,7 @@ var callStickerTypes = {
 };
 exports.callStickerTypes = callStickerTypes;
 
-},{}],271:[function(require,module,exports){
+},{}],273:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -44676,7 +45591,7 @@ exports.raiseError = raiseError;
 var _default = handleError;
 exports["default"] = _default;
 
-},{"../events.module":268,"@babel/runtime/helpers/defineProperty":4,"@babel/runtime/helpers/interopRequireDefault":5}],272:[function(require,module,exports){
+},{"../events.module":269,"@babel/runtime/helpers/defineProperty":4,"@babel/runtime/helpers/interopRequireDefault":5}],274:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -44702,7 +45617,7 @@ var storeEvents = {
 };
 exports.storeEvents = storeEvents;
 
-},{"@babel/runtime/helpers/interopRequireDefault":5,"events":149}],273:[function(require,module,exports){
+},{"@babel/runtime/helpers/interopRequireDefault":5,"events":149}],275:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -44720,7 +45635,7 @@ var store = {
 };
 exports.store = store;
 
-},{"./eventEmitter":272,"./threads":274}],274:[function(require,module,exports){
+},{"./eventEmitter":274,"./threads":276}],276:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -44898,7 +45813,7 @@ function ThreadObject(thread) {
   };
 }
 
-},{"./eventEmitter":272,"@babel/runtime/helpers/defineProperty":4,"@babel/runtime/helpers/interopRequireDefault":5}],275:[function(require,module,exports){
+},{"./eventEmitter":274,"@babel/runtime/helpers/defineProperty":4,"@babel/runtime/helpers/interopRequireDefault":5}],277:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -45254,7 +46169,7 @@ function ChatMessaging(params) {
 var _default = ChatMessaging;
 exports["default"] = _default;
 
-},{"./lib/constants":270,"./lib/errorHandler":271,"./utility/utility":276,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":11,"dompurify":131}],276:[function(require,module,exports){
+},{"./lib/constants":272,"./lib/errorHandler":273,"./utility/utility":278,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":11,"dompurify":131}],278:[function(require,module,exports){
 (function (global){(function (){
 "use strict";
 
@@ -45852,4 +46767,4 @@ var _default = new ChatUtility();
 exports["default"] = _default;
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":11,"crypto-js":94}]},{},[267]);
+},{"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":11,"crypto-js":94}]},{},[268]);

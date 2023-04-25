@@ -90,8 +90,7 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
   }
 
   function addTheCandidates() {
-    console.log("[SDK][WebRtcModule][addTheCandidates] adding the candidates");
-
+    // console.log("[SDK][WebRtcModule][addTheCandidates] adding the candidates")
     while (config.candidatesQueue.length) {
       var entry = config.candidatesQueue.shift();
       config.peerConnection.addIceCandidate(entry.candidate, entry.callback, entry.callback);
@@ -147,11 +146,11 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
         callback && callback(error, null);
       }).then(function (result) {
         //TODO: handle set offer result
-        console.debug("[SDK][WebRtcModule] Set offer done. result: ", result);
+        // console.debug("[SDK][WebRtcModule] Set offer done. result: ", result);
         callback && callback(null, config.peerConnection.localDescription.sdp);
       }, function (error) {
         //TODO: handle set offer failed
-        console.debug("[SDK][WebRtcModule] Set offer failed. Error:", error);
+        // console.debug("[SDK][WebRtcModule] Set offer failed. Error:", error);
         callback && callback(error, null);
       });
     },
@@ -160,8 +159,7 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
       var offer = new RTCSessionDescription({
         type: 'offer',
         sdp: sdpOffer
-      });
-      console.debug('[SDK][WebRtcModule] SDP offer received, setting remote description');
+      }); // console.debug('[SDK][WebRtcModule] SDP offer received, setting remote description')
 
       if (config.peerConnection.signalingState === 'closed') {
         return callback('[SDK][WebRtcModule] PeerConnection is closed');
@@ -175,8 +173,8 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
         console.debug('[SDK][WebRtcModule] Created SDP answer');
         return config.peerConnection.setLocalDescription(answer);
       }).then(function () {
-        var localDescription = config.peerConnection.localDescription;
-        console.debug('[SDK][WebRtcModule] Local description set\n', localDescription.sdp);
+        var localDescription = config.peerConnection.localDescription; // console.debug('[SDK][WebRtcModule] Local description set\n', localDescription.sdp)
+
         callback(null, localDescription.sdp);
       })["catch"](callback);
     },
@@ -209,8 +207,7 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
       config.candidatesQueue.push({
         candidate: new RTCIceCandidate(candidate),
         callback: callback
-      });
-      console.log("[SDK][WebRtcModule] Remote ICE candidate received", candidate);
+      }); // console.log("[SDK][WebRtcModule] Remote ICE candidate received", candidate)
 
       if (config.peerConnection.signalingState === 'stable') {
         addTheCandidates();
