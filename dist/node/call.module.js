@@ -953,13 +953,26 @@ function ChatCall(params) {
           }
         });
       },
-      createTopic: function createTopic() {
-        var manager = this;
-
-        if (callUsers[config.userId] && config.peer) {
-          return;
+      canCreateTopic: function canCreateTopic() {
+        if (config.mediaType === 'video' && !callUsers[config.userId].localVideoStreamCreated) {
+          callUsers[config.userId].localVideoStreamCreated = true;
+          return true;
         }
 
+        if (config.mediaType === 'audio' && !callUsers[config.userId].localAudioStreamCreated) {
+          callUsers[config.userId].localAudioStreamCreated = true;
+          return true;
+        }
+
+        if (callUsers[config.userId] && config.peer) {
+          return false;
+        }
+
+        return false;
+      },
+      createTopic: function createTopic() {
+        if (!this.canCreateTopic()) return;
+        var manager = this;
         this.generateSdpOfferOptions().then(function (options) {
           consoleLogging && console.debug("[SDK][generateSdpOfferOptions] Options for this request have been resolved: ", {
             options: options
@@ -972,12 +985,17 @@ function ChatCall(params) {
       removeTopic: function removeTopic() {
         var manager = this;
         return new Promise(function (resolve, reject) {
+          callUsers[config.userId].localAudioStreamCreated = false;
+          callUsers[config.userId].localVideoStreamCreated = false;
+
           if (config.peer) {
             config.sdpOfferRequestSent = false; // this.removeTopicIceCandidateInterval();
+            // metadataInstance.clearIceCandidateInterval();
 
-            metadataInstance.clearIceCandidateInterval();
             manager.removeConnectionQualityInterval();
             manager.removeAudioWatcherInterval();
+            callUsers[config.userId].localAudioStreamCreated = false;
+            callUsers[config.userId].localVideoStreamCreated = false;
 
             if (config.direction === 'send' && !config.isScreenShare) {
               /*let constraint = {
@@ -1902,7 +1920,7 @@ function ChatCall(params) {
     },
     deactivateParticipantStream: function deactivateParticipantStream(userId, mediaType, mediaKey) {
       if (callUsers[userId]) {
-        callUsers[userId][mediaKey] = mediaKey === 'mute' ? true : false; // var user = callUsers[userId];
+        if (mediaType == 'video') callUsers[userId].localVideoEnabled = true;else if (mediaType === 'audio') callUsers[userId].localAudioEnabled = true; // var user = callUsers[userId];
         // var topicNameKey = mediaType === 'audio' ? 'audioTopicName' : 'videoTopicName';
 
         callUsers[userId][mediaType + 'TopicManager'].removeTopic();
@@ -2673,6 +2691,29 @@ function ChatCall(params) {
         }
       });
     }
+  },
+      maybeInquiryCall = function maybeInquiryCall(usersList) {
+    var inquiryCallIsNeeded = false,
+        inquiryTimoutId;
+    usersList.forEach(function (item) {
+      if (item.id && !callUsers[item.id]) inquiryCallIsNeeded = true;
+    });
+
+    if (inquiryCallIsNeeded) {
+      doCallInquiryOnce();
+    }
+    /**
+     * Prevent fast api calls
+     */
+
+
+    function doCallInquiryOnce() {
+      inquiryTimoutId && clearTimeout(inquiryTimoutId);
+      inquiryTimoutId = setTimeout(function () {
+        clearTimeout(inquiryTimoutId);
+        inquiryCallState();
+      }, 1000);
+    }
   };
 
   this.updateToken = function (newToken) {
@@ -2686,7 +2727,7 @@ function ChatCall(params) {
 
     if (jsonMessage.done !== 'FALSE' || jsonMessage.done === 'FALSE' && jsonMessage.desc === 'duplicated') {
       asyncRequestTimeouts[uniqueId] && clearTimeout(asyncRequestTimeouts[uniqueId]);
-    } else if (jsonMessage.done === 'FALSE') {
+    } else if (jsonMessage.done === 'FALSE' && jsonMessage.id != 'ADD_ICE_CANDIDATE') {
       _eventsModule.chatEvents.fireEvent('callEvents', {
         type: 'CALL_ERROR',
         code: 7000,
@@ -2829,805 +2870,880 @@ function ChatCall(params) {
       return;
     }
 
-    switch (type) {
-      /**
-       * Type 70    Send Call Request
-       */
-      case _constants.chatMessageVOTypes.CALL_REQUEST:
-        // callRequestController.callRequestReceived = true;
-        callReceived({
-          callId: messageContent.callId
-        }, function (r) {});
+    var _ret = function () {
+      switch (type) {
+        /**
+         * Type 70    Send Call Request
+         */
+        case _constants.chatMessageVOTypes.CALL_REQUEST:
+          // callRequestController.callRequestReceived = true;
+          callReceived({
+            callId: messageContent.callId
+          }, function (r) {});
 
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
-        }
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+          }
 
-        messageContent.threadId = threadId;
+          messageContent.threadId = threadId;
 
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'RECEIVE_CALL',
-          result: messageContent
-        });
-
-        if (messageContent.callId > 0) {
-          // if(!currentCallId ) {
-          latestCallRequestId = messageContent.callId; // }
-        } else {
-          _eventsModule.chatEvents.fireEvent('callEvents', {
-            type: 'PARTNER_RECEIVED_YOUR_CALL',
-            result: messageContent
-          });
-        }
-
-        break;
-
-      /**
-       * Type 71    Accept Call Request
-       */
-
-      case _constants.chatMessageVOTypes.ACCEPT_CALL:
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
-        }
-
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'ACCEPT_CALL',
-          result: messageContent
-        });
-
-        break;
-
-      /**
-       * Type 72    Reject Call Request
-       */
-
-      case _constants.chatMessageVOTypes.REJECT_CALL:
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
-        }
-
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'REJECT_CALL',
-          result: messageContent
-        });
-
-        break;
-
-      /**
-       * Type 73    Receive Call Request
-       */
-
-      case _constants.chatMessageVOTypes.RECEIVE_CALL_REQUEST:
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
-        }
-
-        if (messageContent.callId > 0) {
           _eventsModule.chatEvents.fireEvent('callEvents', {
             type: 'RECEIVE_CALL',
             result: messageContent
-          }); // if(!currentCallId ) {
+          });
 
+          if (messageContent.callId > 0) {
+            // if(!currentCallId ) {
+            latestCallRequestId = messageContent.callId; // }
+          } else {
+            _eventsModule.chatEvents.fireEvent('callEvents', {
+              type: 'PARTNER_RECEIVED_YOUR_CALL',
+              result: messageContent
+            });
+          }
 
-          latestCallRequestId = messageContent.callId; // }
-        } else {
+          break;
+
+        /**
+         * Type 71    Accept Call Request
+         */
+
+        case _constants.chatMessageVOTypes.ACCEPT_CALL:
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+          }
+
           _eventsModule.chatEvents.fireEvent('callEvents', {
-            type: 'PARTNER_RECEIVED_YOUR_CALL',
+            type: 'ACCEPT_CALL',
             result: messageContent
           });
-        }
 
-        break;
+          break;
 
-      /**
-       * Type 74    Start Call (Start sender and receivers)
-       */
+        /**
+         * Type 72    Reject Call Request
+         */
 
-      case _constants.chatMessageVOTypes.START_CALL:
-        if (!callRequestController.canProcessStartCall(threadId)) {
+        case _constants.chatMessageVOTypes.REJECT_CALL:
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+          }
+
           _eventsModule.chatEvents.fireEvent('callEvents', {
-            type: 'CALL_STARTED_ELSEWHERE',
-            message: 'Call already started somewhere else..., aborting...'
+            type: 'REJECT_CALL',
+            result: messageContent
           });
 
-          return;
-        }
+          break;
 
-        if (currentCallId) {
-          endCall({
-            callId: currentCallId
-          });
-          callStop(true, false);
-          setTimeout(function () {
-            currentCallId = threadId;
-            processChatStartCallEvent(type, messageContent, contentCount, threadId, uniqueId);
-          }, 5000);
-        } else {
-          currentCallId = threadId;
-          processChatStartCallEvent(type, messageContent, contentCount, threadId, uniqueId);
-        }
+        /**
+         * Type 73    Receive Call Request
+         */
 
-        break;
+        case _constants.chatMessageVOTypes.RECEIVE_CALL_REQUEST:
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+          }
 
-      /**
-       * Type 75    End Call Request
-       */
-
-      case _constants.chatMessageVOTypes.END_CALL_REQUEST:
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
-        }
-
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'END_CALL',
-          result: messageContent
-        });
-
-        callStop();
-        break;
-
-      /**
-       * Type 76   Call Ended
-       */
-
-      case _constants.chatMessageVOTypes.END_CALL:
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
-        }
-
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'CALL_ENDED',
-          callId: threadId
-        });
-
-        if (threadId === currentCallId && callStopQueue.callStarted) callStop();
-        break;
-
-      /**
-       * Type 77    Get Calls History
-       */
-
-      case _constants.chatMessageVOTypes.GET_CALLS:
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
-        }
-
-        break;
-
-      /**
-       * Type 78    Call Partner Reconnecting
-       */
-
-      case _constants.chatMessageVOTypes.RECONNECT:
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
-        }
-
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'CALL_PARTICIPANT_RECONNECTING',
-          result: messageContent
-        });
-
-        break;
-
-      /**
-       * Type 79    Call Partner Connects
-       */
-
-      case _constants.chatMessageVOTypes.CONNECT:
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
-        }
-
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'CALL_PARTICIPANT_CONNECTED',
-          result: messageContent
-        });
-
-        if (callUsers && callUsers[chatMessaging.userInfo.id] && callUsers[chatMessaging.userInfo.id].video) {
-          restartMediaOnKeyFrame(chatMessaging.userInfo.id, [2000, 4000, 8000, 12000]);
-        }
-
-        if (callUsers && callUsers['screenShare'] && screenShareInfo.isStarted() && screenShareInfo.iAmOwner()) {
-          restartMediaOnKeyFrame('screenShare', [2000, 4000, 8000, 12000]);
-        }
-
-        break;
-
-      /**
-       * Type 90    Contacts Synced
-       */
-
-      case _constants.chatMessageVOTypes.CONTACT_SYNCED:
-        _eventsModule.chatEvents.fireEvent('contactEvents', {
-          type: 'CONTACTS_SYNCED',
-          result: messageContent
-        });
-
-        break;
-
-      /**
-       * Type 91    Send Group Call Request
-       */
-
-      case _constants.chatMessageVOTypes.GROUP_CALL_REQUEST:
-        // callRequestController.callRequestReceived = true;
-        callReceived({
-          callId: messageContent.callId
-        }, function (r) {});
-
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
-        }
-
-        if (messageContent.callId > 0) {
-          // if(!currentCallId ) {
-          latestCallRequestId = messageContent.callId; // }
-        }
-
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'RECEIVE_CALL',
-          result: messageContent
-        }); //currentCallId = messageContent.callId;
-
-
-        break;
-
-      /**
-       * Type 92    Call Partner Leave
-       * 1. I have left the call (GroupCall)
-       * 2. Other person has left the call (GroupCall)
-       */
-
-      case _constants.chatMessageVOTypes.LEAVE_CALL:
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
-        }
-
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'CALL_PARTICIPANT_LEFT',
-          callId: threadId,
-          result: messageContent
-        });
-
-        if (currentCallId != threadId) return; //If I'm the only call participant, stop the call
-
-        if (callUsers && Object.values(callUsers).length >= 1) {
-          if (Object.values(callUsers).length < 2) {
+          if (messageContent.callId > 0) {
             _eventsModule.chatEvents.fireEvent('callEvents', {
-              type: 'CALL_ENDED',
-              callId: threadId
+              type: 'RECEIVE_CALL',
+              result: messageContent
+            }); // if(!currentCallId ) {
+
+
+            latestCallRequestId = messageContent.callId; // }
+          } else {
+            _eventsModule.chatEvents.fireEvent('callEvents', {
+              type: 'PARTNER_RECEIVED_YOUR_CALL',
+              result: messageContent
+            });
+          }
+
+          break;
+
+        /**
+         * Type 74    Start Call (Start sender and receivers)
+         */
+
+        case _constants.chatMessageVOTypes.START_CALL:
+          if (!callRequestController.canProcessStartCall(threadId)) {
+            _eventsModule.chatEvents.fireEvent('callEvents', {
+              type: 'CALL_STARTED_ELSEWHERE',
+              message: 'Call already started somewhere else..., aborting...'
             });
 
-            callStop();
-            return;
+            return {
+              v: void 0
+            };
           }
 
-          if (!!messageContent[0].userId) {
-            //console.log("chatMessageVOTypes.LEAVE_CALL: ", messageContent[0].userId, chatMessaging.userInfo.id)
-            if (messageContent[0].userId == chatMessaging.userInfo.id) {
+          if (currentCallId) {
+            endCall({
+              callId: currentCallId
+            });
+            callStop(true, false);
+            setTimeout(function () {
+              currentCallId = threadId;
+              processChatStartCallEvent(type, messageContent, contentCount, threadId, uniqueId);
+            }, 5000);
+          } else {
+            currentCallId = threadId;
+            processChatStartCallEvent(type, messageContent, contentCount, threadId, uniqueId);
+          }
+
+          break;
+
+        /**
+         * Type 75    End Call Request
+         */
+
+        case _constants.chatMessageVOTypes.END_CALL_REQUEST:
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+          }
+
+          _eventsModule.chatEvents.fireEvent('callEvents', {
+            type: 'END_CALL',
+            result: messageContent
+          });
+
+          callStop();
+          break;
+
+        /**
+         * Type 76   Call Ended
+         */
+
+        case _constants.chatMessageVOTypes.END_CALL:
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+          }
+
+          _eventsModule.chatEvents.fireEvent('callEvents', {
+            type: 'CALL_ENDED',
+            callId: threadId
+          });
+
+          if (threadId === currentCallId && callStopQueue.callStarted) callStop();
+          break;
+
+        /**
+         * Type 77    Get Calls History
+         */
+
+        case _constants.chatMessageVOTypes.GET_CALLS:
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+          }
+
+          break;
+
+        /**
+         * Type 78    Call Partner Reconnecting
+         */
+
+        case _constants.chatMessageVOTypes.RECONNECT:
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+          }
+
+          _eventsModule.chatEvents.fireEvent('callEvents', {
+            type: 'CALL_PARTICIPANT_RECONNECTING',
+            result: messageContent
+          });
+
+          break;
+
+        /**
+         * Type 79    Call Partner Connects
+         */
+
+        case _constants.chatMessageVOTypes.CONNECT:
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+          }
+
+          _eventsModule.chatEvents.fireEvent('callEvents', {
+            type: 'CALL_PARTICIPANT_CONNECTED',
+            result: messageContent
+          });
+
+          if (callUsers && callUsers[chatMessaging.userInfo.id] && callUsers[chatMessaging.userInfo.id].video) {
+            restartMediaOnKeyFrame(chatMessaging.userInfo.id, [2000, 4000, 8000, 12000]);
+          }
+
+          if (callUsers && callUsers['screenShare'] && screenShareInfo.isStarted() && screenShareInfo.iAmOwner()) {
+            restartMediaOnKeyFrame('screenShare', [2000, 4000, 8000, 12000]);
+          }
+
+          break;
+
+        /**
+         * Type 90    Contacts Synced
+         */
+
+        case _constants.chatMessageVOTypes.CONTACT_SYNCED:
+          _eventsModule.chatEvents.fireEvent('contactEvents', {
+            type: 'CONTACTS_SYNCED',
+            result: messageContent
+          });
+
+          break;
+
+        /**
+         * Type 91    Send Group Call Request
+         */
+
+        case _constants.chatMessageVOTypes.GROUP_CALL_REQUEST:
+          // callRequestController.callRequestReceived = true;
+          callReceived({
+            callId: messageContent.callId
+          }, function (r) {});
+
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+          }
+
+          if (messageContent.callId > 0) {
+            // if(!currentCallId ) {
+            latestCallRequestId = messageContent.callId; // }
+          }
+
+          _eventsModule.chatEvents.fireEvent('callEvents', {
+            type: 'RECEIVE_CALL',
+            result: messageContent
+          }); //currentCallId = messageContent.callId;
+
+
+          break;
+
+        /**
+         * Type 92    Call Partner Leave
+         * 1. I have left the call (GroupCall)
+         * 2. Other person has left the call (GroupCall)
+         */
+
+        case _constants.chatMessageVOTypes.LEAVE_CALL:
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+          }
+
+          _eventsModule.chatEvents.fireEvent('callEvents', {
+            type: 'CALL_PARTICIPANT_LEFT',
+            callId: threadId,
+            result: messageContent
+          });
+
+          if (currentCallId != threadId) return {
+            v: void 0
+          }; //If I'm the only call participant, stop the call
+
+          if (callUsers && Object.values(callUsers).length >= 1) {
+            if (Object.values(callUsers).length < 2) {
+              _eventsModule.chatEvents.fireEvent('callEvents', {
+                type: 'CALL_ENDED',
+                callId: threadId
+              });
+
               callStop();
-            } else {
-              callStateController.removeParticipant(messageContent[0].userId);
-              if (screenShareInfo.isStarted() && screenShareInfo.getOwner() === messageContent[0].userId) callStateController.removeScreenShareFromCall();
+              return {
+                v: void 0
+              };
+            }
+
+            if (!!messageContent[0].userId) {
+              //console.log("chatMessageVOTypes.LEAVE_CALL: ", messageContent[0].userId, chatMessaging.userInfo.id)
+              if (messageContent[0].userId == chatMessaging.userInfo.id) {
+                callStop();
+              } else {
+                callStateController.removeParticipant(messageContent[0].userId);
+                if (screenShareInfo.isStarted() && screenShareInfo.getOwner() === messageContent[0].userId) callStateController.removeScreenShareFromCall();
+              }
             }
           }
-        }
 
-        break;
+          break;
 
-      /**
-       * Type 93    Add Call Participant
-       */
+        /**
+         * Type 93    Add Call Participant
+         */
 
-      case _constants.chatMessageVOTypes.ADD_CALL_PARTICIPANT:
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
-        }
+        case _constants.chatMessageVOTypes.ADD_CALL_PARTICIPANT:
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+          }
 
-        break;
+          break;
 
-      /**
-       * Type 94    Call Participant Joined
-       */
+        /**
+         * Type 94    Call Participant Joined
+         */
 
-      case _constants.chatMessageVOTypes.CALL_PARTICIPANT_JOINED:
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
-        }
+        case _constants.chatMessageVOTypes.CALL_PARTICIPANT_JOINED:
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+          }
 
-        if (Array.isArray(messageContent)) {
-          var _loop2 = function _loop2(i) {
-            var correctedData = {
-              video: messageContent[i].video,
-              mute: messageContent[i].mute,
-              userId: messageContent[i].userId,
-              topicSend: messageContent[i].sendTopic
+          if (Array.isArray(messageContent)) {
+            var _loop2 = function _loop2(i) {
+              var correctedData = {
+                video: messageContent[i].video,
+                mute: messageContent[i].mute,
+                userId: messageContent[i].userId,
+                topicSend: messageContent[i].sendTopic
+              };
+
+              if (!callUsers[correctedData.userId]) {
+                setTimeout(function () {
+                  return setupJoinedParticipant(correctedData);
+                }, 500);
+              } // else {
+              //     callStateController.removeParticipant(correctedData.userId);
+              // }
+
             };
-            callStateController.removeParticipant(correctedData.userId);
-            setTimeout(function () {
-              callStateController.setupCallParticipant(correctedData);
 
-              if (correctedData.video) {
-                callStateController.startParticipantVideo(correctedData.userId);
-              }
+            for (var i in messageContent) {
+              _loop2(i);
+            }
+          }
 
-              if (!correctedData.mute) {
-                callStateController.startParticipantAudio(correctedData.userId);
-              }
+          var setupJoinedParticipant = function setupJoinedParticipant(callUser) {
+            callStateController.setupCallParticipant(callUser);
 
-              _eventsModule.chatEvents.fireEvent('callEvents', {
-                type: 'CALL_DIVS',
-                result: generateCallUIList()
-              });
-            }, 500);
+            if (callUser.video) {
+              callStateController.startParticipantVideo(callUser.userId);
+            }
+
+            if (!callUser.mute) {
+              callStateController.startParticipantAudio(callUser.userId);
+            }
+
+            _eventsModule.chatEvents.fireEvent('callEvents', {
+              type: 'CALL_DIVS',
+              result: generateCallUIList()
+            });
           };
 
-          for (var i in messageContent) {
-            _loop2(i);
-          }
-        }
-
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'CALL_PARTICIPANT_JOINED',
-          result: messageContent
-        });
-
-        if (callUsers && callUsers[chatMessaging.userInfo.id] && callUsers[chatMessaging.userInfo.id].video) {
-          restartMediaOnKeyFrame(chatMessaging.userInfo.id, [2000, 4000, 8000, 12000, 16000, 24000]);
-        }
-
-        if (callUsers && callUsers['screenShare'] && callUsers['screenShare'].video && screenShareInfo.isStarted() && screenShareInfo.iAmOwner()) {
-          sendCallMetaData({
-            id: callMetaDataTypes.SCREENSHAREMETADATA,
-            userid: chatMessaging.userInfo.id,
-            content: {
-              dimension: {
-                width: screenShareInfo.getWidth(),
-                height: screenShareInfo.getHeight()
-              }
-            }
+          _eventsModule.chatEvents.fireEvent('callEvents', {
+            type: 'CALL_PARTICIPANT_JOINED',
+            result: messageContent
           });
-          restartMediaOnKeyFrame('screenShare', [2000, 4000, 8000, 12000, 16000, 24000]);
-        }
 
-        break;
-
-      /**
-       * Type 95    Remove Call Participant
-       */
-
-      case _constants.chatMessageVOTypes.REMOVE_CALL_PARTICIPANT:
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
-        }
-
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'CALL_PARTICIPANT_REMOVED',
-          result: messageContent
-        });
-
-        break;
-
-      /**
-       * Type 96    Terminate Call
-       */
-
-      case _constants.chatMessageVOTypes.TERMINATE_CALL:
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
-        }
-
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'TERMINATE_CALL',
-          result: messageContent
-        });
-
-        callStop();
-        break;
-
-      /**
-       * Type 97    Mute Call Participant
-       */
-
-      case _constants.chatMessageVOTypes.MUTE_CALL_PARTICIPANT:
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
-        }
-
-        if (Array.isArray(messageContent)) {
-          for (var _i in messageContent) {
-            var cUserId = messageContent[_i].userId; // pause = messageContent[i].userId == chatMessaging.userInfo.id;
-
-            callUsers[cUserId].mute = true;
-
-            callUsers[messageContent[_i].userId].audioStopManager.disableStream(); // callStateController.deactivateParticipantStream(
-            //     messageContent[i].userId,
-            //     'audio',
-            //     'mute'
-            // )
-
+          if (callUsers && callUsers[chatMessaging.userInfo.id] && callUsers[chatMessaging.userInfo.id].video) {
+            restartMediaOnKeyFrame(chatMessaging.userInfo.id, [2000, 4000, 8000, 12000, 16000, 24000]);
           }
-        }
 
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'CALL_DIVS',
-          result: generateCallUIList()
-        });
+          if (callUsers && callUsers['screenShare'] && callUsers['screenShare'].video && screenShareInfo.isStarted() && screenShareInfo.iAmOwner()) {
+            sendCallMetaData({
+              id: callMetaDataTypes.SCREENSHAREMETADATA,
+              userid: chatMessaging.userInfo.id,
+              content: {
+                dimension: {
+                  width: screenShareInfo.getWidth(),
+                  height: screenShareInfo.getHeight()
+                }
+              }
+            });
+            restartMediaOnKeyFrame('screenShare', [2000, 4000, 8000, 12000, 16000, 24000]);
+          }
 
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'CALL_PARTICIPANT_MUTE',
-          result: messageContent
-        });
+          break;
 
-        break;
+        /**
+         * Type 95    Remove Call Participant
+         */
 
-      /**
-       * Type 98    UnMute Call Participant
-       */
+        case _constants.chatMessageVOTypes.REMOVE_CALL_PARTICIPANT:
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+          }
 
-      case _constants.chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT:
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
-        }
+          _eventsModule.chatEvents.fireEvent('callEvents', {
+            type: 'CALL_PARTICIPANT_REMOVED',
+            result: messageContent
+          });
 
-        var myId = chatMessaging.userInfo.id;
+          break;
 
-        if (Array.isArray(messageContent)) {
-          for (var _i2 in messageContent) {
-            var _cUserId = messageContent[_i2].userId;
-            callUsers[_cUserId].mute = false;
+        /**
+         * Type 96    Terminate Call
+         */
 
-            if (callUsers[_cUserId].audioStopManager.isStreamPaused()) {
-              if (callUsers[_cUserId].audioStopManager.isStreamStopped()) {
-                callStateController.activateParticipantStream(_cUserId, 'audio', myId === _cUserId ? 'send' : 'receive', 'audioTopicName', callUsers[_cUserId].topicSend, 'mute');
-              } else if (myId === _cUserId) {
-                currentModuleInstance.resumeMice({});
+        case _constants.chatMessageVOTypes.TERMINATE_CALL:
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+          }
+
+          _eventsModule.chatEvents.fireEvent('callEvents', {
+            type: 'TERMINATE_CALL',
+            result: messageContent
+          });
+
+          callStop();
+          break;
+
+        /**
+         * Type 97    Mute Call Participant
+         */
+
+        case _constants.chatMessageVOTypes.MUTE_CALL_PARTICIPANT:
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+          }
+
+          if (Array.isArray(messageContent)) {
+            for (var _i in messageContent) {
+              var cUserId = messageContent[_i].userId;
+
+              if (!callUsers[cUserId]) {
+                maybeInquiryCall([{
+                  id: cUserId
+                }]);
+                continue;
               }
 
-              callUsers[_cUserId].audioStopManager.reset();
+              callUsers[cUserId].mute = true;
+
+              callUsers[messageContent[_i].userId].audioStopManager.disableStream(); // callStateController.deactivateParticipantStream(
+              //     messageContent[i].userId,
+              //     'audio',
+              //     'mute'
+              // )
+
             }
-            /*                            callStateController.activateParticipantStream(
-                                        messageContent[i].userId,
-                                        'audio',
-                                        //TODO: Should send in here when chat server fixes the bug
-                                        'receive',   //(messageContent[i].userId === chatMessaging.userInfo.id ? 'send' : 'receive'),
-                                        'audioTopicName',
-                                        messageContent[i].sendTopic,
-                                        'mute'
-                                    );*/
-
           }
-        }
 
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'CALL_DIVS',
-          result: generateCallUIList()
-        });
-
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'CALL_PARTICIPANT_UNMUTE',
-          result: messageContent
-        });
-
-        break;
-
-      /**
-       * Type 99   Partner rejected call
-       */
-
-      case _constants.chatMessageVOTypes.CANCEL_GROUP_CALL:
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
-        }
-
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'REJECT_GROUP_CALL',
-          result: messageContent
-        });
-
-        break;
-
-      /**
-       * Type 110    Active Call Participants List
-       */
-
-      case _constants.chatMessageVOTypes.ACTIVE_CALL_PARTICIPANTS:
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
-        }
-
-        break;
-
-      /**
-       * Type 111    Kafka Call Session Created
-       */
-
-      case _constants.chatMessageVOTypes.CALL_SESSION_CREATED:
-        // if(!callRequestController.callEstablishedInMySide)
-        //     return;
-        if (!callRequestController.iRequestedCall) return;
-
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'CALL_SESSION_CREATED',
-          result: messageContent
-        }); // if(!requestedCallId) {
-
-
-        requestedCallId = messageContent.callId; // }
-
-        break;
-
-      /**
-       * Type 113    Turn On Video Call
-       */
-
-      case _constants.chatMessageVOTypes.TURN_ON_VIDEO_CALL:
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
-        }
-
-        if (Array.isArray(messageContent)) {
-          for (var _i3 in messageContent) {
-            var _cUserId2 = messageContent[_i3].userId;
-            callUsers[_cUserId2].video = true;
-            callStateController.activateParticipantStream(messageContent[_i3].userId, 'video', messageContent[_i3].userId === chatMessaging.userInfo.id ? 'send' : 'receive', 'videoTopicName', messageContent[_i3].sendTopic, 'video');
-          }
-        }
-
-        setTimeout(function () {
           _eventsModule.chatEvents.fireEvent('callEvents', {
             type: 'CALL_DIVS',
             result: generateCallUIList()
           });
-        });
 
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'TURN_ON_VIDEO_CALL',
-          result: messageContent
-        });
+          _eventsModule.chatEvents.fireEvent('callEvents', {
+            type: 'CALL_PARTICIPANT_MUTE',
+            result: messageContent
+          });
 
-        break;
+          break;
 
-      /**
-       * Type 114    Turn Off Video Call
-       */
+        /**
+         * Type 98    UnMute Call Participant
+         */
 
-      case _constants.chatMessageVOTypes.TURN_OFF_VIDEO_CALL:
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
-        }
-
-        if (Array.isArray(messageContent)) {
-          for (var _i4 in messageContent) {
-            var _cUserId3 = messageContent[_i4].userId;
-            callUsers[_cUserId3].video = false;
-            callStateController.deactivateParticipantStream(messageContent[_i4].userId, 'video', 'video');
+        case _constants.chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT:
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
           }
-        }
 
-        setTimeout(function () {
+          var myId = chatMessaging.userInfo.id;
+
+          if (Array.isArray(messageContent)) {
+            var _loop3 = function _loop3(_i2) {
+              var cUserId = messageContent[_i2].userId;
+
+              if (!callUsers[cUserId]) {
+                maybeInquiryCall([{
+                  id: cUserId
+                }]);
+                return "continue";
+              }
+
+              if (callUsers[cUserId].lockUnmuting) return "continue";
+              callUsers[cUserId].lockUnmuting = true;
+              setTimeout(function () {
+                callUsers[cUserId].lockUnmuting = false;
+              }, 1000);
+              callUsers[cUserId].mute = false;
+
+              if (callUsers[cUserId].audioStopManager.isStreamPaused()) {
+                if (callUsers[cUserId].audioStopManager.isStreamStopped()) {
+                  callStateController.activateParticipantStream(cUserId, 'audio', myId === cUserId ? 'send' : 'receive', 'audioTopicName', callUsers[cUserId].topicSend, 'mute');
+                } else if (myId === cUserId) {
+                  currentModuleInstance.resumeMice({});
+                }
+
+                callUsers[cUserId].audioStopManager.reset();
+              }
+              /*                            callStateController.activateParticipantStream(
+                                          messageContent[i].userId,
+                                          'audio',
+                                          //TODO: Should send in here when chat server fixes the bug
+                                          'receive',   //(messageContent[i].userId === chatMessaging.userInfo.id ? 'send' : 'receive'),
+                                          'audioTopicName',
+                                          messageContent[i].sendTopic,
+                                          'mute'
+                                      );*/
+
+            };
+
+            for (var _i2 in messageContent) {
+              var _ret2 = _loop3(_i2);
+
+              if (_ret2 === "continue") continue;
+            }
+          }
+
           _eventsModule.chatEvents.fireEvent('callEvents', {
             type: 'CALL_DIVS',
             result: generateCallUIList()
           });
-        });
 
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'TURN_OFF_VIDEO_CALL',
-          result: messageContent
-        });
+          _eventsModule.chatEvents.fireEvent('callEvents', {
+            type: 'CALL_PARTICIPANT_UNMUTE',
+            result: messageContent
+          });
 
-        break;
+          break;
 
-      /**
-       * Type 121    Record Call Request
-       */
+        /**
+         * Type 99   Partner rejected call
+         */
 
-      case _constants.chatMessageVOTypes.RECORD_CALL:
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
-        }
+        case _constants.chatMessageVOTypes.CANCEL_GROUP_CALL:
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+          }
 
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'START_RECORDING_CALL',
-          result: messageContent
-        });
+          _eventsModule.chatEvents.fireEvent('callEvents', {
+            type: 'REJECT_GROUP_CALL',
+            result: messageContent
+          });
 
-        restartMediaOnKeyFrame(chatMessaging.userInfo.id, [4000, 8000, 12000, 25000]);
-        restartMediaOnKeyFrame("screenShare", [4000, 8000, 12000, 25000]);
-        break;
+          break;
 
-      /**
-       * Type 122   End Record Call Request
-       */
+        /**
+         * Type 110    Active Call Participants List
+         */
 
-      case _constants.chatMessageVOTypes.END_RECORD_CALL:
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
-        }
+        case _constants.chatMessageVOTypes.ACTIVE_CALL_PARTICIPANTS:
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+          }
 
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'STOP_RECORDING_CALL',
-          result: messageContent
-        });
+          break;
 
-        break;
+        /**
+         * Type 111    Kafka Call Session Created
+         */
 
-      /**
-       * Type 123   Start Screen Share
-       */
+        case _constants.chatMessageVOTypes.CALL_SESSION_CREATED:
+          // if(!callRequestController.callEstablishedInMySide)
+          //     return;
+          if (!callRequestController.iRequestedCall) return {
+            v: void 0
+          };
 
-      case _constants.chatMessageVOTypes.START_SCREEN_SHARE:
-        // if(!callRequestController.callEstablishedInMySide)
-        //     return;
-        screenShareInfo.setIsStarted(true);
-        screenShareInfo.setOwner(messageContent.screenOwner.id);
+          _eventsModule.chatEvents.fireEvent('callEvents', {
+            type: 'CALL_SESSION_CREATED',
+            result: messageContent
+          }); // if(!requestedCallId) {
 
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
-        } else if (!screenShareInfo.iAmOwner()) {
-          callStateController.addScreenShareToCall("receive", false);
-        }
 
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'START_SCREEN_SHARE',
-          result: messageContent
-        });
+          requestedCallId = messageContent.callId; // }
 
-        break;
+          break;
 
-      /**
-       * Type 124   End Screen Share
-       */
+        /**
+         * Type 113    Turn On Video Call
+         */
 
-      case _constants.chatMessageVOTypes.END_SCREEN_SHARE:
-        // screenShareInfo.setIAmOwner(false);
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
-        } else if (!screenShareInfo.iAmOwner()) {
-          consoleLogging && console.log("[SDK][END_SCREEN_SHARE], im not owner of screen");
-          callStateController.removeScreenShareFromCall();
-        }
+        case _constants.chatMessageVOTypes.TURN_ON_VIDEO_CALL:
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+          }
 
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'END_SCREEN_SHARE',
-          result: messageContent
-        });
+          if (Array.isArray(messageContent)) {
+            var _loop4 = function _loop4(_i3) {
+              var cUserId = messageContent[_i3].userId;
 
-        break;
+              if (!callUsers[cUserId]) {
+                //TODO: Inquiry once for all the list
+                maybeInquiryCall([{
+                  id: cUserId
+                }]);
+                return "continue";
+              }
 
-      /**
-       * Type 125   Delete From Call List
-       */
+              if (callUsers[cUserId].lockVideoStart) return "continue";
+              callUsers[cUserId].lockVideoStart = true;
+              setTimeout(function () {
+                callUsers[cUserId].lockVideoStart = false;
+              }, 1000);
+              callUsers[cUserId].video = true;
+              callStateController.activateParticipantStream(messageContent[_i3].userId, 'video', messageContent[_i3].userId === chatMessaging.userInfo.id ? 'send' : 'receive', 'videoTopicName', messageContent[_i3].sendTopic, 'video');
+            };
 
-      case _constants.chatMessageVOTypes.DELETE_FROM_CALL_HISTORY:
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent));
-        }
+            for (var _i3 in messageContent) {
+              var _ret3 = _loop4(_i3);
 
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'DELETE_FROM_CALL_LIST',
-          result: messageContent
-        });
+              if (_ret3 === "continue") continue;
+            }
+          }
 
-        break;
+          setTimeout(function () {
+            _eventsModule.chatEvents.fireEvent('callEvents', {
+              type: 'CALL_DIVS',
+              result: generateCallUIList()
+            });
+          });
 
-      /**
-       * Type 126   Destinated Record Call Request
-       */
+          _eventsModule.chatEvents.fireEvent('callEvents', {
+            type: 'TURN_ON_VIDEO_CALL',
+            result: messageContent
+          });
 
-      case _constants.chatMessageVOTypes.DESTINED_RECORD_CALL:
-        // if(!callRequestController.callEstablishedInMySide)
-        //     return;
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
-        }
+          break;
 
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'START_RECORDING_CALL',
-          result: messageContent
-        });
+        /**
+         * Type 114    Turn Off Video Call
+         */
 
-        restartMediaOnKeyFrame(chatMessaging.userInfo.id, [4000, 8000, 12000, 25000]);
-        restartMediaOnKeyFrame("screenShare", [4000, 8000, 12000, 25000]);
-        break;
+        case _constants.chatMessageVOTypes.TURN_OFF_VIDEO_CALL:
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+          }
 
-      /**
-       * Type 129   Get Calls To Join
-       */
+          if (Array.isArray(messageContent)) {
+            for (var _i4 in messageContent) {
+              var _cUserId = messageContent[_i4].userId;
 
-      case _constants.chatMessageVOTypes.GET_CALLS_TO_JOIN:
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
-        }
+              if (!callUsers[_cUserId]) {
+                maybeInquiryCall([{
+                  id: _cUserId
+                }]);
+                continue;
+              }
 
-        break;
+              callUsers[_cUserId].video = false;
+              callStateController.deactivateParticipantStream(messageContent[_i4].userId, 'video', 'video');
+            }
+          }
 
-      /**
-      * Type 221  Event to tell us p2p call converted to a group call
-      */
+          setTimeout(function () {
+            _eventsModule.chatEvents.fireEvent('callEvents', {
+              type: 'CALL_DIVS',
+              result: generateCallUIList()
+            });
+          });
 
-      case _constants.chatMessageVOTypes.SWITCH_TO_GROUP_CALL_REQUEST:
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'SWITCH_TO_GROUP_CALL',
-          result: messageContent //contains: isGroup, callId, threadId
+          _eventsModule.chatEvents.fireEvent('callEvents', {
+            type: 'TURN_OFF_VIDEO_CALL',
+            result: messageContent
+          });
 
-        });
+          break;
 
-        break;
+        /**
+         * Type 121    Record Call Request
+         */
 
-      /**
-       * Type 222    Call Recording Started
-       */
+        case _constants.chatMessageVOTypes.RECORD_CALL:
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+          }
 
-      case _constants.chatMessageVOTypes.RECORD_CALL_STARTED:
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
-        }
+          _eventsModule.chatEvents.fireEvent('callEvents', {
+            type: 'START_RECORDING_CALL',
+            result: messageContent
+          });
 
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'CALL_RECORDING_STARTED',
-          result: messageContent
-        });
+          restartMediaOnKeyFrame(chatMessaging.userInfo.id, [4000, 8000, 12000, 25000]);
+          restartMediaOnKeyFrame("screenShare", [4000, 8000, 12000, 25000]);
+          break;
 
-        break;
+        /**
+         * Type 122   End Record Call Request
+         */
 
-      /**
-       * Type 225    Call Recording Started
-       */
+        case _constants.chatMessageVOTypes.END_RECORD_CALL:
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+          }
 
-      case _constants.chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE:
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
-        }
+          _eventsModule.chatEvents.fireEvent('callEvents', {
+            type: 'STOP_RECORDING_CALL',
+            result: messageContent
+          });
 
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'CALL_STICKER',
-          result: messageContent
-        });
+          break;
 
-        break;
+        /**
+         * Type 123   Start Screen Share
+         */
 
-      /**
-       * Type 227    RECALL_THREAD_PARTICIPANT
-       */
+        case _constants.chatMessageVOTypes.START_SCREEN_SHARE:
+          // if(!callRequestController.callEstablishedInMySide)
+          //     return;
+          screenShareInfo.setIsStarted(true);
+          screenShareInfo.setOwner(messageContent.screenOwner.id);
 
-      case _constants.chatMessageVOTypes.RECALL_THREAD_PARTICIPANT:
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
-        }
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+          } else if (!screenShareInfo.iAmOwner()) {
+            callStateController.addScreenShareToCall("receive", false);
+          }
 
-        break;
+          _eventsModule.chatEvents.fireEvent('callEvents', {
+            type: 'START_SCREEN_SHARE',
+            result: messageContent
+          });
 
-      /**
-      * Type 228   INQUIRY_CALL
-      */
+          break;
 
-      case _constants.chatMessageVOTypes.INQUIRY_CALL:
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
-        }
+        /**
+         * Type 124   End Screen Share
+         */
 
-        break;
+        case _constants.chatMessageVOTypes.END_SCREEN_SHARE:
+          // screenShareInfo.setIAmOwner(false);
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+          } else if (!screenShareInfo.iAmOwner()) {
+            consoleLogging && console.log("[SDK][END_SCREEN_SHARE], im not owner of screen");
+            callStateController.removeScreenShareFromCall();
+          }
 
-      /**
-       * Type 230    CALL_RECORDING_FAILED
-       */
+          _eventsModule.chatEvents.fireEvent('callEvents', {
+            type: 'END_SCREEN_SHARE',
+            result: messageContent
+          });
 
-      case _constants.chatMessageVOTypes.CALL_RECORDING_FAILED:
-        if (chatMessaging.messagesCallbacks[uniqueId]) {
-          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
-        }
+          break;
 
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'CALL_RECORDING_FAILED',
-          result: messageContent
-        });
+        /**
+         * Type 125   Delete From Call List
+         */
 
-        break;
-    }
+        case _constants.chatMessageVOTypes.DELETE_FROM_CALL_HISTORY:
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent));
+          }
+
+          _eventsModule.chatEvents.fireEvent('callEvents', {
+            type: 'DELETE_FROM_CALL_LIST',
+            result: messageContent
+          });
+
+          break;
+
+        /**
+         * Type 126   Destinated Record Call Request
+         */
+
+        case _constants.chatMessageVOTypes.DESTINED_RECORD_CALL:
+          // if(!callRequestController.callEstablishedInMySide)
+          //     return;
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+          }
+
+          _eventsModule.chatEvents.fireEvent('callEvents', {
+            type: 'START_RECORDING_CALL',
+            result: messageContent
+          });
+
+          restartMediaOnKeyFrame(chatMessaging.userInfo.id, [4000, 8000, 12000, 25000]);
+          restartMediaOnKeyFrame("screenShare", [4000, 8000, 12000, 25000]);
+          break;
+
+        /**
+         * Type 129   Get Calls To Join
+         */
+
+        case _constants.chatMessageVOTypes.GET_CALLS_TO_JOIN:
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+          }
+
+          break;
+
+        /**
+        * Type 221  Event to tell us p2p call converted to a group call
+        */
+
+        case _constants.chatMessageVOTypes.SWITCH_TO_GROUP_CALL_REQUEST:
+          _eventsModule.chatEvents.fireEvent('callEvents', {
+            type: 'SWITCH_TO_GROUP_CALL',
+            result: messageContent //contains: isGroup, callId, threadId
+
+          });
+
+          break;
+
+        /**
+         * Type 222    Call Recording Started
+         */
+
+        case _constants.chatMessageVOTypes.RECORD_CALL_STARTED:
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+          }
+
+          _eventsModule.chatEvents.fireEvent('callEvents', {
+            type: 'CALL_RECORDING_STARTED',
+            result: messageContent
+          });
+
+          break;
+
+        /**
+         * Type 225    Call Recording Started
+         */
+
+        case _constants.chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE:
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+          }
+
+          _eventsModule.chatEvents.fireEvent('callEvents', {
+            type: 'CALL_STICKER',
+            result: messageContent
+          });
+
+          break;
+
+        /**
+         * Type 227    RECALL_THREAD_PARTICIPANT
+         */
+
+        case _constants.chatMessageVOTypes.RECALL_THREAD_PARTICIPANT:
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+          }
+
+          break;
+
+        /**
+        * Type 228   INQUIRY_CALL
+        */
+
+        case _constants.chatMessageVOTypes.INQUIRY_CALL:
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+          }
+
+          break;
+
+        /**
+         * Type 230    CALL_RECORDING_FAILED
+         */
+
+        case _constants.chatMessageVOTypes.CALL_RECORDING_FAILED:
+          if (chatMessaging.messagesCallbacks[uniqueId]) {
+            chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+          }
+
+          _eventsModule.chatEvents.fireEvent('callEvents', {
+            type: 'CALL_RECORDING_FAILED',
+            result: messageContent
+          });
+
+          break;
+      }
+    }();
+
+    if ((0, _typeof2["default"])(_ret) === "object") return _ret.v;
   };
 
   function processChatStartCallEvent(type, messageContent, contentCount, threadId, uniqueId) {
@@ -4783,6 +4899,10 @@ function ChatCall(params) {
             callback = undefined;
 
             if (!returnData.hasError) {
+              maybeInquiryCall(returnData.result.participants.map(function (item) {
+                return item.participantVO;
+              }));
+
               _eventsModule.chatEvents.fireEvent('callEvents', {
                 type: 'CALL_PARTICIPANTS_LIST_CHANGE',
                 threadId: callId,

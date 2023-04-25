@@ -950,11 +950,28 @@ function ChatCall(params) {
                     }
                 });
             },
-            createTopic: function () {
-                let manager = this;
-                if(callUsers[config.userId] && config.peer) {
-                    return;
+            canCreateTopic: function () {
+                if(config.mediaType === 'video' && !callUsers[config.userId].localVideoStreamCreated) {
+                    callUsers[config.userId].localVideoStreamCreated = true;
+                    return true;
                 }
+
+                if(config.mediaType === 'audio' && !callUsers[config.userId].localAudioStreamCreated){
+                    callUsers[config.userId].localAudioStreamCreated = true;
+                    return true;
+                }
+
+                if(callUsers[config.userId] && config.peer) {
+                    return false;
+                }
+
+                return false;
+            },
+            createTopic: function () {
+                if(!this.canCreateTopic())
+                    return;
+
+                let manager = this;
 
                 this.generateSdpOfferOptions().then(function (options) {
                     consoleLogging && console.debug("[SDK][generateSdpOfferOptions] Options for this request have been resolved: ", {options}, "userId: ", config.userId, "topic: ", config.topic, "direction: ", config.direction);
@@ -966,12 +983,16 @@ function ChatCall(params) {
             removeTopic: function () {
                 let manager = this;
                 return new Promise(function (resolve, reject) {
+                    callUsers[config.userId].localAudioStreamCreated = false;
+                    callUsers[config.userId].localVideoStreamCreated = false;
                     if(config.peer) {
                         config.sdpOfferRequestSent = false;
                         // this.removeTopicIceCandidateInterval();
-                        metadataInstance.clearIceCandidateInterval();
+                        // metadataInstance.clearIceCandidateInterval();
                         manager.removeConnectionQualityInterval();
                         manager.removeAudioWatcherInterval();
+                        callUsers[config.userId].localAudioStreamCreated = false;
+                        callUsers[config.userId].localVideoStreamCreated = false;
                         if(config.direction === 'send' && !config.isScreenShare) {
                             /*let constraint = {
                                 audio: config.mediaType === 'audio',
@@ -1889,7 +1910,10 @@ function ChatCall(params) {
             },
             deactivateParticipantStream: function (userId, mediaType, mediaKey) {
                 if(callUsers[userId]) {
-                    callUsers[userId][mediaKey] = (mediaKey === 'mute' ? true : false);
+                    if(mediaType == 'video')
+                        callUsers[userId].localVideoEnabled = true;
+                    else if(mediaType === 'audio')
+                        callUsers[userId].localAudioEnabled = true;
                     // var user = callUsers[userId];
                     // var topicNameKey = mediaType === 'audio' ? 'audioTopicName' : 'videoTopicName';
                     callUsers[userId][mediaType + 'TopicManager'].removeTopic();
@@ -2677,6 +2701,29 @@ function ChatCall(params) {
                     }
                 });
             }
+        },
+
+        maybeInquiryCall = function (usersList) {
+            let inquiryCallIsNeeded = false,
+            inquiryTimoutId;
+            usersList.forEach(item => {
+                if(item.id && !callUsers[item.id])
+                    inquiryCallIsNeeded = true;
+            });
+            if(inquiryCallIsNeeded) {
+                doCallInquiryOnce();
+            }
+
+            /**
+             * Prevent fast api calls
+             */
+            function doCallInquiryOnce(){
+                inquiryTimoutId && clearTimeout(inquiryTimoutId);
+                inquiryTimoutId = setTimeout(()=>{
+                    clearTimeout(inquiryTimoutId);
+                    inquiryCallState();
+                }, 1000);
+            }
         };
 
     this.updateToken = function (newToken) {
@@ -2695,7 +2742,7 @@ function ChatCall(params) {
 
         if (jsonMessage.done !== 'FALSE' || (jsonMessage.done === 'FALSE' && jsonMessage.desc === 'duplicated')) {
             asyncRequestTimeouts[uniqueId] && clearTimeout(asyncRequestTimeouts[uniqueId]);
-        } else if(jsonMessage.done === 'FALSE') {
+        } else if(jsonMessage.done === 'FALSE' && jsonMessage.id != 'ADD_ICE_CANDIDATE') {
             chatEvents.fireEvent('callEvents', {
                 type: 'CALL_ERROR',
                 code: 7000,
@@ -3148,22 +3195,28 @@ function ChatCall(params) {
                             userId: messageContent[i].userId,
                             topicSend: messageContent[i].sendTopic
                         };
-                        callStateController.removeParticipant(correctedData.userId);
-                        setTimeout(function (){
-                            callStateController.setupCallParticipant(correctedData);
-                            if(correctedData.video) {
-                                callStateController.startParticipantVideo(correctedData.userId);
-                            }
-                            if(!correctedData.mute) {
-                                callStateController.startParticipantAudio(correctedData.userId);
-                            }
-
-                            chatEvents.fireEvent('callEvents', {
-                                type: 'CALL_DIVS',
-                                result: generateCallUIList()
-                            });
-                        }, 500)
+                        if(!callUsers[correctedData.userId]) {
+                            setTimeout(()=> setupJoinedParticipant(correctedData), 500)
+                        }
+                        // else {
+                        //     callStateController.removeParticipant(correctedData.userId);
+                        // }
                     }
+                }
+
+                function setupJoinedParticipant(callUser){
+                    callStateController.setupCallParticipant(callUser);
+                    if (callUser.video) {
+                        callStateController.startParticipantVideo(callUser.userId);
+                    }
+                    if (!callUser.mute) {
+                        callStateController.startParticipantAudio(callUser.userId);
+                    }
+
+                    chatEvents.fireEvent('callEvents', {
+                        type: 'CALL_DIVS',
+                        result: generateCallUIList()
+                    });
                 }
 
                 chatEvents.fireEvent('callEvents', {
@@ -3237,7 +3290,10 @@ function ChatCall(params) {
                 if(Array.isArray(messageContent)){
                     for(let i in messageContent) {
                         let cUserId = messageContent[i].userId;
-                        // pause = messageContent[i].userId == chatMessaging.userInfo.id;
+                        if(!callUsers[cUserId]) {
+                            maybeInquiryCall([{id: cUserId}]);
+                            continue;
+                        }
                         callUsers[cUserId].mute = true;
                         callUsers[messageContent[i].userId].audioStopManager.disableStream();
                         // callStateController.deactivateParticipantStream(
@@ -3273,6 +3329,17 @@ function ChatCall(params) {
                 if(Array.isArray(messageContent)) {
                     for(let i in messageContent) {
                         let cUserId = messageContent[i].userId;
+                        if(!callUsers[cUserId]) {
+                            maybeInquiryCall([{id: cUserId}]);
+                            continue;
+                        }
+
+                        if(callUsers[cUserId].lockUnmuting)
+                            continue;
+                        callUsers[cUserId].lockUnmuting = true;
+                        setTimeout(()=>{
+                            callUsers[cUserId].lockUnmuting = false;
+                        }, 1000);
 
                         callUsers[cUserId].mute = false;
                         if(callUsers[cUserId].audioStopManager.isStreamPaused()) {
@@ -3372,6 +3439,17 @@ function ChatCall(params) {
                 if(Array.isArray(messageContent)) {
                     for(let i in messageContent) {
                         let cUserId = messageContent[i].userId;
+                        if(!callUsers[cUserId]) {
+                            maybeInquiryCall([{id: cUserId}]);
+                            continue;
+                        }
+                        if(callUsers[cUserId].lockVideoStart)
+                            continue;
+                        callUsers[cUserId].lockVideoStart = true;
+                        setTimeout(()=>{
+                            callUsers[cUserId].lockVideoStart = false;
+                        }, 1000);
+
                         callUsers[cUserId].video = true;
                         callStateController.activateParticipantStream(
                             messageContent[i].userId,
@@ -3409,6 +3487,11 @@ function ChatCall(params) {
                 if(Array.isArray(messageContent)) {
                     for(let i in messageContent) {
                         let cUserId = messageContent[i].userId;
+                        if(!callUsers[cUserId]) {
+                            maybeInquiryCall([{id: cUserId}]);
+                            continue;
+                        }
+
                         callUsers[cUserId].video = false;
                         callStateController.deactivateParticipantStream(
                             messageContent[i].userId,
@@ -4661,6 +4744,8 @@ function ChatCall(params) {
                         callback = undefined;
 
                         if (!returnData.hasError) {
+                            maybeInquiryCall(returnData.result.participants.map(item => item.participantVO));
+
                             chatEvents.fireEvent('callEvents', {
                                 type: 'CALL_PARTICIPANTS_LIST_CHANGE',
                                 threadId: callId,
