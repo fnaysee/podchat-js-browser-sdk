@@ -3298,9 +3298,7 @@ function ChatCall(params) {
               var cUserId = messageContent[_i].userId;
 
               if (!callUsers[cUserId]) {
-                maybeInquiryCall([{
-                  id: cUserId
-                }]);
+                // maybeInquiryCall([{id: cUserId}]);
                 continue;
               }
 
@@ -3343,9 +3341,7 @@ function ChatCall(params) {
               var cUserId = messageContent[_i2].userId;
 
               if (!callUsers[cUserId]) {
-                maybeInquiryCall([{
-                  id: cUserId
-                }]);
+                // maybeInquiryCall([{id: cUserId}]);
                 return "continue";
               }
 
@@ -3458,10 +3454,7 @@ function ChatCall(params) {
               var cUserId = messageContent[_i3].userId;
 
               if (!callUsers[cUserId]) {
-                //TODO: Inquiry once for all the list
-                maybeInquiryCall([{
-                  id: cUserId
-                }]);
+                // maybeInquiryCall([{id: cUserId}]);
                 return "continue";
               }
 
@@ -3509,9 +3502,7 @@ function ChatCall(params) {
               var _cUserId = messageContent[_i4].userId;
 
               if (!callUsers[_cUserId]) {
-                maybeInquiryCall([{
-                  id: _cUserId
-                }]);
+                // maybeInquiryCall([{id: cUserId}]);
                 continue;
               }
 
@@ -4899,10 +4890,7 @@ function ChatCall(params) {
             callback = undefined;
 
             if (!returnData.hasError) {
-              maybeInquiryCall(returnData.result.participants.map(function (item) {
-                return item.participantVO;
-              }));
-
+              // maybeInquiryCall(returnData.result.participants.map(item => item.participantVO));
               _eventsModule.chatEvents.fireEvent('callEvents', {
                 type: 'CALL_PARTICIPANTS_LIST_CHANGE',
                 threadId: callId,

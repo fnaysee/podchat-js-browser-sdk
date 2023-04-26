@@ -737,7 +737,7 @@ EncoderBuffer.prototype.join = function join(out, offset) {
   return out;
 };
 
-},{"../base/reporter":19,"inherits":182,"safer-buffer":216}],17:[function(require,module,exports){
+},{"../base/reporter":19,"inherits":182,"safer-buffer":217}],17:[function(require,module,exports){
 'use strict';
 
 const base = exports;
@@ -1993,7 +1993,7 @@ PEMDecoder.prototype.decode = function decode(data, options) {
   return DERDecoder.prototype.decode.call(this, input, options);
 };
 
-},{"./der":22,"inherits":182,"safer-buffer":216}],25:[function(require,module,exports){
+},{"./der":22,"inherits":182,"safer-buffer":217}],25:[function(require,module,exports){
 'use strict';
 
 const inherits = require('inherits');
@@ -2290,7 +2290,7 @@ function encodeTag(tag, primitive, cls, reporter) {
   return res;
 }
 
-},{"../base/node":18,"../constants/der":20,"inherits":182,"safer-buffer":216}],26:[function(require,module,exports){
+},{"../base/node":18,"../constants/der":20,"inherits":182,"safer-buffer":217}],26:[function(require,module,exports){
 'use strict';
 
 const encoders = exports;
@@ -9771,7 +9771,7 @@ AES.prototype.scrub = function () {
 
 module.exports.AES = AES
 
-},{"safe-buffer":215}],34:[function(require,module,exports){
+},{"safe-buffer":216}],34:[function(require,module,exports){
 var aes = require('./aes')
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('cipher-base')
@@ -9890,7 +9890,7 @@ StreamCipher.prototype.setAAD = function setAAD (buf) {
 
 module.exports = StreamCipher
 
-},{"./aes":33,"./ghash":38,"./incr32":39,"buffer-xor":76,"cipher-base":78,"inherits":182,"safe-buffer":215}],35:[function(require,module,exports){
+},{"./aes":33,"./ghash":38,"./incr32":39,"buffer-xor":76,"cipher-base":78,"inherits":182,"safe-buffer":216}],35:[function(require,module,exports){
 var ciphers = require('./encrypter')
 var deciphers = require('./decrypter')
 var modes = require('./modes/list.json')
@@ -10031,7 +10031,7 @@ function createDecipher (suite, password) {
 exports.createDecipher = createDecipher
 exports.createDecipheriv = createDecipheriv
 
-},{"./aes":33,"./authCipher":34,"./modes":46,"./streamCipher":49,"cipher-base":78,"evp_bytestokey":150,"inherits":182,"safe-buffer":215}],37:[function(require,module,exports){
+},{"./aes":33,"./authCipher":34,"./modes":46,"./streamCipher":49,"cipher-base":78,"evp_bytestokey":150,"inherits":182,"safe-buffer":216}],37:[function(require,module,exports){
 var MODES = require('./modes')
 var AuthCipher = require('./authCipher')
 var Buffer = require('safe-buffer').Buffer
@@ -10147,7 +10147,7 @@ function createCipher (suite, password) {
 exports.createCipheriv = createCipheriv
 exports.createCipher = createCipher
 
-},{"./aes":33,"./authCipher":34,"./modes":46,"./streamCipher":49,"cipher-base":78,"evp_bytestokey":150,"inherits":182,"safe-buffer":215}],38:[function(require,module,exports){
+},{"./aes":33,"./authCipher":34,"./modes":46,"./streamCipher":49,"cipher-base":78,"evp_bytestokey":150,"inherits":182,"safe-buffer":216}],38:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var ZEROES = Buffer.alloc(16, 0)
 
@@ -10238,7 +10238,7 @@ GHASH.prototype.final = function (abl, bl) {
 
 module.exports = GHASH
 
-},{"safe-buffer":215}],39:[function(require,module,exports){
+},{"safe-buffer":216}],39:[function(require,module,exports){
 function incr32 (iv) {
   var len = iv.length
   var item
@@ -10309,7 +10309,7 @@ exports.encrypt = function (self, data, decrypt) {
   return out
 }
 
-},{"buffer-xor":76,"safe-buffer":215}],42:[function(require,module,exports){
+},{"buffer-xor":76,"safe-buffer":216}],42:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 function encryptByte (self, byteParam, decrypt) {
@@ -10353,7 +10353,7 @@ exports.encrypt = function (self, chunk, decrypt) {
   return out
 }
 
-},{"safe-buffer":215}],43:[function(require,module,exports){
+},{"safe-buffer":216}],43:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 function encryptByte (self, byteParam, decrypt) {
@@ -10380,7 +10380,7 @@ exports.encrypt = function (self, chunk, decrypt) {
   return out
 }
 
-},{"safe-buffer":215}],44:[function(require,module,exports){
+},{"safe-buffer":216}],44:[function(require,module,exports){
 var xor = require('buffer-xor')
 var Buffer = require('safe-buffer').Buffer
 var incr32 = require('../incr32')
@@ -10412,7 +10412,7 @@ exports.encrypt = function (self, chunk) {
   return xor(chunk, pad)
 }
 
-},{"../incr32":39,"buffer-xor":76,"safe-buffer":215}],45:[function(require,module,exports){
+},{"../incr32":39,"buffer-xor":76,"safe-buffer":216}],45:[function(require,module,exports){
 exports.encrypt = function (self, block) {
   return self._cipher.encryptBlock(block)
 }
@@ -10683,7 +10683,7 @@ StreamCipher.prototype._final = function () {
 
 module.exports = StreamCipher
 
-},{"./aes":33,"cipher-base":78,"inherits":182,"safe-buffer":215}],50:[function(require,module,exports){
+},{"./aes":33,"cipher-base":78,"inherits":182,"safe-buffer":216}],50:[function(require,module,exports){
 var DES = require('browserify-des')
 var aes = require('browserify-aes/browser')
 var aesModes = require('browserify-aes/modes')
@@ -10804,7 +10804,7 @@ DES.prototype._final = function () {
   return Buffer.from(this._des.final())
 }
 
-},{"cipher-base":78,"des.js":120,"inherits":182,"safe-buffer":215}],52:[function(require,module,exports){
+},{"cipher-base":78,"des.js":120,"inherits":182,"safe-buffer":216}],52:[function(require,module,exports){
 exports['des-ecb'] = {
   key: 8,
   iv: 0
@@ -10869,7 +10869,7 @@ crt.getr = getr
 module.exports = crt
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"bn.js":30,"buffer":77,"randombytes":212}],54:[function(require,module,exports){
+},{"bn.js":30,"buffer":77,"randombytes":213}],54:[function(require,module,exports){
 module.exports = require('./browser/algorithms.json')
 
 },{"./browser/algorithms.json":55}],55:[function(require,module,exports){
@@ -11632,7 +11632,7 @@ Object.defineProperty(Duplex.prototype, 'destroyed', {
   }
 });
 }).call(this)}).call(this,require('_process'))
-},{"./_stream_readable":63,"./_stream_writable":65,"_process":204,"inherits":182}],62:[function(require,module,exports){
+},{"./_stream_readable":63,"./_stream_writable":65,"_process":205,"inherits":182}],62:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12799,7 +12799,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":60,"./_stream_duplex":61,"./internal/streams/async_iterator":66,"./internal/streams/buffer_list":67,"./internal/streams/destroy":68,"./internal/streams/from":70,"./internal/streams/state":72,"./internal/streams/stream":73,"_process":204,"buffer":77,"events":149,"inherits":182,"string_decoder/":240,"util":32}],64:[function(require,module,exports){
+},{"../errors":60,"./_stream_duplex":61,"./internal/streams/async_iterator":66,"./internal/streams/buffer_list":67,"./internal/streams/destroy":68,"./internal/streams/from":70,"./internal/streams/state":72,"./internal/streams/stream":73,"_process":205,"buffer":77,"events":149,"inherits":182,"string_decoder/":241,"util":32}],64:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13701,7 +13701,7 @@ Writable.prototype._destroy = function (err, cb) {
   cb(err);
 };
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":60,"./_stream_duplex":61,"./internal/streams/destroy":68,"./internal/streams/state":72,"./internal/streams/stream":73,"_process":204,"buffer":77,"inherits":182,"util-deprecate":242}],66:[function(require,module,exports){
+},{"../errors":60,"./_stream_duplex":61,"./internal/streams/destroy":68,"./internal/streams/state":72,"./internal/streams/stream":73,"_process":205,"buffer":77,"inherits":182,"util-deprecate":243}],66:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -13911,7 +13911,7 @@ var createReadableStreamAsyncIterator = function createReadableStreamAsyncIterat
 
 module.exports = createReadableStreamAsyncIterator;
 }).call(this)}).call(this,require('_process'))
-},{"./end-of-stream":69,"_process":204}],67:[function(require,module,exports){
+},{"./end-of-stream":69,"_process":205}],67:[function(require,module,exports){
 'use strict';
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -14230,7 +14230,7 @@ module.exports = {
   errorOrDestroy: errorOrDestroy
 };
 }).call(this)}).call(this,require('_process'))
-},{"_process":204}],69:[function(require,module,exports){
+},{"_process":205}],69:[function(require,module,exports){
 // Ported from https://github.com/mafintosh/end-of-stream with
 // permission from the author, Mathias Buus (@mafintosh).
 'use strict';
@@ -16443,7 +16443,7 @@ CipherBase.prototype._toString = function (value, enc, fin) {
 
 module.exports = CipherBase
 
-},{"inherits":182,"safe-buffer":215,"stream":225,"string_decoder":240}],79:[function(require,module,exports){
+},{"inherits":182,"safe-buffer":216,"stream":226,"string_decoder":241}],79:[function(require,module,exports){
 (function (Buffer){(function (){
 var elliptic = require('elliptic')
 var BN = require('bn.js')
@@ -16605,7 +16605,7 @@ module.exports = function createHash (alg) {
   return new Hash(sha(alg))
 }
 
-},{"cipher-base":78,"inherits":182,"md5.js":184,"ripemd160":214,"sha.js":218}],82:[function(require,module,exports){
+},{"cipher-base":78,"inherits":182,"md5.js":184,"ripemd160":215,"sha.js":219}],82:[function(require,module,exports){
 var MD5 = require('md5.js')
 
 module.exports = function (buffer) {
@@ -16676,7 +16676,7 @@ module.exports = function createHmac (alg, key) {
   return new Hmac(alg, key)
 }
 
-},{"./legacy":84,"cipher-base":78,"create-hash/md5":82,"inherits":182,"ripemd160":214,"safe-buffer":215,"sha.js":218}],84:[function(require,module,exports){
+},{"./legacy":84,"cipher-base":78,"create-hash/md5":82,"inherits":182,"ripemd160":215,"safe-buffer":216,"sha.js":219}],84:[function(require,module,exports){
 'use strict'
 var inherits = require('inherits')
 var Buffer = require('safe-buffer').Buffer
@@ -16724,7 +16724,7 @@ Hmac.prototype._final = function () {
 }
 module.exports = Hmac
 
-},{"cipher-base":78,"inherits":182,"safe-buffer":215}],85:[function(require,module,exports){
+},{"cipher-base":78,"inherits":182,"safe-buffer":216}],85:[function(require,module,exports){
 'use strict'
 
 exports.randomBytes = exports.rng = exports.pseudoRandomBytes = exports.prng = require('randombytes')
@@ -16823,7 +16823,7 @@ exports.constants = {
   'POINT_CONVERSION_HYBRID': 6
 }
 
-},{"browserify-cipher":50,"browserify-sign":57,"browserify-sign/algos":54,"create-ecdh":79,"create-hash":81,"create-hmac":83,"diffie-hellman":126,"pbkdf2":194,"public-encrypt":205,"randombytes":212,"randomfill":213}],86:[function(require,module,exports){
+},{"browserify-cipher":50,"browserify-sign":57,"browserify-sign/algos":54,"create-ecdh":79,"create-hash":81,"create-hmac":83,"diffie-hellman":126,"pbkdf2":194,"public-encrypt":206,"randombytes":213,"randomfill":214}],86:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -24399,7 +24399,7 @@ function formatReturnValue(bn, enc) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"./generatePrime":128,"bn.js":130,"buffer":77,"miller-rabin":185,"randombytes":212}],128:[function(require,module,exports){
+},{"./generatePrime":128,"bn.js":130,"buffer":77,"miller-rabin":185,"randombytes":213}],128:[function(require,module,exports){
 var randomBytes = require('randombytes');
 module.exports = findPrime;
 findPrime.simpleSieve = simpleSieve;
@@ -24506,7 +24506,7 @@ function findPrime(bits, gen) {
 
 }
 
-},{"bn.js":130,"miller-rabin":185,"randombytes":212}],129:[function(require,module,exports){
+},{"bn.js":130,"miller-rabin":185,"randombytes":213}],129:[function(require,module,exports){
 module.exports={
     "modp1": {
         "gen": "02",
@@ -30478,7 +30478,7 @@ function EVP_BytesToKey (password, salt, keyBits, ivLen) {
 
 module.exports = EVP_BytesToKey
 
-},{"md5.js":184,"safe-buffer":215}],151:[function(require,module,exports){
+},{"md5.js":184,"safe-buffer":216}],151:[function(require,module,exports){
 'use strict'
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('readable-stream').Transform
@@ -30579,21 +30579,21 @@ module.exports = HashBase
 arguments[4][60][0].apply(exports,arguments)
 },{"dup":60}],153:[function(require,module,exports){
 arguments[4][61][0].apply(exports,arguments)
-},{"./_stream_readable":155,"./_stream_writable":157,"_process":204,"dup":61,"inherits":182}],154:[function(require,module,exports){
+},{"./_stream_readable":155,"./_stream_writable":157,"_process":205,"dup":61,"inherits":182}],154:[function(require,module,exports){
 arguments[4][62][0].apply(exports,arguments)
 },{"./_stream_transform":156,"dup":62,"inherits":182}],155:[function(require,module,exports){
 arguments[4][63][0].apply(exports,arguments)
-},{"../errors":152,"./_stream_duplex":153,"./internal/streams/async_iterator":158,"./internal/streams/buffer_list":159,"./internal/streams/destroy":160,"./internal/streams/from":162,"./internal/streams/state":164,"./internal/streams/stream":165,"_process":204,"buffer":77,"dup":63,"events":149,"inherits":182,"string_decoder/":240,"util":32}],156:[function(require,module,exports){
+},{"../errors":152,"./_stream_duplex":153,"./internal/streams/async_iterator":158,"./internal/streams/buffer_list":159,"./internal/streams/destroy":160,"./internal/streams/from":162,"./internal/streams/state":164,"./internal/streams/stream":165,"_process":205,"buffer":77,"dup":63,"events":149,"inherits":182,"string_decoder/":241,"util":32}],156:[function(require,module,exports){
 arguments[4][64][0].apply(exports,arguments)
 },{"../errors":152,"./_stream_duplex":153,"dup":64,"inherits":182}],157:[function(require,module,exports){
 arguments[4][65][0].apply(exports,arguments)
-},{"../errors":152,"./_stream_duplex":153,"./internal/streams/destroy":160,"./internal/streams/state":164,"./internal/streams/stream":165,"_process":204,"buffer":77,"dup":65,"inherits":182,"util-deprecate":242}],158:[function(require,module,exports){
+},{"../errors":152,"./_stream_duplex":153,"./internal/streams/destroy":160,"./internal/streams/state":164,"./internal/streams/stream":165,"_process":205,"buffer":77,"dup":65,"inherits":182,"util-deprecate":243}],158:[function(require,module,exports){
 arguments[4][66][0].apply(exports,arguments)
-},{"./end-of-stream":161,"_process":204,"dup":66}],159:[function(require,module,exports){
+},{"./end-of-stream":161,"_process":205,"dup":66}],159:[function(require,module,exports){
 arguments[4][67][0].apply(exports,arguments)
 },{"buffer":77,"dup":67,"util":32}],160:[function(require,module,exports){
 arguments[4][68][0].apply(exports,arguments)
-},{"_process":204,"dup":68}],161:[function(require,module,exports){
+},{"_process":205,"dup":68}],161:[function(require,module,exports){
 arguments[4][69][0].apply(exports,arguments)
 },{"../../../errors":152,"dup":69}],162:[function(require,module,exports){
 arguments[4][70][0].apply(exports,arguments)
@@ -32239,7 +32239,7 @@ function fnI (a, b, c, d, m, k, s) {
 
 module.exports = MD5
 
-},{"hash-base":151,"inherits":182,"safe-buffer":215}],185:[function(require,module,exports){
+},{"hash-base":151,"inherits":182,"safe-buffer":216}],185:[function(require,module,exports){
 var bn = require('bn.js');
 var brorand = require('brorand');
 
@@ -32693,7 +32693,7 @@ module.exports = function (okey, password) {
   }
 }
 
-},{"browserify-aes":35,"evp_bytestokey":150,"safe-buffer":215}],193:[function(require,module,exports){
+},{"browserify-aes":35,"evp_bytestokey":150,"safe-buffer":216}],193:[function(require,module,exports){
 var asn1 = require('./asn1')
 var aesid = require('./aesid.json')
 var fixProc = require('./fixProc')
@@ -32802,7 +32802,7 @@ function decrypt (data, password) {
   return Buffer.concat(out)
 }
 
-},{"./aesid.json":189,"./asn1":190,"./fixProc":192,"browserify-aes":35,"pbkdf2":194,"safe-buffer":215}],194:[function(require,module,exports){
+},{"./aesid.json":189,"./asn1":190,"./fixProc":192,"browserify-aes":35,"pbkdf2":194,"safe-buffer":216}],194:[function(require,module,exports){
 exports.pbkdf2 = require('./lib/async')
 exports.pbkdf2Sync = require('./lib/sync')
 
@@ -32928,7 +32928,7 @@ module.exports = function (password, salt, iterations, keylen, digest, callback)
 }
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./default-encoding":196,"./precondition":197,"./sync":198,"./to-buffer":199,"safe-buffer":215}],196:[function(require,module,exports){
+},{"./default-encoding":196,"./precondition":197,"./sync":198,"./to-buffer":199,"safe-buffer":216}],196:[function(require,module,exports){
 (function (process,global){(function (){
 var defaultEncoding
 /* istanbul ignore next */
@@ -32944,7 +32944,7 @@ if (global.process && global.process.browser) {
 module.exports = defaultEncoding
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":204}],197:[function(require,module,exports){
+},{"_process":205}],197:[function(require,module,exports){
 var MAX_ALLOC = Math.pow(2, 30) - 1 // default in iojs
 
 module.exports = function (iterations, keylen) {
@@ -33072,7 +33072,7 @@ function pbkdf2 (password, salt, iterations, keylen, digest) {
 
 module.exports = pbkdf2
 
-},{"./default-encoding":196,"./precondition":197,"./to-buffer":199,"create-hash/md5":82,"ripemd160":214,"safe-buffer":215,"sha.js":218}],199:[function(require,module,exports){
+},{"./default-encoding":196,"./precondition":197,"./to-buffer":199,"create-hash/md5":82,"ripemd160":215,"safe-buffer":216,"sha.js":219}],199:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 module.exports = function (thing, encoding, name) {
@@ -33087,7 +33087,7 @@ module.exports = function (thing, encoding, name) {
   }
 }
 
-},{"safe-buffer":215}],200:[function(require,module,exports){
+},{"safe-buffer":216}],200:[function(require,module,exports){
 (function () {
     /*
      * Async module to handle async messaging
@@ -33103,10 +33103,12 @@ module.exports = function (thing, encoding, name) {
          *******************************************************/
 
         var PodSocketClass,
+            WebRTCClass,
             PodUtility,
             LogLevel
         if (typeof(require) !== 'undefined' && typeof(exports) !== 'undefined') {
             PodSocketClass = require('./socket.js');
+            WebRTCClass = require('./webrtc.js');
             PodUtility = require('../utility/utility.js');
             LogLevel = require('../utility/logger.js');
         }
@@ -33132,6 +33134,7 @@ module.exports = function (thing, encoding, name) {
             },
             ackCallback = {},
             socket,
+            webRTCClass,
             asyncMessageType = {
                 PING: 0,
                 SERVER_REGISTER: 1,
@@ -33180,7 +33183,8 @@ module.exports = function (thing, encoding, name) {
                 ? params.asyncLogging.onMessageReceive
                 : false,
             onSendLogging = (params.asyncLogging && typeof params.asyncLogging.onMessageSend === 'boolean') ? params.asyncLogging.onMessageSend : false,
-            workerId = (params.asyncLogging && typeof parseInt(params.asyncLogging.workerId) === 'number') ? params.asyncLogging.workerId : 0;
+            workerId = (params.asyncLogging && typeof parseInt(params.asyncLogging.workerId) === 'number') ? params.asyncLogging.workerId : 0,
+            webrtcConfig = (params.webrtcConfig ? params.webrtcConfig : null);
 
         // function setRetryStep(val){
         //     console.log("new retryStep value:", val);
@@ -33210,6 +33214,9 @@ module.exports = function (thing, encoding, name) {
                 switch (protocol) {
                     case 'websocket':
                         initSocket();
+                        break;
+                    case 'webrtc':
+                        initWebrtc();
                         break;
                 }
             },
@@ -33371,6 +33378,124 @@ module.exports = function (thing, encoding, name) {
                 });
 
                 socket.on('error', function (error) {
+                    fireEvent('error', {
+                        errorCode: '',
+                        errorMessage: '',
+                        errorEvent: error
+                    });
+                });
+            },
+            initWebrtc = function () {
+                webRTCClass = new WebRTCClass({
+                    baseUrl: (webrtcConfig ? webrtcConfig.baseUrl : null),
+                    configuration : (webrtcConfig ? webrtcConfig.configuration : null),
+                    connectionCheckTimeout: params.connectionCheckTimeout,
+                    logLevel: logLevel
+                });
+
+                checkIfSocketHasOpennedTimeoutId = setTimeout(function () {
+                    if (!isSocketOpen) {
+                        fireEvent('error', {
+                            errorCode: 4001,
+                            errorMessage: 'Can not open Socket!'
+                        });
+                    }
+                }, 65000);
+
+                webRTCClass.on('open', function () {
+                    checkIfSocketHasOpennedTimeoutId && clearTimeout(checkIfSocketHasOpennedTimeoutId);
+                    socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+                    socketReconnectCheck && clearTimeout(socketReconnectCheck);
+
+                    isSocketOpen = true;
+                    retryStep.set(4);
+
+                    socketState = socketStateType.OPEN;
+                    fireEvent('stateChange', {
+                        socketState: socketState,
+                        timeUntilReconnect: 0,
+                        deviceRegister: isDeviceRegister,
+                        serverRegister: isServerRegister,
+                        peerId: peerId
+                    });
+                });
+
+                webRTCClass.on('message', function (msg) {
+                    console.log({msg})
+                    handleSocketMessage(msg);
+                    if (onReceiveLogging) {
+                        asyncLogger('Receive', msg);
+                    }
+                });
+
+                webRTCClass.on('close', function (event) {
+                    isSocketOpen = false;
+                    isDeviceRegister = false;
+                    oldPeerId = peerId;
+
+                    fireEvent('disconnect', event);
+
+                    if (reconnectOnClose) {
+                        if (asyncLogging) {
+                            if (workerId > 0) {
+                                Utility.asyncStepLogger(workerId + '\t Reconnecting after ' + retryStep.get() + 's');
+                            }
+                            else {
+                                Utility.asyncStepLogger('Reconnecting after ' + retryStep.get() + 's');
+                            }
+                        }
+
+                        logLevel.debug && console.debug("[Async][async.js] on connection close, retryStep:", retryStep.get());
+
+                        socketState = socketStateType.CLOSED;
+                        fireEvent('stateChange', {
+                            socketState: socketState,
+                            timeUntilReconnect: 1000 * retryStep.get(),
+                            deviceRegister: isDeviceRegister,
+                            serverRegister: isServerRegister,
+                            peerId: peerId
+                        });
+
+                        socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+
+                        socketReconnectRetryInterval = setTimeout(function () {
+                            webRTCClass.connect();
+                        }, 1000 * retryStep.get());
+
+                        if (retryStep.get() < 64) {
+                            // retryStep += 3;
+                            retryStep.set(retryStep.get() + 3)
+                        }
+                    }
+                    else {
+                        socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+                        socketReconnectCheck && clearTimeout(socketReconnectCheck);
+                        fireEvent('error', {
+                            errorCode: 4005,
+                            errorMessage: 'Connection Closed!'
+                        });
+
+                        socketState = socketStateType.CLOSED;
+                        fireEvent('stateChange', {
+                            socketState: socketState,
+                            timeUntilReconnect: 0,
+                            deviceRegister: isDeviceRegister,
+                            serverRegister: isServerRegister,
+                            peerId: peerId
+                        });
+                    }
+
+                });
+
+                webRTCClass.on('customError', function (error) {
+                    fireEvent('error', {
+                        errorCode: error.errorCode,
+                        errorMessage: error.errorMessage,
+                        errorEvent: error.errorEvent
+                    });
+                });
+
+                webRTCClass.on('error', function (error) {
                     fireEvent('error', {
                         errorCode: '',
                         errorMessage: '',
@@ -33629,6 +33754,15 @@ module.exports = function (thing, encoding, name) {
                             pushSendDataQueue.push(msg);
                         }
                         break;
+                    case 'webrtc':
+                        if (socketState === socketStateType.OPEN) {
+                            webRTCClass.emit(msg);
+                        }
+                        else {
+                            pushSendDataQueue.push(msg);
+                        }
+
+                        break;
                 }
             },
 
@@ -33648,16 +33782,16 @@ module.exports = function (thing, encoding, name) {
 
             fireEvent = function (eventName, param, ack) {
                 // try {
-                    if (ack) {
-                        for (var id in eventCallbacks[eventName]) {
-                            eventCallbacks[eventName][id](param, ack);
-                        }
+                if (ack) {
+                    for (var id in eventCallbacks[eventName]) {
+                        eventCallbacks[eventName][id](param, ack);
                     }
-                    else {
-                        for (var id in eventCallbacks[eventName]) {
-                            eventCallbacks[eventName][id](param);
-                        }
+                }
+                else {
+                    for (var id in eventCallbacks[eventName]) {
+                        eventCallbacks[eventName][id](param);
                     }
+                }
                 // }
                 // catch (e) {
                 //     fireEvent('error', {
@@ -33759,6 +33893,20 @@ module.exports = function (thing, encoding, name) {
                     socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
                     socket.close();
                     break;
+                case 'webrtc':
+                    socketState = socketStateType.CLOSED;
+                    fireEvent('stateChange', {
+                        socketState: socketState,
+                        timeUntilReconnect: 0,
+                        deviceRegister: isDeviceRegister,
+                        serverRegister: isServerRegister,
+                        peerId: peerId
+                    });
+
+                    socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+                    webRTCClass.close();
+
+                    break;
             }
         };
 
@@ -33788,6 +33936,20 @@ module.exports = function (thing, encoding, name) {
 
                     socket.close();
                     break;
+                case 'webrtc':
+                    socketState = socketStateType.CLOSED;
+                    fireEvent('stateChange', {
+                        socketState: socketState,
+                        timeUntilReconnect: 0,
+                        deviceRegister: isDeviceRegister,
+                        serverRegister: isServerRegister,
+                        peerId: peerId
+                    });
+
+                    reconnectOnClose = false;
+                    webRTCClass.close();
+
+                    break;
             }
         };
 
@@ -33807,12 +33969,18 @@ module.exports = function (thing, encoding, name) {
             });
 
             socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-            socket.close();
+            if(protocol === "websocket")
+                socket.close();
+            else if(protocol == "webrtc")
+                webRTCClass.close()
 
             socketReconnectRetryInterval = setTimeout(function () {
                 // retryStep = 4;
                 retryStep.set(4);
-                socket.connect();
+                if(protocol === "websocket")
+                    socket.close();
+                else if(protocol == "webrtc")
+                    webRTCClass.close()
             }, 2000);
         };
 
@@ -33832,7 +34000,7 @@ module.exports = function (thing, encoding, name) {
     }
 })();
 
-},{"../utility/logger.js":202,"../utility/utility.js":203,"./socket.js":201}],201:[function(require,module,exports){
+},{"../utility/logger.js":203,"../utility/utility.js":204,"./socket.js":201,"./webrtc.js":202}],201:[function(require,module,exports){
 (function() {
   /*
    * Socket Module to connect and handle Socket functionalities
@@ -33852,15 +34020,15 @@ module.exports = function (thing, encoding, name) {
      *******************************************************/
 
     var address = params.socketAddress,
-      wsConnectionWaitTime = params.wsConnectionWaitTime || 500,
-      connectionCheckTimeout = params.connectionCheckTimeout || 10000,
-      eventCallback = {},
-      socket,
-      waitForSocketToConnectTimeoutId,
-      socketRealTimeStatusInterval,
-      logLevel = params.logLevel,
-      pingController = new PingManager({waitTime: connectionCheckTimeout}),
-      socketWatchTimeout;
+        wsConnectionWaitTime = params.wsConnectionWaitTime || 500,
+        connectionCheckTimeout = params.connectionCheckTimeout || 10000,
+        eventCallback = {},
+        socket,
+        waitForSocketToConnectTimeoutId,
+        socketRealTimeStatusInterval,
+        logLevel = params.logLevel,
+        pingController = new PingManager({waitTime: connectionCheckTimeout}),
+        socketWatchTimeout;
 
 
     function PingManager(params) {
@@ -33874,7 +34042,7 @@ module.exports = function (thing, encoding, name) {
           first: null,
           second: null,
           third: null,
-          fourth: null
+          //fourth: null
         }
       }
 
@@ -33886,13 +34054,13 @@ module.exports = function (thing, encoding, name) {
         setPingTimeout() {
           config.timeoutIds.first = setTimeout(()=>{
             ping();
-            config.timeoutIds.first = setTimeout(()=>{
+            config.timeoutIds.second = setTimeout(()=>{
               ping();
-                config.timeoutIds.fourth = setTimeout(()=>{
-                  logLevel.debug && console.debug("[Async][Socket.js] Force closing socket.");
-                  onCloseHandler(null);
-                  socket.close();
-                }, 2000);
+              config.timeoutIds.third = setTimeout(()=>{
+                logLevel.debug && console.debug("[Async][Socket.js] Force closing socket.");
+                onCloseHandler(null);
+                socket.close();
+              }, 2000);
             }, 2000);
           }, 8000);
         },
@@ -33900,7 +34068,7 @@ module.exports = function (thing, encoding, name) {
           clearTimeout(config.timeoutIds.first);
           clearTimeout(config.timeoutIds.second);
           clearTimeout(config.timeoutIds.third);
-          clearTimeout(config.timeoutIds.fourth);
+          // clearTimeout(config.timeoutIds.fourth);
         },
       }
     }
@@ -33910,135 +34078,135 @@ module.exports = function (thing, encoding, name) {
      *******************************************************/
 
     var init = function() {
-        connect();
-      },
+          connect();
+        },
 
-      connect = function() {
-        try {
-          if (socket && socket.readyState == 1) {
-            return;
-          }
+        connect = function() {
+          try {
+            if (socket && socket.readyState == 1) {
+              return;
+            }
 
-          socket = new WebSocket(address, []);
+            socket = new WebSocket(address, []);
 
-          // socketRealTimeStatusInterval && clearInterval(socketRealTimeStatusInterval);
-          // socketRealTimeStatusInterval = setInterval(function() {
-          //   switch (socket.readyState) {
-          //     case 2:
-          //       onCloseHandler(null);
-          //       socketRealTimeStatusInterval && clearInterval(socketRealTimeStatusInterval);
-          //       break;
-          //     case 3:
-          //
-          //       break;
-          //   }
-          // }, 5000);
+            // socketRealTimeStatusInterval && clearInterval(socketRealTimeStatusInterval);
+            // socketRealTimeStatusInterval = setInterval(function() {
+            //   switch (socket.readyState) {
+            //     case 2:
+            //       onCloseHandler(null);
+            //       socketRealTimeStatusInterval && clearInterval(socketRealTimeStatusInterval);
+            //       break;
+            //     case 3:
+            //
+            //       break;
+            //   }
+            // }, 5000);
 
-          /**
-           * Watches the socket to make sure it's state changes to 1 in 5 seconds
-           */
-          socketWatchTimeout && clearTimeout(socketWatchTimeout);
-          socketWatchTimeout = setTimeout(() => {
-            // if(socket.readyState !== 1) {
-            logLevel.debug && console.debug("[Async][Socket.js] socketWatchTimeout triggered.");
-            onCloseHandler(null);
-            socket.close();
-            // }
-          }, 5000);
+            /**
+             * Watches the socket to make sure it's state changes to 1 in 5 seconds
+             */
+            socketWatchTimeout && clearTimeout(socketWatchTimeout);
+            socketWatchTimeout = setTimeout(() => {
+              // if(socket.readyState !== 1) {
+              logLevel.debug && console.debug("[Async][Socket.js] socketWatchTimeout triggered.");
+              onCloseHandler(null);
+              socket.close();
+              // }
+            }, 5000);
 
-          socket.onopen = function(event) {
-            waitForSocketToConnect(function() {
+            socket.onopen = function(event) {
+              waitForSocketToConnect(function() {
+                pingController.resetPingLoop();
+                eventCallback["open"]();
+                socketWatchTimeout && clearTimeout(socketWatchTimeout);
+              });
+            }
+
+            socket.onmessage = function(event) {
               pingController.resetPingLoop();
-              eventCallback["open"]();
+
+              var messageData = JSON.parse(event.data);
+              eventCallback["message"](messageData);
+            }
+
+            socket.onclose = function(event) {
+              pingController.stopPingLoop();
+              logLevel.debug && console.debug("[Async][Socket.js] socket.onclose happened. EventData:", event);
+              onCloseHandler(event);
               socketWatchTimeout && clearTimeout(socketWatchTimeout);
+            }
+
+            socket.onerror = function(event) {
+              logLevel.debug && console.debug("[Async][Socket.js] socket.onerror happened. EventData:", event);
+              eventCallback["error"](event);
+              socketWatchTimeout && clearTimeout(socketWatchTimeout);
+            }
+          } catch (error) {
+            eventCallback["customError"]({
+              errorCode: 4000,
+              errorMessage: "ERROR in WEBSOCKET!",
+              errorEvent: error
             });
           }
+        },
 
-          socket.onmessage = function(event) {
-            pingController.resetPingLoop();
+        onCloseHandler = function(event) {
+          pingController.stopPingLoop();
+          socket.onclose = null;
+          socket.onmessage = null;
+          socket.onerror = null;
+          socket.onopen = null;
+          eventCallback["close"](event);
+        },
 
-            var messageData = JSON.parse(event.data);
-            eventCallback["message"](messageData);
-          }
-
-          socket.onclose = function(event) {
-            pingController.stopPingLoop();
-            logLevel.debug && console.debug("[Async][Socket.js] socket.onclose happened. EventData:", event);
-            onCloseHandler(event);
-            socketWatchTimeout && clearTimeout(socketWatchTimeout);
-          }
-
-          socket.onerror = function(event) {
-            logLevel.debug && console.debug("[Async][Socket.js] socket.onerror happened. EventData:", event);
-            eventCallback["error"](event);
-            socketWatchTimeout && clearTimeout(socketWatchTimeout);
-          }
-        } catch (error) {
-          eventCallback["customError"]({
-            errorCode: 4000,
-            errorMessage: "ERROR in WEBSOCKET!",
-            errorEvent: error
+        ping = function() {
+          sendData({
+            type: 0
           });
-        }
-      },
+        },
 
-      onCloseHandler = function(event) {
-        pingController.stopPingLoop();
-        socket.onclose = null;
-        socket.onmessage = null;
-        socket.onerror = null;
-        socket.onopen = null;
-        eventCallback["close"](event);
-      },
-
-      ping = function() {
-        sendData({
-          type: 0
-        });
-      },
-
-      waitForSocketToConnect = function(callback) {
-        waitForSocketToConnectTimeoutId && clearTimeout(waitForSocketToConnectTimeoutId);
-
-        if (socket.readyState === 1) {
-          callback();
-        } else {
-          waitForSocketToConnectTimeoutId = setTimeout(function() {
-            if (socket.readyState === 1) {
-              callback();
-            } else {
-              waitForSocketToConnect(callback);
-            }
-          }, wsConnectionWaitTime);
-        }
-      },
-
-      sendData = function(params) {
-        var data = {
-          type: params.type,
-          uniqueId: params.uniqueId
-        };
-
-        if (params.trackerId) {
-          data.trackerId = params.trackerId;
-        }
-
-        try {
-          if (params.content) {
-            data.content = JSON.stringify(params.content);
-          }
+        waitForSocketToConnect = function(callback) {
+          waitForSocketToConnectTimeoutId && clearTimeout(waitForSocketToConnectTimeoutId);
 
           if (socket.readyState === 1) {
-            socket.send(JSON.stringify(data));
+            callback();
+          } else {
+            waitForSocketToConnectTimeoutId = setTimeout(function() {
+              if (socket.readyState === 1) {
+                callback();
+              } else {
+                waitForSocketToConnect(callback);
+              }
+            }, wsConnectionWaitTime);
           }
-        } catch (error) {
-          eventCallback["customError"]({
-            errorCode: 4004,
-            errorMessage: "Error in Socket sendData!",
-            errorEvent: error
-          });
-        }
-      };
+        },
+
+        sendData = function(params) {
+          var data = {
+            type: params.type,
+            uniqueId: params.uniqueId
+          };
+
+          if (params.trackerId) {
+            data.trackerId = params.trackerId;
+          }
+
+          try {
+            if (params.content) {
+              data.content = JSON.stringify(params.content);
+            }
+
+            if (socket.readyState === 1) {
+              socket.send(JSON.stringify(data));
+            }
+          } catch (error) {
+            eventCallback["customError"]({
+              errorCode: 4004,
+              errorMessage: "Error in Socket sendData!",
+              errorEvent: error
+            });
+          }
+        };
 
     /*******************************************************
      *             P U B L I C   M E T H O D S             *
@@ -34076,6 +34244,478 @@ module.exports = function (thing, encoding, name) {
 })();
 
 },{"isomorphic-ws":183}],202:[function(require,module,exports){
+let defaultConfig = {
+        baseUrl: "http://109.201.0.97/webrtc/",
+        registerEndpoint: "register/",
+        addICEEndpoint: "add-ice/",
+        getICEEndpoint: "get-ice/?",
+        configuration: {
+            bundlePolicy: "balanced",
+            iceTransportPolicy: "relay",
+            iceServers: [{
+                "urls": "turn:turnsandbox.podstream.ir:3478", "username": "mkhorrami", "credential": "mkh_123456"
+            }]
+        },
+        connectionCheckTimeout: 10000,
+        logLevel: null
+    },
+    variables = {
+        peerConnection: null,
+        dataChannel: null,
+        pingController: new PingManager({waitTime: defaultConfig.connectionCheckTimeout}),
+        candidatesQueue: [],
+        // candidatesSendQueue: [],
+        candidateManager: new CandidatesSendQueueManager(),
+        clientId: null,
+        deviceId: null,
+        apiCallRetries: {
+            register: 3,
+            getIce: 3,
+            addIce: 5
+        }
+    };
+
+function CandidatesSendQueueManager() {
+    let config = {
+        candidatesToSend: [],
+        alreadyReceivedServerCandidates: false,
+        reCheckTimeout: null
+    }
+
+    function trySendingCandidates() {
+        timoutCallback();
+        function timoutCallback() {
+            if(variables.peerConnection.signalingState === 'stable') {
+                config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
+                if (config.candidatesToSend.length) {
+                    let entry = config.candidatesToSend.shift();
+                    handshakingFunctions
+                        .sendCandidate(entry)
+                        .then(function (result) {
+                            if (result.length) {
+                                addServerCandidates(result);
+
+                                config.alreadyReceivedServerCandidates = true;
+                            }
+                            trySendingCandidates();
+                        });
+
+                } else if (!config.alreadyReceivedServerCandidates) {
+                    handshakingFunctions.getCandidates(variables.clientId).then(function (result) {
+                        addServerCandidates(result)
+                    }).catch();
+                }
+            } else {
+                config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
+                config.reCheckTimeout = setTimeout(timoutCallback, 1000);
+            }
+        }
+    }
+
+    function addServerCandidates(candidates) {
+        for(let i in candidates) {
+            webrtcFunctions.putCandidateToQueue(candidates[i]);
+        }
+    }
+
+    return {
+        add: function (candidate) {
+            config.candidatesToSend.push(candidate);
+            trySendingCandidates();
+        },
+        destroy: function (){
+            config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
+        }
+    }
+}
+
+function PingManager(params) {
+    const config = {
+        normalWaitTime: params.waitTime,
+
+        lastRequestTimeoutId: null,
+        lastReceivedMessageTime: 0,
+        totalNoMessageCount: 0,
+        timeoutIds: {
+            first: null,
+            second: null,
+            third: null,
+            fourth: null
+        }
+    }
+
+    return {
+        resetPingLoop() {
+            this.stopPingLoop();
+            this.setPingTimeout();
+        },
+        setPingTimeout() {
+            config.timeoutIds.first = setTimeout(() => {
+                ping();
+                config.timeoutIds.second = setTimeout(() => {
+                    ping();
+                    config.timeoutIds.third = setTimeout(() => {
+                        defaultConfig.logLevel.debug && console.debug("[Async][Webrtc.js] Force closing connection.");
+                        publicized.close();
+                    }, 2000);
+                }, 2000);
+            }, 8000);
+        },
+        stopPingLoop() {
+            clearTimeout(config.timeoutIds.first);
+            clearTimeout(config.timeoutIds.second);
+            clearTimeout(config.timeoutIds.third);
+            // clearTimeout(config.timeoutIds.fourth);
+        },
+    }
+}
+
+function connect() {
+    webrtcFunctions.createPeerConnection();
+    webrtcFunctions.createDataChannel();
+    webrtcFunctions.generateSdpOffer()
+        .then(sendOfferToServer);
+
+    function sendOfferToServer(offer) {
+        handshakingFunctions
+            .register(offer.sdp)
+            .then(processRegisterResult).catch();
+
+        variables
+            .peerConnection.setLocalDescription(offer)
+            .catch(error => console.error(error));
+    }
+
+    function processRegisterResult(result) {
+        variables.clientId = result.clientId;
+        variables.deviceId = result.deviceId;
+        webrtcFunctions.processAnswer(result.sdpAnswer);
+    }
+}
+
+let webrtcFunctions = {
+    createPeerConnection: function () {
+        variables.peerConnection = new RTCPeerConnection(defaultConfig.configuration);
+        variables.peerConnection.addEventListener('signalingstatechange', webrtcFunctions.signalingStateChangeCallback);
+        variables.peerConnection.onicecandidate = function (event) {
+            if (event.candidate) {
+                variables.candidateManager.add(event.candidate);
+                webrtcFunctions.putCandidateToQueue(event.candidate);
+            }
+        };
+    },
+    signalingStateChangeCallback: function () {
+        if (variables.peerConnection.signalingState === 'stable') {
+            // handshakingFunctions.getCandidates().catch()
+            webrtcFunctions.addTheCandidates();
+        }
+    },
+    createDataChannel: function () {
+        variables.dataChannel = variables.peerConnection.createDataChannel("dataChannel", {ordered: false});
+        variables.dataChannel.onopen = dataChannelCallbacks.onopen;
+        variables.dataChannel.onmessage = dataChannelCallbacks.onmessage;
+        variables.dataChannel.onerror = dataChannelCallbacks.onerror;
+        variables.dataChannel.onclose = dataChannelCallbacks.onclose;
+    },
+    generateSdpOffer: function () {
+        return new Promise(function (resolve, reject) {
+            variables.peerConnection.createOffer(function (offer) {
+                resolve(offer)
+            }, function (error) {
+                reject(error);
+                console.error(error);
+            }).then(r => console.log(r));
+        })
+    },
+    processAnswer: function (answer) {
+        let remoteDesc = {
+            type: "answer", sdp: answer
+        };
+        variables
+            .peerConnection
+            .setRemoteDescription(new RTCSessionDescription(remoteDesc))
+            .catch(function (error) {
+                console.error(error)
+            });
+    },
+    addTheCandidates: function () {
+        while (variables.candidatesQueue.length) {
+            let entry = variables.candidatesQueue.shift();
+            variables.peerConnection.addIceCandidate(entry.candidate);
+        }
+    },
+    putCandidateToQueue: function (candidate) {
+        variables.candidatesQueue.push({
+            candidate: new RTCIceCandidate(candidate)
+        });
+        if (variables.peerConnection.signalingState === 'stable') {
+            webrtcFunctions.addTheCandidates();
+        }
+    },
+    sendData: function(params) {
+        if(!variables.dataChannel) {
+            console.error("Connection is closed, do not send messages.")
+            return;
+        }
+        var data = {
+            type: params.type,
+            uniqueId: params.uniqueId
+        };
+
+        if (params.trackerId) {
+            data.trackerId = params.trackerId;
+        }
+
+        try {
+            if (params.content) {
+                data.content = JSON.stringify(params.content);
+            }
+
+            if (variables.peerConnection.signalingState === 'stable') {
+                //defaultConfig.logLevel.debug &&
+                console.log("[Async][WebRTC] Send ", data);
+                variables.dataChannel.send(JSON.stringify(data));
+            }
+        } catch (error) {
+            eventCallback["customError"]({
+                errorCode: 4004,
+                errorMessage: "Error in Socket sendData!",
+                errorEvent: error
+            });
+        }
+    }
+}
+
+let dataChannelCallbacks = {
+    onopen: function (event) {
+        console.log("********* dataChannel open *********");
+        variables.pingController.resetPingLoop();
+        eventCallback["open"]();
+
+        const deviceRegister = {
+            "type": "2",
+            "content": {"deviceId": variables.deviceId, "appId": "PodChat", "refresh": false, "renew": true}
+        };
+        deviceRegister.content = JSON.stringify(deviceRegister.content)
+        variables.dataChannel.send(JSON.stringify(deviceRegister));
+    },
+
+    onmessage: function (event) {
+
+        variables.pingController.resetPingLoop();
+        var messageData = JSON.parse(event.data);
+        console.log("[Async][WebRTC] Receive ", event.data);
+        eventCallback["message"](messageData);
+    },
+
+    onerror: function (error) {
+        logLevel.debug && console.debug("[Async][Socket.js] dataChannel.onerror happened. EventData:", event);
+        eventCallback["error"](event);
+    },
+    onclose: function (event) {
+        resetVariables();
+        eventCallback["close"](event);
+    }
+}
+
+let handshakingFunctions = {
+    register: function (offer) {
+        let retries = variables.apiCallRetries.register;
+        return new Promise(promiseHandler);
+        function promiseHandler(resolve, reject) {
+            let registerEndPoint = defaultConfig.baseUrl + defaultConfig.registerEndpoint
+            fetch(registerEndPoint, {
+                method: "POST",
+                body: JSON.stringify({
+                    offer: offer
+                }),
+                headers: {
+                    "Content-Type": "application/json",
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            })
+                .then(function (response) {
+                    if(response.ok)
+                        return response.json();
+                    else if(retries){
+                        retryTheRequest(resolve, reject);
+                        retries--;
+                    } else reject();
+                })
+                .then(result => resolve(result))
+                .catch(err => {
+                    if(retries){
+                        retryTheRequest(resolve, reject);
+                        retries--;
+                    } else {
+                        publicized.close();
+                    }
+                    console.error(err);
+                });
+        }
+        function retryTheRequest(resolve, reject){
+            setTimeout(function (){promiseHandler(resolve, reject)}, 1000);
+        }
+    },
+    getCandidates: function (clientId) {
+        let addIceCandidateEndPoint = defaultConfig.baseUrl + defaultConfig.getICEEndpoint
+        addIceCandidateEndPoint += "clientId=" + clientId;
+
+        let retries = variables.apiCallRetries.getIce;
+        return new Promise(promiseHandler);
+        function promiseHandler(resolve, reject) {
+            fetch(addIceCandidateEndPoint, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            })
+                .then(function (response) {
+                    if(response.ok)
+                        return response.json();
+                    else if(retries){
+                        retryTheRequest(resolve, reject);
+                        retries--;
+                    } else reject();
+                })
+                .then(function (result) {
+                    resolve(result.iceCandidates)
+                    // if(result.iceCandidates && result.iceCandidates.length) {
+                    //     // result.iceCandidates.forEach((item) => {
+                    //     //     webrtcFunctions.putCandidateToQueue(item);
+                    //     // });
+                    //     resolve(result.iceCandidates)
+                    // }
+                    // else {
+                    //     if(retries){
+                    //         retryTheRequest(resolve, reject);
+                    //         retries--;
+                    //     } else reject();
+                    // }
+                })
+                .catch(function (err) {
+                    if(retries){
+                        retryTheRequest(resolve, reject);
+                        retries--;
+                    } else reject(err);
+                    console.error(err);
+                });
+        }
+
+        function retryTheRequest(resolve, reject){
+            setTimeout(function (){promiseHandler(resolve, reject)}, 1000);
+        }
+
+    },
+    sendCandidate: function (candidate) {
+        let addIceCandidateEndPoint = defaultConfig.baseUrl + defaultConfig.addICEEndpoint
+            , retries = variables.apiCallRetries.addIce;
+
+        return new Promise(promiseHandler);
+        function promiseHandler(resolve, reject) {
+            fetch(addIceCandidateEndPoint, {
+                method: "POST",
+                body: JSON.stringify({
+                    "clientId": variables.clientId,
+                    "candidate": candidate
+                }),
+                headers: {
+                    "Content-Type": "application/json",
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            })
+                .then(function (response) {
+                    if(response.ok)
+                        return response.json();
+                    else if(retries){
+                        retryTheRequest(resolve, reject);
+                        retries--;
+                    } else reject();
+                })
+                .then(function (result) {
+                    resolve(result.iceCandidates);
+                })
+                .catch(err => {
+                    if(retries){
+                        retryTheRequest(resolve, reject);
+                        retries--;
+                    } else reject(err);
+                    console.error(err);
+                });
+        }
+
+        function retryTheRequest(resolve, reject){
+            setTimeout(function (){promiseHandler(resolve, reject)}, 2000);
+        }
+    }
+}
+
+eventCallback = {};
+
+function resetVariables() {
+    console.log("resetVariables");
+    eventCallback["close"]();
+    variables.pingController.stopPingLoop();
+    variables.dataChannel.close();
+    variables.dataChannel = null;
+    variables.peerConnection.close();
+    variables.peerConnection = null;
+    variables.candidatesQueue = [];
+    variables.clientId = null;
+    variables.deviceId = null;
+    variables.candidateManager.destroy();
+    variables.candidateManager = new CandidatesSendQueueManager()
+}
+
+function ping() {
+    webrtcFunctions.sendData({
+        type: 0
+    });
+}
+function removeCallbacks(){
+    variables.peerConnection.onicecandidate = null;
+    variables.dataChannel.onclose = null;
+    variables.dataChannel.onmessage = null;
+    variables.dataChannel.onerror = null;
+    variables.dataChannel.onopen = null;
+}
+
+function WebRTCClass({
+    baseUrl,
+    configuration,
+    connectionCheckTimeout = 10000,
+    logLevel
+}) {
+    let config = {}
+    if (baseUrl)
+        config.baseUrl = baseUrl;
+    if (configuration)
+        config.configuration = configuration;
+    if (connectionCheckTimeout)
+        config.connectionCheckTimeout = connectionCheckTimeout;
+    if (logLevel)
+        config.logLevel = logLevel;
+
+    defaultConfig = Object.assign(defaultConfig, config);
+    connect();
+    return publicized;
+}
+
+let publicized = {
+    on: function (messageName, callback) {
+        eventCallback[messageName] = callback;
+    },
+    emit: webrtcFunctions.sendData,
+    connect: connect,
+    close: function () {
+        removeCallbacks();
+        resetVariables();
+    }
+};
+
+module.exports = WebRTCClass;
+},{}],203:[function(require,module,exports){
 function LogLevel(logLevel){
     let ll = logLevel || 2;
     switch (ll) {
@@ -34111,7 +34751,7 @@ else {
     window.POD.LogLevel = LogLevel;
 }
 
-},{}],203:[function(require,module,exports){
+},{}],204:[function(require,module,exports){
 (function (global){(function (){
 (function() {
   /**
@@ -34339,7 +34979,7 @@ else {
 })();
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],204:[function(require,module,exports){
+},{}],205:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -34525,7 +35165,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],205:[function(require,module,exports){
+},{}],206:[function(require,module,exports){
 exports.publicEncrypt = require('./publicEncrypt')
 exports.privateDecrypt = require('./privateDecrypt')
 
@@ -34537,7 +35177,7 @@ exports.publicDecrypt = function publicDecrypt (key, buf) {
   return exports.privateDecrypt(key, buf, true)
 }
 
-},{"./privateDecrypt":208,"./publicEncrypt":209}],206:[function(require,module,exports){
+},{"./privateDecrypt":209,"./publicEncrypt":210}],207:[function(require,module,exports){
 var createHash = require('create-hash')
 var Buffer = require('safe-buffer').Buffer
 
@@ -34558,9 +35198,9 @@ function i2ops (c) {
   return out
 }
 
-},{"create-hash":81,"safe-buffer":215}],207:[function(require,module,exports){
+},{"create-hash":81,"safe-buffer":216}],208:[function(require,module,exports){
 arguments[4][28][0].apply(exports,arguments)
-},{"buffer":32,"dup":28}],208:[function(require,module,exports){
+},{"buffer":32,"dup":28}],209:[function(require,module,exports){
 var parseKeys = require('parse-asn1')
 var mgf = require('./mgf')
 var xor = require('./xor')
@@ -34667,7 +35307,7 @@ function compare (a, b) {
   return dif
 }
 
-},{"./mgf":206,"./withPublic":210,"./xor":211,"bn.js":207,"browserify-rsa":53,"create-hash":81,"parse-asn1":193,"safe-buffer":215}],209:[function(require,module,exports){
+},{"./mgf":207,"./withPublic":211,"./xor":212,"bn.js":208,"browserify-rsa":53,"create-hash":81,"parse-asn1":193,"safe-buffer":216}],210:[function(require,module,exports){
 var parseKeys = require('parse-asn1')
 var randomBytes = require('randombytes')
 var createHash = require('create-hash')
@@ -34757,7 +35397,7 @@ function nonZero (len) {
   return out
 }
 
-},{"./mgf":206,"./withPublic":210,"./xor":211,"bn.js":207,"browserify-rsa":53,"create-hash":81,"parse-asn1":193,"randombytes":212,"safe-buffer":215}],210:[function(require,module,exports){
+},{"./mgf":207,"./withPublic":211,"./xor":212,"bn.js":208,"browserify-rsa":53,"create-hash":81,"parse-asn1":193,"randombytes":213,"safe-buffer":216}],211:[function(require,module,exports){
 var BN = require('bn.js')
 var Buffer = require('safe-buffer').Buffer
 
@@ -34771,7 +35411,7 @@ function withPublic (paddedMsg, key) {
 
 module.exports = withPublic
 
-},{"bn.js":207,"safe-buffer":215}],211:[function(require,module,exports){
+},{"bn.js":208,"safe-buffer":216}],212:[function(require,module,exports){
 module.exports = function xor (a, b) {
   var len = a.length
   var i = -1
@@ -34781,7 +35421,7 @@ module.exports = function xor (a, b) {
   return a
 }
 
-},{}],212:[function(require,module,exports){
+},{}],213:[function(require,module,exports){
 (function (process,global){(function (){
 'use strict'
 
@@ -34835,7 +35475,7 @@ function randomBytes (size, cb) {
 }
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":204,"safe-buffer":215}],213:[function(require,module,exports){
+},{"_process":205,"safe-buffer":216}],214:[function(require,module,exports){
 (function (process,global){(function (){
 'use strict'
 
@@ -34947,7 +35587,7 @@ function randomFillSync (buf, offset, size) {
 }
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":204,"randombytes":212,"safe-buffer":215}],214:[function(require,module,exports){
+},{"_process":205,"randombytes":213,"safe-buffer":216}],215:[function(require,module,exports){
 'use strict'
 var Buffer = require('buffer').Buffer
 var inherits = require('inherits')
@@ -35112,7 +35752,7 @@ function fn5 (a, b, c, d, e, m, k, s) {
 
 module.exports = RIPEMD160
 
-},{"buffer":77,"hash-base":151,"inherits":182}],215:[function(require,module,exports){
+},{"buffer":77,"hash-base":151,"inherits":182}],216:[function(require,module,exports){
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
 var Buffer = buffer.Buffer
@@ -35176,7 +35816,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-},{"buffer":77}],216:[function(require,module,exports){
+},{"buffer":77}],217:[function(require,module,exports){
 (function (process){(function (){
 /* eslint-disable node/no-deprecated-api */
 
@@ -35257,7 +35897,7 @@ if (!safer.constants) {
 module.exports = safer
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":204,"buffer":77}],217:[function(require,module,exports){
+},{"_process":205,"buffer":77}],218:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 // prototype class for hash functions
@@ -35340,7 +35980,7 @@ Hash.prototype._update = function () {
 
 module.exports = Hash
 
-},{"safe-buffer":215}],218:[function(require,module,exports){
+},{"safe-buffer":216}],219:[function(require,module,exports){
 var exports = module.exports = function SHA (algorithm) {
   algorithm = algorithm.toLowerCase()
 
@@ -35357,7 +35997,7 @@ exports.sha256 = require('./sha256')
 exports.sha384 = require('./sha384')
 exports.sha512 = require('./sha512')
 
-},{"./sha":219,"./sha1":220,"./sha224":221,"./sha256":222,"./sha384":223,"./sha512":224}],219:[function(require,module,exports){
+},{"./sha":220,"./sha1":221,"./sha224":222,"./sha256":223,"./sha384":224,"./sha512":225}],220:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-0, as defined
  * in FIPS PUB 180-1
@@ -35453,7 +36093,7 @@ Sha.prototype._hash = function () {
 
 module.exports = Sha
 
-},{"./hash":217,"inherits":182,"safe-buffer":215}],220:[function(require,module,exports){
+},{"./hash":218,"inherits":182,"safe-buffer":216}],221:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
  * in FIPS PUB 180-1
@@ -35554,7 +36194,7 @@ Sha1.prototype._hash = function () {
 
 module.exports = Sha1
 
-},{"./hash":217,"inherits":182,"safe-buffer":215}],221:[function(require,module,exports){
+},{"./hash":218,"inherits":182,"safe-buffer":216}],222:[function(require,module,exports){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
  * in FIPS 180-2
@@ -35609,7 +36249,7 @@ Sha224.prototype._hash = function () {
 
 module.exports = Sha224
 
-},{"./hash":217,"./sha256":222,"inherits":182,"safe-buffer":215}],222:[function(require,module,exports){
+},{"./hash":218,"./sha256":223,"inherits":182,"safe-buffer":216}],223:[function(require,module,exports){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
  * in FIPS 180-2
@@ -35746,7 +36386,7 @@ Sha256.prototype._hash = function () {
 
 module.exports = Sha256
 
-},{"./hash":217,"inherits":182,"safe-buffer":215}],223:[function(require,module,exports){
+},{"./hash":218,"inherits":182,"safe-buffer":216}],224:[function(require,module,exports){
 var inherits = require('inherits')
 var SHA512 = require('./sha512')
 var Hash = require('./hash')
@@ -35805,7 +36445,7 @@ Sha384.prototype._hash = function () {
 
 module.exports = Sha384
 
-},{"./hash":217,"./sha512":224,"inherits":182,"safe-buffer":215}],224:[function(require,module,exports){
+},{"./hash":218,"./sha512":225,"inherits":182,"safe-buffer":216}],225:[function(require,module,exports){
 var inherits = require('inherits')
 var Hash = require('./hash')
 var Buffer = require('safe-buffer').Buffer
@@ -36067,7 +36707,7 @@ Sha512.prototype._hash = function () {
 
 module.exports = Sha512
 
-},{"./hash":217,"inherits":182,"safe-buffer":215}],225:[function(require,module,exports){
+},{"./hash":218,"inherits":182,"safe-buffer":216}],226:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -36198,35 +36838,35 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":149,"inherits":182,"readable-stream/lib/_stream_duplex.js":227,"readable-stream/lib/_stream_passthrough.js":228,"readable-stream/lib/_stream_readable.js":229,"readable-stream/lib/_stream_transform.js":230,"readable-stream/lib/_stream_writable.js":231,"readable-stream/lib/internal/streams/end-of-stream.js":235,"readable-stream/lib/internal/streams/pipeline.js":237}],226:[function(require,module,exports){
+},{"events":149,"inherits":182,"readable-stream/lib/_stream_duplex.js":228,"readable-stream/lib/_stream_passthrough.js":229,"readable-stream/lib/_stream_readable.js":230,"readable-stream/lib/_stream_transform.js":231,"readable-stream/lib/_stream_writable.js":232,"readable-stream/lib/internal/streams/end-of-stream.js":236,"readable-stream/lib/internal/streams/pipeline.js":238}],227:[function(require,module,exports){
 arguments[4][60][0].apply(exports,arguments)
-},{"dup":60}],227:[function(require,module,exports){
+},{"dup":60}],228:[function(require,module,exports){
 arguments[4][61][0].apply(exports,arguments)
-},{"./_stream_readable":229,"./_stream_writable":231,"_process":204,"dup":61,"inherits":182}],228:[function(require,module,exports){
+},{"./_stream_readable":230,"./_stream_writable":232,"_process":205,"dup":61,"inherits":182}],229:[function(require,module,exports){
 arguments[4][62][0].apply(exports,arguments)
-},{"./_stream_transform":230,"dup":62,"inherits":182}],229:[function(require,module,exports){
+},{"./_stream_transform":231,"dup":62,"inherits":182}],230:[function(require,module,exports){
 arguments[4][63][0].apply(exports,arguments)
-},{"../errors":226,"./_stream_duplex":227,"./internal/streams/async_iterator":232,"./internal/streams/buffer_list":233,"./internal/streams/destroy":234,"./internal/streams/from":236,"./internal/streams/state":238,"./internal/streams/stream":239,"_process":204,"buffer":77,"dup":63,"events":149,"inherits":182,"string_decoder/":240,"util":32}],230:[function(require,module,exports){
+},{"../errors":227,"./_stream_duplex":228,"./internal/streams/async_iterator":233,"./internal/streams/buffer_list":234,"./internal/streams/destroy":235,"./internal/streams/from":237,"./internal/streams/state":239,"./internal/streams/stream":240,"_process":205,"buffer":77,"dup":63,"events":149,"inherits":182,"string_decoder/":241,"util":32}],231:[function(require,module,exports){
 arguments[4][64][0].apply(exports,arguments)
-},{"../errors":226,"./_stream_duplex":227,"dup":64,"inherits":182}],231:[function(require,module,exports){
+},{"../errors":227,"./_stream_duplex":228,"dup":64,"inherits":182}],232:[function(require,module,exports){
 arguments[4][65][0].apply(exports,arguments)
-},{"../errors":226,"./_stream_duplex":227,"./internal/streams/destroy":234,"./internal/streams/state":238,"./internal/streams/stream":239,"_process":204,"buffer":77,"dup":65,"inherits":182,"util-deprecate":242}],232:[function(require,module,exports){
+},{"../errors":227,"./_stream_duplex":228,"./internal/streams/destroy":235,"./internal/streams/state":239,"./internal/streams/stream":240,"_process":205,"buffer":77,"dup":65,"inherits":182,"util-deprecate":243}],233:[function(require,module,exports){
 arguments[4][66][0].apply(exports,arguments)
-},{"./end-of-stream":235,"_process":204,"dup":66}],233:[function(require,module,exports){
+},{"./end-of-stream":236,"_process":205,"dup":66}],234:[function(require,module,exports){
 arguments[4][67][0].apply(exports,arguments)
-},{"buffer":77,"dup":67,"util":32}],234:[function(require,module,exports){
+},{"buffer":77,"dup":67,"util":32}],235:[function(require,module,exports){
 arguments[4][68][0].apply(exports,arguments)
-},{"_process":204,"dup":68}],235:[function(require,module,exports){
+},{"_process":205,"dup":68}],236:[function(require,module,exports){
 arguments[4][69][0].apply(exports,arguments)
-},{"../../../errors":226,"dup":69}],236:[function(require,module,exports){
+},{"../../../errors":227,"dup":69}],237:[function(require,module,exports){
 arguments[4][70][0].apply(exports,arguments)
-},{"dup":70}],237:[function(require,module,exports){
+},{"dup":70}],238:[function(require,module,exports){
 arguments[4][71][0].apply(exports,arguments)
-},{"../../../errors":226,"./end-of-stream":235,"dup":71}],238:[function(require,module,exports){
+},{"../../../errors":227,"./end-of-stream":236,"dup":71}],239:[function(require,module,exports){
 arguments[4][72][0].apply(exports,arguments)
-},{"../../../errors":226,"dup":72}],239:[function(require,module,exports){
+},{"../../../errors":227,"dup":72}],240:[function(require,module,exports){
 arguments[4][73][0].apply(exports,arguments)
-},{"dup":73,"events":149}],240:[function(require,module,exports){
+},{"dup":73,"events":149}],241:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -36523,9 +37163,9 @@ function simpleWrite(buf) {
 function simpleEnd(buf) {
   return buf && buf.length ? this.write(buf) : '';
 }
-},{"safe-buffer":241}],241:[function(require,module,exports){
+},{"safe-buffer":242}],242:[function(require,module,exports){
 arguments[4][75][0].apply(exports,arguments)
-},{"buffer":77,"dup":75}],242:[function(require,module,exports){
+},{"buffer":77,"dup":75}],243:[function(require,module,exports){
 (function (global){(function (){
 
 /**
@@ -36596,9 +37236,9 @@ function config (name) {
 }
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],243:[function(require,module,exports){
-module.exports={"version":"13.0.0-snapshot.1","date":"۱۴۰۲/۲/۵","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],244:[function(require,module,exports){
+module.exports={"version":"13.0.0-snapshot.1","date":"۱۴۰۲/۲/۶","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+},{}],245:[function(require,module,exports){
 "use strict";var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");var _typeof3=require("@babel/runtime/helpers/typeof");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _regenerator=_interopRequireDefault(require("@babel/runtime/regenerator"));var _objectDestructuringEmpty2=_interopRequireDefault(require("@babel/runtime/helpers/objectDestructuringEmpty"));var _asyncToGenerator2=_interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _constants=require("./lib/constants");var _utility=_interopRequireDefault(require("./utility/utility"));var _eventsModule=require("./events.module.js");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));var _errorHandler=_interopRequireWildcard(require("./lib/errorHandler"));var _webrtcPeer=require("./lib/call/webrtcPeer");function _getRequireWildcardCache(nodeInterop){if(typeof WeakMap!=="function")return null;var cacheBabelInterop=new WeakMap();var cacheNodeInterop=new WeakMap();return(_getRequireWildcardCache=function _getRequireWildcardCache(nodeInterop){return nodeInterop?cacheNodeInterop:cacheBabelInterop;})(nodeInterop);}function _interopRequireWildcard(obj,nodeInterop){if(!nodeInterop&&obj&&obj.__esModule){return obj;}if(obj===null||_typeof3(obj)!=="object"&&typeof obj!=="function"){return{"default":obj};}var cache=_getRequireWildcardCache(nodeInterop);if(cache&&cache.has(obj)){return cache.get(obj);}var newObj={};var hasPropertyDescriptor=Object.defineProperty&&Object.getOwnPropertyDescriptor;for(var key in obj){if(key!=="default"&&Object.prototype.hasOwnProperty.call(obj,key)){var desc=hasPropertyDescriptor?Object.getOwnPropertyDescriptor(obj,key):null;if(desc&&(desc.get||desc.set)){Object.defineProperty(newObj,key,desc);}else{newObj[key]=obj[key];}}}newObj["default"]=obj;if(cache){cache.set(obj,newObj);}return newObj;}function _createForOfIteratorHelper(o,allowArrayLike){var it=typeof Symbol!=="undefined"&&o[Symbol.iterator]||o["@@iterator"];if(!it){if(Array.isArray(o)||(it=_unsupportedIterableToArray(o))||allowArrayLike&&o&&typeof o.length==="number"){if(it)o=it;var i=0;var F=function F(){};return{s:F,n:function n(){if(i>=o.length)return{done:true};return{done:false,value:o[i++]};},e:function e(_e){throw _e;},f:F};}throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}var normalCompletion=true,didErr=false,err;return{s:function s(){it=it.call(o);},n:function n(){var step=it.next();normalCompletion=step.done;return step;},e:function e(_e2){didErr=true;err=_e2;},f:function f(){try{if(!normalCompletion&&it["return"]!=null)it["return"]();}finally{if(didErr)throw err;}}};}function _unsupportedIterableToArray(o,minLen){if(!o)return;if(typeof o==="string")return _arrayLikeToArray(o,minLen);var n=Object.prototype.toString.call(o).slice(8,-1);if(n==="Object"&&o.constructor)n=o.constructor.name;if(n==="Map"||n==="Set")return Array.from(o);if(n==="Arguments"||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n))return _arrayLikeToArray(o,minLen);}function _arrayLikeToArray(arr,len){if(len==null||len>arr.length)len=arr.length;for(var i=0,arr2=new Array(len);i<len;i++){arr2[i]=arr[i];}return arr2;}function ChatCall(params){var _params$asyncLogging,_params$asyncLogging2,_params$asyncLogging3,_params$callOptions,_params$callOptions2;var//Utility = params.Utility,
 currentModuleInstance=this,asyncClient=params.asyncClient,//chatEvents = params.chatEvents,
 chatMessaging=params.chatMessaging,token=params.token,asyncRequestTimeouts={},callTypes={'VOICE':0x0,'VIDEO':0x1},generalTypeCode=params.typeCode,callOptions=params.callOptions,useInternalTurnAddress=!!(params.callOptions&&params.callOptions.useInternalTurnAddress),callTurnIp=params.callOptions&&params.callOptions.hasOwnProperty('callTurnIp')&&typeof params.callOptions.callTurnIp==='string'?params.callOptions.callTurnIp:'46.32.6.188',callDivId=params.callOptions&&params.callOptions.hasOwnProperty('callDivId')&&typeof params.callOptions.callDivId==='string'?params.callOptions.callDivId:'call-div',callAudioTagClassName=params.callOptions&&params.callOptions.hasOwnProperty('callAudioTagClassName')&&typeof params.callOptions.callAudioTagClassName==='string'?params.callOptions.callAudioTagClassName:'',callVideoTagClassName=params.callOptions&&params.callOptions.hasOwnProperty('callVideoTagClassName')&&typeof params.callOptions.callVideoTagClassName==='string'?params.callOptions.callVideoTagClassName:'',callVideoMinWidth=params.callOptions&&params.callOptions.hasOwnProperty('callVideo')&&(0,_typeof2["default"])(params.callOptions.callVideo)==='object'&&params.callOptions.callVideo.hasOwnProperty('minWidth')?params.callOptions.callVideo.minWidth:320,callVideoMinHeight=params.callOptions&&params.callOptions.hasOwnProperty('callVideo')&&(0,_typeof2["default"])(params.callOptions.callVideo)==='object'&&params.callOptions.callVideo.hasOwnProperty('minHeight')?params.callOptions.callVideo.minHeight:180,currentCallParams={},requestedCallId=null,acceptedCallId=null,currentCallId=null,latestCallRequestId=null,//shouldReconnectCallTimeout = null,
@@ -37126,14 +37766,16 @@ if(messageContent[0].userId==chatMessaging.userInfo.id){callStop();}else{callSta
          * Type 96    Terminate Call
          */case _constants.chatMessageVOTypes.TERMINATE_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}_eventsModule.chatEvents.fireEvent('callEvents',{type:'TERMINATE_CALL',result:messageContent});callStop();break;/**
          * Type 97    Mute Call Participant
-         */case _constants.chatMessageVOTypes.MUTE_CALL_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(Array.isArray(messageContent)){for(var _i in messageContent){var cUserId=messageContent[_i].userId;if(!callUsers[cUserId]){maybeInquiryCall([{id:cUserId}]);continue;}callUsers[cUserId].mute=true;callUsers[messageContent[_i].userId].audioStopManager.disableStream();// callStateController.deactivateParticipantStream(
+         */case _constants.chatMessageVOTypes.MUTE_CALL_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(Array.isArray(messageContent)){for(var _i in messageContent){var cUserId=messageContent[_i].userId;if(!callUsers[cUserId]){// maybeInquiryCall([{id: cUserId}]);
+continue;}callUsers[cUserId].mute=true;callUsers[messageContent[_i].userId].audioStopManager.disableStream();// callStateController.deactivateParticipantStream(
 //     messageContent[i].userId,
 //     'audio',
 //     'mute'
 // )
 }}_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_DIVS',result:generateCallUIList()});_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_PARTICIPANT_MUTE',result:messageContent});break;/**
          * Type 98    UnMute Call Participant
-         */case _constants.chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}var myId=chatMessaging.userInfo.id;if(Array.isArray(messageContent)){var _loop3=function _loop3(_i2){var cUserId=messageContent[_i2].userId;if(!callUsers[cUserId]){maybeInquiryCall([{id:cUserId}]);return"continue";}if(callUsers[cUserId].lockUnmuting)return"continue";callUsers[cUserId].lockUnmuting=true;setTimeout(function(){callUsers[cUserId].lockUnmuting=false;},1000);callUsers[cUserId].mute=false;if(callUsers[cUserId].audioStopManager.isStreamPaused()){if(callUsers[cUserId].audioStopManager.isStreamStopped()){callStateController.activateParticipantStream(cUserId,'audio',myId===cUserId?'send':'receive','audioTopicName',callUsers[cUserId].topicSend,'mute');}else if(myId===cUserId){currentModuleInstance.resumeMice({});}callUsers[cUserId].audioStopManager.reset();}/*                            callStateController.activateParticipantStream(
+         */case _constants.chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}var myId=chatMessaging.userInfo.id;if(Array.isArray(messageContent)){var _loop3=function _loop3(_i2){var cUserId=messageContent[_i2].userId;if(!callUsers[cUserId]){// maybeInquiryCall([{id: cUserId}]);
+return"continue";}if(callUsers[cUserId].lockUnmuting)return"continue";callUsers[cUserId].lockUnmuting=true;setTimeout(function(){callUsers[cUserId].lockUnmuting=false;},1000);callUsers[cUserId].mute=false;if(callUsers[cUserId].audioStopManager.isStreamPaused()){if(callUsers[cUserId].audioStopManager.isStreamStopped()){callStateController.activateParticipantStream(cUserId,'audio',myId===cUserId?'send':'receive','audioTopicName',callUsers[cUserId].topicSend,'mute');}else if(myId===cUserId){currentModuleInstance.resumeMice({});}callUsers[cUserId].audioStopManager.reset();}/*                            callStateController.activateParticipantStream(
                                           messageContent[i].userId,
                                           'audio',
                                           //TODO: Should send in here when chat server fixes the bug
@@ -37153,10 +37795,11 @@ if(!callRequestController.iRequestedCall)return{v:void 0};_eventsModule.chatEven
 requestedCallId=messageContent.callId;// }
 break;/**
          * Type 113    Turn On Video Call
-         */case _constants.chatMessageVOTypes.TURN_ON_VIDEO_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(Array.isArray(messageContent)){var _loop4=function _loop4(_i3){var cUserId=messageContent[_i3].userId;if(!callUsers[cUserId]){//TODO: Inquiry once for all the list
-maybeInquiryCall([{id:cUserId}]);return"continue";}if(callUsers[cUserId].lockVideoStart)return"continue";callUsers[cUserId].lockVideoStart=true;setTimeout(function(){callUsers[cUserId].lockVideoStart=false;},1000);callUsers[cUserId].video=true;callStateController.activateParticipantStream(messageContent[_i3].userId,'video',messageContent[_i3].userId===chatMessaging.userInfo.id?'send':'receive','videoTopicName',messageContent[_i3].sendTopic,'video');};for(var _i3 in messageContent){var _ret3=_loop4(_i3);if(_ret3==="continue")continue;}}setTimeout(function(){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_DIVS',result:generateCallUIList()});});_eventsModule.chatEvents.fireEvent('callEvents',{type:'TURN_ON_VIDEO_CALL',result:messageContent});break;/**
+         */case _constants.chatMessageVOTypes.TURN_ON_VIDEO_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(Array.isArray(messageContent)){var _loop4=function _loop4(_i3){var cUserId=messageContent[_i3].userId;if(!callUsers[cUserId]){// maybeInquiryCall([{id: cUserId}]);
+return"continue";}if(callUsers[cUserId].lockVideoStart)return"continue";callUsers[cUserId].lockVideoStart=true;setTimeout(function(){callUsers[cUserId].lockVideoStart=false;},1000);callUsers[cUserId].video=true;callStateController.activateParticipantStream(messageContent[_i3].userId,'video',messageContent[_i3].userId===chatMessaging.userInfo.id?'send':'receive','videoTopicName',messageContent[_i3].sendTopic,'video');};for(var _i3 in messageContent){var _ret3=_loop4(_i3);if(_ret3==="continue")continue;}}setTimeout(function(){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_DIVS',result:generateCallUIList()});});_eventsModule.chatEvents.fireEvent('callEvents',{type:'TURN_ON_VIDEO_CALL',result:messageContent});break;/**
          * Type 114    Turn Off Video Call
-         */case _constants.chatMessageVOTypes.TURN_OFF_VIDEO_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(Array.isArray(messageContent)){for(var _i4 in messageContent){var _cUserId=messageContent[_i4].userId;if(!callUsers[_cUserId]){maybeInquiryCall([{id:_cUserId}]);continue;}callUsers[_cUserId].video=false;callStateController.deactivateParticipantStream(messageContent[_i4].userId,'video','video');}}setTimeout(function(){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_DIVS',result:generateCallUIList()});});_eventsModule.chatEvents.fireEvent('callEvents',{type:'TURN_OFF_VIDEO_CALL',result:messageContent});break;/**
+         */case _constants.chatMessageVOTypes.TURN_OFF_VIDEO_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(Array.isArray(messageContent)){for(var _i4 in messageContent){var _cUserId=messageContent[_i4].userId;if(!callUsers[_cUserId]){// maybeInquiryCall([{id: cUserId}]);
+continue;}callUsers[_cUserId].video=false;callStateController.deactivateParticipantStream(messageContent[_i4].userId,'video','video');}}setTimeout(function(){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_DIVS',result:generateCallUIList()});});_eventsModule.chatEvents.fireEvent('callEvents',{type:'TURN_OFF_VIDEO_CALL',result:messageContent});break;/**
          * Type 121    Record Call Request
          */case _constants.chatMessageVOTypes.RECORD_CALL:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}_eventsModule.chatEvents.fireEvent('callEvents',{type:'START_RECORDING_CALL',result:messageContent});restartMediaOnKeyFrame(chatMessaging.userInfo.id,[4000,8000,12000,25000]);restartMediaOnKeyFrame("screenShare",[4000,8000,12000,25000]);break;/**
          * Type 122   End Record Call Request
@@ -37379,7 +38022,8 @@ content:{}};if(params){if(isNaN(params.callId)){(0,_errorHandler.raiseError)(_er
 return;}else{var callId=+params.callId;sendMessageParams.subjectId=callId;var offset=parseInt(params.offset)>0?parseInt(params.offset):0,count=parseInt(params.count)>0?parseInt(params.count):config.getHistoryCount;sendMessageParams.content.count=count;sendMessageParams.content.offset=offset;return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={participants:reformatCallParticipants(messageContent),contentCount:result.contentCount,hasNext:sendMessageParams.content.offset+sendMessageParams.content.count<result.contentCount&&messageLength>0,nextOffset:sendMessageParams.content.offset*1+messageLength*1};returnData.result=resultData;}callback&&callback(returnData);/**
              * Delete callback so if server pushes response before
              * cache, cache won't send data again
-             */callback=undefined;if(!returnData.hasError){maybeInquiryCall(returnData.result.participants.map(function(item){return item.participantVO;}));_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_PARTICIPANTS_LIST_CHANGE',threadId:callId,result:returnData.result});}}});}}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Get Call Participants!'});return;}};/**
+             */callback=undefined;if(!returnData.hasError){// maybeInquiryCall(returnData.result.participants.map(item => item.participantVO));
+_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_PARTICIPANTS_LIST_CHANGE',threadId:callId,result:returnData.result});}}});}}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Get Call Participants!'});return;}};/**
    * This method inquiries call participants from call servers
    */this.inquiryCallParticipants=function(_ref7,callback){(0,_objectDestructuringEmpty2["default"])(_ref7);var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.INQUIRY_CALL,typeCode:generalTypeCode,//params.typeCode,
 subjectId:currentCallId,content:{}};return chatMessaging.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={participants:reformatCallParticipants(messageContent),contentCount:result.contentCount};returnData.result=resultData;}callback&&callback(returnData);returnData.result.callId=currentCallId;if(!returnData.hasError){_eventsModule.chatEvents.fireEvent('callEvents',{type:'ACTIVE_CALL_PARTICIPANTS',result:returnData.result});}}});};this.addCallParticipants=function(params,callback){/**
@@ -37439,7 +38083,7 @@ invitees.forEach(function(item){item.idType=_constants.inviteeVOidTypes[item.idT
          }
      }*/return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};this.deviceManager=_deviceManager["default"];this.resetCallStream=function(_ref10,callback){var userId=_ref10.userId,_ref10$streamType=_ref10.streamType,streamType=_ref10$streamType===void 0?'audio':_ref10$streamType;return new Promise(function(resolve,reject){if(userId==='screenShare'||streamType==='video'){if(callUsers[userId]){callUsers[userId].videoTopicManager.recreateTopic().then(function(){resolve();callback&&callback({hasError:false});})["catch"](function(){reject();callback&&callback({hasError:true});});}}else{callUsers[userId].audioTopicManager.recreateTopic().then(function(){resolve();callback&&callback({hasError:false});})["catch"](function(){reject();callback&&callback({hasError:true});});}});};this.callStop=callStop;this.restartMedia=restartMedia;}var _default=ChatCall;exports["default"]=_default;
 
-},{"./events.module.js":246,"./lib/call/deviceManager.js":247,"./lib/call/webrtcPeer":248,"./lib/constants":249,"./lib/errorHandler":250,"./utility/utility":255,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/objectDestructuringEmpty":8,"@babel/runtime/helpers/toConsumableArray":10,"@babel/runtime/helpers/typeof":11,"@babel/runtime/regenerator":13}],245:[function(require,module,exports){
+},{"./events.module.js":247,"./lib/call/deviceManager.js":248,"./lib/call/webrtcPeer":249,"./lib/constants":250,"./lib/errorHandler":251,"./utility/utility":256,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/objectDestructuringEmpty":8,"@babel/runtime/helpers/toConsumableArray":10,"@babel/runtime/helpers/typeof":11,"@babel/runtime/regenerator":13}],246:[function(require,module,exports){
 'use strict';var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _podasyncWsOnly=_interopRequireDefault(require("podasync-ws-only"));var _utility=_interopRequireDefault(require("./utility/utility"));var _call=_interopRequireDefault(require("./call.module"));var _events=require("./events.module");var _messaging=_interopRequireDefault(require("./messaging.module"));var _buildConfig=_interopRequireDefault(require("./buildConfig.json"));var _constants=require("./lib/constants");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));var _errorHandler=require("./lib/errorHandler");var _store=require("./lib/store");function Chat(params){/*******************************************************
    *          P R I V A T E   V A R I A B L E S          *
    *******************************************************/var asyncClient,peerId,oldPeerId,token=params.token,generalTypeCode=params.typeCode||'default',typeCodeOwnerId=params.typeCodeOwnerId||null,mapApiKey=params.mapApiKey||'8b77db18704aa646ee5aaea13e7370f4f88b9e8c',deviceId,productEnv=typeof navigator!='undefined'?navigator.product:'undefined',// queueDb,
@@ -39660,7 +40304,7 @@ token:token,subjectId:threadId};return chatMessaging.sendMessage(sendData,{onRes
 window.PodChat=Chat;}var _default=Chat;// })();
 exports["default"]=_default;
 
-},{"./buildConfig.json":243,"./call.module":244,"./events.module":246,"./lib/call/deviceManager.js":247,"./lib/constants":249,"./lib/errorHandler":250,"./lib/store":252,"./messaging.module":254,"./utility/utility":255,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/toConsumableArray":10,"@babel/runtime/helpers/typeof":11,"podasync-ws-only":200}],246:[function(require,module,exports){
+},{"./buildConfig.json":244,"./call.module":245,"./events.module":247,"./lib/call/deviceManager.js":248,"./lib/constants":250,"./lib/errorHandler":251,"./lib/store":253,"./messaging.module":255,"./utility/utility":256,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/toConsumableArray":10,"@babel/runtime/helpers/typeof":11,"podasync-ws-only":200}],247:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -39785,7 +40429,7 @@ function initEventHandler(params) {
 var _default = ChatEvents;
 exports["default"] = _default;
 
-},{"./utility/utility":255,"@babel/runtime/helpers/interopRequireDefault":5}],247:[function(require,module,exports){
+},{"./utility/utility":256,"@babel/runtime/helpers/interopRequireDefault":5}],248:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -40150,7 +40794,7 @@ var deviceManager = {
 var _default = deviceManager;
 exports["default"] = _default;
 
-},{"../../events.module.js":246,"../constants.js":249,"../errorHandler.js":250,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":11,"@babel/runtime/regenerator":13}],248:[function(require,module,exports){
+},{"../../events.module.js":247,"../constants.js":250,"../errorHandler.js":251,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":11,"@babel/runtime/regenerator":13}],249:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -40386,7 +41030,7 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
   };
 }
 
-},{}],249:[function(require,module,exports){
+},{}],250:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -40597,7 +41241,7 @@ var callStickerTypes = {
 };
 exports.callStickerTypes = callStickerTypes;
 
-},{}],250:[function(require,module,exports){
+},{}],251:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -40775,7 +41419,7 @@ exports.raiseError = raiseError;
 var _default = handleError;
 exports["default"] = _default;
 
-},{"../events.module":246,"@babel/runtime/helpers/defineProperty":4,"@babel/runtime/helpers/interopRequireDefault":5}],251:[function(require,module,exports){
+},{"../events.module":247,"@babel/runtime/helpers/defineProperty":4,"@babel/runtime/helpers/interopRequireDefault":5}],252:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -40801,7 +41445,7 @@ var storeEvents = {
 };
 exports.storeEvents = storeEvents;
 
-},{"@babel/runtime/helpers/interopRequireDefault":5,"events":149}],252:[function(require,module,exports){
+},{"@babel/runtime/helpers/interopRequireDefault":5,"events":149}],253:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -40819,7 +41463,7 @@ var store = {
 };
 exports.store = store;
 
-},{"./eventEmitter":251,"./threads":253}],253:[function(require,module,exports){
+},{"./eventEmitter":252,"./threads":254}],254:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -40997,7 +41641,7 @@ function ThreadObject(thread) {
   };
 }
 
-},{"./eventEmitter":251,"@babel/runtime/helpers/defineProperty":4,"@babel/runtime/helpers/interopRequireDefault":5}],254:[function(require,module,exports){
+},{"./eventEmitter":252,"@babel/runtime/helpers/defineProperty":4,"@babel/runtime/helpers/interopRequireDefault":5}],255:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -41353,7 +41997,7 @@ function ChatMessaging(params) {
 var _default = ChatMessaging;
 exports["default"] = _default;
 
-},{"./lib/constants":249,"./lib/errorHandler":250,"./utility/utility":255,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":11,"dompurify":131}],255:[function(require,module,exports){
+},{"./lib/constants":250,"./lib/errorHandler":251,"./utility/utility":256,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":11,"dompurify":131}],256:[function(require,module,exports){
 (function (global){(function (){
 "use strict";
 
@@ -41951,4 +42595,4 @@ var _default = new ChatUtility();
 exports["default"] = _default;
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":11,"crypto-js":94}]},{},[245]);
+},{"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":11,"crypto-js":94}]},{},[246]);

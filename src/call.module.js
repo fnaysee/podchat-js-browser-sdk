@@ -3291,7 +3291,7 @@ function ChatCall(params) {
                     for(let i in messageContent) {
                         let cUserId = messageContent[i].userId;
                         if(!callUsers[cUserId]) {
-                            maybeInquiryCall([{id: cUserId}]);
+                            // maybeInquiryCall([{id: cUserId}]);
                             continue;
                         }
                         callUsers[cUserId].mute = true;
@@ -3330,7 +3330,7 @@ function ChatCall(params) {
                     for(let i in messageContent) {
                         let cUserId = messageContent[i].userId;
                         if(!callUsers[cUserId]) {
-                            maybeInquiryCall([{id: cUserId}]);
+                            // maybeInquiryCall([{id: cUserId}]);
                             continue;
                         }
 
@@ -3440,7 +3440,7 @@ function ChatCall(params) {
                     for(let i in messageContent) {
                         let cUserId = messageContent[i].userId;
                         if(!callUsers[cUserId]) {
-                            maybeInquiryCall([{id: cUserId}]);
+                            // maybeInquiryCall([{id: cUserId}]);
                             continue;
                         }
                         if(callUsers[cUserId].lockVideoStart)
@@ -3488,7 +3488,7 @@ function ChatCall(params) {
                     for(let i in messageContent) {
                         let cUserId = messageContent[i].userId;
                         if(!callUsers[cUserId]) {
-                            maybeInquiryCall([{id: cUserId}]);
+                            // maybeInquiryCall([{id: cUserId}]);
                             continue;
                         }
 
@@ -4744,7 +4744,7 @@ function ChatCall(params) {
                         callback = undefined;
 
                         if (!returnData.hasError) {
-                            maybeInquiryCall(returnData.result.participants.map(item => item.participantVO));
+                            // maybeInquiryCall(returnData.result.participants.map(item => item.participantVO));
 
                             chatEvents.fireEvent('callEvents', {
                                 type: 'CALL_PARTICIPANTS_LIST_CHANGE',
