@@ -34,12 +34,12 @@ import {errorList, raiseError} from "./lib/errorHandler";
         /**
          * sendPingTimeout removed,
          *
-         * TODO: remove the interval when socket statet changes to closed
          */
         this.startChatPing = function () {
+            chatPingMessageInterval && clearInterval(chatPingMessageInterval);
             chatPingMessageInterval = setInterval(() => {
                 currentModuleInstance.ping();
-            }, 20000) ;//TODO: chatPingMessageInterval
+            }, 20000);
         }
         this.stopChatPing = function() {
             clearInterval(chatPingMessageInterval);

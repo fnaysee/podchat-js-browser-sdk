@@ -41702,13 +41702,13 @@ function ChatMessaging(params) {
   /**
    * sendPingTimeout removed,
    *
-   * TODO: remove the interval when socket statet changes to closed
    */
 
   this.startChatPing = function () {
+    chatPingMessageInterval && clearInterval(chatPingMessageInterval);
     chatPingMessageInterval = setInterval(function () {
       currentModuleInstance.ping();
-    }, 20000); //TODO: chatPingMessageInterval
+    }, 20000);
   };
 
   this.stopChatPing = function () {
