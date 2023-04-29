@@ -174,16 +174,16 @@ function Chat(params) {
         chatUploadQueue = [],
         fullResponseObject = params.fullResponseObject || false;
 
-    if(!consoleLogging) {
-        /**
-         * Disable kurento-utils logs
-         */
-        window.Logger = {
-            error(){},
-            log(){},
-            debug(){},
-        };
-    }
+    // if(!consoleLogging) {
+    //     /**
+    //      * Disable kurento-utils logs
+    //      */
+    //     window.Logger = {
+    //         error(){},
+    //         log(){},
+    //         debug(){},
+    //     };
+    // }
 
     initEventHandler(Object.assign(params, {
         consoleLogging,
@@ -301,26 +301,7 @@ function Chat(params) {
 
                 if (!chatMessaging.userInfo) {
                     var getUserInfoTime = new Date().getTime();
-
-                    getUserInfo(function (userInfoResult) {
-                        if (actualTimingLog) {
-                            Utility.chatStepLogger('Get User Info ', new Date().getTime() - getUserInfoTime);
-                        }
-                        if (!userInfoResult.hasError) {
-                            chatMessaging.userInfo = userInfoResult.result.user;
-
-                            // getAllThreads({
-                            //     summary: true,
-                            //     cache: false
-                            // });
-
-
-                            chatMessaging.chatState = true;
-                            chatEvents.fireEvent('chatReady');
-                            chatSendQueueHandler();
-
-                        }
-                    });
+                    getUserAndUpdateSDKState();
                 } else if (chatMessaging.userInfo.id > 0) {
                     chatMessaging.chatState = true;
                     chatEvents.fireEvent('chatReady');
@@ -416,6 +397,25 @@ function Chat(params) {
                     raiseError(errorList.SOCKET_CONNECTION_FAILED, null, true, {});
                 }
 
+            });
+        },
+        getUserAndUpdateSDKState = function () {
+            getUserInfo(function (userInfoResult) {
+                if (actualTimingLog) {
+                    Utility.chatStepLogger('Get User Info ', new Date().getTime() - getUserInfoTime);
+                }
+                if (!userInfoResult.hasError) {
+                    chatMessaging.userInfo = userInfoResult.result.user;
+
+                    // getAllThreads({
+                    //     summary: true,
+                    //     cache: false
+                    // });
+
+                    chatMessaging.chatState = true;
+                    chatEvents.fireEvent('chatReady');
+                    chatSendQueueHandler();
+                }
             });
         },
 
@@ -11489,6 +11489,9 @@ function Chat(params) {
             callModule.updateToken(token);
             chatMessaging.updateToken(token);
             chatEvents.updateToken(token);
+            if(!chatMessaging.userInfo || !chatMessaging.userInfo.id) {
+                getUserAndUpdateSDKState();
+            }
         }
     };
 

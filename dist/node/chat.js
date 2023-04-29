@@ -174,18 +174,16 @@ function Chat(params) {
       chatSendQueue = [],
       chatWaitQueue = [],
       chatUploadQueue = [],
-      fullResponseObject = params.fullResponseObject || false;
-
-  if (!consoleLogging) {
-    /**
-     * Disable kurento-utils logs
-     */
-    window.Logger = {
-      error: function error() {},
-      log: function log() {},
-      debug: function debug() {}
-    };
-  }
+      fullResponseObject = params.fullResponseObject || false; // if(!consoleLogging) {
+  //     /**
+  //      * Disable kurento-utils logs
+  //      */
+  //     window.Logger = {
+  //         error(){},
+  //         log(){},
+  //         debug(){},
+  //     };
+  // }
 
   (0, _events.initEventHandler)(Object.assign(params, {
     consoleLogging: consoleLogging
@@ -297,24 +295,7 @@ function Chat(params) {
 
       if (!chatMessaging.userInfo) {
         var getUserInfoTime = new Date().getTime();
-        getUserInfo(function (userInfoResult) {
-          if (actualTimingLog) {
-            _utility["default"].chatStepLogger('Get User Info ', new Date().getTime() - getUserInfoTime);
-          }
-
-          if (!userInfoResult.hasError) {
-            chatMessaging.userInfo = userInfoResult.result.user; // getAllThreads({
-            //     summary: true,
-            //     cache: false
-            // });
-
-            chatMessaging.chatState = true;
-
-            _events.chatEvents.fireEvent('chatReady');
-
-            chatSendQueueHandler();
-          }
-        });
+        getUserAndUpdateSDKState();
       } else if (chatMessaging.userInfo.id > 0) {
         chatMessaging.chatState = true;
 
@@ -412,6 +393,26 @@ function Chat(params) {
         });
       } else {
         (0, _errorHandler.raiseError)(_errorHandler.errorList.SOCKET_CONNECTION_FAILED, null, true, {});
+      }
+    });
+  },
+      getUserAndUpdateSDKState = function getUserAndUpdateSDKState() {
+    getUserInfo(function (userInfoResult) {
+      if (actualTimingLog) {
+        _utility["default"].chatStepLogger('Get User Info ', new Date().getTime() - getUserInfoTime);
+      }
+
+      if (!userInfoResult.hasError) {
+        chatMessaging.userInfo = userInfoResult.result.user; // getAllThreads({
+        //     summary: true,
+        //     cache: false
+        // });
+
+        chatMessaging.chatState = true;
+
+        _events.chatEvents.fireEvent('chatReady');
+
+        chatSendQueueHandler();
       }
     });
   },
@@ -11583,6 +11584,10 @@ function Chat(params) {
       chatMessaging.updateToken(token);
 
       _events.chatEvents.updateToken(token);
+
+      if (!chatMessaging.userInfo || !chatMessaging.userInfo.id) {
+        getUserAndUpdateSDKState();
+      }
     }
   };
 
