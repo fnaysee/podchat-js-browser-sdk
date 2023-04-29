@@ -54,9 +54,9 @@ function ChatEvents(params) {
     this.fireEvent = function (eventName, param) {
         if (eventName === "chatReady") {
             if (typeof navigator === "undefined") {
-                consoleLogging && console.log("\x1b[90m    ☰ \x1b[0m\x1b[90m%s\x1b[0m", "Chat is Ready 😉");
+                console.log("\x1b[90m    ☰ \x1b[0m\x1b[90m%s\x1b[0m", "Chat is Ready 😉");
             } else {
-                consoleLogging && console.log("%c   Chat is Ready 😉", 'border-left: solid #666 10px; color: #666;');
+                console.log("%c   Chat is Ready 😉", 'border-left: solid #666 10px; color: #666;');
             }
         }
 
