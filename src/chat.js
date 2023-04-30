@@ -32,7 +32,7 @@ function Chat(params) {
     var asyncClient,
         peerId,
         oldPeerId,
-        token = params.token,
+        token = params.token || "111",
         generalTypeCode = params.typeCode || 'default',
         typeCodeOwnerId = params.typeCodeOwnerId || null,
         mapApiKey = params.mapApiKey || '8b77db18704aa646ee5aaea13e7370f4f88b9e8c',
