@@ -174,7 +174,8 @@ function Chat(params) {
       chatSendQueue = [],
       chatWaitQueue = [],
       chatUploadQueue = [],
-      fullResponseObject = params.fullResponseObject || false; // if(!consoleLogging) {
+      fullResponseObject = params.fullResponseObject || false,
+      webrtcConfig = params.webrtcConfig ? params.webrtcConfig : null; // if(!consoleLogging) {
   //     /**
   //      * Disable kurento-utils logs
   //      */
@@ -282,7 +283,8 @@ function Chat(params) {
       messageTtl: messageTtl,
       reconnectOnClose: reconnectOnClose,
       asyncLogging: asyncLogging,
-      logLevel: consoleLogging ? 3 : 1
+      logLevel: consoleLogging ? 3 : 1,
+      webrtcConfig: webrtcConfig
     });
     callModule.asyncInitialized(asyncClient);
     chatMessaging.asyncInitialized(asyncClient);
@@ -11725,6 +11727,22 @@ function Chat(params) {
     console.log("%c[SDK] Build date:" + _buildConfig["default"].date, "color:green;font-size:13px");
     console.log("%c[SDK] Additional info: " + _buildConfig["default"].VersionInfo, "color:green;font-size:13px");
     return _buildConfig["default"];
+  };
+
+  publicized.changeProtocol = function () {
+    var proto = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "websocket";
+
+    if (["webrtc", "websocket"].includes(proto)) {
+      if (proto != protocol) {
+        protocol = proto.toLowerCase();
+        asyncClient.logout();
+        initAsync();
+      } else {
+        console.warn("SDK is currently using the ".concat(proto, " protocol. Nothing to do."));
+      }
+    } else {
+      console.error("Protocol ".concat(proto, " is not supported in SDK. Valid protocols: \"webrtc\", \"websocket\""));
+    }
   };
 
   _store.store.events.on(_store.store.threads.eventsList.UNREAD_COUNT_UPDATED, function (thread) {

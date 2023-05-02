@@ -48,7 +48,7 @@
     "crypto-js": "^4.0.0",
     "dompurify": "^2.3.3",
     "node-rsa": "^1.1.1",
-    "podasync-ws-only": "^2.7.11",
+    "podasync-ws-only": "^2.9.0-snapshot.1",
     "webrtc-adapter": "^8.0.0"
   },
   "devDependencies": {
