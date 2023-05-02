@@ -41,6 +41,18 @@
             serverName: CONFIG[env].serverName,
             callServerName: CONFIG[env].callServerName,
 
+            // protocol: "webrtc",
+            webrtcConfig: {
+                baseUrl: "https://async-chat.fanapsoft.ir/webrtc/",//"https://172.16.110.26/webrtc/",//"http://localhost:3000/webrtc/",//"http://109.201.0.97/webrtc/",//"https://172.16.110.26:443/webrtc/",
+                configuration: {
+                    bundlePolicy: "balanced",
+                    iceTransportPolicy: "relay",
+                    iceServers: [{
+                        "urls": "turn:turnsandbox.podstream.ir:3478", "username": "mkhorrami", "credential": "mkh_123456"
+                    }]
+                }
+            },
+
             token: CONFIG.token,
             grantDeviceIdFromSSO: false,
             enableCache: false,

@@ -172,7 +172,8 @@ function Chat(params) {
         chatSendQueue = [],
         chatWaitQueue = [],
         chatUploadQueue = [],
-        fullResponseObject = params.fullResponseObject || false;
+        fullResponseObject = params.fullResponseObject || false,
+        webrtcConfig = (params.webrtcConfig ? params.webrtcConfig : null);
 
     // if(!consoleLogging) {
     //     /**
@@ -287,7 +288,8 @@ function Chat(params) {
                 messageTtl: messageTtl,
                 reconnectOnClose: reconnectOnClose,
                 asyncLogging: asyncLogging,
-                logLevel: (consoleLogging ? 3 : 1)
+                logLevel: (consoleLogging ? 3 : 1),
+                webrtcConfig: webrtcConfig
             });
             callModule.asyncInitialized(asyncClient);
             chatMessaging.asyncInitialized(asyncClient);
@@ -11622,6 +11624,20 @@ function Chat(params) {
         console.log("%c[SDK] Additional info: " + buildConfig.VersionInfo, "color:green;font-size:13px")
         return buildConfig;
     };
+
+    publicized.changeProtocol = function (proto = "websocket") {
+        if(["webrtc", "websocket"].includes(proto)) {
+            if (proto != protocol) {
+                protocol = proto.toLowerCase();
+                asyncClient.logout();
+                initAsync();
+            } else {
+                console.warn(`SDK is currently using the ${proto} protocol. Nothing to do.`)
+            }
+        } else {
+            console.error(`Protocol ${proto} is not supported in SDK. Valid protocols: "webrtc", "websocket"`)
+        }
+    }
 
     store.events.on(store.threads.eventsList.UNREAD_COUNT_UPDATED, (thread) => {
         chatEvents.fireEvent('threadEvents', {
