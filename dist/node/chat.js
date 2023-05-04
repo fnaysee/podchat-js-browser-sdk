@@ -8252,11 +8252,13 @@ function Chat(params) {
         sendMessageParams.content = {
           clearHistory: params.clearHistory
         };
-      } else {
-        sendMessageParams.content = {
-          clearHistory: true
-        };
       }
+      /*else {
+        sendMessageParams.content = {
+            clearHistory: false
+        };
+      }*/
+
     }
 
     return chatMessaging.sendMessage(sendMessageParams, {

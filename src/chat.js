@@ -8230,11 +8230,11 @@ function Chat(params) {
                 sendMessageParams.content = {
                     clearHistory: params.clearHistory
                 };
-            } else {
+            } /*else {
                 sendMessageParams.content = {
-                    clearHistory: true
+                    clearHistory: false
                 };
-            }
+            }*/
         }
 
         return chatMessaging.sendMessage(sendMessageParams, {
