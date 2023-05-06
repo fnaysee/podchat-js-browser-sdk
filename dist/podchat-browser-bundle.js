@@ -731,7 +731,7 @@ EncoderBuffer.prototype.join = function join(out, offset) {
   return out;
 };
 
-},{"../base/reporter":18,"inherits":186,"safer-buffer":225}],16:[function(require,module,exports){
+},{"../base/reporter":18,"inherits":186,"safer-buffer":226}],16:[function(require,module,exports){
 'use strict';
 
 const base = exports;
@@ -1987,7 +1987,7 @@ PEMDecoder.prototype.decode = function decode(data, options) {
   return DERDecoder.prototype.decode.call(this, input, options);
 };
 
-},{"./der":21,"inherits":186,"safer-buffer":225}],24:[function(require,module,exports){
+},{"./der":21,"inherits":186,"safer-buffer":226}],24:[function(require,module,exports){
 'use strict';
 
 const inherits = require('inherits');
@@ -2284,7 +2284,7 @@ function encodeTag(tag, primitive, cls, reporter) {
   return res;
 }
 
-},{"../base/node":17,"../constants/der":19,"inherits":186,"safer-buffer":225}],25:[function(require,module,exports){
+},{"../base/node":17,"../constants/der":19,"inherits":186,"safer-buffer":226}],25:[function(require,module,exports){
 'use strict';
 
 const encoders = exports;
@@ -9765,7 +9765,7 @@ AES.prototype.scrub = function () {
 
 module.exports.AES = AES
 
-},{"safe-buffer":224}],33:[function(require,module,exports){
+},{"safe-buffer":225}],33:[function(require,module,exports){
 var aes = require('./aes')
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('cipher-base')
@@ -9884,7 +9884,7 @@ StreamCipher.prototype.setAAD = function setAAD (buf) {
 
 module.exports = StreamCipher
 
-},{"./aes":32,"./ghash":37,"./incr32":38,"buffer-xor":75,"cipher-base":77,"inherits":186,"safe-buffer":224}],34:[function(require,module,exports){
+},{"./aes":32,"./ghash":37,"./incr32":38,"buffer-xor":75,"cipher-base":77,"inherits":186,"safe-buffer":225}],34:[function(require,module,exports){
 var ciphers = require('./encrypter')
 var deciphers = require('./decrypter')
 var modes = require('./modes/list.json')
@@ -10025,7 +10025,7 @@ function createDecipher (suite, password) {
 exports.createDecipher = createDecipher
 exports.createDecipheriv = createDecipheriv
 
-},{"./aes":32,"./authCipher":33,"./modes":45,"./streamCipher":48,"cipher-base":77,"evp_bytestokey":150,"inherits":186,"safe-buffer":224}],36:[function(require,module,exports){
+},{"./aes":32,"./authCipher":33,"./modes":45,"./streamCipher":48,"cipher-base":77,"evp_bytestokey":150,"inherits":186,"safe-buffer":225}],36:[function(require,module,exports){
 var MODES = require('./modes')
 var AuthCipher = require('./authCipher')
 var Buffer = require('safe-buffer').Buffer
@@ -10141,7 +10141,7 @@ function createCipher (suite, password) {
 exports.createCipheriv = createCipheriv
 exports.createCipher = createCipher
 
-},{"./aes":32,"./authCipher":33,"./modes":45,"./streamCipher":48,"cipher-base":77,"evp_bytestokey":150,"inherits":186,"safe-buffer":224}],37:[function(require,module,exports){
+},{"./aes":32,"./authCipher":33,"./modes":45,"./streamCipher":48,"cipher-base":77,"evp_bytestokey":150,"inherits":186,"safe-buffer":225}],37:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var ZEROES = Buffer.alloc(16, 0)
 
@@ -10232,7 +10232,7 @@ GHASH.prototype.final = function (abl, bl) {
 
 module.exports = GHASH
 
-},{"safe-buffer":224}],38:[function(require,module,exports){
+},{"safe-buffer":225}],38:[function(require,module,exports){
 function incr32 (iv) {
   var len = iv.length
   var item
@@ -10303,7 +10303,7 @@ exports.encrypt = function (self, data, decrypt) {
   return out
 }
 
-},{"buffer-xor":75,"safe-buffer":224}],41:[function(require,module,exports){
+},{"buffer-xor":75,"safe-buffer":225}],41:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 function encryptByte (self, byteParam, decrypt) {
@@ -10347,7 +10347,7 @@ exports.encrypt = function (self, chunk, decrypt) {
   return out
 }
 
-},{"safe-buffer":224}],42:[function(require,module,exports){
+},{"safe-buffer":225}],42:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 function encryptByte (self, byteParam, decrypt) {
@@ -10374,7 +10374,7 @@ exports.encrypt = function (self, chunk, decrypt) {
   return out
 }
 
-},{"safe-buffer":224}],43:[function(require,module,exports){
+},{"safe-buffer":225}],43:[function(require,module,exports){
 var xor = require('buffer-xor')
 var Buffer = require('safe-buffer').Buffer
 var incr32 = require('../incr32')
@@ -10406,7 +10406,7 @@ exports.encrypt = function (self, chunk) {
   return xor(chunk, pad)
 }
 
-},{"../incr32":38,"buffer-xor":75,"safe-buffer":224}],44:[function(require,module,exports){
+},{"../incr32":38,"buffer-xor":75,"safe-buffer":225}],44:[function(require,module,exports){
 exports.encrypt = function (self, block) {
   return self._cipher.encryptBlock(block)
 }
@@ -10677,7 +10677,7 @@ StreamCipher.prototype._final = function () {
 
 module.exports = StreamCipher
 
-},{"./aes":32,"cipher-base":77,"inherits":186,"safe-buffer":224}],49:[function(require,module,exports){
+},{"./aes":32,"cipher-base":77,"inherits":186,"safe-buffer":225}],49:[function(require,module,exports){
 var DES = require('browserify-des')
 var aes = require('browserify-aes/browser')
 var aesModes = require('browserify-aes/modes')
@@ -10798,7 +10798,7 @@ DES.prototype._final = function () {
   return Buffer.from(this._des.final())
 }
 
-},{"cipher-base":77,"des.js":119,"inherits":186,"safe-buffer":224}],51:[function(require,module,exports){
+},{"cipher-base":77,"des.js":119,"inherits":186,"safe-buffer":225}],51:[function(require,module,exports){
 exports['des-ecb'] = {
   key: 8,
   iv: 0
@@ -10863,7 +10863,7 @@ crt.getr = getr
 module.exports = crt
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"bn.js":29,"buffer":76,"randombytes":221}],53:[function(require,module,exports){
+},{"bn.js":29,"buffer":76,"randombytes":222}],53:[function(require,module,exports){
 module.exports = require('./browser/algorithms.json')
 
 },{"./browser/algorithms.json":54}],54:[function(require,module,exports){
@@ -11626,7 +11626,7 @@ Object.defineProperty(Duplex.prototype, 'destroyed', {
   }
 });
 }).call(this)}).call(this,require('_process'))
-},{"./_stream_readable":62,"./_stream_writable":64,"_process":213,"inherits":186}],61:[function(require,module,exports){
+},{"./_stream_readable":62,"./_stream_writable":64,"_process":214,"inherits":186}],61:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12793,7 +12793,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":59,"./_stream_duplex":60,"./internal/streams/async_iterator":65,"./internal/streams/buffer_list":66,"./internal/streams/destroy":67,"./internal/streams/from":69,"./internal/streams/state":71,"./internal/streams/stream":72,"_process":213,"buffer":76,"events":149,"inherits":186,"string_decoder/":257,"util":31}],63:[function(require,module,exports){
+},{"../errors":59,"./_stream_duplex":60,"./internal/streams/async_iterator":65,"./internal/streams/buffer_list":66,"./internal/streams/destroy":67,"./internal/streams/from":69,"./internal/streams/state":71,"./internal/streams/stream":72,"_process":214,"buffer":76,"events":149,"inherits":186,"string_decoder/":258,"util":31}],63:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13695,7 +13695,7 @@ Writable.prototype._destroy = function (err, cb) {
   cb(err);
 };
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":59,"./_stream_duplex":60,"./internal/streams/destroy":67,"./internal/streams/state":71,"./internal/streams/stream":72,"_process":213,"buffer":76,"inherits":186,"util-deprecate":261}],65:[function(require,module,exports){
+},{"../errors":59,"./_stream_duplex":60,"./internal/streams/destroy":67,"./internal/streams/state":71,"./internal/streams/stream":72,"_process":214,"buffer":76,"inherits":186,"util-deprecate":262}],65:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -13905,7 +13905,7 @@ var createReadableStreamAsyncIterator = function createReadableStreamAsyncIterat
 
 module.exports = createReadableStreamAsyncIterator;
 }).call(this)}).call(this,require('_process'))
-},{"./end-of-stream":68,"_process":213}],66:[function(require,module,exports){
+},{"./end-of-stream":68,"_process":214}],66:[function(require,module,exports){
 'use strict';
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -14224,7 +14224,7 @@ module.exports = {
   errorOrDestroy: errorOrDestroy
 };
 }).call(this)}).call(this,require('_process'))
-},{"_process":213}],68:[function(require,module,exports){
+},{"_process":214}],68:[function(require,module,exports){
 // Ported from https://github.com/mafintosh/end-of-stream with
 // permission from the author, Mathias Buus (@mafintosh).
 'use strict';
@@ -16437,7 +16437,7 @@ CipherBase.prototype._toString = function (value, enc, fin) {
 
 module.exports = CipherBase
 
-},{"inherits":186,"safe-buffer":224,"stream":242,"string_decoder":257}],78:[function(require,module,exports){
+},{"inherits":186,"safe-buffer":225,"stream":243,"string_decoder":258}],78:[function(require,module,exports){
 (function (Buffer){(function (){
 var elliptic = require('elliptic')
 var BN = require('bn.js')
@@ -16599,7 +16599,7 @@ module.exports = function createHash (alg) {
   return new Hash(sha(alg))
 }
 
-},{"cipher-base":77,"inherits":186,"md5.js":191,"ripemd160":223,"sha.js":235}],81:[function(require,module,exports){
+},{"cipher-base":77,"inherits":186,"md5.js":191,"ripemd160":224,"sha.js":236}],81:[function(require,module,exports){
 var MD5 = require('md5.js')
 
 module.exports = function (buffer) {
@@ -16670,7 +16670,7 @@ module.exports = function createHmac (alg, key) {
   return new Hmac(alg, key)
 }
 
-},{"./legacy":83,"cipher-base":77,"create-hash/md5":81,"inherits":186,"ripemd160":223,"safe-buffer":224,"sha.js":235}],83:[function(require,module,exports){
+},{"./legacy":83,"cipher-base":77,"create-hash/md5":81,"inherits":186,"ripemd160":224,"safe-buffer":225,"sha.js":236}],83:[function(require,module,exports){
 'use strict'
 var inherits = require('inherits')
 var Buffer = require('safe-buffer').Buffer
@@ -16718,7 +16718,7 @@ Hmac.prototype._final = function () {
 }
 module.exports = Hmac
 
-},{"cipher-base":77,"inherits":186,"safe-buffer":224}],84:[function(require,module,exports){
+},{"cipher-base":77,"inherits":186,"safe-buffer":225}],84:[function(require,module,exports){
 'use strict'
 
 exports.randomBytes = exports.rng = exports.pseudoRandomBytes = exports.prng = require('randombytes')
@@ -16817,7 +16817,7 @@ exports.constants = {
   'POINT_CONVERSION_HYBRID': 6
 }
 
-},{"browserify-cipher":49,"browserify-sign":56,"browserify-sign/algos":53,"create-ecdh":78,"create-hash":80,"create-hmac":82,"diffie-hellman":126,"pbkdf2":203,"public-encrypt":214,"randombytes":221,"randomfill":222}],85:[function(require,module,exports){
+},{"browserify-cipher":49,"browserify-sign":56,"browserify-sign/algos":53,"create-ecdh":78,"create-hash":80,"create-hmac":82,"diffie-hellman":126,"pbkdf2":203,"public-encrypt":215,"randombytes":222,"randomfill":223}],85:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -28657,7 +28657,7 @@ return Dexie;
 
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
-},{"timers":259}],126:[function(require,module,exports){
+},{"timers":260}],126:[function(require,module,exports){
 (function (Buffer){(function (){
 var generatePrime = require('./lib/generatePrime')
 var primes = require('./lib/primes.json')
@@ -28871,7 +28871,7 @@ function formatReturnValue(bn, enc) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"./generatePrime":128,"bn.js":130,"buffer":76,"miller-rabin":193,"randombytes":221}],128:[function(require,module,exports){
+},{"./generatePrime":128,"bn.js":130,"buffer":76,"miller-rabin":193,"randombytes":222}],128:[function(require,module,exports){
 var randomBytes = require('randombytes');
 module.exports = findPrime;
 findPrime.simpleSieve = simpleSieve;
@@ -28978,7 +28978,7 @@ function findPrime(bits, gen) {
 
 }
 
-},{"bn.js":130,"miller-rabin":193,"randombytes":221}],129:[function(require,module,exports){
+},{"bn.js":130,"miller-rabin":193,"randombytes":222}],129:[function(require,module,exports){
 module.exports={
     "modp1": {
         "gen": "02",
@@ -34315,36 +34315,53 @@ utils.intFromLE = intFromLE;
 arguments[4][27][0].apply(exports,arguments)
 },{"buffer":31,"dup":27}],148:[function(require,module,exports){
 module.exports={
-  "name": "elliptic",
-  "version": "6.5.4",
-  "description": "EC cryptography",
-  "main": "lib/elliptic.js",
-  "files": [
-    "lib"
+  "_args": [
+    [
+      "elliptic@6.5.4",
+      "D:\\social-sdk\\podchat-browser-sdk"
+    ]
   ],
-  "scripts": {
-    "lint": "eslint lib test",
-    "lint:fix": "npm run lint -- --fix",
-    "unit": "istanbul test _mocha --reporter=spec test/index.js",
-    "test": "npm run lint && npm run unit",
-    "version": "grunt dist && git add dist/"
+  "_development": true,
+  "_from": "elliptic@6.5.4",
+  "_id": "elliptic@6.5.4",
+  "_inBundle": false,
+  "_integrity": "sha512-iLhC6ULemrljPZb+QutR5TQGB+pdW6KGD5RSegS+8sorOZT+rdQFbsQFJgvN3eRqNALqJer4oQ16YvJHlU8hzQ==",
+  "_location": "/elliptic",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "elliptic@6.5.4",
+    "name": "elliptic",
+    "escapedName": "elliptic",
+    "rawSpec": "6.5.4",
+    "saveSpec": null,
+    "fetchSpec": "6.5.4"
   },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:indutny/elliptic"
-  },
-  "keywords": [
-    "EC",
-    "Elliptic",
-    "curve",
-    "Cryptography"
+  "_requiredBy": [
+    "/browserify-sign",
+    "/create-ecdh"
   ],
-  "author": "Fedor Indutny <fedor@indutny.com>",
-  "license": "MIT",
+  "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.5.4.tgz",
+  "_spec": "6.5.4",
+  "_where": "D:\\social-sdk\\podchat-browser-sdk",
+  "author": {
+    "name": "Fedor Indutny",
+    "email": "fedor@indutny.com"
+  },
   "bugs": {
     "url": "https://github.com/indutny/elliptic/issues"
   },
-  "homepage": "https://github.com/indutny/elliptic",
+  "dependencies": {
+    "bn.js": "^4.11.9",
+    "brorand": "^1.1.0",
+    "hash.js": "^1.0.0",
+    "hmac-drbg": "^1.0.1",
+    "inherits": "^2.0.4",
+    "minimalistic-assert": "^1.0.1",
+    "minimalistic-crypto-utils": "^1.0.1"
+  },
+  "description": "EC cryptography",
   "devDependencies": {
     "brfs": "^2.0.2",
     "coveralls": "^3.1.0",
@@ -34360,15 +34377,31 @@ module.exports={
     "istanbul": "^0.4.5",
     "mocha": "^8.0.1"
   },
-  "dependencies": {
-    "bn.js": "^4.11.9",
-    "brorand": "^1.1.0",
-    "hash.js": "^1.0.0",
-    "hmac-drbg": "^1.0.1",
-    "inherits": "^2.0.4",
-    "minimalistic-assert": "^1.0.1",
-    "minimalistic-crypto-utils": "^1.0.1"
-  }
+  "files": [
+    "lib"
+  ],
+  "homepage": "https://github.com/indutny/elliptic",
+  "keywords": [
+    "EC",
+    "Elliptic",
+    "curve",
+    "Cryptography"
+  ],
+  "license": "MIT",
+  "main": "lib/elliptic.js",
+  "name": "elliptic",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/indutny/elliptic.git"
+  },
+  "scripts": {
+    "lint": "eslint lib test",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "npm run lint && npm run unit",
+    "unit": "istanbul test _mocha --reporter=spec test/index.js",
+    "version": "grunt dist && git add dist/"
+  },
+  "version": "6.5.4"
 }
 
 },{}],149:[function(require,module,exports){
@@ -34917,7 +34950,7 @@ function EVP_BytesToKey (password, salt, keyBits, ivLen) {
 
 module.exports = EVP_BytesToKey
 
-},{"md5.js":191,"safe-buffer":224}],151:[function(require,module,exports){
+},{"md5.js":191,"safe-buffer":225}],151:[function(require,module,exports){
 /* jshint node: true */
 'use strict';
 
@@ -35190,7 +35223,7 @@ module.exports = function(stream, options) {
   return harker;
 }
 
-},{"wildemitter":265}],155:[function(require,module,exports){
+},{"wildemitter":266}],155:[function(require,module,exports){
 'use strict'
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('readable-stream').Transform
@@ -35291,21 +35324,21 @@ module.exports = HashBase
 arguments[4][59][0].apply(exports,arguments)
 },{"dup":59}],157:[function(require,module,exports){
 arguments[4][60][0].apply(exports,arguments)
-},{"./_stream_readable":159,"./_stream_writable":161,"_process":213,"dup":60,"inherits":186}],158:[function(require,module,exports){
+},{"./_stream_readable":159,"./_stream_writable":161,"_process":214,"dup":60,"inherits":186}],158:[function(require,module,exports){
 arguments[4][61][0].apply(exports,arguments)
 },{"./_stream_transform":160,"dup":61,"inherits":186}],159:[function(require,module,exports){
 arguments[4][62][0].apply(exports,arguments)
-},{"../errors":156,"./_stream_duplex":157,"./internal/streams/async_iterator":162,"./internal/streams/buffer_list":163,"./internal/streams/destroy":164,"./internal/streams/from":166,"./internal/streams/state":168,"./internal/streams/stream":169,"_process":213,"buffer":76,"dup":62,"events":149,"inherits":186,"string_decoder/":257,"util":31}],160:[function(require,module,exports){
+},{"../errors":156,"./_stream_duplex":157,"./internal/streams/async_iterator":162,"./internal/streams/buffer_list":163,"./internal/streams/destroy":164,"./internal/streams/from":166,"./internal/streams/state":168,"./internal/streams/stream":169,"_process":214,"buffer":76,"dup":62,"events":149,"inherits":186,"string_decoder/":258,"util":31}],160:[function(require,module,exports){
 arguments[4][63][0].apply(exports,arguments)
 },{"../errors":156,"./_stream_duplex":157,"dup":63,"inherits":186}],161:[function(require,module,exports){
 arguments[4][64][0].apply(exports,arguments)
-},{"../errors":156,"./_stream_duplex":157,"./internal/streams/destroy":164,"./internal/streams/state":168,"./internal/streams/stream":169,"_process":213,"buffer":76,"dup":64,"inherits":186,"util-deprecate":261}],162:[function(require,module,exports){
+},{"../errors":156,"./_stream_duplex":157,"./internal/streams/destroy":164,"./internal/streams/state":168,"./internal/streams/stream":169,"_process":214,"buffer":76,"dup":64,"inherits":186,"util-deprecate":262}],162:[function(require,module,exports){
 arguments[4][65][0].apply(exports,arguments)
-},{"./end-of-stream":165,"_process":213,"dup":65}],163:[function(require,module,exports){
+},{"./end-of-stream":165,"_process":214,"dup":65}],163:[function(require,module,exports){
 arguments[4][66][0].apply(exports,arguments)
 },{"buffer":76,"dup":66,"util":31}],164:[function(require,module,exports){
 arguments[4][67][0].apply(exports,arguments)
-},{"_process":213,"dup":67}],165:[function(require,module,exports){
+},{"_process":214,"dup":67}],165:[function(require,module,exports){
 arguments[4][68][0].apply(exports,arguments)
 },{"../../../errors":156,"dup":68}],166:[function(require,module,exports){
 arguments[4][69][0].apply(exports,arguments)
@@ -37727,7 +37760,7 @@ exports.WebRtcPeerSendonly = WebRtcPeerSendonly
 exports.WebRtcPeerSendrecv = WebRtcPeerSendrecv
 exports.hark = harkUtils
 
-},{"events":149,"freeice":151,"hark":154,"inherits":186,"kurento-browser-extensions":188,"merge":192,"sdp-translator":231,"ua-parser-js":260,"uuid/v4":264}],190:[function(require,module,exports){
+},{"events":149,"freeice":151,"hark":154,"inherits":186,"kurento-browser-extensions":188,"merge":192,"sdp-translator":232,"ua-parser-js":261,"uuid/v4":265}],190:[function(require,module,exports){
 /*
  * (C) Copyright 2014 Kurento (http://kurento.org/)
  *
@@ -37907,7 +37940,7 @@ function fnI (a, b, c, d, m, k, s) {
 
 module.exports = MD5
 
-},{"hash-base":155,"inherits":186,"safe-buffer":224}],192:[function(require,module,exports){
+},{"hash-base":155,"inherits":186,"safe-buffer":225}],192:[function(require,module,exports){
 /*!
  * @name JavaScript/NodeJS Merge v1.2.1
  * @author yeikos
@@ -38601,7 +38634,7 @@ module.exports = function (okey, password) {
   }
 }
 
-},{"browserify-aes":34,"evp_bytestokey":150,"safe-buffer":224}],202:[function(require,module,exports){
+},{"browserify-aes":34,"evp_bytestokey":150,"safe-buffer":225}],202:[function(require,module,exports){
 var asn1 = require('./asn1')
 var aesid = require('./aesid.json')
 var fixProc = require('./fixProc')
@@ -38710,7 +38743,7 @@ function decrypt (data, password) {
   return Buffer.concat(out)
 }
 
-},{"./aesid.json":198,"./asn1":199,"./fixProc":201,"browserify-aes":34,"pbkdf2":203,"safe-buffer":224}],203:[function(require,module,exports){
+},{"./aesid.json":198,"./asn1":199,"./fixProc":201,"browserify-aes":34,"pbkdf2":203,"safe-buffer":225}],203:[function(require,module,exports){
 exports.pbkdf2 = require('./lib/async')
 exports.pbkdf2Sync = require('./lib/sync')
 
@@ -38836,7 +38869,7 @@ module.exports = function (password, salt, iterations, keylen, digest, callback)
 }
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./default-encoding":205,"./precondition":206,"./sync":207,"./to-buffer":208,"safe-buffer":224}],205:[function(require,module,exports){
+},{"./default-encoding":205,"./precondition":206,"./sync":207,"./to-buffer":208,"safe-buffer":225}],205:[function(require,module,exports){
 (function (process,global){(function (){
 var defaultEncoding
 /* istanbul ignore next */
@@ -38852,7 +38885,7 @@ if (global.process && global.process.browser) {
 module.exports = defaultEncoding
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":213}],206:[function(require,module,exports){
+},{"_process":214}],206:[function(require,module,exports){
 var MAX_ALLOC = Math.pow(2, 30) - 1 // default in iojs
 
 module.exports = function (iterations, keylen) {
@@ -38980,7 +39013,7 @@ function pbkdf2 (password, salt, iterations, keylen, digest) {
 
 module.exports = pbkdf2
 
-},{"./default-encoding":205,"./precondition":206,"./to-buffer":208,"create-hash/md5":81,"ripemd160":223,"safe-buffer":224,"sha.js":235}],208:[function(require,module,exports){
+},{"./default-encoding":205,"./precondition":206,"./to-buffer":208,"create-hash/md5":81,"ripemd160":224,"safe-buffer":225,"sha.js":236}],208:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 module.exports = function (thing, encoding, name) {
@@ -38995,7 +39028,7 @@ module.exports = function (thing, encoding, name) {
   }
 }
 
-},{"safe-buffer":224}],209:[function(require,module,exports){
+},{"safe-buffer":225}],209:[function(require,module,exports){
 (function () {
     /*
      * Async module to handle async messaging
@@ -39011,10 +39044,12 @@ module.exports = function (thing, encoding, name) {
          *******************************************************/
 
         var PodSocketClass,
+            WebRTCClass,
             PodUtility,
             LogLevel
         if (typeof(require) !== 'undefined' && typeof(exports) !== 'undefined') {
             PodSocketClass = require('./socket.js');
+            WebRTCClass = require('./webrtc.js');
             PodUtility = require('../utility/utility.js');
             LogLevel = require('../utility/logger.js');
         }
@@ -39040,6 +39075,7 @@ module.exports = function (thing, encoding, name) {
             },
             ackCallback = {},
             socket,
+            webRTCClass,
             asyncMessageType = {
                 PING: 0,
                 SERVER_REGISTER: 1,
@@ -39088,7 +39124,8 @@ module.exports = function (thing, encoding, name) {
                 ? params.asyncLogging.onMessageReceive
                 : false,
             onSendLogging = (params.asyncLogging && typeof params.asyncLogging.onMessageSend === 'boolean') ? params.asyncLogging.onMessageSend : false,
-            workerId = (params.asyncLogging && typeof parseInt(params.asyncLogging.workerId) === 'number') ? params.asyncLogging.workerId : 0;
+            workerId = (params.asyncLogging && typeof parseInt(params.asyncLogging.workerId) === 'number') ? params.asyncLogging.workerId : 0,
+            webrtcConfig = (params.webrtcConfig ? params.webrtcConfig : null);
 
         // function setRetryStep(val){
         //     console.log("new retryStep value:", val);
@@ -39118,6 +39155,9 @@ module.exports = function (thing, encoding, name) {
                 switch (protocol) {
                     case 'websocket':
                         initSocket();
+                        break;
+                    case 'webrtc':
+                        initWebrtc();
                         break;
                 }
             },
@@ -39279,6 +39319,124 @@ module.exports = function (thing, encoding, name) {
                 });
 
                 socket.on('error', function (error) {
+                    fireEvent('error', {
+                        errorCode: '',
+                        errorMessage: '',
+                        errorEvent: error
+                    });
+                });
+            },
+            initWebrtc = function () {
+                webRTCClass = new WebRTCClass({
+                    baseUrl: (webrtcConfig ? webrtcConfig.baseUrl : null),
+                    configuration : (webrtcConfig ? webrtcConfig.configuration : null),
+                    connectionCheckTimeout: params.connectionCheckTimeout,
+                    logLevel: logLevel
+                });
+
+                checkIfSocketHasOpennedTimeoutId = setTimeout(function () {
+                    if (!isSocketOpen) {
+                        fireEvent('error', {
+                            errorCode: 4001,
+                            errorMessage: 'Can not open Socket!'
+                        });
+                    }
+                }, 65000);
+
+                webRTCClass.on('open', function () {
+                    checkIfSocketHasOpennedTimeoutId && clearTimeout(checkIfSocketHasOpennedTimeoutId);
+                    socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+                    socketReconnectCheck && clearTimeout(socketReconnectCheck);
+
+                    isSocketOpen = true;
+                    retryStep.set(4);
+
+                    socketState = socketStateType.OPEN;
+                    fireEvent('stateChange', {
+                        socketState: socketState,
+                        timeUntilReconnect: 0,
+                        deviceRegister: isDeviceRegister,
+                        serverRegister: isServerRegister,
+                        peerId: peerId
+                    });
+                });
+
+                webRTCClass.on('message', function (msg) {
+                    console.log({msg})
+                    handleSocketMessage(msg);
+                    if (onReceiveLogging) {
+                        asyncLogger('Receive', msg);
+                    }
+                });
+
+                webRTCClass.on('close', function (event) {
+                    isSocketOpen = false;
+                    isDeviceRegister = false;
+                    oldPeerId = peerId;
+
+                    fireEvent('disconnect', event);
+
+                    if (reconnectOnClose) {
+                        if (asyncLogging) {
+                            if (workerId > 0) {
+                                Utility.asyncStepLogger(workerId + '\t Reconnecting after ' + retryStep.get() + 's');
+                            }
+                            else {
+                                Utility.asyncStepLogger('Reconnecting after ' + retryStep.get() + 's');
+                            }
+                        }
+
+                        logLevel.debug && console.debug("[Async][async.js] on connection close, retryStep:", retryStep.get());
+
+                        socketState = socketStateType.CLOSED;
+                        fireEvent('stateChange', {
+                            socketState: socketState,
+                            timeUntilReconnect: 1000 * retryStep.get(),
+                            deviceRegister: isDeviceRegister,
+                            serverRegister: isServerRegister,
+                            peerId: peerId
+                        });
+
+                        socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+
+                        socketReconnectRetryInterval = setTimeout(function () {
+                            webRTCClass.connect();
+                        }, 1000 * retryStep.get());
+
+                        if (retryStep.get() < 64) {
+                            // retryStep += 3;
+                            retryStep.set(retryStep.get() + 3)
+                        }
+                    }
+                    else {
+                        socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+                        socketReconnectCheck && clearTimeout(socketReconnectCheck);
+                        fireEvent('error', {
+                            errorCode: 4005,
+                            errorMessage: 'Connection Closed!'
+                        });
+
+                        socketState = socketStateType.CLOSED;
+                        fireEvent('stateChange', {
+                            socketState: socketState,
+                            timeUntilReconnect: 0,
+                            deviceRegister: isDeviceRegister,
+                            serverRegister: isServerRegister,
+                            peerId: peerId
+                        });
+                    }
+
+                });
+
+                webRTCClass.on('customError', function (error) {
+                    fireEvent('error', {
+                        errorCode: error.errorCode,
+                        errorMessage: error.errorMessage,
+                        errorEvent: error.errorEvent
+                    });
+                });
+
+                webRTCClass.on('error', function (error) {
                     fireEvent('error', {
                         errorCode: '',
                         errorMessage: '',
@@ -39537,6 +39695,15 @@ module.exports = function (thing, encoding, name) {
                             pushSendDataQueue.push(msg);
                         }
                         break;
+                    case 'webrtc':
+                        if (socketState === socketStateType.OPEN) {
+                            webRTCClass.emit(msg);
+                        }
+                        else {
+                            pushSendDataQueue.push(msg);
+                        }
+
+                        break;
                 }
             },
 
@@ -39556,16 +39723,16 @@ module.exports = function (thing, encoding, name) {
 
             fireEvent = function (eventName, param, ack) {
                 // try {
-                    if (ack) {
-                        for (var id in eventCallbacks[eventName]) {
-                            eventCallbacks[eventName][id](param, ack);
-                        }
+                if (ack) {
+                    for (var id in eventCallbacks[eventName]) {
+                        eventCallbacks[eventName][id](param, ack);
                     }
-                    else {
-                        for (var id in eventCallbacks[eventName]) {
-                            eventCallbacks[eventName][id](param);
-                        }
+                }
+                else {
+                    for (var id in eventCallbacks[eventName]) {
+                        eventCallbacks[eventName][id](param);
                     }
+                }
                 // }
                 // catch (e) {
                 //     fireEvent('error', {
@@ -39667,6 +39834,20 @@ module.exports = function (thing, encoding, name) {
                     socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
                     socket.close();
                     break;
+                case 'webrtc':
+                    socketState = socketStateType.CLOSED;
+                    fireEvent('stateChange', {
+                        socketState: socketState,
+                        timeUntilReconnect: 0,
+                        deviceRegister: isDeviceRegister,
+                        serverRegister: isServerRegister,
+                        peerId: peerId
+                    });
+
+                    socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+                    webRTCClass.close();
+
+                    break;
             }
         };
 
@@ -39696,6 +39877,20 @@ module.exports = function (thing, encoding, name) {
 
                     socket.close();
                     break;
+                case 'webrtc':
+                    socketState = socketStateType.CLOSED;
+                    fireEvent('stateChange', {
+                        socketState: socketState,
+                        timeUntilReconnect: 0,
+                        deviceRegister: isDeviceRegister,
+                        serverRegister: isServerRegister,
+                        peerId: peerId
+                    });
+
+                    reconnectOnClose = false;
+                    webRTCClass.close();
+
+                    break;
             }
         };
 
@@ -39715,12 +39910,18 @@ module.exports = function (thing, encoding, name) {
             });
 
             socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-            socket.close();
+            if(protocol === "websocket")
+                socket.close();
+            else if(protocol == "webrtc")
+                webRTCClass.close()
 
             socketReconnectRetryInterval = setTimeout(function () {
                 // retryStep = 4;
                 retryStep.set(4);
-                socket.connect();
+                if(protocol === "websocket")
+                    socket.close();
+                else if(protocol == "webrtc")
+                    webRTCClass.close()
             }, 2000);
         };
 
@@ -39740,7 +39941,7 @@ module.exports = function (thing, encoding, name) {
     }
 })();
 
-},{"../utility/logger.js":211,"../utility/utility.js":212,"./socket.js":210}],210:[function(require,module,exports){
+},{"../utility/logger.js":212,"../utility/utility.js":213,"./socket.js":210,"./webrtc.js":211}],210:[function(require,module,exports){
 (function() {
   /*
    * Socket Module to connect and handle Socket functionalities
@@ -39760,15 +39961,15 @@ module.exports = function (thing, encoding, name) {
      *******************************************************/
 
     var address = params.socketAddress,
-      wsConnectionWaitTime = params.wsConnectionWaitTime || 500,
-      connectionCheckTimeout = params.connectionCheckTimeout || 10000,
-      eventCallback = {},
-      socket,
-      waitForSocketToConnectTimeoutId,
-      socketRealTimeStatusInterval,
-      logLevel = params.logLevel,
-      pingController = new PingManager({waitTime: connectionCheckTimeout}),
-      socketWatchTimeout;
+        wsConnectionWaitTime = params.wsConnectionWaitTime || 500,
+        connectionCheckTimeout = params.connectionCheckTimeout || 10000,
+        eventCallback = {},
+        socket,
+        waitForSocketToConnectTimeoutId,
+        socketRealTimeStatusInterval,
+        logLevel = params.logLevel,
+        pingController = new PingManager({waitTime: connectionCheckTimeout}),
+        socketWatchTimeout;
 
 
     function PingManager(params) {
@@ -39782,7 +39983,7 @@ module.exports = function (thing, encoding, name) {
           first: null,
           second: null,
           third: null,
-          fourth: null
+          //fourth: null
         }
       }
 
@@ -39794,13 +39995,13 @@ module.exports = function (thing, encoding, name) {
         setPingTimeout() {
           config.timeoutIds.first = setTimeout(()=>{
             ping();
-            config.timeoutIds.first = setTimeout(()=>{
+            config.timeoutIds.second = setTimeout(()=>{
               ping();
-                config.timeoutIds.fourth = setTimeout(()=>{
-                  logLevel.debug && console.debug("[Async][Socket.js] Force closing socket.");
-                  onCloseHandler(null);
-                  socket.close();
-                }, 2000);
+              config.timeoutIds.third = setTimeout(()=>{
+                logLevel.debug && console.debug("[Async][Socket.js] Force closing socket.");
+                onCloseHandler(null);
+                socket.close();
+              }, 2000);
             }, 2000);
           }, 8000);
         },
@@ -39808,7 +40009,7 @@ module.exports = function (thing, encoding, name) {
           clearTimeout(config.timeoutIds.first);
           clearTimeout(config.timeoutIds.second);
           clearTimeout(config.timeoutIds.third);
-          clearTimeout(config.timeoutIds.fourth);
+          // clearTimeout(config.timeoutIds.fourth);
         },
       }
     }
@@ -39818,135 +40019,135 @@ module.exports = function (thing, encoding, name) {
      *******************************************************/
 
     var init = function() {
-        connect();
-      },
+          connect();
+        },
 
-      connect = function() {
-        try {
-          if (socket && socket.readyState == 1) {
-            return;
-          }
+        connect = function() {
+          try {
+            if (socket && socket.readyState == 1) {
+              return;
+            }
 
-          socket = new WebSocket(address, []);
+            socket = new WebSocket(address, []);
 
-          // socketRealTimeStatusInterval && clearInterval(socketRealTimeStatusInterval);
-          // socketRealTimeStatusInterval = setInterval(function() {
-          //   switch (socket.readyState) {
-          //     case 2:
-          //       onCloseHandler(null);
-          //       socketRealTimeStatusInterval && clearInterval(socketRealTimeStatusInterval);
-          //       break;
-          //     case 3:
-          //
-          //       break;
-          //   }
-          // }, 5000);
+            // socketRealTimeStatusInterval && clearInterval(socketRealTimeStatusInterval);
+            // socketRealTimeStatusInterval = setInterval(function() {
+            //   switch (socket.readyState) {
+            //     case 2:
+            //       onCloseHandler(null);
+            //       socketRealTimeStatusInterval && clearInterval(socketRealTimeStatusInterval);
+            //       break;
+            //     case 3:
+            //
+            //       break;
+            //   }
+            // }, 5000);
 
-          /**
-           * Watches the socket to make sure it's state changes to 1 in 5 seconds
-           */
-          socketWatchTimeout && clearTimeout(socketWatchTimeout);
-          socketWatchTimeout = setTimeout(() => {
-            // if(socket.readyState !== 1) {
-            logLevel.debug && console.debug("[Async][Socket.js] socketWatchTimeout triggered.");
-            onCloseHandler(null);
-            socket.close();
-            // }
-          }, 5000);
+            /**
+             * Watches the socket to make sure it's state changes to 1 in 5 seconds
+             */
+            socketWatchTimeout && clearTimeout(socketWatchTimeout);
+            socketWatchTimeout = setTimeout(() => {
+              // if(socket.readyState !== 1) {
+              logLevel.debug && console.debug("[Async][Socket.js] socketWatchTimeout triggered.");
+              onCloseHandler(null);
+              socket.close();
+              // }
+            }, 5000);
 
-          socket.onopen = function(event) {
-            waitForSocketToConnect(function() {
+            socket.onopen = function(event) {
+              waitForSocketToConnect(function() {
+                pingController.resetPingLoop();
+                eventCallback["open"]();
+                socketWatchTimeout && clearTimeout(socketWatchTimeout);
+              });
+            }
+
+            socket.onmessage = function(event) {
               pingController.resetPingLoop();
-              eventCallback["open"]();
+
+              var messageData = JSON.parse(event.data);
+              eventCallback["message"](messageData);
+            }
+
+            socket.onclose = function(event) {
+              pingController.stopPingLoop();
+              logLevel.debug && console.debug("[Async][Socket.js] socket.onclose happened. EventData:", event);
+              onCloseHandler(event);
               socketWatchTimeout && clearTimeout(socketWatchTimeout);
+            }
+
+            socket.onerror = function(event) {
+              logLevel.debug && console.debug("[Async][Socket.js] socket.onerror happened. EventData:", event);
+              eventCallback["error"](event);
+              socketWatchTimeout && clearTimeout(socketWatchTimeout);
+            }
+          } catch (error) {
+            eventCallback["customError"]({
+              errorCode: 4000,
+              errorMessage: "ERROR in WEBSOCKET!",
+              errorEvent: error
             });
           }
+        },
 
-          socket.onmessage = function(event) {
-            pingController.resetPingLoop();
+        onCloseHandler = function(event) {
+          pingController.stopPingLoop();
+          socket.onclose = null;
+          socket.onmessage = null;
+          socket.onerror = null;
+          socket.onopen = null;
+          eventCallback["close"](event);
+        },
 
-            var messageData = JSON.parse(event.data);
-            eventCallback["message"](messageData);
-          }
-
-          socket.onclose = function(event) {
-            pingController.stopPingLoop();
-            logLevel.debug && console.debug("[Async][Socket.js] socket.onclose happened. EventData:", event);
-            onCloseHandler(event);
-            socketWatchTimeout && clearTimeout(socketWatchTimeout);
-          }
-
-          socket.onerror = function(event) {
-            logLevel.debug && console.debug("[Async][Socket.js] socket.onerror happened. EventData:", event);
-            eventCallback["error"](event);
-            socketWatchTimeout && clearTimeout(socketWatchTimeout);
-          }
-        } catch (error) {
-          eventCallback["customError"]({
-            errorCode: 4000,
-            errorMessage: "ERROR in WEBSOCKET!",
-            errorEvent: error
+        ping = function() {
+          sendData({
+            type: 0
           });
-        }
-      },
+        },
 
-      onCloseHandler = function(event) {
-        pingController.stopPingLoop();
-        socket.onclose = null;
-        socket.onmessage = null;
-        socket.onerror = null;
-        socket.onopen = null;
-        eventCallback["close"](event);
-      },
-
-      ping = function() {
-        sendData({
-          type: 0
-        });
-      },
-
-      waitForSocketToConnect = function(callback) {
-        waitForSocketToConnectTimeoutId && clearTimeout(waitForSocketToConnectTimeoutId);
-
-        if (socket.readyState === 1) {
-          callback();
-        } else {
-          waitForSocketToConnectTimeoutId = setTimeout(function() {
-            if (socket.readyState === 1) {
-              callback();
-            } else {
-              waitForSocketToConnect(callback);
-            }
-          }, wsConnectionWaitTime);
-        }
-      },
-
-      sendData = function(params) {
-        var data = {
-          type: params.type,
-          uniqueId: params.uniqueId
-        };
-
-        if (params.trackerId) {
-          data.trackerId = params.trackerId;
-        }
-
-        try {
-          if (params.content) {
-            data.content = JSON.stringify(params.content);
-          }
+        waitForSocketToConnect = function(callback) {
+          waitForSocketToConnectTimeoutId && clearTimeout(waitForSocketToConnectTimeoutId);
 
           if (socket.readyState === 1) {
-            socket.send(JSON.stringify(data));
+            callback();
+          } else {
+            waitForSocketToConnectTimeoutId = setTimeout(function() {
+              if (socket.readyState === 1) {
+                callback();
+              } else {
+                waitForSocketToConnect(callback);
+              }
+            }, wsConnectionWaitTime);
           }
-        } catch (error) {
-          eventCallback["customError"]({
-            errorCode: 4004,
-            errorMessage: "Error in Socket sendData!",
-            errorEvent: error
-          });
-        }
-      };
+        },
+
+        sendData = function(params) {
+          var data = {
+            type: params.type,
+            uniqueId: params.uniqueId
+          };
+
+          if (params.trackerId) {
+            data.trackerId = params.trackerId;
+          }
+
+          try {
+            if (params.content) {
+              data.content = JSON.stringify(params.content);
+            }
+
+            if (socket.readyState === 1) {
+              socket.send(JSON.stringify(data));
+            }
+          } catch (error) {
+            eventCallback["customError"]({
+              errorCode: 4004,
+              errorMessage: "Error in Socket sendData!",
+              errorEvent: error
+            });
+          }
+        };
 
     /*******************************************************
      *             P U B L I C   M E T H O D S             *
@@ -39984,6 +40185,481 @@ module.exports = function (thing, encoding, name) {
 })();
 
 },{"isomorphic-ws":187}],211:[function(require,module,exports){
+let defaultConfig = {
+        baseUrl: "http://109.201.0.97/webrtc/",
+        registerEndpoint: "register/",
+        addICEEndpoint: "add-ice/",
+        getICEEndpoint: "get-ice/?",
+        configuration: {
+            bundlePolicy: "balanced",
+            iceTransportPolicy: "relay",
+            iceServers: [{
+                "urls": "turn:turnsandbox.podstream.ir:3478", "username": "mkhorrami", "credential": "mkh_123456"
+            }]
+        },
+        connectionCheckTimeout: 10000,
+        logLevel: null
+    },
+    variables = {
+        peerConnection: null,
+        dataChannel: null,
+        pingController: new PingManager({waitTime: defaultConfig.connectionCheckTimeout}),
+        candidatesQueue: [],
+        // candidatesSendQueue: [],
+        candidateManager: new CandidatesSendQueueManager(),
+        clientId: null,
+        deviceId: null,
+        apiCallRetries: {
+            register: 3,
+            getIce: 3,
+            addIce: 5
+        }
+    };
+
+function CandidatesSendQueueManager() {
+    let config = {
+        candidatesToSend: [],
+        alreadyReceivedServerCandidates: false,
+        reCheckTimeout: null
+    }
+
+    function trySendingCandidates() {
+        timoutCallback();
+        function timoutCallback() {
+            if(variables.peerConnection.signalingState === 'stable') {
+                config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
+                if (config.candidatesToSend.length) {
+                    let entry = config.candidatesToSend.shift();
+                    handshakingFunctions
+                        .sendCandidate(entry)
+                        .then(function (result) {
+                            if (result.length) {
+                                addServerCandidates(result);
+
+                                config.alreadyReceivedServerCandidates = true;
+                            }
+                            trySendingCandidates();
+                        });
+
+                } else if (!config.alreadyReceivedServerCandidates) {
+                    handshakingFunctions.getCandidates(variables.clientId).then(function (result) {
+                        addServerCandidates(result)
+                    }).catch();
+                }
+            } else {
+                config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
+                config.reCheckTimeout = setTimeout(timoutCallback, 1000);
+            }
+        }
+    }
+
+    function addServerCandidates(candidates) {
+        for(let i in candidates) {
+            webrtcFunctions.putCandidateToQueue(candidates[i]);
+        }
+    }
+
+    return {
+        add: function (candidate) {
+            config.candidatesToSend.push(candidate);
+            trySendingCandidates();
+        },
+        destroy: function (){
+            config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
+        }
+    }
+}
+
+function PingManager(params) {
+    const config = {
+        normalWaitTime: params.waitTime,
+
+        lastRequestTimeoutId: null,
+        lastReceivedMessageTime: 0,
+        totalNoMessageCount: 0,
+        timeoutIds: {
+            first: null,
+            second: null,
+            third: null,
+            fourth: null
+        }
+    }
+
+    return {
+        resetPingLoop() {
+            this.stopPingLoop();
+            this.setPingTimeout();
+        },
+        setPingTimeout() {
+            config.timeoutIds.first = setTimeout(() => {
+                ping();
+                config.timeoutIds.second = setTimeout(() => {
+                    ping();
+                    config.timeoutIds.third = setTimeout(() => {
+                        defaultConfig.logLevel.debug && console.debug("[Async][Webrtc.js] Force closing connection.");
+                        publicized.close();
+                    }, 2000);
+                }, 2000);
+            }, 8000);
+        },
+        stopPingLoop() {
+            clearTimeout(config.timeoutIds.first);
+            clearTimeout(config.timeoutIds.second);
+            clearTimeout(config.timeoutIds.third);
+            // clearTimeout(config.timeoutIds.fourth);
+        },
+    }
+}
+
+function connect() {
+    webrtcFunctions.createPeerConnection();
+    webrtcFunctions.createDataChannel();
+    webrtcFunctions.generateSdpOffer()
+        .then(sendOfferToServer);
+
+    function sendOfferToServer(offer) {
+        handshakingFunctions
+            .register(offer.sdp)
+            .then(processRegisterResult).catch();
+
+        variables
+            .peerConnection.setLocalDescription(offer)
+            .catch(error => console.error(error));
+    }
+
+    function processRegisterResult(result) {
+        variables.clientId = result.clientId;
+        variables.deviceId = result.deviceId;
+        webrtcFunctions.processAnswer(result.sdpAnswer);
+    }
+}
+
+let webrtcFunctions = {
+    createPeerConnection: function () {
+        variables.peerConnection = new RTCPeerConnection(defaultConfig.configuration);
+        variables.peerConnection.addEventListener('signalingstatechange', webrtcFunctions.signalingStateChangeCallback);
+        variables.peerConnection.onicecandidate = function (event) {
+            if (event.candidate) {
+                variables.candidateManager.add(event.candidate);
+                webrtcFunctions.putCandidateToQueue(event.candidate);
+            }
+        };
+    },
+    signalingStateChangeCallback: function () {
+        if (variables.peerConnection.signalingState === 'stable') {
+            // handshakingFunctions.getCandidates().catch()
+            webrtcFunctions.addTheCandidates();
+        }
+    },
+    createDataChannel: function () {
+        variables.dataChannel = variables.peerConnection.createDataChannel("dataChannel", {ordered: false});
+        variables.dataChannel.onopen = dataChannelCallbacks.onopen;
+        variables.dataChannel.onmessage = dataChannelCallbacks.onmessage;
+        variables.dataChannel.onerror = dataChannelCallbacks.onerror;
+        variables.dataChannel.onclose = dataChannelCallbacks.onclose;
+    },
+    generateSdpOffer: function () {
+        return new Promise(function (resolve, reject) {
+            variables.peerConnection.createOffer(function (offer) {
+                resolve(offer)
+            }, function (error) {
+                reject(error);
+                console.error(error);
+            }).then(r => console.log(r));
+        })
+    },
+    processAnswer: function (answer) {
+        let remoteDesc = {
+            type: "answer", sdp: answer
+        };
+        variables
+            .peerConnection
+            .setRemoteDescription(new RTCSessionDescription(remoteDesc))
+            .catch(function (error) {
+                console.error(error)
+            });
+    },
+    addTheCandidates: function () {
+        while (variables.candidatesQueue.length) {
+            let entry = variables.candidatesQueue.shift();
+            variables.peerConnection.addIceCandidate(entry.candidate);
+        }
+    },
+    putCandidateToQueue: function (candidate) {
+        variables.candidatesQueue.push({
+            candidate: new RTCIceCandidate(candidate)
+        });
+        if (variables.peerConnection.signalingState === 'stable') {
+            webrtcFunctions.addTheCandidates();
+        }
+    },
+    sendData: function(params) {
+        if(!variables.dataChannel) {
+            console.error("Connection is closed, do not send messages.")
+            return;
+        }
+        var data = {
+            type: params.type,
+            uniqueId: params.uniqueId
+        };
+
+        if (params.trackerId) {
+            data.trackerId = params.trackerId;
+        }
+
+        try {
+            if (params.content) {
+                data.content = JSON.stringify(params.content);
+            }
+
+            if (variables.peerConnection.signalingState === 'stable') {
+                //defaultConfig.logLevel.debug &&
+                console.log("[Async][WebRTC] Send ", data);
+                variables.dataChannel.send(JSON.stringify(data));
+            }
+        } catch (error) {
+            eventCallback["customError"]({
+                errorCode: 4004,
+                errorMessage: "Error in Socket sendData!",
+                errorEvent: error
+            });
+        }
+    }
+}
+
+let dataChannelCallbacks = {
+    onopen: function (event) {
+        console.log("********* dataChannel open *********");
+        variables.pingController.resetPingLoop();
+        eventCallback["open"]();
+
+        const deviceRegister = {
+            "type": "2",
+            "content": {"deviceId": variables.deviceId, "appId": "PodChat", "refresh": false, "renew": true}
+        };
+        deviceRegister.content = JSON.stringify(deviceRegister.content)
+        variables.dataChannel.send(JSON.stringify(deviceRegister));
+    },
+
+    onmessage: function (event) {
+
+        variables.pingController.resetPingLoop();
+        var messageData = JSON.parse(event.data);
+        console.log("[Async][WebRTC] Receive ", event.data);
+        eventCallback["message"](messageData);
+    },
+
+    onerror: function (error) {
+        logLevel.debug && console.debug("[Async][Socket.js] dataChannel.onerror happened. EventData:", event);
+        eventCallback["error"](event);
+    },
+    onclose: function (event) {
+        resetVariables();
+        eventCallback["close"](event);
+    }
+}
+
+let handshakingFunctions = {
+    register: function (offer) {
+        let retries = variables.apiCallRetries.register;
+        return new Promise(promiseHandler);
+        function promiseHandler(resolve, reject) {
+            let registerEndPoint = defaultConfig.baseUrl + defaultConfig.registerEndpoint
+            fetch(registerEndPoint, {
+                method: "POST",
+                body: JSON.stringify({
+                    offer: offer
+                }),
+                headers: {
+                    "Content-Type": "application/json",
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            })
+                .then(function (response) {
+                    if(response.ok)
+                        return response.json();
+                    else if(retries){
+                        retryTheRequest(resolve, reject);
+                        retries--;
+                    } else reject();
+                })
+                .then(result => resolve(result))
+                .catch(err => {
+                    if(retries){
+                        retryTheRequest(resolve, reject);
+                        retries--;
+                    } else {
+                        publicized.close();
+                    }
+                    console.error(err);
+                });
+        }
+        function retryTheRequest(resolve, reject){
+            setTimeout(function (){promiseHandler(resolve, reject)}, 1000);
+        }
+    },
+    getCandidates: function (clientId) {
+        let addIceCandidateEndPoint = defaultConfig.baseUrl + defaultConfig.getICEEndpoint
+        addIceCandidateEndPoint += "clientId=" + clientId;
+
+        let retries = variables.apiCallRetries.getIce;
+        return new Promise(promiseHandler);
+        function promiseHandler(resolve, reject) {
+            fetch(addIceCandidateEndPoint, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            })
+                .then(function (response) {
+                    if(response.ok)
+                        return response.json();
+                    else if(retries){
+                        retryTheRequest(resolve, reject);
+                        retries--;
+                    } else reject();
+                })
+                .then(function (result) {
+                    resolve(result.iceCandidates)
+                    // if(result.iceCandidates && result.iceCandidates.length) {
+                    //     // result.iceCandidates.forEach((item) => {
+                    //     //     webrtcFunctions.putCandidateToQueue(item);
+                    //     // });
+                    //     resolve(result.iceCandidates)
+                    // }
+                    // else {
+                    //     if(retries){
+                    //         retryTheRequest(resolve, reject);
+                    //         retries--;
+                    //     } else reject();
+                    // }
+                })
+                .catch(function (err) {
+                    if(retries){
+                        retryTheRequest(resolve, reject);
+                        retries--;
+                    } else reject(err);
+                    console.error(err);
+                });
+        }
+
+        function retryTheRequest(resolve, reject){
+            setTimeout(function (){promiseHandler(resolve, reject)}, 1000);
+        }
+
+    },
+    sendCandidate: function (candidate) {
+        let addIceCandidateEndPoint = defaultConfig.baseUrl + defaultConfig.addICEEndpoint
+            , retries = variables.apiCallRetries.addIce;
+
+        return new Promise(promiseHandler);
+        function promiseHandler(resolve, reject) {
+            fetch(addIceCandidateEndPoint, {
+                method: "POST",
+                body: JSON.stringify({
+                    "clientId": variables.clientId,
+                    "candidate": candidate
+                }),
+                headers: {
+                    "Content-Type": "application/json",
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            })
+                .then(function (response) {
+                    if(response.ok)
+                        return response.json();
+                    else if(retries){
+                        retryTheRequest(resolve, reject);
+                        retries--;
+                    } else reject();
+                })
+                .then(function (result) {
+                    resolve(result.iceCandidates);
+                })
+                .catch(err => {
+                    if(retries){
+                        retryTheRequest(resolve, reject);
+                        retries--;
+                    } else reject(err);
+                    console.error(err);
+                });
+        }
+
+        function retryTheRequest(resolve, reject){
+            setTimeout(function (){promiseHandler(resolve, reject)}, 2000);
+        }
+    }
+}
+
+eventCallback = {};
+
+function resetVariables() {
+    console.log("resetVariables");
+    eventCallback["close"]();
+    variables.pingController.stopPingLoop();
+    variables.dataChannel.close();
+    variables.dataChannel = null;
+    variables.peerConnection.close();
+    variables.peerConnection = null;
+    variables.candidatesQueue = [];
+    variables.clientId = null;
+    variables.deviceId = null;
+    variables.candidateManager.destroy();
+    variables.candidateManager = new CandidatesSendQueueManager()
+}
+
+function ping() {
+    webrtcFunctions.sendData({
+        type: 0
+    });
+}
+function removeCallbacks(){
+    if(variables.peerConnection)
+        variables.peerConnection.onicecandidate = null;
+    if(variables.dataChannel) {
+        variables.dataChannel.onclose = null;
+        variables.dataChannel.onmessage = null;
+        variables.dataChannel.onerror = null;
+        variables.dataChannel.onopen = null;
+    }
+}
+
+function WebRTCClass({
+    baseUrl,
+    configuration,
+    connectionCheckTimeout = 10000,
+    logLevel
+}) {
+    let config = {}
+    if (baseUrl)
+        config.baseUrl = baseUrl;
+    if (configuration)
+        config.configuration = configuration;
+    if (connectionCheckTimeout)
+        config.connectionCheckTimeout = connectionCheckTimeout;
+    if (logLevel)
+        config.logLevel = logLevel;
+
+    defaultConfig = Object.assign(defaultConfig, config);
+    connect();
+    return publicized;
+}
+
+let publicized = {
+    on: function (messageName, callback) {
+        eventCallback[messageName] = callback;
+    },
+    emit: webrtcFunctions.sendData,
+    connect: connect,
+    close: function () {
+        removeCallbacks();
+        resetVariables();
+    }
+};
+
+module.exports = WebRTCClass;
+},{}],212:[function(require,module,exports){
 function LogLevel(logLevel){
     let ll = logLevel || 2;
     switch (ll) {
@@ -40019,7 +40695,7 @@ else {
     window.POD.LogLevel = LogLevel;
 }
 
-},{}],212:[function(require,module,exports){
+},{}],213:[function(require,module,exports){
 (function (global){(function (){
 (function() {
   /**
@@ -40247,7 +40923,7 @@ else {
 })();
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],213:[function(require,module,exports){
+},{}],214:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -40433,7 +41109,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],214:[function(require,module,exports){
+},{}],215:[function(require,module,exports){
 exports.publicEncrypt = require('./publicEncrypt')
 exports.privateDecrypt = require('./privateDecrypt')
 
@@ -40445,7 +41121,7 @@ exports.publicDecrypt = function publicDecrypt (key, buf) {
   return exports.privateDecrypt(key, buf, true)
 }
 
-},{"./privateDecrypt":217,"./publicEncrypt":218}],215:[function(require,module,exports){
+},{"./privateDecrypt":218,"./publicEncrypt":219}],216:[function(require,module,exports){
 var createHash = require('create-hash')
 var Buffer = require('safe-buffer').Buffer
 
@@ -40466,9 +41142,9 @@ function i2ops (c) {
   return out
 }
 
-},{"create-hash":80,"safe-buffer":224}],216:[function(require,module,exports){
+},{"create-hash":80,"safe-buffer":225}],217:[function(require,module,exports){
 arguments[4][27][0].apply(exports,arguments)
-},{"buffer":31,"dup":27}],217:[function(require,module,exports){
+},{"buffer":31,"dup":27}],218:[function(require,module,exports){
 var parseKeys = require('parse-asn1')
 var mgf = require('./mgf')
 var xor = require('./xor')
@@ -40575,7 +41251,7 @@ function compare (a, b) {
   return dif
 }
 
-},{"./mgf":215,"./withPublic":219,"./xor":220,"bn.js":216,"browserify-rsa":52,"create-hash":80,"parse-asn1":202,"safe-buffer":224}],218:[function(require,module,exports){
+},{"./mgf":216,"./withPublic":220,"./xor":221,"bn.js":217,"browserify-rsa":52,"create-hash":80,"parse-asn1":202,"safe-buffer":225}],219:[function(require,module,exports){
 var parseKeys = require('parse-asn1')
 var randomBytes = require('randombytes')
 var createHash = require('create-hash')
@@ -40665,7 +41341,7 @@ function nonZero (len) {
   return out
 }
 
-},{"./mgf":215,"./withPublic":219,"./xor":220,"bn.js":216,"browserify-rsa":52,"create-hash":80,"parse-asn1":202,"randombytes":221,"safe-buffer":224}],219:[function(require,module,exports){
+},{"./mgf":216,"./withPublic":220,"./xor":221,"bn.js":217,"browserify-rsa":52,"create-hash":80,"parse-asn1":202,"randombytes":222,"safe-buffer":225}],220:[function(require,module,exports){
 var BN = require('bn.js')
 var Buffer = require('safe-buffer').Buffer
 
@@ -40679,7 +41355,7 @@ function withPublic (paddedMsg, key) {
 
 module.exports = withPublic
 
-},{"bn.js":216,"safe-buffer":224}],220:[function(require,module,exports){
+},{"bn.js":217,"safe-buffer":225}],221:[function(require,module,exports){
 module.exports = function xor (a, b) {
   var len = a.length
   var i = -1
@@ -40689,7 +41365,7 @@ module.exports = function xor (a, b) {
   return a
 }
 
-},{}],221:[function(require,module,exports){
+},{}],222:[function(require,module,exports){
 (function (process,global){(function (){
 'use strict'
 
@@ -40743,7 +41419,7 @@ function randomBytes (size, cb) {
 }
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":213,"safe-buffer":224}],222:[function(require,module,exports){
+},{"_process":214,"safe-buffer":225}],223:[function(require,module,exports){
 (function (process,global){(function (){
 'use strict'
 
@@ -40855,7 +41531,7 @@ function randomFillSync (buf, offset, size) {
 }
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":213,"randombytes":221,"safe-buffer":224}],223:[function(require,module,exports){
+},{"_process":214,"randombytes":222,"safe-buffer":225}],224:[function(require,module,exports){
 'use strict'
 var Buffer = require('buffer').Buffer
 var inherits = require('inherits')
@@ -41020,7 +41696,7 @@ function fn5 (a, b, c, d, e, m, k, s) {
 
 module.exports = RIPEMD160
 
-},{"buffer":76,"hash-base":155,"inherits":186}],224:[function(require,module,exports){
+},{"buffer":76,"hash-base":155,"inherits":186}],225:[function(require,module,exports){
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
 var Buffer = buffer.Buffer
@@ -41084,7 +41760,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-},{"buffer":76}],225:[function(require,module,exports){
+},{"buffer":76}],226:[function(require,module,exports){
 (function (process){(function (){
 /* eslint-disable node/no-deprecated-api */
 
@@ -41165,7 +41841,7 @@ if (!safer.constants) {
 module.exports = safer
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":213,"buffer":76}],226:[function(require,module,exports){
+},{"_process":214,"buffer":76}],227:[function(require,module,exports){
 var grammar = module.exports = {
   v: [{
       name: 'version',
@@ -41424,7 +42100,7 @@ Object.keys(grammar).forEach(function (key) {
   });
 });
 
-},{}],227:[function(require,module,exports){
+},{}],228:[function(require,module,exports){
 var parser = require('./parser');
 var writer = require('./writer');
 
@@ -41434,7 +42110,7 @@ exports.parseFmtpConfig = parser.parseFmtpConfig;
 exports.parsePayloads = parser.parsePayloads;
 exports.parseRemoteCandidates = parser.parseRemoteCandidates;
 
-},{"./parser":228,"./writer":229}],228:[function(require,module,exports){
+},{"./parser":229,"./writer":230}],229:[function(require,module,exports){
 var toIntIfInt = function (v) {
   return String(Number(v)) === v ? Number(v) : v;
 };
@@ -41529,7 +42205,7 @@ exports.parseRemoteCandidates = function (str) {
   return candidates;
 };
 
-},{"./grammar":226}],229:[function(require,module,exports){
+},{"./grammar":227}],230:[function(require,module,exports){
 var grammar = require('./grammar');
 
 // customized util.format - discards excess arguments and can void middle ones
@@ -41645,7 +42321,7 @@ module.exports = function (session, opts) {
   return sdp.join('\r\n') + '\r\n';
 };
 
-},{"./grammar":226}],230:[function(require,module,exports){
+},{"./grammar":227}],231:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -41686,7 +42362,7 @@ module.exports = function arrayEquals(array) {
 };
 
 
-},{}],231:[function(require,module,exports){
+},{}],232:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -41704,7 +42380,7 @@ module.exports = function arrayEquals(array) {
 
 exports.Interop = require('./interop');
 
-},{"./interop":232}],232:[function(require,module,exports){
+},{"./interop":233}],233:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -42589,7 +43265,7 @@ Interop.prototype.toUnifiedPlan = function(desc) {
     //#endregion
 };
 
-},{"./array-equals":230,"./transform":233}],233:[function(require,module,exports){
+},{"./array-equals":231,"./transform":234}],234:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -42703,7 +43379,7 @@ exports.parse = function(sdp) {
 };
 
 
-},{"sdp-transform":227}],234:[function(require,module,exports){
+},{"sdp-transform":228}],235:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 // prototype class for hash functions
@@ -42786,7 +43462,7 @@ Hash.prototype._update = function () {
 
 module.exports = Hash
 
-},{"safe-buffer":224}],235:[function(require,module,exports){
+},{"safe-buffer":225}],236:[function(require,module,exports){
 var exports = module.exports = function SHA (algorithm) {
   algorithm = algorithm.toLowerCase()
 
@@ -42803,7 +43479,7 @@ exports.sha256 = require('./sha256')
 exports.sha384 = require('./sha384')
 exports.sha512 = require('./sha512')
 
-},{"./sha":236,"./sha1":237,"./sha224":238,"./sha256":239,"./sha384":240,"./sha512":241}],236:[function(require,module,exports){
+},{"./sha":237,"./sha1":238,"./sha224":239,"./sha256":240,"./sha384":241,"./sha512":242}],237:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-0, as defined
  * in FIPS PUB 180-1
@@ -42899,7 +43575,7 @@ Sha.prototype._hash = function () {
 
 module.exports = Sha
 
-},{"./hash":234,"inherits":186,"safe-buffer":224}],237:[function(require,module,exports){
+},{"./hash":235,"inherits":186,"safe-buffer":225}],238:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
  * in FIPS PUB 180-1
@@ -43000,7 +43676,7 @@ Sha1.prototype._hash = function () {
 
 module.exports = Sha1
 
-},{"./hash":234,"inherits":186,"safe-buffer":224}],238:[function(require,module,exports){
+},{"./hash":235,"inherits":186,"safe-buffer":225}],239:[function(require,module,exports){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
  * in FIPS 180-2
@@ -43055,7 +43731,7 @@ Sha224.prototype._hash = function () {
 
 module.exports = Sha224
 
-},{"./hash":234,"./sha256":239,"inherits":186,"safe-buffer":224}],239:[function(require,module,exports){
+},{"./hash":235,"./sha256":240,"inherits":186,"safe-buffer":225}],240:[function(require,module,exports){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
  * in FIPS 180-2
@@ -43192,7 +43868,7 @@ Sha256.prototype._hash = function () {
 
 module.exports = Sha256
 
-},{"./hash":234,"inherits":186,"safe-buffer":224}],240:[function(require,module,exports){
+},{"./hash":235,"inherits":186,"safe-buffer":225}],241:[function(require,module,exports){
 var inherits = require('inherits')
 var SHA512 = require('./sha512')
 var Hash = require('./hash')
@@ -43251,7 +43927,7 @@ Sha384.prototype._hash = function () {
 
 module.exports = Sha384
 
-},{"./hash":234,"./sha512":241,"inherits":186,"safe-buffer":224}],241:[function(require,module,exports){
+},{"./hash":235,"./sha512":242,"inherits":186,"safe-buffer":225}],242:[function(require,module,exports){
 var inherits = require('inherits')
 var Hash = require('./hash')
 var Buffer = require('safe-buffer').Buffer
@@ -43513,7 +44189,7 @@ Sha512.prototype._hash = function () {
 
 module.exports = Sha512
 
-},{"./hash":234,"inherits":186,"safe-buffer":224}],242:[function(require,module,exports){
+},{"./hash":235,"inherits":186,"safe-buffer":225}],243:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -43644,35 +44320,35 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":149,"inherits":186,"readable-stream/lib/_stream_duplex.js":244,"readable-stream/lib/_stream_passthrough.js":245,"readable-stream/lib/_stream_readable.js":246,"readable-stream/lib/_stream_transform.js":247,"readable-stream/lib/_stream_writable.js":248,"readable-stream/lib/internal/streams/end-of-stream.js":252,"readable-stream/lib/internal/streams/pipeline.js":254}],243:[function(require,module,exports){
+},{"events":149,"inherits":186,"readable-stream/lib/_stream_duplex.js":245,"readable-stream/lib/_stream_passthrough.js":246,"readable-stream/lib/_stream_readable.js":247,"readable-stream/lib/_stream_transform.js":248,"readable-stream/lib/_stream_writable.js":249,"readable-stream/lib/internal/streams/end-of-stream.js":253,"readable-stream/lib/internal/streams/pipeline.js":255}],244:[function(require,module,exports){
 arguments[4][59][0].apply(exports,arguments)
-},{"dup":59}],244:[function(require,module,exports){
+},{"dup":59}],245:[function(require,module,exports){
 arguments[4][60][0].apply(exports,arguments)
-},{"./_stream_readable":246,"./_stream_writable":248,"_process":213,"dup":60,"inherits":186}],245:[function(require,module,exports){
+},{"./_stream_readable":247,"./_stream_writable":249,"_process":214,"dup":60,"inherits":186}],246:[function(require,module,exports){
 arguments[4][61][0].apply(exports,arguments)
-},{"./_stream_transform":247,"dup":61,"inherits":186}],246:[function(require,module,exports){
+},{"./_stream_transform":248,"dup":61,"inherits":186}],247:[function(require,module,exports){
 arguments[4][62][0].apply(exports,arguments)
-},{"../errors":243,"./_stream_duplex":244,"./internal/streams/async_iterator":249,"./internal/streams/buffer_list":250,"./internal/streams/destroy":251,"./internal/streams/from":253,"./internal/streams/state":255,"./internal/streams/stream":256,"_process":213,"buffer":76,"dup":62,"events":149,"inherits":186,"string_decoder/":257,"util":31}],247:[function(require,module,exports){
+},{"../errors":244,"./_stream_duplex":245,"./internal/streams/async_iterator":250,"./internal/streams/buffer_list":251,"./internal/streams/destroy":252,"./internal/streams/from":254,"./internal/streams/state":256,"./internal/streams/stream":257,"_process":214,"buffer":76,"dup":62,"events":149,"inherits":186,"string_decoder/":258,"util":31}],248:[function(require,module,exports){
 arguments[4][63][0].apply(exports,arguments)
-},{"../errors":243,"./_stream_duplex":244,"dup":63,"inherits":186}],248:[function(require,module,exports){
+},{"../errors":244,"./_stream_duplex":245,"dup":63,"inherits":186}],249:[function(require,module,exports){
 arguments[4][64][0].apply(exports,arguments)
-},{"../errors":243,"./_stream_duplex":244,"./internal/streams/destroy":251,"./internal/streams/state":255,"./internal/streams/stream":256,"_process":213,"buffer":76,"dup":64,"inherits":186,"util-deprecate":261}],249:[function(require,module,exports){
+},{"../errors":244,"./_stream_duplex":245,"./internal/streams/destroy":252,"./internal/streams/state":256,"./internal/streams/stream":257,"_process":214,"buffer":76,"dup":64,"inherits":186,"util-deprecate":262}],250:[function(require,module,exports){
 arguments[4][65][0].apply(exports,arguments)
-},{"./end-of-stream":252,"_process":213,"dup":65}],250:[function(require,module,exports){
+},{"./end-of-stream":253,"_process":214,"dup":65}],251:[function(require,module,exports){
 arguments[4][66][0].apply(exports,arguments)
-},{"buffer":76,"dup":66,"util":31}],251:[function(require,module,exports){
+},{"buffer":76,"dup":66,"util":31}],252:[function(require,module,exports){
 arguments[4][67][0].apply(exports,arguments)
-},{"_process":213,"dup":67}],252:[function(require,module,exports){
+},{"_process":214,"dup":67}],253:[function(require,module,exports){
 arguments[4][68][0].apply(exports,arguments)
-},{"../../../errors":243,"dup":68}],253:[function(require,module,exports){
+},{"../../../errors":244,"dup":68}],254:[function(require,module,exports){
 arguments[4][69][0].apply(exports,arguments)
-},{"dup":69}],254:[function(require,module,exports){
+},{"dup":69}],255:[function(require,module,exports){
 arguments[4][70][0].apply(exports,arguments)
-},{"../../../errors":243,"./end-of-stream":252,"dup":70}],255:[function(require,module,exports){
+},{"../../../errors":244,"./end-of-stream":253,"dup":70}],256:[function(require,module,exports){
 arguments[4][71][0].apply(exports,arguments)
-},{"../../../errors":243,"dup":71}],256:[function(require,module,exports){
+},{"../../../errors":244,"dup":71}],257:[function(require,module,exports){
 arguments[4][72][0].apply(exports,arguments)
-},{"dup":72,"events":149}],257:[function(require,module,exports){
+},{"dup":72,"events":149}],258:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -43969,9 +44645,9 @@ function simpleWrite(buf) {
 function simpleEnd(buf) {
   return buf && buf.length ? this.write(buf) : '';
 }
-},{"safe-buffer":258}],258:[function(require,module,exports){
+},{"safe-buffer":259}],259:[function(require,module,exports){
 arguments[4][74][0].apply(exports,arguments)
-},{"buffer":76,"dup":74}],259:[function(require,module,exports){
+},{"buffer":76,"dup":74}],260:[function(require,module,exports){
 (function (setImmediate,clearImmediate){(function (){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
@@ -44050,7 +44726,7 @@ exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate :
   delete immediateIds[id];
 };
 }).call(this)}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
-},{"process/browser.js":213,"timers":259}],260:[function(require,module,exports){
+},{"process/browser.js":214,"timers":260}],261:[function(require,module,exports){
 /*!
  * UAParser.js v0.7.24
  * Lightweight JavaScript-based User-Agent string parser
@@ -44989,7 +45665,7 @@ exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate :
 
 })(typeof window === 'object' ? window : this);
 
-},{}],261:[function(require,module,exports){
+},{}],262:[function(require,module,exports){
 (function (global){(function (){
 
 /**
@@ -45060,7 +45736,7 @@ function config (name) {
 }
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],262:[function(require,module,exports){
+},{}],263:[function(require,module,exports){
 /**
  * Convert array of 16 byte values to UUID string format of the form:
  * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
@@ -45088,7 +45764,7 @@ function bytesToUuid(buf, offset) {
 
 module.exports = bytesToUuid;
 
-},{}],263:[function(require,module,exports){
+},{}],264:[function(require,module,exports){
 // Unique ID creation requires a high quality random # generator.  In the
 // browser this is a little complicated due to unknown quality of Math.random()
 // and inconsistent support for the `crypto` API.  We do the best we can via
@@ -45124,7 +45800,7 @@ if (getRandomValues) {
   };
 }
 
-},{}],264:[function(require,module,exports){
+},{}],265:[function(require,module,exports){
 var rng = require('./lib/rng');
 var bytesToUuid = require('./lib/bytesToUuid');
 
@@ -45155,7 +45831,7 @@ function v4(options, buf, offset) {
 
 module.exports = v4;
 
-},{"./lib/bytesToUuid":262,"./lib/rng":263}],265:[function(require,module,exports){
+},{"./lib/bytesToUuid":263,"./lib/rng":264}],266:[function(require,module,exports){
 /*
 WildEmitter.js is a slim little event emitter by @henrikjoreteg largely based
 on @visionmedia's Emitter from UI Kit.
@@ -45312,7 +45988,9 @@ WildEmitter.mixin = function (constructor) {
 
 WildEmitter.mixin(WildEmitter);
 
-},{}],266:[function(require,module,exports){
+},{}],267:[function(require,module,exports){
+module.exports={"version":"12.7.2-snapshot.19","date":"۱۴۰۲/۲/۱۶","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+},{}],268:[function(require,module,exports){
 "use strict";var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");var _typeof3=require("@babel/runtime/helpers/typeof");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _regenerator=_interopRequireDefault(require("@babel/runtime/regenerator"));var _asyncToGenerator2=_interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _constants=require("./lib/constants");var _kurentoUtils=_interopRequireDefault(require("kurento-utils"));var _utility=_interopRequireDefault(require("./utility/utility"));var _eventsModule=require("./events.module.js");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));var _errorHandler=_interopRequireWildcard(require("./lib/errorHandler"));function _getRequireWildcardCache(nodeInterop){if(typeof WeakMap!=="function")return null;var cacheBabelInterop=new WeakMap();var cacheNodeInterop=new WeakMap();return(_getRequireWildcardCache=function _getRequireWildcardCache(nodeInterop){return nodeInterop?cacheNodeInterop:cacheBabelInterop;})(nodeInterop);}function _interopRequireWildcard(obj,nodeInterop){if(!nodeInterop&&obj&&obj.__esModule){return obj;}if(obj===null||_typeof3(obj)!=="object"&&typeof obj!=="function"){return{"default":obj};}var cache=_getRequireWildcardCache(nodeInterop);if(cache&&cache.has(obj)){return cache.get(obj);}var newObj={};var hasPropertyDescriptor=Object.defineProperty&&Object.getOwnPropertyDescriptor;for(var key in obj){if(key!=="default"&&Object.prototype.hasOwnProperty.call(obj,key)){var desc=hasPropertyDescriptor?Object.getOwnPropertyDescriptor(obj,key):null;if(desc&&(desc.get||desc.set)){Object.defineProperty(newObj,key,desc);}else{newObj[key]=obj[key];}}}newObj["default"]=obj;if(cache){cache.set(obj,newObj);}return newObj;}function ChatCall(params){var _params$asyncLogging,_params$asyncLogging2,_params$asyncLogging3,_params$callOptions,_params$callOptions2;var//Utility = params.Utility,
 currentModuleInstance=this,asyncClient=params.asyncClient,//chatEvents = params.chatEvents,
 chatMessaging=params.chatMessaging,token=params.token,asyncRequestTimeouts={},callTypes={'VOICE':0x0,'VIDEO':0x1},generalTypeCode=params.typeCode,callOptions=params.callOptions,useInternalTurnAddress=!!(params.callOptions&&params.callOptions.useInternalTurnAddress),callTurnIp=params.callOptions&&params.callOptions.hasOwnProperty('callTurnIp')&&typeof params.callOptions.callTurnIp==='string'?params.callOptions.callTurnIp:'46.32.6.188',callDivId=params.callOptions&&params.callOptions.hasOwnProperty('callDivId')&&typeof params.callOptions.callDivId==='string'?params.callOptions.callDivId:'call-div',callAudioTagClassName=params.callOptions&&params.callOptions.hasOwnProperty('callAudioTagClassName')&&typeof params.callOptions.callAudioTagClassName==='string'?params.callOptions.callAudioTagClassName:'',callVideoTagClassName=params.callOptions&&params.callOptions.hasOwnProperty('callVideoTagClassName')&&typeof params.callOptions.callVideoTagClassName==='string'?params.callOptions.callVideoTagClassName:'',callVideoMinWidth=params.callOptions&&params.callOptions.hasOwnProperty('callVideo')&&(0,_typeof2["default"])(params.callOptions.callVideo)==='object'&&params.callOptions.callVideo.hasOwnProperty('minWidth')?params.callOptions.callVideo.minWidth:320,callVideoMinHeight=params.callOptions&&params.callOptions.hasOwnProperty('callVideo')&&(0,_typeof2["default"])(params.callOptions.callVideo)==='object'&&params.callOptions.callVideo.hasOwnProperty('minHeight')?params.callOptions.callVideo.minHeight:180,currentCallParams={},requestedCallId=null,acceptedCallId=null,currentCallId=null,latestCallRequestId=null,//shouldReconnectCallTimeout = null,
@@ -46048,10 +46726,10 @@ invitees.forEach(function(item){item.idType=_constants.inviteeVOidTypes[item.idT
          }
      }*/return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};this.deviceManager=_deviceManager["default"];this.resetCallStream=function(_ref9,callback){var userId=_ref9.userId,_ref9$streamType=_ref9.streamType,streamType=_ref9$streamType===void 0?'audio':_ref9$streamType;return new Promise(function(resolve,reject){if(userId==='screenShare'||streamType==='video'){if(callUsers[userId]){callUsers[userId].videoTopicManager.recreateTopic().then(function(){resolve();callback&&callback({hasError:false});})["catch"](function(){reject();callback&&callback({hasError:true});});}}else{callUsers[userId].audioTopicManager.recreateTopic().then(function(){resolve();callback&&callback({hasError:false});})["catch"](function(){reject();callback&&callback({hasError:true});});}});};this.callStop=callStop;this.restartMedia=restartMedia;}var _default=ChatCall;exports["default"]=_default;
 
-},{"./events.module.js":268,"./lib/call/deviceManager.js":269,"./lib/constants":270,"./lib/errorHandler":271,"./utility/utility":273,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/toConsumableArray":9,"@babel/runtime/helpers/typeof":10,"@babel/runtime/regenerator":12,"kurento-utils":190}],267:[function(require,module,exports){
-'use strict';var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");var _typeof3=require("@babel/runtime/helpers/typeof");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _podasyncWsOnly=_interopRequireDefault(require("podasync-ws-only"));var _utility=_interopRequireDefault(require("./utility/utility"));var _dexie=_interopRequireDefault(require("dexie"));var _call=_interopRequireDefault(require("./call.module"));var _events=_interopRequireWildcard(require("./events.module"));var _messaging=_interopRequireDefault(require("./messaging.module"));var _constants=require("./lib/constants");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));function _getRequireWildcardCache(nodeInterop){if(typeof WeakMap!=="function")return null;var cacheBabelInterop=new WeakMap();var cacheNodeInterop=new WeakMap();return(_getRequireWildcardCache=function _getRequireWildcardCache(nodeInterop){return nodeInterop?cacheNodeInterop:cacheBabelInterop;})(nodeInterop);}function _interopRequireWildcard(obj,nodeInterop){if(!nodeInterop&&obj&&obj.__esModule){return obj;}if(obj===null||_typeof3(obj)!=="object"&&typeof obj!=="function"){return{"default":obj};}var cache=_getRequireWildcardCache(nodeInterop);if(cache&&cache.has(obj)){return cache.get(obj);}var newObj={};var hasPropertyDescriptor=Object.defineProperty&&Object.getOwnPropertyDescriptor;for(var key in obj){if(key!=="default"&&Object.prototype.hasOwnProperty.call(obj,key)){var desc=hasPropertyDescriptor?Object.getOwnPropertyDescriptor(obj,key):null;if(desc&&(desc.get||desc.set)){Object.defineProperty(newObj,key,desc);}else{newObj[key]=obj[key];}}}newObj["default"]=obj;if(cache){cache.set(obj,newObj);}return newObj;}function Chat(params){/*******************************************************
+},{"./events.module.js":270,"./lib/call/deviceManager.js":271,"./lib/constants":272,"./lib/errorHandler":273,"./utility/utility":275,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/toConsumableArray":9,"@babel/runtime/helpers/typeof":10,"@babel/runtime/regenerator":12,"kurento-utils":190}],269:[function(require,module,exports){
+'use strict';var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");var _typeof3=require("@babel/runtime/helpers/typeof");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _podasyncWsOnly=_interopRequireDefault(require("podasync-ws-only"));var _utility=_interopRequireDefault(require("./utility/utility"));var _dexie=_interopRequireDefault(require("dexie"));var _call=_interopRequireDefault(require("./call.module"));var _events=_interopRequireWildcard(require("./events.module"));var _messaging=_interopRequireDefault(require("./messaging.module"));var _buildConfig=_interopRequireDefault(require("./buildConfig.json"));var _constants=require("./lib/constants");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));function _getRequireWildcardCache(nodeInterop){if(typeof WeakMap!=="function")return null;var cacheBabelInterop=new WeakMap();var cacheNodeInterop=new WeakMap();return(_getRequireWildcardCache=function _getRequireWildcardCache(nodeInterop){return nodeInterop?cacheNodeInterop:cacheBabelInterop;})(nodeInterop);}function _interopRequireWildcard(obj,nodeInterop){if(!nodeInterop&&obj&&obj.__esModule){return obj;}if(obj===null||_typeof3(obj)!=="object"&&typeof obj!=="function"){return{"default":obj};}var cache=_getRequireWildcardCache(nodeInterop);if(cache&&cache.has(obj)){return cache.get(obj);}var newObj={};var hasPropertyDescriptor=Object.defineProperty&&Object.getOwnPropertyDescriptor;for(var key in obj){if(key!=="default"&&Object.prototype.hasOwnProperty.call(obj,key)){var desc=hasPropertyDescriptor?Object.getOwnPropertyDescriptor(obj,key):null;if(desc&&(desc.get||desc.set)){Object.defineProperty(newObj,key,desc);}else{newObj[key]=obj[key];}}}newObj["default"]=obj;if(cache){cache.set(obj,newObj);}return newObj;}function Chat(params){/*******************************************************
      *          P R I V A T E   V A R I A B L E S          *
-     *******************************************************/var asyncClient,peerId,oldPeerId,token=params.token,generalTypeCode=params.typeCode||'default',typeCodeOwnerId=params.typeCodeOwnerId||null,mapApiKey=params.mapApiKey||'8b77db18704aa646ee5aaea13e7370f4f88b9e8c',deviceId,productEnv=typeof navigator!='undefined'?navigator.product:'undefined',db,queueDb,forceWaitQueueInMemory=params.forceWaitQueueInMemory&&typeof params.forceWaitQueueInMemory==='boolean'?params.forceWaitQueueInMemory:false,hasCache=productEnv!=='ReactNative'&&typeof _dexie["default"]!='undefined',cacheInMemory=forceWaitQueueInMemory?true:!hasCache,enableCache=params.enableCache&&typeof params.enableCache==='boolean'?params.enableCache:false,canUseCache=hasCache&&enableCache,isCacheReady=false,cacheDeletingInProgress=false,cacheExpireTime=params.cacheExpireTime||2*24*60*60*1000,cacheSecret='VjaaS9YxNdVVAd3cAsRPcU5FyxRcyyV6tG6bFGjjK5RV8JJjLrXNbS5zZxnqUT6Y',cacheSyncWorker,grantDeviceIdFromSSO=params.grantDeviceIdFromSSO&&typeof params.grantDeviceIdFromSSO==='boolean'?params.grantDeviceIdFromSSO:false,messagesDelivery={},messagesSeen={},deliveryInterval,deliveryIntervalPitch=params.deliveryIntervalPitch||2000,seenInterval,seenIntervalPitch=params.seenIntervalPitch||2000,getImageFromLinkObjects={},locationPingTypes={'CHAT':1,'THREAD':2,'CONTACTS':3},systemMessageIntervalPitch=params.systemMessageIntervalPitch||1000,isTypingInterval,protocol=params.protocol||'websocket',queueHost=params.queueHost,queuePort=params.queuePort,queueUsername=params.queueUsername,queuePassword=params.queuePassword,queueReceive=params.queueReceive,queueSend=params.queueSend,queueConnectionTimeout=params.queueConnectionTimeout,socketAddress=params.socketAddress,serverName=params.serverName||'',wsConnectionWaitTime=params.wsConnectionWaitTime,connectionRetryInterval=params.connectionRetryInterval,msgPriority=params.msgPriority||1,messageTtl=params.messageTtl||10000,reconnectOnClose=params.reconnectOnClose,asyncLogging=params.asyncLogging,chatPingMessageInterval=20000,getUserInfoTimeout,config={getHistoryCount:50},SERVICE_ADDRESSES={SSO_ADDRESS:params.ssoHost||'https://accounts.pod.ir',PLATFORM_ADDRESS:params.platformHost||'https://api.pod.ir/srv/core',FILESERVER_ADDRESS:params.fileServer||'https://core.pod.ir',PODSPACE_FILESERVER_ADDRESS:params.podSpaceFileServer||'https://podspace.pod.ir',MAP_ADDRESS:params.mapServer||'https://api.neshan.org/v2'},SERVICES_PATH={// Grant Devices
+     *******************************************************/var asyncClient,peerId,oldPeerId,token=params.token||"111",generalTypeCode=params.typeCode||'default',typeCodeOwnerId=params.typeCodeOwnerId||null,mapApiKey=params.mapApiKey||'8b77db18704aa646ee5aaea13e7370f4f88b9e8c',deviceId,productEnv=typeof navigator!='undefined'?navigator.product:'undefined',db,queueDb,forceWaitQueueInMemory=params.forceWaitQueueInMemory&&typeof params.forceWaitQueueInMemory==='boolean'?params.forceWaitQueueInMemory:false,hasCache=productEnv!=='ReactNative'&&typeof _dexie["default"]!='undefined',cacheInMemory=forceWaitQueueInMemory?true:!hasCache,enableCache=params.enableCache&&typeof params.enableCache==='boolean'?params.enableCache:false,canUseCache=hasCache&&enableCache,isCacheReady=false,cacheDeletingInProgress=false,cacheExpireTime=params.cacheExpireTime||2*24*60*60*1000,cacheSecret='VjaaS9YxNdVVAd3cAsRPcU5FyxRcyyV6tG6bFGjjK5RV8JJjLrXNbS5zZxnqUT6Y',cacheSyncWorker,grantDeviceIdFromSSO=params.grantDeviceIdFromSSO&&typeof params.grantDeviceIdFromSSO==='boolean'?params.grantDeviceIdFromSSO:false,messagesDelivery={},messagesSeen={},deliveryInterval,deliveryIntervalPitch=params.deliveryIntervalPitch||2000,seenInterval,seenIntervalPitch=params.seenIntervalPitch||2000,getImageFromLinkObjects={},locationPingTypes={'CHAT':1,'THREAD':2,'CONTACTS':3},systemMessageIntervalPitch=params.systemMessageIntervalPitch||1000,isTypingInterval,protocol=params.protocol||'websocket',queueHost=params.queueHost,queuePort=params.queuePort,queueUsername=params.queueUsername,queuePassword=params.queuePassword,queueReceive=params.queueReceive,queueSend=params.queueSend,queueConnectionTimeout=params.queueConnectionTimeout,socketAddress=params.socketAddress,serverName=params.serverName||'',wsConnectionWaitTime=params.wsConnectionWaitTime,connectionRetryInterval=params.connectionRetryInterval,msgPriority=params.msgPriority||1,messageTtl=params.messageTtl||10000,reconnectOnClose=params.reconnectOnClose,asyncLogging=params.asyncLogging,chatPingMessageInterval=20000,getUserInfoTimeout,config={getHistoryCount:50},SERVICE_ADDRESSES={SSO_ADDRESS:params.ssoHost||'https://accounts.pod.ir',PLATFORM_ADDRESS:params.platformHost||'https://api.pod.ir/srv/core',FILESERVER_ADDRESS:params.fileServer||'https://core.pod.ir',PODSPACE_FILESERVER_ADDRESS:params.podSpaceFileServer||'https://podspace.pod.ir',MAP_ADDRESS:params.mapServer||'https://api.neshan.org/v2'},SERVICES_PATH={// Grant Devices
 SSO_DEVICES:'/oauth2/grants/devices',SSO_GENERATE_KEY:'/handshake/users/',SSO_GET_KEY:'/handshake/keys/',// Contacts
 ADD_CONTACTS:'/nzh/addContacts',UPDATE_CONTACTS:'/nzh/updateContacts',REMOVE_CONTACTS:'/nzh/removeContacts',SEARCH_CONTACTS:'/nzh/listContacts',// File/Image Upload and Download
 UPLOAD_IMAGE:'/nzh/uploadImage',GET_IMAGE:'/nzh/image/',UPLOAD_FILE:'/nzh/uploadFile',GET_FILE:'/nzh/file/',// POD Drive Services
@@ -46071,7 +46749,7 @@ REVERSE:'/reverse',SEARCH:'/search',ROUTING:'/routing',STATIC_IMAGE:'/static'},C
 6300:'Error in uploading File!',6301:'Not an image!',6302:'No file has been selected!',6303:'File upload has been canceled!',6304:'User Group Hash is needed for file sharing!',// Cache Database Errors
 6600:'Your Environment doesn\'t have Databse compatibility',6601:'Database is not defined! (missing db)',6602:'Database Error',// Map Errors
 6700:'You should Enter a Center Location like {lat: " ", lng: " "}'},getUserInfoRetry=5,getUserInfoRetryCount=0,chatFullStateObject={},httpRequestObject={},connectionCheckTimeout=params.connectionCheckTimeout,connectionCheckTimeoutThreshold=params.connectionCheckTimeoutThreshold,httpRequestTimeout=params.httpRequestTimeout>=0?params.httpRequestTimeout:0,asyncRequestTimeout=typeof params.asyncRequestTimeout==='number'&&params.asyncRequestTimeout>=0?params.asyncRequestTimeout:0,//callRequestTimeout = (typeof params.callRequestTimeout === 'number' && params.callRequestTimeout >= 0) ? params.callRequestTimeout : 10000,
-httpUploadRequestTimeout=params.httpUploadRequestTimeout>=0?params.httpUploadRequestTimeout:0,actualTimingLog=params.asyncLogging.actualTiming&&typeof params.asyncLogging.actualTiming==='boolean'?params.asyncLogging.actualTiming:false,consoleLogging=params.asyncLogging.consoleLogging&&typeof params.asyncLogging.consoleLogging==='boolean'?params.asyncLogging.consoleLogging:false,minIntegerValue=Number.MAX_SAFE_INTEGER*-1,maxIntegerValue=Number.MAX_SAFE_INTEGER,chatSendQueue=[],chatWaitQueue=[],chatUploadQueue=[],fullResponseObject=params.fullResponseObject||false;if(!consoleLogging){/**
+httpUploadRequestTimeout=params.httpUploadRequestTimeout>=0?params.httpUploadRequestTimeout:0,actualTimingLog=params.asyncLogging.actualTiming&&typeof params.asyncLogging.actualTiming==='boolean'?params.asyncLogging.actualTiming:false,consoleLogging=params.asyncLogging.consoleLogging&&typeof params.asyncLogging.consoleLogging==='boolean'?params.asyncLogging.consoleLogging:false,minIntegerValue=Number.MAX_SAFE_INTEGER*-1,maxIntegerValue=Number.MAX_SAFE_INTEGER,chatSendQueue=[],chatWaitQueue=[],chatUploadQueue=[],fullResponseObject=params.fullResponseObject||false,webrtcConfig=params.webrtcConfig?params.webrtcConfig:null;if(!consoleLogging){/**
          * Disable kurento-utils logs
          */window.Logger={error:function error(){},log:function log(){},debug:function debug(){}};}(0,_events.initEventHandler)(Object.assign(params,{consoleLogging:consoleLogging}));var/*chatEvents = new ChatEvents(Object.assign(params, {
 
@@ -46092,13 +46770,7 @@ consoleLogging:consoleLogging,chatEvents:_events.chatEvents,asyncClient:asyncCli
          *
          * @return {undefined}
          * @return {undefined}
-         */initAsync=function initAsync(){var asyncGetReadyTime=new Date().getTime();asyncClient=new _podasyncWsOnly["default"]({protocol:protocol,queueHost:queueHost,queuePort:queuePort,queueUsername:queueUsername,queuePassword:queuePassword,queueReceive:queueReceive,queueSend:queueSend,queueConnectionTimeout:queueConnectionTimeout,socketAddress:socketAddress,serverName:serverName,deviceId:deviceId,wsConnectionWaitTime:wsConnectionWaitTime,connectionRetryInterval:connectionRetryInterval,connectionCheckTimeout:connectionCheckTimeout,connectionCheckTimeoutThreshold:connectionCheckTimeoutThreshold,messageTtl:messageTtl,reconnectOnClose:reconnectOnClose,asyncLogging:asyncLogging,logLevel:consoleLogging?3:1});callModule.asyncInitialized(asyncClient);chatMessaging.asyncInitialized(asyncClient);asyncClient.on('asyncReady',function(){if(actualTimingLog){_utility["default"].chatStepLogger('Async Connection ',new Date().getTime()-asyncGetReadyTime);}peerId=asyncClient.getPeerId();if(!chatMessaging.userInfo){var getUserInfoTime=new Date().getTime();getUserInfo(function(userInfoResult){if(actualTimingLog){_utility["default"].chatStepLogger('Get User Info ',new Date().getTime()-getUserInfoTime);}if(!userInfoResult.hasError){chatMessaging.userInfo=userInfoResult.result.user;// getAllThreads({
-//     summary: true,
-//     cache: false
-// });
-/**
-                             * Check if user has KeyId stored in their cache or not?
-                             */if(canUseCache){if(db){db.users.where('id').equals(parseInt(chatMessaging.userInfo.id)).toArray().then(function(users){if(users.length>0&&typeof users[0].keyId!='undefined'){var user=users[0];getEncryptionKey({keyId:user.keyId},function(result){if(!result.hasError){cacheSecret=result.secretKey;chatMessaging.chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();}else{if(result.message!==''){try{var response=JSON.parse(result.message);if(response.error==='invalid_param'){generateEncryptionKey({keyAlgorithm:'AES',keySize:256},function(){chatMessaging.chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();});}}catch(e){consoleLogging&&console.log(e);}}}});}else{generateEncryptionKey({keyAlgorithm:'AES',keySize:256},function(){chatMessaging.chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();});}})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.errorCode,message:error.errorMessage,error:error});});}else{_events.chatEvents.fireEvent('error',{code:6601,message:CHAT_ERRORS[6601],error:null});}}else{chatMessaging.chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();}}});}else if(chatMessaging.userInfo.id>0){chatMessaging.chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();}deliveryInterval&&clearInterval(deliveryInterval);deliveryInterval=setInterval(function(){if(Object.keys(messagesDelivery).length){messagesDeliveryQueueHandler();}},deliveryIntervalPitch);seenInterval&&clearInterval(seenInterval);seenInterval=setInterval(function(){if(Object.keys(messagesSeen).length){messagesSeenQueueHandler();}},seenIntervalPitch);//shouldReconnectCall();
+         */initAsync=function initAsync(){var asyncGetReadyTime=new Date().getTime();asyncClient=new _podasyncWsOnly["default"]({protocol:protocol,queueHost:queueHost,queuePort:queuePort,queueUsername:queueUsername,queuePassword:queuePassword,queueReceive:queueReceive,queueSend:queueSend,queueConnectionTimeout:queueConnectionTimeout,socketAddress:socketAddress,serverName:serverName,deviceId:deviceId,wsConnectionWaitTime:wsConnectionWaitTime,connectionRetryInterval:connectionRetryInterval,connectionCheckTimeout:connectionCheckTimeout,connectionCheckTimeoutThreshold:connectionCheckTimeoutThreshold,messageTtl:messageTtl,reconnectOnClose:reconnectOnClose,asyncLogging:asyncLogging,logLevel:consoleLogging?3:1,webrtcConfig:webrtcConfig});callModule.asyncInitialized(asyncClient);chatMessaging.asyncInitialized(asyncClient);asyncClient.on('asyncReady',function(){if(actualTimingLog){_utility["default"].chatStepLogger('Async Connection ',new Date().getTime()-asyncGetReadyTime);}peerId=asyncClient.getPeerId();if(!chatMessaging.userInfo){var getUserInfoTime=new Date().getTime();getUserAndUpdateSDKState();}else if(chatMessaging.userInfo.id>0){chatMessaging.chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();}deliveryInterval&&clearInterval(deliveryInterval);deliveryInterval=setInterval(function(){if(Object.keys(messagesDelivery).length){messagesDeliveryQueueHandler();}},deliveryIntervalPitch);seenInterval&&clearInterval(seenInterval);seenInterval=setInterval(function(){if(Object.keys(messagesSeen).length){messagesSeenQueueHandler();}},seenIntervalPitch);//shouldReconnectCall();
 });asyncClient.on('stateChange',function(state){_events.chatEvents.fireEvent('chatState',state);chatFullStateObject=state;switch(state.socketState){case 1:// CONNECTED
 if(state.deviceRegister&&state.serverRegister){chatMessaging.chatState=true;// chatMessaging.ping();
 chatMessaging.startChatPing();}break;case 0:// CONNECTING
@@ -46106,7 +46778,11 @@ chatMessaging.chatState=false;chatMessaging.stopChatPing();break;case 2:// CLOSI
 chatMessaging.chatState=false;chatMessaging.stopChatPing();break;case 3:// CLOSED
 chatMessaging.chatState=false;chatMessaging.stopChatPing();// TODO: Check if this is OK or not?!
 //chatMessaging.sendPingTimeout && clearTimeout(chatMessaging.sendPingTimeout);
-break;}});asyncClient.on('connect',function(newPeerId){asyncGetReadyTime=new Date().getTime();peerId=newPeerId;_events.chatEvents.fireEvent('connect');chatMessaging.ping();});asyncClient.on('disconnect',function(event){oldPeerId=peerId;peerId=undefined;_events.chatEvents.fireEvent('disconnect',event);_events.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:'Call Socket is closed!',error:event});});asyncClient.on('reconnect',function(newPeerId){peerId=newPeerId;_events.chatEvents.fireEvent('reconnect');});asyncClient.on('message',function(params,ack){receivedAsyncMessageHandler(params);ack&&ack();});asyncClient.on('error',function(error){_events.chatEvents.fireEvent('error',{code:error.errorCode,message:error.errorMessage,error:error.errorEvent});});},/**
+break;}});asyncClient.on('connect',function(newPeerId){asyncGetReadyTime=new Date().getTime();peerId=newPeerId;_events.chatEvents.fireEvent('connect');chatMessaging.ping();});asyncClient.on('disconnect',function(event){oldPeerId=peerId;peerId=undefined;_events.chatEvents.fireEvent('disconnect',event);_events.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:'Call Socket is closed!',error:event});});asyncClient.on('reconnect',function(newPeerId){peerId=newPeerId;_events.chatEvents.fireEvent('reconnect');});asyncClient.on('message',function(params,ack){receivedAsyncMessageHandler(params);ack&&ack();});asyncClient.on('error',function(error){_events.chatEvents.fireEvent('error',{code:error.errorCode,message:error.errorMessage,error:error.errorEvent});});},getUserAndUpdateSDKState=function getUserAndUpdateSDKState(){getUserInfo(function(userInfoResult){if(actualTimingLog){_utility["default"].chatStepLogger('Get User Info ',new Date().getTime()-getUserInfoTime);}if(!userInfoResult.hasError){chatMessaging.userInfo=userInfoResult.result.user;// getAllThreads({
+//     summary: true,
+//     cache: false
+// });
+chatMessaging.chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();}});},/**
          * Get Device Id With Token
          *
          * If ssoGrantDevicesAddress set as TRUE, chat agent gets Device ID
@@ -48211,7 +48887,7 @@ content:{count:count,offset:offset}};if(params){if((0,_typeof2["default"])(param
          * + locationPingRequest     {object}
          *    + content              {list} A map of { location: string, locationId: int }
          */var locationPingData={chatMessageVOType:_constants.chatMessageVOTypes.LOCATION_PING,typeCode:generalTypeCode,//params.typeCode,
-pushMsgType:3,token:token},content={};if(params){if(typeof params.location==='string'&&locationPingTypes.hasOwnProperty(params.location.toUpperCase())){content.location=locationPingTypes[params.location.toUpperCase()];if(params.location.toUpperCase()==='THREAD'){if(typeof params.threadId==='number'&&params.threadId>0){content.locationId=+params.threadId;}else{_events.chatEvents.fireEvent('error',{code:999,message:'You set the location to be a thread, you have to send a valid ThreadId'});return;}}}else{_events.chatEvents.fireEvent('error',{code:999,message:'Send a valid location type (CHAT / THREAD / CONTACTS)'});return;}locationPingData.content=JSON.stringify(content);}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to LocationPing!'});return;}return chatMessaging.sendMessage(locationPingData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.clearChatServerCaches=clearChatServerCaches;publicized.deleteCacheDatabases=deleteCacheDatabases;publicized.clearCacheDatabasesOfUser=clearCacheDatabasesOfUser;publicized.getChatState=function(){return chatFullStateObject;};publicized.reconnect=function(){asyncClient.reconnectSocket();};publicized.setToken=function(newToken){if(typeof newToken!=='undefined'){token=newToken;callModule.updateToken(token);chatMessaging.updateToken(token);_events.chatEvents.updateToken(token);}};publicized.generateUUID=_utility["default"].generateUUID;publicized.logout=function(){clearChatServerCaches();_events.chatEvents.clearEventCallbacks();chatMessaging.messagesCallbacks={};chatMessaging.sendMessageCallbacks={};chatMessaging.threadCallbacks={};chatMessaging.stopChatPing();asyncClient.logout();};publicized.inviteeIdTypes=_constants.inviteeVOidTypes;/**
+pushMsgType:3,token:token},content={};if(params){if(typeof params.location==='string'&&locationPingTypes.hasOwnProperty(params.location.toUpperCase())){content.location=locationPingTypes[params.location.toUpperCase()];if(params.location.toUpperCase()==='THREAD'){if(typeof params.threadId==='number'&&params.threadId>0){content.locationId=+params.threadId;}else{_events.chatEvents.fireEvent('error',{code:999,message:'You set the location to be a thread, you have to send a valid ThreadId'});return;}}}else{_events.chatEvents.fireEvent('error',{code:999,message:'Send a valid location type (CHAT / THREAD / CONTACTS)'});return;}locationPingData.content=JSON.stringify(content);}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to LocationPing!'});return;}return chatMessaging.sendMessage(locationPingData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.clearChatServerCaches=clearChatServerCaches;publicized.deleteCacheDatabases=deleteCacheDatabases;publicized.clearCacheDatabasesOfUser=clearCacheDatabasesOfUser;publicized.getChatState=function(){return chatFullStateObject;};publicized.reconnect=function(){asyncClient.reconnectSocket();};publicized.setToken=function(newToken){if(typeof newToken!=='undefined'){token=newToken;callModule.updateToken(token);chatMessaging.updateToken(token);_events.chatEvents.updateToken(token);if(!chatMessaging.userInfo||!chatMessaging.userInfo.id){getUserAndUpdateSDKState();}}};publicized.generateUUID=_utility["default"].generateUUID;publicized.logout=function(){clearChatServerCaches();_events.chatEvents.clearEventCallbacks();chatMessaging.messagesCallbacks={};chatMessaging.sendMessageCallbacks={};chatMessaging.threadCallbacks={};chatMessaging.stopChatPing();asyncClient.logout();};publicized.inviteeIdTypes=_constants.inviteeVOidTypes;/**
      * Check a turn server availability
      *
      * @param turnIp
@@ -48229,11 +48905,11 @@ pc.onicecandidate=function(ice){//listen for candidate events
 if(promiseResolved||!ice||!ice.candidate||!ice.candidate.candidate||!(ice.candidate.candidate.indexOf('typ relay')>-1))return;promiseResolved=true;resolve(true);};});};publicized.getCustomerInfo=function(params,callback){var userId=params.userId||chatMessaging.userInfo.id,sendData={chatMessageVOType:_constants.chatMessageVOTypes.CUSTOMER_INFO,typeCode:generalTypeCode,//params.typeCode,
 content:[userId],token:token};return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.archiveThread=function(_ref,callback){var threadId=_ref.threadId;var sendData={chatMessageVOType:_constants.chatMessageVOTypes.ARCHIVE_THREAD,typeCode:generalTypeCode,//params.typeCode,
 token:token,subjectId:threadId};return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.unArchiveThread=function(_ref2,callback){var threadId=_ref2.threadId;var sendData={chatMessageVOType:_constants.chatMessageVOTypes.UNARCHIVE_THREAD,typeCode:generalTypeCode,//params.typeCode,
-token:token,subjectId:threadId};return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};init();return publicized;}if(window){if(!window.POD){window.POD={};}window.POD.Chat=Chat;//For backward compatibility
+token:token,subjectId:threadId};return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.version=function(){console.log("%c[SDK] Version: podchat-browser@"+_buildConfig["default"].version,"color:green; font-size:13px");console.log("%c[SDK] Build date:"+_buildConfig["default"].date,"color:green;font-size:13px");console.log("%c[SDK] Additional info: "+_buildConfig["default"].VersionInfo,"color:green;font-size:13px");return _buildConfig["default"];};publicized.changeProtocol=function(){var proto=arguments.length>0&&arguments[0]!==undefined?arguments[0]:"websocket";if(["webrtc","websocket"].includes(proto)){if(proto!=protocol){protocol=proto.toLowerCase();asyncClient.logout();initAsync();}else{console.warn("SDK is currently using the ".concat(proto," protocol. Nothing to do."));}}else{console.error("Protocol ".concat(proto," is not supported in SDK. Valid protocols: \"webrtc\", \"websocket\""));}};init();return publicized;}if(window){if(!window.POD){window.POD={};}window.POD.Chat=Chat;//For backward compatibility
 window.PodChat=Chat;}var _default=Chat;// })();
 exports["default"]=_default;
 
-},{"./call.module":266,"./events.module":268,"./lib/call/deviceManager.js":269,"./lib/constants":270,"./messaging.module":272,"./utility/utility":273,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/toConsumableArray":9,"@babel/runtime/helpers/typeof":10,"dexie":125,"podasync-ws-only":209}],268:[function(require,module,exports){
+},{"./buildConfig.json":267,"./call.module":268,"./events.module":270,"./lib/call/deviceManager.js":271,"./lib/constants":272,"./messaging.module":274,"./utility/utility":275,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/toConsumableArray":9,"@babel/runtime/helpers/typeof":10,"dexie":125,"podasync-ws-only":209}],270:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -48359,7 +49035,7 @@ function initEventHandler(params) {
 var _default = ChatEvents;
 exports["default"] = _default;
 
-},{"./utility/utility":273,"@babel/runtime/helpers/interopRequireDefault":5}],269:[function(require,module,exports){
+},{"./utility/utility":275,"@babel/runtime/helpers/interopRequireDefault":5}],271:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -48724,7 +49400,7 @@ var deviceManager = {
 var _default = deviceManager;
 exports["default"] = _default;
 
-},{"../../events.module.js":268,"../constants.js":270,"../errorHandler.js":271,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":10,"@babel/runtime/regenerator":12}],270:[function(require,module,exports){
+},{"../../events.module.js":270,"../constants.js":272,"../errorHandler.js":273,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":10,"@babel/runtime/regenerator":12}],272:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -48935,7 +49611,7 @@ var callStickerTypes = {
 };
 exports.callStickerTypes = callStickerTypes;
 
-},{}],271:[function(require,module,exports){
+},{}],273:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -49105,7 +49781,7 @@ exports.raiseError = raiseError;
 var _default = handleError;
 exports["default"] = _default;
 
-},{"../events.module":268,"@babel/runtime/helpers/defineProperty":4,"@babel/runtime/helpers/interopRequireDefault":5}],272:[function(require,module,exports){
+},{"../events.module":270,"@babel/runtime/helpers/defineProperty":4,"@babel/runtime/helpers/interopRequireDefault":5}],274:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -49461,7 +50137,7 @@ function ChatMessaging(params) {
 var _default = ChatMessaging;
 exports["default"] = _default;
 
-},{"./lib/constants":270,"./lib/errorHandler":271,"./utility/utility":273,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":10,"dompurify":131}],273:[function(require,module,exports){
+},{"./lib/constants":272,"./lib/errorHandler":273,"./utility/utility":275,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":10,"dompurify":131}],275:[function(require,module,exports){
 (function (global){(function (){
 "use strict";
 
@@ -50059,4 +50735,4 @@ var _default = new ChatUtility();
 exports["default"] = _default;
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":10,"crypto-js":93}]},{},[267]);
+},{"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":10,"crypto-js":93}]},{},[269]);

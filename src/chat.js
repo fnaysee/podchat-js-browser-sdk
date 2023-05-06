@@ -6,6 +6,7 @@ import Dexie from "dexie"
 import ChatCall from "./call.module"
 import ChatEvents, { initEventHandler, chatEvents } from "./events.module"
 import ChatMessaging from "./messaging.module"
+import buildConfig from "./buildConfig.json"
 
 import {
     chatMessageVOTypes,
@@ -30,7 +31,7 @@ function Chat(params) {
     var asyncClient,
         peerId,
         oldPeerId,
-        token = params.token,
+        token = params.token || "111",
         generalTypeCode = params.typeCode || 'default',
         typeCodeOwnerId = params.typeCodeOwnerId || null,
         mapApiKey = params.mapApiKey || '8b77db18704aa646ee5aaea13e7370f4f88b9e8c',
@@ -175,7 +176,8 @@ function Chat(params) {
         chatSendQueue = [],
         chatWaitQueue = [],
         chatUploadQueue = [],
-        fullResponseObject = params.fullResponseObject || false;
+        fullResponseObject = params.fullResponseObject || false,
+        webrtcConfig = (params.webrtcConfig ? params.webrtcConfig : null);
 
     if(!consoleLogging) {
         /**
@@ -275,7 +277,8 @@ function Chat(params) {
                 messageTtl: messageTtl,
                 reconnectOnClose: reconnectOnClose,
                 asyncLogging: asyncLogging,
-                logLevel: (consoleLogging ? 3 : 1)
+                logLevel: (consoleLogging ? 3 : 1),
+                webrtcConfig: webrtcConfig
             });
             callModule.asyncInitialized(asyncClient);
             chatMessaging.asyncInitialized(asyncClient);
@@ -288,94 +291,8 @@ function Chat(params) {
                 peerId = asyncClient.getPeerId();
 
                 if (!chatMessaging.userInfo) {
-                    var getUserInfoTime = new Date().getTime();
-
-                    getUserInfo(function (userInfoResult) {
-                        if (actualTimingLog) {
-                            Utility.chatStepLogger('Get User Info ', new Date().getTime() - getUserInfoTime);
-                        }
-                        if (!userInfoResult.hasError) {
-                            chatMessaging.userInfo = userInfoResult.result.user;
-
-                            // getAllThreads({
-                            //     summary: true,
-                            //     cache: false
-                            // });
-
-                            /**
-                             * Check if user has KeyId stored in their cache or not?
-                             */
-                            if (canUseCache) {
-                                if (db) {
-                                    db.users
-                                        .where('id')
-                                        .equals(parseInt(chatMessaging.userInfo.id))
-                                        .toArray()
-                                        .then(function (users) {
-                                            if (users.length > 0 && typeof users[0].keyId != 'undefined') {
-                                                var user = users[0];
-
-                                                getEncryptionKey({
-                                                    keyId: user.keyId
-                                                }, function (result) {
-                                                    if (!result.hasError) {
-                                                        cacheSecret = result.secretKey;
-
-                                                        chatMessaging.chatState = true;
-                                                        chatEvents.fireEvent('chatReady');
-                                                        chatSendQueueHandler();
-                                                    } else {
-                                                        if (result.message !== '') {
-                                                            try {
-                                                                var response = JSON.parse(result.message);
-                                                                if (response.error === 'invalid_param') {
-                                                                    generateEncryptionKey({
-                                                                        keyAlgorithm: 'AES',
-                                                                        keySize: 256
-                                                                    }, function () {
-                                                                        chatMessaging.chatState = true;
-                                                                        chatEvents.fireEvent('chatReady');
-                                                                        chatSendQueueHandler();
-                                                                    });
-                                                                }
-                                                            } catch (e) {
-                                                                consoleLogging && console.log(e);
-                                                            }
-                                                        }
-                                                    }
-                                                });
-                                            } else {
-                                                generateEncryptionKey({
-                                                    keyAlgorithm: 'AES',
-                                                    keySize: 256
-                                                }, function () {
-                                                    chatMessaging.chatState = true;
-                                                    chatEvents.fireEvent('chatReady');
-                                                    chatSendQueueHandler();
-                                                });
-                                            }
-                                        })
-                                        .catch(function (error) {
-                                            chatEvents.fireEvent('error', {
-                                                code: error.errorCode,
-                                                message: error.errorMessage,
-                                                error: error
-                                            });
-                                        });
-                                } else {
-                                    chatEvents.fireEvent('error', {
-                                        code: 6601,
-                                        message: CHAT_ERRORS[6601],
-                                        error: null
-                                    });
-                                }
-                            } else {
-                                chatMessaging.chatState = true;
-                                chatEvents.fireEvent('chatReady');
-                                chatSendQueueHandler();
-                            }
-                        }
-                    });
+                    // var getUserInfoTime = new Date().getTime();
+                    getUserAndUpdateSDKState();
                 } else if (chatMessaging.userInfo.id > 0) {
                     chatMessaging.chatState = true;
                     chatEvents.fireEvent('chatReady');
@@ -468,7 +385,26 @@ function Chat(params) {
                 });
             });
         },
+        getUserAndUpdateSDKState = function () {
+            var getUserInfoTime = new Date().getTime();
+            getUserInfo(function (userInfoResult) {
+                if (actualTimingLog) {
+                    Utility.chatStepLogger('Get User Info ', new Date().getTime() - getUserInfoTime);
+                }
+                if (!userInfoResult.hasError) {
+                    chatMessaging.userInfo = userInfoResult.result.user;
 
+                    // getAllThreads({
+                    //     summary: true,
+                    //     cache: false
+                    // });
+
+                    chatMessaging.chatState = true;
+                    chatEvents.fireEvent('chatReady');
+                    chatSendQueueHandler();
+                }
+            });
+        },
         /**
          * Get Device Id With Token
          *
@@ -14169,6 +14105,9 @@ function Chat(params) {
             callModule.updateToken(token);
             chatMessaging.updateToken(token);
             chatEvents.updateToken(token);
+            if(!chatMessaging.userInfo || !chatMessaging.userInfo.id) {
+                getUserAndUpdateSDKState();
+            }
         }
     };
 
@@ -14292,6 +14231,27 @@ function Chat(params) {
             }
         });
     };
+
+    publicized.version = function () {
+        console.log("%c[SDK] Version: podchat-browser@" + buildConfig.version, "color:green; font-size:13px")
+        console.log("%c[SDK] Build date:" + buildConfig.date, "color:green;font-size:13px")
+        console.log("%c[SDK] Additional info: " + buildConfig.VersionInfo, "color:green;font-size:13px")
+        return buildConfig;
+    };
+
+    publicized.changeProtocol = function (proto = "websocket") {
+        if(["webrtc", "websocket"].includes(proto)) {
+            if (proto != protocol) {
+                protocol = proto.toLowerCase();
+                asyncClient.logout();
+                initAsync();
+            } else {
+                console.warn(`SDK is currently using the ${proto} protocol. Nothing to do.`)
+            }
+        } else {
+            console.error(`Protocol ${proto} is not supported in SDK. Valid protocols: "webrtc", "websocket"`)
+        }
+    }
 
     init();
 

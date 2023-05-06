@@ -5,13 +5,15 @@
   "main": "./dist/node/chat.js",
   "scripts": {
     "test": "mocha --reporter spec --exit",
-    "publish:snapshot": "npm run version:snapshot && npm publish --tag snapshot",
+    "publish:snapshot": "npm run version:snapshot && npm run build && npm run commitVersionChanges && npm publish --tag snapshot",
     "version:snapshot": "npm version prerelease --preid snapshot",
     "publish:release": "npm run version:release && npm publish",
     "version:release": "npm version 12.7.1",
     "build:browser": "browserify -t [ babelify ] src/chat.js > dist/podchat-browser-bundle.js",
     "build:npm": "babel src -d dist/node --copy-files",
-    "build": "npm run build:browser && npm run build:npm",
+    "commitVersionChanges": "git add . && git commit -m \"Version\" && npm run wait",
+    "wait": "node -e \"setTimeout(() => process.exit(0), 500)\"",
+    "build": "node _buildInfo.js && npm run wait && npm run build:browser && npm run build:npm",
     "watch": "npm-watch build"
   },
   "watch": {
@@ -43,16 +45,13 @@
   },
   "homepage": "https://github.com/FanapSoft/pod-chat-browser-js-sdk#readme",
   "dependencies": {
-    "@sentry/browser": "^6.11.0",
-    "@sentry/tracing": "^6.11.0",
     "crypto-js": "^4.0.0",
     "dexie": "^2.0.4",
     "dompurify": "^2.3.3",
     "faker": "^5.5.3",
     "kurento-utils": "^6.16.0",
     "node-rsa": "^1.1.1",
-    "podasync-ws-only": "^2.7.11",
-    "query-string": "^6.8.1",
+    "podasync-ws-only": "^2.9.0-snapshot.1",
     "webrtc-adapter": "^8.0.0"
   },
   "devDependencies": {
