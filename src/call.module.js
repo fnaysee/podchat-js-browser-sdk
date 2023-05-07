@@ -2970,7 +2970,7 @@ function ChatCall(params) {
                     // if(!currentCallId ) {
                     latestCallRequestId = messageContent.callId;
                     // }
-                } else {
+                } else if(callRequestController.iRequestedCall) {
                     chatEvents.fireEvent('callEvents', {
                         type: 'PARTNER_RECEIVED_YOUR_CALL',
                         result: messageContent
