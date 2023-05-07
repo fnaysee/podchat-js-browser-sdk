@@ -2754,7 +2754,7 @@ function ChatCall(params) {
 
 
           latestCallRequestId = messageContent.callId; // }
-        } else {
+        } else if (callRequestController.iRequestedCall) {
           _eventsModule.chatEvents.fireEvent('callEvents', {
             type: 'PARTNER_RECEIVED_YOUR_CALL',
             result: messageContent

@@ -39917,11 +39917,12 @@ module.exports = function (thing, encoding, name) {
 
             socketReconnectRetryInterval = setTimeout(function () {
                 // retryStep = 4;
-                retryStep.set(4);
+                retryStep.set(0);
+
                 if(protocol === "websocket")
-                    socket.close();
+                    socket.connect();
                 else if(protocol == "webrtc")
-                    webRTCClass.close()
+                    webRTCClass.connect()
             }, 2000);
         };
 
@@ -45989,7 +45990,7 @@ WildEmitter.mixin = function (constructor) {
 WildEmitter.mixin(WildEmitter);
 
 },{}],267:[function(require,module,exports){
-module.exports={"version":"12.7.2-snapshot.22","date":"۱۴۰۲/۲/۱۶","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.7.2-snapshot.22","date":"۱۴۰۲/۲/۱۷","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],268:[function(require,module,exports){
 "use strict";var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");var _typeof3=require("@babel/runtime/helpers/typeof");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _regenerator=_interopRequireDefault(require("@babel/runtime/regenerator"));var _asyncToGenerator2=_interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _constants=require("./lib/constants");var _kurentoUtils=_interopRequireDefault(require("kurento-utils"));var _utility=_interopRequireDefault(require("./utility/utility"));var _eventsModule=require("./events.module.js");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));var _errorHandler=_interopRequireWildcard(require("./lib/errorHandler"));function _getRequireWildcardCache(nodeInterop){if(typeof WeakMap!=="function")return null;var cacheBabelInterop=new WeakMap();var cacheNodeInterop=new WeakMap();return(_getRequireWildcardCache=function _getRequireWildcardCache(nodeInterop){return nodeInterop?cacheNodeInterop:cacheBabelInterop;})(nodeInterop);}function _interopRequireWildcard(obj,nodeInterop){if(!nodeInterop&&obj&&obj.__esModule){return obj;}if(obj===null||_typeof3(obj)!=="object"&&typeof obj!=="function"){return{"default":obj};}var cache=_getRequireWildcardCache(nodeInterop);if(cache&&cache.has(obj)){return cache.get(obj);}var newObj={};var hasPropertyDescriptor=Object.defineProperty&&Object.getOwnPropertyDescriptor;for(var key in obj){if(key!=="default"&&Object.prototype.hasOwnProperty.call(obj,key)){var desc=hasPropertyDescriptor?Object.getOwnPropertyDescriptor(obj,key):null;if(desc&&(desc.get||desc.set)){Object.defineProperty(newObj,key,desc);}else{newObj[key]=obj[key];}}}newObj["default"]=obj;if(cache){cache.set(obj,newObj);}return newObj;}function ChatCall(params){var _params$asyncLogging,_params$asyncLogging2,_params$asyncLogging3,_params$callOptions,_params$callOptions2;var//Utility = params.Utility,
 currentModuleInstance=this,asyncClient=params.asyncClient,//chatEvents = params.chatEvents,
@@ -46398,7 +46399,7 @@ latestCallRequestId=messageContent.callId;// }
        * Type 73    Receive Call Request
        */case _constants.chatMessageVOTypes.RECEIVE_CALL_REQUEST:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(messageContent.callId>0){_eventsModule.chatEvents.fireEvent('callEvents',{type:'RECEIVE_CALL',result:messageContent});// if(!currentCallId ) {
 latestCallRequestId=messageContent.callId;// }
-}else{_eventsModule.chatEvents.fireEvent('callEvents',{type:'PARTNER_RECEIVED_YOUR_CALL',result:messageContent});}break;/**
+}else if(callRequestController.iRequestedCall){_eventsModule.chatEvents.fireEvent('callEvents',{type:'PARTNER_RECEIVED_YOUR_CALL',result:messageContent});}break;/**
        * Type 74    Start Call (Start sender and receivers)
        */case _constants.chatMessageVOTypes.START_CALL:if(!callRequestController.canProcessStartCall(threadId)){_eventsModule.chatEvents.fireEvent('callEvents',{type:'CALL_STARTED_ELSEWHERE',message:'Call already started somewhere else..., aborting...'});return;}if(currentCallId){endCall({callId:currentCallId});callStop(true,false);setTimeout(function(){currentCallId=threadId;processChatStartCallEvent(type,messageContent,contentCount,threadId,uniqueId);},5000);}else{currentCallId=threadId;processChatStartCallEvent(type,messageContent,contentCount,threadId,uniqueId);}break;/**
        * Type 75    End Call Request
