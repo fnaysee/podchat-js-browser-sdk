@@ -1441,6 +1441,8 @@ function ChatCall(params) {
       callStateController = {
     createSessionInChat: function createSessionInChat(params) {
       currentCallParams = params;
+      callStopQueue.callStarted = true;
+      this.startCall(params);
 
       var callController = this,
           totalRetries = 1,
@@ -1451,12 +1453,16 @@ function ChatCall(params) {
       },
           onResultCallback = function onResultCallback(res) {
         if (res.done === 'TRUE') {
-          callStopQueue.callStarted = true;
-          callController.startCall(params);
+          callStopQueue.callStarted = true; // callController.startCall(params);
+        } else {
+          endCall({
+            callId: currentCallId
+          });
+          callStop(true, true);
         }
         /*else if (res.done === 'SKIP') {
-          callStopQueue.callStarted = true;
-          callController.startCall(params);
+            callStopQueue.callStarted = true;
+            callController.startCall(params);
         }*/
 
         /*else {
@@ -3188,15 +3194,16 @@ function ChatCall(params) {
       case _constants.chatMessageVOTypes.CALL_SESSION_CREATED:
         // if(!callRequestController.callEstablishedInMySide)
         //     return;
-        if (!callRequestController.iRequestedCall) return;
+        if (callRequestController.iRequestedCall) {
+          _eventsModule.chatEvents.fireEvent('callEvents', {
+            type: 'CALL_SESSION_CREATED',
+            result: messageContent
+          }); // if(!requestedCallId) {
 
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'CALL_SESSION_CREATED',
-          result: messageContent
-        }); // if(!requestedCallId) {
 
+          requestedCallId = messageContent.callId;
+        } // }
 
-        requestedCallId = messageContent.callId; // }
 
         break;
 
@@ -3297,7 +3304,8 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.START_SCREEN_SHARE:
-        if (!callRequestController.callEstablishedInMySide) return;
+        // if(!callRequestController.callEstablishedInMySide)
+        //     return;
         screenShareInfo.setIsStarted(true);
         screenShareInfo.setOwner(messageContent.screenOwner.id);
 
@@ -3355,8 +3363,8 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.DESTINED_RECORD_CALL:
-        if (!callRequestController.callEstablishedInMySide) return;
-
+        // if(!callRequestController.callEstablishedInMySide)
+        //     return;
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
@@ -3460,6 +3468,7 @@ function ChatCall(params) {
       chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
     }
 
+    callStopQueue.callStarted = true;
     messageContent.callId = threadId;
 
     _eventsModule.chatEvents.fireEvent('callEvents', {

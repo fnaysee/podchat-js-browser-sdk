@@ -1453,7 +1453,11 @@ function ChatCall(params) {
 
         callStateController = {
             createSessionInChat: function (params) {
+
                 currentCallParams = params;
+                callStopQueue.callStarted = true;
+                this.startCall(params);
+
                 let callController = this,
                     totalRetries = 1,
                     message = {
@@ -1464,8 +1468,13 @@ function ChatCall(params) {
                     onResultCallback = function (res) {
                         if (res.done === 'TRUE') {
                             callStopQueue.callStarted = true;
-                            callController.startCall(params);
-                        } /*else if (res.done === 'SKIP') {
+                            // callController.startCall(params);
+                        } else {
+                            endCall({callId: currentCallId});
+                            callStop( true, true);
+                        }
+
+                        /*else if (res.done === 'SKIP') {
                             callStopQueue.callStarted = true;
                             callController.startCall(params);
                         }*/
@@ -3186,16 +3195,15 @@ function ChatCall(params) {
             case chatMessageVOTypes.CALL_SESSION_CREATED:
                 // if(!callRequestController.callEstablishedInMySide)
                 //     return;
-                if(!callRequestController.iRequestedCall)
-                    return;
+                if(callRequestController.iRequestedCall) {
+                    chatEvents.fireEvent('callEvents', {
+                        type: 'CALL_SESSION_CREATED',
+                        result: messageContent
+                    });
 
-                chatEvents.fireEvent('callEvents', {
-                    type: 'CALL_SESSION_CREATED',
-                    result: messageContent
-                });
-
-                // if(!requestedCallId) {
-                requestedCallId = messageContent.callId;
+                    // if(!requestedCallId) {
+                    requestedCallId = messageContent.callId;
+                }
                 // }
                 break;
 
@@ -3303,8 +3311,8 @@ function ChatCall(params) {
              * Type 123   Start Screen Share
              */
             case chatMessageVOTypes.START_SCREEN_SHARE:
-                if(!callRequestController.callEstablishedInMySide)
-                    return;
+                // if(!callRequestController.callEstablishedInMySide)
+                //     return;
 
                 screenShareInfo.setIsStarted(true);
                 screenShareInfo.setOwner(messageContent.screenOwner.id);
@@ -3360,8 +3368,8 @@ function ChatCall(params) {
              * Type 126   Destinated Record Call Request
              */
             case chatMessageVOTypes.DESTINED_RECORD_CALL:
-                if(!callRequestController.callEstablishedInMySide)
-                    return;
+                // if(!callRequestController.callEstablishedInMySide)
+                //     return;
 
                 if (chatMessaging.messagesCallbacks[uniqueId]) {
                     chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
@@ -3462,6 +3470,7 @@ function ChatCall(params) {
             chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
         }
 
+        callStopQueue.callStarted = true;
         messageContent.callId = threadId;
         chatEvents.fireEvent('callEvents', {
             type: 'CALL_STARTED',
