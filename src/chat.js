@@ -4204,6 +4204,9 @@ function Chat(params) {
             if (pushMessageVO.participant) {
                 message.ownerId = pushMessageVO.participant.id;
             }
+            else if (pushMessageVO.participantVO) {
+                message.ownerId = pushMessageVO.participantVO.id;
+            }
 
             if (pushMessageVO.conversation) {
                 message.conversation = formatDataToMakeConversation(pushMessageVO.conversation);
