@@ -1,4 +1,1923 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+(function (global){(function (){
+// https://github.com/maxogden/websocket-stream/blob/48dc3ddf943e5ada668c31ccd94e9186f02fafbd/ws-fallback.js
+
+var ws = null
+
+if (typeof WebSocket !== 'undefined') {
+  ws = WebSocket
+} else if (typeof MozWebSocket !== 'undefined') {
+  ws = MozWebSocket
+} else if (typeof global !== 'undefined') {
+  ws = global.WebSocket || global.MozWebSocket
+} else if (typeof window !== 'undefined') {
+  ws = window.WebSocket || window.MozWebSocket
+} else if (typeof self !== 'undefined') {
+  ws = self.WebSocket || self.MozWebSocket
+}
+
+module.exports = ws
+
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],2:[function(require,module,exports){
+(function () {
+    /*
+     * Async module to handle async messaging
+     * @module Async
+     *
+     * @param {Object} params
+     */
+
+    function Async(params) {
+
+        /*******************************************************
+         *          P R I V A T E   V A R I A B L E S          *
+         *******************************************************/
+
+        var PodSocketClass,
+            WebRTCClass,
+            PodUtility,
+            LogLevel
+        if (typeof(require) !== 'undefined' && typeof(exports) !== 'undefined') {
+            PodSocketClass = require('./socket.js');
+            WebRTCClass = require('./webrtc.js');
+            PodUtility = require('../utility/utility.js');
+            LogLevel = require('../utility/logger.js');
+        }
+        else {
+            PodSocketClass = POD.Socket;
+            PodUtility = POD.AsyncUtility;
+            LogLevel = POD.LogLevel;
+        }
+
+        var Utility = new PodUtility();
+
+        var protocol = params.protocol || 'websocket',
+            appId = params.appId || 'PodChat',
+            deviceId = params.deviceId,
+            eventCallbacks = {
+                connect: {},
+                disconnect: {},
+                reconnect: {},
+                message: {},
+                asyncReady: {},
+                stateChange: {},
+                error: {}
+            },
+            ackCallback = {},
+            socket,
+            webRTCClass,
+            asyncMessageType = {
+                PING: 0,
+                SERVER_REGISTER: 1,
+                DEVICE_REGISTER: 2,
+                MESSAGE: 3,
+                MESSAGE_ACK_NEEDED: 4,
+                MESSAGE_SENDER_ACK_NEEDED: 5,
+                ACK: 6,
+                GET_REGISTERED_PEERS: 7,
+                PEER_REMOVED: -3,
+                REGISTER_QUEUE: -2,
+                NOT_REGISTERED: -1,
+                ERROR_MESSAGE: -99
+            },
+            socketStateType = {
+                CONNECTING: 0, // The connection is not yet open.
+                OPEN: 1, // The connection is open and ready to communicate.
+                CLOSING: 2, // The connection is in the process of closing.
+                CLOSED: 3 // The connection is closed or couldn't be opened.
+            },
+            logLevel = LogLevel(params.logLevel),
+            isNode = Utility.isNode(),
+            isSocketOpen = false,
+            isDeviceRegister = false,
+            isServerRegister = false,
+            socketState = socketStateType.CONNECTING,
+            asyncState = '',
+            registerServerTimeoutId,
+            registerDeviceTimeoutId,
+            checkIfSocketHasOpennedTimeoutId,
+            asyncReadyTimeoutId,
+            pushSendDataQueue = [],
+            oldPeerId,
+            peerId = params.peerId,
+            lastMessageId = 0,
+            messageTtl = params.messageTtl || 86400,
+            serverName = params.serverName || 'oauth-wire',
+            serverRegisteration = (typeof params.serverRegisteration === 'boolean') ? params.serverRegisteration : true,
+            connectionRetryInterval = params.connectionRetryInterval || 5000,
+            socketReconnectRetryInterval,
+            socketReconnectCheck,
+            // retryStep = 4,
+            reconnectOnClose = (typeof params.reconnectOnClose === 'boolean') ? params.reconnectOnClose : true,
+            asyncLogging = (params.asyncLogging && typeof params.asyncLogging.onFunction === 'boolean') ? params.asyncLogging.onFunction : false,
+            onReceiveLogging = (params.asyncLogging && typeof params.asyncLogging.onMessageReceive === 'boolean')
+                ? params.asyncLogging.onMessageReceive
+                : false,
+            onSendLogging = (params.asyncLogging && typeof params.asyncLogging.onMessageSend === 'boolean') ? params.asyncLogging.onMessageSend : false,
+            workerId = (params.asyncLogging && typeof parseInt(params.asyncLogging.workerId) === 'number') ? params.asyncLogging.workerId : 0,
+            webrtcConfig = (params.webrtcConfig ? params.webrtcConfig : null);
+
+        // function setRetryStep(val){
+        //     console.log("new retryStep value:", val);
+        //     retryStep = val;
+        // }
+        //
+        // function getRetryStep() {
+        //     return retryStep;
+        // }
+
+        const retryStep = {
+            value: 4,
+            get() {
+                return retryStep.value;
+            },
+            set(val) {
+                logLevel.debug && console.debug("[Async][async.js] retryStep new value:", val);
+                retryStep.value = val;
+            }
+        };
+
+        /*******************************************************
+         *            P R I V A T E   M E T H O D S            *
+         *******************************************************/
+
+        var init = function () {
+                switch (protocol) {
+                    case 'websocket':
+                        initSocket();
+                        break;
+                    case 'webrtc':
+                        initWebrtc();
+                        break;
+                }
+            },
+
+            asyncLogger = function (type, msg) {
+                Utility.asyncLogger({
+                    protocol: protocol,
+                    workerId: workerId,
+                    type: type,
+                    msg: msg,
+                    peerId: peerId,
+                    deviceId: deviceId,
+                    isSocketOpen: isSocketOpen,
+                    isDeviceRegister: isDeviceRegister,
+                    isServerRegister: isServerRegister,
+                    socketState: socketState,
+                    pushSendDataQueue: pushSendDataQueue
+                });
+            },
+
+            initSocket = function () {
+                socket = new PodSocketClass({
+                    socketAddress: params.socketAddress,
+                    wsConnectionWaitTime: params.wsConnectionWaitTime,
+                    connectionCheckTimeout: params.connectionCheckTimeout,
+                    connectionCheckTimeoutThreshold: params.connectionCheckTimeoutThreshold,
+                    logLevel: logLevel
+                });
+
+                checkIfSocketHasOpennedTimeoutId = setTimeout(function () {
+                    if (!isSocketOpen) {
+                        fireEvent('error', {
+                            errorCode: 4001,
+                            errorMessage: 'Can not open Socket!'
+                        });
+                    }
+                }, 65000);
+
+                socket.on('open', function () {
+                    checkIfSocketHasOpennedTimeoutId && clearTimeout(checkIfSocketHasOpennedTimeoutId);
+                    socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+                    socketReconnectCheck && clearTimeout(socketReconnectCheck);
+
+                    isSocketOpen = true;
+                    // retryStep.set(4);
+
+                    socketState = socketStateType.OPEN;
+                    fireEvent('stateChange', {
+                        socketState: socketState,
+                        timeUntilReconnect: 0,
+                        deviceRegister: isDeviceRegister,
+                        serverRegister: isServerRegister,
+                        peerId: peerId
+                    });
+                });
+
+                socket.on('message', function (msg) {
+                    handleSocketMessage(msg);
+                    if (onReceiveLogging) {
+                        asyncLogger('Receive', msg);
+                    }
+                });
+
+                socket.on('close', function (event) {
+                    isSocketOpen = false;
+                    isDeviceRegister = false;
+                    oldPeerId = peerId;
+
+                    // socketState = socketStateType.CLOSED;
+                    //
+                    // fireEvent('stateChange', {
+                    //     socketState: socketState,
+                    //     timeUntilReconnect: 0,
+                    //     deviceRegister: isDeviceRegister,
+                    //     serverRegister: isServerRegister,
+                    //     peerId: peerId
+                    // });
+
+                    fireEvent('disconnect', event);
+
+                    if (reconnectOnClose) {
+                        if (asyncLogging) {
+                            if (workerId > 0) {
+                                Utility.asyncStepLogger(workerId + '\t Reconnecting after ' + retryStep.get() + 's');
+                            }
+                            else {
+                                Utility.asyncStepLogger('Reconnecting after ' + retryStep.get() + 's');
+                            }
+                        }
+
+                        logLevel.debug && console.debug("[Async][async.js] on socket close, retryStep:", retryStep.get());
+
+                        socketState = socketStateType.CLOSED;
+                        fireEvent('stateChange', {
+                            socketState: socketState,
+                            timeUntilReconnect: 1000 * retryStep.get(),
+                            deviceRegister: isDeviceRegister,
+                            serverRegister: isServerRegister,
+                            peerId: peerId
+                        });
+
+                        socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+
+                        socketReconnectRetryInterval = setTimeout(function () {
+                            socket.connect();
+                        }, 1000 * retryStep.get());
+
+                        if (retryStep.get() < 64) {
+                            // retryStep += 3;
+                            retryStep.set(retryStep.get() + 3)
+                        }
+
+                        // socketReconnectCheck && clearTimeout(socketReconnectCheck);
+                        //
+                        // socketReconnectCheck = setTimeout(function() {
+                        //   if (!isSocketOpen) {
+                        //     fireEvent("error", {
+                        //       errorCode: 4001,
+                        //       errorMessage: "Can not open Socket!"
+                        //     });
+                        //
+                        //     socketState = socketStateType.CLOSED;
+                        //     fireEvent("stateChange", {
+                        //       socketState: socketState,
+                        //       deviceRegister: isDeviceRegister,
+                        //       serverRegister: isServerRegister,
+                        //       peerId: peerId
+                        //     });
+                        //   }
+                        // }, 65000);
+
+                    }
+                    else {
+                        socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+                        socketReconnectCheck && clearTimeout(socketReconnectCheck);
+                        fireEvent('error', {
+                            errorCode: 4005,
+                            errorMessage: 'Socket Closed!'
+                        });
+
+                        socketState = socketStateType.CLOSED;
+                        fireEvent('stateChange', {
+                            socketState: socketState,
+                            timeUntilReconnect: 0,
+                            deviceRegister: isDeviceRegister,
+                            serverRegister: isServerRegister,
+                            peerId: peerId
+                        });
+                    }
+
+                });
+
+                socket.on('customError', function (error) {
+                    fireEvent('error', {
+                        errorCode: error.errorCode,
+                        errorMessage: error.errorMessage,
+                        errorEvent: error.errorEvent
+                    });
+                });
+
+                socket.on('error', function (error) {
+                    fireEvent('error', {
+                        errorCode: '',
+                        errorMessage: '',
+                        errorEvent: error
+                    });
+                });
+            },
+            initWebrtc = function () {
+                webRTCClass = new WebRTCClass({
+                    baseUrl: (webrtcConfig ? webrtcConfig.baseUrl : null),
+                    configuration : (webrtcConfig ? webrtcConfig.configuration : null),
+                    connectionCheckTimeout: params.connectionCheckTimeout,
+                    logLevel: logLevel
+                });
+
+                checkIfSocketHasOpennedTimeoutId = setTimeout(function () {
+                    if (!isSocketOpen) {
+                        fireEvent('error', {
+                            errorCode: 4001,
+                            errorMessage: 'Can not open Socket!'
+                        });
+                    }
+                }, 65000);
+
+                webRTCClass.on('open', function () {
+                    checkIfSocketHasOpennedTimeoutId && clearTimeout(checkIfSocketHasOpennedTimeoutId);
+                    socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+                    socketReconnectCheck && clearTimeout(socketReconnectCheck);
+
+                    isSocketOpen = true;
+                    // retryStep.set(4);
+
+                    socketState = socketStateType.OPEN;
+                    fireEvent('stateChange', {
+                        socketState: socketState,
+                        timeUntilReconnect: 0,
+                        deviceRegister: isDeviceRegister,
+                        serverRegister: isServerRegister,
+                        peerId: peerId
+                    });
+                });
+
+                webRTCClass.on('message', function (msg) {
+                    console.log({msg})
+                    handleSocketMessage(msg);
+                    if (onReceiveLogging) {
+                        asyncLogger('Receive', msg);
+                    }
+                });
+
+                webRTCClass.on('close', function (event) {
+                    isSocketOpen = false;
+                    isDeviceRegister = false;
+                    oldPeerId = peerId;
+
+                    fireEvent('disconnect', event);
+
+                    if (reconnectOnClose) {
+                        if (asyncLogging) {
+                            if (workerId > 0) {
+                                Utility.asyncStepLogger(workerId + '\t Reconnecting after ' + retryStep.get() + 's');
+                            }
+                            else {
+                                Utility.asyncStepLogger('Reconnecting after ' + retryStep.get() + 's');
+                            }
+                        }
+
+                        logLevel.debug && console.debug("[Async][async.js] on connection close, retryStep:", retryStep.get());
+
+                        socketState = socketStateType.CLOSED;
+                        fireEvent('stateChange', {
+                            socketState: socketState,
+                            timeUntilReconnect: 1000 * retryStep.get(),
+                            deviceRegister: isDeviceRegister,
+                            serverRegister: isServerRegister,
+                            peerId: peerId
+                        });
+
+                        socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+
+                        socketReconnectRetryInterval = setTimeout(function () {
+                            webRTCClass.connect();
+                        }, 1000 * retryStep.get());
+
+                        if (retryStep.get() < 64) {
+                            // retryStep += 3;
+                            retryStep.set(retryStep.get() + 3)
+                        }
+                    }
+                    else {
+                        socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+                        socketReconnectCheck && clearTimeout(socketReconnectCheck);
+                        fireEvent('error', {
+                            errorCode: 4005,
+                            errorMessage: 'Connection Closed!'
+                        });
+
+                        socketState = socketStateType.CLOSED;
+                        fireEvent('stateChange', {
+                            socketState: socketState,
+                            timeUntilReconnect: 0,
+                            deviceRegister: isDeviceRegister,
+                            serverRegister: isServerRegister,
+                            peerId: peerId
+                        });
+                    }
+
+                });
+
+                webRTCClass.on('customError', function (error) {
+                    fireEvent('error', {
+                        errorCode: error.errorCode,
+                        errorMessage: error.errorMessage,
+                        errorEvent: error.errorEvent
+                    });
+                });
+
+                webRTCClass.on('error', function (error) {
+                    fireEvent('error', {
+                        errorCode: '',
+                        errorMessage: '',
+                        errorEvent: error
+                    });
+                });
+            },
+
+            handleSocketMessage = function (msg) {
+                var ack;
+
+                if (msg.type === asyncMessageType.MESSAGE_ACK_NEEDED || msg.type === asyncMessageType.MESSAGE_SENDER_ACK_NEEDED) {
+                    ack = function () {
+                        pushSendData({
+                            type: asyncMessageType.ACK,
+                            content: {
+                                messageId: msg.id
+                            }
+                        });
+                    };
+                }
+
+                switch (msg.type) {
+                    case asyncMessageType.PING:
+                        handlePingMessage(msg);
+                        break;
+
+                    case asyncMessageType.SERVER_REGISTER:
+                        handleServerRegisterMessage(msg);
+                        break;
+
+                    case asyncMessageType.DEVICE_REGISTER:
+                        handleDeviceRegisterMessage(msg.content);
+                        break;
+
+                    case asyncMessageType.MESSAGE:
+                        fireEvent('message', msg);
+                        break;
+
+                    case asyncMessageType.MESSAGE_ACK_NEEDED:
+                    case asyncMessageType.MESSAGE_SENDER_ACK_NEEDED:
+                        ack();
+                        fireEvent('message', msg);
+                        break;
+
+                    case asyncMessageType.ACK:
+                        fireEvent('message', msg);
+                        if (ackCallback[msg.senderMessageId] == 'function') {
+                            ackCallback[msg.senderMessageId]();
+                            delete ackCallback[msg.senderMessageId];
+                        }
+                        break;
+
+                    case asyncMessageType.ERROR_MESSAGE:
+                        fireEvent('error', {
+                            errorCode: 4002,
+                            errorMessage: 'Async Error!',
+                            errorEvent: msg
+                        });
+                        break;
+                }
+            },
+
+            handlePingMessage = function (msg) {
+                if (msg.content) {
+                    if (deviceId === undefined) {
+                        deviceId = msg.content;
+                        registerDevice();
+                    }
+                    else {
+                        registerDevice();
+                    }
+                }
+                else {
+                    if (onReceiveLogging) {
+                        if (workerId > 0) {
+                            Utility.asyncStepLogger(workerId + '\t Ping Response at (' + new Date() + ')');
+                        }
+                        else {
+                            Utility.asyncStepLogger('Ping Response at (' + new Date() + ')');
+                        }
+                    }
+                }
+            },
+
+            registerDevice = function (isRetry) {
+                if (asyncLogging) {
+                    if (workerId > 0) {
+                        Utility.asyncStepLogger(workerId + '\t Registering Device');
+                    }
+                    else {
+                        Utility.asyncStepLogger('Registering Device');
+                    }
+                }
+
+                var content = {
+                    appId: appId,
+                    deviceId: deviceId
+                };
+
+                if (peerId !== undefined) {
+                    content.refresh = true;
+                    content.renew = false;
+
+                }
+                else {
+                    content.renew = true;
+                    content.refresh = false;
+                }
+
+                pushSendData({
+                    type: asyncMessageType.DEVICE_REGISTER,
+                    content: content
+                });
+            },
+
+            handleDeviceRegisterMessage = function (recievedPeerId) {
+                if (!isDeviceRegister) {
+                    if (registerDeviceTimeoutId) {
+                        clearTimeout(registerDeviceTimeoutId);
+                    }
+
+                    isDeviceRegister = true;
+                    peerId = recievedPeerId;
+                }
+
+                /**
+                 * If serverRegisteration == true we have to register
+                 * on server then make async status ready
+                 */
+                if (serverRegisteration) {
+                    if (isServerRegister && peerId === oldPeerId) {
+                        fireEvent('asyncReady');
+                        isServerRegister = true;
+                        pushSendDataQueueHandler();
+
+                        socketState = socketStateType.OPEN;
+                        fireEvent('stateChange', {
+                            socketState: socketState,
+                            timeUntilReconnect: 0,
+                            deviceRegister: isDeviceRegister,
+                            serverRegister: isServerRegister,
+                            peerId: peerId
+                        });
+                    }
+                    else {
+                        socketState = socketStateType.OPEN;
+                        fireEvent('stateChange', {
+                            socketState: socketState,
+                            timeUntilReconnect: 0,
+                            deviceRegister: isDeviceRegister,
+                            serverRegister: isServerRegister,
+                            peerId: peerId
+                        });
+
+                        registerServer();
+                    }
+                }
+                else {
+                    fireEvent('asyncReady');
+                    isServerRegister = 'Not Needed';
+                    pushSendDataQueueHandler();
+
+                    if (asyncLogging) {
+                        if (workerId > 0) {
+                            Utility.asyncStepLogger(workerId + '\t Async is Ready');
+                        }
+                        else {
+                            Utility.asyncStepLogger('Async is Ready');
+                        }
+                    }
+
+                    socketState = socketStateType.OPEN;
+                    fireEvent('stateChange', {
+                        socketState: socketState,
+                        timeUntilReconnect: 0,
+                        deviceRegister: isDeviceRegister,
+                        serverRegister: isServerRegister,
+                        peerId: peerId
+                    });
+                }
+            },
+
+            registerServer = function () {
+
+                if (asyncLogging) {
+                    if (workerId > 0) {
+                        Utility.asyncStepLogger(workerId + '\t Registering Server');
+                    }
+                    else {
+                        Utility.asyncStepLogger('Registering Server');
+                    }
+                }
+
+                var content = {
+                    name: serverName
+                };
+
+                pushSendData({
+                    type: asyncMessageType.SERVER_REGISTER,
+                    content: content
+                });
+
+                registerServerTimeoutId = setTimeout(function () {
+                    if (!isServerRegister) {
+                        registerServer();
+                    }
+                }, connectionRetryInterval);
+            },
+
+            handleServerRegisterMessage = function (msg) {
+                if (msg.senderName && msg.senderName === serverName) {
+                    isServerRegister = true;
+
+                    if (registerServerTimeoutId) {
+                        clearTimeout(registerServerTimeoutId);
+                    }
+
+                    socketState = socketStateType.OPEN;
+                    fireEvent('stateChange', {
+                        socketState: socketState,
+                        timeUntilReconnect: 0,
+                        deviceRegister: isDeviceRegister,
+                        serverRegister: isServerRegister,
+                        peerId: peerId
+                    });
+                    fireEvent('asyncReady');
+
+                    pushSendDataQueueHandler();
+
+                    if (asyncLogging) {
+                        if (workerId > 0) {
+                            Utility.asyncStepLogger(workerId + '\t Async is Ready');
+                        }
+                        else {
+                            Utility.asyncStepLogger('Async is Ready');
+                        }
+                    }
+                }
+                else {
+                    isServerRegister = false;
+                }
+            },
+
+            pushSendData = function (msg) {
+                if (onSendLogging) {
+                    asyncLogger('Send', msg);
+                }
+
+                switch (protocol) {
+                    case 'websocket':
+                        if (socketState === socketStateType.OPEN) {
+                            socket.emit(msg);
+                        }
+                        else {
+                            pushSendDataQueue.push(msg);
+                        }
+                        break;
+                    case 'webrtc':
+                        if (socketState === socketStateType.OPEN) {
+                            webRTCClass.emit(msg);
+                        }
+                        else {
+                            pushSendDataQueue.push(msg);
+                        }
+
+                        break;
+                }
+            },
+
+            clearTimeouts = function () {
+                registerDeviceTimeoutId && clearTimeout(registerDeviceTimeoutId);
+                registerServerTimeoutId && clearTimeout(registerServerTimeoutId);
+                checkIfSocketHasOpennedTimeoutId && clearTimeout(checkIfSocketHasOpennedTimeoutId);
+                socketReconnectCheck && clearTimeout(socketReconnectCheck);
+            },
+
+            pushSendDataQueueHandler = function () {
+                while (pushSendDataQueue.length > 0 && socketState === socketStateType.OPEN) {
+                    var msg = pushSendDataQueue.splice(0, 1)[0];
+                    pushSendData(msg);
+                }
+            },
+
+            fireEvent = function (eventName, param, ack) {
+                // try {
+                if (ack) {
+                    for (var id in eventCallbacks[eventName]) {
+                        eventCallbacks[eventName][id](param, ack);
+                    }
+                }
+                else {
+                    for (var id in eventCallbacks[eventName]) {
+                        eventCallbacks[eventName][id](param);
+                    }
+                }
+                // }
+                // catch (e) {
+                //     fireEvent('error', {
+                //         errorCode: 999,
+                //         errorMessage: 'Unknown ERROR!',
+                //         errorEvent: e
+                //     });
+                // }
+            };
+
+        /*******************************************************
+         *             P U B L I C   M E T H O D S             *
+         *******************************************************/
+
+        this.on = function (eventName, callback) {
+            if (eventCallbacks[eventName]) {
+                var id = Utility.generateUUID();
+                eventCallbacks[eventName][id] = callback;
+                return id;
+            }
+            if (eventName === 'connect' && socketState === socketStateType.OPEN) {
+                callback(peerId);
+            }
+        };
+
+        this.send = function (params, callback) {
+            var messageType = (typeof params.type === 'number')
+                ? params.type
+                : (callback)
+                    ? asyncMessageType.MESSAGE_SENDER_ACK_NEEDED
+                    : asyncMessageType.MESSAGE;
+
+            var socketData = {
+                type: messageType,
+                uniqueId: params.uniqueId ? params.uniqueId : undefined,
+                content: params.content
+            };
+
+            if (params.trackerId) {
+                socketData.trackerId = params.trackerId;
+            }
+
+            lastMessageId += 1;
+            var messageId = lastMessageId;
+
+            if (messageType === asyncMessageType.MESSAGE_SENDER_ACK_NEEDED || messageType === asyncMessageType.MESSAGE_ACK_NEEDED) {
+                ackCallback[messageId] = function () {
+                    callback && callback();
+                };
+            }
+
+            socketData.content.messageId = messageId;
+            socketData.content.ttl = messageTtl;
+
+            pushSendData(socketData);
+        };
+
+        this.getAsyncState = function () {
+            return socketState;
+        };
+
+        this.getSendQueue = function () {
+            return pushSendDataQueue;
+        };
+
+        this.getPeerId = function () {
+            return peerId;
+        };
+
+        this.getServerName = function () {
+            return serverName;
+        };
+
+        this.setServerName = function (newServerName) {
+            serverName = newServerName;
+        };
+
+        this.setDeviceId = function (newDeviceId) {
+            deviceId = newDeviceId;
+        };
+
+        this.close = function () {
+            oldPeerId = peerId;
+            isDeviceRegister = false;
+            isSocketOpen = false;
+            clearTimeouts();
+
+            switch (protocol) {
+                case 'websocket':
+                    socketState = socketStateType.CLOSED;
+                    fireEvent('stateChange', {
+                        socketState: socketState,
+                        timeUntilReconnect: 0,
+                        deviceRegister: isDeviceRegister,
+                        serverRegister: isServerRegister,
+                        peerId: peerId
+                    });
+
+                    socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+                    socket.close();
+                    break;
+                case 'webrtc':
+                    socketState = socketStateType.CLOSED;
+                    fireEvent('stateChange', {
+                        socketState: socketState,
+                        timeUntilReconnect: 0,
+                        deviceRegister: isDeviceRegister,
+                        serverRegister: isServerRegister,
+                        peerId: peerId
+                    });
+
+                    socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+                    webRTCClass.close();
+
+                    break;
+            }
+        };
+
+        this.logout = function () {
+            oldPeerId = peerId;
+            peerId = undefined;
+            isServerRegister = false;
+            isDeviceRegister = false;
+            isSocketOpen = false;
+            deviceId = undefined;
+            pushSendDataQueue = [];
+            ackCallback = {};
+            clearTimeouts();
+
+            switch (protocol) {
+                case 'websocket':
+                    socketState = socketStateType.CLOSED;
+                    fireEvent('stateChange', {
+                        socketState: socketState,
+                        timeUntilReconnect: 0,
+                        deviceRegister: isDeviceRegister,
+                        serverRegister: isServerRegister,
+                        peerId: peerId
+                    });
+
+                    reconnectOnClose = false;
+
+                    socket.close();
+                    break;
+                case 'webrtc':
+                    socketState = socketStateType.CLOSED;
+                    fireEvent('stateChange', {
+                        socketState: socketState,
+                        timeUntilReconnect: 0,
+                        deviceRegister: isDeviceRegister,
+                        serverRegister: isServerRegister,
+                        peerId: peerId
+                    });
+
+                    reconnectOnClose = false;
+                    webRTCClass.close();
+
+                    break;
+            }
+        };
+
+        this.reconnectSocket = function () {
+            oldPeerId = peerId;
+            isDeviceRegister = false;
+            isSocketOpen = false;
+            clearTimeouts();
+
+            socketState = socketStateType.CLOSED;
+            fireEvent('stateChange', {
+                socketState: socketState,
+                timeUntilReconnect: 0,
+                deviceRegister: isDeviceRegister,
+                serverRegister: isServerRegister,
+                peerId: peerId
+            });
+
+            socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+            if(protocol === "websocket")
+                socket.close();
+            else if(protocol == "webrtc")
+                webRTCClass.close()
+
+            reconnectOnClose = false;
+            retryStep.set(0);
+            socketReconnectRetryInterval = setTimeout(function () {
+                // retryStep = 4;
+                retryStep.set(0);
+                reconnectOnClose = true;
+                if(protocol === "websocket")
+                    socket.connect();
+                else if(protocol == "webrtc")
+                    webRTCClass.connect()
+            }, 2000);
+        };
+
+        this.generateUUID = Utility.generateUUID;
+
+        init();
+    }
+
+    if (typeof module !== 'undefined' && typeof module.exports != 'undefined') {
+        module.exports = Async;
+    }
+    else {
+        if (!window.POD) {
+            window.POD = {};
+        }
+        window.POD.Async = Async;
+    }
+})();
+
+},{"../utility/logger.js":5,"../utility/utility.js":6,"./socket.js":3,"./webrtc.js":4}],3:[function(require,module,exports){
+(function() {
+  /*
+   * Socket Module to connect and handle Socket functionalities
+   * @module Socket
+   *
+   * @param {Object} params
+   */
+
+  function Socket(params) {
+
+    if (typeof(WebSocket) === "undefined" && typeof(require) !== "undefined" && typeof(exports) !== "undefined") {
+      WebSocket = require('isomorphic-ws');
+    }
+
+    /*******************************************************
+     *          P R I V A T E   V A R I A B L E S          *
+     *******************************************************/
+
+    var address = params.socketAddress,
+        wsConnectionWaitTime = params.wsConnectionWaitTime || 500,
+        connectionCheckTimeout = params.connectionCheckTimeout || 10000,
+        eventCallback = {},
+        socket,
+        waitForSocketToConnectTimeoutId,
+        socketRealTimeStatusInterval,
+        logLevel = params.logLevel,
+        pingController = new PingManager({waitTime: connectionCheckTimeout}),
+        socketWatchTimeout;
+
+
+    function PingManager(params) {
+      const config = {
+        normalWaitTime: params.waitTime,
+
+        lastRequestTimeoutId: null,
+        lastReceivedMessageTime: 0,
+        totalNoMessageCount: 0,
+        timeoutIds: {
+          first: null,
+          second: null,
+          third: null,
+          //fourth: null
+        }
+      }
+
+      return {
+        resetPingLoop() {
+          this.stopPingLoop();
+          this.setPingTimeout();
+        },
+        setPingTimeout() {
+          config.timeoutIds.first = setTimeout(()=>{
+            ping();
+            config.timeoutIds.second = setTimeout(()=>{
+              ping();
+              config.timeoutIds.third = setTimeout(()=>{
+                logLevel.debug && console.debug("[Async][Socket.js] Force closing socket.");
+                onCloseHandler(null);
+                socket.close();
+              }, 2000);
+            }, 2000);
+          }, 8000);
+        },
+        stopPingLoop(){
+          clearTimeout(config.timeoutIds.first);
+          clearTimeout(config.timeoutIds.second);
+          clearTimeout(config.timeoutIds.third);
+          // clearTimeout(config.timeoutIds.fourth);
+        },
+      }
+    }
+
+    /*******************************************************
+     *            P R I V A T E   M E T H O D S            *
+     *******************************************************/
+
+    var init = function() {
+          connect();
+        },
+
+        connect = function() {
+          try {
+            if (socket && socket.readyState == 1) {
+              return;
+            }
+
+            socket = new WebSocket(address, []);
+
+            // socketRealTimeStatusInterval && clearInterval(socketRealTimeStatusInterval);
+            // socketRealTimeStatusInterval = setInterval(function() {
+            //   switch (socket.readyState) {
+            //     case 2:
+            //       onCloseHandler(null);
+            //       socketRealTimeStatusInterval && clearInterval(socketRealTimeStatusInterval);
+            //       break;
+            //     case 3:
+            //
+            //       break;
+            //   }
+            // }, 5000);
+
+            /**
+             * Watches the socket to make sure it's state changes to 1 in 5 seconds
+             */
+            socketWatchTimeout && clearTimeout(socketWatchTimeout);
+            socketWatchTimeout = setTimeout(() => {
+              // if(socket.readyState !== 1) {
+              logLevel.debug && console.debug("[Async][Socket.js] socketWatchTimeout triggered.");
+              onCloseHandler(null);
+              socket.close();
+              // }
+            }, 5000);
+
+            socket.onopen = function(event) {
+              waitForSocketToConnect(function() {
+                pingController.resetPingLoop();
+                eventCallback["open"]();
+                socketWatchTimeout && clearTimeout(socketWatchTimeout);
+              });
+            }
+
+            socket.onmessage = function(event) {
+              pingController.resetPingLoop();
+
+              var messageData = JSON.parse(event.data);
+              eventCallback["message"](messageData);
+            }
+
+            socket.onclose = function(event) {
+              pingController.stopPingLoop();
+              logLevel.debug && console.debug("[Async][Socket.js] socket.onclose happened. EventData:", event);
+              onCloseHandler(event);
+              socketWatchTimeout && clearTimeout(socketWatchTimeout);
+            }
+
+            socket.onerror = function(event) {
+              logLevel.debug && console.debug("[Async][Socket.js] socket.onerror happened. EventData:", event);
+              eventCallback["error"](event);
+              socketWatchTimeout && clearTimeout(socketWatchTimeout);
+            }
+          } catch (error) {
+            eventCallback["customError"]({
+              errorCode: 4000,
+              errorMessage: "ERROR in WEBSOCKET!",
+              errorEvent: error
+            });
+          }
+        },
+
+        onCloseHandler = function(event) {
+          pingController.stopPingLoop();
+          socket.onclose = null;
+          socket.onmessage = null;
+          socket.onerror = null;
+          socket.onopen = null;
+          eventCallback["close"](event);
+        },
+
+        ping = function() {
+          sendData({
+            type: 0
+          });
+        },
+
+        waitForSocketToConnect = function(callback) {
+          waitForSocketToConnectTimeoutId && clearTimeout(waitForSocketToConnectTimeoutId);
+
+          if (socket.readyState === 1) {
+            callback();
+          } else {
+            waitForSocketToConnectTimeoutId = setTimeout(function() {
+              if (socket.readyState === 1) {
+                callback();
+              } else {
+                waitForSocketToConnect(callback);
+              }
+            }, wsConnectionWaitTime);
+          }
+        },
+
+        sendData = function(params) {
+          var data = {
+            type: params.type,
+            uniqueId: params.uniqueId
+          };
+
+          if (params.trackerId) {
+            data.trackerId = params.trackerId;
+          }
+
+          try {
+            if (params.content) {
+              data.content = JSON.stringify(params.content);
+            }
+
+            if (socket.readyState === 1) {
+              socket.send(JSON.stringify(data));
+            }
+          } catch (error) {
+            eventCallback["customError"]({
+              errorCode: 4004,
+              errorMessage: "Error in Socket sendData!",
+              errorEvent: error
+            });
+          }
+        };
+
+    /*******************************************************
+     *             P U B L I C   M E T H O D S             *
+     *******************************************************/
+
+    this.on = function(messageName, callback) {
+      eventCallback[messageName] = callback;
+    }
+
+    this.emit = sendData;
+
+    this.connect = function() {
+      connect();
+    }
+
+    this.close = function() {
+      logLevel.debug && console.debug("[Async][Socket.js] Closing socket by call to this.close");
+      socket.close();
+      onCloseHandler(null);
+      socketWatchTimeout && clearTimeout(socketWatchTimeout);
+    }
+
+    init();
+  }
+
+  if (typeof module !== 'undefined' && typeof module.exports != "undefined") {
+    module.exports = Socket;
+  } else {
+    if (!window.POD) {
+      window.POD = {};
+    }
+    window.POD.Socket = Socket;
+  }
+
+})();
+
+},{"isomorphic-ws":1}],4:[function(require,module,exports){
+let defaultConfig = {
+        baseUrl: "http://109.201.0.97/webrtc/",
+        registerEndpoint: "register/",
+        addICEEndpoint: "add-ice/",
+        getICEEndpoint: "get-ice/?",
+        configuration: {
+            bundlePolicy: "balanced",
+            iceTransportPolicy: "relay",
+            iceServers: [{
+                "urls": "turn:turnsandbox.podstream.ir:3478", "username": "mkhorrami", "credential": "mkh_123456"
+            }]
+        },
+        connectionCheckTimeout: 10000,
+        logLevel: null
+    },
+    variables = {
+        peerConnection: null,
+        dataChannel: null,
+        pingController: new PingManager({waitTime: defaultConfig.connectionCheckTimeout}),
+        candidatesQueue: [],
+        // candidatesSendQueue: [],
+        candidateManager: new CandidatesSendQueueManager(),
+        clientId: null,
+        deviceId: null,
+        apiCallRetries: {
+            register: 3,
+            getIce: 3,
+            addIce: 5
+        }
+    };
+
+function CandidatesSendQueueManager() {
+    let config = {
+        candidatesToSend: [],
+        alreadyReceivedServerCandidates: false,
+        reCheckTimeout: null
+    }
+
+    function trySendingCandidates() {
+        timoutCallback();
+        function timoutCallback() {
+            if(variables.peerConnection.signalingState === 'stable') {
+                config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
+                if (config.candidatesToSend.length) {
+                    let entry = config.candidatesToSend.shift();
+                    handshakingFunctions
+                        .sendCandidate(entry)
+                        .then(function (result) {
+                            if (result.length) {
+                                addServerCandidates(result);
+
+                                config.alreadyReceivedServerCandidates = true;
+                            }
+                            trySendingCandidates();
+                        });
+
+                } else if (!config.alreadyReceivedServerCandidates) {
+                    handshakingFunctions.getCandidates(variables.clientId).then(function (result) {
+                        addServerCandidates(result)
+                    }).catch();
+                }
+            } else {
+                config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
+                config.reCheckTimeout = setTimeout(timoutCallback, 1000);
+            }
+        }
+    }
+
+    function addServerCandidates(candidates) {
+        for(let i in candidates) {
+            webrtcFunctions.putCandidateToQueue(candidates[i]);
+        }
+    }
+
+    return {
+        add: function (candidate) {
+            config.candidatesToSend.push(candidate);
+            trySendingCandidates();
+        },
+        destroy: function (){
+            config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
+        }
+    }
+}
+
+function PingManager(params) {
+    const config = {
+        normalWaitTime: params.waitTime,
+
+        lastRequestTimeoutId: null,
+        lastReceivedMessageTime: 0,
+        totalNoMessageCount: 0,
+        timeoutIds: {
+            first: null,
+            second: null,
+            third: null,
+            fourth: null
+        }
+    }
+
+    return {
+        resetPingLoop() {
+            this.stopPingLoop();
+            this.setPingTimeout();
+        },
+        setPingTimeout() {
+            config.timeoutIds.first = setTimeout(() => {
+                ping();
+                config.timeoutIds.second = setTimeout(() => {
+                    ping();
+                    config.timeoutIds.third = setTimeout(() => {
+                        defaultConfig.logLevel.debug && console.debug("[Async][Webrtc.js] Force closing connection.");
+                        publicized.close();
+                    }, 2000);
+                }, 2000);
+            }, 8000);
+        },
+        stopPingLoop() {
+            clearTimeout(config.timeoutIds.first);
+            clearTimeout(config.timeoutIds.second);
+            clearTimeout(config.timeoutIds.third);
+            // clearTimeout(config.timeoutIds.fourth);
+        },
+    }
+}
+
+function connect() {
+    webrtcFunctions.createPeerConnection();
+    webrtcFunctions.createDataChannel();
+    webrtcFunctions.generateSdpOffer()
+        .then(sendOfferToServer);
+
+    function sendOfferToServer(offer) {
+        handshakingFunctions
+            .register(offer.sdp)
+            .then(processRegisterResult).catch();
+
+        variables
+            .peerConnection.setLocalDescription(offer)
+            .catch(error => console.error(error));
+    }
+
+    function processRegisterResult(result) {
+        variables.clientId = result.clientId;
+        variables.deviceId = result.deviceId;
+        webrtcFunctions.processAnswer(result.sdpAnswer);
+    }
+}
+
+let webrtcFunctions = {
+    createPeerConnection: function () {
+        variables.peerConnection = new RTCPeerConnection(defaultConfig.configuration);
+        variables.peerConnection.addEventListener('signalingstatechange', webrtcFunctions.signalingStateChangeCallback);
+        variables.peerConnection.onicecandidate = function (event) {
+            if (event.candidate) {
+                variables.candidateManager.add(event.candidate);
+                webrtcFunctions.putCandidateToQueue(event.candidate);
+            }
+        };
+    },
+    signalingStateChangeCallback: function () {
+        if (variables.peerConnection.signalingState === 'stable') {
+            // handshakingFunctions.getCandidates().catch()
+            webrtcFunctions.addTheCandidates();
+        }
+    },
+    createDataChannel: function () {
+        variables.dataChannel = variables.peerConnection.createDataChannel("dataChannel", {ordered: false});
+        variables.dataChannel.onopen = dataChannelCallbacks.onopen;
+        variables.dataChannel.onmessage = dataChannelCallbacks.onmessage;
+        variables.dataChannel.onerror = dataChannelCallbacks.onerror;
+        variables.dataChannel.onclose = dataChannelCallbacks.onclose;
+    },
+    generateSdpOffer: function () {
+        return new Promise(function (resolve, reject) {
+            variables.peerConnection.createOffer(function (offer) {
+                resolve(offer)
+            }, function (error) {
+                reject(error);
+                console.error(error);
+            }).then(r => console.log(r));
+        })
+    },
+    processAnswer: function (answer) {
+        let remoteDesc = {
+            type: "answer", sdp: answer
+        };
+        variables
+            .peerConnection
+            .setRemoteDescription(new RTCSessionDescription(remoteDesc))
+            .catch(function (error) {
+                console.error(error)
+            });
+    },
+    addTheCandidates: function () {
+        while (variables.candidatesQueue.length) {
+            let entry = variables.candidatesQueue.shift();
+            variables.peerConnection.addIceCandidate(entry.candidate);
+        }
+    },
+    putCandidateToQueue: function (candidate) {
+        variables.candidatesQueue.push({
+            candidate: new RTCIceCandidate(candidate)
+        });
+        if (variables.peerConnection.signalingState === 'stable') {
+            webrtcFunctions.addTheCandidates();
+        }
+    },
+    sendData: function(params) {
+        if(!variables.dataChannel) {
+            console.error("Connection is closed, do not send messages.")
+            return;
+        }
+        var data = {
+            type: params.type,
+            uniqueId: params.uniqueId
+        };
+
+        if (params.trackerId) {
+            data.trackerId = params.trackerId;
+        }
+
+        try {
+            if (params.content) {
+                data.content = JSON.stringify(params.content);
+            }
+
+            if (variables.peerConnection.signalingState === 'stable') {
+                //defaultConfig.logLevel.debug &&
+                console.log("[Async][WebRTC] Send ", data);
+                variables.dataChannel.send(JSON.stringify(data));
+            }
+        } catch (error) {
+            eventCallback["customError"]({
+                errorCode: 4004,
+                errorMessage: "Error in Socket sendData!",
+                errorEvent: error
+            });
+        }
+    }
+}
+
+let dataChannelCallbacks = {
+    onopen: function (event) {
+        console.log("********* dataChannel open *********");
+        variables.pingController.resetPingLoop();
+        eventCallback["open"]();
+
+        const deviceRegister = {
+            "type": "2",
+            "content": {"deviceId": variables.deviceId, "appId": "PodChat", "refresh": false, "renew": true}
+        };
+        deviceRegister.content = JSON.stringify(deviceRegister.content)
+        variables.dataChannel.send(JSON.stringify(deviceRegister));
+    },
+
+    onmessage: function (event) {
+
+        variables.pingController.resetPingLoop();
+        var messageData = JSON.parse(event.data);
+        console.log("[Async][WebRTC] Receive ", event.data);
+        eventCallback["message"](messageData);
+    },
+
+    onerror: function (error) {
+        logLevel.debug && console.debug("[Async][Socket.js] dataChannel.onerror happened. EventData:", event);
+        eventCallback["error"](event);
+    },
+    onclose: function (event) {
+        resetVariables();
+        eventCallback["close"](event);
+    }
+}
+
+let handshakingFunctions = {
+    register: function (offer) {
+        let retries = variables.apiCallRetries.register;
+        return new Promise(promiseHandler);
+        function promiseHandler(resolve, reject) {
+            let registerEndPoint = defaultConfig.baseUrl + defaultConfig.registerEndpoint
+            fetch(registerEndPoint, {
+                method: "POST",
+                body: JSON.stringify({
+                    offer: offer
+                }),
+                headers: {
+                    "Content-Type": "application/json",
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            })
+                .then(function (response) {
+                    if(response.ok)
+                        return response.json();
+                    else if(retries){
+                        retryTheRequest(resolve, reject);
+                        retries--;
+                    } else reject();
+                })
+                .then(result => resolve(result))
+                .catch(err => {
+                    if(retries){
+                        retryTheRequest(resolve, reject);
+                        retries--;
+                    } else {
+                        publicized.close();
+                    }
+                    console.error(err);
+                });
+        }
+        function retryTheRequest(resolve, reject){
+            setTimeout(function (){promiseHandler(resolve, reject)}, 1000);
+        }
+    },
+    getCandidates: function (clientId) {
+        let addIceCandidateEndPoint = defaultConfig.baseUrl + defaultConfig.getICEEndpoint
+        addIceCandidateEndPoint += "clientId=" + clientId;
+
+        let retries = variables.apiCallRetries.getIce;
+        return new Promise(promiseHandler);
+        function promiseHandler(resolve, reject) {
+            fetch(addIceCandidateEndPoint, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            })
+                .then(function (response) {
+                    if(response.ok)
+                        return response.json();
+                    else if(retries){
+                        retryTheRequest(resolve, reject);
+                        retries--;
+                    } else reject();
+                })
+                .then(function (result) {
+                    resolve(result.iceCandidates)
+                    // if(result.iceCandidates && result.iceCandidates.length) {
+                    //     // result.iceCandidates.forEach((item) => {
+                    //     //     webrtcFunctions.putCandidateToQueue(item);
+                    //     // });
+                    //     resolve(result.iceCandidates)
+                    // }
+                    // else {
+                    //     if(retries){
+                    //         retryTheRequest(resolve, reject);
+                    //         retries--;
+                    //     } else reject();
+                    // }
+                })
+                .catch(function (err) {
+                    if(retries){
+                        retryTheRequest(resolve, reject);
+                        retries--;
+                    } else reject(err);
+                    console.error(err);
+                });
+        }
+
+        function retryTheRequest(resolve, reject){
+            setTimeout(function (){promiseHandler(resolve, reject)}, 1000);
+        }
+
+    },
+    sendCandidate: function (candidate) {
+        let addIceCandidateEndPoint = defaultConfig.baseUrl + defaultConfig.addICEEndpoint
+            , retries = variables.apiCallRetries.addIce;
+
+        return new Promise(promiseHandler);
+        function promiseHandler(resolve, reject) {
+            fetch(addIceCandidateEndPoint, {
+                method: "POST",
+                body: JSON.stringify({
+                    "clientId": variables.clientId,
+                    "candidate": candidate
+                }),
+                headers: {
+                    "Content-Type": "application/json",
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            })
+                .then(function (response) {
+                    if(response.ok)
+                        return response.json();
+                    else if(retries){
+                        retryTheRequest(resolve, reject);
+                        retries--;
+                    } else reject();
+                })
+                .then(function (result) {
+                    resolve(result.iceCandidates);
+                })
+                .catch(err => {
+                    if(retries){
+                        retryTheRequest(resolve, reject);
+                        retries--;
+                    } else reject(err);
+                    console.error(err);
+                });
+        }
+
+        function retryTheRequest(resolve, reject){
+            setTimeout(function (){promiseHandler(resolve, reject)}, 2000);
+        }
+    }
+}
+
+eventCallback = {};
+
+function resetVariables() {
+    console.log("resetVariables");
+    eventCallback["close"]();
+    variables.pingController.stopPingLoop();
+    variables.dataChannel.close();
+    variables.dataChannel = null;
+    variables.peerConnection.close();
+    variables.peerConnection = null;
+    variables.candidatesQueue = [];
+    variables.clientId = null;
+    variables.deviceId = null;
+    variables.candidateManager.destroy();
+    variables.candidateManager = new CandidatesSendQueueManager()
+}
+
+function ping() {
+    webrtcFunctions.sendData({
+        type: 0
+    });
+}
+function removeCallbacks(){
+    if(variables.peerConnection)
+        variables.peerConnection.onicecandidate = null;
+    if(variables.dataChannel) {
+        variables.dataChannel.onclose = null;
+        variables.dataChannel.onmessage = null;
+        variables.dataChannel.onerror = null;
+        variables.dataChannel.onopen = null;
+    }
+}
+
+function WebRTCClass({
+    baseUrl,
+    configuration,
+    connectionCheckTimeout = 10000,
+    logLevel
+}) {
+    let config = {}
+    if (baseUrl)
+        config.baseUrl = baseUrl;
+    if (configuration)
+        config.configuration = configuration;
+    if (connectionCheckTimeout)
+        config.connectionCheckTimeout = connectionCheckTimeout;
+    if (logLevel)
+        config.logLevel = logLevel;
+
+    defaultConfig = Object.assign(defaultConfig, config);
+    connect();
+    return publicized;
+}
+
+let publicized = {
+    on: function (messageName, callback) {
+        eventCallback[messageName] = callback;
+    },
+    emit: webrtcFunctions.sendData,
+    connect: connect,
+    close: function () {
+        removeCallbacks();
+        resetVariables();
+    }
+};
+
+module.exports = WebRTCClass;
+},{}],5:[function(require,module,exports){
+function LogLevel(logLevel){
+    let ll = logLevel || 2;
+    switch (ll) {
+        case 1:
+            return {
+                error: true,
+                debug: false,
+                info: false,
+            }
+        case 2:
+            return {
+                error: true,
+                debug: true,
+                info: false,
+            }
+        case 3:
+            return {
+                error: true,
+                debug: true,
+                info: true,
+            }
+    }
+}
+
+
+if (typeof module !== 'undefined' && typeof module.exports != 'undefined') {
+    module.exports = LogLevel;
+}
+else {
+    if (!window.POD) {
+        window.POD = {};
+    }
+    window.POD.LogLevel = LogLevel;
+}
+
+},{}],6:[function(require,module,exports){
+(function (global){(function (){
+(function() {
+  /**
+   * General Utilities
+   */
+  function Utility() {
+    /**
+     * Checks if Client is using NodeJS or not
+     * @return {boolean}
+     */
+    this.isNode = function() {
+      // return (typeof module !== 'undefined' && typeof module.exports != "undefined");
+      return (typeof global !== "undefined" && ({}).toString.call(global) === '[object global]');
+    }
+
+    /**
+     * Generates Random String
+     * @param   {int}     sectionCount
+     * @return  {string}
+     */
+    this.generateUUID = function(sectionCount) {
+      var d = new Date().getTime();
+      var textData = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
+
+      if (sectionCount == 1) {
+        textData = 'xxxxxxxx';
+      }
+
+      if (sectionCount == 2) {
+        textData = 'xxxxxxxx-xxxx';
+      }
+
+      if (sectionCount == 3) {
+        textData = 'xxxxxxxx-xxxx-4xxx';
+      }
+
+      if (sectionCount == 4) {
+        textData = 'xxxxxxxx-xxxx-4xxx-yxxx';
+      }
+
+      var uuid = textData.replace(/[xy]/g, function(c) {
+        var r = (d + Math.random() * 16) % 16 | 0;
+        d = Math.floor(d / 16);
+
+        return (
+          c == 'x' ?
+          r :
+          (r & 0x7 | 0x8)).toString(16);
+      });
+      return uuid;
+    };
+
+    /**
+     * Prints Socket Status on Both Browser and Linux Terminal
+     * @param {object} params Socket status + current msg + send queue
+     * @return
+     */
+    this.asyncLogger = function(params) {
+      var type = params.type,
+        msg = params.msg,
+        peerId = params.peerId,
+        deviceId = params.deviceId,
+        isSocketOpen = params.isSocketOpen,
+        isDeviceRegister = params.isDeviceRegister,
+        isServerRegister = params.isServerRegister,
+        socketState = params.socketState,
+        pushSendDataQueue = params.pushSendDataQueue,
+        workerId = params.workerId,
+        protocol = params.protocol || "websocket",
+        BgColor;
+
+      switch (type) {
+        case "Send":
+          BgColor = 44;
+          FgColor = 34;
+          ColorCSS = "#4c8aff";
+          break;
+
+        case "Receive":
+          BgColor = 45;
+          FgColor = 35;
+          ColorCSS = "#aa386d";
+          break;
+
+        case "Error":
+          BgColor = 41;
+          FgColor = 31;
+          ColorCSS = "#ff0043";
+          break;
+
+        default:
+          BgColor = 45;
+          ColorCSS = "#212121";
+          break;
+      }
+
+      switch (protocol) {
+        case "websocket":
+          if (typeof global !== "undefined" && ({}).toString.call(global) === '[object global]') {
+            console.log("\n");
+            console.log("\x1b[" + BgColor + "m\x1b[8m%s\x1b[0m", "################################################################");
+            console.log("\x1b[" + BgColor + "m\x1b[8m##################\x1b[0m\x1b[37m\x1b[" + BgColor + "m S O C K E T    S T A T U S \x1b[0m\x1b[" + BgColor + "m\x1b[8m##################\x1b[0m");
+            console.log("\x1b[" + BgColor + "m\x1b[8m%s\x1b[0m", "################################################################");
+            console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t\t\t\t\t\t\t      \x1b[" + BgColor + "m\x1b[8m##\x1b[0m");
+            console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m", " PEER ID\t\t", peerId);
+            if (workerId > 0) {
+              console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m", " WORKER ID\t\t", workerId);
+            }
+            console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m", " DEVICE ID\t\t", deviceId);
+            console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m", " IS SOCKET OPEN\t", isSocketOpen);
+            console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m", " DEVICE REGISTER\t", isDeviceRegister);
+            console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m", " SERVER REGISTER\t", isServerRegister);
+            console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m", " SOCKET STATE\t", socketState);
+            console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[" + FgColor + "m%s\x1b[0m ", " CURRENT MESSAGE\t", type);
+            console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m");
+
+            Object.keys(msg).forEach(function(key) {
+              if (typeof msg[key] === 'object') {
+                console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t \x1b[1m-\x1b[0m \x1b[35m%s\x1b[0m", key);
+                Object.keys(msg[key]).forEach(function(k) {
+                  console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t   \x1b[1m•\x1b[0m \x1b[35m%s\x1b[0m : \x1b[33m%s\x1b[0m", k, msg[key][k]);
+                });
+              } else {
+                console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t \x1b[1m•\x1b[0m \x1b[35m%s\x1b[0m : \x1b[33m%s\x1b[0m", key, msg[key]);
+              }
+            });
+
+            console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m");
+
+            if (pushSendDataQueue.length > 0) {
+              console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m", " SEND QUEUE");
+              console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m");
+              Object.keys(pushSendDataQueue).forEach(function(key) {
+                if (typeof pushSendDataQueue[key] === 'object') {
+                  console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t \x1b[1m-\x1b[0m \x1b[35m%s\x1b[0m", key);
+                  Object.keys(pushSendDataQueue[key]).forEach(function(k) {
+                    console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t   \x1b[1m•\x1b[0m \x1b[35m%s\x1b[0m : \x1b[36m%s\x1b[0m", k, JSON.stringify(pushSendDataQueue[key][k]));
+                  });
+                } else {
+                  console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t \x1b[1m•\x1b[0m \x1b[35m%s\x1b[0m : \x1b[33m%s\x1b[0m", key, pushSendDataQueue[key]);
+                }
+              });
+
+            } else {
+              console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m ", " SEND QUEUE\t\t", "Empty");
+            }
+
+            console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t\t\t\t\t\t\t      \x1b[" + BgColor + "m\x1b[8m##\x1b[0m");
+            console.log("\x1b[" + BgColor + "m\x1b[8m%s\x1b[0m", "################################################################");
+            console.log("\n");
+          } else {
+            console.log("\n");
+            console.log("%cS O C K E T    S T A T U S", 'background: ' + ColorCSS + '; padding: 10px 142px; font-weight: bold; font-size: 18px; color: #fff;');
+            console.log("\n");
+            console.log("%c   PEER ID\t\t %c" + peerId, 'color: #444', 'color: #ffac28; font-weight: bold');
+            console.log("%c   DEVICE ID\t\t %c" + deviceId, 'color: #444', 'color: #ffac28; font-weight: bold');
+            console.log("%c   IS SOCKET OPEN\t %c" + isSocketOpen, 'color: #444', 'color: #ffac28; font-weight: bold');
+            console.log("%c   DEVICE REGISTER\t %c" + isDeviceRegister, 'color: #444', 'color: #ffac28; font-weight: bold');
+            console.log("%c   SERVER REGISTER\t %c" + isServerRegister, 'color: #444', 'color: #ffac28; font-weight: bold');
+            console.log("%c   SOCKET STATE\t\t %c" + socketState, 'color: #444', 'color: #ffac28; font-weight: bold');
+            console.log("%c   CURRENT MESSAGE\t %c" + type, 'color: #444', 'color: #aa386d; font-weight: bold');
+            console.log("\n");
+
+            Object.keys(msg).forEach(function(key) {
+              if (typeof msg[key] === 'object') {
+                console.log("%c \t-" + key, 'color: #777');
+                Object.keys(msg[key]).forEach(function(k) {
+                  console.log("%c \t  •" + k + " : %c" + msg[key][k], 'color: #777', 'color: #f23; font-weight: bold');
+                });
+              } else {
+                console.log("%c \t•" + key + " : %c" + msg[key], 'color: #777', 'color: #f23; font-weight: bold');
+              }
+            });
+
+            console.log("\n");
+
+            if (pushSendDataQueue.length > 0) {
+              console.log("%c   SEND QUEUE", 'color: #444');
+              console.log("\n");
+              Object.keys(pushSendDataQueue).forEach(function(key) {
+                if (typeof pushSendDataQueue[key] === 'object') {
+                  console.log("%c \t-" + key, 'color: #777');
+                  Object.keys(pushSendDataQueue[key]).forEach(function(k) {
+                    console.log("%c \t  •" + k + " : %c" + JSON.stringify(pushSendDataQueue[key][k]), 'color: #777', 'color: #999; font-weight: bold');
+                  });
+                } else {
+                  console.log("%c \t•" + key + " : %c" + pushSendDataQueue[key], 'color: #777', 'color: #999; font-weight: bold');
+                }
+              });
+
+            } else {
+              console.log("%c   SEND QUEUE\t\t %cEmpty", 'color: #444', 'color: #000; font-weight: bold');
+            }
+
+            console.log("\n");
+            console.log("%c ", 'font-weight: bold; font-size: 3px; border-left: solid 540px ' + ColorCSS + ';');
+            console.log("\n");
+          }
+          break;
+      }
+    }
+
+    /**
+     * Prints Custom Message in console
+     * @param {string} message Message to be logged in terminal
+     * @return
+     */
+    this.asyncStepLogger = function(message) {
+      if (typeof navigator == "undefined") {
+        console.log("\x1b[90m    ☰ \x1b[0m\x1b[90m%s\x1b[0m", message);
+      } else {
+        console.log("%c   " + message, 'border-left: solid #666 10px; color: #666;');
+      }
+    }
+  }
+
+  if (typeof module !== 'undefined' && typeof module.exports != "undefined") {
+    module.exports = Utility;
+  } else {
+    if (!window.POD) {
+      window.POD = {};
+    }
+    window.POD.AsyncUtility = Utility;
+  }
+})();
+
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],7:[function(require,module,exports){
 function _arrayLikeToArray(arr, len) {
   if (len == null || len > arr.length) len = arr.length;
 
@@ -10,7 +1929,7 @@ function _arrayLikeToArray(arr, len) {
 }
 
 module.exports = _arrayLikeToArray, module.exports.__esModule = true, module.exports["default"] = module.exports;
-},{}],2:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 var arrayLikeToArray = require("./arrayLikeToArray.js");
 
 function _arrayWithoutHoles(arr) {
@@ -18,7 +1937,7 @@ function _arrayWithoutHoles(arr) {
 }
 
 module.exports = _arrayWithoutHoles, module.exports.__esModule = true, module.exports["default"] = module.exports;
-},{"./arrayLikeToArray.js":1}],3:[function(require,module,exports){
+},{"./arrayLikeToArray.js":7}],9:[function(require,module,exports){
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
   try {
     var info = gen[key](arg);
@@ -56,7 +1975,7 @@ function _asyncToGenerator(fn) {
 }
 
 module.exports = _asyncToGenerator, module.exports.__esModule = true, module.exports["default"] = module.exports;
-},{}],4:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 function _defineProperty(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
@@ -73,7 +1992,7 @@ function _defineProperty(obj, key, value) {
 }
 
 module.exports = _defineProperty, module.exports.__esModule = true, module.exports["default"] = module.exports;
-},{}],5:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 function _interopRequireDefault(obj) {
   return obj && obj.__esModule ? obj : {
     "default": obj
@@ -81,25 +2000,25 @@ function _interopRequireDefault(obj) {
 }
 
 module.exports = _interopRequireDefault, module.exports.__esModule = true, module.exports["default"] = module.exports;
-},{}],6:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 function _iterableToArray(iter) {
   if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter);
 }
 
 module.exports = _iterableToArray, module.exports.__esModule = true, module.exports["default"] = module.exports;
-},{}],7:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 function _nonIterableSpread() {
   throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 
 module.exports = _nonIterableSpread, module.exports.__esModule = true, module.exports["default"] = module.exports;
-},{}],8:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 function _objectDestructuringEmpty(obj) {
   if (obj == null) throw new TypeError("Cannot destructure undefined");
 }
 
 module.exports = _objectDestructuringEmpty, module.exports.__esModule = true, module.exports["default"] = module.exports;
-},{}],9:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 var _typeof = require("./typeof.js")["default"];
 
 function _regeneratorRuntime() {
@@ -454,7 +2373,7 @@ function _regeneratorRuntime() {
 }
 
 module.exports = _regeneratorRuntime, module.exports.__esModule = true, module.exports["default"] = module.exports;
-},{"./typeof.js":11}],10:[function(require,module,exports){
+},{"./typeof.js":17}],16:[function(require,module,exports){
 var arrayWithoutHoles = require("./arrayWithoutHoles.js");
 
 var iterableToArray = require("./iterableToArray.js");
@@ -468,7 +2387,7 @@ function _toConsumableArray(arr) {
 }
 
 module.exports = _toConsumableArray, module.exports.__esModule = true, module.exports["default"] = module.exports;
-},{"./arrayWithoutHoles.js":2,"./iterableToArray.js":6,"./nonIterableSpread.js":7,"./unsupportedIterableToArray.js":12}],11:[function(require,module,exports){
+},{"./arrayWithoutHoles.js":8,"./iterableToArray.js":12,"./nonIterableSpread.js":13,"./unsupportedIterableToArray.js":18}],17:[function(require,module,exports){
 function _typeof(obj) {
   "@babel/helpers - typeof";
 
@@ -480,7 +2399,7 @@ function _typeof(obj) {
 }
 
 module.exports = _typeof, module.exports.__esModule = true, module.exports["default"] = module.exports;
-},{}],12:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 var arrayLikeToArray = require("./arrayLikeToArray.js");
 
 function _unsupportedIterableToArray(o, minLen) {
@@ -493,7 +2412,7 @@ function _unsupportedIterableToArray(o, minLen) {
 }
 
 module.exports = _unsupportedIterableToArray, module.exports.__esModule = true, module.exports["default"] = module.exports;
-},{"./arrayLikeToArray.js":1}],13:[function(require,module,exports){
+},{"./arrayLikeToArray.js":7}],19:[function(require,module,exports){
 // TODO(Babel 8): Remove this file.
 
 var runtime = require("../helpers/regeneratorRuntime")();
@@ -510,7 +2429,7 @@ try {
   }
 }
 
-},{"../helpers/regeneratorRuntime":9}],14:[function(require,module,exports){
+},{"../helpers/regeneratorRuntime":15}],20:[function(require,module,exports){
 'use strict';
 
 const asn1 = exports;
@@ -523,7 +2442,7 @@ asn1.constants = require('./asn1/constants');
 asn1.decoders = require('./asn1/decoders');
 asn1.encoders = require('./asn1/encoders');
 
-},{"./asn1/api":15,"./asn1/base":17,"./asn1/constants":21,"./asn1/decoders":23,"./asn1/encoders":26,"bn.js":28}],15:[function(require,module,exports){
+},{"./asn1/api":21,"./asn1/base":23,"./asn1/constants":27,"./asn1/decoders":29,"./asn1/encoders":32,"bn.js":34}],21:[function(require,module,exports){
 'use strict';
 
 const encoders = require('./encoders');
@@ -582,7 +2501,7 @@ Entity.prototype.encode = function encode(data, enc, /* internal */ reporter) {
   return this._getEncoder(enc).encode(data, reporter);
 };
 
-},{"./decoders":23,"./encoders":26,"inherits":182}],16:[function(require,module,exports){
+},{"./decoders":29,"./encoders":32,"inherits":188}],22:[function(require,module,exports){
 'use strict';
 
 const inherits = require('inherits');
@@ -737,7 +2656,7 @@ EncoderBuffer.prototype.join = function join(out, offset) {
   return out;
 };
 
-},{"../base/reporter":19,"inherits":182,"safer-buffer":217}],17:[function(require,module,exports){
+},{"../base/reporter":25,"inherits":188,"safer-buffer":217}],23:[function(require,module,exports){
 'use strict';
 
 const base = exports;
@@ -747,7 +2666,7 @@ base.DecoderBuffer = require('./buffer').DecoderBuffer;
 base.EncoderBuffer = require('./buffer').EncoderBuffer;
 base.Node = require('./node');
 
-},{"./buffer":16,"./node":18,"./reporter":19}],18:[function(require,module,exports){
+},{"./buffer":22,"./node":24,"./reporter":25}],24:[function(require,module,exports){
 'use strict';
 
 const Reporter = require('../base/reporter').Reporter;
@@ -1387,7 +3306,7 @@ Node.prototype._isPrintstr = function isPrintstr(str) {
   return /^[A-Za-z0-9 '()+,-./:=?]*$/.test(str);
 };
 
-},{"../base/buffer":16,"../base/reporter":19,"minimalistic-assert":187}],19:[function(require,module,exports){
+},{"../base/buffer":22,"../base/reporter":25,"minimalistic-assert":192}],25:[function(require,module,exports){
 'use strict';
 
 const inherits = require('inherits');
@@ -1512,7 +3431,7 @@ ReporterError.prototype.rethrow = function rethrow(msg) {
   return this;
 };
 
-},{"inherits":182}],20:[function(require,module,exports){
+},{"inherits":188}],26:[function(require,module,exports){
 'use strict';
 
 // Helper
@@ -1572,7 +3491,7 @@ exports.tag = {
 };
 exports.tagByName = reverse(exports.tag);
 
-},{}],21:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 'use strict';
 
 const constants = exports;
@@ -1595,7 +3514,7 @@ constants._reverse = function reverse(map) {
 
 constants.der = require('./der');
 
-},{"./der":20}],22:[function(require,module,exports){
+},{"./der":26}],28:[function(require,module,exports){
 'use strict';
 
 const inherits = require('inherits');
@@ -1932,7 +3851,7 @@ function derDecodeLen(buf, primitive, fail) {
   return len;
 }
 
-},{"../base/buffer":16,"../base/node":18,"../constants/der":20,"bn.js":28,"inherits":182}],23:[function(require,module,exports){
+},{"../base/buffer":22,"../base/node":24,"../constants/der":26,"bn.js":34,"inherits":188}],29:[function(require,module,exports){
 'use strict';
 
 const decoders = exports;
@@ -1940,7 +3859,7 @@ const decoders = exports;
 decoders.der = require('./der');
 decoders.pem = require('./pem');
 
-},{"./der":22,"./pem":24}],24:[function(require,module,exports){
+},{"./der":28,"./pem":30}],30:[function(require,module,exports){
 'use strict';
 
 const inherits = require('inherits');
@@ -1993,7 +3912,7 @@ PEMDecoder.prototype.decode = function decode(data, options) {
   return DERDecoder.prototype.decode.call(this, input, options);
 };
 
-},{"./der":22,"inherits":182,"safer-buffer":217}],25:[function(require,module,exports){
+},{"./der":28,"inherits":188,"safer-buffer":217}],31:[function(require,module,exports){
 'use strict';
 
 const inherits = require('inherits');
@@ -2290,7 +4209,7 @@ function encodeTag(tag, primitive, cls, reporter) {
   return res;
 }
 
-},{"../base/node":18,"../constants/der":20,"inherits":182,"safer-buffer":217}],26:[function(require,module,exports){
+},{"../base/node":24,"../constants/der":26,"inherits":188,"safer-buffer":217}],32:[function(require,module,exports){
 'use strict';
 
 const encoders = exports;
@@ -2298,7 +4217,7 @@ const encoders = exports;
 encoders.der = require('./der');
 encoders.pem = require('./pem');
 
-},{"./der":25,"./pem":27}],27:[function(require,module,exports){
+},{"./der":31,"./pem":33}],33:[function(require,module,exports){
 'use strict';
 
 const inherits = require('inherits');
@@ -2323,7 +4242,7 @@ PEMEncoder.prototype.encode = function encode(data, options) {
   return out.join('\n');
 };
 
-},{"./der":25,"inherits":182}],28:[function(require,module,exports){
+},{"./der":31,"inherits":188}],34:[function(require,module,exports){
 (function (module, exports) {
   'use strict';
 
@@ -5771,7 +7690,7 @@ PEMEncoder.prototype.encode = function encode(data, options) {
   };
 })(typeof module === 'undefined' || module, this);
 
-},{"buffer":32}],29:[function(require,module,exports){
+},{"buffer":38}],35:[function(require,module,exports){
 'use strict'
 
 exports.byteLength = byteLength
@@ -5923,7 +7842,7 @@ function fromByteArray (uint8) {
   return parts.join('')
 }
 
-},{}],30:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 (function (module, exports) {
   'use strict';
 
@@ -9472,7 +11391,7 @@ function fromByteArray (uint8) {
   };
 })(typeof module === 'undefined' || module, this);
 
-},{"buffer":32}],31:[function(require,module,exports){
+},{"buffer":38}],37:[function(require,module,exports){
 var r;
 
 module.exports = function rand(len) {
@@ -9539,9 +11458,9 @@ if (typeof self === 'object') {
   }
 }
 
-},{"crypto":32}],32:[function(require,module,exports){
+},{"crypto":38}],38:[function(require,module,exports){
 
-},{}],33:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 // based on the aes implimentation in triple sec
 // https://github.com/keybase/triplesec
 // which is in turn based on the one from crypto-js
@@ -9771,7 +11690,7 @@ AES.prototype.scrub = function () {
 
 module.exports.AES = AES
 
-},{"safe-buffer":216}],34:[function(require,module,exports){
+},{"safe-buffer":216}],40:[function(require,module,exports){
 var aes = require('./aes')
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('cipher-base')
@@ -9890,7 +11809,7 @@ StreamCipher.prototype.setAAD = function setAAD (buf) {
 
 module.exports = StreamCipher
 
-},{"./aes":33,"./ghash":38,"./incr32":39,"buffer-xor":76,"cipher-base":78,"inherits":182,"safe-buffer":216}],35:[function(require,module,exports){
+},{"./aes":39,"./ghash":44,"./incr32":45,"buffer-xor":82,"cipher-base":84,"inherits":188,"safe-buffer":216}],41:[function(require,module,exports){
 var ciphers = require('./encrypter')
 var deciphers = require('./decrypter')
 var modes = require('./modes/list.json')
@@ -9905,7 +11824,7 @@ exports.createDecipher = exports.Decipher = deciphers.createDecipher
 exports.createDecipheriv = exports.Decipheriv = deciphers.createDecipheriv
 exports.listCiphers = exports.getCiphers = getCiphers
 
-},{"./decrypter":36,"./encrypter":37,"./modes/list.json":47}],36:[function(require,module,exports){
+},{"./decrypter":42,"./encrypter":43,"./modes/list.json":53}],42:[function(require,module,exports){
 var AuthCipher = require('./authCipher')
 var Buffer = require('safe-buffer').Buffer
 var MODES = require('./modes')
@@ -10031,7 +11950,7 @@ function createDecipher (suite, password) {
 exports.createDecipher = createDecipher
 exports.createDecipheriv = createDecipheriv
 
-},{"./aes":33,"./authCipher":34,"./modes":46,"./streamCipher":49,"cipher-base":78,"evp_bytestokey":150,"inherits":182,"safe-buffer":216}],37:[function(require,module,exports){
+},{"./aes":39,"./authCipher":40,"./modes":52,"./streamCipher":55,"cipher-base":84,"evp_bytestokey":156,"inherits":188,"safe-buffer":216}],43:[function(require,module,exports){
 var MODES = require('./modes')
 var AuthCipher = require('./authCipher')
 var Buffer = require('safe-buffer').Buffer
@@ -10147,7 +12066,7 @@ function createCipher (suite, password) {
 exports.createCipheriv = createCipheriv
 exports.createCipher = createCipher
 
-},{"./aes":33,"./authCipher":34,"./modes":46,"./streamCipher":49,"cipher-base":78,"evp_bytestokey":150,"inherits":182,"safe-buffer":216}],38:[function(require,module,exports){
+},{"./aes":39,"./authCipher":40,"./modes":52,"./streamCipher":55,"cipher-base":84,"evp_bytestokey":156,"inherits":188,"safe-buffer":216}],44:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var ZEROES = Buffer.alloc(16, 0)
 
@@ -10238,7 +12157,7 @@ GHASH.prototype.final = function (abl, bl) {
 
 module.exports = GHASH
 
-},{"safe-buffer":216}],39:[function(require,module,exports){
+},{"safe-buffer":216}],45:[function(require,module,exports){
 function incr32 (iv) {
   var len = iv.length
   var item
@@ -10255,7 +12174,7 @@ function incr32 (iv) {
 }
 module.exports = incr32
 
-},{}],40:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 var xor = require('buffer-xor')
 
 exports.encrypt = function (self, block) {
@@ -10274,7 +12193,7 @@ exports.decrypt = function (self, block) {
   return xor(out, pad)
 }
 
-},{"buffer-xor":76}],41:[function(require,module,exports){
+},{"buffer-xor":82}],47:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var xor = require('buffer-xor')
 
@@ -10309,7 +12228,7 @@ exports.encrypt = function (self, data, decrypt) {
   return out
 }
 
-},{"buffer-xor":76,"safe-buffer":216}],42:[function(require,module,exports){
+},{"buffer-xor":82,"safe-buffer":216}],48:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 function encryptByte (self, byteParam, decrypt) {
@@ -10353,7 +12272,7 @@ exports.encrypt = function (self, chunk, decrypt) {
   return out
 }
 
-},{"safe-buffer":216}],43:[function(require,module,exports){
+},{"safe-buffer":216}],49:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 function encryptByte (self, byteParam, decrypt) {
@@ -10380,7 +12299,7 @@ exports.encrypt = function (self, chunk, decrypt) {
   return out
 }
 
-},{"safe-buffer":216}],44:[function(require,module,exports){
+},{"safe-buffer":216}],50:[function(require,module,exports){
 var xor = require('buffer-xor')
 var Buffer = require('safe-buffer').Buffer
 var incr32 = require('../incr32')
@@ -10412,7 +12331,7 @@ exports.encrypt = function (self, chunk) {
   return xor(chunk, pad)
 }
 
-},{"../incr32":39,"buffer-xor":76,"safe-buffer":216}],45:[function(require,module,exports){
+},{"../incr32":45,"buffer-xor":82,"safe-buffer":216}],51:[function(require,module,exports){
 exports.encrypt = function (self, block) {
   return self._cipher.encryptBlock(block)
 }
@@ -10421,7 +12340,7 @@ exports.decrypt = function (self, block) {
   return self._cipher.decryptBlock(block)
 }
 
-},{}],46:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 var modeModules = {
   ECB: require('./ecb'),
   CBC: require('./cbc'),
@@ -10441,7 +12360,7 @@ for (var key in modes) {
 
 module.exports = modes
 
-},{"./cbc":40,"./cfb":41,"./cfb1":42,"./cfb8":43,"./ctr":44,"./ecb":45,"./list.json":47,"./ofb":48}],47:[function(require,module,exports){
+},{"./cbc":46,"./cfb":47,"./cfb1":48,"./cfb8":49,"./ctr":50,"./ecb":51,"./list.json":53,"./ofb":54}],53:[function(require,module,exports){
 module.exports={
   "aes-128-ecb": {
     "cipher": "AES",
@@ -10634,7 +12553,7 @@ module.exports={
   }
 }
 
-},{}],48:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 (function (Buffer){(function (){
 var xor = require('buffer-xor')
 
@@ -10654,7 +12573,7 @@ exports.encrypt = function (self, chunk) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"buffer":77,"buffer-xor":76}],49:[function(require,module,exports){
+},{"buffer":83,"buffer-xor":82}],55:[function(require,module,exports){
 var aes = require('./aes')
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('cipher-base')
@@ -10683,7 +12602,7 @@ StreamCipher.prototype._final = function () {
 
 module.exports = StreamCipher
 
-},{"./aes":33,"cipher-base":78,"inherits":182,"safe-buffer":216}],50:[function(require,module,exports){
+},{"./aes":39,"cipher-base":84,"inherits":188,"safe-buffer":216}],56:[function(require,module,exports){
 var DES = require('browserify-des')
 var aes = require('browserify-aes/browser')
 var aesModes = require('browserify-aes/modes')
@@ -10752,7 +12671,7 @@ exports.createDecipher = exports.Decipher = createDecipher
 exports.createDecipheriv = exports.Decipheriv = createDecipheriv
 exports.listCiphers = exports.getCiphers = getCiphers
 
-},{"browserify-aes/browser":35,"browserify-aes/modes":46,"browserify-des":51,"browserify-des/modes":52,"evp_bytestokey":150}],51:[function(require,module,exports){
+},{"browserify-aes/browser":41,"browserify-aes/modes":52,"browserify-des":57,"browserify-des/modes":58,"evp_bytestokey":156}],57:[function(require,module,exports){
 var CipherBase = require('cipher-base')
 var des = require('des.js')
 var inherits = require('inherits')
@@ -10804,7 +12723,7 @@ DES.prototype._final = function () {
   return Buffer.from(this._des.final())
 }
 
-},{"cipher-base":78,"des.js":120,"inherits":182,"safe-buffer":216}],52:[function(require,module,exports){
+},{"cipher-base":84,"des.js":126,"inherits":188,"safe-buffer":216}],58:[function(require,module,exports){
 exports['des-ecb'] = {
   key: 8,
   iv: 0
@@ -10830,7 +12749,7 @@ exports['des-ede'] = {
   iv: 0
 }
 
-},{}],53:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 (function (Buffer){(function (){
 var BN = require('bn.js')
 var randomBytes = require('randombytes')
@@ -10869,10 +12788,10 @@ crt.getr = getr
 module.exports = crt
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"bn.js":30,"buffer":77,"randombytes":213}],54:[function(require,module,exports){
+},{"bn.js":36,"buffer":83,"randombytes":213}],60:[function(require,module,exports){
 module.exports = require('./browser/algorithms.json')
 
-},{"./browser/algorithms.json":55}],55:[function(require,module,exports){
+},{"./browser/algorithms.json":61}],61:[function(require,module,exports){
 module.exports={
   "sha224WithRSAEncryption": {
     "sign": "rsa",
@@ -11026,7 +12945,7 @@ module.exports={
   }
 }
 
-},{}],56:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 module.exports={
   "1.3.132.0.10": "secp256k1",
   "1.3.132.0.33": "p224",
@@ -11036,7 +12955,7 @@ module.exports={
   "1.3.132.0.35": "p521"
 }
 
-},{}],57:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var createHash = require('create-hash')
 var stream = require('readable-stream')
@@ -11130,7 +13049,7 @@ module.exports = {
   createVerify: createVerify
 }
 
-},{"./algorithms.json":55,"./sign":58,"./verify":59,"create-hash":81,"inherits":182,"readable-stream":74,"safe-buffer":75}],58:[function(require,module,exports){
+},{"./algorithms.json":61,"./sign":64,"./verify":65,"create-hash":87,"inherits":188,"readable-stream":80,"safe-buffer":81}],64:[function(require,module,exports){
 // much of this based on https://github.com/indutny/self-signed/blob/gh-pages/lib/rsa.js
 var Buffer = require('safe-buffer').Buffer
 var createHmac = require('create-hmac')
@@ -11275,7 +13194,7 @@ module.exports = sign
 module.exports.getKey = getKey
 module.exports.makeKey = makeKey
 
-},{"./curves.json":56,"bn.js":30,"browserify-rsa":53,"create-hmac":83,"elliptic":132,"parse-asn1":193,"safe-buffer":75}],59:[function(require,module,exports){
+},{"./curves.json":62,"bn.js":36,"browserify-rsa":59,"create-hmac":89,"elliptic":138,"parse-asn1":198,"safe-buffer":81}],65:[function(require,module,exports){
 // much of this based on https://github.com/indutny/self-signed/blob/gh-pages/lib/rsa.js
 var Buffer = require('safe-buffer').Buffer
 var BN = require('bn.js')
@@ -11361,7 +13280,7 @@ function checkValue (b, q) {
 
 module.exports = verify
 
-},{"./curves.json":56,"bn.js":30,"elliptic":132,"parse-asn1":193,"safe-buffer":75}],60:[function(require,module,exports){
+},{"./curves.json":62,"bn.js":36,"elliptic":138,"parse-asn1":198,"safe-buffer":81}],66:[function(require,module,exports){
 'use strict';
 
 function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
@@ -11490,7 +13409,7 @@ createErrorType('ERR_UNKNOWN_ENCODING', function (arg) {
 createErrorType('ERR_STREAM_UNSHIFT_AFTER_END_EVENT', 'stream.unshift() after end event');
 module.exports.codes = codes;
 
-},{}],61:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 (function (process){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -11632,7 +13551,7 @@ Object.defineProperty(Duplex.prototype, 'destroyed', {
   }
 });
 }).call(this)}).call(this,require('_process'))
-},{"./_stream_readable":63,"./_stream_writable":65,"_process":205,"inherits":182}],62:[function(require,module,exports){
+},{"./_stream_readable":69,"./_stream_writable":71,"_process":205,"inherits":188}],68:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -11672,7 +13591,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":64,"inherits":182}],63:[function(require,module,exports){
+},{"./_stream_transform":70,"inherits":188}],69:[function(require,module,exports){
 (function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -12799,7 +14718,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":60,"./_stream_duplex":61,"./internal/streams/async_iterator":66,"./internal/streams/buffer_list":67,"./internal/streams/destroy":68,"./internal/streams/from":70,"./internal/streams/state":72,"./internal/streams/stream":73,"_process":205,"buffer":77,"events":149,"inherits":182,"string_decoder/":241,"util":32}],64:[function(require,module,exports){
+},{"../errors":66,"./_stream_duplex":67,"./internal/streams/async_iterator":72,"./internal/streams/buffer_list":73,"./internal/streams/destroy":74,"./internal/streams/from":76,"./internal/streams/state":78,"./internal/streams/stream":79,"_process":205,"buffer":83,"events":155,"inherits":188,"string_decoder/":241,"util":38}],70:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13001,7 +14920,7 @@ function done(stream, er, data) {
   if (stream._transformState.transforming) throw new ERR_TRANSFORM_ALREADY_TRANSFORMING();
   return stream.push(null);
 }
-},{"../errors":60,"./_stream_duplex":61,"inherits":182}],65:[function(require,module,exports){
+},{"../errors":66,"./_stream_duplex":67,"inherits":188}],71:[function(require,module,exports){
 (function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -13701,7 +15620,7 @@ Writable.prototype._destroy = function (err, cb) {
   cb(err);
 };
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":60,"./_stream_duplex":61,"./internal/streams/destroy":68,"./internal/streams/state":72,"./internal/streams/stream":73,"_process":205,"buffer":77,"inherits":182,"util-deprecate":243}],66:[function(require,module,exports){
+},{"../errors":66,"./_stream_duplex":67,"./internal/streams/destroy":74,"./internal/streams/state":78,"./internal/streams/stream":79,"_process":205,"buffer":83,"inherits":188,"util-deprecate":243}],72:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -13911,7 +15830,7 @@ var createReadableStreamAsyncIterator = function createReadableStreamAsyncIterat
 
 module.exports = createReadableStreamAsyncIterator;
 }).call(this)}).call(this,require('_process'))
-},{"./end-of-stream":69,"_process":205}],67:[function(require,module,exports){
+},{"./end-of-stream":75,"_process":205}],73:[function(require,module,exports){
 'use strict';
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -14122,7 +16041,7 @@ function () {
 
   return BufferList;
 }();
-},{"buffer":77,"util":32}],68:[function(require,module,exports){
+},{"buffer":83,"util":38}],74:[function(require,module,exports){
 (function (process){(function (){
 'use strict'; // undocumented cb() API, needed for core, not for public API
 
@@ -14230,7 +16149,7 @@ module.exports = {
   errorOrDestroy: errorOrDestroy
 };
 }).call(this)}).call(this,require('_process'))
-},{"_process":205}],69:[function(require,module,exports){
+},{"_process":205}],75:[function(require,module,exports){
 // Ported from https://github.com/mafintosh/end-of-stream with
 // permission from the author, Mathias Buus (@mafintosh).
 'use strict';
@@ -14335,12 +16254,12 @@ function eos(stream, opts, callback) {
 }
 
 module.exports = eos;
-},{"../../../errors":60}],70:[function(require,module,exports){
+},{"../../../errors":66}],76:[function(require,module,exports){
 module.exports = function () {
   throw new Error('Readable.from is not available in the browser')
 };
 
-},{}],71:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 // Ported from https://github.com/mafintosh/pump with
 // permission from the author, Mathias Buus (@mafintosh).
 'use strict';
@@ -14438,7 +16357,7 @@ function pipeline() {
 }
 
 module.exports = pipeline;
-},{"../../../errors":60,"./end-of-stream":69}],72:[function(require,module,exports){
+},{"../../../errors":66,"./end-of-stream":75}],78:[function(require,module,exports){
 'use strict';
 
 var ERR_INVALID_OPT_VALUE = require('../../../errors').codes.ERR_INVALID_OPT_VALUE;
@@ -14466,10 +16385,10 @@ function getHighWaterMark(state, options, duplexKey, isDuplex) {
 module.exports = {
   getHighWaterMark: getHighWaterMark
 };
-},{"../../../errors":60}],73:[function(require,module,exports){
+},{"../../../errors":66}],79:[function(require,module,exports){
 module.exports = require('events').EventEmitter;
 
-},{"events":149}],74:[function(require,module,exports){
+},{"events":155}],80:[function(require,module,exports){
 exports = module.exports = require('./lib/_stream_readable.js');
 exports.Stream = exports;
 exports.Readable = exports;
@@ -14480,7 +16399,7 @@ exports.PassThrough = require('./lib/_stream_passthrough.js');
 exports.finished = require('./lib/internal/streams/end-of-stream.js');
 exports.pipeline = require('./lib/internal/streams/pipeline.js');
 
-},{"./lib/_stream_duplex.js":61,"./lib/_stream_passthrough.js":62,"./lib/_stream_readable.js":63,"./lib/_stream_transform.js":64,"./lib/_stream_writable.js":65,"./lib/internal/streams/end-of-stream.js":69,"./lib/internal/streams/pipeline.js":71}],75:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":67,"./lib/_stream_passthrough.js":68,"./lib/_stream_readable.js":69,"./lib/_stream_transform.js":70,"./lib/_stream_writable.js":71,"./lib/internal/streams/end-of-stream.js":75,"./lib/internal/streams/pipeline.js":77}],81:[function(require,module,exports){
 /*! safe-buffer. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
@@ -14547,7 +16466,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-},{"buffer":77}],76:[function(require,module,exports){
+},{"buffer":83}],82:[function(require,module,exports){
 (function (Buffer){(function (){
 module.exports = function xor (a, b) {
   var length = Math.min(a.length, b.length)
@@ -14561,7 +16480,7 @@ module.exports = function xor (a, b) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"buffer":77}],77:[function(require,module,exports){
+},{"buffer":83}],83:[function(require,module,exports){
 (function (Buffer){(function (){
 /*!
  * The buffer module from node.js, for the browser.
@@ -16342,7 +18261,7 @@ function numberIsNaN (obj) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"base64-js":29,"buffer":77,"ieee754":181}],78:[function(require,module,exports){
+},{"base64-js":35,"buffer":83,"ieee754":187}],84:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('stream').Transform
 var StringDecoder = require('string_decoder').StringDecoder
@@ -16443,7 +18362,7 @@ CipherBase.prototype._toString = function (value, enc, fin) {
 
 module.exports = CipherBase
 
-},{"inherits":182,"safe-buffer":216,"stream":226,"string_decoder":241}],79:[function(require,module,exports){
+},{"inherits":188,"safe-buffer":216,"stream":226,"string_decoder":241}],85:[function(require,module,exports){
 (function (Buffer){(function (){
 var elliptic = require('elliptic')
 var BN = require('bn.js')
@@ -16571,9 +18490,9 @@ function formatReturnValue (bn, enc, len) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"bn.js":80,"buffer":77,"elliptic":132}],80:[function(require,module,exports){
-arguments[4][28][0].apply(exports,arguments)
-},{"buffer":32,"dup":28}],81:[function(require,module,exports){
+},{"bn.js":86,"buffer":83,"elliptic":138}],86:[function(require,module,exports){
+arguments[4][34][0].apply(exports,arguments)
+},{"buffer":38,"dup":34}],87:[function(require,module,exports){
 'use strict'
 var inherits = require('inherits')
 var MD5 = require('md5.js')
@@ -16605,14 +18524,14 @@ module.exports = function createHash (alg) {
   return new Hash(sha(alg))
 }
 
-},{"cipher-base":78,"inherits":182,"md5.js":184,"ripemd160":215,"sha.js":219}],82:[function(require,module,exports){
+},{"cipher-base":84,"inherits":188,"md5.js":189,"ripemd160":215,"sha.js":219}],88:[function(require,module,exports){
 var MD5 = require('md5.js')
 
 module.exports = function (buffer) {
   return new MD5().update(buffer).digest()
 }
 
-},{"md5.js":184}],83:[function(require,module,exports){
+},{"md5.js":189}],89:[function(require,module,exports){
 'use strict'
 var inherits = require('inherits')
 var Legacy = require('./legacy')
@@ -16676,7 +18595,7 @@ module.exports = function createHmac (alg, key) {
   return new Hmac(alg, key)
 }
 
-},{"./legacy":84,"cipher-base":78,"create-hash/md5":82,"inherits":182,"ripemd160":215,"safe-buffer":216,"sha.js":219}],84:[function(require,module,exports){
+},{"./legacy":90,"cipher-base":84,"create-hash/md5":88,"inherits":188,"ripemd160":215,"safe-buffer":216,"sha.js":219}],90:[function(require,module,exports){
 'use strict'
 var inherits = require('inherits')
 var Buffer = require('safe-buffer').Buffer
@@ -16724,7 +18643,7 @@ Hmac.prototype._final = function () {
 }
 module.exports = Hmac
 
-},{"cipher-base":78,"inherits":182,"safe-buffer":216}],85:[function(require,module,exports){
+},{"cipher-base":84,"inherits":188,"safe-buffer":216}],91:[function(require,module,exports){
 'use strict'
 
 exports.randomBytes = exports.rng = exports.pseudoRandomBytes = exports.prng = require('randombytes')
@@ -16823,7 +18742,7 @@ exports.constants = {
   'POINT_CONVERSION_HYBRID': 6
 }
 
-},{"browserify-cipher":50,"browserify-sign":57,"browserify-sign/algos":54,"create-ecdh":79,"create-hash":81,"create-hmac":83,"diffie-hellman":126,"pbkdf2":194,"public-encrypt":206,"randombytes":213,"randomfill":214}],86:[function(require,module,exports){
+},{"browserify-cipher":56,"browserify-sign":63,"browserify-sign/algos":60,"create-ecdh":85,"create-hash":87,"create-hmac":89,"diffie-hellman":132,"pbkdf2":199,"public-encrypt":206,"randombytes":213,"randomfill":214}],92:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -17058,7 +18977,7 @@ exports.constants = {
 	return CryptoJS.AES;
 
 }));
-},{"./cipher-core":87,"./core":88,"./enc-base64":89,"./evpkdf":91,"./md5":96}],87:[function(require,module,exports){
+},{"./cipher-core":93,"./core":94,"./enc-base64":95,"./evpkdf":97,"./md5":102}],93:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -17949,7 +19868,7 @@ exports.constants = {
 
 
 }));
-},{"./core":88,"./evpkdf":91}],88:[function(require,module,exports){
+},{"./core":94,"./evpkdf":97}],94:[function(require,module,exports){
 (function (global){(function (){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
@@ -18749,7 +20668,7 @@ exports.constants = {
 
 }));
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"crypto":85}],89:[function(require,module,exports){
+},{"crypto":91}],95:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -18886,7 +20805,7 @@ exports.constants = {
 	return CryptoJS.enc.Base64;
 
 }));
-},{"./core":88}],90:[function(require,module,exports){
+},{"./core":94}],96:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -19036,7 +20955,7 @@ exports.constants = {
 	return CryptoJS.enc.Utf16;
 
 }));
-},{"./core":88}],91:[function(require,module,exports){
+},{"./core":94}],97:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -19171,7 +21090,7 @@ exports.constants = {
 	return CryptoJS.EvpKDF;
 
 }));
-},{"./core":88,"./hmac":93,"./sha1":112}],92:[function(require,module,exports){
+},{"./core":94,"./hmac":99,"./sha1":118}],98:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -19238,7 +21157,7 @@ exports.constants = {
 	return CryptoJS.format.Hex;
 
 }));
-},{"./cipher-core":87,"./core":88}],93:[function(require,module,exports){
+},{"./cipher-core":93,"./core":94}],99:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -19382,7 +21301,7 @@ exports.constants = {
 
 
 }));
-},{"./core":88}],94:[function(require,module,exports){
+},{"./core":94}],100:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -19401,7 +21320,7 @@ exports.constants = {
 	return CryptoJS;
 
 }));
-},{"./aes":86,"./cipher-core":87,"./core":88,"./enc-base64":89,"./enc-utf16":90,"./evpkdf":91,"./format-hex":92,"./hmac":93,"./lib-typedarrays":95,"./md5":96,"./mode-cfb":97,"./mode-ctr":99,"./mode-ctr-gladman":98,"./mode-ecb":100,"./mode-ofb":101,"./pad-ansix923":102,"./pad-iso10126":103,"./pad-iso97971":104,"./pad-nopadding":105,"./pad-zeropadding":106,"./pbkdf2":107,"./rabbit":109,"./rabbit-legacy":108,"./rc4":110,"./ripemd160":111,"./sha1":112,"./sha224":113,"./sha256":114,"./sha3":115,"./sha384":116,"./sha512":117,"./tripledes":118,"./x64-core":119}],95:[function(require,module,exports){
+},{"./aes":92,"./cipher-core":93,"./core":94,"./enc-base64":95,"./enc-utf16":96,"./evpkdf":97,"./format-hex":98,"./hmac":99,"./lib-typedarrays":101,"./md5":102,"./mode-cfb":103,"./mode-ctr":105,"./mode-ctr-gladman":104,"./mode-ecb":106,"./mode-ofb":107,"./pad-ansix923":108,"./pad-iso10126":109,"./pad-iso97971":110,"./pad-nopadding":111,"./pad-zeropadding":112,"./pbkdf2":113,"./rabbit":115,"./rabbit-legacy":114,"./rc4":116,"./ripemd160":117,"./sha1":118,"./sha224":119,"./sha256":120,"./sha3":121,"./sha384":122,"./sha512":123,"./tripledes":124,"./x64-core":125}],101:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -19478,7 +21397,7 @@ exports.constants = {
 	return CryptoJS.lib.WordArray;
 
 }));
-},{"./core":88}],96:[function(require,module,exports){
+},{"./core":94}],102:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -19747,7 +21666,7 @@ exports.constants = {
 	return CryptoJS.MD5;
 
 }));
-},{"./core":88}],97:[function(require,module,exports){
+},{"./core":94}],103:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -19828,7 +21747,7 @@ exports.constants = {
 	return CryptoJS.mode.CFB;
 
 }));
-},{"./cipher-core":87,"./core":88}],98:[function(require,module,exports){
+},{"./cipher-core":93,"./core":94}],104:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -19945,7 +21864,7 @@ exports.constants = {
 	return CryptoJS.mode.CTRGladman;
 
 }));
-},{"./cipher-core":87,"./core":88}],99:[function(require,module,exports){
+},{"./cipher-core":93,"./core":94}],105:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -20004,7 +21923,7 @@ exports.constants = {
 	return CryptoJS.mode.CTR;
 
 }));
-},{"./cipher-core":87,"./core":88}],100:[function(require,module,exports){
+},{"./cipher-core":93,"./core":94}],106:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -20045,7 +21964,7 @@ exports.constants = {
 	return CryptoJS.mode.ECB;
 
 }));
-},{"./cipher-core":87,"./core":88}],101:[function(require,module,exports){
+},{"./cipher-core":93,"./core":94}],107:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -20100,7 +22019,7 @@ exports.constants = {
 	return CryptoJS.mode.OFB;
 
 }));
-},{"./cipher-core":87,"./core":88}],102:[function(require,module,exports){
+},{"./cipher-core":93,"./core":94}],108:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -20150,7 +22069,7 @@ exports.constants = {
 	return CryptoJS.pad.Ansix923;
 
 }));
-},{"./cipher-core":87,"./core":88}],103:[function(require,module,exports){
+},{"./cipher-core":93,"./core":94}],109:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -20195,7 +22114,7 @@ exports.constants = {
 	return CryptoJS.pad.Iso10126;
 
 }));
-},{"./cipher-core":87,"./core":88}],104:[function(require,module,exports){
+},{"./cipher-core":93,"./core":94}],110:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -20236,7 +22155,7 @@ exports.constants = {
 	return CryptoJS.pad.Iso97971;
 
 }));
-},{"./cipher-core":87,"./core":88}],105:[function(require,module,exports){
+},{"./cipher-core":93,"./core":94}],111:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -20267,7 +22186,7 @@ exports.constants = {
 	return CryptoJS.pad.NoPadding;
 
 }));
-},{"./cipher-core":87,"./core":88}],106:[function(require,module,exports){
+},{"./cipher-core":93,"./core":94}],112:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -20315,7 +22234,7 @@ exports.constants = {
 	return CryptoJS.pad.ZeroPadding;
 
 }));
-},{"./cipher-core":87,"./core":88}],107:[function(require,module,exports){
+},{"./cipher-core":93,"./core":94}],113:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -20461,7 +22380,7 @@ exports.constants = {
 	return CryptoJS.PBKDF2;
 
 }));
-},{"./core":88,"./hmac":93,"./sha1":112}],108:[function(require,module,exports){
+},{"./core":94,"./hmac":99,"./sha1":118}],114:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -20652,7 +22571,7 @@ exports.constants = {
 	return CryptoJS.RabbitLegacy;
 
 }));
-},{"./cipher-core":87,"./core":88,"./enc-base64":89,"./evpkdf":91,"./md5":96}],109:[function(require,module,exports){
+},{"./cipher-core":93,"./core":94,"./enc-base64":95,"./evpkdf":97,"./md5":102}],115:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -20845,7 +22764,7 @@ exports.constants = {
 	return CryptoJS.Rabbit;
 
 }));
-},{"./cipher-core":87,"./core":88,"./enc-base64":89,"./evpkdf":91,"./md5":96}],110:[function(require,module,exports){
+},{"./cipher-core":93,"./core":94,"./enc-base64":95,"./evpkdf":97,"./md5":102}],116:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -20985,7 +22904,7 @@ exports.constants = {
 	return CryptoJS.RC4;
 
 }));
-},{"./cipher-core":87,"./core":88,"./enc-base64":89,"./evpkdf":91,"./md5":96}],111:[function(require,module,exports){
+},{"./cipher-core":93,"./core":94,"./enc-base64":95,"./evpkdf":97,"./md5":102}],117:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -21253,7 +23172,7 @@ exports.constants = {
 	return CryptoJS.RIPEMD160;
 
 }));
-},{"./core":88}],112:[function(require,module,exports){
+},{"./core":94}],118:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -21404,7 +23323,7 @@ exports.constants = {
 	return CryptoJS.SHA1;
 
 }));
-},{"./core":88}],113:[function(require,module,exports){
+},{"./core":94}],119:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -21485,7 +23404,7 @@ exports.constants = {
 	return CryptoJS.SHA224;
 
 }));
-},{"./core":88,"./sha256":114}],114:[function(require,module,exports){
+},{"./core":94,"./sha256":120}],120:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -21685,7 +23604,7 @@ exports.constants = {
 	return CryptoJS.SHA256;
 
 }));
-},{"./core":88}],115:[function(require,module,exports){
+},{"./core":94}],121:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -22012,7 +23931,7 @@ exports.constants = {
 	return CryptoJS.SHA3;
 
 }));
-},{"./core":88,"./x64-core":119}],116:[function(require,module,exports){
+},{"./core":94,"./x64-core":125}],122:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -22096,7 +24015,7 @@ exports.constants = {
 	return CryptoJS.SHA384;
 
 }));
-},{"./core":88,"./sha512":117,"./x64-core":119}],117:[function(require,module,exports){
+},{"./core":94,"./sha512":123,"./x64-core":125}],123:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -22423,7 +24342,7 @@ exports.constants = {
 	return CryptoJS.SHA512;
 
 }));
-},{"./core":88,"./x64-core":119}],118:[function(require,module,exports){
+},{"./core":94,"./x64-core":125}],124:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -23203,7 +25122,7 @@ exports.constants = {
 	return CryptoJS.TripleDES;
 
 }));
-},{"./cipher-core":87,"./core":88,"./enc-base64":89,"./evpkdf":91,"./md5":96}],119:[function(require,module,exports){
+},{"./cipher-core":93,"./core":94,"./enc-base64":95,"./evpkdf":97,"./md5":102}],125:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -23508,7 +25427,7 @@ exports.constants = {
 	return CryptoJS;
 
 }));
-},{"./core":88}],120:[function(require,module,exports){
+},{"./core":94}],126:[function(require,module,exports){
 'use strict';
 
 exports.utils = require('./des/utils');
@@ -23517,7 +25436,7 @@ exports.DES = require('./des/des');
 exports.CBC = require('./des/cbc');
 exports.EDE = require('./des/ede');
 
-},{"./des/cbc":121,"./des/cipher":122,"./des/des":123,"./des/ede":124,"./des/utils":125}],121:[function(require,module,exports){
+},{"./des/cbc":127,"./des/cipher":128,"./des/des":129,"./des/ede":130,"./des/utils":131}],127:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -23584,7 +25503,7 @@ proto._update = function _update(inp, inOff, out, outOff) {
   }
 };
 
-},{"inherits":182,"minimalistic-assert":187}],122:[function(require,module,exports){
+},{"inherits":188,"minimalistic-assert":192}],128:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -23727,7 +25646,7 @@ Cipher.prototype._finalDecrypt = function _finalDecrypt() {
   return this._unpad(out);
 };
 
-},{"minimalistic-assert":187}],123:[function(require,module,exports){
+},{"minimalistic-assert":192}],129:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -23871,7 +25790,7 @@ DES.prototype._decrypt = function _decrypt(state, lStart, rStart, out, off) {
   utils.rip(l, r, out, off);
 };
 
-},{"./cipher":122,"./utils":125,"inherits":182,"minimalistic-assert":187}],124:[function(require,module,exports){
+},{"./cipher":128,"./utils":131,"inherits":188,"minimalistic-assert":192}],130:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -23927,7 +25846,7 @@ EDE.prototype._update = function _update(inp, inOff, out, outOff) {
 EDE.prototype._pad = DES.prototype._pad;
 EDE.prototype._unpad = DES.prototype._unpad;
 
-},{"./cipher":122,"./des":123,"inherits":182,"minimalistic-assert":187}],125:[function(require,module,exports){
+},{"./cipher":128,"./des":129,"inherits":188,"minimalistic-assert":192}],131:[function(require,module,exports){
 'use strict';
 
 exports.readUInt32BE = function readUInt32BE(bytes, off) {
@@ -24185,7 +26104,7 @@ exports.padSplit = function padSplit(num, size, group) {
   return out.join(' ');
 };
 
-},{}],126:[function(require,module,exports){
+},{}],132:[function(require,module,exports){
 (function (Buffer){(function (){
 var generatePrime = require('./lib/generatePrime')
 var primes = require('./lib/primes.json')
@@ -24231,7 +26150,7 @@ exports.DiffieHellmanGroup = exports.createDiffieHellmanGroup = exports.getDiffi
 exports.createDiffieHellman = exports.DiffieHellman = createDiffieHellman
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"./lib/dh":127,"./lib/generatePrime":128,"./lib/primes.json":129,"buffer":77}],127:[function(require,module,exports){
+},{"./lib/dh":133,"./lib/generatePrime":134,"./lib/primes.json":135,"buffer":83}],133:[function(require,module,exports){
 (function (Buffer){(function (){
 var BN = require('bn.js');
 var MillerRabin = require('miller-rabin');
@@ -24399,7 +26318,7 @@ function formatReturnValue(bn, enc) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"./generatePrime":128,"bn.js":130,"buffer":77,"miller-rabin":185,"randombytes":213}],128:[function(require,module,exports){
+},{"./generatePrime":134,"bn.js":136,"buffer":83,"miller-rabin":190,"randombytes":213}],134:[function(require,module,exports){
 var randomBytes = require('randombytes');
 module.exports = findPrime;
 findPrime.simpleSieve = simpleSieve;
@@ -24506,7 +26425,7 @@ function findPrime(bits, gen) {
 
 }
 
-},{"bn.js":130,"miller-rabin":185,"randombytes":213}],129:[function(require,module,exports){
+},{"bn.js":136,"miller-rabin":190,"randombytes":213}],135:[function(require,module,exports){
 module.exports={
     "modp1": {
         "gen": "02",
@@ -24541,9 +26460,9 @@ module.exports={
         "prime": "ffffffffffffffffc90fdaa22168c234c4c6628b80dc1cd129024e088a67cc74020bbea63b139b22514a08798e3404ddef9519b3cd3a431b302b0a6df25f14374fe1356d6d51c245e485b576625e7ec6f44c42e9a637ed6b0bff5cb6f406b7edee386bfb5a899fa5ae9f24117c4b1fe649286651ece45b3dc2007cb8a163bf0598da48361c55d39a69163fa8fd24cf5f83655d23dca3ad961c62f356208552bb9ed529077096966d670c354e4abc9804f1746c08ca18217c32905e462e36ce3be39e772c180e86039b2783a2ec07a28fb5c55df06f4c52c9de2bcbf6955817183995497cea956ae515d2261898fa051015728e5a8aaac42dad33170d04507a33a85521abdf1cba64ecfb850458dbef0a8aea71575d060c7db3970f85a6e1e4c7abf5ae8cdb0933d71e8c94e04a25619dcee3d2261ad2ee6bf12ffa06d98a0864d87602733ec86a64521f2b18177b200cbbe117577a615d6c770988c0bad946e208e24fa074e5ab3143db5bfce0fd108e4b82d120a92108011a723c12a787e6d788719a10bdba5b2699c327186af4e23c1a946834b6150bda2583e9ca2ad44ce8dbbbc2db04de8ef92e8efc141fbecaa6287c59474e6bc05d99b2964fa090c3a2233ba186515be7ed1f612970cee2d7afb81bdd762170481cd0069127d5b05aa993b4ea988d8fddc186ffb7dc90a6c08f4df435c93402849236c3fab4d27c7026c1d4dcb2602646dec9751e763dba37bdf8ff9406ad9e530ee5db382f413001aeb06a53ed9027d831179727b0865a8918da3edbebcf9b14ed44ce6cbaced4bb1bdb7f1447e6cc254b332051512bd7af426fb8f401378cd2bf5983ca01c64b92ecf032ea15d1721d03f482d7ce6e74fef6d55e702f46980c82b5a84031900b1c9e59e7c97fbec7e8f323a97a7e36cc88be0f1d45b7ff585ac54bd407b22b4154aacc8f6d7ebf48e1d814cc5ed20f8037e0a79715eef29be32806a1d58bb7c5da76f550aa3d8a1fbff0eb19ccb1a313d55cda56c9ec2ef29632387fe8d76e3c0468043e8f663f4860ee12bf2d5b0b7474d6e694f91e6dbe115974a3926f12fee5e438777cb6a932df8cd8bec4d073b931ba3bc832b68d9dd300741fa7bf8afc47ed2576f6936ba424663aab639c5ae4f5683423b4742bf1c978238f16cbe39d652de3fdb8befc848ad922222e04a4037c0713eb57a81a23f0c73473fc646cea306b4bcbc8862f8385ddfa9d4b7fa2c087e879683303ed5bdd3a062b3cf5b3a278a66d2a13f83f44f82ddf310ee074ab6a364597e899a0255dc164f31cc50846851df9ab48195ded7ea1b1d510bd7ee74d73faf36bc31ecfa268359046f4eb879f924009438b481c6cd7889a002ed5ee382bc9190da6fc026e479558e4475677e9aa9e3050e2765694dfc81f56e880b96e7160c980dd98edd3dfffffffffffffffff"
     }
 }
-},{}],130:[function(require,module,exports){
-arguments[4][28][0].apply(exports,arguments)
-},{"buffer":32,"dup":28}],131:[function(require,module,exports){
+},{}],136:[function(require,module,exports){
+arguments[4][34][0].apply(exports,arguments)
+},{"buffer":38,"dup":34}],137:[function(require,module,exports){
 /*! @license DOMPurify 2.3.3 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/2.3.3/LICENSE */
 
 (function (global, factory) {
@@ -25943,7 +27862,7 @@ arguments[4][28][0].apply(exports,arguments)
 }));
 
 
-},{}],132:[function(require,module,exports){
+},{}],138:[function(require,module,exports){
 'use strict';
 
 var elliptic = exports;
@@ -25958,7 +27877,7 @@ elliptic.curves = require('./elliptic/curves');
 elliptic.ec = require('./elliptic/ec');
 elliptic.eddsa = require('./elliptic/eddsa');
 
-},{"../package.json":148,"./elliptic/curve":135,"./elliptic/curves":138,"./elliptic/ec":139,"./elliptic/eddsa":142,"./elliptic/utils":146,"brorand":31}],133:[function(require,module,exports){
+},{"../package.json":154,"./elliptic/curve":141,"./elliptic/curves":144,"./elliptic/ec":145,"./elliptic/eddsa":148,"./elliptic/utils":152,"brorand":37}],139:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -26341,7 +28260,7 @@ BasePoint.prototype.dblp = function dblp(k) {
   return r;
 };
 
-},{"../utils":146,"bn.js":147}],134:[function(require,module,exports){
+},{"../utils":152,"bn.js":153}],140:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -26778,7 +28697,7 @@ Point.prototype.eqXToP = function eqXToP(x) {
 Point.prototype.toP = Point.prototype.normalize;
 Point.prototype.mixedAdd = Point.prototype.add;
 
-},{"../utils":146,"./base":133,"bn.js":147,"inherits":182}],135:[function(require,module,exports){
+},{"../utils":152,"./base":139,"bn.js":153,"inherits":188}],141:[function(require,module,exports){
 'use strict';
 
 var curve = exports;
@@ -26788,7 +28707,7 @@ curve.short = require('./short');
 curve.mont = require('./mont');
 curve.edwards = require('./edwards');
 
-},{"./base":133,"./edwards":134,"./mont":136,"./short":137}],136:[function(require,module,exports){
+},{"./base":139,"./edwards":140,"./mont":142,"./short":143}],142:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -26968,7 +28887,7 @@ Point.prototype.getX = function getX() {
   return this.x.fromRed();
 };
 
-},{"../utils":146,"./base":133,"bn.js":147,"inherits":182}],137:[function(require,module,exports){
+},{"../utils":152,"./base":139,"bn.js":153,"inherits":188}],143:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -27908,7 +29827,7 @@ JPoint.prototype.isInfinity = function isInfinity() {
   return this.z.cmpn(0) === 0;
 };
 
-},{"../utils":146,"./base":133,"bn.js":147,"inherits":182}],138:[function(require,module,exports){
+},{"../utils":152,"./base":139,"bn.js":153,"inherits":188}],144:[function(require,module,exports){
 'use strict';
 
 var curves = exports;
@@ -28116,7 +30035,7 @@ defineCurve('secp256k1', {
   ],
 });
 
-},{"./curve":135,"./precomputed/secp256k1":145,"./utils":146,"hash.js":168}],139:[function(require,module,exports){
+},{"./curve":141,"./precomputed/secp256k1":151,"./utils":152,"hash.js":174}],145:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -28361,7 +30280,7 @@ EC.prototype.getKeyRecoveryParam = function(e, signature, Q, enc) {
   throw new Error('Unable to find valid recovery factor');
 };
 
-},{"../curves":138,"../utils":146,"./key":140,"./signature":141,"bn.js":147,"brorand":31,"hmac-drbg":180}],140:[function(require,module,exports){
+},{"../curves":144,"../utils":152,"./key":146,"./signature":147,"bn.js":153,"brorand":37,"hmac-drbg":186}],146:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -28484,7 +30403,7 @@ KeyPair.prototype.inspect = function inspect() {
          ' pub: ' + (this.pub && this.pub.inspect()) + ' >';
 };
 
-},{"../utils":146,"bn.js":147}],141:[function(require,module,exports){
+},{"../utils":152,"bn.js":153}],147:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -28652,7 +30571,7 @@ Signature.prototype.toDER = function toDER(enc) {
   return utils.encode(res, enc);
 };
 
-},{"../utils":146,"bn.js":147}],142:[function(require,module,exports){
+},{"../utils":152,"bn.js":153}],148:[function(require,module,exports){
 'use strict';
 
 var hash = require('hash.js');
@@ -28772,7 +30691,7 @@ EDDSA.prototype.isPoint = function isPoint(val) {
   return val instanceof this.pointClass;
 };
 
-},{"../curves":138,"../utils":146,"./key":143,"./signature":144,"hash.js":168}],143:[function(require,module,exports){
+},{"../curves":144,"../utils":152,"./key":149,"./signature":150,"hash.js":174}],149:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -28869,7 +30788,7 @@ KeyPair.prototype.getPublic = function getPublic(enc) {
 
 module.exports = KeyPair;
 
-},{"../utils":146}],144:[function(require,module,exports){
+},{"../utils":152}],150:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -28936,7 +30855,7 @@ Signature.prototype.toHex = function toHex() {
 
 module.exports = Signature;
 
-},{"../utils":146,"bn.js":147}],145:[function(require,module,exports){
+},{"../utils":152,"bn.js":153}],151:[function(require,module,exports){
 module.exports = {
   doubles: {
     step: 4,
@@ -29718,7 +31637,7 @@ module.exports = {
   },
 };
 
-},{}],146:[function(require,module,exports){
+},{}],152:[function(require,module,exports){
 'use strict';
 
 var utils = exports;
@@ -29839,9 +31758,9 @@ function intFromLE(bytes) {
 utils.intFromLE = intFromLE;
 
 
-},{"bn.js":147,"minimalistic-assert":187,"minimalistic-crypto-utils":188}],147:[function(require,module,exports){
-arguments[4][28][0].apply(exports,arguments)
-},{"buffer":32,"dup":28}],148:[function(require,module,exports){
+},{"bn.js":153,"minimalistic-assert":192,"minimalistic-crypto-utils":193}],153:[function(require,module,exports){
+arguments[4][34][0].apply(exports,arguments)
+},{"buffer":38,"dup":34}],154:[function(require,module,exports){
 module.exports={
   "_args": [
     [
@@ -29932,7 +31851,7 @@ module.exports={
   "version": "6.5.4"
 }
 
-},{}],149:[function(require,module,exports){
+},{}],155:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -30431,7 +32350,7 @@ function eventTargetAgnosticAddListener(emitter, name, listener, flags) {
   }
 }
 
-},{}],150:[function(require,module,exports){
+},{}],156:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var MD5 = require('md5.js')
 
@@ -30478,7 +32397,7 @@ function EVP_BytesToKey (password, salt, keyBits, ivLen) {
 
 module.exports = EVP_BytesToKey
 
-},{"md5.js":184,"safe-buffer":216}],151:[function(require,module,exports){
+},{"md5.js":189,"safe-buffer":216}],157:[function(require,module,exports){
 'use strict'
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('readable-stream').Transform
@@ -30575,39 +32494,39 @@ HashBase.prototype._digest = function () {
 
 module.exports = HashBase
 
-},{"inherits":182,"readable-stream":166,"safe-buffer":167}],152:[function(require,module,exports){
-arguments[4][60][0].apply(exports,arguments)
-},{"dup":60}],153:[function(require,module,exports){
-arguments[4][61][0].apply(exports,arguments)
-},{"./_stream_readable":155,"./_stream_writable":157,"_process":205,"dup":61,"inherits":182}],154:[function(require,module,exports){
-arguments[4][62][0].apply(exports,arguments)
-},{"./_stream_transform":156,"dup":62,"inherits":182}],155:[function(require,module,exports){
-arguments[4][63][0].apply(exports,arguments)
-},{"../errors":152,"./_stream_duplex":153,"./internal/streams/async_iterator":158,"./internal/streams/buffer_list":159,"./internal/streams/destroy":160,"./internal/streams/from":162,"./internal/streams/state":164,"./internal/streams/stream":165,"_process":205,"buffer":77,"dup":63,"events":149,"inherits":182,"string_decoder/":241,"util":32}],156:[function(require,module,exports){
-arguments[4][64][0].apply(exports,arguments)
-},{"../errors":152,"./_stream_duplex":153,"dup":64,"inherits":182}],157:[function(require,module,exports){
-arguments[4][65][0].apply(exports,arguments)
-},{"../errors":152,"./_stream_duplex":153,"./internal/streams/destroy":160,"./internal/streams/state":164,"./internal/streams/stream":165,"_process":205,"buffer":77,"dup":65,"inherits":182,"util-deprecate":243}],158:[function(require,module,exports){
+},{"inherits":188,"readable-stream":172,"safe-buffer":173}],158:[function(require,module,exports){
 arguments[4][66][0].apply(exports,arguments)
-},{"./end-of-stream":161,"_process":205,"dup":66}],159:[function(require,module,exports){
+},{"dup":66}],159:[function(require,module,exports){
 arguments[4][67][0].apply(exports,arguments)
-},{"buffer":77,"dup":67,"util":32}],160:[function(require,module,exports){
+},{"./_stream_readable":161,"./_stream_writable":163,"_process":205,"dup":67,"inherits":188}],160:[function(require,module,exports){
 arguments[4][68][0].apply(exports,arguments)
-},{"_process":205,"dup":68}],161:[function(require,module,exports){
+},{"./_stream_transform":162,"dup":68,"inherits":188}],161:[function(require,module,exports){
 arguments[4][69][0].apply(exports,arguments)
-},{"../../../errors":152,"dup":69}],162:[function(require,module,exports){
+},{"../errors":158,"./_stream_duplex":159,"./internal/streams/async_iterator":164,"./internal/streams/buffer_list":165,"./internal/streams/destroy":166,"./internal/streams/from":168,"./internal/streams/state":170,"./internal/streams/stream":171,"_process":205,"buffer":83,"dup":69,"events":155,"inherits":188,"string_decoder/":241,"util":38}],162:[function(require,module,exports){
 arguments[4][70][0].apply(exports,arguments)
-},{"dup":70}],163:[function(require,module,exports){
+},{"../errors":158,"./_stream_duplex":159,"dup":70,"inherits":188}],163:[function(require,module,exports){
 arguments[4][71][0].apply(exports,arguments)
-},{"../../../errors":152,"./end-of-stream":161,"dup":71}],164:[function(require,module,exports){
+},{"../errors":158,"./_stream_duplex":159,"./internal/streams/destroy":166,"./internal/streams/state":170,"./internal/streams/stream":171,"_process":205,"buffer":83,"dup":71,"inherits":188,"util-deprecate":243}],164:[function(require,module,exports){
 arguments[4][72][0].apply(exports,arguments)
-},{"../../../errors":152,"dup":72}],165:[function(require,module,exports){
+},{"./end-of-stream":167,"_process":205,"dup":72}],165:[function(require,module,exports){
 arguments[4][73][0].apply(exports,arguments)
-},{"dup":73,"events":149}],166:[function(require,module,exports){
+},{"buffer":83,"dup":73,"util":38}],166:[function(require,module,exports){
 arguments[4][74][0].apply(exports,arguments)
-},{"./lib/_stream_duplex.js":153,"./lib/_stream_passthrough.js":154,"./lib/_stream_readable.js":155,"./lib/_stream_transform.js":156,"./lib/_stream_writable.js":157,"./lib/internal/streams/end-of-stream.js":161,"./lib/internal/streams/pipeline.js":163,"dup":74}],167:[function(require,module,exports){
+},{"_process":205,"dup":74}],167:[function(require,module,exports){
 arguments[4][75][0].apply(exports,arguments)
-},{"buffer":77,"dup":75}],168:[function(require,module,exports){
+},{"../../../errors":158,"dup":75}],168:[function(require,module,exports){
+arguments[4][76][0].apply(exports,arguments)
+},{"dup":76}],169:[function(require,module,exports){
+arguments[4][77][0].apply(exports,arguments)
+},{"../../../errors":158,"./end-of-stream":167,"dup":77}],170:[function(require,module,exports){
+arguments[4][78][0].apply(exports,arguments)
+},{"../../../errors":158,"dup":78}],171:[function(require,module,exports){
+arguments[4][79][0].apply(exports,arguments)
+},{"dup":79,"events":155}],172:[function(require,module,exports){
+arguments[4][80][0].apply(exports,arguments)
+},{"./lib/_stream_duplex.js":159,"./lib/_stream_passthrough.js":160,"./lib/_stream_readable.js":161,"./lib/_stream_transform.js":162,"./lib/_stream_writable.js":163,"./lib/internal/streams/end-of-stream.js":167,"./lib/internal/streams/pipeline.js":169,"dup":80}],173:[function(require,module,exports){
+arguments[4][81][0].apply(exports,arguments)
+},{"buffer":83,"dup":81}],174:[function(require,module,exports){
 var hash = exports;
 
 hash.utils = require('./hash/utils');
@@ -30624,7 +32543,7 @@ hash.sha384 = hash.sha.sha384;
 hash.sha512 = hash.sha.sha512;
 hash.ripemd160 = hash.ripemd.ripemd160;
 
-},{"./hash/common":169,"./hash/hmac":170,"./hash/ripemd":171,"./hash/sha":172,"./hash/utils":179}],169:[function(require,module,exports){
+},{"./hash/common":175,"./hash/hmac":176,"./hash/ripemd":177,"./hash/sha":178,"./hash/utils":185}],175:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -30718,7 +32637,7 @@ BlockHash.prototype._pad = function pad() {
   return res;
 };
 
-},{"./utils":179,"minimalistic-assert":187}],170:[function(require,module,exports){
+},{"./utils":185,"minimalistic-assert":192}],176:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -30767,7 +32686,7 @@ Hmac.prototype.digest = function digest(enc) {
   return this.outer.digest(enc);
 };
 
-},{"./utils":179,"minimalistic-assert":187}],171:[function(require,module,exports){
+},{"./utils":185,"minimalistic-assert":192}],177:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -30915,7 +32834,7 @@ var sh = [
   8, 5, 12, 9, 12, 5, 14, 6, 8, 13, 6, 5, 15, 13, 11, 11
 ];
 
-},{"./common":169,"./utils":179}],172:[function(require,module,exports){
+},{"./common":175,"./utils":185}],178:[function(require,module,exports){
 'use strict';
 
 exports.sha1 = require('./sha/1');
@@ -30924,7 +32843,7 @@ exports.sha256 = require('./sha/256');
 exports.sha384 = require('./sha/384');
 exports.sha512 = require('./sha/512');
 
-},{"./sha/1":173,"./sha/224":174,"./sha/256":175,"./sha/384":176,"./sha/512":177}],173:[function(require,module,exports){
+},{"./sha/1":179,"./sha/224":180,"./sha/256":181,"./sha/384":182,"./sha/512":183}],179:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -31000,7 +32919,7 @@ SHA1.prototype._digest = function digest(enc) {
     return utils.split32(this.h, 'big');
 };
 
-},{"../common":169,"../utils":179,"./common":178}],174:[function(require,module,exports){
+},{"../common":175,"../utils":185,"./common":184}],180:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -31032,7 +32951,7 @@ SHA224.prototype._digest = function digest(enc) {
 };
 
 
-},{"../utils":179,"./256":175}],175:[function(require,module,exports){
+},{"../utils":185,"./256":181}],181:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -31139,7 +33058,7 @@ SHA256.prototype._digest = function digest(enc) {
     return utils.split32(this.h, 'big');
 };
 
-},{"../common":169,"../utils":179,"./common":178,"minimalistic-assert":187}],176:[function(require,module,exports){
+},{"../common":175,"../utils":185,"./common":184,"minimalistic-assert":192}],182:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -31176,7 +33095,7 @@ SHA384.prototype._digest = function digest(enc) {
     return utils.split32(this.h.slice(0, 12), 'big');
 };
 
-},{"../utils":179,"./512":177}],177:[function(require,module,exports){
+},{"../utils":185,"./512":183}],183:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -31508,7 +33427,7 @@ function g1_512_lo(xh, xl) {
   return r;
 }
 
-},{"../common":169,"../utils":179,"minimalistic-assert":187}],178:[function(require,module,exports){
+},{"../common":175,"../utils":185,"minimalistic-assert":192}],184:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -31559,7 +33478,7 @@ function g1_256(x) {
 }
 exports.g1_256 = g1_256;
 
-},{"../utils":179}],179:[function(require,module,exports){
+},{"../utils":185}],185:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -31839,7 +33758,7 @@ function shr64_lo(ah, al, num) {
 }
 exports.shr64_lo = shr64_lo;
 
-},{"inherits":182,"minimalistic-assert":187}],180:[function(require,module,exports){
+},{"inherits":188,"minimalistic-assert":192}],186:[function(require,module,exports){
 'use strict';
 
 var hash = require('hash.js');
@@ -31954,7 +33873,7 @@ HmacDRBG.prototype.generate = function generate(len, enc, add, addEnc) {
   return utils.encode(res, enc);
 };
 
-},{"hash.js":168,"minimalistic-assert":187,"minimalistic-crypto-utils":188}],181:[function(require,module,exports){
+},{"hash.js":174,"minimalistic-assert":192,"minimalistic-crypto-utils":193}],187:[function(require,module,exports){
 /*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
@@ -32041,7 +33960,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],182:[function(require,module,exports){
+},{}],188:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -32070,28 +33989,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],183:[function(require,module,exports){
-(function (global){(function (){
-// https://github.com/maxogden/websocket-stream/blob/48dc3ddf943e5ada668c31ccd94e9186f02fafbd/ws-fallback.js
-
-var ws = null
-
-if (typeof WebSocket !== 'undefined') {
-  ws = WebSocket
-} else if (typeof MozWebSocket !== 'undefined') {
-  ws = MozWebSocket
-} else if (typeof global !== 'undefined') {
-  ws = global.WebSocket || global.MozWebSocket
-} else if (typeof window !== 'undefined') {
-  ws = window.WebSocket || window.MozWebSocket
-} else if (typeof self !== 'undefined') {
-  ws = self.WebSocket || self.MozWebSocket
-}
-
-module.exports = ws
-
-}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],184:[function(require,module,exports){
+},{}],189:[function(require,module,exports){
 'use strict'
 var inherits = require('inherits')
 var HashBase = require('hash-base')
@@ -32239,7 +34137,7 @@ function fnI (a, b, c, d, m, k, s) {
 
 module.exports = MD5
 
-},{"hash-base":151,"inherits":182,"safe-buffer":216}],185:[function(require,module,exports){
+},{"hash-base":157,"inherits":188,"safe-buffer":216}],190:[function(require,module,exports){
 var bn = require('bn.js');
 var brorand = require('brorand');
 
@@ -32356,9 +34254,9 @@ MillerRabin.prototype.getDivisor = function getDivisor(n, k) {
   return false;
 };
 
-},{"bn.js":186,"brorand":31}],186:[function(require,module,exports){
-arguments[4][28][0].apply(exports,arguments)
-},{"buffer":32,"dup":28}],187:[function(require,module,exports){
+},{"bn.js":191,"brorand":37}],191:[function(require,module,exports){
+arguments[4][34][0].apply(exports,arguments)
+},{"buffer":38,"dup":34}],192:[function(require,module,exports){
 module.exports = assert;
 
 function assert(val, msg) {
@@ -32371,7 +34269,7 @@ assert.equal = function assertEqual(l, r, msg) {
     throw new Error(msg || ('Assertion failed: ' + l + ' != ' + r));
 };
 
-},{}],188:[function(require,module,exports){
+},{}],193:[function(require,module,exports){
 'use strict';
 
 var utils = exports;
@@ -32431,7 +34329,7 @@ utils.encode = function encode(arr, enc) {
     return arr;
 };
 
-},{}],189:[function(require,module,exports){
+},{}],194:[function(require,module,exports){
 module.exports={"2.16.840.1.101.3.4.1.1": "aes-128-ecb",
 "2.16.840.1.101.3.4.1.2": "aes-128-cbc",
 "2.16.840.1.101.3.4.1.3": "aes-128-ofb",
@@ -32445,7 +34343,7 @@ module.exports={"2.16.840.1.101.3.4.1.1": "aes-128-ecb",
 "2.16.840.1.101.3.4.1.43": "aes-256-ofb",
 "2.16.840.1.101.3.4.1.44": "aes-256-cfb"
 }
-},{}],190:[function(require,module,exports){
+},{}],195:[function(require,module,exports){
 // from https://github.com/indutny/self-signed/blob/gh-pages/lib/asn1.js
 // Fedor, you are amazing.
 'use strict'
@@ -32569,7 +34467,7 @@ exports.signature = asn1.define('signature', function () {
   )
 })
 
-},{"./certificate":191,"asn1.js":14}],191:[function(require,module,exports){
+},{"./certificate":196,"asn1.js":20}],196:[function(require,module,exports){
 // from https://github.com/Rantanen/node-dtls/blob/25a7dc861bda38cfeac93a723500eea4f0ac2e86/Certificate.js
 // thanks to @Rantanen
 
@@ -32660,7 +34558,7 @@ var X509Certificate = asn.define('X509Certificate', function () {
 
 module.exports = X509Certificate
 
-},{"asn1.js":14}],192:[function(require,module,exports){
+},{"asn1.js":20}],197:[function(require,module,exports){
 // adapted from https://github.com/apatil/pemstrip
 var findProc = /Proc-Type: 4,ENCRYPTED[\n\r]+DEK-Info: AES-((?:128)|(?:192)|(?:256))-CBC,([0-9A-H]+)[\n\r]+([0-9A-z\n\r+/=]+)[\n\r]+/m
 var startRegex = /^-----BEGIN ((?:.*? KEY)|CERTIFICATE)-----/m
@@ -32693,7 +34591,7 @@ module.exports = function (okey, password) {
   }
 }
 
-},{"browserify-aes":35,"evp_bytestokey":150,"safe-buffer":216}],193:[function(require,module,exports){
+},{"browserify-aes":41,"evp_bytestokey":156,"safe-buffer":216}],198:[function(require,module,exports){
 var asn1 = require('./asn1')
 var aesid = require('./aesid.json')
 var fixProc = require('./fixProc')
@@ -32802,11 +34700,11 @@ function decrypt (data, password) {
   return Buffer.concat(out)
 }
 
-},{"./aesid.json":189,"./asn1":190,"./fixProc":192,"browserify-aes":35,"pbkdf2":194,"safe-buffer":216}],194:[function(require,module,exports){
+},{"./aesid.json":194,"./asn1":195,"./fixProc":197,"browserify-aes":41,"pbkdf2":199,"safe-buffer":216}],199:[function(require,module,exports){
 exports.pbkdf2 = require('./lib/async')
 exports.pbkdf2Sync = require('./lib/sync')
 
-},{"./lib/async":195,"./lib/sync":198}],195:[function(require,module,exports){
+},{"./lib/async":200,"./lib/sync":203}],200:[function(require,module,exports){
 (function (global){(function (){
 var Buffer = require('safe-buffer').Buffer
 
@@ -32928,7 +34826,7 @@ module.exports = function (password, salt, iterations, keylen, digest, callback)
 }
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./default-encoding":196,"./precondition":197,"./sync":198,"./to-buffer":199,"safe-buffer":216}],196:[function(require,module,exports){
+},{"./default-encoding":201,"./precondition":202,"./sync":203,"./to-buffer":204,"safe-buffer":216}],201:[function(require,module,exports){
 (function (process,global){(function (){
 var defaultEncoding
 /* istanbul ignore next */
@@ -32944,7 +34842,7 @@ if (global.process && global.process.browser) {
 module.exports = defaultEncoding
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":205}],197:[function(require,module,exports){
+},{"_process":205}],202:[function(require,module,exports){
 var MAX_ALLOC = Math.pow(2, 30) - 1 // default in iojs
 
 module.exports = function (iterations, keylen) {
@@ -32965,7 +34863,7 @@ module.exports = function (iterations, keylen) {
   }
 }
 
-},{}],198:[function(require,module,exports){
+},{}],203:[function(require,module,exports){
 var md5 = require('create-hash/md5')
 var RIPEMD160 = require('ripemd160')
 var sha = require('sha.js')
@@ -33072,7 +34970,7 @@ function pbkdf2 (password, salt, iterations, keylen, digest) {
 
 module.exports = pbkdf2
 
-},{"./default-encoding":196,"./precondition":197,"./to-buffer":199,"create-hash/md5":82,"ripemd160":215,"safe-buffer":216,"sha.js":219}],199:[function(require,module,exports){
+},{"./default-encoding":201,"./precondition":202,"./to-buffer":204,"create-hash/md5":88,"ripemd160":215,"safe-buffer":216,"sha.js":219}],204:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 module.exports = function (thing, encoding, name) {
@@ -33087,1903 +34985,7 @@ module.exports = function (thing, encoding, name) {
   }
 }
 
-},{"safe-buffer":216}],200:[function(require,module,exports){
-(function () {
-    /*
-     * Async module to handle async messaging
-     * @module Async
-     *
-     * @param {Object} params
-     */
-
-    function Async(params) {
-
-        /*******************************************************
-         *          P R I V A T E   V A R I A B L E S          *
-         *******************************************************/
-
-        var PodSocketClass,
-            WebRTCClass,
-            PodUtility,
-            LogLevel
-        if (typeof(require) !== 'undefined' && typeof(exports) !== 'undefined') {
-            PodSocketClass = require('./socket.js');
-            WebRTCClass = require('./webrtc.js');
-            PodUtility = require('../utility/utility.js');
-            LogLevel = require('../utility/logger.js');
-        }
-        else {
-            PodSocketClass = POD.Socket;
-            PodUtility = POD.AsyncUtility;
-            LogLevel = POD.LogLevel;
-        }
-
-        var Utility = new PodUtility();
-
-        var protocol = params.protocol || 'websocket',
-            appId = params.appId || 'PodChat',
-            deviceId = params.deviceId,
-            eventCallbacks = {
-                connect: {},
-                disconnect: {},
-                reconnect: {},
-                message: {},
-                asyncReady: {},
-                stateChange: {},
-                error: {}
-            },
-            ackCallback = {},
-            socket,
-            webRTCClass,
-            asyncMessageType = {
-                PING: 0,
-                SERVER_REGISTER: 1,
-                DEVICE_REGISTER: 2,
-                MESSAGE: 3,
-                MESSAGE_ACK_NEEDED: 4,
-                MESSAGE_SENDER_ACK_NEEDED: 5,
-                ACK: 6,
-                GET_REGISTERED_PEERS: 7,
-                PEER_REMOVED: -3,
-                REGISTER_QUEUE: -2,
-                NOT_REGISTERED: -1,
-                ERROR_MESSAGE: -99
-            },
-            socketStateType = {
-                CONNECTING: 0, // The connection is not yet open.
-                OPEN: 1, // The connection is open and ready to communicate.
-                CLOSING: 2, // The connection is in the process of closing.
-                CLOSED: 3 // The connection is closed or couldn't be opened.
-            },
-            logLevel = LogLevel(params.logLevel),
-            isNode = Utility.isNode(),
-            isSocketOpen = false,
-            isDeviceRegister = false,
-            isServerRegister = false,
-            socketState = socketStateType.CONNECTING,
-            asyncState = '',
-            registerServerTimeoutId,
-            registerDeviceTimeoutId,
-            checkIfSocketHasOpennedTimeoutId,
-            asyncReadyTimeoutId,
-            pushSendDataQueue = [],
-            oldPeerId,
-            peerId = params.peerId,
-            lastMessageId = 0,
-            messageTtl = params.messageTtl || 86400,
-            serverName = params.serverName || 'oauth-wire',
-            serverRegisteration = (typeof params.serverRegisteration === 'boolean') ? params.serverRegisteration : true,
-            connectionRetryInterval = params.connectionRetryInterval || 5000,
-            socketReconnectRetryInterval,
-            socketReconnectCheck,
-            // retryStep = 4,
-            reconnectOnClose = (typeof params.reconnectOnClose === 'boolean') ? params.reconnectOnClose : true,
-            asyncLogging = (params.asyncLogging && typeof params.asyncLogging.onFunction === 'boolean') ? params.asyncLogging.onFunction : false,
-            onReceiveLogging = (params.asyncLogging && typeof params.asyncLogging.onMessageReceive === 'boolean')
-                ? params.asyncLogging.onMessageReceive
-                : false,
-            onSendLogging = (params.asyncLogging && typeof params.asyncLogging.onMessageSend === 'boolean') ? params.asyncLogging.onMessageSend : false,
-            workerId = (params.asyncLogging && typeof parseInt(params.asyncLogging.workerId) === 'number') ? params.asyncLogging.workerId : 0,
-            webrtcConfig = (params.webrtcConfig ? params.webrtcConfig : null);
-
-        // function setRetryStep(val){
-        //     console.log("new retryStep value:", val);
-        //     retryStep = val;
-        // }
-        //
-        // function getRetryStep() {
-        //     return retryStep;
-        // }
-
-        const retryStep = {
-            value: 4,
-            get() {
-                return retryStep.value;
-            },
-            set(val) {
-                logLevel.debug && console.debug("[Async][async.js] retryStep new value:", val);
-                retryStep.value = val;
-            }
-        };
-
-        /*******************************************************
-         *            P R I V A T E   M E T H O D S            *
-         *******************************************************/
-
-        var init = function () {
-                switch (protocol) {
-                    case 'websocket':
-                        initSocket();
-                        break;
-                    case 'webrtc':
-                        initWebrtc();
-                        break;
-                }
-            },
-
-            asyncLogger = function (type, msg) {
-                Utility.asyncLogger({
-                    protocol: protocol,
-                    workerId: workerId,
-                    type: type,
-                    msg: msg,
-                    peerId: peerId,
-                    deviceId: deviceId,
-                    isSocketOpen: isSocketOpen,
-                    isDeviceRegister: isDeviceRegister,
-                    isServerRegister: isServerRegister,
-                    socketState: socketState,
-                    pushSendDataQueue: pushSendDataQueue
-                });
-            },
-
-            initSocket = function () {
-                socket = new PodSocketClass({
-                    socketAddress: params.socketAddress,
-                    wsConnectionWaitTime: params.wsConnectionWaitTime,
-                    connectionCheckTimeout: params.connectionCheckTimeout,
-                    connectionCheckTimeoutThreshold: params.connectionCheckTimeoutThreshold,
-                    logLevel: logLevel
-                });
-
-                checkIfSocketHasOpennedTimeoutId = setTimeout(function () {
-                    if (!isSocketOpen) {
-                        fireEvent('error', {
-                            errorCode: 4001,
-                            errorMessage: 'Can not open Socket!'
-                        });
-                    }
-                }, 65000);
-
-                socket.on('open', function () {
-                    checkIfSocketHasOpennedTimeoutId && clearTimeout(checkIfSocketHasOpennedTimeoutId);
-                    socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-                    socketReconnectCheck && clearTimeout(socketReconnectCheck);
-
-                    isSocketOpen = true;
-                    retryStep.set(4);
-
-                    socketState = socketStateType.OPEN;
-                    fireEvent('stateChange', {
-                        socketState: socketState,
-                        timeUntilReconnect: 0,
-                        deviceRegister: isDeviceRegister,
-                        serverRegister: isServerRegister,
-                        peerId: peerId
-                    });
-                });
-
-                socket.on('message', function (msg) {
-                    handleSocketMessage(msg);
-                    if (onReceiveLogging) {
-                        asyncLogger('Receive', msg);
-                    }
-                });
-
-                socket.on('close', function (event) {
-                    isSocketOpen = false;
-                    isDeviceRegister = false;
-                    oldPeerId = peerId;
-
-                    // socketState = socketStateType.CLOSED;
-                    //
-                    // fireEvent('stateChange', {
-                    //     socketState: socketState,
-                    //     timeUntilReconnect: 0,
-                    //     deviceRegister: isDeviceRegister,
-                    //     serverRegister: isServerRegister,
-                    //     peerId: peerId
-                    // });
-
-                    fireEvent('disconnect', event);
-
-                    if (reconnectOnClose) {
-                        if (asyncLogging) {
-                            if (workerId > 0) {
-                                Utility.asyncStepLogger(workerId + '\t Reconnecting after ' + retryStep.get() + 's');
-                            }
-                            else {
-                                Utility.asyncStepLogger('Reconnecting after ' + retryStep.get() + 's');
-                            }
-                        }
-
-                        logLevel.debug && console.debug("[Async][async.js] on socket close, retryStep:", retryStep.get());
-
-                        socketState = socketStateType.CLOSED;
-                        fireEvent('stateChange', {
-                            socketState: socketState,
-                            timeUntilReconnect: 1000 * retryStep.get(),
-                            deviceRegister: isDeviceRegister,
-                            serverRegister: isServerRegister,
-                            peerId: peerId
-                        });
-
-                        socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-
-                        socketReconnectRetryInterval = setTimeout(function () {
-                            socket.connect();
-                        }, 1000 * retryStep.get());
-
-                        if (retryStep.get() < 64) {
-                            // retryStep += 3;
-                            retryStep.set(retryStep.get() + 3)
-                        }
-
-                        // socketReconnectCheck && clearTimeout(socketReconnectCheck);
-                        //
-                        // socketReconnectCheck = setTimeout(function() {
-                        //   if (!isSocketOpen) {
-                        //     fireEvent("error", {
-                        //       errorCode: 4001,
-                        //       errorMessage: "Can not open Socket!"
-                        //     });
-                        //
-                        //     socketState = socketStateType.CLOSED;
-                        //     fireEvent("stateChange", {
-                        //       socketState: socketState,
-                        //       deviceRegister: isDeviceRegister,
-                        //       serverRegister: isServerRegister,
-                        //       peerId: peerId
-                        //     });
-                        //   }
-                        // }, 65000);
-
-                    }
-                    else {
-                        socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-                        socketReconnectCheck && clearTimeout(socketReconnectCheck);
-                        fireEvent('error', {
-                            errorCode: 4005,
-                            errorMessage: 'Socket Closed!'
-                        });
-
-                        socketState = socketStateType.CLOSED;
-                        fireEvent('stateChange', {
-                            socketState: socketState,
-                            timeUntilReconnect: 0,
-                            deviceRegister: isDeviceRegister,
-                            serverRegister: isServerRegister,
-                            peerId: peerId
-                        });
-                    }
-
-                });
-
-                socket.on('customError', function (error) {
-                    fireEvent('error', {
-                        errorCode: error.errorCode,
-                        errorMessage: error.errorMessage,
-                        errorEvent: error.errorEvent
-                    });
-                });
-
-                socket.on('error', function (error) {
-                    fireEvent('error', {
-                        errorCode: '',
-                        errorMessage: '',
-                        errorEvent: error
-                    });
-                });
-            },
-            initWebrtc = function () {
-                webRTCClass = new WebRTCClass({
-                    baseUrl: (webrtcConfig ? webrtcConfig.baseUrl : null),
-                    configuration : (webrtcConfig ? webrtcConfig.configuration : null),
-                    connectionCheckTimeout: params.connectionCheckTimeout,
-                    logLevel: logLevel
-                });
-
-                checkIfSocketHasOpennedTimeoutId = setTimeout(function () {
-                    if (!isSocketOpen) {
-                        fireEvent('error', {
-                            errorCode: 4001,
-                            errorMessage: 'Can not open Socket!'
-                        });
-                    }
-                }, 65000);
-
-                webRTCClass.on('open', function () {
-                    checkIfSocketHasOpennedTimeoutId && clearTimeout(checkIfSocketHasOpennedTimeoutId);
-                    socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-                    socketReconnectCheck && clearTimeout(socketReconnectCheck);
-
-                    isSocketOpen = true;
-                    retryStep.set(4);
-
-                    socketState = socketStateType.OPEN;
-                    fireEvent('stateChange', {
-                        socketState: socketState,
-                        timeUntilReconnect: 0,
-                        deviceRegister: isDeviceRegister,
-                        serverRegister: isServerRegister,
-                        peerId: peerId
-                    });
-                });
-
-                webRTCClass.on('message', function (msg) {
-                    console.log({msg})
-                    handleSocketMessage(msg);
-                    if (onReceiveLogging) {
-                        asyncLogger('Receive', msg);
-                    }
-                });
-
-                webRTCClass.on('close', function (event) {
-                    isSocketOpen = false;
-                    isDeviceRegister = false;
-                    oldPeerId = peerId;
-
-                    fireEvent('disconnect', event);
-
-                    if (reconnectOnClose) {
-                        if (asyncLogging) {
-                            if (workerId > 0) {
-                                Utility.asyncStepLogger(workerId + '\t Reconnecting after ' + retryStep.get() + 's');
-                            }
-                            else {
-                                Utility.asyncStepLogger('Reconnecting after ' + retryStep.get() + 's');
-                            }
-                        }
-
-                        logLevel.debug && console.debug("[Async][async.js] on connection close, retryStep:", retryStep.get());
-
-                        socketState = socketStateType.CLOSED;
-                        fireEvent('stateChange', {
-                            socketState: socketState,
-                            timeUntilReconnect: 1000 * retryStep.get(),
-                            deviceRegister: isDeviceRegister,
-                            serverRegister: isServerRegister,
-                            peerId: peerId
-                        });
-
-                        socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-
-                        socketReconnectRetryInterval = setTimeout(function () {
-                            webRTCClass.connect();
-                        }, 1000 * retryStep.get());
-
-                        if (retryStep.get() < 64) {
-                            // retryStep += 3;
-                            retryStep.set(retryStep.get() + 3)
-                        }
-                    }
-                    else {
-                        socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-                        socketReconnectCheck && clearTimeout(socketReconnectCheck);
-                        fireEvent('error', {
-                            errorCode: 4005,
-                            errorMessage: 'Connection Closed!'
-                        });
-
-                        socketState = socketStateType.CLOSED;
-                        fireEvent('stateChange', {
-                            socketState: socketState,
-                            timeUntilReconnect: 0,
-                            deviceRegister: isDeviceRegister,
-                            serverRegister: isServerRegister,
-                            peerId: peerId
-                        });
-                    }
-
-                });
-
-                webRTCClass.on('customError', function (error) {
-                    fireEvent('error', {
-                        errorCode: error.errorCode,
-                        errorMessage: error.errorMessage,
-                        errorEvent: error.errorEvent
-                    });
-                });
-
-                webRTCClass.on('error', function (error) {
-                    fireEvent('error', {
-                        errorCode: '',
-                        errorMessage: '',
-                        errorEvent: error
-                    });
-                });
-            },
-
-            handleSocketMessage = function (msg) {
-                var ack;
-
-                if (msg.type === asyncMessageType.MESSAGE_ACK_NEEDED || msg.type === asyncMessageType.MESSAGE_SENDER_ACK_NEEDED) {
-                    ack = function () {
-                        pushSendData({
-                            type: asyncMessageType.ACK,
-                            content: {
-                                messageId: msg.id
-                            }
-                        });
-                    };
-                }
-
-                switch (msg.type) {
-                    case asyncMessageType.PING:
-                        handlePingMessage(msg);
-                        break;
-
-                    case asyncMessageType.SERVER_REGISTER:
-                        handleServerRegisterMessage(msg);
-                        break;
-
-                    case asyncMessageType.DEVICE_REGISTER:
-                        handleDeviceRegisterMessage(msg.content);
-                        break;
-
-                    case asyncMessageType.MESSAGE:
-                        fireEvent('message', msg);
-                        break;
-
-                    case asyncMessageType.MESSAGE_ACK_NEEDED:
-                    case asyncMessageType.MESSAGE_SENDER_ACK_NEEDED:
-                        ack();
-                        fireEvent('message', msg);
-                        break;
-
-                    case asyncMessageType.ACK:
-                        fireEvent('message', msg);
-                        if (ackCallback[msg.senderMessageId] == 'function') {
-                            ackCallback[msg.senderMessageId]();
-                            delete ackCallback[msg.senderMessageId];
-                        }
-                        break;
-
-                    case asyncMessageType.ERROR_MESSAGE:
-                        fireEvent('error', {
-                            errorCode: 4002,
-                            errorMessage: 'Async Error!',
-                            errorEvent: msg
-                        });
-                        break;
-                }
-            },
-
-            handlePingMessage = function (msg) {
-                if (msg.content) {
-                    if (deviceId === undefined) {
-                        deviceId = msg.content;
-                        registerDevice();
-                    }
-                    else {
-                        registerDevice();
-                    }
-                }
-                else {
-                    if (onReceiveLogging) {
-                        if (workerId > 0) {
-                            Utility.asyncStepLogger(workerId + '\t Ping Response at (' + new Date() + ')');
-                        }
-                        else {
-                            Utility.asyncStepLogger('Ping Response at (' + new Date() + ')');
-                        }
-                    }
-                }
-            },
-
-            registerDevice = function (isRetry) {
-                if (asyncLogging) {
-                    if (workerId > 0) {
-                        Utility.asyncStepLogger(workerId + '\t Registering Device');
-                    }
-                    else {
-                        Utility.asyncStepLogger('Registering Device');
-                    }
-                }
-
-                var content = {
-                    appId: appId,
-                    deviceId: deviceId
-                };
-
-                if (peerId !== undefined) {
-                    content.refresh = true;
-                    content.renew = false;
-
-                }
-                else {
-                    content.renew = true;
-                    content.refresh = false;
-                }
-
-                pushSendData({
-                    type: asyncMessageType.DEVICE_REGISTER,
-                    content: content
-                });
-            },
-
-            handleDeviceRegisterMessage = function (recievedPeerId) {
-                if (!isDeviceRegister) {
-                    if (registerDeviceTimeoutId) {
-                        clearTimeout(registerDeviceTimeoutId);
-                    }
-
-                    isDeviceRegister = true;
-                    peerId = recievedPeerId;
-                }
-
-                /**
-                 * If serverRegisteration == true we have to register
-                 * on server then make async status ready
-                 */
-                if (serverRegisteration) {
-                    if (isServerRegister && peerId === oldPeerId) {
-                        fireEvent('asyncReady');
-                        isServerRegister = true;
-                        pushSendDataQueueHandler();
-
-                        socketState = socketStateType.OPEN;
-                        fireEvent('stateChange', {
-                            socketState: socketState,
-                            timeUntilReconnect: 0,
-                            deviceRegister: isDeviceRegister,
-                            serverRegister: isServerRegister,
-                            peerId: peerId
-                        });
-                    }
-                    else {
-                        socketState = socketStateType.OPEN;
-                        fireEvent('stateChange', {
-                            socketState: socketState,
-                            timeUntilReconnect: 0,
-                            deviceRegister: isDeviceRegister,
-                            serverRegister: isServerRegister,
-                            peerId: peerId
-                        });
-
-                        registerServer();
-                    }
-                }
-                else {
-                    fireEvent('asyncReady');
-                    isServerRegister = 'Not Needed';
-                    pushSendDataQueueHandler();
-
-                    if (asyncLogging) {
-                        if (workerId > 0) {
-                            Utility.asyncStepLogger(workerId + '\t Async is Ready');
-                        }
-                        else {
-                            Utility.asyncStepLogger('Async is Ready');
-                        }
-                    }
-
-                    socketState = socketStateType.OPEN;
-                    fireEvent('stateChange', {
-                        socketState: socketState,
-                        timeUntilReconnect: 0,
-                        deviceRegister: isDeviceRegister,
-                        serverRegister: isServerRegister,
-                        peerId: peerId
-                    });
-                }
-            },
-
-            registerServer = function () {
-
-                if (asyncLogging) {
-                    if (workerId > 0) {
-                        Utility.asyncStepLogger(workerId + '\t Registering Server');
-                    }
-                    else {
-                        Utility.asyncStepLogger('Registering Server');
-                    }
-                }
-
-                var content = {
-                    name: serverName
-                };
-
-                pushSendData({
-                    type: asyncMessageType.SERVER_REGISTER,
-                    content: content
-                });
-
-                registerServerTimeoutId = setTimeout(function () {
-                    if (!isServerRegister) {
-                        registerServer();
-                    }
-                }, connectionRetryInterval);
-            },
-
-            handleServerRegisterMessage = function (msg) {
-                if (msg.senderName && msg.senderName === serverName) {
-                    isServerRegister = true;
-
-                    if (registerServerTimeoutId) {
-                        clearTimeout(registerServerTimeoutId);
-                    }
-
-                    socketState = socketStateType.OPEN;
-                    fireEvent('stateChange', {
-                        socketState: socketState,
-                        timeUntilReconnect: 0,
-                        deviceRegister: isDeviceRegister,
-                        serverRegister: isServerRegister,
-                        peerId: peerId
-                    });
-                    fireEvent('asyncReady');
-
-                    pushSendDataQueueHandler();
-
-                    if (asyncLogging) {
-                        if (workerId > 0) {
-                            Utility.asyncStepLogger(workerId + '\t Async is Ready');
-                        }
-                        else {
-                            Utility.asyncStepLogger('Async is Ready');
-                        }
-                    }
-                }
-                else {
-                    isServerRegister = false;
-                }
-            },
-
-            pushSendData = function (msg) {
-                if (onSendLogging) {
-                    asyncLogger('Send', msg);
-                }
-
-                switch (protocol) {
-                    case 'websocket':
-                        if (socketState === socketStateType.OPEN) {
-                            socket.emit(msg);
-                        }
-                        else {
-                            pushSendDataQueue.push(msg);
-                        }
-                        break;
-                    case 'webrtc':
-                        if (socketState === socketStateType.OPEN) {
-                            webRTCClass.emit(msg);
-                        }
-                        else {
-                            pushSendDataQueue.push(msg);
-                        }
-
-                        break;
-                }
-            },
-
-            clearTimeouts = function () {
-                registerDeviceTimeoutId && clearTimeout(registerDeviceTimeoutId);
-                registerServerTimeoutId && clearTimeout(registerServerTimeoutId);
-                checkIfSocketHasOpennedTimeoutId && clearTimeout(checkIfSocketHasOpennedTimeoutId);
-                socketReconnectCheck && clearTimeout(socketReconnectCheck);
-            },
-
-            pushSendDataQueueHandler = function () {
-                while (pushSendDataQueue.length > 0 && socketState === socketStateType.OPEN) {
-                    var msg = pushSendDataQueue.splice(0, 1)[0];
-                    pushSendData(msg);
-                }
-            },
-
-            fireEvent = function (eventName, param, ack) {
-                // try {
-                if (ack) {
-                    for (var id in eventCallbacks[eventName]) {
-                        eventCallbacks[eventName][id](param, ack);
-                    }
-                }
-                else {
-                    for (var id in eventCallbacks[eventName]) {
-                        eventCallbacks[eventName][id](param);
-                    }
-                }
-                // }
-                // catch (e) {
-                //     fireEvent('error', {
-                //         errorCode: 999,
-                //         errorMessage: 'Unknown ERROR!',
-                //         errorEvent: e
-                //     });
-                // }
-            };
-
-        /*******************************************************
-         *             P U B L I C   M E T H O D S             *
-         *******************************************************/
-
-        this.on = function (eventName, callback) {
-            if (eventCallbacks[eventName]) {
-                var id = Utility.generateUUID();
-                eventCallbacks[eventName][id] = callback;
-                return id;
-            }
-            if (eventName === 'connect' && socketState === socketStateType.OPEN) {
-                callback(peerId);
-            }
-        };
-
-        this.send = function (params, callback) {
-            var messageType = (typeof params.type === 'number')
-                ? params.type
-                : (callback)
-                    ? asyncMessageType.MESSAGE_SENDER_ACK_NEEDED
-                    : asyncMessageType.MESSAGE;
-
-            var socketData = {
-                type: messageType,
-                uniqueId: params.uniqueId ? params.uniqueId : undefined,
-                content: params.content
-            };
-
-            if (params.trackerId) {
-                socketData.trackerId = params.trackerId;
-            }
-
-            lastMessageId += 1;
-            var messageId = lastMessageId;
-
-            if (messageType === asyncMessageType.MESSAGE_SENDER_ACK_NEEDED || messageType === asyncMessageType.MESSAGE_ACK_NEEDED) {
-                ackCallback[messageId] = function () {
-                    callback && callback();
-                };
-            }
-
-            socketData.content.messageId = messageId;
-            socketData.content.ttl = messageTtl;
-
-            pushSendData(socketData);
-        };
-
-        this.getAsyncState = function () {
-            return socketState;
-        };
-
-        this.getSendQueue = function () {
-            return pushSendDataQueue;
-        };
-
-        this.getPeerId = function () {
-            return peerId;
-        };
-
-        this.getServerName = function () {
-            return serverName;
-        };
-
-        this.setServerName = function (newServerName) {
-            serverName = newServerName;
-        };
-
-        this.setDeviceId = function (newDeviceId) {
-            deviceId = newDeviceId;
-        };
-
-        this.close = function () {
-            oldPeerId = peerId;
-            isDeviceRegister = false;
-            isSocketOpen = false;
-            clearTimeouts();
-
-            switch (protocol) {
-                case 'websocket':
-                    socketState = socketStateType.CLOSED;
-                    fireEvent('stateChange', {
-                        socketState: socketState,
-                        timeUntilReconnect: 0,
-                        deviceRegister: isDeviceRegister,
-                        serverRegister: isServerRegister,
-                        peerId: peerId
-                    });
-
-                    socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-                    socket.close();
-                    break;
-                case 'webrtc':
-                    socketState = socketStateType.CLOSED;
-                    fireEvent('stateChange', {
-                        socketState: socketState,
-                        timeUntilReconnect: 0,
-                        deviceRegister: isDeviceRegister,
-                        serverRegister: isServerRegister,
-                        peerId: peerId
-                    });
-
-                    socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-                    webRTCClass.close();
-
-                    break;
-            }
-        };
-
-        this.logout = function () {
-            oldPeerId = peerId;
-            peerId = undefined;
-            isServerRegister = false;
-            isDeviceRegister = false;
-            isSocketOpen = false;
-            deviceId = undefined;
-            pushSendDataQueue = [];
-            ackCallback = {};
-            clearTimeouts();
-
-            switch (protocol) {
-                case 'websocket':
-                    socketState = socketStateType.CLOSED;
-                    fireEvent('stateChange', {
-                        socketState: socketState,
-                        timeUntilReconnect: 0,
-                        deviceRegister: isDeviceRegister,
-                        serverRegister: isServerRegister,
-                        peerId: peerId
-                    });
-
-                    reconnectOnClose = false;
-
-                    socket.close();
-                    break;
-                case 'webrtc':
-                    socketState = socketStateType.CLOSED;
-                    fireEvent('stateChange', {
-                        socketState: socketState,
-                        timeUntilReconnect: 0,
-                        deviceRegister: isDeviceRegister,
-                        serverRegister: isServerRegister,
-                        peerId: peerId
-                    });
-
-                    reconnectOnClose = false;
-                    webRTCClass.close();
-
-                    break;
-            }
-        };
-
-        this.reconnectSocket = function () {
-            oldPeerId = peerId;
-            isDeviceRegister = false;
-            isSocketOpen = false;
-            clearTimeouts();
-
-            socketState = socketStateType.CLOSED;
-            fireEvent('stateChange', {
-                socketState: socketState,
-                timeUntilReconnect: 0,
-                deviceRegister: isDeviceRegister,
-                serverRegister: isServerRegister,
-                peerId: peerId
-            });
-
-            socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-            if(protocol === "websocket")
-                socket.close();
-            else if(protocol == "webrtc")
-                webRTCClass.close()
-
-            socketReconnectRetryInterval = setTimeout(function () {
-                // retryStep = 4;
-                retryStep.set(0);
-
-                if(protocol === "websocket")
-                    socket.connect();
-                else if(protocol == "webrtc")
-                    webRTCClass.connect()
-            }, 2000);
-        };
-
-        this.generateUUID = Utility.generateUUID;
-
-        init();
-    }
-
-    if (typeof module !== 'undefined' && typeof module.exports != 'undefined') {
-        module.exports = Async;
-    }
-    else {
-        if (!window.POD) {
-            window.POD = {};
-        }
-        window.POD.Async = Async;
-    }
-})();
-
-},{"../utility/logger.js":203,"../utility/utility.js":204,"./socket.js":201,"./webrtc.js":202}],201:[function(require,module,exports){
-(function() {
-  /*
-   * Socket Module to connect and handle Socket functionalities
-   * @module Socket
-   *
-   * @param {Object} params
-   */
-
-  function Socket(params) {
-
-    if (typeof(WebSocket) === "undefined" && typeof(require) !== "undefined" && typeof(exports) !== "undefined") {
-      WebSocket = require('isomorphic-ws');
-    }
-
-    /*******************************************************
-     *          P R I V A T E   V A R I A B L E S          *
-     *******************************************************/
-
-    var address = params.socketAddress,
-        wsConnectionWaitTime = params.wsConnectionWaitTime || 500,
-        connectionCheckTimeout = params.connectionCheckTimeout || 10000,
-        eventCallback = {},
-        socket,
-        waitForSocketToConnectTimeoutId,
-        socketRealTimeStatusInterval,
-        logLevel = params.logLevel,
-        pingController = new PingManager({waitTime: connectionCheckTimeout}),
-        socketWatchTimeout;
-
-
-    function PingManager(params) {
-      const config = {
-        normalWaitTime: params.waitTime,
-
-        lastRequestTimeoutId: null,
-        lastReceivedMessageTime: 0,
-        totalNoMessageCount: 0,
-        timeoutIds: {
-          first: null,
-          second: null,
-          third: null,
-          //fourth: null
-        }
-      }
-
-      return {
-        resetPingLoop() {
-          this.stopPingLoop();
-          this.setPingTimeout();
-        },
-        setPingTimeout() {
-          config.timeoutIds.first = setTimeout(()=>{
-            ping();
-            config.timeoutIds.second = setTimeout(()=>{
-              ping();
-              config.timeoutIds.third = setTimeout(()=>{
-                logLevel.debug && console.debug("[Async][Socket.js] Force closing socket.");
-                onCloseHandler(null);
-                socket.close();
-              }, 2000);
-            }, 2000);
-          }, 8000);
-        },
-        stopPingLoop(){
-          clearTimeout(config.timeoutIds.first);
-          clearTimeout(config.timeoutIds.second);
-          clearTimeout(config.timeoutIds.third);
-          // clearTimeout(config.timeoutIds.fourth);
-        },
-      }
-    }
-
-    /*******************************************************
-     *            P R I V A T E   M E T H O D S            *
-     *******************************************************/
-
-    var init = function() {
-          connect();
-        },
-
-        connect = function() {
-          try {
-            if (socket && socket.readyState == 1) {
-              return;
-            }
-
-            socket = new WebSocket(address, []);
-
-            // socketRealTimeStatusInterval && clearInterval(socketRealTimeStatusInterval);
-            // socketRealTimeStatusInterval = setInterval(function() {
-            //   switch (socket.readyState) {
-            //     case 2:
-            //       onCloseHandler(null);
-            //       socketRealTimeStatusInterval && clearInterval(socketRealTimeStatusInterval);
-            //       break;
-            //     case 3:
-            //
-            //       break;
-            //   }
-            // }, 5000);
-
-            /**
-             * Watches the socket to make sure it's state changes to 1 in 5 seconds
-             */
-            socketWatchTimeout && clearTimeout(socketWatchTimeout);
-            socketWatchTimeout = setTimeout(() => {
-              // if(socket.readyState !== 1) {
-              logLevel.debug && console.debug("[Async][Socket.js] socketWatchTimeout triggered.");
-              onCloseHandler(null);
-              socket.close();
-              // }
-            }, 5000);
-
-            socket.onopen = function(event) {
-              waitForSocketToConnect(function() {
-                pingController.resetPingLoop();
-                eventCallback["open"]();
-                socketWatchTimeout && clearTimeout(socketWatchTimeout);
-              });
-            }
-
-            socket.onmessage = function(event) {
-              pingController.resetPingLoop();
-
-              var messageData = JSON.parse(event.data);
-              eventCallback["message"](messageData);
-            }
-
-            socket.onclose = function(event) {
-              pingController.stopPingLoop();
-              logLevel.debug && console.debug("[Async][Socket.js] socket.onclose happened. EventData:", event);
-              onCloseHandler(event);
-              socketWatchTimeout && clearTimeout(socketWatchTimeout);
-            }
-
-            socket.onerror = function(event) {
-              logLevel.debug && console.debug("[Async][Socket.js] socket.onerror happened. EventData:", event);
-              eventCallback["error"](event);
-              socketWatchTimeout && clearTimeout(socketWatchTimeout);
-            }
-          } catch (error) {
-            eventCallback["customError"]({
-              errorCode: 4000,
-              errorMessage: "ERROR in WEBSOCKET!",
-              errorEvent: error
-            });
-          }
-        },
-
-        onCloseHandler = function(event) {
-          pingController.stopPingLoop();
-          socket.onclose = null;
-          socket.onmessage = null;
-          socket.onerror = null;
-          socket.onopen = null;
-          eventCallback["close"](event);
-        },
-
-        ping = function() {
-          sendData({
-            type: 0
-          });
-        },
-
-        waitForSocketToConnect = function(callback) {
-          waitForSocketToConnectTimeoutId && clearTimeout(waitForSocketToConnectTimeoutId);
-
-          if (socket.readyState === 1) {
-            callback();
-          } else {
-            waitForSocketToConnectTimeoutId = setTimeout(function() {
-              if (socket.readyState === 1) {
-                callback();
-              } else {
-                waitForSocketToConnect(callback);
-              }
-            }, wsConnectionWaitTime);
-          }
-        },
-
-        sendData = function(params) {
-          var data = {
-            type: params.type,
-            uniqueId: params.uniqueId
-          };
-
-          if (params.trackerId) {
-            data.trackerId = params.trackerId;
-          }
-
-          try {
-            if (params.content) {
-              data.content = JSON.stringify(params.content);
-            }
-
-            if (socket.readyState === 1) {
-              socket.send(JSON.stringify(data));
-            }
-          } catch (error) {
-            eventCallback["customError"]({
-              errorCode: 4004,
-              errorMessage: "Error in Socket sendData!",
-              errorEvent: error
-            });
-          }
-        };
-
-    /*******************************************************
-     *             P U B L I C   M E T H O D S             *
-     *******************************************************/
-
-    this.on = function(messageName, callback) {
-      eventCallback[messageName] = callback;
-    }
-
-    this.emit = sendData;
-
-    this.connect = function() {
-      connect();
-    }
-
-    this.close = function() {
-      logLevel.debug && console.debug("[Async][Socket.js] Closing socket by call to this.close");
-      socket.close();
-      onCloseHandler(null);
-      socketWatchTimeout && clearTimeout(socketWatchTimeout);
-    }
-
-    init();
-  }
-
-  if (typeof module !== 'undefined' && typeof module.exports != "undefined") {
-    module.exports = Socket;
-  } else {
-    if (!window.POD) {
-      window.POD = {};
-    }
-    window.POD.Socket = Socket;
-  }
-
-})();
-
-},{"isomorphic-ws":183}],202:[function(require,module,exports){
-let defaultConfig = {
-        baseUrl: "http://109.201.0.97/webrtc/",
-        registerEndpoint: "register/",
-        addICEEndpoint: "add-ice/",
-        getICEEndpoint: "get-ice/?",
-        configuration: {
-            bundlePolicy: "balanced",
-            iceTransportPolicy: "relay",
-            iceServers: [{
-                "urls": "turn:turnsandbox.podstream.ir:3478", "username": "mkhorrami", "credential": "mkh_123456"
-            }]
-        },
-        connectionCheckTimeout: 10000,
-        logLevel: null
-    },
-    variables = {
-        peerConnection: null,
-        dataChannel: null,
-        pingController: new PingManager({waitTime: defaultConfig.connectionCheckTimeout}),
-        candidatesQueue: [],
-        // candidatesSendQueue: [],
-        candidateManager: new CandidatesSendQueueManager(),
-        clientId: null,
-        deviceId: null,
-        apiCallRetries: {
-            register: 3,
-            getIce: 3,
-            addIce: 5
-        }
-    };
-
-function CandidatesSendQueueManager() {
-    let config = {
-        candidatesToSend: [],
-        alreadyReceivedServerCandidates: false,
-        reCheckTimeout: null
-    }
-
-    function trySendingCandidates() {
-        timoutCallback();
-        function timoutCallback() {
-            if(variables.peerConnection.signalingState === 'stable') {
-                config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
-                if (config.candidatesToSend.length) {
-                    let entry = config.candidatesToSend.shift();
-                    handshakingFunctions
-                        .sendCandidate(entry)
-                        .then(function (result) {
-                            if (result.length) {
-                                addServerCandidates(result);
-
-                                config.alreadyReceivedServerCandidates = true;
-                            }
-                            trySendingCandidates();
-                        });
-
-                } else if (!config.alreadyReceivedServerCandidates) {
-                    handshakingFunctions.getCandidates(variables.clientId).then(function (result) {
-                        addServerCandidates(result)
-                    }).catch();
-                }
-            } else {
-                config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
-                config.reCheckTimeout = setTimeout(timoutCallback, 1000);
-            }
-        }
-    }
-
-    function addServerCandidates(candidates) {
-        for(let i in candidates) {
-            webrtcFunctions.putCandidateToQueue(candidates[i]);
-        }
-    }
-
-    return {
-        add: function (candidate) {
-            config.candidatesToSend.push(candidate);
-            trySendingCandidates();
-        },
-        destroy: function (){
-            config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
-        }
-    }
-}
-
-function PingManager(params) {
-    const config = {
-        normalWaitTime: params.waitTime,
-
-        lastRequestTimeoutId: null,
-        lastReceivedMessageTime: 0,
-        totalNoMessageCount: 0,
-        timeoutIds: {
-            first: null,
-            second: null,
-            third: null,
-            fourth: null
-        }
-    }
-
-    return {
-        resetPingLoop() {
-            this.stopPingLoop();
-            this.setPingTimeout();
-        },
-        setPingTimeout() {
-            config.timeoutIds.first = setTimeout(() => {
-                ping();
-                config.timeoutIds.second = setTimeout(() => {
-                    ping();
-                    config.timeoutIds.third = setTimeout(() => {
-                        defaultConfig.logLevel.debug && console.debug("[Async][Webrtc.js] Force closing connection.");
-                        publicized.close();
-                    }, 2000);
-                }, 2000);
-            }, 8000);
-        },
-        stopPingLoop() {
-            clearTimeout(config.timeoutIds.first);
-            clearTimeout(config.timeoutIds.second);
-            clearTimeout(config.timeoutIds.third);
-            // clearTimeout(config.timeoutIds.fourth);
-        },
-    }
-}
-
-function connect() {
-    webrtcFunctions.createPeerConnection();
-    webrtcFunctions.createDataChannel();
-    webrtcFunctions.generateSdpOffer()
-        .then(sendOfferToServer);
-
-    function sendOfferToServer(offer) {
-        handshakingFunctions
-            .register(offer.sdp)
-            .then(processRegisterResult).catch();
-
-        variables
-            .peerConnection.setLocalDescription(offer)
-            .catch(error => console.error(error));
-    }
-
-    function processRegisterResult(result) {
-        variables.clientId = result.clientId;
-        variables.deviceId = result.deviceId;
-        webrtcFunctions.processAnswer(result.sdpAnswer);
-    }
-}
-
-let webrtcFunctions = {
-    createPeerConnection: function () {
-        variables.peerConnection = new RTCPeerConnection(defaultConfig.configuration);
-        variables.peerConnection.addEventListener('signalingstatechange', webrtcFunctions.signalingStateChangeCallback);
-        variables.peerConnection.onicecandidate = function (event) {
-            if (event.candidate) {
-                variables.candidateManager.add(event.candidate);
-                webrtcFunctions.putCandidateToQueue(event.candidate);
-            }
-        };
-    },
-    signalingStateChangeCallback: function () {
-        if (variables.peerConnection.signalingState === 'stable') {
-            // handshakingFunctions.getCandidates().catch()
-            webrtcFunctions.addTheCandidates();
-        }
-    },
-    createDataChannel: function () {
-        variables.dataChannel = variables.peerConnection.createDataChannel("dataChannel", {ordered: false});
-        variables.dataChannel.onopen = dataChannelCallbacks.onopen;
-        variables.dataChannel.onmessage = dataChannelCallbacks.onmessage;
-        variables.dataChannel.onerror = dataChannelCallbacks.onerror;
-        variables.dataChannel.onclose = dataChannelCallbacks.onclose;
-    },
-    generateSdpOffer: function () {
-        return new Promise(function (resolve, reject) {
-            variables.peerConnection.createOffer(function (offer) {
-                resolve(offer)
-            }, function (error) {
-                reject(error);
-                console.error(error);
-            }).then(r => console.log(r));
-        })
-    },
-    processAnswer: function (answer) {
-        let remoteDesc = {
-            type: "answer", sdp: answer
-        };
-        variables
-            .peerConnection
-            .setRemoteDescription(new RTCSessionDescription(remoteDesc))
-            .catch(function (error) {
-                console.error(error)
-            });
-    },
-    addTheCandidates: function () {
-        while (variables.candidatesQueue.length) {
-            let entry = variables.candidatesQueue.shift();
-            variables.peerConnection.addIceCandidate(entry.candidate);
-        }
-    },
-    putCandidateToQueue: function (candidate) {
-        variables.candidatesQueue.push({
-            candidate: new RTCIceCandidate(candidate)
-        });
-        if (variables.peerConnection.signalingState === 'stable') {
-            webrtcFunctions.addTheCandidates();
-        }
-    },
-    sendData: function(params) {
-        if(!variables.dataChannel) {
-            console.error("Connection is closed, do not send messages.")
-            return;
-        }
-        var data = {
-            type: params.type,
-            uniqueId: params.uniqueId
-        };
-
-        if (params.trackerId) {
-            data.trackerId = params.trackerId;
-        }
-
-        try {
-            if (params.content) {
-                data.content = JSON.stringify(params.content);
-            }
-
-            if (variables.peerConnection.signalingState === 'stable') {
-                //defaultConfig.logLevel.debug &&
-                console.log("[Async][WebRTC] Send ", data);
-                variables.dataChannel.send(JSON.stringify(data));
-            }
-        } catch (error) {
-            eventCallback["customError"]({
-                errorCode: 4004,
-                errorMessage: "Error in Socket sendData!",
-                errorEvent: error
-            });
-        }
-    }
-}
-
-let dataChannelCallbacks = {
-    onopen: function (event) {
-        console.log("********* dataChannel open *********");
-        variables.pingController.resetPingLoop();
-        eventCallback["open"]();
-
-        const deviceRegister = {
-            "type": "2",
-            "content": {"deviceId": variables.deviceId, "appId": "PodChat", "refresh": false, "renew": true}
-        };
-        deviceRegister.content = JSON.stringify(deviceRegister.content)
-        variables.dataChannel.send(JSON.stringify(deviceRegister));
-    },
-
-    onmessage: function (event) {
-
-        variables.pingController.resetPingLoop();
-        var messageData = JSON.parse(event.data);
-        console.log("[Async][WebRTC] Receive ", event.data);
-        eventCallback["message"](messageData);
-    },
-
-    onerror: function (error) {
-        logLevel.debug && console.debug("[Async][Socket.js] dataChannel.onerror happened. EventData:", event);
-        eventCallback["error"](event);
-    },
-    onclose: function (event) {
-        resetVariables();
-        eventCallback["close"](event);
-    }
-}
-
-let handshakingFunctions = {
-    register: function (offer) {
-        let retries = variables.apiCallRetries.register;
-        return new Promise(promiseHandler);
-        function promiseHandler(resolve, reject) {
-            let registerEndPoint = defaultConfig.baseUrl + defaultConfig.registerEndpoint
-            fetch(registerEndPoint, {
-                method: "POST",
-                body: JSON.stringify({
-                    offer: offer
-                }),
-                headers: {
-                    "Content-Type": "application/json",
-                    // 'Content-Type': 'application/x-www-form-urlencoded',
-                },
-            })
-                .then(function (response) {
-                    if(response.ok)
-                        return response.json();
-                    else if(retries){
-                        retryTheRequest(resolve, reject);
-                        retries--;
-                    } else reject();
-                })
-                .then(result => resolve(result))
-                .catch(err => {
-                    if(retries){
-                        retryTheRequest(resolve, reject);
-                        retries--;
-                    } else {
-                        publicized.close();
-                    }
-                    console.error(err);
-                });
-        }
-        function retryTheRequest(resolve, reject){
-            setTimeout(function (){promiseHandler(resolve, reject)}, 1000);
-        }
-    },
-    getCandidates: function (clientId) {
-        let addIceCandidateEndPoint = defaultConfig.baseUrl + defaultConfig.getICEEndpoint
-        addIceCandidateEndPoint += "clientId=" + clientId;
-
-        let retries = variables.apiCallRetries.getIce;
-        return new Promise(promiseHandler);
-        function promiseHandler(resolve, reject) {
-            fetch(addIceCandidateEndPoint, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    // 'Content-Type': 'application/x-www-form-urlencoded',
-                },
-            })
-                .then(function (response) {
-                    if(response.ok)
-                        return response.json();
-                    else if(retries){
-                        retryTheRequest(resolve, reject);
-                        retries--;
-                    } else reject();
-                })
-                .then(function (result) {
-                    resolve(result.iceCandidates)
-                    // if(result.iceCandidates && result.iceCandidates.length) {
-                    //     // result.iceCandidates.forEach((item) => {
-                    //     //     webrtcFunctions.putCandidateToQueue(item);
-                    //     // });
-                    //     resolve(result.iceCandidates)
-                    // }
-                    // else {
-                    //     if(retries){
-                    //         retryTheRequest(resolve, reject);
-                    //         retries--;
-                    //     } else reject();
-                    // }
-                })
-                .catch(function (err) {
-                    if(retries){
-                        retryTheRequest(resolve, reject);
-                        retries--;
-                    } else reject(err);
-                    console.error(err);
-                });
-        }
-
-        function retryTheRequest(resolve, reject){
-            setTimeout(function (){promiseHandler(resolve, reject)}, 1000);
-        }
-
-    },
-    sendCandidate: function (candidate) {
-        let addIceCandidateEndPoint = defaultConfig.baseUrl + defaultConfig.addICEEndpoint
-            , retries = variables.apiCallRetries.addIce;
-
-        return new Promise(promiseHandler);
-        function promiseHandler(resolve, reject) {
-            fetch(addIceCandidateEndPoint, {
-                method: "POST",
-                body: JSON.stringify({
-                    "clientId": variables.clientId,
-                    "candidate": candidate
-                }),
-                headers: {
-                    "Content-Type": "application/json",
-                    // 'Content-Type': 'application/x-www-form-urlencoded',
-                },
-            })
-                .then(function (response) {
-                    if(response.ok)
-                        return response.json();
-                    else if(retries){
-                        retryTheRequest(resolve, reject);
-                        retries--;
-                    } else reject();
-                })
-                .then(function (result) {
-                    resolve(result.iceCandidates);
-                })
-                .catch(err => {
-                    if(retries){
-                        retryTheRequest(resolve, reject);
-                        retries--;
-                    } else reject(err);
-                    console.error(err);
-                });
-        }
-
-        function retryTheRequest(resolve, reject){
-            setTimeout(function (){promiseHandler(resolve, reject)}, 2000);
-        }
-    }
-}
-
-eventCallback = {};
-
-function resetVariables() {
-    console.log("resetVariables");
-    eventCallback["close"]();
-    variables.pingController.stopPingLoop();
-    variables.dataChannel.close();
-    variables.dataChannel = null;
-    variables.peerConnection.close();
-    variables.peerConnection = null;
-    variables.candidatesQueue = [];
-    variables.clientId = null;
-    variables.deviceId = null;
-    variables.candidateManager.destroy();
-    variables.candidateManager = new CandidatesSendQueueManager()
-}
-
-function ping() {
-    webrtcFunctions.sendData({
-        type: 0
-    });
-}
-function removeCallbacks(){
-    if(variables.peerConnection)
-        variables.peerConnection.onicecandidate = null;
-    if(variables.dataChannel) {
-        variables.dataChannel.onclose = null;
-        variables.dataChannel.onmessage = null;
-        variables.dataChannel.onerror = null;
-        variables.dataChannel.onopen = null;
-    }
-}
-
-function WebRTCClass({
-    baseUrl,
-    configuration,
-    connectionCheckTimeout = 10000,
-    logLevel
-}) {
-    let config = {}
-    if (baseUrl)
-        config.baseUrl = baseUrl;
-    if (configuration)
-        config.configuration = configuration;
-    if (connectionCheckTimeout)
-        config.connectionCheckTimeout = connectionCheckTimeout;
-    if (logLevel)
-        config.logLevel = logLevel;
-
-    defaultConfig = Object.assign(defaultConfig, config);
-    connect();
-    return publicized;
-}
-
-let publicized = {
-    on: function (messageName, callback) {
-        eventCallback[messageName] = callback;
-    },
-    emit: webrtcFunctions.sendData,
-    connect: connect,
-    close: function () {
-        removeCallbacks();
-        resetVariables();
-    }
-};
-
-module.exports = WebRTCClass;
-},{}],203:[function(require,module,exports){
-function LogLevel(logLevel){
-    let ll = logLevel || 2;
-    switch (ll) {
-        case 1:
-            return {
-                error: true,
-                debug: false,
-                info: false,
-            }
-        case 2:
-            return {
-                error: true,
-                debug: true,
-                info: false,
-            }
-        case 3:
-            return {
-                error: true,
-                debug: true,
-                info: true,
-            }
-    }
-}
-
-
-if (typeof module !== 'undefined' && typeof module.exports != 'undefined') {
-    module.exports = LogLevel;
-}
-else {
-    if (!window.POD) {
-        window.POD = {};
-    }
-    window.POD.LogLevel = LogLevel;
-}
-
-},{}],204:[function(require,module,exports){
-(function (global){(function (){
-(function() {
-  /**
-   * General Utilities
-   */
-  function Utility() {
-    /**
-     * Checks if Client is using NodeJS or not
-     * @return {boolean}
-     */
-    this.isNode = function() {
-      // return (typeof module !== 'undefined' && typeof module.exports != "undefined");
-      return (typeof global !== "undefined" && ({}).toString.call(global) === '[object global]');
-    }
-
-    /**
-     * Generates Random String
-     * @param   {int}     sectionCount
-     * @return  {string}
-     */
-    this.generateUUID = function(sectionCount) {
-      var d = new Date().getTime();
-      var textData = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
-
-      if (sectionCount == 1) {
-        textData = 'xxxxxxxx';
-      }
-
-      if (sectionCount == 2) {
-        textData = 'xxxxxxxx-xxxx';
-      }
-
-      if (sectionCount == 3) {
-        textData = 'xxxxxxxx-xxxx-4xxx';
-      }
-
-      if (sectionCount == 4) {
-        textData = 'xxxxxxxx-xxxx-4xxx-yxxx';
-      }
-
-      var uuid = textData.replace(/[xy]/g, function(c) {
-        var r = (d + Math.random() * 16) % 16 | 0;
-        d = Math.floor(d / 16);
-
-        return (
-          c == 'x' ?
-          r :
-          (r & 0x7 | 0x8)).toString(16);
-      });
-      return uuid;
-    };
-
-    /**
-     * Prints Socket Status on Both Browser and Linux Terminal
-     * @param {object} params Socket status + current msg + send queue
-     * @return
-     */
-    this.asyncLogger = function(params) {
-      var type = params.type,
-        msg = params.msg,
-        peerId = params.peerId,
-        deviceId = params.deviceId,
-        isSocketOpen = params.isSocketOpen,
-        isDeviceRegister = params.isDeviceRegister,
-        isServerRegister = params.isServerRegister,
-        socketState = params.socketState,
-        pushSendDataQueue = params.pushSendDataQueue,
-        workerId = params.workerId,
-        protocol = params.protocol || "websocket",
-        BgColor;
-
-      switch (type) {
-        case "Send":
-          BgColor = 44;
-          FgColor = 34;
-          ColorCSS = "#4c8aff";
-          break;
-
-        case "Receive":
-          BgColor = 45;
-          FgColor = 35;
-          ColorCSS = "#aa386d";
-          break;
-
-        case "Error":
-          BgColor = 41;
-          FgColor = 31;
-          ColorCSS = "#ff0043";
-          break;
-
-        default:
-          BgColor = 45;
-          ColorCSS = "#212121";
-          break;
-      }
-
-      switch (protocol) {
-        case "websocket":
-          if (typeof global !== "undefined" && ({}).toString.call(global) === '[object global]') {
-            console.log("\n");
-            console.log("\x1b[" + BgColor + "m\x1b[8m%s\x1b[0m", "################################################################");
-            console.log("\x1b[" + BgColor + "m\x1b[8m##################\x1b[0m\x1b[37m\x1b[" + BgColor + "m S O C K E T    S T A T U S \x1b[0m\x1b[" + BgColor + "m\x1b[8m##################\x1b[0m");
-            console.log("\x1b[" + BgColor + "m\x1b[8m%s\x1b[0m", "################################################################");
-            console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t\t\t\t\t\t\t      \x1b[" + BgColor + "m\x1b[8m##\x1b[0m");
-            console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m", " PEER ID\t\t", peerId);
-            if (workerId > 0) {
-              console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m", " WORKER ID\t\t", workerId);
-            }
-            console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m", " DEVICE ID\t\t", deviceId);
-            console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m", " IS SOCKET OPEN\t", isSocketOpen);
-            console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m", " DEVICE REGISTER\t", isDeviceRegister);
-            console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m", " SERVER REGISTER\t", isServerRegister);
-            console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m", " SOCKET STATE\t", socketState);
-            console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[" + FgColor + "m%s\x1b[0m ", " CURRENT MESSAGE\t", type);
-            console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m");
-
-            Object.keys(msg).forEach(function(key) {
-              if (typeof msg[key] === 'object') {
-                console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t \x1b[1m-\x1b[0m \x1b[35m%s\x1b[0m", key);
-                Object.keys(msg[key]).forEach(function(k) {
-                  console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t   \x1b[1m•\x1b[0m \x1b[35m%s\x1b[0m : \x1b[33m%s\x1b[0m", k, msg[key][k]);
-                });
-              } else {
-                console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t \x1b[1m•\x1b[0m \x1b[35m%s\x1b[0m : \x1b[33m%s\x1b[0m", key, msg[key]);
-              }
-            });
-
-            console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m");
-
-            if (pushSendDataQueue.length > 0) {
-              console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m", " SEND QUEUE");
-              console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m");
-              Object.keys(pushSendDataQueue).forEach(function(key) {
-                if (typeof pushSendDataQueue[key] === 'object') {
-                  console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t \x1b[1m-\x1b[0m \x1b[35m%s\x1b[0m", key);
-                  Object.keys(pushSendDataQueue[key]).forEach(function(k) {
-                    console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t   \x1b[1m•\x1b[0m \x1b[35m%s\x1b[0m : \x1b[36m%s\x1b[0m", k, JSON.stringify(pushSendDataQueue[key][k]));
-                  });
-                } else {
-                  console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t \x1b[1m•\x1b[0m \x1b[35m%s\x1b[0m : \x1b[33m%s\x1b[0m", key, pushSendDataQueue[key]);
-                }
-              });
-
-            } else {
-              console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m ", " SEND QUEUE\t\t", "Empty");
-            }
-
-            console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t\t\t\t\t\t\t      \x1b[" + BgColor + "m\x1b[8m##\x1b[0m");
-            console.log("\x1b[" + BgColor + "m\x1b[8m%s\x1b[0m", "################################################################");
-            console.log("\n");
-          } else {
-            console.log("\n");
-            console.log("%cS O C K E T    S T A T U S", 'background: ' + ColorCSS + '; padding: 10px 142px; font-weight: bold; font-size: 18px; color: #fff;');
-            console.log("\n");
-            console.log("%c   PEER ID\t\t %c" + peerId, 'color: #444', 'color: #ffac28; font-weight: bold');
-            console.log("%c   DEVICE ID\t\t %c" + deviceId, 'color: #444', 'color: #ffac28; font-weight: bold');
-            console.log("%c   IS SOCKET OPEN\t %c" + isSocketOpen, 'color: #444', 'color: #ffac28; font-weight: bold');
-            console.log("%c   DEVICE REGISTER\t %c" + isDeviceRegister, 'color: #444', 'color: #ffac28; font-weight: bold');
-            console.log("%c   SERVER REGISTER\t %c" + isServerRegister, 'color: #444', 'color: #ffac28; font-weight: bold');
-            console.log("%c   SOCKET STATE\t\t %c" + socketState, 'color: #444', 'color: #ffac28; font-weight: bold');
-            console.log("%c   CURRENT MESSAGE\t %c" + type, 'color: #444', 'color: #aa386d; font-weight: bold');
-            console.log("\n");
-
-            Object.keys(msg).forEach(function(key) {
-              if (typeof msg[key] === 'object') {
-                console.log("%c \t-" + key, 'color: #777');
-                Object.keys(msg[key]).forEach(function(k) {
-                  console.log("%c \t  •" + k + " : %c" + msg[key][k], 'color: #777', 'color: #f23; font-weight: bold');
-                });
-              } else {
-                console.log("%c \t•" + key + " : %c" + msg[key], 'color: #777', 'color: #f23; font-weight: bold');
-              }
-            });
-
-            console.log("\n");
-
-            if (pushSendDataQueue.length > 0) {
-              console.log("%c   SEND QUEUE", 'color: #444');
-              console.log("\n");
-              Object.keys(pushSendDataQueue).forEach(function(key) {
-                if (typeof pushSendDataQueue[key] === 'object') {
-                  console.log("%c \t-" + key, 'color: #777');
-                  Object.keys(pushSendDataQueue[key]).forEach(function(k) {
-                    console.log("%c \t  •" + k + " : %c" + JSON.stringify(pushSendDataQueue[key][k]), 'color: #777', 'color: #999; font-weight: bold');
-                  });
-                } else {
-                  console.log("%c \t•" + key + " : %c" + pushSendDataQueue[key], 'color: #777', 'color: #999; font-weight: bold');
-                }
-              });
-
-            } else {
-              console.log("%c   SEND QUEUE\t\t %cEmpty", 'color: #444', 'color: #000; font-weight: bold');
-            }
-
-            console.log("\n");
-            console.log("%c ", 'font-weight: bold; font-size: 3px; border-left: solid 540px ' + ColorCSS + ';');
-            console.log("\n");
-          }
-          break;
-      }
-    }
-
-    /**
-     * Prints Custom Message in console
-     * @param {string} message Message to be logged in terminal
-     * @return
-     */
-    this.asyncStepLogger = function(message) {
-      if (typeof navigator == "undefined") {
-        console.log("\x1b[90m    ☰ \x1b[0m\x1b[90m%s\x1b[0m", message);
-      } else {
-        console.log("%c   " + message, 'border-left: solid #666 10px; color: #666;');
-      }
-    }
-  }
-
-  if (typeof module !== 'undefined' && typeof module.exports != "undefined") {
-    module.exports = Utility;
-  } else {
-    if (!window.POD) {
-      window.POD = {};
-    }
-    window.POD.AsyncUtility = Utility;
-  }
-})();
-
-}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],205:[function(require,module,exports){
+},{"safe-buffer":216}],205:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -35202,9 +35204,9 @@ function i2ops (c) {
   return out
 }
 
-},{"create-hash":81,"safe-buffer":216}],208:[function(require,module,exports){
-arguments[4][28][0].apply(exports,arguments)
-},{"buffer":32,"dup":28}],209:[function(require,module,exports){
+},{"create-hash":87,"safe-buffer":216}],208:[function(require,module,exports){
+arguments[4][34][0].apply(exports,arguments)
+},{"buffer":38,"dup":34}],209:[function(require,module,exports){
 var parseKeys = require('parse-asn1')
 var mgf = require('./mgf')
 var xor = require('./xor')
@@ -35311,7 +35313,7 @@ function compare (a, b) {
   return dif
 }
 
-},{"./mgf":207,"./withPublic":211,"./xor":212,"bn.js":208,"browserify-rsa":53,"create-hash":81,"parse-asn1":193,"safe-buffer":216}],210:[function(require,module,exports){
+},{"./mgf":207,"./withPublic":211,"./xor":212,"bn.js":208,"browserify-rsa":59,"create-hash":87,"parse-asn1":198,"safe-buffer":216}],210:[function(require,module,exports){
 var parseKeys = require('parse-asn1')
 var randomBytes = require('randombytes')
 var createHash = require('create-hash')
@@ -35401,7 +35403,7 @@ function nonZero (len) {
   return out
 }
 
-},{"./mgf":207,"./withPublic":211,"./xor":212,"bn.js":208,"browserify-rsa":53,"create-hash":81,"parse-asn1":193,"randombytes":213,"safe-buffer":216}],211:[function(require,module,exports){
+},{"./mgf":207,"./withPublic":211,"./xor":212,"bn.js":208,"browserify-rsa":59,"create-hash":87,"parse-asn1":198,"randombytes":213,"safe-buffer":216}],211:[function(require,module,exports){
 var BN = require('bn.js')
 var Buffer = require('safe-buffer').Buffer
 
@@ -35756,7 +35758,7 @@ function fn5 (a, b, c, d, e, m, k, s) {
 
 module.exports = RIPEMD160
 
-},{"buffer":77,"hash-base":151,"inherits":182}],216:[function(require,module,exports){
+},{"buffer":83,"hash-base":157,"inherits":188}],216:[function(require,module,exports){
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
 var Buffer = buffer.Buffer
@@ -35820,7 +35822,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-},{"buffer":77}],217:[function(require,module,exports){
+},{"buffer":83}],217:[function(require,module,exports){
 (function (process){(function (){
 /* eslint-disable node/no-deprecated-api */
 
@@ -35901,7 +35903,7 @@ if (!safer.constants) {
 module.exports = safer
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":205,"buffer":77}],218:[function(require,module,exports){
+},{"_process":205,"buffer":83}],218:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 // prototype class for hash functions
@@ -36097,7 +36099,7 @@ Sha.prototype._hash = function () {
 
 module.exports = Sha
 
-},{"./hash":218,"inherits":182,"safe-buffer":216}],221:[function(require,module,exports){
+},{"./hash":218,"inherits":188,"safe-buffer":216}],221:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
  * in FIPS PUB 180-1
@@ -36198,7 +36200,7 @@ Sha1.prototype._hash = function () {
 
 module.exports = Sha1
 
-},{"./hash":218,"inherits":182,"safe-buffer":216}],222:[function(require,module,exports){
+},{"./hash":218,"inherits":188,"safe-buffer":216}],222:[function(require,module,exports){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
  * in FIPS 180-2
@@ -36253,7 +36255,7 @@ Sha224.prototype._hash = function () {
 
 module.exports = Sha224
 
-},{"./hash":218,"./sha256":223,"inherits":182,"safe-buffer":216}],223:[function(require,module,exports){
+},{"./hash":218,"./sha256":223,"inherits":188,"safe-buffer":216}],223:[function(require,module,exports){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
  * in FIPS 180-2
@@ -36390,7 +36392,7 @@ Sha256.prototype._hash = function () {
 
 module.exports = Sha256
 
-},{"./hash":218,"inherits":182,"safe-buffer":216}],224:[function(require,module,exports){
+},{"./hash":218,"inherits":188,"safe-buffer":216}],224:[function(require,module,exports){
 var inherits = require('inherits')
 var SHA512 = require('./sha512')
 var Hash = require('./hash')
@@ -36449,7 +36451,7 @@ Sha384.prototype._hash = function () {
 
 module.exports = Sha384
 
-},{"./hash":218,"./sha512":225,"inherits":182,"safe-buffer":216}],225:[function(require,module,exports){
+},{"./hash":218,"./sha512":225,"inherits":188,"safe-buffer":216}],225:[function(require,module,exports){
 var inherits = require('inherits')
 var Hash = require('./hash')
 var Buffer = require('safe-buffer').Buffer
@@ -36711,7 +36713,7 @@ Sha512.prototype._hash = function () {
 
 module.exports = Sha512
 
-},{"./hash":218,"inherits":182,"safe-buffer":216}],226:[function(require,module,exports){
+},{"./hash":218,"inherits":188,"safe-buffer":216}],226:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -36842,35 +36844,35 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":149,"inherits":182,"readable-stream/lib/_stream_duplex.js":228,"readable-stream/lib/_stream_passthrough.js":229,"readable-stream/lib/_stream_readable.js":230,"readable-stream/lib/_stream_transform.js":231,"readable-stream/lib/_stream_writable.js":232,"readable-stream/lib/internal/streams/end-of-stream.js":236,"readable-stream/lib/internal/streams/pipeline.js":238}],227:[function(require,module,exports){
-arguments[4][60][0].apply(exports,arguments)
-},{"dup":60}],228:[function(require,module,exports){
-arguments[4][61][0].apply(exports,arguments)
-},{"./_stream_readable":230,"./_stream_writable":232,"_process":205,"dup":61,"inherits":182}],229:[function(require,module,exports){
-arguments[4][62][0].apply(exports,arguments)
-},{"./_stream_transform":231,"dup":62,"inherits":182}],230:[function(require,module,exports){
-arguments[4][63][0].apply(exports,arguments)
-},{"../errors":227,"./_stream_duplex":228,"./internal/streams/async_iterator":233,"./internal/streams/buffer_list":234,"./internal/streams/destroy":235,"./internal/streams/from":237,"./internal/streams/state":239,"./internal/streams/stream":240,"_process":205,"buffer":77,"dup":63,"events":149,"inherits":182,"string_decoder/":241,"util":32}],231:[function(require,module,exports){
-arguments[4][64][0].apply(exports,arguments)
-},{"../errors":227,"./_stream_duplex":228,"dup":64,"inherits":182}],232:[function(require,module,exports){
-arguments[4][65][0].apply(exports,arguments)
-},{"../errors":227,"./_stream_duplex":228,"./internal/streams/destroy":235,"./internal/streams/state":239,"./internal/streams/stream":240,"_process":205,"buffer":77,"dup":65,"inherits":182,"util-deprecate":243}],233:[function(require,module,exports){
+},{"events":155,"inherits":188,"readable-stream/lib/_stream_duplex.js":228,"readable-stream/lib/_stream_passthrough.js":229,"readable-stream/lib/_stream_readable.js":230,"readable-stream/lib/_stream_transform.js":231,"readable-stream/lib/_stream_writable.js":232,"readable-stream/lib/internal/streams/end-of-stream.js":236,"readable-stream/lib/internal/streams/pipeline.js":238}],227:[function(require,module,exports){
 arguments[4][66][0].apply(exports,arguments)
-},{"./end-of-stream":236,"_process":205,"dup":66}],234:[function(require,module,exports){
+},{"dup":66}],228:[function(require,module,exports){
 arguments[4][67][0].apply(exports,arguments)
-},{"buffer":77,"dup":67,"util":32}],235:[function(require,module,exports){
+},{"./_stream_readable":230,"./_stream_writable":232,"_process":205,"dup":67,"inherits":188}],229:[function(require,module,exports){
 arguments[4][68][0].apply(exports,arguments)
-},{"_process":205,"dup":68}],236:[function(require,module,exports){
+},{"./_stream_transform":231,"dup":68,"inherits":188}],230:[function(require,module,exports){
 arguments[4][69][0].apply(exports,arguments)
-},{"../../../errors":227,"dup":69}],237:[function(require,module,exports){
+},{"../errors":227,"./_stream_duplex":228,"./internal/streams/async_iterator":233,"./internal/streams/buffer_list":234,"./internal/streams/destroy":235,"./internal/streams/from":237,"./internal/streams/state":239,"./internal/streams/stream":240,"_process":205,"buffer":83,"dup":69,"events":155,"inherits":188,"string_decoder/":241,"util":38}],231:[function(require,module,exports){
 arguments[4][70][0].apply(exports,arguments)
-},{"dup":70}],238:[function(require,module,exports){
+},{"../errors":227,"./_stream_duplex":228,"dup":70,"inherits":188}],232:[function(require,module,exports){
 arguments[4][71][0].apply(exports,arguments)
-},{"../../../errors":227,"./end-of-stream":236,"dup":71}],239:[function(require,module,exports){
+},{"../errors":227,"./_stream_duplex":228,"./internal/streams/destroy":235,"./internal/streams/state":239,"./internal/streams/stream":240,"_process":205,"buffer":83,"dup":71,"inherits":188,"util-deprecate":243}],233:[function(require,module,exports){
 arguments[4][72][0].apply(exports,arguments)
-},{"../../../errors":227,"dup":72}],240:[function(require,module,exports){
+},{"./end-of-stream":236,"_process":205,"dup":72}],234:[function(require,module,exports){
 arguments[4][73][0].apply(exports,arguments)
-},{"dup":73,"events":149}],241:[function(require,module,exports){
+},{"buffer":83,"dup":73,"util":38}],235:[function(require,module,exports){
+arguments[4][74][0].apply(exports,arguments)
+},{"_process":205,"dup":74}],236:[function(require,module,exports){
+arguments[4][75][0].apply(exports,arguments)
+},{"../../../errors":227,"dup":75}],237:[function(require,module,exports){
+arguments[4][76][0].apply(exports,arguments)
+},{"dup":76}],238:[function(require,module,exports){
+arguments[4][77][0].apply(exports,arguments)
+},{"../../../errors":227,"./end-of-stream":236,"dup":77}],239:[function(require,module,exports){
+arguments[4][78][0].apply(exports,arguments)
+},{"../../../errors":227,"dup":78}],240:[function(require,module,exports){
+arguments[4][79][0].apply(exports,arguments)
+},{"dup":79,"events":155}],241:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -37168,8 +37170,8 @@ function simpleEnd(buf) {
   return buf && buf.length ? this.write(buf) : '';
 }
 },{"safe-buffer":242}],242:[function(require,module,exports){
-arguments[4][75][0].apply(exports,arguments)
-},{"buffer":77,"dup":75}],243:[function(require,module,exports){
+arguments[4][81][0].apply(exports,arguments)
+},{"buffer":83,"dup":81}],243:[function(require,module,exports){
 (function (global){(function (){
 
 /**
@@ -37241,7 +37243,7 @@ function config (name) {
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],244:[function(require,module,exports){
-module.exports={"version":"13.0.0-snapshot.2","date":"۱۴۰۲/۲/۱۷","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"13.0.0-snapshot.2","date":"۱۴۰۲/۲/۲۰","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],245:[function(require,module,exports){
 "use strict";var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");var _typeof3=require("@babel/runtime/helpers/typeof");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _regenerator=_interopRequireDefault(require("@babel/runtime/regenerator"));var _objectDestructuringEmpty2=_interopRequireDefault(require("@babel/runtime/helpers/objectDestructuringEmpty"));var _asyncToGenerator2=_interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _constants=require("./lib/constants");var _utility=_interopRequireDefault(require("./utility/utility"));var _eventsModule=require("./events.module.js");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));var _errorHandler=_interopRequireWildcard(require("./lib/errorHandler"));var _webrtcPeer=require("./lib/call/webrtcPeer");function _getRequireWildcardCache(nodeInterop){if(typeof WeakMap!=="function")return null;var cacheBabelInterop=new WeakMap();var cacheNodeInterop=new WeakMap();return(_getRequireWildcardCache=function _getRequireWildcardCache(nodeInterop){return nodeInterop?cacheNodeInterop:cacheBabelInterop;})(nodeInterop);}function _interopRequireWildcard(obj,nodeInterop){if(!nodeInterop&&obj&&obj.__esModule){return obj;}if(obj===null||_typeof3(obj)!=="object"&&typeof obj!=="function"){return{"default":obj};}var cache=_getRequireWildcardCache(nodeInterop);if(cache&&cache.has(obj)){return cache.get(obj);}var newObj={};var hasPropertyDescriptor=Object.defineProperty&&Object.getOwnPropertyDescriptor;for(var key in obj){if(key!=="default"&&Object.prototype.hasOwnProperty.call(obj,key)){var desc=hasPropertyDescriptor?Object.getOwnPropertyDescriptor(obj,key):null;if(desc&&(desc.get||desc.set)){Object.defineProperty(newObj,key,desc);}else{newObj[key]=obj[key];}}}newObj["default"]=obj;if(cache){cache.set(obj,newObj);}return newObj;}function _createForOfIteratorHelper(o,allowArrayLike){var it=typeof Symbol!=="undefined"&&o[Symbol.iterator]||o["@@iterator"];if(!it){if(Array.isArray(o)||(it=_unsupportedIterableToArray(o))||allowArrayLike&&o&&typeof o.length==="number"){if(it)o=it;var i=0;var F=function F(){};return{s:F,n:function n(){if(i>=o.length)return{done:true};return{done:false,value:o[i++]};},e:function e(_e){throw _e;},f:F};}throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}var normalCompletion=true,didErr=false,err;return{s:function s(){it=it.call(o);},n:function n(){var step=it.next();normalCompletion=step.done;return step;},e:function e(_e2){didErr=true;err=_e2;},f:function f(){try{if(!normalCompletion&&it["return"]!=null)it["return"]();}finally{if(didErr)throw err;}}};}function _unsupportedIterableToArray(o,minLen){if(!o)return;if(typeof o==="string")return _arrayLikeToArray(o,minLen);var n=Object.prototype.toString.call(o).slice(8,-1);if(n==="Object"&&o.constructor)n=o.constructor.name;if(n==="Map"||n==="Set")return Array.from(o);if(n==="Arguments"||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n))return _arrayLikeToArray(o,minLen);}function _arrayLikeToArray(arr,len){if(len==null||len>arr.length)len=arr.length;for(var i=0,arr2=new Array(len);i<len;i++){arr2[i]=arr[i];}return arr2;}function ChatCall(params){var _params$asyncLogging,_params$asyncLogging2,_params$asyncLogging3,_params$callOptions,_params$callOptions2;var//Utility = params.Utility,
 currentModuleInstance=this,asyncClient=params.asyncClient,//chatEvents = params.chatEvents,
@@ -38087,7 +38089,7 @@ invitees.forEach(function(item){item.idType=_constants.inviteeVOidTypes[item.idT
          }
      }*/return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};this.deviceManager=_deviceManager["default"];this.resetCallStream=function(_ref10,callback){var userId=_ref10.userId,_ref10$streamType=_ref10.streamType,streamType=_ref10$streamType===void 0?'audio':_ref10$streamType;return new Promise(function(resolve,reject){if(userId==='screenShare'||streamType==='video'){if(callUsers[userId]){callUsers[userId].videoTopicManager.recreateTopic().then(function(){resolve();callback&&callback({hasError:false});})["catch"](function(){reject();callback&&callback({hasError:true});});}}else{callUsers[userId].audioTopicManager.recreateTopic().then(function(){resolve();callback&&callback({hasError:false});})["catch"](function(){reject();callback&&callback({hasError:true});});}});};this.callStop=callStop;this.restartMedia=restartMedia;}var _default=ChatCall;exports["default"]=_default;
 
-},{"./events.module.js":247,"./lib/call/deviceManager.js":248,"./lib/call/webrtcPeer":249,"./lib/constants":250,"./lib/errorHandler":251,"./utility/utility":256,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/objectDestructuringEmpty":8,"@babel/runtime/helpers/toConsumableArray":10,"@babel/runtime/helpers/typeof":11,"@babel/runtime/regenerator":13}],246:[function(require,module,exports){
+},{"./events.module.js":247,"./lib/call/deviceManager.js":248,"./lib/call/webrtcPeer":249,"./lib/constants":250,"./lib/errorHandler":251,"./utility/utility":256,"@babel/runtime/helpers/asyncToGenerator":9,"@babel/runtime/helpers/interopRequireDefault":11,"@babel/runtime/helpers/objectDestructuringEmpty":14,"@babel/runtime/helpers/toConsumableArray":16,"@babel/runtime/helpers/typeof":17,"@babel/runtime/regenerator":19}],246:[function(require,module,exports){
 'use strict';var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _podasyncWsOnly=_interopRequireDefault(require("podasync-ws-only"));var _utility=_interopRequireDefault(require("./utility/utility"));var _call=_interopRequireDefault(require("./call.module"));var _events=require("./events.module");var _messaging=_interopRequireDefault(require("./messaging.module"));var _buildConfig=_interopRequireDefault(require("./buildConfig.json"));var _constants=require("./lib/constants");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));var _errorHandler=require("./lib/errorHandler");var _store=require("./lib/store");function Chat(params){/*******************************************************
    *          P R I V A T E   V A R I A B L E S          *
    *******************************************************/var asyncClient,peerId,oldPeerId,token=params.token||"111",generalTypeCode=params.typeCode||'default',typeCodeOwnerId=params.typeCodeOwnerId||null,mapApiKey=params.mapApiKey||'8b77db18704aa646ee5aaea13e7370f4f88b9e8c',deviceId,productEnv=typeof navigator!='undefined'?navigator.product:'undefined',// queueDb,
@@ -39412,7 +39414,7 @@ return JSON.parse(JSON.stringify(forwardInfo));},/**
      *    - systemMetadata               {string}
      *    - time                         {int}
      *    - timeNanos                    {int}
-     */if(fromCache||pushMessageVO.time.toString().length>14){var time=pushMessageVO.time,timeMiliSeconds=parseInt(pushMessageVO.time/1000000);}else{var time=pushMessageVO.timeNanos?parseInt(parseInt(pushMessageVO.time)/1000)*1000000000+parseInt(pushMessageVO.timeNanos):parseInt(pushMessageVO.time),timeMiliSeconds=parseInt(pushMessageVO.time);}var message={id:pushMessageVO.id,threadId:threadId,ownerId:pushMessageVO.ownerId?pushMessageVO.ownerId:undefined,uniqueId:pushMessageVO.uniqueId,previousId:pushMessageVO.previousId,message:pushMessageVO.message,messageType:pushMessageVO.messageType,edited:pushMessageVO.edited,editable:pushMessageVO.editable,deletable:pushMessageVO.deletable,delivered:pushMessageVO.delivered,seen:pushMessageVO.seen,mentioned:pushMessageVO.mentioned,pinned:pushMessageVO.pinned,participant:undefined,conversation:undefined,replyInfo:undefined,forwardInfo:undefined,metadata:pushMessageVO.metadata,systemMetadata:pushMessageVO.systemMetadata,time:time,timeMiliSeconds:timeMiliSeconds,timeNanos:parseInt(pushMessageVO.timeNanos),callHistory:pushMessageVO.callHistoryVO};if(pushMessageVO.participant){message.ownerId=pushMessageVO.participant.id;}if(pushMessageVO.conversation){message.conversation=formatDataToMakeConversation(pushMessageVO.conversation);message.threadId=pushMessageVO.conversation.id;}if(pushMessageVO.replyInfoVO||pushMessageVO.replyInfo){message.replyInfo=pushMessageVO.replyInfoVO?formatDataToMakeReplyInfo(pushMessageVO.replyInfoVO,threadId):formatDataToMakeReplyInfo(pushMessageVO.replyInfo,threadId);}if(pushMessageVO.forwardInfo){message.forwardInfo=formatDataToMakeForwardInfo(pushMessageVO.forwardInfo,threadId);}if(pushMessageVO.participant){message.participant=formatDataToMakeParticipant(pushMessageVO.participant,threadId);}// return message;
+     */if(fromCache||pushMessageVO.time.toString().length>14){var time=pushMessageVO.time,timeMiliSeconds=parseInt(pushMessageVO.time/1000000);}else{var time=pushMessageVO.timeNanos?parseInt(parseInt(pushMessageVO.time)/1000)*1000000000+parseInt(pushMessageVO.timeNanos):parseInt(pushMessageVO.time),timeMiliSeconds=parseInt(pushMessageVO.time);}var message={id:pushMessageVO.id,threadId:threadId,ownerId:pushMessageVO.ownerId?pushMessageVO.ownerId:undefined,uniqueId:pushMessageVO.uniqueId,previousId:pushMessageVO.previousId,message:pushMessageVO.message,messageType:pushMessageVO.messageType,edited:pushMessageVO.edited,editable:pushMessageVO.editable,deletable:pushMessageVO.deletable,delivered:pushMessageVO.delivered,seen:pushMessageVO.seen,mentioned:pushMessageVO.mentioned,pinned:pushMessageVO.pinned,participant:undefined,conversation:undefined,replyInfo:undefined,forwardInfo:undefined,metadata:pushMessageVO.metadata,systemMetadata:pushMessageVO.systemMetadata,time:time,timeMiliSeconds:timeMiliSeconds,timeNanos:parseInt(pushMessageVO.timeNanos),callHistory:pushMessageVO.callHistoryVO};if(pushMessageVO.participant){message.ownerId=pushMessageVO.participant.id;}else if(pushMessageVO.participantVO){message.ownerId=pushMessageVO.participantVO.id;}if(pushMessageVO.conversation){message.conversation=formatDataToMakeConversation(pushMessageVO.conversation);message.threadId=pushMessageVO.conversation.id;}if(pushMessageVO.replyInfoVO||pushMessageVO.replyInfo){message.replyInfo=pushMessageVO.replyInfoVO?formatDataToMakeReplyInfo(pushMessageVO.replyInfoVO,threadId):formatDataToMakeReplyInfo(pushMessageVO.replyInfo,threadId);}if(pushMessageVO.forwardInfo){message.forwardInfo=formatDataToMakeForwardInfo(pushMessageVO.forwardInfo,threadId);}if(pushMessageVO.participant){message.participant=formatDataToMakeParticipant(pushMessageVO.participant,threadId);}// return message;
 return JSON.parse(JSON.stringify(message));},/**
    * Format Data To Make Pin Message
    *
@@ -40320,7 +40322,7 @@ token:token,subjectId:threadId};return chatMessaging.sendMessage(sendData,{onRes
 window.PodChat=Chat;}var _default=Chat;// })();
 exports["default"]=_default;
 
-},{"./buildConfig.json":244,"./call.module":245,"./events.module":247,"./lib/call/deviceManager.js":248,"./lib/constants":250,"./lib/errorHandler":251,"./lib/store":253,"./messaging.module":255,"./utility/utility":256,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/toConsumableArray":10,"@babel/runtime/helpers/typeof":11,"podasync-ws-only":200}],247:[function(require,module,exports){
+},{"./buildConfig.json":244,"./call.module":245,"./events.module":247,"./lib/call/deviceManager.js":248,"./lib/constants":250,"./lib/errorHandler":251,"./lib/store":253,"./messaging.module":255,"./utility/utility":256,"@babel/runtime/helpers/interopRequireDefault":11,"@babel/runtime/helpers/toConsumableArray":16,"@babel/runtime/helpers/typeof":17,"podasync-ws-only":2}],247:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -40445,7 +40447,7 @@ function initEventHandler(params) {
 var _default = ChatEvents;
 exports["default"] = _default;
 
-},{"./utility/utility":256,"@babel/runtime/helpers/interopRequireDefault":5}],248:[function(require,module,exports){
+},{"./utility/utility":256,"@babel/runtime/helpers/interopRequireDefault":11}],248:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -40810,7 +40812,7 @@ var deviceManager = {
 var _default = deviceManager;
 exports["default"] = _default;
 
-},{"../../events.module.js":247,"../constants.js":250,"../errorHandler.js":251,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":11,"@babel/runtime/regenerator":13}],249:[function(require,module,exports){
+},{"../../events.module.js":247,"../constants.js":250,"../errorHandler.js":251,"@babel/runtime/helpers/asyncToGenerator":9,"@babel/runtime/helpers/interopRequireDefault":11,"@babel/runtime/helpers/typeof":17,"@babel/runtime/regenerator":19}],249:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -41435,7 +41437,7 @@ exports.raiseError = raiseError;
 var _default = handleError;
 exports["default"] = _default;
 
-},{"../events.module":247,"@babel/runtime/helpers/defineProperty":4,"@babel/runtime/helpers/interopRequireDefault":5}],252:[function(require,module,exports){
+},{"../events.module":247,"@babel/runtime/helpers/defineProperty":10,"@babel/runtime/helpers/interopRequireDefault":11}],252:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -41461,7 +41463,7 @@ var storeEvents = {
 };
 exports.storeEvents = storeEvents;
 
-},{"@babel/runtime/helpers/interopRequireDefault":5,"events":149}],253:[function(require,module,exports){
+},{"@babel/runtime/helpers/interopRequireDefault":11,"events":155}],253:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -41657,7 +41659,7 @@ function ThreadObject(thread) {
   };
 }
 
-},{"./eventEmitter":252,"@babel/runtime/helpers/defineProperty":4,"@babel/runtime/helpers/interopRequireDefault":5}],255:[function(require,module,exports){
+},{"./eventEmitter":252,"@babel/runtime/helpers/defineProperty":10,"@babel/runtime/helpers/interopRequireDefault":11}],255:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -42013,7 +42015,7 @@ function ChatMessaging(params) {
 var _default = ChatMessaging;
 exports["default"] = _default;
 
-},{"./lib/constants":250,"./lib/errorHandler":251,"./utility/utility":256,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":11,"dompurify":131}],256:[function(require,module,exports){
+},{"./lib/constants":250,"./lib/errorHandler":251,"./utility/utility":256,"@babel/runtime/helpers/interopRequireDefault":11,"@babel/runtime/helpers/typeof":17,"dompurify":137}],256:[function(require,module,exports){
 (function (global){(function (){
 "use strict";
 
@@ -42611,4 +42613,4 @@ var _default = new ChatUtility();
 exports["default"] = _default;
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":11,"crypto-js":94}]},{},[246]);
+},{"@babel/runtime/helpers/interopRequireDefault":11,"@babel/runtime/helpers/typeof":17,"crypto-js":100}]},{},[246]);
