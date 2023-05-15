@@ -88,16 +88,16 @@ module.exports = ws
                 CLOSED: 3 // The connection is closed or couldn't be opened.
             },
             logLevel = LogLevel(params.logLevel),
-            isNode = Utility.isNode(),
+            // isNode = Utility.isNode(),
             isSocketOpen = false,
             isDeviceRegister = false,
             isServerRegister = false,
             socketState = socketStateType.CONNECTING,
-            asyncState = '',
+            // asyncState = '',
             registerServerTimeoutId,
             registerDeviceTimeoutId,
             checkIfSocketHasOpennedTimeoutId,
-            asyncReadyTimeoutId,
+            // asyncReadyTimeoutId,
             pushSendDataQueue = [],
             oldPeerId,
             peerId = params.peerId,
@@ -193,7 +193,7 @@ module.exports = ws
                     socketReconnectCheck && clearTimeout(socketReconnectCheck);
 
                     isSocketOpen = true;
-                    // retryStep.set(4);
+                    retryStep.set(4);
 
                     socketState = socketStateType.OPEN;
                     fireEvent('stateChange', {
@@ -340,7 +340,7 @@ module.exports = ws
                     socketReconnectCheck && clearTimeout(socketReconnectCheck);
 
                     isSocketOpen = true;
-                    // retryStep.set(4);
+                    retryStep.set(4);
 
                     socketState = socketStateType.OPEN;
                     fireEvent('stateChange', {
@@ -906,17 +906,32 @@ module.exports = ws
             else if(protocol == "webrtc")
                 webRTCClass.close()
 
+            let tmpReconnectOnClose = reconnectOnClose;
             reconnectOnClose = false;
             retryStep.set(0);
-            socketReconnectRetryInterval = setTimeout(function () {
+
+            if(protocol === "websocket")
+                socket.connect();
+            else if(protocol == "webrtc")
+                webRTCClass.connect()
+
+            setTimeout(function () {
                 // retryStep = 4;
                 retryStep.set(0);
-                reconnectOnClose = true;
-                if(protocol === "websocket")
-                    socket.connect();
-                else if(protocol == "webrtc")
-                    webRTCClass.connect()
-            }, 2000);
+                reconnectOnClose = tmpReconnectOnClose;
+
+                if(socketState != socketStateType.OPEN){
+                    if(protocol === "websocket")
+                        socket.connect();
+                    else if(protocol == "webrtc")
+                        webRTCClass.connect()
+                }
+
+                // if(protocol === "websocket")
+                //     socket.connect();
+                // else if(protocol == "webrtc")
+                //     webRTCClass.connect()
+            }, 4000);
         };
 
         this.generateUUID = Utility.generateUUID;
@@ -45992,7 +46007,7 @@ WildEmitter.mixin = function (constructor) {
 WildEmitter.mixin(WildEmitter);
 
 },{}],267:[function(require,module,exports){
-module.exports={"version":"12.7.2-snapshot.26","date":"۱۴۰۲/۲/۲۰","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.7.2-snapshot.26","date":"۱۴۰۲/۲/۲۵","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],268:[function(require,module,exports){
 "use strict";var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");var _typeof3=require("@babel/runtime/helpers/typeof");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _regenerator=_interopRequireDefault(require("@babel/runtime/regenerator"));var _asyncToGenerator2=_interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _constants=require("./lib/constants");var _kurentoUtils=_interopRequireDefault(require("kurento-utils"));var _utility=_interopRequireDefault(require("./utility/utility"));var _eventsModule=require("./events.module.js");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));var _errorHandler=_interopRequireWildcard(require("./lib/errorHandler"));function _getRequireWildcardCache(nodeInterop){if(typeof WeakMap!=="function")return null;var cacheBabelInterop=new WeakMap();var cacheNodeInterop=new WeakMap();return(_getRequireWildcardCache=function _getRequireWildcardCache(nodeInterop){return nodeInterop?cacheNodeInterop:cacheBabelInterop;})(nodeInterop);}function _interopRequireWildcard(obj,nodeInterop){if(!nodeInterop&&obj&&obj.__esModule){return obj;}if(obj===null||_typeof3(obj)!=="object"&&typeof obj!=="function"){return{"default":obj};}var cache=_getRequireWildcardCache(nodeInterop);if(cache&&cache.has(obj)){return cache.get(obj);}var newObj={};var hasPropertyDescriptor=Object.defineProperty&&Object.getOwnPropertyDescriptor;for(var key in obj){if(key!=="default"&&Object.prototype.hasOwnProperty.call(obj,key)){var desc=hasPropertyDescriptor?Object.getOwnPropertyDescriptor(obj,key):null;if(desc&&(desc.get||desc.set)){Object.defineProperty(newObj,key,desc);}else{newObj[key]=obj[key];}}}newObj["default"]=obj;if(cache){cache.set(obj,newObj);}return newObj;}function ChatCall(params){var _params$asyncLogging,_params$asyncLogging2,_params$asyncLogging3,_params$callOptions,_params$callOptions2;var//Utility = params.Utility,
 currentModuleInstance=this,asyncClient=params.asyncClient,//chatEvents = params.chatEvents,
@@ -46706,7 +46721,7 @@ pushMsgType:3,token:token};if(params){if(typeof+params.callId==='number'&&params
 pushMsgType:3,token:token};if(params){if(typeof+params.callId==='number'&&params.callId>0){turnOffVideoData.subjectId=+params.callId;}else{(0,_errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID,callback,true,{});/* chatEvents.fireEvent('error', {
             code: 999,
             message: 'Invalid call id!'
-        }); */return;}}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to turn off the video call!'});return;}var user=callUsers[chatMessaging.userInfo.id];if(user&&user.videoTopicManager&&user.videoTopicManager.getPeer()&&(user.videoTopicManager.isPeerConnecting()||user.videoTopicManager.isPeerFailed()||user.videoTopicManager.isPeerDisconnected())){_eventsModule.chatEvents.fireEvent('error',{code:999,message:'Can not stop stream in current state'});return;}return chatMessaging.sendMessage(turnOffVideoData,{onResult:function onResult(result){callback&&callback(result);}});};this.disableParticipantsVideoReceive=function(params,callback){if(params){if(Array.isArray(params.userIds)&&params.userIds.length){for(var i in params.userIds){callStateController.deactivateParticipantStream(params.userIds[i],'video','video');}callback&&callback({hasError:false});}}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to closeOthersVideoReceive'});return;}};this.enableParticipantsVideoReceive=function(params,callback){if(params){if(Array.isArray(params.userIds)&&params.userIds.length){for(var i in params.userIds){callStateController.activateParticipantStream(params.userIds[i],'video','receive','videoTopicName',callUsers[params.userIds[i]].topicSend,'video');}callback&&callback({hasError:false});}}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to closeOthersVideoReceive'});}};/**
+        }); */return;}}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to turn off the video call!'});return;}var user=callUsers[chatMessaging.userInfo.id];if(user&&user.videoTopicManager&&user.videoTopicManager.getPeer()&&(user.videoTopicManager.isPeerConnecting()||user.videoTopicManager.isPeerFailed()||user.videoTopicManager.isPeerDisconnected())){_eventsModule.chatEvents.fireEvent('error',{code:999,message:'Can not stop stream in current state'});return;}return chatMessaging.sendMessage(turnOffVideoData,{onResult:function onResult(result){callback&&callback(result);}});};this.disableParticipantsVideoReceive=function(params,callback){if(params){if(Array.isArray(params.userIds)&&params.userIds.length){for(var i in params.userIds){callStateController.deactivateParticipantStream(params.userIds[i],'video','video');}callback&&callback({hasError:false});}}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to closeOthersVideoReceive'});return;}};this.enableParticipantsVideoReceive=function(params,callback){if(params){if(Array.isArray(params.userIds)&&params.userIds.length){for(var i in params.userIds){var user=callUsers[params.userIds[i]];if(!user||!user.video)continue;callStateController.activateParticipantStream(user.userId,'video','receive','videoTopicName',callUsers[user.userId].topicSend,'video');}callback&&callback({hasError:false});}}else{_eventsModule.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to closeOthersVideoReceive'});}};/**
    * Pauses camera-send without closing its topic
    * @param params
    * @param callback

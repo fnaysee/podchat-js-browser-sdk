@@ -4945,7 +4945,9 @@ function ChatCall(params) {
     if (params) {
       if (Array.isArray(params.userIds) && params.userIds.length) {
         for (var i in params.userIds) {
-          callStateController.activateParticipantStream(params.userIds[i], 'video', 'receive', 'videoTopicName', callUsers[params.userIds[i]].topicSend, 'video');
+          var user = callUsers[params.userIds[i]];
+          if (!user || !user.video) continue;
+          callStateController.activateParticipantStream(user.userId, 'video', 'receive', 'videoTopicName', callUsers[user.userId].topicSend, 'video');
         }
 
         callback && callback({
