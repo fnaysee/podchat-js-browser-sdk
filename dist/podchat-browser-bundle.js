@@ -39097,16 +39097,16 @@ module.exports = function (thing, encoding, name) {
                 CLOSED: 3 // The connection is closed or couldn't be opened.
             },
             logLevel = LogLevel(params.logLevel),
-            // isNode = Utility.isNode(),
+            isNode = Utility.isNode(),
             isSocketOpen = false,
             isDeviceRegister = false,
             isServerRegister = false,
             socketState = socketStateType.CONNECTING,
-            // asyncState = '',
+            asyncState = '',
             registerServerTimeoutId,
             registerDeviceTimeoutId,
             checkIfSocketHasOpennedTimeoutId,
-            // asyncReadyTimeoutId,
+            asyncReadyTimeoutId,
             pushSendDataQueue = [],
             oldPeerId,
             peerId = params.peerId,
@@ -39915,32 +39915,14 @@ module.exports = function (thing, encoding, name) {
             else if(protocol == "webrtc")
                 webRTCClass.close()
 
-            let tmpReconnectOnClose = reconnectOnClose;
-            reconnectOnClose = false;
-            retryStep.set(0);
-
-            if(protocol === "websocket")
-                socket.connect();
-            else if(protocol == "webrtc")
-                webRTCClass.connect()
-
-            setTimeout(function () {
+            socketReconnectRetryInterval = setTimeout(function () {
                 // retryStep = 4;
-                retryStep.set(0);
-                reconnectOnClose = tmpReconnectOnClose;
-
-                if(socketState != socketStateType.OPEN){
-                    if(protocol === "websocket")
-                        socket.connect();
-                    else if(protocol == "webrtc")
-                        webRTCClass.connect()
-                }
-
-                // if(protocol === "websocket")
-                //     socket.connect();
-                // else if(protocol == "webrtc")
-                //     webRTCClass.connect()
-            }, 4000);
+                retryStep.set(4);
+                if(protocol === "websocket")
+                    socket.close();
+                else if(protocol == "webrtc")
+                    webRTCClass.close()
+            }, 2000);
         };
 
         this.generateUUID = Utility.generateUUID;
@@ -46007,7 +45989,7 @@ WildEmitter.mixin = function (constructor) {
 WildEmitter.mixin(WildEmitter);
 
 },{}],267:[function(require,module,exports){
-module.exports={"version":"12.7.2-snapshot.27","date":"۱۴۰۲/۲/۲۷","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.7.2-snapshot.27","date":"۱۴۰۲/۲/۲۸","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],268:[function(require,module,exports){
 "use strict";var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");var _typeof3=require("@babel/runtime/helpers/typeof");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _regenerator=_interopRequireDefault(require("@babel/runtime/regenerator"));var _asyncToGenerator2=_interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _constants=require("./lib/constants");var _kurentoUtils=_interopRequireDefault(require("kurento-utils"));var _utility=_interopRequireDefault(require("./utility/utility"));var _eventsModule=require("./events.module.js");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));var _errorHandler=_interopRequireWildcard(require("./lib/errorHandler"));function _getRequireWildcardCache(nodeInterop){if(typeof WeakMap!=="function")return null;var cacheBabelInterop=new WeakMap();var cacheNodeInterop=new WeakMap();return(_getRequireWildcardCache=function _getRequireWildcardCache(nodeInterop){return nodeInterop?cacheNodeInterop:cacheBabelInterop;})(nodeInterop);}function _interopRequireWildcard(obj,nodeInterop){if(!nodeInterop&&obj&&obj.__esModule){return obj;}if(obj===null||_typeof3(obj)!=="object"&&typeof obj!=="function"){return{"default":obj};}var cache=_getRequireWildcardCache(nodeInterop);if(cache&&cache.has(obj)){return cache.get(obj);}var newObj={};var hasPropertyDescriptor=Object.defineProperty&&Object.getOwnPropertyDescriptor;for(var key in obj){if(key!=="default"&&Object.prototype.hasOwnProperty.call(obj,key)){var desc=hasPropertyDescriptor?Object.getOwnPropertyDescriptor(obj,key):null;if(desc&&(desc.get||desc.set)){Object.defineProperty(newObj,key,desc);}else{newObj[key]=obj[key];}}}newObj["default"]=obj;if(cache){cache.set(obj,newObj);}return newObj;}function ChatCall(params){var _params$asyncLogging,_params$asyncLogging2,_params$asyncLogging3,_params$callOptions,_params$callOptions2;var//Utility = params.Utility,
 currentModuleInstance=this,asyncClient=params.asyncClient,//chatEvents = params.chatEvents,
@@ -46804,7 +46786,8 @@ getUserAndUpdateSDKState();// if (!chatMessaging.userInfo) {
 // }
 deliveryInterval&&clearInterval(deliveryInterval);deliveryInterval=setInterval(function(){if(Object.keys(messagesDelivery).length){messagesDeliveryQueueHandler();}},deliveryIntervalPitch);seenInterval&&clearInterval(seenInterval);seenInterval=setInterval(function(){if(Object.keys(messagesSeen).length){messagesSeenQueueHandler();}},seenIntervalPitch);//shouldReconnectCall();
 });asyncClient.on('stateChange',function(state){_events.chatEvents.fireEvent('chatState',state);chatFullStateObject=state;switch(state.socketState){case 1:// CONNECTED
-if(state.deviceRegister&&state.serverRegister){chatMessaging.chatState=true;// chatMessaging.ping();
+if(state.deviceRegister&&state.serverRegister){// chatMessaging.chatState = true;
+// chatMessaging.ping();
 chatMessaging.startChatPing();}break;case 0:// CONNECTING
 chatMessaging.chatState=false;chatMessaging.stopChatPing();break;case 2:// CLOSING
 chatMessaging.chatState=false;chatMessaging.stopChatPing();break;case 3:// CLOSED
@@ -49909,7 +49892,7 @@ function ChatMessaging(params) {
 
 
   this.sendMessage = function (params, callbacks, recursiveCallback) {
-    if (!currentModuleInstance.chatState) {
+    if (!currentModuleInstance.chatState && _constants.chatMessageVOTypes.USER_INFO != params.chatMessageVOType) {
       var clbck;
 
       if (!callbacks) {

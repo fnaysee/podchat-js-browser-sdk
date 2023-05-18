@@ -328,7 +328,7 @@ function Chat(params) {
                 switch (state.socketState) {
                     case 1: // CONNECTED
                         if (state.deviceRegister && state.serverRegister) {
-                            chatMessaging.chatState = true;
+                            // chatMessaging.chatState = true;
                             // chatMessaging.ping();
                             chatMessaging.startChatPing();
                         }

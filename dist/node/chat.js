@@ -52,7 +52,8 @@ getUserAndUpdateSDKState();// if (!chatMessaging.userInfo) {
 // }
 deliveryInterval&&clearInterval(deliveryInterval);deliveryInterval=setInterval(function(){if(Object.keys(messagesDelivery).length){messagesDeliveryQueueHandler();}},deliveryIntervalPitch);seenInterval&&clearInterval(seenInterval);seenInterval=setInterval(function(){if(Object.keys(messagesSeen).length){messagesSeenQueueHandler();}},seenIntervalPitch);//shouldReconnectCall();
 });asyncClient.on('stateChange',function(state){_events.chatEvents.fireEvent('chatState',state);chatFullStateObject=state;switch(state.socketState){case 1:// CONNECTED
-if(state.deviceRegister&&state.serverRegister){chatMessaging.chatState=true;// chatMessaging.ping();
+if(state.deviceRegister&&state.serverRegister){// chatMessaging.chatState = true;
+// chatMessaging.ping();
 chatMessaging.startChatPing();}break;case 0:// CONNECTING
 chatMessaging.chatState=false;chatMessaging.stopChatPing();break;case 2:// CLOSING
 chatMessaging.chatState=false;chatMessaging.stopChatPing();break;case 3:// CLOSED

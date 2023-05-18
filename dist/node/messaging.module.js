@@ -93,7 +93,7 @@ function ChatMessaging(params) {
 
 
   this.sendMessage = function (params, callbacks, recursiveCallback) {
-    if (!currentModuleInstance.chatState) {
+    if (!currentModuleInstance.chatState && _constants.chatMessageVOTypes.USER_INFO != params.chatMessageVOType) {
       var clbck;
 
       if (!callbacks) {

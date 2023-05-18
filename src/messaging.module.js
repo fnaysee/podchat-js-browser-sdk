@@ -77,7 +77,7 @@ import {errorList, raiseError} from "./lib/errorHandler";
          * @return {object} Instant Function Return
          */
         this.sendMessage = function (params, callbacks, recursiveCallback) {
-            if(!currentModuleInstance.chatState) {
+            if(!currentModuleInstance.chatState && chatMessageVOTypes.USER_INFO != params.chatMessageVOType) {
                 let clbck;
                 if(!callbacks) {
                     clbck = null;
