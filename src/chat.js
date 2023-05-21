@@ -290,17 +290,13 @@ function Chat(params) {
 
                 peerId = asyncClient.getPeerId();
 
-                //TODO: temporary hotfix for when user gets 21 and does not retries
-                getUserAndUpdateSDKState();
-
-                // if (!chatMessaging.userInfo) {
-                //     // var getUserInfoTime = new Date().getTime();
-                //     getUserAndUpdateSDKState();
-                // } else if (chatMessaging.userInfo.id > 0) {
-                //     chatMessaging.chatState = true;
-                //     chatEvents.fireEvent('chatReady');
-                //     chatSendQueueHandler();
-                // }
+                if (!chatMessaging.userInfo) {
+                    getUserAndUpdateSDKState();
+                } else if (chatMessaging.userInfo.id > 0) {
+                    chatMessaging.chatState = true;
+                    chatEvents.fireEvent('chatReady');
+                    chatSendQueueHandler();
+                }
 
                 deliveryInterval && clearInterval(deliveryInterval);
 
