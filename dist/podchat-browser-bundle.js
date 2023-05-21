@@ -39030,919 +39030,821 @@ module.exports = function (thing, encoding, name) {
 
 },{"safe-buffer":225}],209:[function(require,module,exports){
 (function () {
-    /*
-     * Async module to handle async messaging
-     * @module Async
-     *
-     * @param {Object} params
-     */
+  /*
+   * Async module to handle async messaging
+   * @module Async
+   *
+   * @param {Object} params
+   */
 
-    function Async(params) {
+  function Async(params) {
+    /*******************************************************
+     *          P R I V A T E   V A R I A B L E S          *
+     *******************************************************/
 
-        /*******************************************************
-         *          P R I V A T E   V A R I A B L E S          *
-         *******************************************************/
+    var PodSocketClass, WebRTCClass, PodUtility, LogLevel;
+    if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
+      PodSocketClass = require('./socket.js');
+      WebRTCClass = require('./webrtc.js');
+      PodUtility = require('../utility/utility.js');
+      LogLevel = require('../utility/logger.js');
+    } else {
+      PodSocketClass = POD.Socket;
+      PodUtility = POD.AsyncUtility;
+      LogLevel = POD.LogLevel;
+    }
+    var Utility = new PodUtility();
+    var protocol = params.protocol || 'websocket',
+      appId = params.appId || 'PodChat',
+      deviceId = params.deviceId,
+      eventCallbacks = {
+        connect: {},
+        disconnect: {},
+        reconnect: {},
+        message: {},
+        asyncReady: {},
+        stateChange: {},
+        error: {}
+      },
+      ackCallback = {},
+      socket,
+      webRTCClass,
+      asyncMessageType = {
+        PING: 0,
+        SERVER_REGISTER: 1,
+        DEVICE_REGISTER: 2,
+        MESSAGE: 3,
+        MESSAGE_ACK_NEEDED: 4,
+        MESSAGE_SENDER_ACK_NEEDED: 5,
+        ACK: 6,
+        GET_REGISTERED_PEERS: 7,
+        PEER_REMOVED: -3,
+        REGISTER_QUEUE: -2,
+        NOT_REGISTERED: -1,
+        ERROR_MESSAGE: -99
+      },
+      socketStateType = {
+        CONNECTING: 0,
+        // The connection is not yet open.
+        OPEN: 1,
+        // The connection is open and ready to communicate.
+        CLOSING: 2,
+        // The connection is in the process of closing.
+        CLOSED: 3 // The connection is closed or couldn't be opened.
+      },
+      logLevel = LogLevel(params.logLevel),
+      // isNode = Utility.isNode(),
+      isSocketOpen = false,
+      isDeviceRegister = false,
+      isServerRegister = false,
+      socketState = socketStateType.CONNECTING,
+      // asyncState = '',
+      registerServerTimeoutId,
+      registerDeviceTimeoutId,
+      checkIfSocketHasOpennedTimeoutId,
+      // asyncReadyTimeoutId,
+      pushSendDataQueue = [],
+      oldPeerId,
+      peerId = params.peerId,
+      lastMessageId = 0,
+      messageTtl = params.messageTtl || 86400,
+      serverName = params.serverName || 'oauth-wire',
+      serverRegisteration = typeof params.serverRegisteration === 'boolean' ? params.serverRegisteration : true,
+      connectionRetryInterval = params.connectionRetryInterval || 5000,
+      socketReconnectRetryInterval,
+      socketReconnectCheck,
+      // retryStep = 4,
+      reconnectOnClose = typeof params.reconnectOnClose === 'boolean' ? params.reconnectOnClose : true,
+      asyncLogging = params.asyncLogging && typeof params.asyncLogging.onFunction === 'boolean' ? params.asyncLogging.onFunction : false,
+      onReceiveLogging = params.asyncLogging && typeof params.asyncLogging.onMessageReceive === 'boolean' ? params.asyncLogging.onMessageReceive : false,
+      onSendLogging = params.asyncLogging && typeof params.asyncLogging.onMessageSend === 'boolean' ? params.asyncLogging.onMessageSend : false,
+      workerId = params.asyncLogging && typeof parseInt(params.asyncLogging.workerId) === 'number' ? params.asyncLogging.workerId : 0,
+      webrtcConfig = params.webrtcConfig ? params.webrtcConfig : null;
 
-        var PodSocketClass,
-            WebRTCClass,
-            PodUtility,
-            LogLevel
-        if (typeof(require) !== 'undefined' && typeof(exports) !== 'undefined') {
-            PodSocketClass = require('./socket.js');
-            WebRTCClass = require('./webrtc.js');
-            PodUtility = require('../utility/utility.js');
-            LogLevel = require('../utility/logger.js');
+    // function setRetryStep(val){
+    //     console.log("new retryStep value:", val);
+    //     retryStep = val;
+    // }
+    //
+    // function getRetryStep() {
+    //     return retryStep;
+    // }
+
+    const reconnOnClose = {
+      value: 4,
+      oldValue: 4,
+      get() {
+        return reconnOnClose.value;
+      },
+      set(val) {
+        reconnOnClose.value = val;
+      },
+      getOld() {
+        return reconnOnClose.oldValue;
+      },
+      setOld(val) {
+        reconnOnClose.oldValue = val;
+      }
+    };
+    reconnOnClose.set(reconnectOnClose);
+    const retryStep = {
+      value: 4,
+      get() {
+        return retryStep.value;
+      },
+      set(val) {
+        logLevel.debug && console.debug("[Async][async.js] retryStep new value:", val);
+        retryStep.value = val;
+      }
+    };
+
+    /*******************************************************
+     *            P R I V A T E   M E T H O D S            *
+     *******************************************************/
+
+    var init = function () {
+        switch (protocol) {
+          case 'websocket':
+            initSocket();
+            break;
+          case 'webrtc':
+            initWebrtc();
+            break;
         }
-        else {
-            PodSocketClass = POD.Socket;
-            PodUtility = POD.AsyncUtility;
-            LogLevel = POD.LogLevel;
-        }
+      },
+      asyncLogger = function (type, msg) {
+        Utility.asyncLogger({
+          protocol: protocol,
+          workerId: workerId,
+          type: type,
+          msg: msg,
+          peerId: peerId,
+          deviceId: deviceId,
+          isSocketOpen: isSocketOpen,
+          isDeviceRegister: isDeviceRegister,
+          isServerRegister: isServerRegister,
+          socketState: socketState,
+          pushSendDataQueue: pushSendDataQueue
+        });
+      },
+      initSocket = function () {
+        socket = new PodSocketClass({
+          socketAddress: params.socketAddress,
+          wsConnectionWaitTime: params.wsConnectionWaitTime,
+          connectionCheckTimeout: params.connectionCheckTimeout,
+          connectionCheckTimeoutThreshold: params.connectionCheckTimeoutThreshold,
+          logLevel: logLevel
+        });
+        checkIfSocketHasOpennedTimeoutId = setTimeout(function () {
+          if (!isSocketOpen) {
+            fireEvent('error', {
+              errorCode: 4001,
+              errorMessage: 'Can not open Socket!'
+            });
+          }
+        }, 65000);
+        socket.on('open', function () {
+          checkIfSocketHasOpennedTimeoutId && clearTimeout(checkIfSocketHasOpennedTimeoutId);
+          socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+          socketReconnectCheck && clearTimeout(socketReconnectCheck);
+          isSocketOpen = true;
+          retryStep.set(4);
+          socketState = socketStateType.OPEN;
+          fireEvent('stateChange', {
+            socketState: socketState,
+            timeUntilReconnect: 0,
+            deviceRegister: isDeviceRegister,
+            serverRegister: isServerRegister,
+            peerId: peerId
+          });
+        });
+        socket.on('message', function (msg) {
+          handleSocketMessage(msg);
+          if (onReceiveLogging) {
+            asyncLogger('Receive', msg);
+          }
+        });
+        socket.on('close', function (event) {
+          console.log("on.close", reconnOnClose.get(), reconnOnClose.getOld());
+          isSocketOpen = false;
+          isDeviceRegister = false;
+          oldPeerId = peerId;
 
-        var Utility = new PodUtility();
+          // socketState = socketStateType.CLOSED;
+          //
+          // fireEvent('stateChange', {
+          //     socketState: socketState,
+          //     timeUntilReconnect: 0,
+          //     deviceRegister: isDeviceRegister,
+          //     serverRegister: isServerRegister,
+          //     peerId: peerId
+          // });
 
-        var protocol = params.protocol || 'websocket',
-            appId = params.appId || 'PodChat',
-            deviceId = params.deviceId,
-            eventCallbacks = {
-                connect: {},
-                disconnect: {},
-                reconnect: {},
-                message: {},
-                asyncReady: {},
-                stateChange: {},
-                error: {}
-            },
-            ackCallback = {},
-            socket,
-            webRTCClass,
-            asyncMessageType = {
-                PING: 0,
-                SERVER_REGISTER: 1,
-                DEVICE_REGISTER: 2,
-                MESSAGE: 3,
-                MESSAGE_ACK_NEEDED: 4,
-                MESSAGE_SENDER_ACK_NEEDED: 5,
-                ACK: 6,
-                GET_REGISTERED_PEERS: 7,
-                PEER_REMOVED: -3,
-                REGISTER_QUEUE: -2,
-                NOT_REGISTERED: -1,
-                ERROR_MESSAGE: -99
-            },
-            socketStateType = {
-                CONNECTING: 0, // The connection is not yet open.
-                OPEN: 1, // The connection is open and ready to communicate.
-                CLOSING: 2, // The connection is in the process of closing.
-                CLOSED: 3 // The connection is closed or couldn't be opened.
-            },
-            logLevel = LogLevel(params.logLevel),
-            isNode = Utility.isNode(),
-            isSocketOpen = false,
-            isDeviceRegister = false,
-            isServerRegister = false,
-            socketState = socketStateType.CONNECTING,
-            asyncState = '',
-            registerServerTimeoutId,
-            registerDeviceTimeoutId,
-            checkIfSocketHasOpennedTimeoutId,
-            asyncReadyTimeoutId,
-            pushSendDataQueue = [],
-            oldPeerId,
-            peerId = params.peerId,
-            lastMessageId = 0,
-            messageTtl = params.messageTtl || 86400,
-            serverName = params.serverName || 'oauth-wire',
-            serverRegisteration = (typeof params.serverRegisteration === 'boolean') ? params.serverRegisteration : true,
-            connectionRetryInterval = params.connectionRetryInterval || 5000,
-            socketReconnectRetryInterval,
-            socketReconnectCheck,
-            // retryStep = 4,
-            reconnectOnClose = (typeof params.reconnectOnClose === 'boolean') ? params.reconnectOnClose : true,
-            asyncLogging = (params.asyncLogging && typeof params.asyncLogging.onFunction === 'boolean') ? params.asyncLogging.onFunction : false,
-            onReceiveLogging = (params.asyncLogging && typeof params.asyncLogging.onMessageReceive === 'boolean')
-                ? params.asyncLogging.onMessageReceive
-                : false,
-            onSendLogging = (params.asyncLogging && typeof params.asyncLogging.onMessageSend === 'boolean') ? params.asyncLogging.onMessageSend : false,
-            workerId = (params.asyncLogging && typeof parseInt(params.asyncLogging.workerId) === 'number') ? params.asyncLogging.workerId : 0,
-            webrtcConfig = (params.webrtcConfig ? params.webrtcConfig : null);
-
-        // function setRetryStep(val){
-        //     console.log("new retryStep value:", val);
-        //     retryStep = val;
-        // }
-        //
-        // function getRetryStep() {
-        //     return retryStep;
-        // }
-
-        const retryStep = {
-            value: 4,
-            get() {
-                return retryStep.value;
-            },
-            set(val) {
-                logLevel.debug && console.debug("[Async][async.js] retryStep new value:", val);
-                retryStep.value = val;
+          fireEvent('disconnect', event);
+          if (reconnOnClose.get() || reconnOnClose.getOld()) {
+            // reconnOnClose.set(reconnOnClose.getOld());
+            if (asyncLogging) {
+              if (workerId > 0) {
+                Utility.asyncStepLogger(workerId + '\t Reconnecting after ' + retryStep.get() + 's');
+              } else {
+                Utility.asyncStepLogger('Reconnecting after ' + retryStep.get() + 's');
+              }
             }
-        };
-
-        /*******************************************************
-         *            P R I V A T E   M E T H O D S            *
-         *******************************************************/
-
-        var init = function () {
-                switch (protocol) {
-                    case 'websocket':
-                        initSocket();
-                        break;
-                    case 'webrtc':
-                        initWebrtc();
-                        break;
-                }
-            },
-
-            asyncLogger = function (type, msg) {
-                Utility.asyncLogger({
-                    protocol: protocol,
-                    workerId: workerId,
-                    type: type,
-                    msg: msg,
-                    peerId: peerId,
-                    deviceId: deviceId,
-                    isSocketOpen: isSocketOpen,
-                    isDeviceRegister: isDeviceRegister,
-                    isServerRegister: isServerRegister,
-                    socketState: socketState,
-                    pushSendDataQueue: pushSendDataQueue
-                });
-            },
-
-            initSocket = function () {
-                socket = new PodSocketClass({
-                    socketAddress: params.socketAddress,
-                    wsConnectionWaitTime: params.wsConnectionWaitTime,
-                    connectionCheckTimeout: params.connectionCheckTimeout,
-                    connectionCheckTimeoutThreshold: params.connectionCheckTimeoutThreshold,
-                    logLevel: logLevel
-                });
-
-                checkIfSocketHasOpennedTimeoutId = setTimeout(function () {
-                    if (!isSocketOpen) {
-                        fireEvent('error', {
-                            errorCode: 4001,
-                            errorMessage: 'Can not open Socket!'
-                        });
-                    }
-                }, 65000);
-
-                socket.on('open', function () {
-                    checkIfSocketHasOpennedTimeoutId && clearTimeout(checkIfSocketHasOpennedTimeoutId);
-                    socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-                    socketReconnectCheck && clearTimeout(socketReconnectCheck);
-
-                    isSocketOpen = true;
-                    retryStep.set(4);
-
-                    socketState = socketStateType.OPEN;
-                    fireEvent('stateChange', {
-                        socketState: socketState,
-                        timeUntilReconnect: 0,
-                        deviceRegister: isDeviceRegister,
-                        serverRegister: isServerRegister,
-                        peerId: peerId
-                    });
-                });
-
-                socket.on('message', function (msg) {
-                    handleSocketMessage(msg);
-                    if (onReceiveLogging) {
-                        asyncLogger('Receive', msg);
-                    }
-                });
-
-                socket.on('close', function (event) {
-                    isSocketOpen = false;
-                    isDeviceRegister = false;
-                    oldPeerId = peerId;
-
-                    // socketState = socketStateType.CLOSED;
-                    //
-                    // fireEvent('stateChange', {
-                    //     socketState: socketState,
-                    //     timeUntilReconnect: 0,
-                    //     deviceRegister: isDeviceRegister,
-                    //     serverRegister: isServerRegister,
-                    //     peerId: peerId
-                    // });
-
-                    fireEvent('disconnect', event);
-
-                    if (reconnectOnClose) {
-                        if (asyncLogging) {
-                            if (workerId > 0) {
-                                Utility.asyncStepLogger(workerId + '\t Reconnecting after ' + retryStep.get() + 's');
-                            }
-                            else {
-                                Utility.asyncStepLogger('Reconnecting after ' + retryStep.get() + 's');
-                            }
-                        }
-
-                        logLevel.debug && console.debug("[Async][async.js] on socket close, retryStep:", retryStep.get());
-
-                        socketState = socketStateType.CLOSED;
-                        fireEvent('stateChange', {
-                            socketState: socketState,
-                            timeUntilReconnect: 1000 * retryStep.get(),
-                            deviceRegister: isDeviceRegister,
-                            serverRegister: isServerRegister,
-                            peerId: peerId
-                        });
-
-                        socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-
-                        socketReconnectRetryInterval = setTimeout(function () {
-                            socket.connect();
-                        }, 1000 * retryStep.get());
-
-                        if (retryStep.get() < 64) {
-                            // retryStep += 3;
-                            retryStep.set(retryStep.get() + 3)
-                        }
-
-                        // socketReconnectCheck && clearTimeout(socketReconnectCheck);
-                        //
-                        // socketReconnectCheck = setTimeout(function() {
-                        //   if (!isSocketOpen) {
-                        //     fireEvent("error", {
-                        //       errorCode: 4001,
-                        //       errorMessage: "Can not open Socket!"
-                        //     });
-                        //
-                        //     socketState = socketStateType.CLOSED;
-                        //     fireEvent("stateChange", {
-                        //       socketState: socketState,
-                        //       deviceRegister: isDeviceRegister,
-                        //       serverRegister: isServerRegister,
-                        //       peerId: peerId
-                        //     });
-                        //   }
-                        // }, 65000);
-
-                    }
-                    else {
-                        socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-                        socketReconnectCheck && clearTimeout(socketReconnectCheck);
-                        fireEvent('error', {
-                            errorCode: 4005,
-                            errorMessage: 'Socket Closed!'
-                        });
-
-                        socketState = socketStateType.CLOSED;
-                        fireEvent('stateChange', {
-                            socketState: socketState,
-                            timeUntilReconnect: 0,
-                            deviceRegister: isDeviceRegister,
-                            serverRegister: isServerRegister,
-                            peerId: peerId
-                        });
-                    }
-
-                });
-
-                socket.on('customError', function (error) {
-                    fireEvent('error', {
-                        errorCode: error.errorCode,
-                        errorMessage: error.errorMessage,
-                        errorEvent: error.errorEvent
-                    });
-                });
-
-                socket.on('error', function (error) {
-                    fireEvent('error', {
-                        errorCode: '',
-                        errorMessage: '',
-                        errorEvent: error
-                    });
-                });
-            },
-            initWebrtc = function () {
-                webRTCClass = new WebRTCClass({
-                    baseUrl: (webrtcConfig ? webrtcConfig.baseUrl : null),
-                    configuration : (webrtcConfig ? webrtcConfig.configuration : null),
-                    connectionCheckTimeout: params.connectionCheckTimeout,
-                    logLevel: logLevel
-                });
-
-                checkIfSocketHasOpennedTimeoutId = setTimeout(function () {
-                    if (!isSocketOpen) {
-                        fireEvent('error', {
-                            errorCode: 4001,
-                            errorMessage: 'Can not open Socket!'
-                        });
-                    }
-                }, 65000);
-
-                webRTCClass.on('open', function () {
-                    checkIfSocketHasOpennedTimeoutId && clearTimeout(checkIfSocketHasOpennedTimeoutId);
-                    socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-                    socketReconnectCheck && clearTimeout(socketReconnectCheck);
-
-                    isSocketOpen = true;
-                    retryStep.set(4);
-
-                    socketState = socketStateType.OPEN;
-                    fireEvent('stateChange', {
-                        socketState: socketState,
-                        timeUntilReconnect: 0,
-                        deviceRegister: isDeviceRegister,
-                        serverRegister: isServerRegister,
-                        peerId: peerId
-                    });
-                });
-
-                webRTCClass.on('message', function (msg) {
-                    console.log({msg})
-                    handleSocketMessage(msg);
-                    if (onReceiveLogging) {
-                        asyncLogger('Receive', msg);
-                    }
-                });
-
-                webRTCClass.on('close', function (event) {
-                    isSocketOpen = false;
-                    isDeviceRegister = false;
-                    oldPeerId = peerId;
-
-                    fireEvent('disconnect', event);
-
-                    if (reconnectOnClose) {
-                        if (asyncLogging) {
-                            if (workerId > 0) {
-                                Utility.asyncStepLogger(workerId + '\t Reconnecting after ' + retryStep.get() + 's');
-                            }
-                            else {
-                                Utility.asyncStepLogger('Reconnecting after ' + retryStep.get() + 's');
-                            }
-                        }
-
-                        logLevel.debug && console.debug("[Async][async.js] on connection close, retryStep:", retryStep.get());
-
-                        socketState = socketStateType.CLOSED;
-                        fireEvent('stateChange', {
-                            socketState: socketState,
-                            timeUntilReconnect: 1000 * retryStep.get(),
-                            deviceRegister: isDeviceRegister,
-                            serverRegister: isServerRegister,
-                            peerId: peerId
-                        });
-
-                        socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-
-                        socketReconnectRetryInterval = setTimeout(function () {
-                            webRTCClass.connect();
-                        }, 1000 * retryStep.get());
-
-                        if (retryStep.get() < 64) {
-                            // retryStep += 3;
-                            retryStep.set(retryStep.get() + 3)
-                        }
-                    }
-                    else {
-                        socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-                        socketReconnectCheck && clearTimeout(socketReconnectCheck);
-                        fireEvent('error', {
-                            errorCode: 4005,
-                            errorMessage: 'Connection Closed!'
-                        });
-
-                        socketState = socketStateType.CLOSED;
-                        fireEvent('stateChange', {
-                            socketState: socketState,
-                            timeUntilReconnect: 0,
-                            deviceRegister: isDeviceRegister,
-                            serverRegister: isServerRegister,
-                            peerId: peerId
-                        });
-                    }
-
-                });
-
-                webRTCClass.on('customError', function (error) {
-                    fireEvent('error', {
-                        errorCode: error.errorCode,
-                        errorMessage: error.errorMessage,
-                        errorEvent: error.errorEvent
-                    });
-                });
-
-                webRTCClass.on('error', function (error) {
-                    fireEvent('error', {
-                        errorCode: '',
-                        errorMessage: '',
-                        errorEvent: error
-                    });
-                });
-            },
-
-            handleSocketMessage = function (msg) {
-                var ack;
-
-                if (msg.type === asyncMessageType.MESSAGE_ACK_NEEDED || msg.type === asyncMessageType.MESSAGE_SENDER_ACK_NEEDED) {
-                    ack = function () {
-                        pushSendData({
-                            type: asyncMessageType.ACK,
-                            content: {
-                                messageId: msg.id
-                            }
-                        });
-                    };
-                }
-
-                switch (msg.type) {
-                    case asyncMessageType.PING:
-                        handlePingMessage(msg);
-                        break;
-
-                    case asyncMessageType.SERVER_REGISTER:
-                        handleServerRegisterMessage(msg);
-                        break;
-
-                    case asyncMessageType.DEVICE_REGISTER:
-                        handleDeviceRegisterMessage(msg.content);
-                        break;
-
-                    case asyncMessageType.MESSAGE:
-                        fireEvent('message', msg);
-                        break;
-
-                    case asyncMessageType.MESSAGE_ACK_NEEDED:
-                    case asyncMessageType.MESSAGE_SENDER_ACK_NEEDED:
-                        ack();
-                        fireEvent('message', msg);
-                        break;
-
-                    case asyncMessageType.ACK:
-                        fireEvent('message', msg);
-                        if (ackCallback[msg.senderMessageId] == 'function') {
-                            ackCallback[msg.senderMessageId]();
-                            delete ackCallback[msg.senderMessageId];
-                        }
-                        break;
-
-                    case asyncMessageType.ERROR_MESSAGE:
-                        fireEvent('error', {
-                            errorCode: 4002,
-                            errorMessage: 'Async Error!',
-                            errorEvent: msg
-                        });
-                        break;
-                }
-            },
-
-            handlePingMessage = function (msg) {
-                if (msg.content) {
-                    if (deviceId === undefined) {
-                        deviceId = msg.content;
-                        registerDevice();
-                    }
-                    else {
-                        registerDevice();
-                    }
-                }
-                else {
-                    if (onReceiveLogging) {
-                        if (workerId > 0) {
-                            Utility.asyncStepLogger(workerId + '\t Ping Response at (' + new Date() + ')');
-                        }
-                        else {
-                            Utility.asyncStepLogger('Ping Response at (' + new Date() + ')');
-                        }
-                    }
-                }
-            },
-
-            registerDevice = function (isRetry) {
-                if (asyncLogging) {
-                    if (workerId > 0) {
-                        Utility.asyncStepLogger(workerId + '\t Registering Device');
-                    }
-                    else {
-                        Utility.asyncStepLogger('Registering Device');
-                    }
-                }
-
-                var content = {
-                    appId: appId,
-                    deviceId: deviceId
-                };
-
-                if (peerId !== undefined) {
-                    content.refresh = true;
-                    content.renew = false;
-
-                }
-                else {
-                    content.renew = true;
-                    content.refresh = false;
-                }
-
-                pushSendData({
-                    type: asyncMessageType.DEVICE_REGISTER,
-                    content: content
-                });
-            },
-
-            handleDeviceRegisterMessage = function (recievedPeerId) {
-                if (!isDeviceRegister) {
-                    if (registerDeviceTimeoutId) {
-                        clearTimeout(registerDeviceTimeoutId);
-                    }
-
-                    isDeviceRegister = true;
-                    peerId = recievedPeerId;
-                }
-
-                /**
-                 * If serverRegisteration == true we have to register
-                 * on server then make async status ready
-                 */
-                if (serverRegisteration) {
-                    if (isServerRegister && peerId === oldPeerId) {
-                        fireEvent('asyncReady');
-                        isServerRegister = true;
-                        pushSendDataQueueHandler();
-
-                        socketState = socketStateType.OPEN;
-                        fireEvent('stateChange', {
-                            socketState: socketState,
-                            timeUntilReconnect: 0,
-                            deviceRegister: isDeviceRegister,
-                            serverRegister: isServerRegister,
-                            peerId: peerId
-                        });
-                    }
-                    else {
-                        socketState = socketStateType.OPEN;
-                        fireEvent('stateChange', {
-                            socketState: socketState,
-                            timeUntilReconnect: 0,
-                            deviceRegister: isDeviceRegister,
-                            serverRegister: isServerRegister,
-                            peerId: peerId
-                        });
-
-                        registerServer();
-                    }
-                }
-                else {
-                    fireEvent('asyncReady');
-                    isServerRegister = 'Not Needed';
-                    pushSendDataQueueHandler();
-
-                    if (asyncLogging) {
-                        if (workerId > 0) {
-                            Utility.asyncStepLogger(workerId + '\t Async is Ready');
-                        }
-                        else {
-                            Utility.asyncStepLogger('Async is Ready');
-                        }
-                    }
-
-                    socketState = socketStateType.OPEN;
-                    fireEvent('stateChange', {
-                        socketState: socketState,
-                        timeUntilReconnect: 0,
-                        deviceRegister: isDeviceRegister,
-                        serverRegister: isServerRegister,
-                        peerId: peerId
-                    });
-                }
-            },
-
-            registerServer = function () {
-
-                if (asyncLogging) {
-                    if (workerId > 0) {
-                        Utility.asyncStepLogger(workerId + '\t Registering Server');
-                    }
-                    else {
-                        Utility.asyncStepLogger('Registering Server');
-                    }
-                }
-
-                var content = {
-                    name: serverName
-                };
-
-                pushSendData({
-                    type: asyncMessageType.SERVER_REGISTER,
-                    content: content
-                });
-
-                registerServerTimeoutId = setTimeout(function () {
-                    if (!isServerRegister) {
-                        registerServer();
-                    }
-                }, connectionRetryInterval);
-            },
-
-            handleServerRegisterMessage = function (msg) {
-                if (msg.senderName && msg.senderName === serverName) {
-                    isServerRegister = true;
-
-                    if (registerServerTimeoutId) {
-                        clearTimeout(registerServerTimeoutId);
-                    }
-
-                    socketState = socketStateType.OPEN;
-                    fireEvent('stateChange', {
-                        socketState: socketState,
-                        timeUntilReconnect: 0,
-                        deviceRegister: isDeviceRegister,
-                        serverRegister: isServerRegister,
-                        peerId: peerId
-                    });
-                    fireEvent('asyncReady');
-
-                    pushSendDataQueueHandler();
-
-                    if (asyncLogging) {
-                        if (workerId > 0) {
-                            Utility.asyncStepLogger(workerId + '\t Async is Ready');
-                        }
-                        else {
-                            Utility.asyncStepLogger('Async is Ready');
-                        }
-                    }
-                }
-                else {
-                    isServerRegister = false;
-                }
-            },
-
-            pushSendData = function (msg) {
-                if (onSendLogging) {
-                    asyncLogger('Send', msg);
-                }
-
-                switch (protocol) {
-                    case 'websocket':
-                        if (socketState === socketStateType.OPEN) {
-                            socket.emit(msg);
-                        }
-                        else {
-                            pushSendDataQueue.push(msg);
-                        }
-                        break;
-                    case 'webrtc':
-                        if (socketState === socketStateType.OPEN) {
-                            webRTCClass.emit(msg);
-                        }
-                        else {
-                            pushSendDataQueue.push(msg);
-                        }
-
-                        break;
-                }
-            },
-
-            clearTimeouts = function () {
-                registerDeviceTimeoutId && clearTimeout(registerDeviceTimeoutId);
-                registerServerTimeoutId && clearTimeout(registerServerTimeoutId);
-                checkIfSocketHasOpennedTimeoutId && clearTimeout(checkIfSocketHasOpennedTimeoutId);
-                socketReconnectCheck && clearTimeout(socketReconnectCheck);
-            },
-
-            pushSendDataQueueHandler = function () {
-                while (pushSendDataQueue.length > 0 && socketState === socketStateType.OPEN) {
-                    var msg = pushSendDataQueue.splice(0, 1)[0];
-                    pushSendData(msg);
-                }
-            },
-
-            fireEvent = function (eventName, param, ack) {
-                // try {
-                if (ack) {
-                    for (var id in eventCallbacks[eventName]) {
-                        eventCallbacks[eventName][id](param, ack);
-                    }
-                }
-                else {
-                    for (var id in eventCallbacks[eventName]) {
-                        eventCallbacks[eventName][id](param);
-                    }
-                }
-                // }
-                // catch (e) {
-                //     fireEvent('error', {
-                //         errorCode: 999,
-                //         errorMessage: 'Unknown ERROR!',
-                //         errorEvent: e
-                //     });
-                // }
-            };
-
-        /*******************************************************
-         *             P U B L I C   M E T H O D S             *
-         *******************************************************/
-
-        this.on = function (eventName, callback) {
-            if (eventCallbacks[eventName]) {
-                var id = Utility.generateUUID();
-                eventCallbacks[eventName][id] = callback;
-                return id;
-            }
-            if (eventName === 'connect' && socketState === socketStateType.OPEN) {
-                callback(peerId);
-            }
-        };
-
-        this.send = function (params, callback) {
-            var messageType = (typeof params.type === 'number')
-                ? params.type
-                : (callback)
-                    ? asyncMessageType.MESSAGE_SENDER_ACK_NEEDED
-                    : asyncMessageType.MESSAGE;
-
-            var socketData = {
-                type: messageType,
-                uniqueId: params.uniqueId ? params.uniqueId : undefined,
-                content: params.content
-            };
-
-            if (params.trackerId) {
-                socketData.trackerId = params.trackerId;
-            }
-
-            lastMessageId += 1;
-            var messageId = lastMessageId;
-
-            if (messageType === asyncMessageType.MESSAGE_SENDER_ACK_NEEDED || messageType === asyncMessageType.MESSAGE_ACK_NEEDED) {
-                ackCallback[messageId] = function () {
-                    callback && callback();
-                };
-            }
-
-            socketData.content.messageId = messageId;
-            socketData.content.ttl = messageTtl;
-
-            pushSendData(socketData);
-        };
-
-        this.getAsyncState = function () {
-            return socketState;
-        };
-
-        this.getSendQueue = function () {
-            return pushSendDataQueue;
-        };
-
-        this.getPeerId = function () {
-            return peerId;
-        };
-
-        this.getServerName = function () {
-            return serverName;
-        };
-
-        this.setServerName = function (newServerName) {
-            serverName = newServerName;
-        };
-
-        this.setDeviceId = function (newDeviceId) {
-            deviceId = newDeviceId;
-        };
-
-        this.close = function () {
-            oldPeerId = peerId;
-            isDeviceRegister = false;
-            isSocketOpen = false;
-            clearTimeouts();
-
-            switch (protocol) {
-                case 'websocket':
-                    socketState = socketStateType.CLOSED;
-                    fireEvent('stateChange', {
-                        socketState: socketState,
-                        timeUntilReconnect: 0,
-                        deviceRegister: isDeviceRegister,
-                        serverRegister: isServerRegister,
-                        peerId: peerId
-                    });
-
-                    socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-                    socket.close();
-                    break;
-                case 'webrtc':
-                    socketState = socketStateType.CLOSED;
-                    fireEvent('stateChange', {
-                        socketState: socketState,
-                        timeUntilReconnect: 0,
-                        deviceRegister: isDeviceRegister,
-                        serverRegister: isServerRegister,
-                        peerId: peerId
-                    });
-
-                    socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-                    webRTCClass.close();
-
-                    break;
-            }
-        };
-
-        this.logout = function () {
-            oldPeerId = peerId;
-            peerId = undefined;
-            isServerRegister = false;
-            isDeviceRegister = false;
-            isSocketOpen = false;
-            deviceId = undefined;
-            pushSendDataQueue = [];
-            ackCallback = {};
-            clearTimeouts();
-
-            switch (protocol) {
-                case 'websocket':
-                    socketState = socketStateType.CLOSED;
-                    fireEvent('stateChange', {
-                        socketState: socketState,
-                        timeUntilReconnect: 0,
-                        deviceRegister: isDeviceRegister,
-                        serverRegister: isServerRegister,
-                        peerId: peerId
-                    });
-
-                    reconnectOnClose = false;
-
-                    socket.close();
-                    break;
-                case 'webrtc':
-                    socketState = socketStateType.CLOSED;
-                    fireEvent('stateChange', {
-                        socketState: socketState,
-                        timeUntilReconnect: 0,
-                        deviceRegister: isDeviceRegister,
-                        serverRegister: isServerRegister,
-                        peerId: peerId
-                    });
-
-                    reconnectOnClose = false;
-                    webRTCClass.close();
-
-                    break;
-            }
-        };
-
-        this.reconnectSocket = function () {
-            oldPeerId = peerId;
-            isDeviceRegister = false;
-            isSocketOpen = false;
-            clearTimeouts();
-
+            logLevel.debug && console.debug("[Async][async.js] on socket close, retryStep:", retryStep.get());
             socketState = socketStateType.CLOSED;
             fireEvent('stateChange', {
-                socketState: socketState,
-                timeUntilReconnect: 0,
-                deviceRegister: isDeviceRegister,
-                serverRegister: isServerRegister,
-                peerId: peerId
+              socketState: socketState,
+              timeUntilReconnect: 1000 * retryStep.get(),
+              deviceRegister: isDeviceRegister,
+              serverRegister: isServerRegister,
+              peerId: peerId
             });
-
             socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-            if(protocol === "websocket")
-                socket.close();
-            else if(protocol == "webrtc")
-                webRTCClass.close()
-
             socketReconnectRetryInterval = setTimeout(function () {
-                // retryStep = 4;
-                retryStep.set(4);
-                if(protocol === "websocket")
-                    socket.close();
-                else if(protocol == "webrtc")
-                    webRTCClass.close()
-            }, 2000);
-        };
+              socket.connect();
+            }, 1000 * retryStep.get());
+            if (retryStep.get() < 64) {
+              // retryStep += 3;
+              retryStep.set(retryStep.get() + 3);
+            }
 
-        this.generateUUID = Utility.generateUUID;
-
-        init();
-    }
-
-    if (typeof module !== 'undefined' && typeof module.exports != 'undefined') {
-        module.exports = Async;
-    }
-    else {
-        if (!window.POD) {
-            window.POD = {};
+            // socketReconnectCheck && clearTimeout(socketReconnectCheck);
+            //
+            // socketReconnectCheck = setTimeout(function() {
+            //   if (!isSocketOpen) {
+            //     fireEvent("error", {
+            //       errorCode: 4001,
+            //       errorMessage: "Can not open Socket!"
+            //     });
+            //
+            //     socketState = socketStateType.CLOSED;
+            //     fireEvent("stateChange", {
+            //       socketState: socketState,
+            //       deviceRegister: isDeviceRegister,
+            //       serverRegister: isServerRegister,
+            //       peerId: peerId
+            //     });
+            //   }
+            // }, 65000);
+          } else {
+            socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+            socketReconnectCheck && clearTimeout(socketReconnectCheck);
+            fireEvent('error', {
+              errorCode: 4005,
+              errorMessage: 'Socket Closed!'
+            });
+            socketState = socketStateType.CLOSED;
+            fireEvent('stateChange', {
+              socketState: socketState,
+              timeUntilReconnect: 0,
+              deviceRegister: isDeviceRegister,
+              serverRegister: isServerRegister,
+              peerId: peerId
+            });
+          }
+        });
+        socket.on('customError', function (error) {
+          fireEvent('error', {
+            errorCode: error.errorCode,
+            errorMessage: error.errorMessage,
+            errorEvent: error.errorEvent
+          });
+        });
+        socket.on('error', function (error) {
+          fireEvent('error', {
+            errorCode: '',
+            errorMessage: '',
+            errorEvent: error
+          });
+        });
+      },
+      initWebrtc = function () {
+        webRTCClass = new WebRTCClass({
+          baseUrl: webrtcConfig ? webrtcConfig.baseUrl : null,
+          configuration: webrtcConfig ? webrtcConfig.configuration : null,
+          connectionCheckTimeout: params.connectionCheckTimeout,
+          logLevel: logLevel
+        });
+        checkIfSocketHasOpennedTimeoutId = setTimeout(function () {
+          if (!isSocketOpen) {
+            fireEvent('error', {
+              errorCode: 4001,
+              errorMessage: 'Can not open Socket!'
+            });
+          }
+        }, 65000);
+        webRTCClass.on('open', function () {
+          checkIfSocketHasOpennedTimeoutId && clearTimeout(checkIfSocketHasOpennedTimeoutId);
+          socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+          socketReconnectCheck && clearTimeout(socketReconnectCheck);
+          isSocketOpen = true;
+          retryStep.set(4);
+          socketState = socketStateType.OPEN;
+          fireEvent('stateChange', {
+            socketState: socketState,
+            timeUntilReconnect: 0,
+            deviceRegister: isDeviceRegister,
+            serverRegister: isServerRegister,
+            peerId: peerId
+          });
+        });
+        webRTCClass.on('message', function (msg) {
+          console.log({
+            msg
+          });
+          handleSocketMessage(msg);
+          if (onReceiveLogging) {
+            asyncLogger('Receive', msg);
+          }
+        });
+        webRTCClass.on('close', function (event) {
+          isSocketOpen = false;
+          isDeviceRegister = false;
+          oldPeerId = peerId;
+          fireEvent('disconnect', event);
+          if (reconnOnClose.get()) {
+            if (asyncLogging) {
+              if (workerId > 0) {
+                Utility.asyncStepLogger(workerId + '\t Reconnecting after ' + retryStep.get() + 's');
+              } else {
+                Utility.asyncStepLogger('Reconnecting after ' + retryStep.get() + 's');
+              }
+            }
+            logLevel.debug && console.debug("[Async][async.js] on connection close, retryStep:", retryStep.get());
+            socketState = socketStateType.CLOSED;
+            fireEvent('stateChange', {
+              socketState: socketState,
+              timeUntilReconnect: 1000 * retryStep.get(),
+              deviceRegister: isDeviceRegister,
+              serverRegister: isServerRegister,
+              peerId: peerId
+            });
+            socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+            socketReconnectRetryInterval = setTimeout(function () {
+              webRTCClass.connect();
+            }, 1000 * retryStep.get());
+            if (retryStep.get() < 64) {
+              // retryStep += 3;
+              retryStep.set(retryStep.get() + 3);
+            }
+          } else {
+            socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+            socketReconnectCheck && clearTimeout(socketReconnectCheck);
+            fireEvent('error', {
+              errorCode: 4005,
+              errorMessage: 'Connection Closed!'
+            });
+            socketState = socketStateType.CLOSED;
+            fireEvent('stateChange', {
+              socketState: socketState,
+              timeUntilReconnect: 0,
+              deviceRegister: isDeviceRegister,
+              serverRegister: isServerRegister,
+              peerId: peerId
+            });
+          }
+        });
+        webRTCClass.on('customError', function (error) {
+          fireEvent('error', {
+            errorCode: error.errorCode,
+            errorMessage: error.errorMessage,
+            errorEvent: error.errorEvent
+          });
+        });
+        webRTCClass.on('error', function (error) {
+          fireEvent('error', {
+            errorCode: '',
+            errorMessage: '',
+            errorEvent: error
+          });
+        });
+      },
+      handleSocketMessage = function (msg) {
+        var ack;
+        if (msg.type === asyncMessageType.MESSAGE_ACK_NEEDED || msg.type === asyncMessageType.MESSAGE_SENDER_ACK_NEEDED) {
+          ack = function () {
+            pushSendData({
+              type: asyncMessageType.ACK,
+              content: {
+                messageId: msg.id
+              }
+            });
+          };
         }
-        window.POD.Async = Async;
-    }
-})();
+        switch (msg.type) {
+          case asyncMessageType.PING:
+            handlePingMessage(msg);
+            break;
+          case asyncMessageType.SERVER_REGISTER:
+            handleServerRegisterMessage(msg);
+            break;
+          case asyncMessageType.DEVICE_REGISTER:
+            handleDeviceRegisterMessage(msg.content);
+            break;
+          case asyncMessageType.MESSAGE:
+            fireEvent('message', msg);
+            break;
+          case asyncMessageType.MESSAGE_ACK_NEEDED:
+          case asyncMessageType.MESSAGE_SENDER_ACK_NEEDED:
+            ack();
+            fireEvent('message', msg);
+            break;
+          case asyncMessageType.ACK:
+            fireEvent('message', msg);
+            if (ackCallback[msg.senderMessageId] == 'function') {
+              ackCallback[msg.senderMessageId]();
+              delete ackCallback[msg.senderMessageId];
+            }
+            break;
+          case asyncMessageType.ERROR_MESSAGE:
+            fireEvent('error', {
+              errorCode: 4002,
+              errorMessage: 'Async Error!',
+              errorEvent: msg
+            });
+            break;
+        }
+      },
+      handlePingMessage = function (msg) {
+        if (msg.content) {
+          if (deviceId === undefined) {
+            deviceId = msg.content;
+            registerDevice();
+          } else {
+            registerDevice();
+          }
+        } else {
+          if (onReceiveLogging) {
+            if (workerId > 0) {
+              Utility.asyncStepLogger(workerId + '\t Ping Response at (' + new Date() + ')');
+            } else {
+              Utility.asyncStepLogger('Ping Response at (' + new Date() + ')');
+            }
+          }
+        }
+      },
+      registerDevice = function (isRetry) {
+        if (asyncLogging) {
+          if (workerId > 0) {
+            Utility.asyncStepLogger(workerId + '\t Registering Device');
+          } else {
+            Utility.asyncStepLogger('Registering Device');
+          }
+        }
+        var content = {
+          appId: appId,
+          deviceId: deviceId
+        };
+        if (peerId !== undefined) {
+          content.refresh = true;
+          content.renew = false;
+        } else {
+          content.renew = true;
+          content.refresh = false;
+        }
+        pushSendData({
+          type: asyncMessageType.DEVICE_REGISTER,
+          content: content
+        });
+      },
+      handleDeviceRegisterMessage = function (recievedPeerId) {
+        if (!isDeviceRegister) {
+          if (registerDeviceTimeoutId) {
+            clearTimeout(registerDeviceTimeoutId);
+          }
+          isDeviceRegister = true;
+          peerId = recievedPeerId;
+        }
 
+        /**
+         * If serverRegisteration == true we have to register
+         * on server then make async status ready
+         */
+        if (serverRegisteration) {
+          if (isServerRegister && peerId === oldPeerId) {
+            fireEvent('asyncReady');
+            isServerRegister = true;
+            pushSendDataQueueHandler();
+            socketState = socketStateType.OPEN;
+            fireEvent('stateChange', {
+              socketState: socketState,
+              timeUntilReconnect: 0,
+              deviceRegister: isDeviceRegister,
+              serverRegister: isServerRegister,
+              peerId: peerId
+            });
+          } else {
+            socketState = socketStateType.OPEN;
+            fireEvent('stateChange', {
+              socketState: socketState,
+              timeUntilReconnect: 0,
+              deviceRegister: isDeviceRegister,
+              serverRegister: isServerRegister,
+              peerId: peerId
+            });
+            registerServer();
+          }
+        } else {
+          fireEvent('asyncReady');
+          isServerRegister = 'Not Needed';
+          pushSendDataQueueHandler();
+          if (asyncLogging) {
+            if (workerId > 0) {
+              Utility.asyncStepLogger(workerId + '\t Async is Ready');
+            } else {
+              Utility.asyncStepLogger('Async is Ready');
+            }
+          }
+          socketState = socketStateType.OPEN;
+          fireEvent('stateChange', {
+            socketState: socketState,
+            timeUntilReconnect: 0,
+            deviceRegister: isDeviceRegister,
+            serverRegister: isServerRegister,
+            peerId: peerId
+          });
+        }
+      },
+      registerServer = function () {
+        if (asyncLogging) {
+          if (workerId > 0) {
+            Utility.asyncStepLogger(workerId + '\t Registering Server');
+          } else {
+            Utility.asyncStepLogger('Registering Server');
+          }
+        }
+        var content = {
+          name: serverName
+        };
+        pushSendData({
+          type: asyncMessageType.SERVER_REGISTER,
+          content: content
+        });
+        registerServerTimeoutId = setTimeout(function () {
+          if (!isServerRegister) {
+            registerServer();
+          }
+        }, connectionRetryInterval);
+      },
+      handleServerRegisterMessage = function (msg) {
+        if (msg.senderName && msg.senderName === serverName) {
+          isServerRegister = true;
+          if (registerServerTimeoutId) {
+            clearTimeout(registerServerTimeoutId);
+          }
+          socketState = socketStateType.OPEN;
+          fireEvent('stateChange', {
+            socketState: socketState,
+            timeUntilReconnect: 0,
+            deviceRegister: isDeviceRegister,
+            serverRegister: isServerRegister,
+            peerId: peerId
+          });
+          fireEvent('asyncReady');
+          pushSendDataQueueHandler();
+          if (asyncLogging) {
+            if (workerId > 0) {
+              Utility.asyncStepLogger(workerId + '\t Async is Ready');
+            } else {
+              Utility.asyncStepLogger('Async is Ready');
+            }
+          }
+        } else {
+          isServerRegister = false;
+        }
+      },
+      pushSendData = function (msg) {
+        if (onSendLogging) {
+          asyncLogger('Send', msg);
+        }
+        switch (protocol) {
+          case 'websocket':
+            if (socketState === socketStateType.OPEN) {
+              socket.emit(msg);
+            } else {
+              pushSendDataQueue.push(msg);
+            }
+            break;
+          case 'webrtc':
+            if (socketState === socketStateType.OPEN) {
+              webRTCClass.emit(msg);
+            } else {
+              pushSendDataQueue.push(msg);
+            }
+            break;
+        }
+      },
+      clearTimeouts = function () {
+        registerDeviceTimeoutId && clearTimeout(registerDeviceTimeoutId);
+        registerServerTimeoutId && clearTimeout(registerServerTimeoutId);
+        checkIfSocketHasOpennedTimeoutId && clearTimeout(checkIfSocketHasOpennedTimeoutId);
+        socketReconnectCheck && clearTimeout(socketReconnectCheck);
+      },
+      pushSendDataQueueHandler = function () {
+        while (pushSendDataQueue.length > 0 && socketState === socketStateType.OPEN) {
+          var msg = pushSendDataQueue.splice(0, 1)[0];
+          pushSendData(msg);
+        }
+      },
+      fireEvent = function (eventName, param, ack) {
+        // try {
+        if (ack) {
+          for (var id in eventCallbacks[eventName]) {
+            eventCallbacks[eventName][id](param, ack);
+          }
+        } else {
+          for (var id in eventCallbacks[eventName]) {
+            eventCallbacks[eventName][id](param);
+          }
+        }
+        // }
+        // catch (e) {
+        //     fireEvent('error', {
+        //         errorCode: 999,
+        //         errorMessage: 'Unknown ERROR!',
+        //         errorEvent: e
+        //     });
+        // }
+      };
+
+    /*******************************************************
+     *             P U B L I C   M E T H O D S             *
+     *******************************************************/
+
+    this.on = function (eventName, callback) {
+      if (eventCallbacks[eventName]) {
+        var id = Utility.generateUUID();
+        eventCallbacks[eventName][id] = callback;
+        return id;
+      }
+      if (eventName === 'connect' && socketState === socketStateType.OPEN) {
+        callback(peerId);
+      }
+    };
+    this.send = function (params, callback) {
+      var messageType = typeof params.type === 'number' ? params.type : callback ? asyncMessageType.MESSAGE_SENDER_ACK_NEEDED : asyncMessageType.MESSAGE;
+      var socketData = {
+        type: messageType,
+        uniqueId: params.uniqueId ? params.uniqueId : undefined,
+        content: params.content
+      };
+      if (params.trackerId) {
+        socketData.trackerId = params.trackerId;
+      }
+      lastMessageId += 1;
+      var messageId = lastMessageId;
+      if (messageType === asyncMessageType.MESSAGE_SENDER_ACK_NEEDED || messageType === asyncMessageType.MESSAGE_ACK_NEEDED) {
+        ackCallback[messageId] = function () {
+          callback && callback();
+        };
+      }
+      socketData.content.messageId = messageId;
+      socketData.content.ttl = messageTtl;
+      pushSendData(socketData);
+    };
+    this.getAsyncState = function () {
+      return socketState;
+    };
+    this.getSendQueue = function () {
+      return pushSendDataQueue;
+    };
+    this.getPeerId = function () {
+      return peerId;
+    };
+    this.getServerName = function () {
+      return serverName;
+    };
+    this.setServerName = function (newServerName) {
+      serverName = newServerName;
+    };
+    this.setDeviceId = function (newDeviceId) {
+      deviceId = newDeviceId;
+    };
+    this.close = function () {
+      oldPeerId = peerId;
+      isDeviceRegister = false;
+      isSocketOpen = false;
+      clearTimeouts();
+      switch (protocol) {
+        case 'websocket':
+          socketState = socketStateType.CLOSED;
+          fireEvent('stateChange', {
+            socketState: socketState,
+            timeUntilReconnect: 0,
+            deviceRegister: isDeviceRegister,
+            serverRegister: isServerRegister,
+            peerId: peerId
+          });
+          socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+          socket.close();
+          break;
+        case 'webrtc':
+          socketState = socketStateType.CLOSED;
+          fireEvent('stateChange', {
+            socketState: socketState,
+            timeUntilReconnect: 0,
+            deviceRegister: isDeviceRegister,
+            serverRegister: isServerRegister,
+            peerId: peerId
+          });
+          socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+          webRTCClass.close();
+          break;
+      }
+    };
+    this.logout = function () {
+      oldPeerId = peerId;
+      peerId = undefined;
+      isServerRegister = false;
+      isDeviceRegister = false;
+      isSocketOpen = false;
+      deviceId = undefined;
+      pushSendDataQueue = [];
+      ackCallback = {};
+      clearTimeouts();
+      switch (protocol) {
+        case 'websocket':
+          socketState = socketStateType.CLOSED;
+          fireEvent('stateChange', {
+            socketState: socketState,
+            timeUntilReconnect: 0,
+            deviceRegister: isDeviceRegister,
+            serverRegister: isServerRegister,
+            peerId: peerId
+          });
+          reconnOnClose.set(false);
+          // reconnectOnClose = false;
+
+          socket.close();
+          break;
+        case 'webrtc':
+          socketState = socketStateType.CLOSED;
+          fireEvent('stateChange', {
+            socketState: socketState,
+            timeUntilReconnect: 0,
+            deviceRegister: isDeviceRegister,
+            serverRegister: isServerRegister,
+            peerId: peerId
+          });
+          reconnOnClose.set(false);
+          // reconnectOnClose = false;
+          webRTCClass.close();
+          break;
+      }
+    };
+    let reconnectSocketTimeout;
+    this.reconnectSocket = function () {
+      oldPeerId = peerId;
+      isDeviceRegister = false;
+      isSocketOpen = false;
+      clearTimeouts();
+      socketState = socketStateType.CLOSED;
+      fireEvent('stateChange', {
+        socketState: socketState,
+        timeUntilReconnect: 0,
+        deviceRegister: isDeviceRegister,
+        serverRegister: isServerRegister,
+        peerId: peerId
+      });
+      socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+      if (protocol === "websocket") socket.close();else if (protocol == "webrtc") webRTCClass.close();
+
+      // let tmpReconnectOnClose = reconnectOnClose;
+      // reconnectOnClose = false;
+      reconnOnClose.setOld(reconnOnClose.get());
+      reconnOnClose.set(false);
+      retryStep.set(0);
+      if (protocol === "websocket") socket.connect();else if (protocol == "webrtc") webRTCClass.connect();
+      reconnectSocketTimeout && clearTimeout(reconnectSocketTimeout);
+      reconnectSocketTimeout = setTimeout(function () {
+        // retryStep = 4;
+        retryStep.set(0);
+        // reconnectOnClose = tmpReconnectOnClose;
+        reconnOnClose.set(reconnOnClose.getOld());
+        if (socketState != socketStateType.OPEN) {
+          if (protocol === "websocket") socket.connect();else if (protocol == "webrtc") webRTCClass.connect();
+        }
+
+        // if(protocol === "websocket")
+        //     socket.connect();
+        // else if(protocol == "webrtc")
+        //     webRTCClass.connect()
+      }, 4000);
+    };
+    this.generateUUID = Utility.generateUUID;
+    init();
+  }
+  if (typeof module !== 'undefined' && typeof module.exports != 'undefined') {
+    module.exports = Async;
+  } else {
+    if (!window.POD) {
+      window.POD = {};
+    }
+    window.POD.Async = Async;
+  }
+})();
 },{"../utility/logger.js":212,"../utility/utility.js":213,"./socket.js":210,"./webrtc.js":211}],210:[function(require,module,exports){
-(function() {
+(function () {
   /*
    * Socket Module to connect and handle Socket functionalities
    * @module Socket
@@ -39951,8 +39853,7 @@ module.exports = function (thing, encoding, name) {
    */
 
   function Socket(params) {
-
-    if (typeof(WebSocket) === "undefined" && typeof(require) !== "undefined" && typeof(exports) !== "undefined") {
+    if (typeof WebSocket === "undefined" && typeof require !== "undefined" && typeof exports !== "undefined") {
       WebSocket = require('isomorphic-ws');
     }
 
@@ -39961,31 +39862,30 @@ module.exports = function (thing, encoding, name) {
      *******************************************************/
 
     var address = params.socketAddress,
-        wsConnectionWaitTime = params.wsConnectionWaitTime || 500,
-        connectionCheckTimeout = params.connectionCheckTimeout || 10000,
-        eventCallback = {},
-        socket,
-        waitForSocketToConnectTimeoutId,
-        socketRealTimeStatusInterval,
-        logLevel = params.logLevel,
-        pingController = new PingManager({waitTime: connectionCheckTimeout}),
-        socketWatchTimeout;
-
-
+      wsConnectionWaitTime = params.wsConnectionWaitTime || 500,
+      connectionCheckTimeout = params.connectionCheckTimeout || 10000,
+      eventCallback = {},
+      socket,
+      waitForSocketToConnectTimeoutId,
+      socketRealTimeStatusInterval,
+      logLevel = params.logLevel,
+      pingController = new PingManager({
+        waitTime: connectionCheckTimeout
+      }),
+      socketWatchTimeout;
     function PingManager(params) {
       const config = {
         normalWaitTime: params.waitTime,
-
         lastRequestTimeoutId: null,
         lastReceivedMessageTime: 0,
         totalNoMessageCount: 0,
         timeoutIds: {
           first: null,
           second: null,
-          third: null,
+          third: null
           //fourth: null
         }
-      }
+      };
 
       return {
         resetPingLoop() {
@@ -39993,11 +39893,11 @@ module.exports = function (thing, encoding, name) {
           this.setPingTimeout();
         },
         setPingTimeout() {
-          config.timeoutIds.first = setTimeout(()=>{
+          config.timeoutIds.first = setTimeout(() => {
             ping();
-            config.timeoutIds.second = setTimeout(()=>{
+            config.timeoutIds.second = setTimeout(() => {
               ping();
-              config.timeoutIds.third = setTimeout(()=>{
+              config.timeoutIds.third = setTimeout(() => {
                 logLevel.debug && console.debug("[Async][Socket.js] Force closing socket.");
                 onCloseHandler(null);
                 socket.close();
@@ -40005,174 +39905,158 @@ module.exports = function (thing, encoding, name) {
             }, 2000);
           }, 8000);
         },
-        stopPingLoop(){
+        stopPingLoop() {
           clearTimeout(config.timeoutIds.first);
           clearTimeout(config.timeoutIds.second);
           clearTimeout(config.timeoutIds.third);
           // clearTimeout(config.timeoutIds.fourth);
-        },
-      }
+        }
+      };
     }
 
     /*******************************************************
      *            P R I V A T E   M E T H O D S            *
      *******************************************************/
 
-    var init = function() {
-          connect();
-        },
-
-        connect = function() {
-          try {
-            if (socket && socket.readyState == 1) {
-              return;
-            }
-
-            socket = new WebSocket(address, []);
-
-            // socketRealTimeStatusInterval && clearInterval(socketRealTimeStatusInterval);
-            // socketRealTimeStatusInterval = setInterval(function() {
-            //   switch (socket.readyState) {
-            //     case 2:
-            //       onCloseHandler(null);
-            //       socketRealTimeStatusInterval && clearInterval(socketRealTimeStatusInterval);
-            //       break;
-            //     case 3:
-            //
-            //       break;
-            //   }
-            // }, 5000);
-
-            /**
-             * Watches the socket to make sure it's state changes to 1 in 5 seconds
-             */
-            socketWatchTimeout && clearTimeout(socketWatchTimeout);
-            socketWatchTimeout = setTimeout(() => {
-              // if(socket.readyState !== 1) {
-              logLevel.debug && console.debug("[Async][Socket.js] socketWatchTimeout triggered.");
-              onCloseHandler(null);
-              socket.close();
-              // }
-            }, 5000);
-
-            socket.onopen = function(event) {
-              waitForSocketToConnect(function() {
-                pingController.resetPingLoop();
-                eventCallback["open"]();
-                socketWatchTimeout && clearTimeout(socketWatchTimeout);
-              });
-            }
-
-            socket.onmessage = function(event) {
-              pingController.resetPingLoop();
-
-              var messageData = JSON.parse(event.data);
-              eventCallback["message"](messageData);
-            }
-
-            socket.onclose = function(event) {
-              pingController.stopPingLoop();
-              logLevel.debug && console.debug("[Async][Socket.js] socket.onclose happened. EventData:", event);
-              onCloseHandler(event);
-              socketWatchTimeout && clearTimeout(socketWatchTimeout);
-            }
-
-            socket.onerror = function(event) {
-              logLevel.debug && console.debug("[Async][Socket.js] socket.onerror happened. EventData:", event);
-              eventCallback["error"](event);
-              socketWatchTimeout && clearTimeout(socketWatchTimeout);
-            }
-          } catch (error) {
-            eventCallback["customError"]({
-              errorCode: 4000,
-              errorMessage: "ERROR in WEBSOCKET!",
-              errorEvent: error
-            });
+    var init = function () {
+        connect();
+      },
+      connect = function () {
+        try {
+          console.log("socket.connect()");
+          if (socket && socket.readyState == 1) {
+            return;
           }
-        },
+          socket = new WebSocket(address, []);
 
-        onCloseHandler = function(event) {
-          pingController.stopPingLoop();
+          // socketRealTimeStatusInterval && clearInterval(socketRealTimeStatusInterval);
+          // socketRealTimeStatusInterval = setInterval(function() {
+          //   switch (socket.readyState) {
+          //     case 2:
+          //       onCloseHandler(null);
+          //       socketRealTimeStatusInterval && clearInterval(socketRealTimeStatusInterval);
+          //       break;
+          //     case 3:
+          //
+          //       break;
+          //   }
+          // }, 5000);
+
+          /**
+           * Watches the socket to make sure it's state changes to 1 in 5 seconds
+           */
+          socketWatchTimeout && clearTimeout(socketWatchTimeout);
+          socketWatchTimeout = setTimeout(() => {
+            // if(socket.readyState !== 1) {
+            logLevel.debug && console.debug("[Async][Socket.js] socketWatchTimeout triggered.");
+            onCloseHandler(null);
+            socket.close();
+            // }
+          }, 5000);
+          socket.onopen = function (event) {
+            waitForSocketToConnect(function () {
+              pingController.resetPingLoop();
+              eventCallback["open"]();
+              socketWatchTimeout && clearTimeout(socketWatchTimeout);
+            });
+          };
+          socket.onmessage = function (event) {
+            pingController.resetPingLoop();
+            var messageData = JSON.parse(event.data);
+            eventCallback["message"](messageData);
+          };
+          socket.onclose = function (event) {
+            pingController.stopPingLoop();
+            logLevel.debug && console.debug("[Async][Socket.js] socket.onclose happened. EventData:", event);
+            onCloseHandler(event);
+            socketWatchTimeout && clearTimeout(socketWatchTimeout);
+          };
+          socket.onerror = function (event) {
+            logLevel.debug && console.debug("[Async][Socket.js] socket.onerror happened. EventData:", event);
+            eventCallback["error"](event);
+            socketWatchTimeout && clearTimeout(socketWatchTimeout);
+          };
+        } catch (error) {
+          eventCallback["customError"]({
+            errorCode: 4000,
+            errorMessage: "ERROR in WEBSOCKET!",
+            errorEvent: error
+          });
+        }
+      },
+      onCloseHandler = function (event) {
+        pingController.stopPingLoop();
+        if (socket) {
           socket.onclose = null;
           socket.onmessage = null;
           socket.onerror = null;
           socket.onopen = null;
-          eventCallback["close"](event);
-        },
-
-        ping = function() {
-          sendData({
-            type: 0
-          });
-        },
-
-        waitForSocketToConnect = function(callback) {
-          waitForSocketToConnectTimeoutId && clearTimeout(waitForSocketToConnectTimeoutId);
-
-          if (socket.readyState === 1) {
-            callback();
-          } else {
-            waitForSocketToConnectTimeoutId = setTimeout(function() {
-              if (socket.readyState === 1) {
-                callback();
-              } else {
-                waitForSocketToConnect(callback);
-              }
-            }, wsConnectionWaitTime);
-          }
-        },
-
-        sendData = function(params) {
-          var data = {
-            type: params.type,
-            uniqueId: params.uniqueId
-          };
-
-          if (params.trackerId) {
-            data.trackerId = params.trackerId;
-          }
-
-          try {
-            if (params.content) {
-              data.content = JSON.stringify(params.content);
-            }
-
+          socket = null;
+        }
+        eventCallback["close"](event);
+      },
+      ping = function () {
+        sendData({
+          type: 0
+        });
+      },
+      waitForSocketToConnect = function (callback) {
+        waitForSocketToConnectTimeoutId && clearTimeout(waitForSocketToConnectTimeoutId);
+        if (socket.readyState === 1) {
+          callback();
+        } else {
+          waitForSocketToConnectTimeoutId = setTimeout(function () {
             if (socket.readyState === 1) {
-              socket.send(JSON.stringify(data));
+              callback();
+            } else {
+              waitForSocketToConnect(callback);
             }
-          } catch (error) {
-            eventCallback["customError"]({
-              errorCode: 4004,
-              errorMessage: "Error in Socket sendData!",
-              errorEvent: error
-            });
-          }
+          }, wsConnectionWaitTime);
+        }
+      },
+      sendData = function (params) {
+        var data = {
+          type: params.type,
+          uniqueId: params.uniqueId
         };
+        if (params.trackerId) {
+          data.trackerId = params.trackerId;
+        }
+        try {
+          if (params.content) {
+            data.content = JSON.stringify(params.content);
+          }
+          if (socket.readyState === 1) {
+            socket.send(JSON.stringify(data));
+          }
+        } catch (error) {
+          eventCallback["customError"]({
+            errorCode: 4004,
+            errorMessage: "Error in Socket sendData!",
+            errorEvent: error
+          });
+        }
+      };
 
     /*******************************************************
      *             P U B L I C   M E T H O D S             *
      *******************************************************/
 
-    this.on = function(messageName, callback) {
+    this.on = function (messageName, callback) {
       eventCallback[messageName] = callback;
-    }
-
+    };
     this.emit = sendData;
-
-    this.connect = function() {
+    this.connect = function () {
       connect();
-    }
-
-    this.close = function() {
+    };
+    this.close = function () {
       logLevel.debug && console.debug("[Async][Socket.js] Closing socket by call to this.close");
       socket.close();
       onCloseHandler(null);
       socketWatchTimeout && clearTimeout(socketWatchTimeout);
-    }
-
+    };
     init();
   }
-
   if (typeof module !== 'undefined' && typeof module.exports != "undefined") {
     module.exports = Socket;
   } else {
@@ -40181,523 +40065,471 @@ module.exports = function (thing, encoding, name) {
     }
     window.POD.Socket = Socket;
   }
-
 })();
-
 },{"isomorphic-ws":187}],211:[function(require,module,exports){
 let defaultConfig = {
-        baseUrl: "http://109.201.0.97/webrtc/",
-        registerEndpoint: "register/",
-        addICEEndpoint: "add-ice/",
-        getICEEndpoint: "get-ice/?",
-        configuration: {
-            bundlePolicy: "balanced",
-            iceTransportPolicy: "relay",
-            iceServers: [{
-                "urls": "turn:turnsandbox.podstream.ir:3478", "username": "mkhorrami", "credential": "mkh_123456"
-            }]
-        },
-        connectionCheckTimeout: 10000,
-        logLevel: null
+    baseUrl: "http://109.201.0.97/webrtc/",
+    registerEndpoint: "register/",
+    addICEEndpoint: "add-ice/",
+    getICEEndpoint: "get-ice/?",
+    configuration: {
+      bundlePolicy: "balanced",
+      iceTransportPolicy: "relay",
+      iceServers: [{
+        "urls": "turn:turnsandbox.podstream.ir:3478",
+        "username": "mkhorrami",
+        "credential": "mkh_123456"
+      }]
     },
-    variables = {
-        peerConnection: null,
-        dataChannel: null,
-        pingController: new PingManager({waitTime: defaultConfig.connectionCheckTimeout}),
-        candidatesQueue: [],
-        // candidatesSendQueue: [],
-        candidateManager: new CandidatesSendQueueManager(),
-        clientId: null,
-        deviceId: null,
-        apiCallRetries: {
-            register: 3,
-            getIce: 3,
-            addIce: 5
-        }
-    };
-
+    connectionCheckTimeout: 10000,
+    logLevel: null
+  },
+  variables = {
+    peerConnection: null,
+    dataChannel: null,
+    pingController: new PingManager({
+      waitTime: defaultConfig.connectionCheckTimeout
+    }),
+    candidatesQueue: [],
+    // candidatesSendQueue: [],
+    candidateManager: new CandidatesSendQueueManager(),
+    clientId: null,
+    deviceId: null,
+    apiCallRetries: {
+      register: 3,
+      getIce: 3,
+      addIce: 5
+    }
+  };
 function CandidatesSendQueueManager() {
-    let config = {
-        candidatesToSend: [],
-        alreadyReceivedServerCandidates: false,
-        reCheckTimeout: null
-    }
-
-    function trySendingCandidates() {
-        timoutCallback();
-        function timoutCallback() {
-            if(variables.peerConnection.signalingState === 'stable') {
-                config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
-                if (config.candidatesToSend.length) {
-                    let entry = config.candidatesToSend.shift();
-                    handshakingFunctions
-                        .sendCandidate(entry)
-                        .then(function (result) {
-                            if (result.length) {
-                                addServerCandidates(result);
-
-                                config.alreadyReceivedServerCandidates = true;
-                            }
-                            trySendingCandidates();
-                        });
-
-                } else if (!config.alreadyReceivedServerCandidates) {
-                    handshakingFunctions.getCandidates(variables.clientId).then(function (result) {
-                        addServerCandidates(result)
-                    }).catch();
-                }
-            } else {
-                config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
-                config.reCheckTimeout = setTimeout(timoutCallback, 1000);
+  let config = {
+    candidatesToSend: [],
+    alreadyReceivedServerCandidates: false,
+    reCheckTimeout: null
+  };
+  function trySendingCandidates() {
+    timoutCallback();
+    function timoutCallback() {
+      if (variables.peerConnection.signalingState === 'stable') {
+        config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
+        if (config.candidatesToSend.length) {
+          let entry = config.candidatesToSend.shift();
+          handshakingFunctions.sendCandidate(entry).then(function (result) {
+            if (result.length) {
+              addServerCandidates(result);
+              config.alreadyReceivedServerCandidates = true;
             }
-        }
-    }
-
-    function addServerCandidates(candidates) {
-        for(let i in candidates) {
-            webrtcFunctions.putCandidateToQueue(candidates[i]);
-        }
-    }
-
-    return {
-        add: function (candidate) {
-            config.candidatesToSend.push(candidate);
             trySendingCandidates();
-        },
-        destroy: function (){
-            config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
+          });
+        } else if (!config.alreadyReceivedServerCandidates) {
+          handshakingFunctions.getCandidates(variables.clientId).then(function (result) {
+            addServerCandidates(result);
+          }).catch();
         }
+      } else {
+        config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
+        config.reCheckTimeout = setTimeout(timoutCallback, 1000);
+      }
     }
+  }
+  function addServerCandidates(candidates) {
+    for (let i in candidates) {
+      webrtcFunctions.putCandidateToQueue(candidates[i]);
+    }
+  }
+  return {
+    add: function (candidate) {
+      config.candidatesToSend.push(candidate);
+      trySendingCandidates();
+    },
+    destroy: function () {
+      config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
+    }
+  };
 }
-
 function PingManager(params) {
-    const config = {
-        normalWaitTime: params.waitTime,
-
-        lastRequestTimeoutId: null,
-        lastReceivedMessageTime: 0,
-        totalNoMessageCount: 0,
-        timeoutIds: {
-            first: null,
-            second: null,
-            third: null,
-            fourth: null
-        }
+  const config = {
+    normalWaitTime: params.waitTime,
+    lastRequestTimeoutId: null,
+    lastReceivedMessageTime: 0,
+    totalNoMessageCount: 0,
+    timeoutIds: {
+      first: null,
+      second: null,
+      third: null,
+      fourth: null
     }
-
-    return {
-        resetPingLoop() {
-            this.stopPingLoop();
-            this.setPingTimeout();
-        },
-        setPingTimeout() {
-            config.timeoutIds.first = setTimeout(() => {
-                ping();
-                config.timeoutIds.second = setTimeout(() => {
-                    ping();
-                    config.timeoutIds.third = setTimeout(() => {
-                        defaultConfig.logLevel.debug && console.debug("[Async][Webrtc.js] Force closing connection.");
-                        publicized.close();
-                    }, 2000);
-                }, 2000);
-            }, 8000);
-        },
-        stopPingLoop() {
-            clearTimeout(config.timeoutIds.first);
-            clearTimeout(config.timeoutIds.second);
-            clearTimeout(config.timeoutIds.third);
-            // clearTimeout(config.timeoutIds.fourth);
-        },
+  };
+  return {
+    resetPingLoop() {
+      this.stopPingLoop();
+      this.setPingTimeout();
+    },
+    setPingTimeout() {
+      config.timeoutIds.first = setTimeout(() => {
+        ping();
+        config.timeoutIds.second = setTimeout(() => {
+          ping();
+          config.timeoutIds.third = setTimeout(() => {
+            defaultConfig.logLevel.debug && console.debug("[Async][Webrtc.js] Force closing connection.");
+            publicized.close();
+          }, 2000);
+        }, 2000);
+      }, 8000);
+    },
+    stopPingLoop() {
+      clearTimeout(config.timeoutIds.first);
+      clearTimeout(config.timeoutIds.second);
+      clearTimeout(config.timeoutIds.third);
+      // clearTimeout(config.timeoutIds.fourth);
     }
+  };
 }
 
 function connect() {
-    webrtcFunctions.createPeerConnection();
-    webrtcFunctions.createDataChannel();
-    webrtcFunctions.generateSdpOffer()
-        .then(sendOfferToServer);
-
-    function sendOfferToServer(offer) {
-        handshakingFunctions
-            .register(offer.sdp)
-            .then(processRegisterResult).catch();
-
-        variables
-            .peerConnection.setLocalDescription(offer)
-            .catch(error => console.error(error));
-    }
-
-    function processRegisterResult(result) {
-        variables.clientId = result.clientId;
-        variables.deviceId = result.deviceId;
-        webrtcFunctions.processAnswer(result.sdpAnswer);
-    }
+  webrtcFunctions.createPeerConnection();
+  webrtcFunctions.createDataChannel();
+  webrtcFunctions.generateSdpOffer().then(sendOfferToServer);
+  function sendOfferToServer(offer) {
+    handshakingFunctions.register(offer.sdp).then(processRegisterResult).catch();
+    variables.peerConnection.setLocalDescription(offer).catch(error => console.error(error));
+  }
+  function processRegisterResult(result) {
+    variables.clientId = result.clientId;
+    variables.deviceId = result.deviceId;
+    webrtcFunctions.processAnswer(result.sdpAnswer);
+  }
 }
-
 let webrtcFunctions = {
-    createPeerConnection: function () {
-        variables.peerConnection = new RTCPeerConnection(defaultConfig.configuration);
-        variables.peerConnection.addEventListener('signalingstatechange', webrtcFunctions.signalingStateChangeCallback);
-        variables.peerConnection.onicecandidate = function (event) {
-            if (event.candidate) {
-                variables.candidateManager.add(event.candidate);
-                webrtcFunctions.putCandidateToQueue(event.candidate);
-            }
-        };
-    },
-    signalingStateChangeCallback: function () {
-        if (variables.peerConnection.signalingState === 'stable') {
-            // handshakingFunctions.getCandidates().catch()
-            webrtcFunctions.addTheCandidates();
-        }
-    },
-    createDataChannel: function () {
-        variables.dataChannel = variables.peerConnection.createDataChannel("dataChannel", {ordered: false});
-        variables.dataChannel.onopen = dataChannelCallbacks.onopen;
-        variables.dataChannel.onmessage = dataChannelCallbacks.onmessage;
-        variables.dataChannel.onerror = dataChannelCallbacks.onerror;
-        variables.dataChannel.onclose = dataChannelCallbacks.onclose;
-    },
-    generateSdpOffer: function () {
-        return new Promise(function (resolve, reject) {
-            variables.peerConnection.createOffer(function (offer) {
-                resolve(offer)
-            }, function (error) {
-                reject(error);
-                console.error(error);
-            }).then(r => console.log(r));
-        })
-    },
-    processAnswer: function (answer) {
-        let remoteDesc = {
-            type: "answer", sdp: answer
-        };
-        variables
-            .peerConnection
-            .setRemoteDescription(new RTCSessionDescription(remoteDesc))
-            .catch(function (error) {
-                console.error(error)
-            });
-    },
-    addTheCandidates: function () {
-        while (variables.candidatesQueue.length) {
-            let entry = variables.candidatesQueue.shift();
-            variables.peerConnection.addIceCandidate(entry.candidate);
-        }
-    },
-    putCandidateToQueue: function (candidate) {
-        variables.candidatesQueue.push({
-            candidate: new RTCIceCandidate(candidate)
-        });
-        if (variables.peerConnection.signalingState === 'stable') {
-            webrtcFunctions.addTheCandidates();
-        }
-    },
-    sendData: function(params) {
-        if(!variables.dataChannel) {
-            console.error("Connection is closed, do not send messages.")
-            return;
-        }
-        var data = {
-            type: params.type,
-            uniqueId: params.uniqueId
-        };
-
-        if (params.trackerId) {
-            data.trackerId = params.trackerId;
-        }
-
-        try {
-            if (params.content) {
-                data.content = JSON.stringify(params.content);
-            }
-
-            if (variables.peerConnection.signalingState === 'stable') {
-                //defaultConfig.logLevel.debug &&
-                console.log("[Async][WebRTC] Send ", data);
-                variables.dataChannel.send(JSON.stringify(data));
-            }
-        } catch (error) {
-            eventCallback["customError"]({
-                errorCode: 4004,
-                errorMessage: "Error in Socket sendData!",
-                errorEvent: error
-            });
-        }
+  createPeerConnection: function () {
+    variables.peerConnection = new RTCPeerConnection(defaultConfig.configuration);
+    variables.peerConnection.addEventListener('signalingstatechange', webrtcFunctions.signalingStateChangeCallback);
+    variables.peerConnection.onicecandidate = function (event) {
+      if (event.candidate) {
+        variables.candidateManager.add(event.candidate);
+        webrtcFunctions.putCandidateToQueue(event.candidate);
+      }
+    };
+  },
+  signalingStateChangeCallback: function () {
+    if (variables.peerConnection.signalingState === 'stable') {
+      // handshakingFunctions.getCandidates().catch()
+      webrtcFunctions.addTheCandidates();
     }
-}
-
-let dataChannelCallbacks = {
-    onopen: function (event) {
-        console.log("********* dataChannel open *********");
-        variables.pingController.resetPingLoop();
-        eventCallback["open"]();
-
-        const deviceRegister = {
-            "type": "2",
-            "content": {"deviceId": variables.deviceId, "appId": "PodChat", "refresh": false, "renew": true}
-        };
-        deviceRegister.content = JSON.stringify(deviceRegister.content)
-        variables.dataChannel.send(JSON.stringify(deviceRegister));
-    },
-
-    onmessage: function (event) {
-
-        variables.pingController.resetPingLoop();
-        var messageData = JSON.parse(event.data);
-        console.log("[Async][WebRTC] Receive ", event.data);
-        eventCallback["message"](messageData);
-    },
-
-    onerror: function (error) {
-        logLevel.debug && console.debug("[Async][Socket.js] dataChannel.onerror happened. EventData:", event);
-        eventCallback["error"](event);
-    },
-    onclose: function (event) {
-        resetVariables();
-        eventCallback["close"](event);
-    }
-}
-
-let handshakingFunctions = {
-    register: function (offer) {
-        let retries = variables.apiCallRetries.register;
-        return new Promise(promiseHandler);
-        function promiseHandler(resolve, reject) {
-            let registerEndPoint = defaultConfig.baseUrl + defaultConfig.registerEndpoint
-            fetch(registerEndPoint, {
-                method: "POST",
-                body: JSON.stringify({
-                    offer: offer
-                }),
-                headers: {
-                    "Content-Type": "application/json",
-                    // 'Content-Type': 'application/x-www-form-urlencoded',
-                },
-            })
-                .then(function (response) {
-                    if(response.ok)
-                        return response.json();
-                    else if(retries){
-                        retryTheRequest(resolve, reject);
-                        retries--;
-                    } else reject();
-                })
-                .then(result => resolve(result))
-                .catch(err => {
-                    if(retries){
-                        retryTheRequest(resolve, reject);
-                        retries--;
-                    } else {
-                        publicized.close();
-                    }
-                    console.error(err);
-                });
-        }
-        function retryTheRequest(resolve, reject){
-            setTimeout(function (){promiseHandler(resolve, reject)}, 1000);
-        }
-    },
-    getCandidates: function (clientId) {
-        let addIceCandidateEndPoint = defaultConfig.baseUrl + defaultConfig.getICEEndpoint
-        addIceCandidateEndPoint += "clientId=" + clientId;
-
-        let retries = variables.apiCallRetries.getIce;
-        return new Promise(promiseHandler);
-        function promiseHandler(resolve, reject) {
-            fetch(addIceCandidateEndPoint, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    // 'Content-Type': 'application/x-www-form-urlencoded',
-                },
-            })
-                .then(function (response) {
-                    if(response.ok)
-                        return response.json();
-                    else if(retries){
-                        retryTheRequest(resolve, reject);
-                        retries--;
-                    } else reject();
-                })
-                .then(function (result) {
-                    resolve(result.iceCandidates)
-                    // if(result.iceCandidates && result.iceCandidates.length) {
-                    //     // result.iceCandidates.forEach((item) => {
-                    //     //     webrtcFunctions.putCandidateToQueue(item);
-                    //     // });
-                    //     resolve(result.iceCandidates)
-                    // }
-                    // else {
-                    //     if(retries){
-                    //         retryTheRequest(resolve, reject);
-                    //         retries--;
-                    //     } else reject();
-                    // }
-                })
-                .catch(function (err) {
-                    if(retries){
-                        retryTheRequest(resolve, reject);
-                        retries--;
-                    } else reject(err);
-                    console.error(err);
-                });
-        }
-
-        function retryTheRequest(resolve, reject){
-            setTimeout(function (){promiseHandler(resolve, reject)}, 1000);
-        }
-
-    },
-    sendCandidate: function (candidate) {
-        let addIceCandidateEndPoint = defaultConfig.baseUrl + defaultConfig.addICEEndpoint
-            , retries = variables.apiCallRetries.addIce;
-
-        return new Promise(promiseHandler);
-        function promiseHandler(resolve, reject) {
-            fetch(addIceCandidateEndPoint, {
-                method: "POST",
-                body: JSON.stringify({
-                    "clientId": variables.clientId,
-                    "candidate": candidate
-                }),
-                headers: {
-                    "Content-Type": "application/json",
-                    // 'Content-Type': 'application/x-www-form-urlencoded',
-                },
-            })
-                .then(function (response) {
-                    if(response.ok)
-                        return response.json();
-                    else if(retries){
-                        retryTheRequest(resolve, reject);
-                        retries--;
-                    } else reject();
-                })
-                .then(function (result) {
-                    resolve(result.iceCandidates);
-                })
-                .catch(err => {
-                    if(retries){
-                        retryTheRequest(resolve, reject);
-                        retries--;
-                    } else reject(err);
-                    console.error(err);
-                });
-        }
-
-        function retryTheRequest(resolve, reject){
-            setTimeout(function (){promiseHandler(resolve, reject)}, 2000);
-        }
-    }
-}
-
-eventCallback = {};
-
-function resetVariables() {
-    console.log("resetVariables");
-    eventCallback["close"]();
-    variables.pingController.stopPingLoop();
-    variables.dataChannel.close();
-    variables.dataChannel = null;
-    variables.peerConnection.close();
-    variables.peerConnection = null;
-    variables.candidatesQueue = [];
-    variables.clientId = null;
-    variables.deviceId = null;
-    variables.candidateManager.destroy();
-    variables.candidateManager = new CandidatesSendQueueManager()
-}
-
-function ping() {
-    webrtcFunctions.sendData({
-        type: 0
+  },
+  createDataChannel: function () {
+    variables.dataChannel = variables.peerConnection.createDataChannel("dataChannel", {
+      ordered: false
     });
-}
-function removeCallbacks(){
-    if(variables.peerConnection)
-        variables.peerConnection.onicecandidate = null;
-    if(variables.dataChannel) {
-        variables.dataChannel.onclose = null;
-        variables.dataChannel.onmessage = null;
-        variables.dataChannel.onerror = null;
-        variables.dataChannel.onopen = null;
+    variables.dataChannel.onopen = dataChannelCallbacks.onopen;
+    variables.dataChannel.onmessage = dataChannelCallbacks.onmessage;
+    variables.dataChannel.onerror = dataChannelCallbacks.onerror;
+    variables.dataChannel.onclose = dataChannelCallbacks.onclose;
+  },
+  generateSdpOffer: function () {
+    return new Promise(function (resolve, reject) {
+      variables.peerConnection.createOffer(function (offer) {
+        resolve(offer);
+      }, function (error) {
+        reject(error);
+        console.error(error);
+      }).then(r => console.log(r));
+    });
+  },
+  processAnswer: function (answer) {
+    let remoteDesc = {
+      type: "answer",
+      sdp: answer
+    };
+    variables.peerConnection.setRemoteDescription(new RTCSessionDescription(remoteDesc)).catch(function (error) {
+      console.error(error);
+    });
+  },
+  addTheCandidates: function () {
+    while (variables.candidatesQueue.length) {
+      let entry = variables.candidatesQueue.shift();
+      variables.peerConnection.addIceCandidate(entry.candidate);
     }
-}
-
-function WebRTCClass({
-    baseUrl,
-    configuration,
-    connectionCheckTimeout = 10000,
-    logLevel
-}) {
-    let config = {}
-    if (baseUrl)
-        config.baseUrl = baseUrl;
-    if (configuration)
-        config.configuration = configuration;
-    if (connectionCheckTimeout)
-        config.connectionCheckTimeout = connectionCheckTimeout;
-    if (logLevel)
-        config.logLevel = logLevel;
-
-    defaultConfig = Object.assign(defaultConfig, config);
-    connect();
-    return publicized;
-}
-
-let publicized = {
-    on: function (messageName, callback) {
-        eventCallback[messageName] = callback;
-    },
-    emit: webrtcFunctions.sendData,
-    connect: connect,
-    close: function () {
-        removeCallbacks();
-        resetVariables();
+  },
+  putCandidateToQueue: function (candidate) {
+    variables.candidatesQueue.push({
+      candidate: new RTCIceCandidate(candidate)
+    });
+    if (variables.peerConnection.signalingState === 'stable') {
+      webrtcFunctions.addTheCandidates();
     }
+  },
+  sendData: function (params) {
+    if (!variables.dataChannel) {
+      console.error("Connection is closed, do not send messages.");
+      return;
+    }
+    var data = {
+      type: params.type,
+      uniqueId: params.uniqueId
+    };
+    if (params.trackerId) {
+      data.trackerId = params.trackerId;
+    }
+    try {
+      if (params.content) {
+        data.content = JSON.stringify(params.content);
+      }
+      if (variables.peerConnection.signalingState === 'stable') {
+        //defaultConfig.logLevel.debug &&
+        console.log("[Async][WebRTC] Send ", data);
+        variables.dataChannel.send(JSON.stringify(data));
+      }
+    } catch (error) {
+      eventCallback["customError"]({
+        errorCode: 4004,
+        errorMessage: "Error in Socket sendData!",
+        errorEvent: error
+      });
+    }
+  }
 };
-
+let dataChannelCallbacks = {
+  onopen: function (event) {
+    console.log("********* dataChannel open *********");
+    variables.pingController.resetPingLoop();
+    eventCallback["open"]();
+    const deviceRegister = {
+      "type": "2",
+      "content": {
+        "deviceId": variables.deviceId,
+        "appId": "PodChat",
+        "refresh": false,
+        "renew": true
+      }
+    };
+    deviceRegister.content = JSON.stringify(deviceRegister.content);
+    variables.dataChannel.send(JSON.stringify(deviceRegister));
+  },
+  onmessage: function (event) {
+    variables.pingController.resetPingLoop();
+    var messageData = JSON.parse(event.data);
+    console.log("[Async][WebRTC] Receive ", event.data);
+    eventCallback["message"](messageData);
+  },
+  onerror: function (error) {
+    logLevel.debug && console.debug("[Async][Socket.js] dataChannel.onerror happened. EventData:", event);
+    eventCallback["error"](event);
+  },
+  onclose: function (event) {
+    resetVariables();
+    eventCallback["close"](event);
+  }
+};
+let handshakingFunctions = {
+  register: function (offer) {
+    let retries = variables.apiCallRetries.register;
+    return new Promise(promiseHandler);
+    function promiseHandler(resolve, reject) {
+      let registerEndPoint = defaultConfig.baseUrl + defaultConfig.registerEndpoint;
+      fetch(registerEndPoint, {
+        method: "POST",
+        body: JSON.stringify({
+          offer: offer
+        }),
+        headers: {
+          "Content-Type": "application/json"
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        }
+      }).then(function (response) {
+        if (response.ok) return response.json();else if (retries) {
+          retryTheRequest(resolve, reject);
+          retries--;
+        } else reject();
+      }).then(result => resolve(result)).catch(err => {
+        if (retries) {
+          retryTheRequest(resolve, reject);
+          retries--;
+        } else {
+          publicized.close();
+        }
+        console.error(err);
+      });
+    }
+    function retryTheRequest(resolve, reject) {
+      setTimeout(function () {
+        promiseHandler(resolve, reject);
+      }, 1000);
+    }
+  },
+  getCandidates: function (clientId) {
+    let addIceCandidateEndPoint = defaultConfig.baseUrl + defaultConfig.getICEEndpoint;
+    addIceCandidateEndPoint += "clientId=" + clientId;
+    let retries = variables.apiCallRetries.getIce;
+    return new Promise(promiseHandler);
+    function promiseHandler(resolve, reject) {
+      fetch(addIceCandidateEndPoint, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        }
+      }).then(function (response) {
+        if (response.ok) return response.json();else if (retries) {
+          retryTheRequest(resolve, reject);
+          retries--;
+        } else reject();
+      }).then(function (result) {
+        resolve(result.iceCandidates);
+        // if(result.iceCandidates && result.iceCandidates.length) {
+        //     // result.iceCandidates.forEach((item) => {
+        //     //     webrtcFunctions.putCandidateToQueue(item);
+        //     // });
+        //     resolve(result.iceCandidates)
+        // }
+        // else {
+        //     if(retries){
+        //         retryTheRequest(resolve, reject);
+        //         retries--;
+        //     } else reject();
+        // }
+      }).catch(function (err) {
+        if (retries) {
+          retryTheRequest(resolve, reject);
+          retries--;
+        } else reject(err);
+        console.error(err);
+      });
+    }
+    function retryTheRequest(resolve, reject) {
+      setTimeout(function () {
+        promiseHandler(resolve, reject);
+      }, 1000);
+    }
+  },
+  sendCandidate: function (candidate) {
+    let addIceCandidateEndPoint = defaultConfig.baseUrl + defaultConfig.addICEEndpoint,
+      retries = variables.apiCallRetries.addIce;
+    return new Promise(promiseHandler);
+    function promiseHandler(resolve, reject) {
+      fetch(addIceCandidateEndPoint, {
+        method: "POST",
+        body: JSON.stringify({
+          "clientId": variables.clientId,
+          "candidate": candidate
+        }),
+        headers: {
+          "Content-Type": "application/json"
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        }
+      }).then(function (response) {
+        if (response.ok) return response.json();else if (retries) {
+          retryTheRequest(resolve, reject);
+          retries--;
+        } else reject();
+      }).then(function (result) {
+        resolve(result.iceCandidates);
+      }).catch(err => {
+        if (retries) {
+          retryTheRequest(resolve, reject);
+          retries--;
+        } else reject(err);
+        console.error(err);
+      });
+    }
+    function retryTheRequest(resolve, reject) {
+      setTimeout(function () {
+        promiseHandler(resolve, reject);
+      }, 2000);
+    }
+  }
+};
+eventCallback = {};
+function resetVariables() {
+  console.log("resetVariables");
+  eventCallback["close"]();
+  variables.pingController.stopPingLoop();
+  variables.dataChannel.close();
+  variables.dataChannel = null;
+  variables.peerConnection.close();
+  variables.peerConnection = null;
+  variables.candidatesQueue = [];
+  variables.clientId = null;
+  variables.deviceId = null;
+  variables.candidateManager.destroy();
+  variables.candidateManager = new CandidatesSendQueueManager();
+}
+function ping() {
+  webrtcFunctions.sendData({
+    type: 0
+  });
+}
+function removeCallbacks() {
+  if (variables.peerConnection) variables.peerConnection.onicecandidate = null;
+  if (variables.dataChannel) {
+    variables.dataChannel.onclose = null;
+    variables.dataChannel.onmessage = null;
+    variables.dataChannel.onerror = null;
+    variables.dataChannel.onopen = null;
+  }
+}
+function WebRTCClass({
+  baseUrl,
+  configuration,
+  connectionCheckTimeout = 10000,
+  logLevel
+}) {
+  let config = {};
+  if (baseUrl) config.baseUrl = baseUrl;
+  if (configuration) config.configuration = configuration;
+  if (connectionCheckTimeout) config.connectionCheckTimeout = connectionCheckTimeout;
+  if (logLevel) config.logLevel = logLevel;
+  defaultConfig = Object.assign(defaultConfig, config);
+  connect();
+  return publicized;
+}
+let publicized = {
+  on: function (messageName, callback) {
+    eventCallback[messageName] = callback;
+  },
+  emit: webrtcFunctions.sendData,
+  connect: connect,
+  close: function () {
+    removeCallbacks();
+    resetVariables();
+  }
+};
 module.exports = WebRTCClass;
 },{}],212:[function(require,module,exports){
-function LogLevel(logLevel){
-    let ll = logLevel || 2;
-    switch (ll) {
-        case 1:
-            return {
-                error: true,
-                debug: false,
-                info: false,
-            }
-        case 2:
-            return {
-                error: true,
-                debug: true,
-                info: false,
-            }
-        case 3:
-            return {
-                error: true,
-                debug: true,
-                info: true,
-            }
-    }
+function LogLevel(logLevel) {
+  let ll = logLevel || 2;
+  switch (ll) {
+    case 1:
+      return {
+        error: true,
+        debug: false,
+        info: false
+      };
+    case 2:
+      return {
+        error: true,
+        debug: true,
+        info: false
+      };
+    case 3:
+      return {
+        error: true,
+        debug: true,
+        info: true
+      };
+  }
 }
-
-
 if (typeof module !== 'undefined' && typeof module.exports != 'undefined') {
-    module.exports = LogLevel;
+  module.exports = LogLevel;
+} else {
+  if (!window.POD) {
+    window.POD = {};
+  }
+  window.POD.LogLevel = LogLevel;
 }
-else {
-    if (!window.POD) {
-        window.POD = {};
-    }
-    window.POD.LogLevel = LogLevel;
-}
-
 },{}],213:[function(require,module,exports){
 (function (global){(function (){
-(function() {
+(function () {
   /**
    * General Utilities
    */
@@ -40706,44 +40538,35 @@ else {
      * Checks if Client is using NodeJS or not
      * @return {boolean}
      */
-    this.isNode = function() {
+    this.isNode = function () {
       // return (typeof module !== 'undefined' && typeof module.exports != "undefined");
-      return (typeof global !== "undefined" && ({}).toString.call(global) === '[object global]');
-    }
+      return typeof global !== "undefined" && {}.toString.call(global) === '[object global]';
+    };
 
     /**
      * Generates Random String
      * @param   {int}     sectionCount
      * @return  {string}
      */
-    this.generateUUID = function(sectionCount) {
+    this.generateUUID = function (sectionCount) {
       var d = new Date().getTime();
       var textData = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
-
       if (sectionCount == 1) {
         textData = 'xxxxxxxx';
       }
-
       if (sectionCount == 2) {
         textData = 'xxxxxxxx-xxxx';
       }
-
       if (sectionCount == 3) {
         textData = 'xxxxxxxx-xxxx-4xxx';
       }
-
       if (sectionCount == 4) {
         textData = 'xxxxxxxx-xxxx-4xxx-yxxx';
       }
-
-      var uuid = textData.replace(/[xy]/g, function(c) {
+      var uuid = textData.replace(/[xy]/g, function (c) {
         var r = (d + Math.random() * 16) % 16 | 0;
         d = Math.floor(d / 16);
-
-        return (
-          c == 'x' ?
-          r :
-          (r & 0x7 | 0x8)).toString(16);
+        return (c == 'x' ? r : r & 0x7 | 0x8).toString(16);
       });
       return uuid;
     };
@@ -40753,7 +40576,7 @@ else {
      * @param {object} params Socket status + current msg + send queue
      * @return
      */
-    this.asyncLogger = function(params) {
+    this.asyncLogger = function (params) {
       var type = params.type,
         msg = params.msg,
         peerId = params.peerId,
@@ -40766,35 +40589,30 @@ else {
         workerId = params.workerId,
         protocol = params.protocol || "websocket",
         BgColor;
-
       switch (type) {
         case "Send":
           BgColor = 44;
           FgColor = 34;
           ColorCSS = "#4c8aff";
           break;
-
         case "Receive":
           BgColor = 45;
           FgColor = 35;
           ColorCSS = "#aa386d";
           break;
-
         case "Error":
           BgColor = 41;
           FgColor = 31;
           ColorCSS = "#ff0043";
           break;
-
         default:
           BgColor = 45;
           ColorCSS = "#212121";
           break;
       }
-
       switch (protocol) {
         case "websocket":
-          if (typeof global !== "undefined" && ({}).toString.call(global) === '[object global]') {
+          if (typeof global !== "undefined" && {}.toString.call(global) === '[object global]') {
             console.log("\n");
             console.log("\x1b[" + BgColor + "m\x1b[8m%s\x1b[0m", "################################################################");
             console.log("\x1b[" + BgColor + "m\x1b[8m##################\x1b[0m\x1b[37m\x1b[" + BgColor + "m S O C K E T    S T A T U S \x1b[0m\x1b[" + BgColor + "m\x1b[8m##################\x1b[0m");
@@ -40811,38 +40629,33 @@ else {
             console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m", " SOCKET STATE\t", socketState);
             console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[" + FgColor + "m%s\x1b[0m ", " CURRENT MESSAGE\t", type);
             console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m");
-
-            Object.keys(msg).forEach(function(key) {
+            Object.keys(msg).forEach(function (key) {
               if (typeof msg[key] === 'object') {
                 console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t \x1b[1m-\x1b[0m \x1b[35m%s\x1b[0m", key);
-                Object.keys(msg[key]).forEach(function(k) {
+                Object.keys(msg[key]).forEach(function (k) {
                   console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t   \x1b[1m•\x1b[0m \x1b[35m%s\x1b[0m : \x1b[33m%s\x1b[0m", k, msg[key][k]);
                 });
               } else {
                 console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t \x1b[1m•\x1b[0m \x1b[35m%s\x1b[0m : \x1b[33m%s\x1b[0m", key, msg[key]);
               }
             });
-
             console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m");
-
             if (pushSendDataQueue.length > 0) {
               console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m", " SEND QUEUE");
               console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m");
-              Object.keys(pushSendDataQueue).forEach(function(key) {
+              Object.keys(pushSendDataQueue).forEach(function (key) {
                 if (typeof pushSendDataQueue[key] === 'object') {
                   console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t \x1b[1m-\x1b[0m \x1b[35m%s\x1b[0m", key);
-                  Object.keys(pushSendDataQueue[key]).forEach(function(k) {
+                  Object.keys(pushSendDataQueue[key]).forEach(function (k) {
                     console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t   \x1b[1m•\x1b[0m \x1b[35m%s\x1b[0m : \x1b[36m%s\x1b[0m", k, JSON.stringify(pushSendDataQueue[key][k]));
                   });
                 } else {
                   console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t \x1b[1m•\x1b[0m \x1b[35m%s\x1b[0m : \x1b[33m%s\x1b[0m", key, pushSendDataQueue[key]);
                 }
               });
-
             } else {
               console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m ", " SEND QUEUE\t\t", "Empty");
             }
-
             console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t\t\t\t\t\t\t      \x1b[" + BgColor + "m\x1b[8m##\x1b[0m");
             console.log("\x1b[" + BgColor + "m\x1b[8m%s\x1b[0m", "################################################################");
             console.log("\n");
@@ -40858,60 +40671,54 @@ else {
             console.log("%c   SOCKET STATE\t\t %c" + socketState, 'color: #444', 'color: #ffac28; font-weight: bold');
             console.log("%c   CURRENT MESSAGE\t %c" + type, 'color: #444', 'color: #aa386d; font-weight: bold');
             console.log("\n");
-
-            Object.keys(msg).forEach(function(key) {
+            Object.keys(msg).forEach(function (key) {
               if (typeof msg[key] === 'object') {
                 console.log("%c \t-" + key, 'color: #777');
-                Object.keys(msg[key]).forEach(function(k) {
+                Object.keys(msg[key]).forEach(function (k) {
                   console.log("%c \t  •" + k + " : %c" + msg[key][k], 'color: #777', 'color: #f23; font-weight: bold');
                 });
               } else {
                 console.log("%c \t•" + key + " : %c" + msg[key], 'color: #777', 'color: #f23; font-weight: bold');
               }
             });
-
             console.log("\n");
-
             if (pushSendDataQueue.length > 0) {
               console.log("%c   SEND QUEUE", 'color: #444');
               console.log("\n");
-              Object.keys(pushSendDataQueue).forEach(function(key) {
+              Object.keys(pushSendDataQueue).forEach(function (key) {
                 if (typeof pushSendDataQueue[key] === 'object') {
                   console.log("%c \t-" + key, 'color: #777');
-                  Object.keys(pushSendDataQueue[key]).forEach(function(k) {
+                  Object.keys(pushSendDataQueue[key]).forEach(function (k) {
                     console.log("%c \t  •" + k + " : %c" + JSON.stringify(pushSendDataQueue[key][k]), 'color: #777', 'color: #999; font-weight: bold');
                   });
                 } else {
                   console.log("%c \t•" + key + " : %c" + pushSendDataQueue[key], 'color: #777', 'color: #999; font-weight: bold');
                 }
               });
-
             } else {
               console.log("%c   SEND QUEUE\t\t %cEmpty", 'color: #444', 'color: #000; font-weight: bold');
             }
-
             console.log("\n");
             console.log("%c ", 'font-weight: bold; font-size: 3px; border-left: solid 540px ' + ColorCSS + ';');
             console.log("\n");
           }
           break;
       }
-    }
+    };
 
     /**
      * Prints Custom Message in console
      * @param {string} message Message to be logged in terminal
      * @return
      */
-    this.asyncStepLogger = function(message) {
+    this.asyncStepLogger = function (message) {
       if (typeof navigator == "undefined") {
         console.log("\x1b[90m    ☰ \x1b[0m\x1b[90m%s\x1b[0m", message);
       } else {
         console.log("%c   " + message, 'border-left: solid #666 10px; color: #666;');
       }
-    }
+    };
   }
-
   if (typeof module !== 'undefined' && typeof module.exports != "undefined") {
     module.exports = Utility;
   } else {
@@ -40921,7 +40728,6 @@ else {
     window.POD.AsyncUtility = Utility;
   }
 })();
-
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],214:[function(require,module,exports){
 // shim for using process in browser
@@ -45989,7 +45795,7 @@ WildEmitter.mixin = function (constructor) {
 WildEmitter.mixin(WildEmitter);
 
 },{}],267:[function(require,module,exports){
-module.exports={"version":"12.7.2-snapshot.28","date":"۱۴۰۲/۲/۲۸","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.7.2-snapshot.28","date":"۱۴۰۲/۲/۳۱","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],268:[function(require,module,exports){
 "use strict";var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");var _typeof3=require("@babel/runtime/helpers/typeof");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _regenerator=_interopRequireDefault(require("@babel/runtime/regenerator"));var _asyncToGenerator2=_interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _constants=require("./lib/constants");var _kurentoUtils=_interopRequireDefault(require("kurento-utils"));var _utility=_interopRequireDefault(require("./utility/utility"));var _eventsModule=require("./events.module.js");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));var _errorHandler=_interopRequireWildcard(require("./lib/errorHandler"));function _getRequireWildcardCache(nodeInterop){if(typeof WeakMap!=="function")return null;var cacheBabelInterop=new WeakMap();var cacheNodeInterop=new WeakMap();return(_getRequireWildcardCache=function _getRequireWildcardCache(nodeInterop){return nodeInterop?cacheNodeInterop:cacheBabelInterop;})(nodeInterop);}function _interopRequireWildcard(obj,nodeInterop){if(!nodeInterop&&obj&&obj.__esModule){return obj;}if(obj===null||_typeof3(obj)!=="object"&&typeof obj!=="function"){return{"default":obj};}var cache=_getRequireWildcardCache(nodeInterop);if(cache&&cache.has(obj)){return cache.get(obj);}var newObj={};var hasPropertyDescriptor=Object.defineProperty&&Object.getOwnPropertyDescriptor;for(var key in obj){if(key!=="default"&&Object.prototype.hasOwnProperty.call(obj,key)){var desc=hasPropertyDescriptor?Object.getOwnPropertyDescriptor(obj,key):null;if(desc&&(desc.get||desc.set)){Object.defineProperty(newObj,key,desc);}else{newObj[key]=obj[key];}}}newObj["default"]=obj;if(cache){cache.set(obj,newObj);}return newObj;}function ChatCall(params){var _params$asyncLogging,_params$asyncLogging2,_params$asyncLogging3,_params$callOptions,_params$callOptions2;var//Utility = params.Utility,
 currentModuleInstance=this,asyncClient=params.asyncClient,//chatEvents = params.chatEvents,
