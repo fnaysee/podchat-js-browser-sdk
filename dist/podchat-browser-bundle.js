@@ -39131,8 +39131,8 @@ module.exports = function (thing, encoding, name) {
     // }
 
     const reconnOnClose = {
-      value: 4,
-      oldValue: 4,
+      value: false,
+      oldValue: null,
       get() {
         return reconnOnClose.value;
       },
@@ -39225,10 +39225,10 @@ module.exports = function (thing, encoding, name) {
           }
         });
         socket.on('close', function (event) {
-          console.log("on.close", reconnOnClose.get(), reconnOnClose.getOld());
           isSocketOpen = false;
           isDeviceRegister = false;
           oldPeerId = peerId;
+          socketState = socketStateType.CLOSED;
 
           // socketState = socketStateType.CLOSED;
           //
@@ -39251,7 +39251,6 @@ module.exports = function (thing, encoding, name) {
               }
             }
             logLevel.debug && console.debug("[Async][async.js] on socket close, retryStep:", retryStep.get());
-            socketState = socketStateType.CLOSED;
             fireEvent('stateChange', {
               socketState: socketState,
               timeUntilReconnect: 1000 * retryStep.get(),
@@ -39811,7 +39810,7 @@ module.exports = function (thing, encoding, name) {
 
       // let tmpReconnectOnClose = reconnectOnClose;
       // reconnectOnClose = false;
-      reconnOnClose.setOld(reconnOnClose.get());
+      if (reconnOnClose.getOld() == null) reconnOnClose.setOld(reconnOnClose.get());
       reconnOnClose.set(false);
       retryStep.set(0);
       if (protocol === "websocket") socket.connect();else if (protocol == "webrtc") webRTCClass.connect();
@@ -39900,7 +39899,7 @@ module.exports = function (thing, encoding, name) {
               config.timeoutIds.third = setTimeout(() => {
                 logLevel.debug && console.debug("[Async][Socket.js] Force closing socket.");
                 onCloseHandler(null);
-                socket.close();
+                if (socket) socket.close();
               }, 2000);
             }, 2000);
           }, 8000);
@@ -39923,7 +39922,6 @@ module.exports = function (thing, encoding, name) {
       },
       connect = function () {
         try {
-          console.log("socket.connect()");
           if (socket && socket.readyState == 1) {
             return;
           }
@@ -40051,7 +40049,7 @@ module.exports = function (thing, encoding, name) {
     };
     this.close = function () {
       logLevel.debug && console.debug("[Async][Socket.js] Closing socket by call to this.close");
-      socket.close();
+      if (socket) socket.close();
       onCloseHandler(null);
       socketWatchTimeout && clearTimeout(socketWatchTimeout);
     };

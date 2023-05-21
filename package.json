@@ -52,7 +52,7 @@
     "kurento-utils": "^6.16.0",
     "node-rsa": "^1.1.1",
     "webrtc-adapter": "^8.0.0",
-    "podasync-ws-only": "^2.9.0-snapshot.3"
+    "podasync-ws-only": "^2.9.0-snapshot.4"
   },
   "devDependencies": {
     "mocha": "^8.1.1",
