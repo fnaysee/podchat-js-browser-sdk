@@ -368,6 +368,7 @@ function Chat(params) {
             asyncClient.on('disconnect', function (event) {
                 oldPeerId = peerId;
                 peerId = undefined;
+                chatMessaging.stopChatPing();
                 chatEvents.fireEvent('disconnect', event);
 
                 chatEvents.fireEvent('callEvents', {
@@ -389,6 +390,7 @@ function Chat(params) {
             });
 
             asyncClient.on('error', function (error) {
+                chatMessaging.stopChatPing();
                 if(error.errorCode) {
                     chatEvents.fireEvent('error', {
                         code: error.errorCode,
@@ -398,7 +400,6 @@ function Chat(params) {
                 } else {
                     raiseError(errorList.SOCKET_CONNECTION_FAILED, null, true, {});
                 }
-
             });
         },
         getUserAndUpdateSDKState = function () {

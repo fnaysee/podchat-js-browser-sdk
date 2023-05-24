@@ -367,6 +367,7 @@ function Chat(params) {
     asyncClient.on('disconnect', function (event) {
       oldPeerId = peerId;
       peerId = undefined;
+      chatMessaging.stopChatPing();
 
       _events.chatEvents.fireEvent('disconnect', event);
 
@@ -387,6 +388,8 @@ function Chat(params) {
       ack && ack();
     });
     asyncClient.on('error', function (error) {
+      chatMessaging.stopChatPing();
+
       if (error.errorCode) {
         _events.chatEvents.fireEvent('error', {
           code: error.errorCode,
