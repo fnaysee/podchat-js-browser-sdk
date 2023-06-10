@@ -51,18 +51,18 @@
     "faker": "^5.5.3",
     "kurento-utils": "^6.16.0",
     "node-rsa": "^1.1.1",
-    "webrtc-adapter": "^8.0.0",
-    "podasync-ws-only": "^2.9.0-snapshot.4"
+    "podasync-ws-only": "2.9.0-snapshot.7",
+    "webrtc-adapter": "^8.0.0"
   },
   "devDependencies": {
-    "mocha": "^8.1.1",
     "@babel/cli": "^7.17.6",
     "@babel/core": "^7.17.9",
     "@babel/plugin-transform-runtime": "^7.17.10",
     "@babel/preset-env": "^7.16.11",
     "babelify": "^10.0.0",
-    "watchify": "^4.0.0",
-    "npm-watch": "^0.11.0"
+    "mocha": "^8.1.1",
+    "npm-watch": "^0.11.0",
+    "watchify": "^4.0.0"
   },
   "directories": {
     "example": "examples",
