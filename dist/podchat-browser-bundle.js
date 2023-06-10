@@ -39064,7 +39064,8 @@ module.exports = function (thing, encoding, name) {
         message: {},
         asyncReady: {},
         stateChange: {},
-        error: {}
+        error: {},
+        msgLogs: {}
       },
       ackCallback = {},
       socket,
@@ -39419,6 +39420,11 @@ module.exports = function (thing, encoding, name) {
         });
       },
       handleSocketMessage = function (msg) {
+        fireEvent("msgLogs", {
+          msg,
+          direction: "receive",
+          time: new Date().getTime()
+        });
         var ack;
         if (msg.type === asyncMessageType.MESSAGE_ACK_NEEDED || msg.type === asyncMessageType.MESSAGE_SENDER_ACK_NEEDED) {
           ack = function () {
@@ -39613,6 +39619,11 @@ module.exports = function (thing, encoding, name) {
         }
       },
       pushSendData = function (msg) {
+        fireEvent("msgLogs", {
+          msg,
+          direction: "send",
+          time: new Date().getTime()
+        });
         if (onSendLogging) {
           asyncLogger('Send', msg);
         }
@@ -39735,7 +39746,7 @@ module.exports = function (thing, encoding, name) {
             peerId: peerId
           });
           socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-          socket.close();
+          socket && socket.close();
           break;
         case 'webrtc':
           socketState = socketStateType.CLOSED;
@@ -39747,7 +39758,7 @@ module.exports = function (thing, encoding, name) {
             peerId: peerId
           });
           socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-          webRTCClass.close();
+          webRTCClass && webRTCClass.close();
           break;
       }
     };
@@ -39774,7 +39785,7 @@ module.exports = function (thing, encoding, name) {
           reconnOnClose.set(false);
           // reconnectOnClose = false;
 
-          socket.close();
+          socket && socket.close();
           break;
         case 'webrtc':
           socketState = socketStateType.CLOSED;
@@ -39787,7 +39798,7 @@ module.exports = function (thing, encoding, name) {
           });
           reconnOnClose.set(false);
           // reconnectOnClose = false;
-          webRTCClass.close();
+          webRTCClass && webRTCClass.close();
           break;
       }
     };
@@ -39806,7 +39817,7 @@ module.exports = function (thing, encoding, name) {
         peerId: peerId
       });
       socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-      if (protocol === "websocket") socket.close();else if (protocol == "webrtc") webRTCClass.close();
+      if (protocol === "websocket") socket && socket.close();else if (protocol == "webrtc") webRTCClass && webRTCClass.close();
 
       // let tmpReconnectOnClose = reconnectOnClose;
       // reconnectOnClose = false;
@@ -39899,7 +39910,7 @@ module.exports = function (thing, encoding, name) {
               config.timeoutIds.third = setTimeout(() => {
                 logLevel.debug && console.debug("[Async][Socket.js] Force closing socket.");
                 onCloseHandler(null);
-                if (socket) socket.close();
+                socket && socket.close();
               }, 2000);
             }, 2000);
           }, 8000);
@@ -39948,7 +39959,7 @@ module.exports = function (thing, encoding, name) {
             // if(socket.readyState !== 1) {
             logLevel.debug && console.debug("[Async][Socket.js] socketWatchTimeout triggered.");
             onCloseHandler(null);
-            socket.close();
+            socket && socket.close();
             // }
           }, 5000);
           socket.onopen = function (event) {
@@ -40049,7 +40060,7 @@ module.exports = function (thing, encoding, name) {
     };
     this.close = function () {
       logLevel.debug && console.debug("[Async][Socket.js] Closing socket by call to this.close");
-      if (socket) socket.close();
+      socket && socket.close();
       onCloseHandler(null);
       socketWatchTimeout && clearTimeout(socketWatchTimeout);
     };
@@ -40306,12 +40317,14 @@ let dataChannelCallbacks = {
   },
   onmessage: function (event) {
     variables.pingController.resetPingLoop();
-    var messageData = JSON.parse(event.data);
-    console.log("[Async][WebRTC] Receive ", event.data);
-    eventCallback["message"](messageData);
+    decompressResponse(event.data).then(result => {
+      var messageData = JSON.parse(result);
+      console.log("[Async][WebRTC] Receive ", result);
+      eventCallback["message"](messageData);
+    });
   },
   onerror: function (error) {
-    logLevel.debug && console.debug("[Async][Socket.js] dataChannel.onerror happened. EventData:", event);
+    defaultConfig.logLevel.debug && console.debug("[Async][Socket.js] dataChannel.onerror happened. EventData:", event);
     eventCallback["error"](event);
   },
   onclose: function (event) {
@@ -40442,9 +40455,9 @@ function resetVariables() {
   console.log("resetVariables");
   eventCallback["close"]();
   variables.pingController.stopPingLoop();
-  variables.dataChannel.close();
+  variables.dataChannel && variables.dataChannel.close();
   variables.dataChannel = null;
-  variables.peerConnection.close();
+  variables.peerConnection && variables.peerConnection.close();
   variables.peerConnection = null;
   variables.candidatesQueue = [];
   variables.clientId = null;
@@ -40492,6 +40505,59 @@ let publicized = {
     resetVariables();
   }
 };
+
+/**
+ * Decompress results
+ */
+function decompress(byteArray, encoding) {
+  const cs = new DecompressionStream(encoding);
+  const writer = cs.writable.getWriter();
+  writer.write(byteArray);
+  writer.close();
+  return new Response(cs.readable).arrayBuffer().then(function (arrayBuffer) {
+    return new TextDecoder().decode(arrayBuffer);
+  });
+}
+async function decompressResponse(compressedData) {
+  return await decompress(_base64UrlToArrayBuffer(compressedData), 'gzip');
+}
+
+//utility
+
+/**
+ * Array buffer to base64Url string
+ * - arrBuff->byte[]->biStr->b64->b64u
+ * @param arrayBuffer
+ * @returns {string}
+ * @private
+ */
+function _arrayBufferToBase64Url(arrayBuffer) {
+  console.log('base64Url from array buffer:', arrayBuffer);
+  let base64Url = window.btoa(String.fromCodePoint(...new Uint8Array(arrayBuffer)));
+  base64Url = base64Url.replaceAll('+', '-');
+  base64Url = base64Url.replaceAll('/', '_');
+  console.log('base64Url:', base64Url);
+  return base64Url;
+}
+
+/**
+ * Base64Url string to array buffer
+ * - b64u->b64->biStr->byte[]->arrBuff
+ * @param base64Url
+ * @returns {ArrayBufferLike}
+ * @private
+ */
+function _base64UrlToArrayBuffer(base64) {
+  console.log('array buffer from base64Url:', base64);
+  const binaryString = window.atob(base64);
+  const length = binaryString.length;
+  const bytes = new Uint8Array(length);
+  for (let i = 0; i < length; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  console.log('array buffer:', bytes.buffer);
+  return bytes.buffer;
+}
 module.exports = WebRTCClass;
 },{}],212:[function(require,module,exports){
 function LogLevel(logLevel) {
@@ -45793,7 +45859,7 @@ WildEmitter.mixin = function (constructor) {
 WildEmitter.mixin(WildEmitter);
 
 },{}],267:[function(require,module,exports){
-module.exports={"version":"12.7.2-snapshot.29","date":"۱۴۰۲/۲/۳۱","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.7.2-snapshot.34","date":"۱۴۰۲/۳/۲۰","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],268:[function(require,module,exports){
 "use strict";var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");var _typeof3=require("@babel/runtime/helpers/typeof");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _regenerator=_interopRequireDefault(require("@babel/runtime/regenerator"));var _asyncToGenerator2=_interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _constants=require("./lib/constants");var _kurentoUtils=_interopRequireDefault(require("kurento-utils"));var _utility=_interopRequireDefault(require("./utility/utility"));var _eventsModule=require("./events.module.js");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));var _errorHandler=_interopRequireWildcard(require("./lib/errorHandler"));function _getRequireWildcardCache(nodeInterop){if(typeof WeakMap!=="function")return null;var cacheBabelInterop=new WeakMap();var cacheNodeInterop=new WeakMap();return(_getRequireWildcardCache=function _getRequireWildcardCache(nodeInterop){return nodeInterop?cacheNodeInterop:cacheBabelInterop;})(nodeInterop);}function _interopRequireWildcard(obj,nodeInterop){if(!nodeInterop&&obj&&obj.__esModule){return obj;}if(obj===null||_typeof3(obj)!=="object"&&typeof obj!=="function"){return{"default":obj};}var cache=_getRequireWildcardCache(nodeInterop);if(cache&&cache.has(obj)){return cache.get(obj);}var newObj={};var hasPropertyDescriptor=Object.defineProperty&&Object.getOwnPropertyDescriptor;for(var key in obj){if(key!=="default"&&Object.prototype.hasOwnProperty.call(obj,key)){var desc=hasPropertyDescriptor?Object.getOwnPropertyDescriptor(obj,key):null;if(desc&&(desc.get||desc.set)){Object.defineProperty(newObj,key,desc);}else{newObj[key]=obj[key];}}}newObj["default"]=obj;if(cache){cache.set(obj,newObj);}return newObj;}function ChatCall(params){var _params$asyncLogging,_params$asyncLogging2,_params$asyncLogging3,_params$callOptions,_params$callOptions2;var//Utility = params.Utility,
 currentModuleInstance=this,asyncClient=params.asyncClient,//chatEvents = params.chatEvents,
