@@ -5,6 +5,28 @@ to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.i
 
 ##[Unreleased]
 
+## [12.7.2-snapshot.30]
+- Updated package podasync-ws-only to version 2.9.0-snapshot.4 to fix retryStep
+
+## [12.7.2-snapshot.29]
+- Rollback get user on each socket reconnect to previous functionality
+- Updated package podasync-ws-only to fix retryStep
+
+## [12.7.2-snapshot.28]
+- Changes to not prevent get user info requests when chat is not ready (but async is ready) Which causes faster get user on reconnects
+
+## [12.7.2-snapshot.27]
+- Changed functionality to get user on each socket reconnect (Temporarily)
+- Fixed functionality of method enableParticipantsVideoReceive (Was fixed in other versions and merged here)
+
+## [12.7.2-snapshot.26]
+- Added additional check to make sure SDK does well even if chat server sends participant instead of participantVO in new messages or history
+
+## [12.7.2-snapshot.24]
+- Fixed screenShare problem
+- Consider the call as started when SDK receives 74:START_CALL event instead of waiting for response of CREATE_SESSION
+
+
 ## [12.7.2-snapshot.0] - 2022-11-01
 ### Added
 - Added possibility to accept incoming call while user is in an existing call
