@@ -4255,7 +4255,9 @@ function Chat(params) {
                 time: pushMessageVO.time,
                 sender: pushMessageVO.sender,
                 messageId: pushMessageVO.messageId,
-                text: pushMessageVO.text
+                text: pushMessageVO.text,
+                metadata: pushMessageVO.metadata,
+                systemMetadata: pushMessageVO.systemMetadata,
             };
 
             if (typeof pushMessageVO.notifyAll === 'boolean') {
