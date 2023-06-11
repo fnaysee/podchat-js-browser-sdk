@@ -2175,7 +2175,7 @@ function Chat(params) {
 
                     let localThreadLastSeenUpdated = JSON.parse(JSON.stringify(messageContent));
                     store.threads.save(localThreadLastSeenUpdated);
-                    store.threads.get(threadId).unreadCount.set(localThreadLastSeenUpdated.unreadCount)
+                    store.threads.get(threadId).unreadCount.set(messageContent.unreadCount)
 
                     chatEvents.fireEvent('threadEvents', {
                         type: 'THREAD_UNREAD_COUNT_UPDATED',
@@ -3361,12 +3361,26 @@ function Chat(params) {
                 }
             });
 
-            let storeThread = store.threads.get(threadObject.id)
+            let storeThread = store.threads.get(threadObject.id);
             if(!storeThread) {
                 store.threads.save(threadObject);
                 storeThread = store.threads.get(threadObject.id);
             }
-            store.threads.get(threadObject.id).unreadCount.set((threadObject.unreadCount) ? threadObject.unreadCount : 0)
+
+            let unreadCount = message.conversation.unreadCount;
+            // store.threads.get(threadObject.id).unreadCount.set();
+            if(message.ownerId != chatMessaging.userInfo.id) {
+                if(unreadCount) {
+                    storeThread.unreadCount.set(unreadCount);
+                } else {
+                    if(!storeThread.unreadCount.get())
+                        storeThread.unreadCount.set(1);
+                    else
+                        storeThread.unreadCount.increase();
+                }
+            } else {
+                storeThread.unreadCount.set(0);
+            }
 
             chatEvents.fireEvent('threadEvents', {
                 type: 'THREAD_LAST_ACTIVITY_TIME',
@@ -4272,7 +4286,9 @@ function Chat(params) {
                 time: pushMessageVO.time,
                 sender: pushMessageVO.sender,
                 messageId: pushMessageVO.messageId,
-                text: pushMessageVO.text
+                text: pushMessageVO.text,
+                metadata: pushMessageVO.metadata,
+                systemMetadata: pushMessageVO.systemMetadata,
             };
 
             if (typeof pushMessageVO.notifyAll === 'boolean') {
