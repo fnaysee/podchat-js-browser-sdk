@@ -21,6 +21,7 @@ import {
 } from "./lib/constants";
 
 import deviceManager from "./lib/call/deviceManager.js";
+import {store} from "./lib/store";
 
 function Chat(params) {
     /*******************************************************
@@ -2001,6 +2002,9 @@ function Chat(params) {
                         chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                     }
 
+                    let msgTime = (parseInt(parseInt(messageContent.time) / 1000) * 1000000000) + parseInt(messageContent.timeNanos);
+                    store.threads.get(threadId).unreadCount.decrease(msgTime);
+
                     if (messageContent.pinned) {
                         unPinMessage({
                             messageId: messageContent.id,
@@ -2168,6 +2172,10 @@ function Chat(params) {
                 case chatMessageVOTypes.LAST_SEEN_UPDATED:
                     var threadObject = messageContent;
                     threadObject.unreadCount = (messageContent.unreadCount) ? messageContent.unreadCount : 0;
+
+                    let localThreadLastSeenUpdated = JSON.parse(JSON.stringify(messageContent));
+                    store.threads.save(localThreadLastSeenUpdated);
+                    store.threads.get(threadId).unreadCount.set(localThreadLastSeenUpdated.unreadCount)
 
                     chatEvents.fireEvent('threadEvents', {
                         type: 'THREAD_UNREAD_COUNT_UPDATED',
@@ -2627,7 +2635,9 @@ function Chat(params) {
                  * Type 66    Last Message Deleted
                  */
                 case chatMessageVOTypes.LAST_MESSAGE_DELETED:
-
+                    delete messageContent.unreadCount;
+                    let threadOfDeletedMessage = formatDataToMakeConversation(messageContent);
+                    store.threads.save(threadOfDeletedMessage);
                     new Promise((resolve, reject)=> {
                         if (fullResponseObject) {
                             getThreads({
@@ -3350,6 +3360,13 @@ function Chat(params) {
                     unreadCount: (threadObject.unreadCount) ? threadObject.unreadCount : 0
                 }
             });
+
+            let storeThread = store.threads.get(threadObject.id)
+            if(!storeThread) {
+                store.threads.save(threadObject);
+                storeThread = store.threads.get(threadObject.id);
+            }
+            store.threads.get(threadObject.id).unreadCount.set((threadObject.unreadCount) ? threadObject.unreadCount : 0)
 
             chatEvents.fireEvent('threadEvents', {
                 type: 'THREAD_LAST_ACTIVITY_TIME',
@@ -4592,6 +4609,7 @@ function Chat(params) {
                             }
                         }
 
+                        store.threads.saveMany(resultData.threads);
                         returnData.result = resultData;
 
                         /**
@@ -14254,6 +14272,16 @@ function Chat(params) {
             console.error(`Protocol ${proto} is not supported in SDK. Valid protocols: "webrtc", "websocket"`)
         }
     }
+
+    store.events.on(store.threads.eventsList.UNREAD_COUNT_UPDATED, (thread) => {
+        chatEvents.fireEvent('threadEvents', {
+            type: 'UNREAD_COUNT_UPDATED',
+            result: {
+                threadId: thread.id,
+                unreadCount: thread.unreadCount || 0
+            }
+        });
+    });
 
     init();
 
