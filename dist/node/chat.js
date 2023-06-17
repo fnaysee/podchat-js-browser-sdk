@@ -505,7 +505,7 @@ break;/**
                  * Type 145    Delete Tag
                  */case _constants.chatMessageVOTypes.GET_TAG_LIST:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'TAG_LIST',result:messageContent});break;/**
                  * Type 151    Delete Message Thread
-                 */case _constants.chatMessageVOTypes.DELETE_MESSAGE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'DELETE_THREAD',result:messageContent});break;/**
+                 */case _constants.chatMessageVOTypes.DELETE_MESSAGE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}messageContent.threadId=threadId;_events.chatEvents.fireEvent('threadEvents',{type:'DELETE_THREAD',result:messageContent});break;/**
                  * Type 152    Gives us a json to export for user
                  */case _constants.chatMessageVOTypes.EXPORT_CHAT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
                  * Type 200    Adding a user to contacts list
