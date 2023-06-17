@@ -5,7 +5,7 @@ to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.i
 
 ##[Unreleased]
 
-## [12.9.0] 2023-06-17
+## [12.9.1] 2023-06-17
 
 ### Fixed
 - Incorrect version number in runtime
