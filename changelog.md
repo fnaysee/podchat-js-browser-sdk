@@ -5,6 +5,58 @@ to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.i
 
 ##[Unreleased]
 
+## [12.9.0] 2023-06-17
+
+### Fixed
+- Incorrect version number in runtime
+
+## [12.9.0] 2023-06-12
+
+### Added
+- Properties: metadata, systemMetadata to pinMessageVO in result of method getThread
+
+## [12.8.4] 2023-06-17
+
+### Fixed
+- Incorrect version number in runtime
+
+## [12.8.3] 2023-06-12 - deprecated
+
+### Added
+- UnreadCount cache
+
+## [12.7.2] 2023-06-12
+
+### Added
+- prevent request when socket not connected
+- Event: THREAD_UNREAD_COUNT_UPDATED on chat: LAST_MESSAGE_DELETED
+- Implemented new poor connection event for audio and video
+- Method resetCallStream
+- Event CALL_RECORDING_FAILED
+- uniqueId to socket data
+- Params: username, cellphoneNumber to method: getThreadParticipants
+- Param: coreUserId to method: getContacts
+- Param: onlyNewMessages to method: getHistory
+- Params: isGroup, type to method: getThreads
+- Prevent ringing in other devices of the call owner
+
+### Changed
+- Method shouldNotProcessChatMessage modified
+- Method recallThreadParticipant modified
+- Merge audioLevel improvements
+- Update package async-ws-only
+- Method exportChat modified due to the chat server changes
+- Modified ping functionality with chat server
+- Improved functionality of field: ownerId
+- Removed unnecessary call to getAllThreads on asyncReady
+- Modified process of call request handling functionality
+- Merge: setToken improvement, sdk version
+
+### Fixed
+- Incorrect callId in some scenarios
+- Bug in CALL_DIVS event in groupCall
+- Bug, call participants voice was playing in other devices of the user
+
 ## [12.7.2-snapshot.30]
 - Updated package podasync-ws-only to version 2.9.0-snapshot.4 to fix retryStep
 
