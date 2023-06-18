@@ -5,6 +5,12 @@ to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.i
 
 ##[Unreleased]
 
+## [12.9.2] 2023-06-18
+
+### Fixed
+- Send threadId in event DELETE_THREAD
+
+
 ## [12.9.1] 2023-06-17
 
 ### Fixed
