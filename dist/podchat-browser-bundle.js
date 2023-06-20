@@ -48767,7 +48767,29 @@ if((0,_typeof2["default"])(callbacks)==='object'&&callbacks.hasOwnProperty('onFi
                                              * Delete those messages from wait
                                              * queue which are in the send
                                              * queue and are going to be sent
-                                             */for(var i=0;i<chatSendQueue.length;i++){for(var j=0;j<uniqueIds.length;j++){if(uniqueIds[j]===chatSendQueue[i].message.uniqueId){deleteFromChatWaitQueue(chatSendQueue[i].message,function(){});uniqueIds.splice(j,1);waitQueueOnCache.splice(j,1);}}}callback&&callback(waitQueueOnCache);}}});}else{callback&&callback(waitQueueOnCache);}})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{var uniqueIds=[],queueToBeSent=[];for(var i=0;i<chatWaitQueue.length;i++){if(chatWaitQueue[i].subjectId==threadId){queueToBeSent.push(chatWaitQueue[i]);uniqueIds.push(chatWaitQueue[i].uniqueId);}}if(uniqueIds.length){chatMessaging.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.GET_HISTORY,content:{uniqueIds:uniqueIds},subjectId:threadId},{onResult:function onResult(result){if(!result.hasError){var messageContent=result.result;for(var i=0;i<messageContent.length;i++){for(var j=0;j<uniqueIds.length;j++){if(uniqueIds[j]===messageContent[i].uniqueId){uniqueIds.splice(j,1);queueToBeSent.splice(j,1);}}}callback&&callback(queueToBeSent);}}});}else{callback&&callback([]);}}}else{callback&&callback([]);}},/**
+                                             */for(var i=0;i<chatSendQueue.length;i++){for(var j=0;j<uniqueIds.length;j++){if(uniqueIds[j]===chatSendQueue[i].message.uniqueId){deleteFromChatWaitQueue(chatSendQueue[i].message,function(){});uniqueIds.splice(j,1);waitQueueOnCache.splice(j,1);}}}callback&&callback(waitQueueOnCache);}}});}else{callback&&callback(waitQueueOnCache);}})["catch"](function(error){_events.chatEvents.fireEvent('error',{code:error.code,message:error.message,error:error});});}else{var uniqueIds=[],queueToBeSent=[];for(var i=0;i<chatWaitQueue.length;i++){if(chatWaitQueue[i].subjectId==threadId){queueToBeSent.push(chatWaitQueue[i]);uniqueIds.push(chatWaitQueue[i].uniqueId);}}if(uniqueIds.length){console.warn("getChatWaitQueue GET_HISTORY disabled: ",{queueToBeSent:queueToBeSent});/* chatMessaging.sendMessage({
+                            chatMessageVOType: chatMessageVOTypes.GET_HISTORY,
+                            content: {
+                                uniqueIds: uniqueIds
+                            },
+                            subjectId: threadId
+                        }, {
+                            onResult: function (result) {
+                                if (!result.hasError) {
+                                    var messageContent = result.result;
+
+                                    for (var i = 0; i < messageContent.length; i++) {
+                                        for (var j = 0; j < uniqueIds.length; j++) {
+                                            if (uniqueIds[j] === messageContent[i].uniqueId) {
+                                                uniqueIds.splice(j, 1);
+                                                queueToBeSent.splice(j, 1);
+                                            }
+                                        }
+                                    }
+                                    callback && callback(queueToBeSent);
+                                }
+                            }
+                        }); */}else{callback&&callback([]);}}}else{callback&&callback([]);}},/**
          * Get Chat Upload Queue
          *
          * This function checks if cache is enabled on client's

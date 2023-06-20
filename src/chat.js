@@ -8904,7 +8904,8 @@ function Chat(params) {
                     }
 
                     if (uniqueIds.length) {
-                        chatMessaging.sendMessage({
+                        console.warn("getChatWaitQueue GET_HISTORY disabled: ", {queueToBeSent})
+                        /* chatMessaging.sendMessage({
                             chatMessageVOType: chatMessageVOTypes.GET_HISTORY,
                             content: {
                                 uniqueIds: uniqueIds
@@ -8926,7 +8927,7 @@ function Chat(params) {
                                     callback && callback(queueToBeSent);
                                 }
                             }
-                        });
+                        }); */
                     } else {
                         callback && callback([]);
                     }
