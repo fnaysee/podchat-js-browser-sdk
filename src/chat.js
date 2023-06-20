@@ -3054,6 +3054,9 @@ function Chat(params) {
                         chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
+                    if(!messageContent) {
+                        messageContent = {};
+                    }
                     messageContent.threadId = threadId;
                     chatEvents.fireEvent('threadEvents', {
                         type: 'DELETE_THREAD',
