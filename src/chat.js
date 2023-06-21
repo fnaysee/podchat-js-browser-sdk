@@ -290,11 +290,11 @@ function Chat(params) {
                 }
 
                 peerId = asyncClient.getPeerId();
+                chatMessaging.chatState = true;
 
                 if (!chatMessaging.userInfo) {
                     getUserAndUpdateSDKState();
                 } else if (chatMessaging.userInfo.id > 0) {
-                    chatMessaging.chatState = true;
                     chatEvents.fireEvent('chatReady');
                     chatSendQueueHandler();
                 }
@@ -328,6 +328,7 @@ function Chat(params) {
                             // chatMessaging.chatState = true;
                             // chatMessaging.ping();
                             chatMessaging.startChatPing();
+                            chatMessaging.chatState = true;
                         }
                         break;
                     case 0: // CONNECTING
