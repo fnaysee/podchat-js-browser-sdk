@@ -22,27 +22,32 @@ import {
 
 import deviceManager from "./lib/call/deviceManager.js";
 import {store} from "./lib/store";
+import {sdkParams} from "./lib/sdkParams";
 
 function Chat(params) {
     /*******************************************************
      *          P R I V A T E   V A R I A B L E S          *
      *******************************************************/
-
-
+        sdkParams.token = params.token || "111";
+        sdkParams.generalTypeCode = params.typeCode || 'default';
+        sdkParams.typeCodeOwnerId = params.typeCodeOwnerId || null;
+        sdkParams.mapApiKey = params.mapApiKey || '8b77db18704aa646ee5aaea13e7370f4f88b9e8c';
+        sdkParams.productEnv = (typeof navigator != 'undefined') ? navigator.product : 'undefined';
+        sdkParams.forceWaitQueueInMemory = (params.forceWaitQueueInMemory && typeof params.forceWaitQueueInMemory === 'boolean') ? params.forceWaitQueueInMemory : false;
+        sdkParams.grantDeviceIdFromSSO = (params.grantDeviceIdFromSSO && typeof params.grantDeviceIdFromSSO === 'boolean')
+        ? params.grantDeviceIdFromSSO
+        : false;
+        sdkParams.deliveryIntervalPitch = params.deliveryIntervalPitch || 2000;
+        sdkParams.seenIntervalPitch = params.seenIntervalPitch || 2000;
+        sdkParams.systemMessageIntervalPitch = params.systemMessageIntervalPitch || 1000;
     var asyncClient,
         peerId,
         oldPeerId,
-        token = params.token || "111",
-        generalTypeCode = params.typeCode || 'default',
-        typeCodeOwnerId = params.typeCodeOwnerId || null,
-        mapApiKey = params.mapApiKey || '8b77db18704aa646ee5aaea13e7370f4f88b9e8c',
         deviceId,
-        productEnv = (typeof navigator != 'undefined') ? navigator.product : 'undefined',
         db,
         queueDb,
-        forceWaitQueueInMemory = (params.forceWaitQueueInMemory && typeof params.forceWaitQueueInMemory === 'boolean') ? params.forceWaitQueueInMemory : false,
-        hasCache = productEnv !== 'ReactNative' && typeof Dexie != 'undefined',
-        cacheInMemory = forceWaitQueueInMemory ? true : !hasCache,
+        hasCache = sdkParams.productEnv !== 'ReactNative' && typeof Dexie != 'undefined',
+        cacheInMemory = sdkParams.forceWaitQueueInMemory ? true : !hasCache,
         enableCache = (params.enableCache && typeof params.enableCache === 'boolean') ? params.enableCache : false,
         canUseCache = hasCache && enableCache,
         isCacheReady = false,
@@ -50,22 +55,16 @@ function Chat(params) {
         cacheExpireTime = params.cacheExpireTime || 2 * 24 * 60 * 60 * 1000,
         cacheSecret = 'VjaaS9YxNdVVAd3cAsRPcU5FyxRcyyV6tG6bFGjjK5RV8JJjLrXNbS5zZxnqUT6Y',
         cacheSyncWorker,
-        grantDeviceIdFromSSO = (params.grantDeviceIdFromSSO && typeof params.grantDeviceIdFromSSO === 'boolean')
-            ? params.grantDeviceIdFromSSO
-            : false,
         messagesDelivery = {},
         messagesSeen = {},
         deliveryInterval,
-        deliveryIntervalPitch = params.deliveryIntervalPitch || 2000,
         seenInterval,
-        seenIntervalPitch = params.seenIntervalPitch || 2000,
         getImageFromLinkObjects = {},
         locationPingTypes = {
             'CHAT': 1,
             'THREAD': 2,
             'CONTACTS': 3
         },
-        systemMessageIntervalPitch = params.systemMessageIntervalPitch || 1000,
         isTypingInterval,
         protocol = params.protocol || 'websocket',
         queueHost = params.queueHost,
@@ -204,8 +203,8 @@ function Chat(params) {
             asyncClient: asyncClient,
             //Utility: Utility,
             consoleLogging: consoleLogging,
-            generalTypeCode: generalTypeCode,
-            typeCodeOwnerId,
+            generalTypeCode: sdkParams.generalTypeCode,
+            typeCodeOwnerId: sdkParams.typeCodeOwnerId,
             chatPingMessageInterval: chatPingMessageInterval,
             asyncRequestTimeout: asyncRequestTimeout,
             serverName: serverName,
@@ -229,7 +228,7 @@ function Chat(params) {
              * Initialize Cache Databases
              */
             startCacheDatabases(function () {
-                if (grantDeviceIdFromSSO) {
+                if (sdkParams.grantDeviceIdFromSSO) {
                     var getDeviceIdWithTokenTime = new Date().getTime();
                     getDeviceIdWithToken(function (retrievedDeviceId) {
                         if (actualTimingLog) {
@@ -305,7 +304,7 @@ function Chat(params) {
                     if (Object.keys(messagesDelivery).length) {
                         messagesDeliveryQueueHandler();
                     }
-                }, deliveryIntervalPitch);
+                }, sdkParams.deliveryIntervalPitch);
 
                 seenInterval && clearInterval(seenInterval);
 
@@ -313,7 +312,7 @@ function Chat(params) {
                     if (Object.keys(messagesSeen).length) {
                         messagesSeenQueueHandler();
                     }
-                }, seenIntervalPitch);
+                }, sdkParams.seenIntervalPitch);
 
                 //shouldReconnectCall();
             });
@@ -424,7 +423,7 @@ function Chat(params) {
                 url: SERVICE_ADDRESSES.SSO_ADDRESS + SERVICES_PATH.SSO_DEVICES,
                 method: 'GET',
                 headers: {
-                    'Authorization': 'Bearer ' + token
+                    'Authorization': 'Bearer ' + sdkParams.token
                 }
             };
 
@@ -503,7 +502,7 @@ function Chat(params) {
                 method: 'POST',
                 data: data,
                 headers: {
-                    'Authorization': 'Bearer ' + token
+                    'Authorization': 'Bearer ' + sdkParams.token
                 }
             };
 
@@ -582,7 +581,7 @@ function Chat(params) {
                         url: SERVICE_ADDRESSES.SSO_ADDRESS + SERVICES_PATH.SSO_GET_KEY + keyId,
                         method: 'GET',
                         headers: {
-                            'Authorization': 'Bearer ' + token
+                            'Authorization': 'Bearer ' + sdkParams.token
                         }
                     };
 
@@ -965,7 +964,7 @@ function Chat(params) {
 
                 return chatMessaging.sendMessage({
                     chatMessageVOType: chatMessageVOTypes.USER_INFO,
-                    typeCode: generalTypeCode//params.typeCode
+                    typeCode: sdkParams.generalTypeCode//params.typeCode
                 }, {
                     onResult: function (result) {
                         var returnData = {
@@ -1236,7 +1235,7 @@ function Chat(params) {
          * @return {undefined}
          */
         chatMessageHandler = function (chatMessage) {
-            if(chatMessage.typeCode && chatMessage.typeCode !== generalTypeCode) {
+            if(chatMessage.typeCode && chatMessage.typeCode !== sdkParams.generalTypeCode) {
                 return;
             }
 
@@ -4496,7 +4495,7 @@ function Chat(params) {
 
             var sendMessageParams = {
                 chatMessageVOType: chatMessageVOTypes.GET_THREADS,
-                typeCode: generalTypeCode, //params.typeCode,
+                typeCode: sdkParams.generalTypeCode, //params.typeCode,
                 content: content
             };
 
@@ -4638,7 +4637,7 @@ function Chat(params) {
                          * thread's last section
                          */
 
-                        if (typeof Worker !== 'undefined' && productEnv !== 'ReactNative' && canUseCache && cacheSecret.length > 0) {
+                        if (typeof Worker !== 'undefined' && sdkParams.productEnv !== 'ReactNative' && canUseCache && cacheSecret.length > 0) {
                             if (typeof cacheSyncWorker === 'undefined') {
                                 var plainWorker = function () {
                                     self.importScripts('https://npmcdn.com/dexie@2.0.4/dist/dexie.min.js');
@@ -4782,7 +4781,7 @@ function Chat(params) {
         getAllThreads = function (params, callback) {
             var sendMessageParams = {
                 chatMessageVOType: chatMessageVOTypes.GET_THREADS,
-                typeCode: generalTypeCode, //params.typeCode,
+                typeCode: sdkParams.generalTypeCode, //params.typeCode,
                 content: {}
             };
 
@@ -4857,7 +4856,7 @@ function Chat(params) {
             if (parseInt(params.threadId) > 0) {
                 var sendMessageParams = {
                         chatMessageVOType: chatMessageVOTypes.GET_HISTORY,
-                        typeCode: generalTypeCode, //params.typeCode,
+                        typeCode: sdkParams.generalTypeCode, //params.typeCode,
                         content: {},
                         subjectId: params.threadId
                     },
@@ -6047,10 +6046,10 @@ function Chat(params) {
         updateThreadInfo = function (params, callback) {
             var updateThreadInfoData = {
                     chatMessageVOType: chatMessageVOTypes.UPDATE_THREAD_INFO,
-                    typeCode: generalTypeCode, //params.typeCode,
+                    typeCode: sdkParams.generalTypeCode, //params.typeCode,
                     content: {},
                     pushMsgType: 3,
-                    token: token
+                    token: sdkParams.token
                 },
                 threadInfoContent = {},
                 fileUploadParams = {},
@@ -6113,13 +6112,13 @@ function Chat(params) {
                         putInChatUploadQueue({
                             message: {
                                 chatMessageVOType: chatMessageVOTypes.UPDATE_THREAD_INFO,
-                                typeCode: generalTypeCode, //params.typeCode,
+                                typeCode: sdkParams.generalTypeCode, //params.typeCode,
                                 subjectId: threadId,
                                 content: threadInfoContent,
                                 metadata: threadInfoContent.metadata,
                                 uniqueId: fileUniqueId,
                                 pushMsgType: 3,
-                                token: token
+                                token: sdkParams.token
                             },
                             callbacks: callback
                         }, function () {
@@ -6164,13 +6163,13 @@ function Chat(params) {
 
                     return chatMessaging.sendMessage({
                         chatMessageVOType: chatMessageVOTypes.UPDATE_THREAD_INFO,
-                        typeCode: generalTypeCode, //params.typeCode,
+                        typeCode: sdkParams.generalTypeCode, //params.typeCode,
                         subjectId: threadId,
                         content: threadInfoContent,
                         metadata: threadInfoContent.metadata,
                         uniqueId: fileUniqueId,
                         pushMsgType: 3,
-                        token: token
+                        token: sdkParams.token
                     }, {
                         onResult: function (result) {
                             callback && callback(result);
@@ -6183,13 +6182,13 @@ function Chat(params) {
 
                     return chatMessaging.sendMessage({
                         chatMessageVOType: chatMessageVOTypes.UPDATE_THREAD_INFO,
-                        typeCode: generalTypeCode,//params.typeCode,
+                        typeCode: sdkParams.generalTypeCode,//params.typeCode,
                         subjectId: threadId,
                         content: threadInfoContent,
                         metadata: threadInfoContent.metadata,
                         uniqueId: fileUniqueId,
                         pushMsgType: 3,
-                        token: token
+                        token: sdkParams.token
                     }, {
                         onResult: function (result) {
                             callback && callback(result);
@@ -6220,7 +6219,7 @@ function Chat(params) {
                 chatMessageVOType: chatMessageVOTypes.UPDATE_CHAT_PROFILE,
                 content: {},
                 pushMsgType: 3,
-                token: token
+                token: sdkParams.token
             };
             if (params) {
                 if (typeof params.bio == 'string') {
@@ -6257,7 +6256,7 @@ function Chat(params) {
                 chatMessageVOType: chatMessageVOTypes.GET_PARTICIPANT_ROLES,
                 pushMsgType: 3,
                 subjectId: params.threadId,
-                token: token
+                token: sdkParams.token
             };
             return chatMessaging.sendMessage(updateChatProfileData, {
                 onResult: function (result) {
@@ -6283,7 +6282,7 @@ function Chat(params) {
         getThreadParticipants = function (params, callback) {
             var sendMessageParams = {
                     chatMessageVOType: chatMessageVOTypes.THREAD_PARTICIPANTS,
-                    typeCode: generalTypeCode,//params.typeCode,
+                    typeCode: sdkParams.generalTypeCode,//params.typeCode,
                     content: {},
                     subjectId: params.threadId
                 },
@@ -6529,7 +6528,7 @@ function Chat(params) {
         deliver = function (params) {
             return chatMessaging.sendMessage({
                 chatMessageVOType: chatMessageVOTypes.DELIVERY,
-                typeCode: generalTypeCode, //params.typeCode,
+                typeCode: sdkParams.generalTypeCode, //params.typeCode,
                 content: params.messageId,
                 pushMsgType: 3
             });
@@ -6549,7 +6548,7 @@ function Chat(params) {
         seen = function (params) {
             return chatMessaging.sendMessage({
                 chatMessageVOType: chatMessageVOTypes.SEEN,
-                typeCode: generalTypeCode, //params.typeCode,
+                typeCode: sdkParams.generalTypeCode, //params.typeCode,
                 content: params.messageId,
                 pushMsgType: 3
             });
@@ -6711,7 +6710,7 @@ function Chat(params) {
             }
 
             if (params.responseType === 'link') {
-                var returnLink = SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS + SERVICES_PATH.PODSPACE_DOWNLOAD_FILE + `?hash=${params.hashCode}&_token_=${token}&_token_issuer_=1`;
+                var returnLink = SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS + SERVICES_PATH.PODSPACE_DOWNLOAD_FILE + `?hash=${params.hashCode}&_token_=${sdkParams.token}&_token_issuer_=1`;
 
                 callback({
                     hasError: false,
@@ -6726,7 +6725,7 @@ function Chat(params) {
                     responseType: 'blob',
                     uniqueId: downloadUniqueId,
                     headers: {
-                        '_token_': token,
+                        '_token_': sdkParams.token,
                         '_token_issuer_': 1,
                         // 'Range': 'bytes=100-200'
                     },
@@ -6802,7 +6801,7 @@ function Chat(params) {
                     responseType: 'blob',
                     uniqueId: downloadUniqueId,
                     headers: {
-                        'Authorization': 'Bearer ' + token
+                        'Authorization': 'Bearer ' + sdkParams.token
                     },
                     enableDownloadProgressEvents: params.enableDownloadProgressEvents,
                     hashCode: params.hashCode
@@ -6869,7 +6868,7 @@ function Chat(params) {
                 }
 
                 if (params.responseType === 'link') {
-                    var returnLink = SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS + SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE + `?hash=${params.hashCode}&_token_=${token}&_token_issuer_=1&size=${params.size}&quality=${params.quality}&crop=${params.crop}`;
+                    var returnLink = SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS + SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE + `?hash=${params.hashCode}&_token_=${sdkParams.token}&_token_issuer_=1&size=${params.size}&quality=${params.quality}&crop=${params.crop}`;
 
                     callback({
                         hasError: false,
@@ -6883,7 +6882,7 @@ function Chat(params) {
                         uniqueId: downloadUniqueId,
                         responseType: 'blob',
                         headers: {
-                            '_token_': token,
+                            '_token_': sdkParams.token,
                             '_token_issuer_': 1
                         },
                         data: getImageData
@@ -6924,7 +6923,7 @@ function Chat(params) {
                         responseType: 'blob',
                         uniqueId: downloadUniqueId,
                         headers: {
-                            '_token_': token,
+                            '_token_': sdkParams.token,
                             '_token_issuer_': 1
                         },
                         data: getImageData
@@ -7005,7 +7004,7 @@ function Chat(params) {
                         uniqueId: downloadUniqueId,
                         responseType: 'blob',
                         headers: {
-                            'Authorization': 'Bearer ' + token
+                            'Authorization': 'Bearer ' + sdkParams.token
                         },
                         enableDownloadProgressEvents: params.enableDownloadProgressEvents,
                         hashCode: params.hashCode
@@ -7048,7 +7047,7 @@ function Chat(params) {
                         responseType: 'blob',
                         uniqueId: downloadUniqueId,
                         headers: {
-                            'Authorization': 'Bearer ' + token
+                            'Authorization': 'Bearer ' + sdkParams.token
                         },
                         enableDownloadProgressEvents: params.enableDownloadProgressEvents,
                         hashCode: params.hashCode
@@ -7245,7 +7244,7 @@ function Chat(params) {
                 url: SERVICE_ADDRESSES.FILESERVER_ADDRESS + SERVICES_PATH.UPLOAD_FILE,
                 method: 'POST',
                 headers: {
-                    '_token_': token,
+                    '_token_': sdkParams.token,
                     '_token_issuer_': 1
                 },
                 data: uploadFileData,
@@ -7369,7 +7368,7 @@ function Chat(params) {
                 url: SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS + SERVICES_PATH.PODSPACE_UPLOAD_FILE_TO_USERGROUP,
                 method: 'POST',
                 headers: {
-                    '_token_': token,
+                    '_token_': sdkParams.token,
                     '_token_issuer_': 1
                 },
                 data: uploadFileData,
@@ -7472,7 +7471,7 @@ function Chat(params) {
                 url: SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS + SERVICES_PATH.PODSPACE_UPLOAD_FILE_NEW,
                 method: 'POST',
                 headers: {
-                    'Authorization': 'Bearer ' + token
+                    'Authorization': 'Bearer ' + sdkParams.token
                 },
                 data: uploadFileData,
                 uniqueId: uploadUniqueId
@@ -7586,7 +7585,7 @@ function Chat(params) {
                 url: SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS + SERVICES_PATH.PODSPACE_UPLOAD_FILE_TO_USERGROUP_NEW.replace('{userGroupHash}', uploadFileData.userGroupHash),
                 method: 'POST',
                 headers: {
-                    'Authorization': 'Bearer ' + token,
+                    'Authorization': 'Bearer ' + sdkParams.token,
                 },
                 data: uploadFileData,
                 uniqueId: uploadUniqueId
@@ -7689,7 +7688,7 @@ function Chat(params) {
                 url: SERVICE_ADDRESSES.POD_DRIVE_ADDRESS + SERVICES_PATH.DRIVE_UPLOAD_FILE_FROM_URL,
                 method: 'POST',
                 headers: {
-                    '_token_': token,
+                    '_token_': sdkParams.token,
                     '_token_issuer_': 1
                 },
                 data: uploadFileData,
@@ -7828,7 +7827,7 @@ function Chat(params) {
                     url: SERVICE_ADDRESSES.FILESERVER_ADDRESS + SERVICES_PATH.UPLOAD_IMAGE,
                     method: 'POST',
                     headers: {
-                        '_token_': token,
+                        '_token_': sdkParams.token,
                         '_token_issuer_': 1
                     },
                     data: uploadImageData,
@@ -7986,7 +7985,7 @@ function Chat(params) {
                         url: SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS + SERVICES_PATH.PODSPACE_UPLOAD_IMAGE,
                         method: 'POST',
                         headers: {
-                            '_token_': token,
+                            '_token_': sdkParams.token,
                             '_token_issuer_': 1
                         },
                         data: uploadImageData,
@@ -8123,7 +8122,7 @@ function Chat(params) {
                     url: SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS + SERVICES_PATH.PODSPACE_UPLOAD_IMAGE_NEW,
                     method: 'POST',
                     headers: {
-                        'Authorization': 'Bearer ' + token,
+                        'Authorization': 'Bearer ' + sdkParams.token,
                     },
                     data: uploadImageData,
                     uniqueId: uploadUniqueId
@@ -8276,7 +8275,7 @@ function Chat(params) {
                         url: SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS + SERVICES_PATH.PODSPACE_UPLOAD_IMAGE_TO_USERGROUP,
                         method: 'POST',
                         headers: {
-                            '_token_': token,
+                            '_token_': sdkParams.token,
                             '_token_issuer_': 1
                         },
                         data: uploadImageData,
@@ -8446,7 +8445,7 @@ function Chat(params) {
                         url: SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS + SERVICES_PATH.PODSPACE_UPLOAD_IMAGE_TO_USERGROUP_NEW.replace('{userGroupHash}', uploadImageData.userGroupHash),
                         method: 'POST',
                         headers: {
-                            'Authorization': 'Bearer ' + token,
+                            'Authorization': 'Bearer ' + sdkParams.token,
                         },
                         data: uploadImageData,
                         uniqueId: uploadUniqueId
@@ -8550,7 +8549,7 @@ function Chat(params) {
                     putInChatUploadQueue({
                         message: {
                             chatMessageVOType: chatMessageVOTypes.MESSAGE,
-                            typeCode: generalTypeCode, //params.typeCode,
+                            typeCode: sdkParams.generalTypeCode, //params.typeCode,
                             messageType: (params.messageType && typeof params.messageType.toUpperCase() !== 'undefined' && chatMessageTypes[params.messageType.toUpperCase()] > 0) ? chatMessageTypes[params.messageType.toUpperCase()] : 1,
                             subjectId: params.threadId,
                             repliedTo: params.repliedTo,
@@ -8819,7 +8818,7 @@ function Chat(params) {
          */
         getChatWaitQueue = function (threadId, active, callback) {
             if (active && threadId > 0) {
-                if (hasCache && typeof queueDb == 'object' && !forceWaitQueueInMemory) {
+                if (hasCache && typeof queueDb == 'object' && !sdkParams.forceWaitQueueInMemory) {
                     queueDb.waitQ.where('threadId')
                         .equals(threadId)
                         .and(function (item) {
@@ -8989,7 +8988,7 @@ function Chat(params) {
          * @return {undefined}
          */
         deleteFromChatWaitQueue = function (item, callback) {
-            if (hasCache && typeof queueDb == 'object' && !forceWaitQueueInMemory) {
+            if (hasCache && typeof queueDb == 'object' && !sdkParams.forceWaitQueueInMemory) {
                 queueDb.waitQ.where('uniqueId')
                     .equals(item.uniqueId)
                     .and(function (item) {
@@ -9036,7 +9035,7 @@ function Chat(params) {
         },
 
         deleteThreadFailedMessagesFromWaitQueue = function (threadId, callback) {
-            if (hasCache && typeof queueDb == 'object' && !forceWaitQueueInMemory) {
+            if (hasCache && typeof queueDb == 'object' && !sdkParams.forceWaitQueueInMemory) {
                 queueDb.waitQ.where('threadId')
                     .equals(threadId)
                     .and(function (item) {
@@ -9107,7 +9106,7 @@ function Chat(params) {
                 var waitQueueUniqueId = (typeof item.uniqueId == 'string') ? item.uniqueId : (Array.isArray(item.uniqueId)) ? item.uniqueId[0] : null;
 
                 if (waitQueueUniqueId != null) {
-                    if (hasCache && typeof queueDb == 'object' && !forceWaitQueueInMemory) {
+                    if (hasCache && typeof queueDb == 'object' && !sdkParams.forceWaitQueueInMemory) {
                         queueDb.waitQ
                             .put({
                                 threadId: parseInt(item.subjectId),
@@ -9136,7 +9135,7 @@ function Chat(params) {
         },
 
         getItemFromChatWaitQueue = function (uniqueId, callback) {
-            if (hasCache && typeof queueDb == 'object' && !forceWaitQueueInMemory) {
+            if (hasCache && typeof queueDb == 'object' && !sdkParams.forceWaitQueueInMemory) {
                 queueDb.waitQ.where('uniqueId')
                     .equals(uniqueId)
                     .and(function (item) {
@@ -9339,10 +9338,10 @@ function Chat(params) {
         setRoleToUser = function (params, callback) {
             var setRoleData = {
                 chatMessageVOType: chatMessageVOTypes.SET_ROLE_TO_USER,
-                typeCode: generalTypeCode, //params.typeCode,
+                typeCode: sdkParams.generalTypeCode, //params.typeCode,
                 content: [],
                 pushMsgType: 3,
-                token: token
+                token: sdkParams.token
             };
 
             if (params) {
@@ -9378,10 +9377,10 @@ function Chat(params) {
         removeRoleFromUser = function (params, callback) {
             var setAdminData = {
                 chatMessageVOType: chatMessageVOTypes.REMOVE_ROLE_FROM_USER,
-                typeCode: generalTypeCode, //params.typeCode,
+                typeCode: sdkParams.generalTypeCode, //params.typeCode,
                 content: [],
                 pushMsgType: 3,
-                token: token
+                token: sdkParams.token
             };
 
             if (params) {
@@ -9417,13 +9416,13 @@ function Chat(params) {
         unPinMessage = function (params, callback) {
             return chatMessaging.sendMessage({
                 chatMessageVOType: chatMessageVOTypes.UNPIN_MESSAGE,
-                typeCode: generalTypeCode, //params.typeCode,
+                typeCode: sdkParams.generalTypeCode, //params.typeCode,
                 subjectId: params.messageId,
                 content: JSON.stringify({
                     'notifyAll': (typeof params.notifyAll === 'boolean') ? params.notifyAll : false
                 }),
                 pushMsgType: 3,
-                token: token
+                token: sdkParams.token
             }, {
                 onResult: function (result) {
                     callback && callback(result);
@@ -9568,7 +9567,7 @@ function Chat(params) {
                 method: 'GET',
                 data: data,
                 headers: {
-                    'Api-Key': mapApiKey
+                    'Api-Key': sdkParams.mapApiKey
                 }
             };
 
@@ -9620,7 +9619,7 @@ function Chat(params) {
                 method: 'GET',
                 data: data,
                 headers: {
-                    'Api-Key': mapApiKey
+                    'Api-Key': sdkParams.mapApiKey
                 }
             };
 
@@ -9682,7 +9681,7 @@ function Chat(params) {
                 method: 'GET',
                 data: data,
                 headers: {
-                    'Api-Key': mapApiKey
+                    'Api-Key': sdkParams.mapApiKey
                 }
             };
 
@@ -9760,7 +9759,7 @@ function Chat(params) {
                     });
                 }
 
-                data.key = mapApiKey;
+                data.key = sdkParams.mapApiKey;
             }
 
             var keys = Object.keys(data);
@@ -9842,7 +9841,7 @@ function Chat(params) {
     publicized.getUserInfo = function (callback) {
         return chatMessaging.sendMessage({
             chatMessageVOType: chatMessageVOTypes.USER_INFO,
-            typeCode: generalTypeCode
+            typeCode: sdkParams.generalTypeCode
         }, {
             onResult: function (result) {
                 var returnData = {
@@ -9877,7 +9876,7 @@ function Chat(params) {
         return getHistory({
             threadId: params.threadId,
             allMentioned: true,
-            typeCode: generalTypeCode,//params.typeCode,
+            typeCode: sdkParams.generalTypeCode,//params.typeCode,
             count: params.count || 50,
             offset: params.offset || 0,
             cache: false,
@@ -9892,7 +9891,7 @@ function Chat(params) {
         return getHistory({
             threadId: params.threadId,
             unreadMentioned: true,
-            typeCode: generalTypeCode,//params.typeCode,
+            typeCode: sdkParams.generalTypeCode,//params.typeCode,
             count: params.count || 50,
             offset: params.offset || 0,
             cache: false,
@@ -9906,12 +9905,12 @@ function Chat(params) {
     publicized.getAllUnreadMessagesCount = function (params, callback) {
         return chatMessaging.sendMessage({
             chatMessageVOType: chatMessageVOTypes.ALL_UNREAD_MESSAGE_COUNT,
-            typeCode: generalTypeCode,//params.typeCode,
+            typeCode: sdkParams.generalTypeCode,//params.typeCode,
             content: JSON.stringify({
                 'mute': (typeof params.countMuteThreads === 'boolean') ? params.countMuteThreads : false
             }),
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         }, {
             onResult: function (result) {
                 callback && callback(result);
@@ -9976,7 +9975,7 @@ function Chat(params) {
 
         var sendMessageParams = {
             chatMessageVOType: chatMessageVOTypes.GET_CONTACTS,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: content
         };
 
@@ -10216,7 +10215,7 @@ function Chat(params) {
          */
         var sendMessageParams = {
             chatMessageVOType: chatMessageVOTypes.ADD_PARTICIPANT,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: []
         };
         if (params) {
@@ -10280,7 +10279,7 @@ function Chat(params) {
 
         var sendMessageParams = {
             chatMessageVOType: chatMessageVOTypes.REMOVE_PARTICIPANT,
-            typeCode: generalTypeCode //params.typeCode
+            typeCode: sdkParams.generalTypeCode //params.typeCode
         };
 
         if (params) {
@@ -10327,7 +10326,7 @@ function Chat(params) {
 
         var sendMessageParams = {
             chatMessageVOType: chatMessageVOTypes.LEAVE_THREAD,
-            typeCode: generalTypeCode//params.typeCode
+            typeCode: sdkParams.generalTypeCode//params.typeCode
         };
 
         if (params) {
@@ -10480,7 +10479,7 @@ function Chat(params) {
 
         var sendMessageParams = {
             chatMessageVOType: chatMessageVOTypes.CREATE_THREAD,
-            typeCode: generalTypeCode,//params.typeCode,
+            typeCode: sdkParams.generalTypeCode,//params.typeCode,
             content: content
         };
 
@@ -10571,7 +10570,7 @@ function Chat(params) {
 
         var sendMessageParams = {
             chatMessageVOType: chatMessageVOTypes.CREATE_THREAD,
-            typeCode: generalTypeCode,//params.typeCode,
+            typeCode: sdkParams.generalTypeCode,//params.typeCode,
             content: content
         };
 
@@ -10610,7 +10609,7 @@ function Chat(params) {
         putInChatSendQueue({
             message: {
                 chatMessageVOType: chatMessageVOTypes.MESSAGE,
-                typeCode: generalTypeCode, //params.typeCode,
+                typeCode: sdkParams.generalTypeCode, //params.typeCode,
                 messageType: (params.messageType && typeof params.messageType.toUpperCase() !== 'undefined' && chatMessageTypes[params.messageType.toUpperCase()] > 0) ? chatMessageTypes[params.messageType.toUpperCase()] : chatMessageTypes.TEXT,
                 subjectId: params.threadId,
                 repliedTo: params.repliedTo,
@@ -10638,7 +10637,7 @@ function Chat(params) {
 
         return chatMessaging.sendMessage({
             chatMessageVOType: chatMessageVOTypes.BOT_MESSAGE,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             subjectId: params.messageId,
             content: params.content,
             uniqueId: params.uniqueId,
@@ -10707,7 +10706,7 @@ function Chat(params) {
         }
         var sendMessageParams = {
             chatMessageVOType: chatMessageVOTypes.CREATE_THREAD,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: content
         };
         return chatMessaging.sendMessage(sendMessageParams, {
@@ -10781,7 +10780,7 @@ function Chat(params) {
                     error: undefined
                 });
             }
-            data.key = mapApiKey;
+            data.key = sdkParams.mapApiKey;
             data.marker = 'red';
         }
         var keys = Object.keys(data);
@@ -10838,7 +10837,7 @@ function Chat(params) {
     };
 
     publicized.resendMessage = function (uniqueId, callbacks) {
-        if (hasCache && typeof queueDb == 'object' && !forceWaitQueueInMemory) {
+        if (hasCache && typeof queueDb == 'object' && !sdkParams.forceWaitQueueInMemory) {
             queueDb.waitQ.where('uniqueId')
                 .equals(uniqueId)
                 .and(function (item) {
@@ -10888,7 +10887,7 @@ function Chat(params) {
 
         var clearHistoryParams = {
             chatMessageVOType: chatMessageVOTypes.CLEAR_HISTORY,
-            typeCode: generalTypeCode, //params.typeCode
+            typeCode: sdkParams.generalTypeCode, //params.typeCode
         };
 
         if (params) {
@@ -10967,7 +10966,7 @@ function Chat(params) {
     publicized.editMessage = function (params, callback) {
         return chatMessaging.sendMessage({
             chatMessageVOType: chatMessageVOTypes.EDIT_MESSAGE,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             messageType: params.messageType,
             subjectId: params.messageId,
             repliedTo: params.repliedTo,
@@ -11045,7 +11044,7 @@ function Chat(params) {
     publicized.deleteMessage = function (params, callback) {
         return chatMessaging.sendMessage({
             chatMessageVOType: chatMessageVOTypes.DELETE_MESSAGE,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             subjectId: params.messageId,
             uniqueId: params.uniqueId,
             content: JSON.stringify({
@@ -11166,7 +11165,7 @@ function Chat(params) {
 
         return chatMessaging.sendMessage({
             chatMessageVOType: chatMessageVOTypes.DELETE_MESSAGE,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: {
                 uniqueIds: uniqueIdsList,
                 ids: messageIdsList,
@@ -11188,7 +11187,7 @@ function Chat(params) {
         putInChatSendQueue({
             message: {
                 chatMessageVOType: chatMessageVOTypes.MESSAGE,
-                typeCode: generalTypeCode, //params.typeCode,
+                typeCode: sdkParams.generalTypeCode, //params.typeCode,
                 messageType: 1,
                 subjectId: params.threadId,
                 repliedTo: params.repliedTo,
@@ -11233,7 +11232,7 @@ function Chat(params) {
             putInChatUploadQueue({
                 message: {
                     chatMessageVOType: chatMessageVOTypes.MESSAGE,
-                    typeCode: generalTypeCode, //params.typeCode,
+                    typeCode: sdkParams.generalTypeCode, //params.typeCode,
                     messageType: (params.messageType && typeof params.messageType.toUpperCase() !== 'undefined' && chatMessageTypes[params.messageType.toUpperCase()] > 0) ? chatMessageTypes[params.messageType.toUpperCase()] : 1,
                     subjectId: params.threadId,
                     repliedTo: params.repliedTo,
@@ -11324,7 +11323,7 @@ function Chat(params) {
         putInChatSendQueue({
             message: {
                 chatMessageVOType: chatMessageVOTypes.FORWARD_MESSAGE,
-                typeCode: generalTypeCode,//params.typeCode,
+                typeCode: sdkParams.generalTypeCode,//params.typeCode,
                 subjectId: params.threadId,
                 repliedTo: params.repliedTo,
                 content: messageIdsList,
@@ -11362,7 +11361,7 @@ function Chat(params) {
                 threadId: threadId,
                 uniqueId: uniqueId
             });
-        }, systemMessageIntervalPitch);
+        }, sdkParams.systemMessageIntervalPitch);
     };
 
     publicized.stopTyping = function () {
@@ -11373,10 +11372,10 @@ function Chat(params) {
 
         var deliveryListData = {
             chatMessageVOType: chatMessageVOTypes.GET_MESSAGE_DELIVERY_PARTICIPANTS,
-            typeCode: generalTypeCode,//params.typeCode,
+            typeCode: sdkParams.generalTypeCode,//params.typeCode,
             content: {},
             pushMsgType: 3,
-            token: token,
+            token: sdkParams.token,
             timeout: params.timeout
         };
 
@@ -11401,10 +11400,10 @@ function Chat(params) {
     publicized.getMessageSeenList = function (params, callback) {
         var seenListData = {
             chatMessageVOType: chatMessageVOTypes.GET_MESSAGE_SEEN_PARTICIPANTS,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: {},
             pushMsgType: 3,
-            token: token,
+            token: sdkParams.token,
             timeout: params.timeout
         };
 
@@ -11433,11 +11432,11 @@ function Chat(params) {
     publicized.muteThread = function (params, callback) {
         return chatMessaging.sendMessage({
             chatMessageVOType: chatMessageVOTypes.MUTE_THREAD,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             subjectId: params.threadId,
             content: {},
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         }, {
             onResult: function (result) {
                 callback && callback(result);
@@ -11448,11 +11447,11 @@ function Chat(params) {
     publicized.unMuteThread = function (params, callback) {
         return chatMessaging.sendMessage({
             chatMessageVOType: chatMessageVOTypes.UNMUTE_THREAD,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             subjectId: params.threadId,
             content: {},
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         }, {
             onResult: function (result) {
                 callback && callback(result);
@@ -11463,11 +11462,11 @@ function Chat(params) {
     publicized.closeThread = function (params, callback) {
         return chatMessaging.sendMessage({
             chatMessageVOType: chatMessageVOTypes.CLOSE_THREAD,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             subjectId: params.threadId,
             content: {},
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         }, {
             onResult: function (result) {
                 callback && callback(result);
@@ -11478,10 +11477,10 @@ function Chat(params) {
     publicized.joinPublicThread = function (params, callback) {
         var joinThreadData = {
             chatMessageVOType: chatMessageVOTypes.JOIN_THREAD,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: '',
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         };
         if (params) {
             if (typeof params.uniqueName === 'string' && params.uniqueName.length > 0) {
@@ -11498,10 +11497,10 @@ function Chat(params) {
     publicized.isPublicThreadNameAvailable = function (params, callback) {
         var isNameAvailableData = {
             chatMessageVOType: chatMessageVOTypes.IS_NAME_AVAILABLE,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: '',
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         };
         if (params) {
             if (typeof params.uniqueName === 'string' && params.uniqueName.length > 0) {
@@ -11518,10 +11517,10 @@ function Chat(params) {
     publicized.changeThreadPrivacy = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.CHANGE_THREAD_PRIVACY,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             pushMsgType: 3,
             content: {},
-            token: token,
+            token: sdkParams.token,
             timeout: params.timeout
         };
 
@@ -11576,11 +11575,11 @@ function Chat(params) {
     publicized.pinThread = function (params, callback) {
         return chatMessaging.sendMessage({
             chatMessageVOType: chatMessageVOTypes.PIN_THREAD,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             subjectId: params.threadId,
             content: {},
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         }, {
             onResult: function (result) {
                 callback && callback(result);
@@ -11591,11 +11590,11 @@ function Chat(params) {
     publicized.unPinThread = function (params, callback) {
         return chatMessaging.sendMessage({
             chatMessageVOType: chatMessageVOTypes.UNPIN_THREAD,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             subjectId: params.threadId,
             content: {},
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         }, {
             onResult: function (result) {
                 callback && callback(result);
@@ -11606,7 +11605,7 @@ function Chat(params) {
     publicized.deleteThread = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.DELETE_MESSAGE_THREAD,
-            typeCode: generalTypeCode//params.typeCode
+            typeCode: sdkParams.generalTypeCode//params.typeCode
         };
 
         if (params) {
@@ -11641,13 +11640,13 @@ function Chat(params) {
     publicized.pinMessage = function (params, callback) {
         return chatMessaging.sendMessage({
             chatMessageVOType: chatMessageVOTypes.PIN_MESSAGE,
-            typeCode: generalTypeCode,//params.typeCode,
+            typeCode: sdkParams.generalTypeCode,//params.typeCode,
             subjectId: params.messageId,
             content: JSON.stringify({
                 'notifyAll': (typeof params.notifyAll === 'boolean') ? params.notifyAll : false
             }),
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         }, {
             onResult: function (result) {
                 callback && callback(result);
@@ -11660,9 +11659,9 @@ function Chat(params) {
     publicized.spamPrivateThread = function (params, callback) {
         var spamData = {
             chatMessageVOType: chatMessageVOTypes.SPAM_PV_THREAD,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             pushMsgType: 3,
-            token: token,
+            token: sdkParams.token,
             timeout: params.timeout
         };
 
@@ -11683,10 +11682,10 @@ function Chat(params) {
 
         var blockData = {
             chatMessageVOType: chatMessageVOTypes.BLOCK,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: {},
             pushMsgType: 3,
-            token: token,
+            token: sdkParams.token,
             timeout: params.timeout
         };
 
@@ -11717,9 +11716,9 @@ function Chat(params) {
     publicized.unblock = function (params, callback) {
         var unblockData = {
             chatMessageVOType: chatMessageVOTypes.UNBLOCK,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             pushMsgType: 3,
-            token: token,
+            token: sdkParams.token,
             content: {},
             timeout: params.timeout
         };
@@ -11773,10 +11772,10 @@ function Chat(params) {
 
         var getBlockedData = {
             chatMessageVOType: chatMessageVOTypes.GET_BLOCKED,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: content,
             pushMsgType: 3,
-            token: token,
+            token: sdkParams.token,
             timeout: params.timeout
         };
 
@@ -11826,10 +11825,10 @@ function Chat(params) {
 
         var getNotSeenDurationData = {
             chatMessageVOType: chatMessageVOTypes.GET_NOT_SEEN_DURATION,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: content,
             pushMsgType: 3,
-            token: token,
+            token: sdkParams.token,
             timeout: params.timeout
         };
 
@@ -11869,11 +11868,11 @@ function Chat(params) {
 
             if (typeof params.typeCode === 'string') {
                 data.typeCode = params.typeCode;
-            } else if (generalTypeCode) {
-                data.typeCode = generalTypeCode;
+            } else if (sdkParams.generalTypeCode) {
+                data.typeCode = sdkParams.generalTypeCode;
             }
 
-            data.ownerId = typeCodeOwnerId ? typeCodeOwnerId : (params.ownerId ? params.ownerId : undefined);
+            data.ownerId = sdkParams.typeCodeOwnerId ? sdkParams.typeCodeOwnerId : (params.ownerId ? params.ownerId : undefined);
 
             if (typeof params.cellphoneNumber === 'string') {
                 data.cellphoneNumber = params.cellphoneNumber;
@@ -11899,7 +11898,7 @@ function Chat(params) {
             method: 'POST',
             data: data,
             headers: {
-                '_token_': token,
+                '_token_': sdkParams.token,
                 '_token_issuer_': 1
             }
         };
@@ -12002,8 +12001,8 @@ function Chat(params) {
             chatMessageVOType: chatMessageVOTypes.ADD_CONTACTS,
             content: {},
             pushMsgType: 3,
-            token: token,
-            typeCode: generalTypeCode
+            token: sdkParams.token,
+            typeCode: sdkParams.generalTypeCode
         },
             AddContactVO = {},
             firstNameList = [],
@@ -12323,7 +12322,7 @@ function Chat(params) {
             method: 'GET',
             data: data,
             headers: {
-                '_token_': token,
+                '_token_': sdkParams.token,
                 '_token_issuer_': 1
             }
         };
@@ -12436,7 +12435,7 @@ function Chat(params) {
             }
         }
 
-        data.ownerId = typeCodeOwnerId ? typeCodeOwnerId : (params.ownerId ? params.ownerId : undefined);
+        data.ownerId = sdkParams.typeCodeOwnerId ? sdkParams.typeCodeOwnerId : (params.ownerId ? params.ownerId : undefined);
 
 
         var requestParams = {
@@ -12444,7 +12443,7 @@ function Chat(params) {
             method: 'POST',
             data: data,
             headers: {
-                '_token_': token,
+                '_token_': sdkParams.token,
                 '_token_issuer_': 1
             }
         };
@@ -12558,7 +12557,7 @@ function Chat(params) {
             method: 'POST',
             data: data,
             headers: {
-                '_token_': token,
+                '_token_': sdkParams.token,
                 '_token_issuer_': 1
             }
         };
@@ -12826,10 +12825,10 @@ function Chat(params) {
     publicized.createBot = function (params, callback) {
         var createBotData = {
             chatMessageVOType: chatMessageVOTypes.CREATE_BOT,
-            typeCode: generalTypeCode,//params.typeCode,
+            typeCode: sdkParams.generalTypeCode,//params.typeCode,
             content: '',
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         };
         if (params) {
             if (typeof params.botName === 'string' && params.botName.length > 0) {
@@ -12866,10 +12865,10 @@ function Chat(params) {
     publicized.defineBotCommand = function (params, callback) {
         var defineBotCommandData = {
             chatMessageVOType: chatMessageVOTypes.DEFINE_BOT_COMMAND,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: {},
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         }, commandList = [];
         if (params) {
             if (typeof params.botName !== 'string' || params.botName.length === 0) {
@@ -12911,10 +12910,10 @@ function Chat(params) {
     publicized.removeBotCommand = function (params, callback) {
         var defineBotCommandData = {
             chatMessageVOType: chatMessageVOTypes.REMOVE_BOT_COMMANDS,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: {},
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         }, commandList = [];
 
         if (params) {
@@ -12961,10 +12960,10 @@ function Chat(params) {
     publicized.startBot = function (params, callback) {
         var startBotData = {
             chatMessageVOType: chatMessageVOTypes.START_BOT,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: {},
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         };
         if (params) {
             if (typeof +params.threadId !== 'number' || params.threadId < 0) {
@@ -13002,10 +13001,10 @@ function Chat(params) {
     publicized.stopBot = function (params, callback) {
         var stopBotData = {
             chatMessageVOType: chatMessageVOTypes.STOP_BOT,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: {},
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         };
         if (params) {
             if (typeof +params.threadId !== 'number' || params.threadId < 0) {
@@ -13043,10 +13042,10 @@ function Chat(params) {
     publicized.getBotCommandsList = function (params, callback) {
         var getBotCommandsListData = {
             chatMessageVOType: chatMessageVOTypes.BOT_COMMANDS,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: {},
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         };
 
         if (params) {
@@ -13080,10 +13079,10 @@ function Chat(params) {
     publicized.getThreadAllBots = function (params, callback) {
         var getThreadBotsData = {
             chatMessageVOType: chatMessageVOTypes.THREAD_ALL_BOTS,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: {},
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         };
 
         if (params) {
@@ -13115,10 +13114,10 @@ function Chat(params) {
     publicized.createTag = function (params, callback) {
         var createTagData = {
             chatMessageVOType: chatMessageVOTypes.CREATE_TAG,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: {},
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         };
 
         if (params) {
@@ -13149,10 +13148,10 @@ function Chat(params) {
     publicized.editTag = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.EDIT_TAG,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: {},
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         };
 
         if (params) {
@@ -13193,10 +13192,10 @@ function Chat(params) {
     publicized.deleteTag = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.DELETE_TAG,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: {},
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         };
 
         if (params) {
@@ -13227,10 +13226,10 @@ function Chat(params) {
     publicized.getTagList = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.GET_TAG_LIST,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: {},
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         };
 
         return chatMessaging.sendMessage(sendData, {
@@ -13243,7 +13242,7 @@ function Chat(params) {
     publicized.addTagParticipants = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.ADD_TAG_PARTICIPANT,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: []
         };
 
@@ -13283,7 +13282,7 @@ function Chat(params) {
     publicized.removeTagParticipants = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.REMOVE_TAG_PARTICIPANT,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: []
         };
 
@@ -13323,7 +13322,7 @@ function Chat(params) {
     publicized.registerAssistant = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.REGISTER_ASSISTANT,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: []
         };
 
@@ -13392,7 +13391,7 @@ function Chat(params) {
     publicized.deactivateAssistant = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.DEACTIVATE_ASSISTANT,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: []
         };
 
@@ -13454,7 +13453,7 @@ function Chat(params) {
     publicized.blockAssistant = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.BLOCK_ASSISTANT,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: []
         };
 
@@ -13516,7 +13515,7 @@ function Chat(params) {
     publicized.unblockAssistant = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.UNBLOCK_ASSISTANT,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: []
         };
 
@@ -13578,10 +13577,10 @@ function Chat(params) {
     publicized.getAssistantsList = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.GET_ASSISTANTS,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: {},
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         };
 
         if (params) {
@@ -13615,10 +13614,10 @@ function Chat(params) {
     publicized.getBlockedAssistantsList = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.BLOCKED_ASSISTANTS,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: {},
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         };
 
         if (params) {
@@ -13652,7 +13651,7 @@ function Chat(params) {
     publicized.getAssistantsHistory = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.ASSISTANT_HISTORY,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: {
                 offset: +params.offset > 0 ? +params.offset : 0,
                 count: +params.count > 0 ? +params.count : config.getHistoryCount
@@ -13785,7 +13784,7 @@ function Chat(params) {
         var stackArr = [], wantedCount = 10000, stepCount = 500, offset = 0;
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.EXPORT_CHAT,
-            typeCode: generalTypeCode,//params.typeCode,
+            typeCode: sdkParams.generalTypeCode,//params.typeCode,
             content: {
                 offset: +params.offset > 0 ? +params.offset : offset,
                 count: +params.count > 0 ? +params.count : wantedCount,//config.getHistoryCount,
@@ -13999,7 +13998,7 @@ function Chat(params) {
 
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.MUTUAL_GROUPS,
-            typeCode: generalTypeCode,//params.typeCode,
+            typeCode: sdkParams.generalTypeCode,//params.typeCode,
             content: {
                 count: count,
                 offset: offset
@@ -14081,9 +14080,9 @@ function Chat(params) {
 
         var locationPingData = {
             chatMessageVOType: chatMessageVOTypes.LOCATION_PING,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         }, content = {};
 
         if (params) {
@@ -14141,10 +14140,10 @@ function Chat(params) {
 
     publicized.setToken = function (newToken) {
         if (typeof newToken !== 'undefined') {
-            token = newToken;
-            callModule.updateToken(token);
-            chatMessaging.updateToken(token);
-            chatEvents.updateToken(token);
+            sdkParams.token = newToken;
+            callModule.updateToken(sdkParams.token);
+            chatMessaging.updateToken(sdkParams.token);
+            chatEvents.updateToken(sdkParams.token);
             if(!chatMessaging.userInfo || !chatMessaging.userInfo.id) {
                 getUserAndUpdateSDKState();
             }
@@ -14225,11 +14224,11 @@ function Chat(params) {
         let userId = params.userId || chatMessaging.userInfo.id
             , sendData = {
             chatMessageVOType: chatMessageVOTypes.CUSTOMER_INFO,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: [
                 userId
             ],
-            token: token
+            token: sdkParams.token
         };
 
         return chatMessaging.sendMessage(sendData, {
@@ -14244,8 +14243,8 @@ function Chat(params) {
     }, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.ARCHIVE_THREAD,
-            typeCode: generalTypeCode, //params.typeCode,
-            token: token,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            token: sdkParams.token,
             subjectId: threadId
         };
 
@@ -14260,8 +14259,8 @@ function Chat(params) {
     }, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.UNARCHIVE_THREAD,
-            typeCode: generalTypeCode, //params.typeCode,
-            token: token,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            token: sdkParams.token,
             subjectId: threadId
         };
 
