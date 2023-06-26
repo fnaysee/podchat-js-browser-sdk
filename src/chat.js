@@ -2172,6 +2172,10 @@ function Chat(params) {
                     var threadObject = messageContent;
                     threadObject.unreadCount = (messageContent.unreadCount) ? messageContent.unreadCount : 0;
 
+                    threadObject.lastSeenMessageTime = (messageContent.lastSeenMessageNanos)
+                        ? (parseInt(parseInt(messageContent.lastSeenMessageTime) / 1000) * 1000000000) + parseInt(messageContent.lastSeenMessageNanos)
+                        : (parseInt(messageContent.lastSeenMessageTime));
+
                     let localThreadLastSeenUpdated = JSON.parse(JSON.stringify(messageContent));
                     store.threads.save(localThreadLastSeenUpdated);
                     store.threads.get(threadId).unreadCount.set(messageContent.unreadCount)
