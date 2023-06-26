@@ -3377,6 +3377,26 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
         })
     });
 
+    function deleteMultipleMessages(){
+        chatAgent.deleteMultipleMessages({
+            messageIds: [
+                863183710,
+                854269101,
+                854268962,
+                854268862,
+                854268682,
+                854268651,
+                854268176,
+                854267902,
+                854267454
+            ]
+        }, function(result) {
+            console.log("deleteMultipleMessages:: ", {result});
+        })
+    }
+
+    window.deleteMultipleMessages = deleteMultipleMessages;
+
 
 </script>
 
