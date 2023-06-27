@@ -931,7 +931,7 @@ return JSON.parse(JSON.stringify(message));},/**
              *    - sender                       {int}
              *    - text                         {string}
              *    - notifyAll                    {boolean}
-             */var pinMessage={threadId:threadId,time:pushMessageVO.time,sender:pushMessageVO.sender,messageId:pushMessageVO.messageId,text:pushMessageVO.text,metadata:pushMessageVO.metadata,systemMetadata:pushMessageVO.systemMetadata};if(typeof pushMessageVO.notifyAll==='boolean'){pinMessage.notifyAll=pushMessageVO.notifyAll;}// return pinMessage;
+             */pushMessageVO.time=pushMessageVO.timeNanos?parseInt(parseInt(pushMessageVO.time)/1000)*1000000000+parseInt(pushMessageVO.timeNanos):parseInt(pushMessageVO.time);var pinMessage={threadId:threadId,time:pushMessageVO.time,timeNanos:pushMessageVO.timeNanos,sender:pushMessageVO.sender,messageId:pushMessageVO.messageId,text:pushMessageVO.text,metadata:pushMessageVO.metadata,systemMetadata:pushMessageVO.systemMetadata};if(typeof pushMessageVO.notifyAll==='boolean'){pinMessage.notifyAll=pushMessageVO.notifyAll;}// return pinMessage;
 return JSON.parse(JSON.stringify(pinMessage));},/**
          * Reformat Thread History
          *

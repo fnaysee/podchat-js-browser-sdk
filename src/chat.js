@@ -4288,9 +4288,14 @@ function Chat(params) {
              *    - text                         {string}
              *    - notifyAll                    {boolean}
              */
+            pushMessageVO.time = (pushMessageVO.timeNanos)
+                ? (parseInt(parseInt(pushMessageVO.time) / 1000) * 1000000000) + parseInt(pushMessageVO.timeNanos)
+                : (parseInt(pushMessageVO.time));
+
             var pinMessage = {
                 threadId: threadId,
                 time: pushMessageVO.time,
+                timeNanos: pushMessageVO.timeNanos,
                 sender: pushMessageVO.sender,
                 messageId: pushMessageVO.messageId,
                 text: pushMessageVO.text,
