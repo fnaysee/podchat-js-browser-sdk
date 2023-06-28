@@ -3374,17 +3374,21 @@ function Chat(params) {
                 storeThread = store.threads.get(threadObject.id);
             }
 
-            let unreadCount = message.conversation.unreadCount;
+            // let unreadCount = message.conversation.unreadCount;
             // store.threads.get(threadObject.id).unreadCount.set();
             if(message.ownerId != chatMessaging.userInfo.id) {
-                if(unreadCount) {
-                    storeThread.unreadCount.set(unreadCount);
-                } else {
-                    if(!storeThread.unreadCount.get())
-                        storeThread.unreadCount.set(1);
-                    else
-                        storeThread.unreadCount.increase();
-                }
+                if(!storeThread.unreadCount.get())
+                    storeThread.unreadCount.set(1);
+                else
+                    storeThread.unreadCount.increase();
+                // if(unreadCount) {
+                //     storeThread.unreadCount.set(unreadCount);
+                // } else {
+                //     if(!storeThread.unreadCount.get())
+                //         storeThread.unreadCount.set(1);
+                //     else
+                //         storeThread.unreadCount.increase();
+                // }
             } else {
                 storeThread.unreadCount.set(0);
             }
