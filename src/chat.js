@@ -3343,13 +3343,6 @@ function Chat(params) {
                 }
             }
 
-            chatEvents.fireEvent('messageEvents', {
-                type: 'MESSAGE_NEW',
-                cache: false,
-                result: {
-                    message: message
-                }
-            });
 
             var threadObject = message.conversation;
             var lastMessageVoCopy = Object.assign({}, message);
@@ -3359,6 +3352,16 @@ function Chat(params) {
             threadObject.lastMessageVO = lastMessageVoCopy;
             threadObject.lastParticipantName = (!!message.participant && message.participant.hasOwnProperty('name')) ? message.participant.name : '';
             threadObject.lastMessage = (message.hasOwnProperty('message')) ? message.message : '';
+
+            let stringMsg = JSON.parse(JSON.stringify(message));
+            stringMsg.conversation = JSON.parse(JSON.stringify(threadObject));
+            chatEvents.fireEvent('messageEvents', {
+                type: 'MESSAGE_NEW',
+                cache: false,
+                result: {
+                    message: stringMsg
+                }
+            });
 
             chatEvents.fireEvent('threadEvents', {
                 type: 'THREAD_UNREAD_COUNT_UPDATED',
