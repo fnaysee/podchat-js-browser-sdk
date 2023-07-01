@@ -5,7 +5,19 @@ to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.i
 
 ##[Unreleased]
 
-## [12.9.2] 2023-06-18
+## [12.9.4] 2023-07-01
+
+### Added
+- Properties: metadata, systemMetadata to pinMessageVO in result of method getThread
+- sample for deleteMultipleMessages
+- Fix lastSeenMessageTime (19 Numbers) on type 31:LAST_SEEN_UPDATED
+- timeNanos & Changed time (19 Numbers) in pinMessage
+
+## Changed
+- Changed cached unreadCount calculation on new messages
+
+## [12.9.3] 2023-06-20
+## [12.9.2] 2023-06-18 - deprecated
 
 ### Fixed
 - Send threadId in event DELETE_THREAD
