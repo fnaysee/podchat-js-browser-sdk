@@ -5,7 +5,7 @@ to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.i
 
 ##[Unreleased]
 
-## [12.9.4] 2023-07-01
+## [12.9.4] 2023-07-02
 
 ### Added
 - Properties: metadata, systemMetadata to pinMessageVO in result of method getThread
