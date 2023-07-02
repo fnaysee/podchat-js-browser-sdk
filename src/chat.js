@@ -11358,6 +11358,10 @@ function Chat(params) {
     };
 
     publicized.seen = function (params) {
+        if(params.threadId && params.unreadCount && params.messageTime) {
+            store.threads.get(params.threadId).unreadCount.set(params.unreadCount);
+            store.threads.get(params.threadId).lastSeenMessageTime.set(params.messageTime);
+        }
         return putInMessagesSeenQueue(params.threadId, params.messageId);
     };
 
