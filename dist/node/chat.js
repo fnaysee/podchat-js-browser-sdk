@@ -1793,11 +1793,14 @@ function Chat(params) {
         var threadObject = messageContent;
         threadObject.unreadCount = messageContent.unreadCount ? messageContent.unreadCount : 0;
         threadObject.lastSeenMessageTime = messageContent.lastSeenMessageNanos ? parseInt(parseInt(messageContent.lastSeenMessageTime) / 1000) * 1000000000 + parseInt(messageContent.lastSeenMessageNanos) : parseInt(messageContent.lastSeenMessageTime);
-        var localThreadLastSeenUpdated = JSON.parse(JSON.stringify(messageContent));
 
-        _store.store.threads.save(localThreadLastSeenUpdated);
+        if (!_store.store.threads.get(threadId).lastSeenMessageTime.get() || _store.store.threads.get(threadId).lastSeenMessageTime.get() && threadObject.lastSeenMessageTime > _store.store.threads.get(threadId).lastSeenMessageTime.get()) {
+          var localThreadLastSeenUpdated = JSON.parse(JSON.stringify(messageContent));
 
-        _store.store.threads.get(threadId).unreadCount.set(messageContent.unreadCount);
+          _store.store.threads.save(localThreadLastSeenUpdated);
+
+          _store.store.threads.get(threadId).unreadCount.set(messageContent.unreadCount);
+        }
 
         _events.chatEvents.fireEvent('threadEvents', {
           type: 'THREAD_UNREAD_COUNT_UPDATED',
@@ -9178,9 +9181,11 @@ function Chat(params) {
 
   publicized.seen = function (params) {
     if (params.threadId && params.unreadCount && params.messageTime) {
-      _store.store.threads.get(params.threadId).unreadCount.set(params.unreadCount);
+      if (_store.store.threads.get(params.threadId) && _store.store.threads.get(params.threadId).lastSeenMessageTime.get() < params.messageTime) {
+        _store.store.threads.get(params.threadId).unreadCount.set(params.unreadCount);
 
-      _store.store.threads.get(params.threadId).lastSeenMessageTime.set(params.messageTime);
+        _store.store.threads.get(params.threadId).lastSeenMessageTime.set(params.messageTime);
+      }
     }
 
     return putInMessagesSeenQueue(params.threadId, params.messageId);

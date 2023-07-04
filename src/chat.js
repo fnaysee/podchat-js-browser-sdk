@@ -1773,10 +1773,13 @@ function Chat(params) {
                         ? (parseInt(parseInt(messageContent.lastSeenMessageTime) / 1000) * 1000000000) + parseInt(messageContent.lastSeenMessageNanos)
                         : (parseInt(messageContent.lastSeenMessageTime));
 
-                    let localThreadLastSeenUpdated = JSON.parse(JSON.stringify(messageContent));
-                    store.threads.save(localThreadLastSeenUpdated);
-                    store.threads.get(threadId).unreadCount.set(messageContent.unreadCount)
-
+                    if(!store.threads.get(threadId).lastSeenMessageTime.get() ||
+                        (store.threads.get(threadId).lastSeenMessageTime.get() && threadObject.lastSeenMessageTime > store.threads.get(threadId).lastSeenMessageTime.get())
+                    ) {
+                        let localThreadLastSeenUpdated = JSON.parse(JSON.stringify(messageContent));
+                        store.threads.save(localThreadLastSeenUpdated);
+                        store.threads.get(threadId).unreadCount.set(messageContent.unreadCount)
+                    }
                     chatEvents.fireEvent('threadEvents', {
                         type: 'THREAD_UNREAD_COUNT_UPDATED',
                         result: {
@@ -9105,8 +9108,10 @@ function Chat(params) {
 
     publicized.seen = function (params) {
         if(params.threadId && params.unreadCount && params.messageTime) {
-            store.threads.get(params.threadId).unreadCount.set(params.unreadCount);
-            store.threads.get(params.threadId).lastSeenMessageTime.set(params.messageTime);
+            if(store.threads.get(params.threadId) && store.threads.get(params.threadId).lastSeenMessageTime.get() < params.messageTime){
+                store.threads.get(params.threadId).unreadCount.set(params.unreadCount);
+                store.threads.get(params.threadId).lastSeenMessageTime.set(params.messageTime);
+            }
         }
         return putInMessagesSeenQueue(params.threadId, params.messageId);
     };
