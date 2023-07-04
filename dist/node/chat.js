@@ -241,21 +241,21 @@ function Chat(params) {
     /**
      * Initialize Cache Databases
      */
-    startCacheDatabases(function () {
-      if (_sdkParams.sdkParams.grantDeviceIdFromSSO) {
-        var getDeviceIdWithTokenTime = new Date().getTime();
-        getDeviceIdWithToken(function (retrievedDeviceId) {
-          if (actualTimingLog) {
-            _utility["default"].chatStepLogger('Get Device ID ', new Date().getTime() - getDeviceIdWithTokenTime);
-          }
+    //startCacheDatabases(function () {
+    if (_sdkParams.sdkParams.grantDeviceIdFromSSO) {
+      var getDeviceIdWithTokenTime = new Date().getTime();
+      getDeviceIdWithToken(function (retrievedDeviceId) {
+        if (actualTimingLog) {
+          _utility["default"].chatStepLogger('Get Device ID ', new Date().getTime() - getDeviceIdWithTokenTime);
+        }
 
-          deviceId = retrievedDeviceId;
-          initAsync();
-        });
-      } else {
+        deviceId = retrievedDeviceId;
         initAsync();
-      }
-    });
+      });
+    } else {
+      initAsync();
+    } //});
+
   },
 
   /**
@@ -9796,55 +9796,6 @@ function Chat(params) {
           }
 
           returnData.result = resultData;
-          /**
-           * Add Contacts into cache database #cache
-           */
-
-          if (canUseCache && cacheSecret.length > 0) {
-            if (db) {
-              var cacheData = [];
-
-              for (var i = 0; i < resultData.contacts.length; i++) {
-                try {
-                  var tempData = {},
-                      salt = _utility["default"].generateUUID();
-
-                  tempData.id = resultData.contacts[i].id;
-                  tempData.owner = chatMessaging.userInfo.id;
-                  tempData.uniqueId = resultData.contacts[i].uniqueId;
-                  tempData.userId = _utility["default"].crypt(resultData.contacts[i].userId, cacheSecret, salt);
-                  tempData.cellphoneNumber = _utility["default"].crypt(resultData.contacts[i].cellphoneNumber, cacheSecret, salt);
-                  tempData.email = _utility["default"].crypt(resultData.contacts[i].email, cacheSecret, salt);
-                  tempData.firstName = _utility["default"].crypt(resultData.contacts[i].firstName, cacheSecret, salt);
-                  tempData.lastName = _utility["default"].crypt(resultData.contacts[i].lastName, cacheSecret, salt);
-                  tempData.expireTime = new Date().getTime() + cacheExpireTime;
-                  tempData.data = _utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(resultData.contacts[i])), cacheSecret, salt);
-                  tempData.salt = salt;
-                  cacheData.push(tempData);
-                } catch (error) {
-                  _events.chatEvents.fireEvent('error', {
-                    code: error.code,
-                    message: error.message,
-                    error: error
-                  });
-                }
-              }
-
-              db.contacts.bulkPut(cacheData)["catch"](function (error) {
-                _events.chatEvents.fireEvent('error', {
-                  code: error.code,
-                  message: error.message,
-                  error: error
-                });
-              });
-            } else {
-              _events.chatEvents.fireEvent('error', {
-                code: 6601,
-                message: CHAT_ERRORS[6601],
-                error: null
-              });
-            }
-          }
         }
 
         callback && callback(returnData);
@@ -9947,57 +9898,7 @@ function Chat(params) {
             }
           }
 
-          returnData.result = resultData;
-          /**
-           * Add Contacts into cache database #cache
-           */
-
-          if (canUseCache && cacheSecret.length > 0) {
-            if (db) {
-              var cacheData = [];
-
-              for (var i = 0; i < resultData.contacts.length; i++) {
-                try {
-                  var tempData = {},
-                      salt = _utility["default"].generateUUID();
-
-                  tempData.id = resultData.contacts[i].id;
-                  tempData.owner = chatMessaging.userInfo.id;
-                  tempData.uniqueId = resultData.contacts[i].uniqueId;
-                  tempData.userId = _utility["default"].crypt(resultData.contacts[i].userId, cacheSecret, salt);
-                  tempData.cellphoneNumber = _utility["default"].crypt(resultData.contacts[i].cellphoneNumber, cacheSecret, salt);
-                  tempData.email = _utility["default"].crypt(resultData.contacts[i].email, cacheSecret, salt);
-                  tempData.firstName = _utility["default"].crypt(resultData.contacts[i].firstName, cacheSecret, salt);
-                  tempData.lastName = _utility["default"].crypt(resultData.contacts[i].lastName, cacheSecret, salt);
-                  tempData.expireTime = new Date().getTime() + cacheExpireTime;
-                  tempData.data = _utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(resultData.contacts[i])), cacheSecret, salt);
-                  tempData.salt = salt;
-                  cacheData.push(tempData);
-                } catch (error) {
-                  _events.chatEvents.fireEvent('error', {
-                    code: error.code,
-                    message: error.message,
-                    error: error
-                  });
-                }
-              }
-
-              db.contacts.bulkPut(cacheData)["catch"](function (error) {
-                _events.chatEvents.fireEvent('error', {
-                  code: error.code,
-                  message: error.message,
-                  error: error
-                });
-              });
-            } else {
-              _events.chatEvents.fireEvent('error', {
-                code: 6601,
-                message: CHAT_ERRORS[6601],
-                error: null
-              });
-            }
-          } // }
-
+          returnData.result = resultData; // }
 
           callback && callback(returnData);
         } //callback && callback(result);
@@ -10203,55 +10104,6 @@ function Chat(params) {
           }
 
           returnData.result = resultData;
-          /**
-           * Add Contacts into cache database #cache
-           */
-
-          if (canUseCache && cacheSecret.length > 0) {
-            if (db) {
-              var cacheData = [];
-
-              for (var i = 0; i < resultData.contacts.length; i++) {
-                try {
-                  var tempData = {},
-                      salt = _utility["default"].generateUUID();
-
-                  tempData.id = resultData.contacts[i].id;
-                  tempData.owner = chatMessaging.userInfo.id;
-                  tempData.uniqueId = resultData.contacts[i].uniqueId;
-                  tempData.userId = _utility["default"].crypt(resultData.contacts[i].userId, cacheSecret, salt);
-                  tempData.cellphoneNumber = _utility["default"].crypt(resultData.contacts[i].cellphoneNumber, cacheSecret, salt);
-                  tempData.email = _utility["default"].crypt(resultData.contacts[i].email, cacheSecret, salt);
-                  tempData.firstName = _utility["default"].crypt(resultData.contacts[i].firstName, cacheSecret, salt);
-                  tempData.lastName = _utility["default"].crypt(resultData.contacts[i].lastName, cacheSecret, salt);
-                  tempData.expireTime = new Date().getTime() + cacheExpireTime;
-                  tempData.data = _utility["default"].crypt(JSON.stringify(unsetNotSeenDuration(resultData.contacts[i])), cacheSecret, salt);
-                  tempData.salt = salt;
-                  cacheData.push(tempData);
-                } catch (error) {
-                  _events.chatEvents.fireEvent('error', {
-                    code: error.code,
-                    message: error.message,
-                    error: error
-                  });
-                }
-              }
-
-              db.contacts.bulkPut(cacheData)["catch"](function (error) {
-                _events.chatEvents.fireEvent('error', {
-                  code: error.code,
-                  message: error.message,
-                  error: error
-                });
-              });
-            } else {
-              _events.chatEvents.fireEvent('error', {
-                code: 6601,
-                message: CHAT_ERRORS[6601],
-                error: null
-              });
-            }
-          }
         }
 
         callback && callback(returnData);
@@ -10302,28 +10154,6 @@ function Chat(params) {
 
         if (!responseData.hasError) {
           returnData.result = responseData.result;
-        }
-        /**
-         * Remove the contact from cache
-         */
-
-
-        if (canUseCache) {
-          if (db) {
-            db.contacts.where('id').equals(parseInt(params.id))["delete"]()["catch"](function (error) {
-              _events.chatEvents.fireEvent('error', {
-                code: 6602,
-                message: CHAT_ERRORS[6602],
-                error: error
-              });
-            });
-          } else {
-            _events.chatEvents.fireEvent('error', {
-              code: 6601,
-              message: CHAT_ERRORS[6601],
-              error: null
-            });
-          }
         }
 
         callback && callback(returnData);
