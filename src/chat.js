@@ -1774,7 +1774,9 @@ function Chat(params) {
                         : (parseInt(messageContent.lastSeenMessageTime));
 
                     if(!store.threads.get(threadId).lastSeenMessageTime.get() ||
-                        (store.threads.get(threadId).lastSeenMessageTime.get() && threadObject.lastSeenMessageTime > store.threads.get(threadId).lastSeenMessageTime.get())
+                        (store.threads.get(threadId).lastSeenMessageTime.get() && threadObject.lastSeenMessageTime > store.threads.get(threadId).lastSeenMessageTime.get()
+                        && threadObject.unreadCount < store.threads.get(threadId).unreadCount.get()
+                        )
                     ) {
                         let localThreadLastSeenUpdated = JSON.parse(JSON.stringify(messageContent));
                         store.threads.save(localThreadLastSeenUpdated);
