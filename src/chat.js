@@ -9108,7 +9108,10 @@ function Chat(params) {
 
     publicized.seen = function (params) {
         if(params.threadId && params.unreadCount && params.messageTime) {
-            if(store.threads.get(params.threadId) && store.threads.get(params.threadId).lastSeenMessageTime.get() < params.messageTime){
+            if(
+                store.threads.get(params.threadId) && store.threads.get(params.threadId).lastSeenMessageTime.get() < params.messageTime
+                && store.threads.get(params.threadId).unreadCount.get() > params.unreadCount
+            ){
                 store.threads.get(params.threadId).unreadCount.set(params.unreadCount);
                 store.threads.get(params.threadId).lastSeenMessageTime.set(params.messageTime);
             }
@@ -9181,6 +9184,12 @@ function Chat(params) {
         if (params) {
             if (parseInt(params.messageId) > 0) {
                 seenListData.content.messageId = params.messageId;
+            }
+            if (parseInt(params.count) > 0) {
+                seenListData.content.count = parseInt(params.count);
+            }
+            if (parseInt(params.offset) > 0) {
+                seenListData.content.offset = parseInt(params.offset);
             }
         }
 
