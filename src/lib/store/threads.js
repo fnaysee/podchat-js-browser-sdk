@@ -86,9 +86,10 @@ function ThreadObject(thread) {
             storeEvents.emit(eventsList.SINGLE_THREAD_UPDATE, config.thread)
         },
         unreadCount: {
-            set(count) {
+            set(count, sendEvent = true) {
                 config.thread.unreadCount = count;
-                storeEvents.emit(eventsList.UNREAD_COUNT_UPDATED, config.thread);
+                if(sendEvent)
+                    storeEvents.emit(eventsList.UNREAD_COUNT_UPDATED, config.thread);
             },
             get() {
                 return config.thread.unreadCount;

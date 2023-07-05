@@ -1799,6 +1799,8 @@ function Chat(params) {
 
           _store.store.threads.save(localThreadLastSeenUpdated);
 
+          _store.store.threads.get(threadId).lastSeenMessageTime.set(threadObject.lastSeenMessageTime);
+
           _store.store.threads.get(threadId).unreadCount.set(messageContent.unreadCount);
         }
 
@@ -9182,7 +9184,7 @@ function Chat(params) {
   publicized.seen = function (params) {
     if (params.threadId && params.unreadCount && params.messageTime) {
       if (_store.store.threads.get(params.threadId) && _store.store.threads.get(params.threadId).lastSeenMessageTime.get() < params.messageTime && _store.store.threads.get(params.threadId).unreadCount.get() > params.unreadCount) {
-        _store.store.threads.get(params.threadId).unreadCount.set(params.unreadCount);
+        _store.store.threads.get(params.threadId).unreadCount.set(params.unreadCount, false);
 
         _store.store.threads.get(params.threadId).lastSeenMessageTime.set(params.messageTime);
       }
@@ -11824,7 +11826,8 @@ function Chat(params) {
       type: 'UNREAD_COUNT_UPDATED',
       result: {
         threadId: thread.id,
-        unreadCount: thread.unreadCount || 0
+        unreadCount: thread.unreadCount || 0,
+        lastSeenMessageTime: thread.lastSeenMessageTime || undefined
       }
     });
   });

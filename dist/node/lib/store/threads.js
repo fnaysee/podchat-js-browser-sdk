@@ -105,9 +105,9 @@ function ThreadObject(thread) {
     },
     unreadCount: {
       set: function set(count) {
+        var sendEvent = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
         config.thread.unreadCount = count;
-
-        _eventEmitter.storeEvents.emit(eventsList.UNREAD_COUNT_UPDATED, config.thread);
+        if (sendEvent) _eventEmitter.storeEvents.emit(eventsList.UNREAD_COUNT_UPDATED, config.thread);
       },
       get: function get() {
         return config.thread.unreadCount;

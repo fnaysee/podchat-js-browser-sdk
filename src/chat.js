@@ -1780,6 +1780,7 @@ function Chat(params) {
                     ) {
                         let localThreadLastSeenUpdated = JSON.parse(JSON.stringify(messageContent));
                         store.threads.save(localThreadLastSeenUpdated);
+                        store.threads.get(threadId).lastSeenMessageTime.set(threadObject.lastSeenMessageTime)
                         store.threads.get(threadId).unreadCount.set(messageContent.unreadCount)
                     }
                     chatEvents.fireEvent('threadEvents', {
@@ -9114,7 +9115,7 @@ function Chat(params) {
                 store.threads.get(params.threadId) && store.threads.get(params.threadId).lastSeenMessageTime.get() < params.messageTime
                 && store.threads.get(params.threadId).unreadCount.get() > params.unreadCount
             ){
-                store.threads.get(params.threadId).unreadCount.set(params.unreadCount);
+                store.threads.get(params.threadId).unreadCount.set(params.unreadCount, false);
                 store.threads.get(params.threadId).lastSeenMessageTime.set(params.messageTime);
             }
         }
@@ -11698,7 +11699,8 @@ function Chat(params) {
             type: 'UNREAD_COUNT_UPDATED',
             result: {
                 threadId: thread.id,
-                unreadCount: thread.unreadCount || 0
+                unreadCount: thread.unreadCount || 0,
+                lastSeenMessageTime: thread.lastSeenMessageTime || undefined,
             }
         });
     });
