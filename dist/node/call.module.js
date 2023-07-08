@@ -104,7 +104,7 @@ function ChatCall(params) {
       //callTopicHealthChecker = new peersHealthChecker(),
   messageTtl = params.messageTtl || 10000,
       config = {
-    getHistoryCount: 50
+    getHistoryCount: 25
   },
       globalCallRequestTimeout = typeof params.callRequestTimeout === 'number' && params.callRequestTimeout >= 0 ? params.callRequestTimeout : 10000,
       consoleLogging = (_params$asyncLogging = params.asyncLogging) !== null && _params$asyncLogging !== void 0 && _params$asyncLogging.consoleLogging && typeof ((_params$asyncLogging2 = params.asyncLogging) === null || _params$asyncLogging2 === void 0 ? void 0 : _params$asyncLogging2.consoleLogging) === 'boolean' ? (_params$asyncLogging3 = params.asyncLogging) === null || _params$asyncLogging3 === void 0 ? void 0 : _params$asyncLogging3.consoleLogging : false,
@@ -4394,7 +4394,7 @@ function ChatCall(params) {
       if (typeof params.count === 'number' && params.count >= 0) {
         content.count = +params.count;
       } else {
-        content.count = 50;
+        content.count = 25;
       }
 
       if (typeof params.offset === 'number' && params.offset >= 0) {
@@ -4464,7 +4464,7 @@ function ChatCall(params) {
       if (typeof params.count === 'number' && params.count >= 0) {
         content.count = +params.count;
       } else {
-        content.count = 50;
+        content.count = 25;
       }
 
       if (typeof params.offset === 'number' && params.offset >= 0) {

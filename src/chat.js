@@ -87,7 +87,7 @@ function Chat(params) {
         chatPingMessageInterval = 20000,
         getUserInfoTimeout,
         config = {
-            getHistoryCount: 50
+            getHistoryCount: 25
         },
         SERVICE_ADDRESSES = {
             SSO_ADDRESS: params.ssoHost || 'https://accounts.pod.ir',
@@ -3908,7 +3908,7 @@ function Chat(params) {
          * @return {object} Instant sendMessage result
          */
         getThreads = function (params, callback) {
-            var count = 50,
+            var count = 25,
                 offset = 0,
                 content = {},
                 returnCache = false;
@@ -7946,7 +7946,7 @@ function Chat(params) {
             threadId: params.threadId,
             allMentioned: true,
             typeCode: sdkParams.generalTypeCode,//params.typeCode,
-            count: params.count || 50,
+            count: params.count || 25,
             offset: params.offset || 0,
             cache: false,
             queues: {
@@ -7961,7 +7961,7 @@ function Chat(params) {
             threadId: params.threadId,
             unreadMentioned: true,
             typeCode: sdkParams.generalTypeCode,//params.typeCode,
-            count: params.count || 50,
+            count: params.count || 25,
             offset: params.offset || 0,
             cache: false,
             queues: {
@@ -8001,7 +8001,7 @@ function Chat(params) {
      * @return {object} Instant Response
      */
     publicized.getContacts = function (params, callback) {
-        var count = 50,
+        var count = 25,
             offset = 0,
             content = {},
             returnCache = false;
@@ -9536,7 +9536,7 @@ function Chat(params) {
     };
 
     publicized.getBlockedList = function (params, callback) {
-        var count = 50,
+        var count = 25,
             offset = 0,
             content = {};
 
@@ -10996,7 +10996,7 @@ function Chat(params) {
                 return;
             }
 
-            sendData.content.count = !!params.count ? +params.count : 50;
+            sendData.content.count = !!params.count ? +params.count : 25;
             sendData.content.offset = !!params.offset ? +params.offset : 0;
         } else {
             chatEvents.fireEvent('error', {
@@ -11033,7 +11033,7 @@ function Chat(params) {
                 return;
             }
 
-            sendData.content.count = !!params.count ? +params.count : 50;
+            sendData.content.count = !!params.count ? +params.count : 25;
             sendData.content.offset = !!params.offset ? +params.offset : 0;
         } else {
             chatEvents.fireEvent('error', {
@@ -11395,7 +11395,7 @@ function Chat(params) {
     publicized.resetCallStream = callModule.resetCallStream;
 
     publicized.getMutualGroups = function (params, callback) {
-        var count = +params.count ? +params.count : 50,
+        var count = +params.count ? +params.count : 25,
             offset = +params.offset ? +params.offset : 0;
 
         var sendData = {

@@ -110,7 +110,7 @@ function ChatCall(params) {
         //callTopicHealthChecker = new peersHealthChecker(),
         messageTtl = params.messageTtl || 10000,
         config = {
-            getHistoryCount: 50
+            getHistoryCount: 25
         },
         globalCallRequestTimeout = (typeof params.callRequestTimeout === 'number' && params.callRequestTimeout >= 0) ? params.callRequestTimeout : 10000,
         consoleLogging = (params.asyncLogging?.consoleLogging && typeof params.asyncLogging?.consoleLogging === 'boolean')
@@ -4271,7 +4271,7 @@ function ChatCall(params) {
             if (typeof params.count === 'number' && params.count >= 0) {
                 content.count = +params.count;
             } else {
-                content.count = 50;
+                content.count = 25;
             }
 
             if (typeof params.offset === 'number' && params.offset >= 0) {
@@ -4339,7 +4339,7 @@ function ChatCall(params) {
             if (typeof params.count === 'number' && params.count >= 0) {
                 content.count = +params.count;
             } else {
-                content.count = 50;
+                content.count = 25;
             }
 
             if (typeof params.offset === 'number' && params.offset >= 0) {
