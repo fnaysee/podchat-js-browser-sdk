@@ -10,6 +10,8 @@ exports.initEventHandler = initEventHandler;
 
 var _utility = _interopRequireDefault(require("./utility/utility"));
 
+var _sdkParams = require("./lib/sdkParams");
+
 // import Sentry from "./lib/sentry.js"
 var chatEvents = null;
 exports.chatEvents = chatEvents;
@@ -17,8 +19,8 @@ exports.chatEvents = chatEvents;
 function ChatEvents(params) {
   var currentModuleInstance = this,
       //Utility = params.Utility,
-  consoleLogging = params.consoleLogging,
-      token = params.token,
+  // consoleLogging = params.consoleLogging,
+  token = params.token,
       eventCallbacks = {
     connect: {},
     disconnect: {},
@@ -67,9 +69,9 @@ function ChatEvents(params) {
   this.fireEvent = function (eventName, param) {
     if (eventName === "chatReady") {
       if (typeof navigator === "undefined") {
-        consoleLogging && console.log("\x1b[90m    ☰ \x1b[0m\x1b[90m%s\x1b[0m", "Chat is Ready 😉");
+        _sdkParams.sdkParams.consoleLogging && console.log("\x1b[90m    ☰ \x1b[0m\x1b[90m%s\x1b[0m", "Chat is Ready 😉");
       } else {
-        consoleLogging && console.log("%c   Chat is Ready 😉", 'border-left: solid #666 10px; color: #666;');
+        _sdkParams.sdkParams.consoleLogging && console.log("%c   Chat is Ready 😉", 'border-left: solid #666 10px; color: #666;');
       }
     }
 

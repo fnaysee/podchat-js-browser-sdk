@@ -4,54 +4,53 @@ import Utility from "./utility/utility"
 import {chatEvents} from "./events.module.js";
 import deviceManager from "./lib/call/deviceManager.js";
 import errorHandler, {errorList, raiseError} from "./lib/errorHandler";
+import {sdkParams} from "./lib/sdkParams";
 
 function ChatCall(params) {
-
     var //Utility = params.Utility,
         currentModuleInstance = this,
         asyncClient = params.asyncClient,
         //chatEvents = params.chatEvents,
         chatMessaging = params.chatMessaging,
-        token = params.token,
         asyncRequestTimeouts = {},
         callTypes = {
             'VOICE': 0x0,
             'VIDEO': 0x1
         },
-        generalTypeCode = params.typeCode,
+        // generalTypeCode = params.typeCode,
         callOptions = params.callOptions,
-        useInternalTurnAddress = !!(params.callOptions && params.callOptions.useInternalTurnAddress),
-        callTurnIp = (params.callOptions
-            && params.callOptions.hasOwnProperty('callTurnIp')
-            && typeof params.callOptions.callTurnIp === 'string')
-            ? params.callOptions.callTurnIp
+        useInternalTurnAddress = !!(sdkParams.callOptions && sdkParams.callOptions.useInternalTurnAddress),
+        callTurnIp = (sdkParams.callOptions
+            && sdkParams.callOptions.hasOwnProperty('callTurnIp')
+            && typeof sdkParams.callOptions.callTurnIp === 'string')
+            ? sdkParams.callOptions.callTurnIp
             : '46.32.6.188',
-        callDivId = (params.callOptions
-            && params.callOptions.hasOwnProperty('callDivId')
-            && typeof params.callOptions.callDivId === 'string')
-            ? params.callOptions.callDivId
+        callDivId = (sdkParams.callOptions
+            && sdkParams.callOptions.hasOwnProperty('callDivId')
+            && typeof sdkParams.callOptions.callDivId === 'string')
+            ? sdkParams.callOptions.callDivId
             : 'call-div',
-        callAudioTagClassName = (params.callOptions
-            && params.callOptions.hasOwnProperty('callAudioTagClassName')
-            && typeof params.callOptions.callAudioTagClassName === 'string')
-            ? params.callOptions.callAudioTagClassName
+        callAudioTagClassName = (sdkParams.callOptions
+            && sdkParams.callOptions.hasOwnProperty('callAudioTagClassName')
+            && typeof sdkParams.callOptions.callAudioTagClassName === 'string')
+            ? sdkParams.callOptions.callAudioTagClassName
             : '',
-        callVideoTagClassName = (params.callOptions
-            && params.callOptions.hasOwnProperty('callVideoTagClassName')
-            && typeof params.callOptions.callVideoTagClassName === 'string')
-            ? params.callOptions.callVideoTagClassName
+        callVideoTagClassName = (sdkParams.callOptions
+            && sdkParams.callOptions.hasOwnProperty('callVideoTagClassName')
+            && typeof sdkParams.callOptions.callVideoTagClassName === 'string')
+            ? sdkParams.callOptions.callVideoTagClassName
             : '',
-        callVideoMinWidth = (params.callOptions
-            && params.callOptions.hasOwnProperty('callVideo')
-            && typeof params.callOptions.callVideo === 'object'
-            && params.callOptions.callVideo.hasOwnProperty('minWidth'))
-            ? params.callOptions.callVideo.minWidth
+        callVideoMinWidth = (sdkParams.callOptions
+            && sdkParams.callOptions.hasOwnProperty('callVideo')
+            && typeof sdkParams.callOptions.callVideo === 'object'
+            && sdkParams.callOptions.callVideo.hasOwnProperty('minWidth'))
+            ? sdkParams.callOptions.callVideo.minWidth
             : 320,
-        callVideoMinHeight = (params.callOptions
-            && params.callOptions.hasOwnProperty('callVideo')
-            && typeof params.callOptions.callVideo === 'object'
-            && params.callOptions.callVideo.hasOwnProperty('minHeight'))
-            ? params.callOptions.callVideo.minHeight
+        callVideoMinHeight = (sdkParams.callOptions
+            && sdkParams.callOptions.hasOwnProperty('callVideo')
+            && typeof sdkParams.callOptions.callVideo === 'object'
+            && sdkParams.callOptions.callVideo.hasOwnProperty('minHeight'))
+            ? sdkParams.callOptions.callVideo.minHeight
             : 180,
         currentCallParams = {},
         requestedCallId = null,
@@ -86,7 +85,7 @@ function ChatCall(params) {
             iAcceptedCall: false,
 
             canProcessStartCall: function (callId) {
-                consoleLogging && console.log(
+                sdkParams.consoleLogging && console.log(
                     "[SDK] canProcessStartCall:",
                     {callId},
                     {acceptedCallId},
@@ -108,16 +107,13 @@ function ChatCall(params) {
         },
         callServerController = new callServerManager(),
         //callTopicHealthChecker = new peersHealthChecker(),
-        messageTtl = params.messageTtl || 10000,
+        //messageTtl = params.messageTtl || 10000,
         config = {
             getHistoryCount: 25
         },
         globalCallRequestTimeout = (typeof params.callRequestTimeout === 'number' && params.callRequestTimeout >= 0) ? params.callRequestTimeout : 10000,
-        consoleLogging = (params.asyncLogging?.consoleLogging && typeof params.asyncLogging?.consoleLogging === 'boolean')
-            ? params.asyncLogging?.consoleLogging
-            : false,
-        callNoAnswerTimeout = params.callOptions?.callNoAnswerTimeout || 0,
-        callStreamCloseTimeout = params.callOptions?.streamCloseTimeout || 10000;
+        callNoAnswerTimeout = sdkParams.callOptions?.callNoAnswerTimeout || 0,
+        callStreamCloseTimeout = sdkParams.callOptions?.streamCloseTimeout || 10000;
 
     function screenShareStateManager() {
         let config = {
@@ -201,7 +197,7 @@ function ChatCall(params) {
             },
             changeServer: function () {
                 if(this.canChangeServer()) {
-                    consoleLogging && console.debug('[SDK][changeServer] Changing kurento server...');
+                    sdkParams.consoleLogging && console.debug('[SDK][changeServer] Changing kurento server...');
                     config.currentServerIndex++;
                 }
             }
@@ -397,7 +393,7 @@ function ChatCall(params) {
                         resolve(options)
                     }
 
-                    consoleLogging && console.log("[SDK][getSdpOfferOptions] ", "topic: ", config.topic, "mediaType: ", config.mediaType, "direction: ", config.direction, "options: ", options);
+                    sdkParams.consoleLogging && console.log("[SDK][getSdpOfferOptions] ", "topic: ", config.topic, "mediaType: ", config.mediaType, "direction: ", config.direction, "options: ", options);
                 });
             },
             watchForIceCandidates: function (candidate) {
@@ -409,7 +405,7 @@ function ChatCall(params) {
                 //callUsers[config.userId].topicMetaData[config.topic].interval
                 metadataInstance.setIceCandidateInterval(setInterval(function () {
                     if (callUsers[config.userId].topicMetaData[config.topic].sdpAnswerReceived === true) {
-                        consoleLogging && console.log("[SDK][watchForIceCandidates][setInterval] sdpAnswerReceived, topic:", config.topic)
+                        sdkParams.consoleLogging && console.log("[SDK][watchForIceCandidates][setInterval] sdpAnswerReceived, topic:", config.topic)
                         callUsers[config.userId].topicMetaData[config.topic].sdpAnswerReceived = false;
                         // manager.removeTopicIceCandidateInterval();
                         metadataInstance.clearIceCandidateInterval();
@@ -430,7 +426,7 @@ function ChatCall(params) {
 
                 config.state = peerStates.CONNECTING;
                 config.peer = new KurentoUtils.WebRtcPeer[WebRtcFunction](options, function (err) {
-                    consoleLogging && console.debug("[SDK][establishPeerConnection][KurentoUtils.WebRtcPeer][WebRtcFunction]: ", {options}, "userId: ", config.userId, "topic: ", config.topic, "direction: ", config.direction);
+                    sdkParams.consoleLogging && console.debug("[SDK][establishPeerConnection][KurentoUtils.WebRtcPeer][WebRtcFunction]: ", {options}, "userId: ", config.userId, "topic: ", config.topic, "direction: ", config.direction);
 
                     if (err) {
                         let errorString = "[SDK][start/webRtc " + config.direction + "  " + config.mediaType + " Peer] Error: " + explainUserMediaError(err, config.mediaType);
@@ -468,7 +464,7 @@ function ChatCall(params) {
                         });
                     } else {
                         config.peer.generateOffer((err, sdpOffer) => {
-                            consoleLogging && console.debug("[SDK][establishPeerConnection][generateOffer] GenerateOffer:: ", " sdpOffer: ", sdpOffer, " err: ", err);
+                            sdkParams.consoleLogging && console.debug("[SDK][establishPeerConnection][generateOffer] GenerateOffer:: ", " sdpOffer: ", sdpOffer, " err: ", err);
                             if (err) {
                                 let errorString = "[SDK][start/WebRc " + config.direction + "  " + config.mediaType + " Peer/generateOffer] " + err
                                 console.error(errorString);
@@ -506,7 +502,7 @@ function ChatCall(params) {
                 }, {timeoutTime: 4000, timeoutRetriesCount: 5});
             },
             watchRTCPeerConnection: function () {
-                consoleLogging && console.log("[SDK][watchRTCPeerConnection] called with: ", "userId: ", config.userId, "topic: ", config.topic, "mediaType: ", config.mediaType, "direction: ", config.direction);
+                sdkParams.consoleLogging && console.log("[SDK][watchRTCPeerConnection] called with: ", "userId: ", config.userId, "topic: ", config.topic, "mediaType: ", config.mediaType, "direction: ", config.direction);
                 let manager = this,
                     user = callUsers[config.userId];
 
@@ -514,7 +510,7 @@ function ChatCall(params) {
                     if(!user || !config.peer) {
                         return; //avoid log errors
                     }
-                    consoleLogging && console.log("[SDK][peerConnection.onconnectionstatechange] ", "peer: ", config.topic, " peerConnection.connectionState: ", config.peer.peerConnection.connectionState);
+                    sdkParams.consoleLogging && console.log("[SDK][peerConnection.onconnectionstatechange] ", "peer: ", config.topic, " peerConnection.connectionState: ", config.peer.peerConnection.connectionState);
                     if (config.peer.peerConnection.connectionState === 'disconnected') {
                         manager.removeConnectionQualityInterval();
                         manager.removeAudioWatcherInterval();
@@ -561,7 +557,7 @@ function ChatCall(params) {
                         return; //avoid log errors
                     }
 
-                    consoleLogging && console.log("[SDK][oniceconnectionstatechange] ", "peer: ", config.topic, " peerConnection.connectionState: ", config.peer.peerConnection.iceConnectionState);
+                    sdkParams.consoleLogging && console.log("[SDK][oniceconnectionstatechange] ", "peer: ", config.topic, " peerConnection.connectionState: ", config.peer.peerConnection.iceConnectionState);
                     if (config.peer.peerConnection.iceConnectionState === 'disconnected') {
                         config.state = peerStates.DISCONNECTED;
                         chatEvents.fireEvent('callEvents', {
@@ -571,7 +567,7 @@ function ChatCall(params) {
                             errorInfo: config.peer
                         });
 
-                        consoleLogging && console.log('[SDK][oniceconnectionstatechange]:[disconnected] Internet connection failed, Reconnect your call, topic:', config.topic);
+                        sdkParams.consoleLogging && console.log('[SDK][oniceconnectionstatechange]:[disconnected] Internet connection failed, Reconnect your call, topic:', config.topic);
                     }
 
                     if (config.peer.peerConnection.iceConnectionState === "failed") {
@@ -808,7 +804,7 @@ function ChatCall(params) {
                                 }
                                 if(topicMetadata.poorConnectionCount > 3 && !topicMetadata.isConnectionPoor) {
                                     //alert('Poor connection detected...');
-                                    consoleLogging && console.log('[SDK][checkConnectionQuality] Poor connection detected...');
+                                    sdkParams.consoleLogging && console.log('[SDK][checkConnectionQuality] Poor connection detected...');
                                     // chatEvents.fireEvent('callEvents', {
                                     //     type: 'POOR_VIDEO_CONNECTION',
                                     //     subType: 'SHORT_TIME',
@@ -919,7 +915,7 @@ function ChatCall(params) {
                                manager.reconnectTopic();
                             } */
                         else {
-                            consoleLogging && console.log('STOP topic faced a problem', result);
+                            sdkParams.consoleLogging && console.log('STOP topic faced a problem', result);
                             endCall({
                                 callId: currentCallId
                             });
@@ -948,7 +944,7 @@ function ChatCall(params) {
                 }
 
                 this.generateSdpOfferOptions().then(function (options) {
-                    consoleLogging && console.debug("[SDK][generateSdpOfferOptions] Options for this request have been resolved: ", {options}, "userId: ", config.userId, "topic: ", config.topic, "direction: ", config.direction);
+                    sdkParams.consoleLogging && console.debug("[SDK][generateSdpOfferOptions] Options for this request have been resolved: ", {options}, "userId: ", config.userId, "topic: ", config.topic, "direction: ", config.direction);
                     manager.establishPeerConnection(options);
                 }).catch(error => {
                     console.error(error)
@@ -1029,7 +1025,7 @@ function ChatCall(params) {
                             user.videoTopicManager.createTopic()
                         })
                         foundProblem = true;
-                        consoleLogging && console.debug("[SDK][HealthChecker] userId:", user.id, "topic:", user.videoTopicName);
+                        sdkParams.consoleLogging && console.debug("[SDK][HealthChecker] userId:", user.id, "topic:", user.videoTopicName);
                     }
                 }
 
@@ -1040,7 +1036,7 @@ function ChatCall(params) {
                             user.audioTopicManager.createTopic()
                         });
                         foundProblem = true;
-                        consoleLogging && console.debug("[SDK][HealthChecker] userId:", user.id, "topic:", user.audioTopicName);
+                        sdkParams.consoleLogging && console.debug("[SDK][HealthChecker] userId:", user.id, "topic:", user.audioTopicName);
                     }
                 }
             });
@@ -1118,7 +1114,7 @@ function ChatCall(params) {
             timeoutRetriesCount = 0//,
             //timeoutCallback = null
         }) {
-            message.token = token;
+            message.token = sdkParams.token;
 
             let uniqueId;
 
@@ -1137,7 +1133,7 @@ function ChatCall(params) {
                     peerName: callServerController.getCurrentServer(),// callServerName,
                     priority: 1,
                     content: JSON.stringify(message),
-                    ttl: messageTtl
+                    ttl: sdkParams.messageTtl
                 }
             };
 
@@ -1165,7 +1161,7 @@ function ChatCall(params) {
                     }
 
                     if(timeoutRetriesCount) {
-                        consoleLogging && console.log("[SDK][sendCallMessage] Retrying call request. uniqueId :" + uniqueId, { message })
+                        sdkParams.consoleLogging && console.log("[SDK][sendCallMessage] Retrying call request. uniqueId :" + uniqueId, { message })
                         //timeoutCallback();
                         sendCallMessage(message, callback, {timeoutTime, timeoutRetriesCount: timeoutRetriesCount - 1})
                     } else if (typeof callback == 'function') {
@@ -1313,9 +1309,9 @@ function ChatCall(params) {
         callReceived = function (params, callback) {
             let receiveCallData = {
                 chatMessageVOType: chatMessageVOTypes.RECEIVE_CALL_REQUEST,
-                typeCode: generalTypeCode, //params.typeCode,
+                typeCode: sdkParams.generalTypeCode, //params.typeCode,
                 pushMsgType: 3,
-                token: token
+                token: sdkParams.token
             };
 
             if (params) {
@@ -1345,13 +1341,13 @@ function ChatCall(params) {
         },
 
         endCall = function (params, callback) {
-            consoleLogging && console.log('[SDK][endCall] called...');
+            sdkParams.consoleLogging && console.log('[SDK][endCall] called...');
 
             let endCallData = {
                 chatMessageVOType: chatMessageVOTypes.END_CALL_REQUEST,
-                typeCode: generalTypeCode, //params.typeCode,
+                typeCode: sdkParams.generalTypeCode, //params.typeCode,
                 pushMsgType: 3,
-                token: token
+                token: sdkParams.token
             };
 
             // if (!callRequestController.callEstablishedInMySide) {
@@ -1425,7 +1421,7 @@ function ChatCall(params) {
                     callAudio: !callMute,
                 }));
             } else {
-                consoleLogging && console.log('No Call DIV has been declared!');
+                sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
                 return;
             }
         },
@@ -1479,7 +1475,7 @@ function ChatCall(params) {
                             callController.startCall(params);
                         }*/
                         /*else {
-                            consoleLogging && console.log('CREATE_SESSION faced a problem', res);
+                            sdkParams.consoleLogging && console.log('CREATE_SESSION faced a problem', res);
                             endCall({
                                 callId: currentCallId
                             });
@@ -1613,7 +1609,7 @@ function ChatCall(params) {
             },
             appendUserToCallDiv: function (userId) {
                 if(!callDivId) {
-                    consoleLogging && console.log('No Call DIV has been declared!');
+                    sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
                     return;
                 }
                 let user = callUsers[userId]
@@ -1889,10 +1885,10 @@ function ChatCall(params) {
                     }
                 }
                 if (line === -1) {
-                    consoleLogging && console.debug("[SDK][setMediaBitrate] Could not find the m line for", media);
+                    sdkParams.consoleLogging && console.debug("[SDK][setMediaBitrate] Could not find the m line for", media);
                     return sdp;
                 }
-                consoleLogging && console.debug("[SDK][setMediaBitrate] Found the m line for", media, "at line", line);
+                sdkParams.consoleLogging && console.debug("[SDK][setMediaBitrate] Found the m line for", media, "at line", line);
 
                 // Pass the m line
                 line++;
@@ -1904,17 +1900,17 @@ function ChatCall(params) {
 
                 // If we're on a b line, replace it
                 if (lines[line].indexOf("b") === 0) {
-                    consoleLogging && console.debug("[SDK][setMediaBitrate] Replaced b line at line", line);
+                    sdkParams.consoleLogging && console.debug("[SDK][setMediaBitrate] Replaced b line at line", line);
                     lines[line] = "b=AS:" + bitrate;
                     return lines.join("\n");
                 }
 
                 // Add a new b line
-                consoleLogging && console.debug("[SDK][setMediaBitrate] Adding new b line before line", line);
+                sdkParams.consoleLogging && console.debug("[SDK][setMediaBitrate] Adding new b line before line", line);
                 let newLines = lines.slice(0, line);
                 newLines.push("b=AS:" + bitrate + "\r");
                 newLines = newLines.concat(lines.slice(line, lines.length));
-                consoleLogging && console.debug("[SDK][setMediaBitrate] output: ", newLines.join("\n"));
+                sdkParams.consoleLogging && console.debug("[SDK][setMediaBitrate] output: ", newLines.join("\n"));
                 return newLines.join("\n")
             },
         },
@@ -1999,7 +1995,7 @@ function ChatCall(params) {
         },
 
         startMedia = function (media) {
-            consoleLogging && console.log("[SDK][startMedia] called with: ", media);
+            sdkParams.consoleLogging && console.log("[SDK][startMedia] called with: ", media);
             media.play().catch((err) => {
                 if (err.name === 'NotAllowedError') {
                     chatEvents.fireEvent('callEvents', {
@@ -2023,7 +2019,7 @@ function ChatCall(params) {
         restartMedia = function (videoTopicName, userId) {
             if (currentCallParams && Object.keys(currentCallParams).length && !callRequestController.cameraPaused) {
 
-                consoleLogging && console.log('[SDK] Sending Key Frame ...');
+                sdkParams.consoleLogging && console.log('[SDK] Sending Key Frame ...');
 
                 let videoTopic = !!videoTopicName ? videoTopicName : callUsers[chatMessaging.userInfo.id].videoTopicName;
                 let videoElement = document.getElementById(`uiRemoteVideo-${videoTopic}`);
@@ -2067,7 +2063,7 @@ function ChatCall(params) {
                                     ]
                                 });
                             }, 500);
-                        }).catch(e => consoleLogging && console.log(e));
+                        }).catch(e => sdkParams.consoleLogging && console.log(e));
                     } else {
                         videoTrack.applyConstraints({
                             width: newWidth,
@@ -2085,7 +2081,7 @@ function ChatCall(params) {
                                     ]
                                 });
                             }, 500);
-                        }).catch(e => consoleLogging && console.log(e));
+                        }).catch(e => sdkParams.consoleLogging && console.log(e));
                     }
                 }
             }
@@ -2193,7 +2189,7 @@ function ChatCall(params) {
                     return;
                 }
 
-                consoleLogging && console.log("[SDK][handleProcessSdpAnswer]", jsonMessage, jsonMessage.topic, topicManager.metadata().isIceCandidateIntervalSet().toString());
+                sdkParams.consoleLogging && console.log("[SDK][handleProcessSdpAnswer]", jsonMessage, jsonMessage.topic, topicManager.metadata().isIceCandidateIntervalSet().toString());
 
                 if (topicManager.metadata().isIceCandidateIntervalSet()){
                     callUsers[userId].topicMetaData[jsonMessage.topic].sdpAnswerReceived = true;
@@ -2460,7 +2456,7 @@ function ChatCall(params) {
                                 "height": screenShareInfo.getHeight()
                             });
                         }, 500);
-                    }).catch(e => consoleLogging && console.log(e));
+                    }).catch(e => sdkParams.consoleLogging && console.log(e));
                 } else {
                     videoTrack.applyConstraints({
                         "width": screenShareInfo.getWidth() - (Math.ceil(Math.random() * 5) + 5)
@@ -2470,7 +2466,7 @@ function ChatCall(params) {
                                 "width": screenShareInfo.getWidth()
                             });
                         }, 500);
-                    }).catch(e => consoleLogging && console.log(e));
+                    }).catch(e => sdkParams.consoleLogging && console.log(e));
                 }
             }
         },
@@ -2529,10 +2525,6 @@ function ChatCall(params) {
                 });
             }
         };
-
-    this.updateToken = function (newToken) {
-        token = newToken;
-    }
 
     this.callMessageHandler = function (callMessage) {
         if(!currentCallId)
@@ -2686,7 +2678,7 @@ function ChatCall(params) {
     }
 
     this.handleChatMessages = function(type, messageContent, contentCount, threadId, uniqueId) {
-        consoleLogging && console.debug("[SDK][CALL_MODULE][handleChatMessages]", "type:", type, "threadId:", threadId, "currentCallId:", currentCallId, "latestCallRequestId:", latestCallRequestId,  "shouldNotProcessChatMessage:", shouldNotProcessChatMessage(type, threadId))
+        sdkParams.consoleLogging && console.debug("[SDK][CALL_MODULE][handleChatMessages]", "type:", type, "threadId:", threadId, "currentCallId:", currentCallId, "latestCallRequestId:", latestCallRequestId,  "shouldNotProcessChatMessage:", shouldNotProcessChatMessage(type, threadId))
         if(shouldNotProcessChatMessage(type, threadId)) {
             return;
         }
@@ -3339,7 +3331,7 @@ function ChatCall(params) {
                 if (chatMessaging.messagesCallbacks[uniqueId]) {
                     chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                 } else if (!screenShareInfo.iAmOwner()) {
-                   consoleLogging && console.log("[SDK][END_SCREEN_SHARE], im not owner of screen");
+                   sdkParams.consoleLogging && console.log("[SDK][END_SCREEN_SHARE], im not owner of screen");
                    callStateController.removeScreenShareFromCall();
                 }
 
@@ -3514,9 +3506,9 @@ function ChatCall(params) {
     this.startCall = async function (params, callback) {
         let startCallData = {
             chatMessageVOType: chatMessageVOTypes.CALL_REQUEST,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         }, content = {
             creatorClientDto: {}
         };
@@ -3628,9 +3620,9 @@ function ChatCall(params) {
     this.startGroupCall = async function (params, callback) {
         let startCallData = {
             chatMessageVOType: chatMessageVOTypes.GROUP_CALL_REQUEST,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         }, content = {
             creatorClientDto: {}
         };
@@ -3752,9 +3744,9 @@ function ChatCall(params) {
     this.terminateCall = function (params, callback) {
         let terminateCallData = {
             chatMessageVOType: chatMessageVOTypes.TERMINATE_CALL,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         }, content = {};
 
         if (params) {
@@ -3788,9 +3780,9 @@ function ChatCall(params) {
     this.acceptCall = async function (params, callback) {
         let acceptCallData = {
             chatMessageVOType: chatMessageVOTypes.ACCEPT_CALL,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         }, content = {};
 
         if (params) {
@@ -3975,9 +3967,9 @@ function ChatCall(params) {
     this.rejectCall = this.cancelCall = function (params, callback) {
         let rejectCallData = {
             chatMessageVOType: chatMessageVOTypes.REJECT_CALL,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         };
 
         if (params) {
@@ -4014,9 +4006,9 @@ function ChatCall(params) {
     this.startRecordingCall = function (params, callback) {
         let recordCallData = {
             chatMessageVOType: chatMessageVOTypes.RECORD_CALL,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             pushMsgType: 3,
-            token: token,
+            token: sdkParams.token,
             content: {}
         };
 
@@ -4058,9 +4050,9 @@ function ChatCall(params) {
     this.stopRecordingCall = function (params, callback) {
         let stopRecordingCallData = {
             chatMessageVOType: chatMessageVOTypes.END_RECORD_CALL,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         };
 
         if (params) {
@@ -4092,10 +4084,10 @@ function ChatCall(params) {
     this.startScreenShare = function (params, callback) {
         let sendData = {
             chatMessageVOType: chatMessageVOTypes.START_SCREEN_SHARE,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             pushMsgType: 3,
             subjectId: currentCallId,
-            token: token
+            token: sdkParams.token
         };
 
         if(!sendData.subjectId) {
@@ -4134,7 +4126,7 @@ function ChatCall(params) {
             }
 
             return chatMessaging.sendMessage(sendData, function (result) {
-                consoleLogging && console.log("[sdk][startScreenShare][onResult]: ", result);
+                sdkParams.consoleLogging && console.log("[sdk][startScreenShare][onResult]: ", result);
                 if (result.hasError) {
                     deviceManager.mediaStreams().stopScreenShareInput();
                 } else {
@@ -4171,9 +4163,9 @@ function ChatCall(params) {
     this.endScreenShare = function (params, callback) {
         let sendData = {
             chatMessageVOType: chatMessageVOTypes.END_SCREEN_SHARE,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             pushMsgType: 3,
-            token: token,
+            token: sdkParams.token,
             subjectId: currentCallId,
         };
 
@@ -4191,7 +4183,7 @@ function ChatCall(params) {
         }
 
         if(!callUsers['screenShare'].videoTopicManager.getPeer()) { //.peers[callUsers['screenShare'].videoTopicName]
-            consoleLogging && console.log('[SDK][endScreenShare] No screenShare connection available');
+            sdkParams.consoleLogging && console.log('[SDK][endScreenShare] No screenShare connection available');
         } else {
             callStateController.removeScreenShareFromCall();
         }
@@ -4262,9 +4254,9 @@ function ChatCall(params) {
     this.getCallsList = function (params, callback) {
         let getCallListData = {
             chatMessageVOType: chatMessageVOTypes.GET_CALLS,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         }, content = {};
 
         if (params) {
@@ -4332,7 +4324,7 @@ function ChatCall(params) {
         let getCallListData = {
             chatMessageVOType: chatMessageVOTypes.GET_CALLS_TO_JOIN,
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         }, content = {};
 
         if (params) {
@@ -4387,7 +4379,7 @@ function ChatCall(params) {
     this.deleteFromCallList = function (params, callback) {
         let sendData = {
             chatMessageVOType: chatMessageVOTypes.DELETE_FROM_CALL_HISTORY,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: []
         };
 
@@ -4433,7 +4425,7 @@ function ChatCall(params) {
     this.getCallParticipants = function (params, callback) {
         let sendMessageParams = {
             chatMessageVOType: chatMessageVOTypes.ACTIVE_CALL_PARTICIPANTS,
-            typeCode: generalTypeCode,//params.typeCode,
+            typeCode: sdkParams.generalTypeCode,//params.typeCode,
             content: {}
         };
 
@@ -4516,7 +4508,7 @@ function ChatCall(params) {
 
         let sendMessageParams = {
             chatMessageVOType: chatMessageVOTypes.ADD_CALL_PARTICIPANT,
-            typeCode: generalTypeCode,//params.typeCode,
+            typeCode: sdkParams.generalTypeCode,//params.typeCode,
             content: []
         };
 
@@ -4576,7 +4568,7 @@ function ChatCall(params) {
 
         let sendMessageParams = {
             chatMessageVOType: chatMessageVOTypes.REMOVE_CALL_PARTICIPANT,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: []
         };
 
@@ -4616,7 +4608,7 @@ function ChatCall(params) {
 
         let sendMessageParams = {
             chatMessageVOType: chatMessageVOTypes.MUTE_CALL_PARTICIPANT,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: []
         };
 
@@ -4656,7 +4648,7 @@ function ChatCall(params) {
 
         let sendMessageParams = {
             chatMessageVOType: chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: []
         };
 
@@ -4691,9 +4683,9 @@ function ChatCall(params) {
     this.turnOnVideoCall = function (params, callback) {
         let turnOnVideoData = {
             chatMessageVOType: chatMessageVOTypes.TURN_ON_VIDEO_CALL,
-            typeCode: generalTypeCode,//params.typeCode,
+            typeCode: sdkParams.generalTypeCode,//params.typeCode,
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         };
 
         if (params) {
@@ -4741,9 +4733,9 @@ function ChatCall(params) {
     this.turnOffVideoCall = function (params, callback) {
         let turnOffVideoData = {
             chatMessageVOType: chatMessageVOTypes.TURN_OFF_VIDEO_CALL,
-            typeCode: generalTypeCode,//params.typeCode,
+            typeCode: sdkParams.generalTypeCode,//params.typeCode,
             pushMsgType: 3,
-            token: token
+            token: sdkParams.token
         };
 
         if (params) {
@@ -4901,7 +4893,7 @@ function ChatCall(params) {
             }
 
             if(!callUsers[chatMessaging.userInfo.id]){
-                consoleLogging && console.log("Error in resizeCallVideo(), call not started ");
+                sdkParams.consoleLogging && console.log("Error in resizeCallVideo(), call not started ");
                 return;
             }
 
@@ -4939,7 +4931,7 @@ function ChatCall(params) {
     }, callback) {
         let sendMessageParams = {
             chatMessageVOType: chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: [
                 sticker
             ],
@@ -4966,7 +4958,7 @@ function ChatCall(params) {
     this.recallThreadParticipant = function ({invitees}, callback) {
         let sendData = {
             chatMessageVOType: chatMessageVOTypes.RECALL_THREAD_PARTICIPANT,
-            typeCode: generalTypeCode, //params.typeCode,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: null,
             subjectId: currentCallId,
         };

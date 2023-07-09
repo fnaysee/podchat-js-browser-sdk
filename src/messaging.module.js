@@ -2,6 +2,7 @@ import { chatMessageVOTypes } from "./lib/constants"
 import DOMPurify from 'dompurify'
 import Utility from "./utility/utility"
 import {errorList, raiseError} from "./lib/errorHandler";
+import {sdkParams} from "./lib/sdkParams";
 // (function () {
     /**
      * Communicates with chat server
@@ -9,19 +10,17 @@ import {errorList, raiseError} from "./lib/errorHandler";
      * @constructor
      */
     function ChatMessaging(params) {
-
         var currentModuleInstance = this,
-            asyncClient = params.asyncClient,
+            asyncClient = params.asyncClient;
             //Utility = params.Utility,
-            consoleLogging = params.consoleLogging,
-            generalTypeCode = params.generalTypeCode,
-            chatPingMessageInterval = params.chatPingMessageInterval,
-            asyncRequestTimeout = params.asyncRequestTimeout,
-            messageTtl = params.messageTtl,
-            serverName = params.serverName,
-            msgPriority = params.msgPriority,
-            typeCodeOwnerId = params.typeCodeOwnerId || null,
-            token = params.token;
+            // consoleLogging = sdkParams.consoleLogging,
+            //generalTypeCode = sdkParams.generalTypeCode,
+            //chatPingMessageInterval = params.chatPingMessageInterval,
+            //asyncRequestTimeout = params.asyncRequestTimeout,
+            //messageTtl = params.messageTtl,
+            //serverName = params.serverName,
+            //msgPriority = params.msgPriority,
+            //typeCodeOwnerId = sdkParams.typeCodeOwnerId || null;
 
         this.threadCallbacks = {};
         this.sendMessageCallbacks = {};
@@ -37,20 +36,16 @@ import {errorList, raiseError} from "./lib/errorHandler";
          * TODO: remove the interval when socket statet changes to closed
          */
         this.startChatPing = function () {
-            chatPingMessageInterval = setInterval(() => {
+            sdkParams.chatPingMessageInterval = setInterval(() => {
                 currentModuleInstance.ping();
             }, 20000) ;//TODO: chatPingMessageInterval
         }
         this.stopChatPing = function() {
-            clearInterval(chatPingMessageInterval);
+            clearInterval(sdkParams.chatPingMessageInterval);
         }
 
         this.asyncInitialized = function (client) {
             asyncClient = client
-        }
-
-        this.updateToken = function (newToken) {
-            token = newToken;
         }
 
         /**
@@ -109,26 +104,20 @@ import {errorList, raiseError} from "./lib/errorHandler";
 
             var asyncPriority = (params.asyncPriority > 0)
                 ? params.asyncPriority
-                : msgPriority;
+                : sdkParams.msgPriority;
 
             var messageVO = {
                 type: params.chatMessageVOType,
-                token: token,
+                token: sdkParams.token,
                 tokenIssuer: 1
             };
 
-            if (params.typeCode || generalTypeCode) {
-                messageVO.typeCode = generalTypeCode;//params.typeCode;
+            if (params.typeCode || sdkParams.generalTypeCode) {
+                messageVO.typeCode = sdkParams.generalTypeCode;//params.typeCode;
             }
 
-            /*if (params.typeCode) {
-                messageVO.typeCode = params.typeCode;
-            } else if (generalTypeCode) {
-                messageVO.typeCode = generalTypeCode;
-            }*/
-
-            if(typeCodeOwnerId) {
-                messageVO.ownerId = typeCodeOwnerId;
+            if(sdkParams.typeCodeOwnerId) {
+                messageVO.ownerId = sdkParams.typeCodeOwnerId;
             }
 
             if (params.messageType) {
@@ -230,12 +219,12 @@ import {errorList, raiseError} from "./lib/errorHandler";
                     ? params.pushMsgType
                     : 3,
                 content: {
-                    peerName: serverName,
+                    peerName: sdkParams.serverName,
                     priority: asyncPriority,
                     content: JSON.stringify(messageVO),
                     ttl: (params.messageTtl > 0)
                         ? params.messageTtl
-                        : messageTtl
+                        : sdkParams.messageTtl
                 },
                 uniqueId: messageVO.uniqueId
             };
@@ -254,7 +243,7 @@ import {errorList, raiseError} from "./lib/errorHandler";
                 }
             });
 
-            if (asyncRequestTimeout > 0) {
+            if (sdkParams.asyncRequestTimeout > 0) {
                 currentModuleInstance.asyncRequestTimeouts[uniqueId] && clearTimeout(currentModuleInstance.asyncRequestTimeouts[uniqueId]);
                 currentModuleInstance.asyncRequestTimeouts[uniqueId] = setTimeout(function () {
                     if (typeof callbacks == 'function') {
@@ -282,7 +271,7 @@ import {errorList, raiseError} from "./lib/errorHandler";
                         delete currentModuleInstance.threadCallbacks[threadId][uniqueId];
                     }
 
-                }, asyncRequestTimeout);
+                }, sdkParams.asyncRequestTimeout);
             }
 
 /*          currentModuleInstance.sendPingTimeout && clearTimeout(currentModuleInstance.sendPingTimeout);

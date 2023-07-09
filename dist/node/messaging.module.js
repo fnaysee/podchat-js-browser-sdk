@@ -17,6 +17,8 @@ var _utility = _interopRequireDefault(require("./utility/utility"));
 
 var _errorHandler = require("./lib/errorHandler");
 
+var _sdkParams = require("./lib/sdkParams");
+
 // (function () {
 
 /**
@@ -26,17 +28,16 @@ var _errorHandler = require("./lib/errorHandler");
  */
 function ChatMessaging(params) {
   var currentModuleInstance = this,
-      asyncClient = params.asyncClient,
-      //Utility = params.Utility,
-  consoleLogging = params.consoleLogging,
-      generalTypeCode = params.generalTypeCode,
-      chatPingMessageInterval = params.chatPingMessageInterval,
-      asyncRequestTimeout = params.asyncRequestTimeout,
-      messageTtl = params.messageTtl,
-      serverName = params.serverName,
-      msgPriority = params.msgPriority,
-      typeCodeOwnerId = params.typeCodeOwnerId || null,
-      token = params.token;
+      asyncClient = params.asyncClient; //Utility = params.Utility,
+  // consoleLogging = sdkParams.consoleLogging,
+  //generalTypeCode = sdkParams.generalTypeCode,
+  //chatPingMessageInterval = params.chatPingMessageInterval,
+  //asyncRequestTimeout = params.asyncRequestTimeout,
+  //messageTtl = params.messageTtl,
+  //serverName = params.serverName,
+  //msgPriority = params.msgPriority,
+  //typeCodeOwnerId = sdkParams.typeCodeOwnerId || null;
+
   this.threadCallbacks = {};
   this.sendMessageCallbacks = {};
   this.messagesCallbacks = {};
@@ -51,21 +52,17 @@ function ChatMessaging(params) {
    */
 
   this.startChatPing = function () {
-    chatPingMessageInterval = setInterval(function () {
+    _sdkParams.sdkParams.chatPingMessageInterval = setInterval(function () {
       currentModuleInstance.ping();
     }, 20000); //TODO: chatPingMessageInterval
   };
 
   this.stopChatPing = function () {
-    clearInterval(chatPingMessageInterval);
+    clearInterval(_sdkParams.sdkParams.chatPingMessageInterval);
   };
 
   this.asyncInitialized = function (client) {
     asyncClient = client;
-  };
-
-  this.updateToken = function (newToken) {
-    token = newToken;
   };
   /**
    * Send Message
@@ -125,25 +122,19 @@ function ChatMessaging(params) {
 
 
     var threadId = null;
-    var asyncPriority = params.asyncPriority > 0 ? params.asyncPriority : msgPriority;
+    var asyncPriority = params.asyncPriority > 0 ? params.asyncPriority : _sdkParams.sdkParams.msgPriority;
     var messageVO = {
       type: params.chatMessageVOType,
-      token: token,
+      token: _sdkParams.sdkParams.token,
       tokenIssuer: 1
     };
 
-    if (params.typeCode || generalTypeCode) {
-      messageVO.typeCode = generalTypeCode; //params.typeCode;
+    if (params.typeCode || _sdkParams.sdkParams.generalTypeCode) {
+      messageVO.typeCode = _sdkParams.sdkParams.generalTypeCode; //params.typeCode;
     }
-    /*if (params.typeCode) {
-        messageVO.typeCode = params.typeCode;
-    } else if (generalTypeCode) {
-        messageVO.typeCode = generalTypeCode;
-    }*/
 
-
-    if (typeCodeOwnerId) {
-      messageVO.ownerId = typeCodeOwnerId;
+    if (_sdkParams.sdkParams.typeCodeOwnerId) {
+      messageVO.ownerId = _sdkParams.sdkParams.typeCodeOwnerId;
     }
 
     if (params.messageType) {
@@ -244,10 +235,10 @@ function ChatMessaging(params) {
     var data = {
       type: parseInt(params.pushMsgType) > 0 ? params.pushMsgType : 3,
       content: {
-        peerName: serverName,
+        peerName: _sdkParams.sdkParams.serverName,
         priority: asyncPriority,
         content: JSON.stringify(messageVO),
-        ttl: params.messageTtl > 0 ? params.messageTtl : messageTtl
+        ttl: params.messageTtl > 0 ? params.messageTtl : _sdkParams.sdkParams.messageTtl
       },
       uniqueId: messageVO.uniqueId
     };
@@ -265,7 +256,7 @@ function ChatMessaging(params) {
       }
     });
 
-    if (asyncRequestTimeout > 0) {
+    if (_sdkParams.sdkParams.asyncRequestTimeout > 0) {
       currentModuleInstance.asyncRequestTimeouts[uniqueId] && clearTimeout(currentModuleInstance.asyncRequestTimeouts[uniqueId]);
       currentModuleInstance.asyncRequestTimeouts[uniqueId] = setTimeout(function () {
         if (typeof callbacks == 'function') {
@@ -294,7 +285,7 @@ function ChatMessaging(params) {
           currentModuleInstance.threadCallbacks[threadId][uniqueId] = {};
           delete currentModuleInstance.threadCallbacks[threadId][uniqueId];
         }
-      }, asyncRequestTimeout);
+      }, _sdkParams.sdkParams.asyncRequestTimeout);
     }
     /*          currentModuleInstance.sendPingTimeout && clearTimeout(currentModuleInstance.sendPingTimeout);
                 currentModuleInstance.sendPingTimeout = setTimeout(function () {

@@ -30,22 +30,47 @@ function Chat(params) {
     /*******************************************************
      *          P R I V A T E   V A R I A B L E S          *
      *******************************************************/
-        sdkParams.token = params.token || "111";
-        sdkParams.generalTypeCode = params.typeCode || 'default';
-        sdkParams.typeCodeOwnerId = params.typeCodeOwnerId || null;
-        sdkParams.mapApiKey = params.mapApiKey || '8b77db18704aa646ee5aaea13e7370f4f88b9e8c';
-        sdkParams.productEnv = (typeof navigator != 'undefined') ? navigator.product : 'undefined';
-        sdkParams.forceWaitQueueInMemory = (params.forceWaitQueueInMemory && typeof params.forceWaitQueueInMemory === 'boolean') ? params.forceWaitQueueInMemory : false;
-        sdkParams.grantDeviceIdFromSSO = (params.grantDeviceIdFromSSO && typeof params.grantDeviceIdFromSSO === 'boolean')
-        ? params.grantDeviceIdFromSSO
+    sdkParams.token = params.token || "111";
+    sdkParams.generalTypeCode = params.typeCode || 'default';
+    sdkParams.typeCodeOwnerId = params.typeCodeOwnerId || null;
+    sdkParams.mapApiKey = params.mapApiKey || '8b77db18704aa646ee5aaea13e7370f4f88b9e8c';
+    sdkParams.productEnv = (typeof navigator != 'undefined') ? navigator.product : 'undefined';
+    sdkParams.forceWaitQueueInMemory = (params.forceWaitQueueInMemory && typeof params.forceWaitQueueInMemory === 'boolean') ? params.forceWaitQueueInMemory : false;
+    sdkParams.grantDeviceIdFromSSO = (params.grantDeviceIdFromSSO && typeof params.grantDeviceIdFromSSO === 'boolean')
+    ? params.grantDeviceIdFromSSO
+    : false;
+    sdkParams.deliveryIntervalPitch = params.deliveryIntervalPitch || 2000;
+    sdkParams.seenIntervalPitch = params.seenIntervalPitch || 2000;
+    sdkParams.systemMessageIntervalPitch = params.systemMessageIntervalPitch || 1000;
+    sdkParams.socketAddress = params.socketAddress;
+    sdkParams.serverName = params.serverName;
+    sdkParams.wsConnectionWaitTime = params.wsConnectionWaitTime;
+    sdkParams.connectionRetryInterval = params.connectionRetryInterval;
+    sdkParams.msgPriority = params.msgPriority;
+    sdkParams.messageTtl = params.messageTtl || 10000;
+    sdkParams.reconnectOnClose = params.reconnectOnClose;
+    sdkParams.asyncLogging = params.asyncLogging;
+
+    sdkParams.connectionCheckTimeout = params.connectionCheckTimeout;
+    sdkParams.httpRequestTimeout = (params.httpRequestTimeout >= 0) ? params.httpRequestTimeout : 0;
+    sdkParams.asyncRequestTimeout = (typeof params.asyncRequestTimeout === 'number' && params.asyncRequestTimeout >= 0) ? params.asyncRequestTimeout : 0;
+    sdkParams.connectionCheckTimeoutThreshold = params.connectionCheckTimeoutThreshold;
+    sdkParams.httpUploadRequestTimeout = (params.httpUploadRequestTimeout >= 0) ? params.httpUploadRequestTimeout : 0;
+    sdkParams.actualTimingLog = (params.asyncLogging.actualTiming && typeof params.asyncLogging.actualTiming === 'boolean')
+        ? params.asyncLogging.actualTiming
         : false;
-        sdkParams.deliveryIntervalPitch = params.deliveryIntervalPitch || 2000;
-        sdkParams.seenIntervalPitch = params.seenIntervalPitch || 2000;
-        sdkParams.systemMessageIntervalPitch = params.systemMessageIntervalPitch || 1000;
+    sdkParams.consoleLogging = (params.asyncLogging.consoleLogging && typeof params.asyncLogging.consoleLogging === 'boolean')
+        ? params.asyncLogging.consoleLogging
+        : false;
+    sdkParams.fullResponseObject = params.fullResponseObject || false;
+    sdkParams.webrtcConfig = (params.webrtcConfig ? params.webrtcConfig : null);
+    sdkParams.chatPingMessageInterval = params.chatPingMessageInterval;
+    sdkParams.callOptions = params.callOptions;
+
     var asyncClient,
         peerId,
         oldPeerId,
-        deviceId,
+        //deviceId,
         //db,
         //queueDb,
         //hasCache = sdkParams.productEnv !== 'ReactNative' && typeof Dexie != 'undefined',
@@ -57,18 +82,18 @@ function Chat(params) {
         //cacheExpireTime = params.cacheExpireTime || 2 * 24 * 60 * 60 * 1000,
         cacheSecret = 'VjaaS9YxNdVVAd3cAsRPcU5FyxRcyyV6tG6bFGjjK5RV8JJjLrXNbS5zZxnqUT6Y',
         //cacheSyncWorker,
-        messagesDelivery = {},
-        messagesSeen = {},
-        deliveryInterval,
-        seenInterval,
-        getImageFromLinkObjects = {},
-        locationPingTypes = {
-            'CHAT': 1,
-            'THREAD': 2,
-            'CONTACTS': 3
-        },
-        isTypingInterval,
-        protocol = params.protocol || 'websocket',
+        //messagesDelivery = {},
+        //messagesSeen = {},
+        //deliveryInterval,
+        //seenInterval,
+        //getImageFromLinkObjects = {},
+        // locationPingTypes = {
+        //     'CHAT': 1,
+        //     'THREAD': 2,
+        //     'CONTACTS': 3
+        // },
+        //isTypingInterval,
+        //protocol = params.protocol || 'websocket',
         queueHost = params.queueHost,
         queuePort = params.queuePort,
         queueUsername = params.queueUsername,
@@ -76,18 +101,18 @@ function Chat(params) {
         queueReceive = params.queueReceive,
         queueSend = params.queueSend,
         queueConnectionTimeout = params.queueConnectionTimeout,
-        socketAddress = params.socketAddress,
-        serverName = params.serverName || '',
-        wsConnectionWaitTime = params.wsConnectionWaitTime,
-        connectionRetryInterval = params.connectionRetryInterval,
-        msgPriority = params.msgPriority || 1,
-        messageTtl = params.messageTtl || 10000,
-        reconnectOnClose = params.reconnectOnClose,
-        asyncLogging = params.asyncLogging,
-        chatPingMessageInterval = 20000,
-        getUserInfoTimeout,
+        //socketAddress = params.socketAddress,
+        //serverName = params.serverName || '',
+        //wsConnectionWaitTime = params.wsConnectionWaitTime,
+        //connectionRetryInterval = params.connectionRetryInterval,
+        //msgPriority = params.msgPriority || 1,
+        //messageTtl = params.messageTtl || 10000,
+        //reconnectOnClose = params.reconnectOnClose,
+        //asyncLogging = params.asyncLogging,
+        //chatPingMessageInterval = 20000,
+        //getUserInfoTimeout,
         config = {
-            getHistoryCount: 25
+            getHistoryCount: 50
         },
         SERVICE_ADDRESSES = {
             SSO_ADDRESS: params.ssoHost || 'https://accounts.pod.ir',
@@ -161,27 +186,27 @@ function Chat(params) {
         getUserInfoRetryCount = 0,
         chatFullStateObject = {},
         httpRequestObject = {},
-        connectionCheckTimeout = params.connectionCheckTimeout,
-        connectionCheckTimeoutThreshold = params.connectionCheckTimeoutThreshold,
-        httpRequestTimeout = (params.httpRequestTimeout >= 0) ? params.httpRequestTimeout : 0,
-        asyncRequestTimeout = (typeof params.asyncRequestTimeout === 'number' && params.asyncRequestTimeout >= 0) ? params.asyncRequestTimeout : 0,
+        //connectionCheckTimeout = params.connectionCheckTimeout,
+        // connectionCheckTimeoutThreshold = params.connectionCheckTimeoutThreshold,
+        // httpRequestTimeout = (params.httpRequestTimeout >= 0) ? params.httpRequestTimeout : 0,
+        // asyncRequestTimeout = (typeof params.asyncRequestTimeout === 'number' && params.asyncRequestTimeout >= 0) ? params.asyncRequestTimeout : 0,
         //callRequestTimeout = (typeof params.callRequestTimeout === 'number' && params.callRequestTimeout >= 0) ? params.callRequestTimeout : 10000,
-        httpUploadRequestTimeout = (params.httpUploadRequestTimeout >= 0) ? params.httpUploadRequestTimeout : 0,
-        actualTimingLog = (params.asyncLogging.actualTiming && typeof params.asyncLogging.actualTiming === 'boolean')
-            ? params.asyncLogging.actualTiming
-            : false,
-        consoleLogging = (params.asyncLogging.consoleLogging && typeof params.asyncLogging.consoleLogging === 'boolean')
-            ? params.asyncLogging.consoleLogging
-            : false,
+        // httpUploadRequestTimeout = (params.httpUploadRequestTimeout >= 0) ? params.httpUploadRequestTimeout : 0,
+        // actualTimingLog = (params.asyncLogging.actualTiming && typeof params.asyncLogging.actualTiming === 'boolean')
+        //     ? params.asyncLogging.actualTiming
+        //     : false,
+        // consoleLogging = (sdkParams.asyncLogging.consoleLogging && typeof sdkParams.asyncLogging.consoleLogging === 'boolean')
+        //     ? params.asyncLogging.consoleLogging
+        //     : false,
         minIntegerValue = Number.MAX_SAFE_INTEGER * -1,
         maxIntegerValue = Number.MAX_SAFE_INTEGER,
         chatSendQueue = [],
         chatWaitQueue = [],
-        chatUploadQueue = [],
-        fullResponseObject = params.fullResponseObject || false,
-        webrtcConfig = (params.webrtcConfig ? params.webrtcConfig : null);
+        chatUploadQueue = [];
+        //fullResponseObject = params.fullResponseObject || false,
+        //webrtcConfig = (params.webrtcConfig ? params.webrtcConfig : null);
 
-    if(!consoleLogging) {
+    if(!sdkParams.consoleLogging) {
         /**
          * Disable kurento-utils logs
          */
@@ -192,31 +217,12 @@ function Chat(params) {
         };
     }
 
-    initEventHandler(Object.assign(params, {
-        consoleLogging,
-    }));
+    initEventHandler(params);
 
-    var /*chatEvents = new ChatEvents(Object.assign(params, {
-
-            //Utility: Utility,
-            consoleLogging,
-        })),*/
-        chatMessaging = new ChatMessaging(Object.assign(params, {
+    var chatMessaging = new ChatMessaging(Object.assign(params, {
             asyncClient: asyncClient,
-            //Utility: Utility,
-            consoleLogging: consoleLogging,
-            generalTypeCode: sdkParams.generalTypeCode,
-            typeCodeOwnerId: sdkParams.typeCodeOwnerId,
-            chatPingMessageInterval: chatPingMessageInterval,
-            asyncRequestTimeout: asyncRequestTimeout,
-            serverName: serverName,
-            messageTtl: messageTtl,
-            msgPriority: msgPriority
         })),
         callModule = new ChatCall(Object.assign(params, {
-            //Utility: Utility,
-            consoleLogging: consoleLogging,
-            chatEvents,
             asyncClient: asyncClient,
             chatMessaging: chatMessaging
         }));
@@ -233,11 +239,11 @@ function Chat(params) {
                 if (sdkParams.grantDeviceIdFromSSO) {
                     var getDeviceIdWithTokenTime = new Date().getTime();
                     getDeviceIdWithToken(function (retrievedDeviceId) {
-                        if (actualTimingLog) {
+                        if (sdkParams.actualTimingLog) {
                             Utility.chatStepLogger('Get Device ID ', new Date().getTime() - getDeviceIdWithTokenTime);
                         }
 
-                        deviceId = retrievedDeviceId;
+                        sdkParams.deviceId = retrievedDeviceId;
 
                         initAsync();
                     });
@@ -261,7 +267,7 @@ function Chat(params) {
             var asyncGetReadyTime = new Date().getTime();
 
             asyncClient = new Async({
-                protocol: protocol,
+                protocol: sdkParams.protocol,
                 queueHost: queueHost,
                 queuePort: queuePort,
                 queueUsername: queueUsername,
@@ -269,24 +275,24 @@ function Chat(params) {
                 queueReceive: queueReceive,
                 queueSend: queueSend,
                 queueConnectionTimeout: queueConnectionTimeout,
-                socketAddress: socketAddress,
-                serverName: serverName,
-                deviceId: deviceId,
-                wsConnectionWaitTime: wsConnectionWaitTime,
-                connectionRetryInterval: connectionRetryInterval,
-                connectionCheckTimeout: connectionCheckTimeout,
-                connectionCheckTimeoutThreshold: connectionCheckTimeoutThreshold,
-                messageTtl: messageTtl,
-                reconnectOnClose: reconnectOnClose,
-                asyncLogging: asyncLogging,
-                logLevel: (consoleLogging ? 3 : 1),
-                webrtcConfig: webrtcConfig
+                socketAddress: sdkParams.socketAddress,
+                serverName: sdkParams.serverName,
+                deviceId: sdkParams.deviceId,
+                wsConnectionWaitTime: sdkParams.wsConnectionWaitTime,
+                connectionRetryInterval: sdkParams.connectionRetryInterval,
+                connectionCheckTimeout: sdkParams.connectionCheckTimeout,
+                connectionCheckTimeoutThreshold: sdkParams.connectionCheckTimeoutThreshold,
+                messageTtl: sdkParams.messageTtl,
+                reconnectOnClose: sdkParams.reconnectOnClose,
+                asyncLogging: sdkParams.asyncLogging,
+                logLevel: (sdkParams.consoleLogging ? 3 : 1),
+                webrtcConfig: sdkParams.webrtcConfig
             });
             callModule.asyncInitialized(asyncClient);
             chatMessaging.asyncInitialized(asyncClient);
 
             asyncClient.on('asyncReady', function () {
-                if (actualTimingLog) {
+                if (sdkParams.actualTimingLog) {
                     Utility.chatStepLogger('Async Connection ', new Date().getTime() - asyncGetReadyTime);
                 }
 
@@ -300,18 +306,18 @@ function Chat(params) {
                     chatSendQueueHandler();
                 }
 
-                deliveryInterval && clearInterval(deliveryInterval);
+                sdkParams.deliveryInterval && clearInterval(sdkParams.deliveryInterval);
 
-                deliveryInterval = setInterval(function () {
-                    if (Object.keys(messagesDelivery).length) {
+                sdkParams.deliveryInterval = setInterval(function () {
+                    if (Object.keys(sdkParams.messagesDelivery).length) {
                         messagesDeliveryQueueHandler();
                     }
                 }, sdkParams.deliveryIntervalPitch);
 
-                seenInterval && clearInterval(seenInterval);
+                sdkParams.seenInterval && clearInterval(sdkParams.seenInterval);
 
-                seenInterval = setInterval(function () {
-                    if (Object.keys(messagesSeen).length) {
+                sdkParams.seenInterval = setInterval(function () {
+                    if (Object.keys(sdkParams.messagesSeen).length) {
                         messagesSeenQueueHandler();
                     }
                 }, sdkParams.seenIntervalPitch);
@@ -389,7 +395,7 @@ function Chat(params) {
         getUserAndUpdateSDKState = function () {
             var getUserInfoTime = new Date().getTime();
             getUserInfo(function (userInfoResult) {
-                if (actualTimingLog) {
+                if (sdkParams.actualTimingLog) {
                     Utility.chatStepLogger('Get User Info ', new Date().getTime() - getUserInfoTime);
                 }
                 if (!userInfoResult.hasError) {
@@ -513,7 +519,7 @@ function Chat(params) {
                     try {
                         var response = JSON.parse(result.result.responseText);
                     } catch (e) {
-                        consoleLogging && console.log(e);
+                        sdkParams.consoleLogging && console.log(e);
                     }
 
                 } else {
@@ -560,7 +566,7 @@ function Chat(params) {
                             try {
                                 var response = JSON.parse(result.result.responseText);
                             } catch (e) {
-                                consoleLogging && console.log(e);
+                                sdkParams.consoleLogging && console.log(e);
                             }
 
                             callback && callback({
@@ -633,11 +639,11 @@ function Chat(params) {
             if (data && typeof data === 'object' && (data.hasOwnProperty('image') || data.hasOwnProperty('file'))) {
                 httpRequestObject[eval('fileUploadUniqueId')].timeout = (settings && typeof parseInt(settings.uploadTimeout) > 0 && settings.uploadTimeout > 0)
                     ? settings.uploadTimeout
-                    : httpUploadRequestTimeout;
+                    : sdkParams.httpUploadRequestTimeout;
             } else {
                 httpRequestObject[eval('fileUploadUniqueId')].timeout = (settings && typeof parseInt(settings.timeout) > 0 && settings.timeout > 0)
                     ? settings.timeout
-                    : httpRequestTimeout;
+                    : sdkParams.httpRequestTimeout;
             }
 
             httpRequestObject[eval('fileUploadUniqueId')]
@@ -843,7 +849,7 @@ function Chat(params) {
                                     fileHashCode = fileUploadResult.result.hashCode;
                                 }
                             } catch (e) {
-                                consoleLogging && console.log(e)
+                                sdkParams.consoleLogging && console.log(e)
                             }
 
                             chatEvents.fireEvent('fileUploadEvents', {
@@ -916,7 +922,7 @@ function Chat(params) {
             getUserInfoRetryCount++;
 
             if (getUserInfoRetryCount > getUserInfoRetry) {
-                getUserInfoTimeout && clearTimeout(getUserInfoTimeout);
+                sdkParams.getUserInfoTimeout && clearTimeout(sdkParams.getUserInfoTimeout);
 
                 getUserInfoRetryCount = 0;
 
@@ -926,9 +932,9 @@ function Chat(params) {
                     error: null
                 });
             } else {
-                getUserInfoTimeout && clearTimeout(getUserInfoTimeout);
+                sdkParams.getUserInfoTimeout && clearTimeout(sdkParams.getUserInfoTimeout);
 
-                getUserInfoTimeout = setTimeout(function () {
+                sdkParams.getUserInfoTimeout = setTimeout(function () {
                     getUserInfoRecursive(callback);
                 }, getUserInfoRetryCount * 10000);
 
@@ -945,7 +951,7 @@ function Chat(params) {
                         };
 
                         if (!returnData.hasError) {
-                            getUserInfoTimeout && clearTimeout(getUserInfoTimeout);
+                            sdkParams.getUserInfoTimeout && clearTimeout(sdkParams.getUserInfoTimeout);
 
                             var messageContent = result.result;
                             var currentUser = formatDataToMakeUser(messageContent);
@@ -1028,26 +1034,26 @@ function Chat(params) {
         },
 
         putInMessagesDeliveryQueue = function (threadId, messageId) {
-            if (messagesDelivery.hasOwnProperty(threadId)
-                && typeof messagesDelivery[threadId] === 'number'
-                && !!messagesDelivery[threadId]) {
-                if (messagesDelivery[threadId] < messageId) {
-                    messagesDelivery[threadId] = messageId;
+            if (sdkParams.messagesDelivery.hasOwnProperty(threadId)
+                && typeof sdkParams.messagesDelivery[threadId] === 'number'
+                && !!sdkParams.messagesDelivery[threadId]) {
+                if (sdkParams.messagesDelivery[threadId] < messageId) {
+                    sdkParams.messagesDelivery[threadId] = messageId;
                 }
             } else {
-                messagesDelivery[threadId] = messageId;
+                sdkParams.messagesDelivery[threadId] = messageId;
             }
         },
 
         putInMessagesSeenQueue = function (threadId, messageId) {
-            if (messagesSeen.hasOwnProperty(threadId)
-                && typeof messagesSeen[threadId] === 'number'
-                && !!messagesSeen[threadId]) {
-                if (messagesSeen[threadId] < messageId) {
-                    messagesSeen[threadId] = messageId;
+            if (sdkParams.messagesSeen.hasOwnProperty(threadId)
+                && typeof sdkParams.messagesSeen[threadId] === 'number'
+                && !!sdkParams.messagesSeen[threadId]) {
+                if (sdkParams.messagesSeen[threadId] < messageId) {
+                    sdkParams.messagesSeen[threadId] = messageId;
                 }
             } else {
-                messagesSeen[threadId] = messageId;
+                sdkParams.messagesSeen[threadId] = messageId;
             }
         },
 
@@ -1063,14 +1069,14 @@ function Chat(params) {
          * @return {undefined}
          */
         messagesDeliveryQueueHandler = function () {
-            if (Object.keys(messagesDelivery).length) {
+            if (Object.keys(sdkParams.messagesDelivery).length) {
                 if (chatMessaging.chatState) {
-                    for (var key in messagesDelivery) {
+                    for (var key in sdkParams.messagesDelivery) {
                         deliver({
-                            messageId: messagesDelivery[key]
+                            messageId: sdkParams.messagesDelivery[key]
                         });
 
-                        delete messagesDelivery[key];
+                        delete sdkParams.messagesDelivery[key];
                     }
                 }
             }
@@ -1088,14 +1094,14 @@ function Chat(params) {
          * @return {undefined}
          */
         messagesSeenQueueHandler = function () {
-            if (Object.keys(messagesSeen).length) {
+            if (Object.keys(sdkParams.messagesSeen).length) {
                 if (chatMessaging.chatState) {
-                    for (var key in messagesSeen) {
+                    for (var key in sdkParams.messagesSeen) {
                         seen({
-                            messageId: messagesSeen[key]
+                            messageId: sdkParams.messagesSeen[key]
                         });
 
-                        delete messagesSeen[key];
+                        delete sdkParams.messagesSeen[key];
                     }
                 }
             }
@@ -1140,7 +1146,7 @@ function Chat(params) {
              *    - content                       {string}
              */
 
-            if (asyncMessage.senderName === serverName) {
+            if (asyncMessage.senderName === sdkParams.serverName) {
                 var content = JSON.parse(asyncMessage.content);
                 chatMessageHandler(content);
             } else {
@@ -1323,7 +1329,7 @@ function Chat(params) {
                     if (chatMessaging.messagesCallbacks[uniqueId]) {
                         chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                     }
-                    if (fullResponseObject) {
+                    if (sdkParams.fullResponseObject) {
                         getThreads({
                             threadIds: [threadId]
                         }, function (threadsResult) {
@@ -1381,7 +1387,7 @@ function Chat(params) {
                         chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                     }
 
-                    if (fullResponseObject) {
+                    if (sdkParams.fullResponseObject) {
                         getThreads({
                             threadIds: [messageContent.id]
                         }, function (threadsResult) {
@@ -1470,7 +1476,7 @@ function Chat(params) {
                     }
 
 
-                    if (fullResponseObject) {
+                    if (sdkParams.fullResponseObject) {
                         getThreads({
                             threadIds: [threadId]
                         }, function (threadsResult) {
@@ -1517,7 +1523,7 @@ function Chat(params) {
                         chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    if (fullResponseObject) {
+                    if (sdkParams.fullResponseObject) {
                         getThreads({
                             threadIds: [threadId]
                         }, function (threadsResult) {
@@ -1550,7 +1556,7 @@ function Chat(params) {
                         chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    if (fullResponseObject) {
+                    if (sdkParams.fullResponseObject) {
                         getThreads({
                             threadIds: [threadId]
                         }, function (threadsResult) {
@@ -1582,7 +1588,7 @@ function Chat(params) {
                         chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    if (fullResponseObject) {
+                    if (sdkParams.fullResponseObject) {
                         getThreads({
                             threadIds: [messageContent.id],
                             cache: false
@@ -1676,7 +1682,7 @@ function Chat(params) {
                         });
                     }
 
-                    if (fullResponseObject) {
+                    if (sdkParams.fullResponseObject) {
                         var time, timeMiliSeconds;
                         if (messageContent.time.toString().length > 14) {
                             time = messageContent.time;
@@ -1906,7 +1912,7 @@ function Chat(params) {
                         chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    if (fullResponseObject) {
+                    if (sdkParams.fullResponseObject) {
                         getThreads({
                             threadIds: [messageContent.id]
                         }, function (threadsResult) {
@@ -1958,7 +1964,7 @@ function Chat(params) {
                         chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    if (fullResponseObject) {
+                    if (sdkParams.fullResponseObject) {
                         getThreads({
                             threadIds: [messageContent.id]
                         }, function (threadsResult) {
@@ -2041,7 +2047,7 @@ function Chat(params) {
                         chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    if (fullResponseObject) {
+                    if (sdkParams.fullResponseObject) {
                         getThreads({
                             threadIds: [threadId]
                         }, function (threadsResult) {
@@ -2073,7 +2079,7 @@ function Chat(params) {
                         chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    if (fullResponseObject) {
+                    if (sdkParams.fullResponseObject) {
                         getThreads({
                             threadIds: [threadId]
                         }, function (threadsResult) {
@@ -2245,7 +2251,7 @@ function Chat(params) {
                     let threadOfDeletedMessage = formatDataToMakeConversation(messageContent);
                     store.threads.save(threadOfDeletedMessage);
                     new Promise((resolve, reject)=> {
-                        if (fullResponseObject) {
+                        if (sdkParams.fullResponseObject) {
                             getThreads({
                                 threadIds: [messageContent.id]
                             }, function (threadsResult) {
@@ -2291,7 +2297,7 @@ function Chat(params) {
                  * Type 67    Last Message Edited
                  */
                 case chatMessageVOTypes.LAST_MESSAGE_EDITED:
-                    if (fullResponseObject) {
+                    if (sdkParams.fullResponseObject) {
                         getThreads({
                             threadIds: [messageContent.id]
                         }, function (threadsResult) {
@@ -2408,7 +2414,7 @@ function Chat(params) {
                         chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    if (fullResponseObject) {
+                    if (sdkParams.fullResponseObject) {
                         getThreads({
                             threadIds: [threadId]
                         }, function (threadsResult) {
@@ -3015,7 +3021,7 @@ function Chat(params) {
         chatEditMessageHandler = function (threadId, messageContent) {
             var message = formatDataToMakeMessage(threadId, messageContent);
 
-            if (fullResponseObject) {
+            if (sdkParams.fullResponseObject) {
                 getThreads({
                     threadIds: [threadId]
                 }, function (threadsResult) {
@@ -4978,7 +4984,7 @@ function Chat(params) {
                         cancelFileDownload({
                             uniqueId: downloadUniqueId
                         }, function () {
-                            consoleLogging && console.log(`"${downloadUniqueId}" - File download has been canceled!`);
+                            sdkParams.consoleLogging && console.log(`"${downloadUniqueId}" - File download has been canceled!`);
                         });
                     }
                 };
@@ -5054,7 +5060,7 @@ function Chat(params) {
                         cancelFileDownload({
                             uniqueId: downloadUniqueId
                         }, function () {
-                            consoleLogging && console.log(`"${downloadUniqueId}" - File download has been canceled!`);
+                            sdkParams.consoleLogging && console.log(`"${downloadUniqueId}" - File download has been canceled!`);
                         });
                     }
                 };
@@ -5140,7 +5146,7 @@ function Chat(params) {
                             cancelFileDownload({
                                 uniqueId: downloadUniqueId
                             }, function () {
-                                consoleLogging && console.log(`"${downloadUniqueId}" - Image download has been canceled!`);
+                                sdkParams.consoleLogging && console.log(`"${downloadUniqueId}" - Image download has been canceled!`);
                             });
                         }
                     };
@@ -5175,7 +5181,7 @@ function Chat(params) {
                             cancelFileDownload({
                                 uniqueId: downloadUniqueId
                             }, function () {
-                                consoleLogging && console.log(`"${downloadUniqueId}" - Image download has been canceled!`);
+                                sdkParams.consoleLogging && console.log(`"${downloadUniqueId}" - Image download has been canceled!`);
                             });
                         }
                     };
@@ -5263,7 +5269,7 @@ function Chat(params) {
                             cancelFileDownload({
                                 uniqueId: downloadUniqueId
                             }, function () {
-                                consoleLogging && console.log(`"${downloadUniqueId}" - Image download has been canceled!`);
+                                sdkParams.consoleLogging && console.log(`"${downloadUniqueId}" - Image download has been canceled!`);
                             });
                         }
                     };
@@ -5300,7 +5306,7 @@ function Chat(params) {
                             cancelFileDownload({
                                 uniqueId: downloadUniqueId
                             }, function () {
-                                consoleLogging && console.log(`"${downloadUniqueId}" - Image download has been canceled!`);
+                                sdkParams.consoleLogging && console.log(`"${downloadUniqueId}" - Image download has been canceled!`);
                             });
                         }
                     };
@@ -6237,7 +6243,7 @@ function Chat(params) {
                                     });
                                 }
                             } catch (e) {
-                                consoleLogging && console.log(e)
+                                sdkParams.consoleLogging && console.log(e)
                                 callback({
                                     hasError: true,
                                     errorCode: 6300,
@@ -6529,7 +6535,7 @@ function Chat(params) {
                                     });
                                 }
                             } catch (e) {
-                                consoleLogging && console.log(e)
+                                sdkParams.consoleLogging && console.log(e)
                                 callback({
                                     hasError: true,
                                     errorCode: 6300,
@@ -6698,7 +6704,7 @@ function Chat(params) {
                                     });
                                 }
                             } catch (e) {
-                                consoleLogging && console.log(e)
+                                sdkParams.consoleLogging && console.log(e)
                                 callback({
                                     hasError: true,
                                     errorCode: 6300,
@@ -7229,7 +7235,7 @@ function Chat(params) {
                 var waitQueueUniqueId = (typeof item.uniqueId == 'string') ? item.uniqueId : (Array.isArray(item.uniqueId)) ? item.uniqueId[0] : null;
 
                 if (waitQueueUniqueId != null) {
-                    consoleLogging && console.log('Forced to use in memory cache');
+                    sdkParams.consoleLogging && console.log('Forced to use in memory cache');
                     item.uniqueId = waitQueueUniqueId;
                     chatWaitQueue.push(item);
                     callback && callback();
@@ -7319,7 +7325,7 @@ function Chat(params) {
 
                             message.metadata = JSON.stringify(finalMetaData);
                         } catch (e) {
-                            consoleLogging && console.log(e);
+                            sdkParams.consoleLogging && console.log(e);
                         }
                         deleteFromChatUploadQueue(uploadQueue[i],
                             function () {
@@ -7371,12 +7377,12 @@ function Chat(params) {
                             .then(function (threadsCount) {
                                 if (threadsCount > 0) {
                                     clearCacheDatabasesOfUser(function () {
-                                        consoleLogging && console.log('All cache databases have been cleared.');
+                                        sdkParams.consoleLogging && console.log('All cache databases have been cleared.');
                                     });
                                 }
                             })
                             .catch(function (e) {
-                                consoleLogging && console.log(e);
+                                sdkParams.consoleLogging && console.log(e);
                             });
                     }
                 }
@@ -7730,7 +7736,7 @@ function Chat(params) {
                     if (parseFloat(params.origin.lat) > 0 && parseFloat(params.origin.lng)) {
                         data.origin = params.origin.lat + ',' + parseFloat(params.origin.lng);
                     } else {
-                        consoleLogging && console.log('No origin has been selected!');
+                        sdkParams.consoleLogging && console.log('No origin has been selected!');
                     }
                 }
 
@@ -7738,7 +7744,7 @@ function Chat(params) {
                     if (parseFloat(params.destination.lat) > 0 && parseFloat(params.destination.lng)) {
                         data.destination = params.destination.lat + ',' + parseFloat(params.destination.lng);
                     } else {
-                        consoleLogging && console.log('No destination has been selected!');
+                        sdkParams.consoleLogging && console.log('No destination has been selected!');
                     }
                 }
 
@@ -7860,10 +7866,10 @@ function Chat(params) {
 
         //TODO Change Node Version
         getImageFormUrl = function (url, uniqueId, callback) {
-            getImageFromLinkObjects[uniqueId] = new Image();
-            getImageFromLinkObjects[uniqueId].setAttribute('crossOrigin', 'anonymous');
+            sdkParams.getImageFromLinkObjects[uniqueId] = new Image();
+            sdkParams.getImageFromLinkObjects[uniqueId].setAttribute('crossOrigin', 'anonymous');
 
-            getImageFromLinkObjects[uniqueId].onload = function () {
+            sdkParams.getImageFromLinkObjects[uniqueId].onload = function () {
                 var canvas = document.createElement("canvas");
                 canvas.width = this.width;
                 canvas.height = this.height;
@@ -7884,11 +7890,11 @@ function Chat(params) {
                     ia[i] = byteString.charCodeAt(i);
                 }
 
-                delete getImageFromLinkObjects[uniqueId];
+                delete sdkParams.getImageFromLinkObjects[uniqueId];
                 return callback(new Blob([ia], {type: mimeString}));
             }
 
-            getImageFromLinkObjects[uniqueId].src = url;
+            sdkParams.getImageFromLinkObjects[uniqueId].src = url;
         };
 
     /******************************************************
@@ -8345,7 +8351,7 @@ function Chat(params) {
                 try {
                     content.metadata = JSON.stringify(params.metadata);
                 } catch (e) {
-                    consoleLogging && console.log(e);
+                    sdkParams.consoleLogging && console.log(e);
                 }
             }
 
@@ -8436,7 +8442,7 @@ function Chat(params) {
                 try {
                     content.metadata = JSON.stringify(params.metadata);
                 } catch (e) {
-                    consoleLogging && console.log(e);
+                    sdkParams.consoleLogging && console.log(e);
                 }
             }
 
@@ -8614,7 +8620,7 @@ function Chat(params) {
                 try {
                     content.metadata = JSON.stringify(params.metadata);
                 } catch (e) {
-                    consoleLogging && console.log(e);
+                    sdkParams.consoleLogging && console.log(e);
                 }
             }
         }
@@ -8734,17 +8740,17 @@ function Chat(params) {
             threadId: params.threadId,
             participant: chatMessaging.userInfo,
             cancel: function () {
-                if (typeof getImageFromLinkObjects !== 'undefined' && getImageFromLinkObjects.hasOwnProperty(fileUniqueId)) {
-                    getImageFromLinkObjects[fileUniqueId].onload = function () {
+                if (typeof sdkParams.getImageFromLinkObjects !== 'undefined' && sdkParams.getImageFromLinkObjects.hasOwnProperty(fileUniqueId)) {
+                    sdkParams.getImageFromLinkObjects[fileUniqueId].onload = function () {
                     };
-                    delete getImageFromLinkObjects[fileUniqueId];
-                    consoleLogging && console.log(`"${fileUniqueId}" - Downloading Location Map has been canceled!`);
+                    delete sdkParams.getImageFromLinkObjects[fileUniqueId];
+                    sdkParams.consoleLogging && console.log(`"${fileUniqueId}" - Downloading Location Map has been canceled!`);
                 }
 
                 cancelFileUpload({
                     uniqueId: fileUniqueId
                 }, function () {
-                    consoleLogging && console.log(`"${fileUniqueId}" - Sending Location Message has been canceled!`);
+                    sdkParams.consoleLogging && console.log(`"${fileUniqueId}" - Sending Location Message has been canceled!`);
                 });
             }
         };
@@ -9128,9 +9134,9 @@ function Chat(params) {
         if (parseInt(params.threadId) > 0) {
             var threadId = params.threadId;
         }
-        isTypingInterval && clearInterval(isTypingInterval);
+        sdkParams.isTypingInterval && clearInterval(sdkParams.isTypingInterval);
 
-        isTypingInterval = setInterval(function () {
+        sdkParams.isTypingInterval = setInterval(function () {
             sendSystemMessage({
                 content: JSON.stringify({
                     type: systemMessageTypes.IS_TYPING
@@ -9142,7 +9148,7 @@ function Chat(params) {
     };
 
     publicized.stopTyping = function () {
-        isTypingInterval && clearInterval(isTypingInterval);
+        sdkParams.isTypingInterval && clearInterval(sdkParams.isTypingInterval);
     };
 
     publicized.getMessageDeliveredList = function (params, callback) {
@@ -11144,7 +11150,7 @@ function Chat(params) {
 
                         stackArr.push(...result.result);
 
-                        consoleLogging && console.log("[SDK][exportChat] a step passed...");
+                        sdkParams.consoleLogging && console.log("[SDK][exportChat] a step passed...");
                         // wantedCount = wantedCount > result.contentCount ? result.contentCount : wantedCount;
                         if(result.result.length < stepCount) {
                             wantedCount = stackArr.length
@@ -11169,7 +11175,7 @@ function Chat(params) {
                         });
                     } else {
                         if(result.errorCode !== 21) {
-                            consoleLogging && console.log("[SDK][exportChat] Problem in one step... . Rerunning the request.", wantedCount, stepCount, stackArr.length, sendData, result);
+                            sdkParams.consoleLogging && console.log("[SDK][exportChat] Problem in one step... . Rerunning the request.", wantedCount, stepCount, stackArr.length, sendData, result);
                             setTimeout(function () {
                                 resolve(requestExportChat(stackArr, wantedCount, stepCount, stackArr.length, sendData))
                             }, 2000)
@@ -11222,9 +11228,9 @@ function Chat(params) {
         if(wantedCount < stepCount)
             stepCount = wantedCount;
 
-        consoleLogging && console.log("[SDK][exportChat] Starting...");
+        sdkParams.consoleLogging && console.log("[SDK][exportChat] Starting...");
         requestExportChat(stackArr, wantedCount, stepCount, offset, sendData).then(function (result) {
-            consoleLogging && console.log("[SDK][exportChat] Export done..., Now converting...");
+            sdkParams.consoleLogging && console.log("[SDK][exportChat] Export done..., Now converting...");
 
             var exportedFilename = (params.fileName || 'export-' + params.threadId) + '.csv',
                 responseType = params.responseType !== null ? params.responseType : "blob",
@@ -11488,8 +11494,8 @@ function Chat(params) {
         }, content = {};
 
         if (params) {
-            if (typeof params.location === 'string' && locationPingTypes.hasOwnProperty(params.location.toUpperCase())) {
-                content.location = locationPingTypes[params.location.toUpperCase()];
+            if (typeof params.location === 'string' && sdkParams.locationPingTypes.hasOwnProperty(params.location.toUpperCase())) {
+                content.location = sdkParams.locationPingTypes[params.location.toUpperCase()];
 
                 if (params.location.toUpperCase() === 'THREAD') {
                     if (typeof params.threadId === 'number' && params.threadId > 0) {
@@ -11543,8 +11549,6 @@ function Chat(params) {
     publicized.setToken = function (newToken) {
         if (typeof newToken !== 'undefined') {
             sdkParams.token = newToken;
-            callModule.updateToken(sdkParams.token);
-            chatMessaging.updateToken(sdkParams.token);
             chatEvents.updateToken(sdkParams.token);
             if(!chatMessaging.userInfo || !chatMessaging.userInfo.id) {
                 getUserAndUpdateSDKState();
@@ -11682,8 +11686,8 @@ function Chat(params) {
 
     publicized.changeProtocol = function (proto = "websocket") {
         if(["webrtc", "websocket"].includes(proto)) {
-            if (proto != protocol) {
-                protocol = proto.toLowerCase();
+            if (proto != sdkParams.protocol) {
+                sdkParams.protocol = proto.toLowerCase();
                 asyncClient.logout();
                 initAsync();
             } else {
