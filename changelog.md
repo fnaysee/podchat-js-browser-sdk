@@ -5,6 +5,12 @@ to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.i
 
 ##[Unreleased]
 
+## [12.9.5] 2023-07-09
+
+## Changed
+- remove old cache
+- Modification on unreadCount cache to prevent unwanted higher unreadCount on event unread_count_updated
+
 ## [12.9.4] 2023-07-02
 
 ### Added
