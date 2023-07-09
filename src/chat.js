@@ -9116,15 +9116,6 @@ function Chat(params) {
     };
 
     publicized.seen = function (params) {
-        if(params.threadId && params.unreadCount && params.messageTime) {
-            if(
-                store.threads.get(params.threadId) && store.threads.get(params.threadId).lastSeenMessageTime.get() < params.messageTime
-                && store.threads.get(params.threadId).unreadCount.get() > params.unreadCount
-            ){
-                store.threads.get(params.threadId).unreadCount.set(params.unreadCount, false);
-                store.threads.get(params.threadId).lastSeenMessageTime.set(params.messageTime);
-            }
-        }
         return putInMessagesSeenQueue(params.threadId, params.messageId);
     };
 
