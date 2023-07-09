@@ -1779,16 +1779,6 @@ function Chat(params) {
                         ? (parseInt(parseInt(messageContent.lastSeenMessageTime) / 1000) * 1000000000) + parseInt(messageContent.lastSeenMessageNanos)
                         : (parseInt(messageContent.lastSeenMessageTime));
 
-                    if(!store.threads.get(threadId).lastSeenMessageTime.get() ||
-                        (store.threads.get(threadId).lastSeenMessageTime.get() && threadObject.lastSeenMessageTime > store.threads.get(threadId).lastSeenMessageTime.get()
-                        && threadObject.unreadCount < store.threads.get(threadId).unreadCount.get()
-                        )
-                    ) {
-                        let localThreadLastSeenUpdated = JSON.parse(JSON.stringify(messageContent));
-                        store.threads.save(localThreadLastSeenUpdated);
-                        store.threads.get(threadId).lastSeenMessageTime.set(threadObject.lastSeenMessageTime)
-                        store.threads.get(threadId).unreadCount.set(messageContent.unreadCount)
-                    }
                     chatEvents.fireEvent('threadEvents', {
                         type: 'THREAD_UNREAD_COUNT_UPDATED',
                         result: {
@@ -1804,6 +1794,18 @@ function Chat(params) {
                             unreadCount: (messageContent.unreadCount) ? messageContent.unreadCount : 0
                         }
                     });
+
+                    if(store.threads.get(threadId) && !store.threads.get(threadId).lastSeenMessageTime.get() ||
+                        (store.threads.get(threadId).lastSeenMessageTime.get() && threadObject.lastSeenMessageTime > store.threads.get(threadId).lastSeenMessageTime.get()
+                        && threadObject.unreadCount < store.threads.get(threadId).unreadCount.get()
+                        )
+                    ) {
+                        let localThreadLastSeenUpdated = JSON.parse(JSON.stringify(messageContent));
+                        store.threads.save(localThreadLastSeenUpdated);
+                        store.threads.get(threadId).lastSeenMessageTime.set(threadObject.lastSeenMessageTime)
+                        store.threads.get(threadId).unreadCount.set(messageContent.unreadCount)
+                    }
+
 
                     // if (fullResponseObject) {
                     //     getThreads({

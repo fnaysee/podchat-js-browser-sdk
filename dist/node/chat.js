@@ -1797,16 +1797,6 @@ function Chat(params) {
         threadObject.unreadCount = messageContent.unreadCount ? messageContent.unreadCount : 0;
         threadObject.lastSeenMessageTime = messageContent.lastSeenMessageNanos ? parseInt(parseInt(messageContent.lastSeenMessageTime) / 1000) * 1000000000 + parseInt(messageContent.lastSeenMessageNanos) : parseInt(messageContent.lastSeenMessageTime);
 
-        if (!_store.store.threads.get(threadId).lastSeenMessageTime.get() || _store.store.threads.get(threadId).lastSeenMessageTime.get() && threadObject.lastSeenMessageTime > _store.store.threads.get(threadId).lastSeenMessageTime.get() && threadObject.unreadCount < _store.store.threads.get(threadId).unreadCount.get()) {
-          var localThreadLastSeenUpdated = JSON.parse(JSON.stringify(messageContent));
-
-          _store.store.threads.save(localThreadLastSeenUpdated);
-
-          _store.store.threads.get(threadId).lastSeenMessageTime.set(threadObject.lastSeenMessageTime);
-
-          _store.store.threads.get(threadId).unreadCount.set(messageContent.unreadCount);
-        }
-
         _events.chatEvents.fireEvent('threadEvents', {
           type: 'THREAD_UNREAD_COUNT_UPDATED',
           result: {
@@ -1821,7 +1811,17 @@ function Chat(params) {
             thread: threadObject,
             unreadCount: messageContent.unreadCount ? messageContent.unreadCount : 0
           }
-        }); // if (fullResponseObject) {
+        });
+
+        if (_store.store.threads.get(threadId) && !_store.store.threads.get(threadId).lastSeenMessageTime.get() || _store.store.threads.get(threadId).lastSeenMessageTime.get() && threadObject.lastSeenMessageTime > _store.store.threads.get(threadId).lastSeenMessageTime.get() && threadObject.unreadCount < _store.store.threads.get(threadId).unreadCount.get()) {
+          var localThreadLastSeenUpdated = JSON.parse(JSON.stringify(messageContent));
+
+          _store.store.threads.save(localThreadLastSeenUpdated);
+
+          _store.store.threads.get(threadId).lastSeenMessageTime.set(threadObject.lastSeenMessageTime);
+
+          _store.store.threads.get(threadId).unreadCount.set(messageContent.unreadCount);
+        } // if (fullResponseObject) {
         //     getThreads({
         //         threadIds: [messageContent.id]
         //     }, function (threadsResult) {
