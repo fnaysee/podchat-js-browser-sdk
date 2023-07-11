@@ -42,6 +42,6 @@ var sdkParams = {
     fullResponseObject: false,
     webrtcConfig: null,
     callOptions: {},
-    asyncPriority
+    asyncPriority: undefined
 }
 export {sdkParams};

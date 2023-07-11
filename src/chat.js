@@ -66,6 +66,7 @@ function Chat(params) {
     sdkParams.webrtcConfig = (params.webrtcConfig ? params.webrtcConfig : null);
     sdkParams.chatPingMessageInterval = params.chatPingMessageInterval;
     sdkParams.callOptions = params.callOptions;
+    sdkParams.protocol = params.protocol;
 
     var asyncClient,
         peerId,
@@ -202,7 +203,8 @@ function Chat(params) {
         maxIntegerValue = Number.MAX_SAFE_INTEGER,
         chatSendQueue = [],
         chatWaitQueue = [],
-        chatUploadQueue = [];
+        chatUploadQueue = [],
+        protocolSwitching =  new ProtocolSwitching();
         //fullResponseObject = params.fullResponseObject || false,
         //webrtcConfig = (params.webrtcConfig ? params.webrtcConfig : null);
 
@@ -226,6 +228,57 @@ function Chat(params) {
             asyncClient: asyncClient,
             chatMessaging: chatMessaging
         }));
+
+    function ProtocolSwitching() {
+        let config = {
+            currentProtocol: 'websocket',
+            failOverProtocol: 'webrtc',
+            retries: 0,
+            allowedRetries: 3
+        };
+
+        function canRetry(){
+            return config.retries < config.allowedRetries
+        }
+        function switchProtocol(protocol) {
+            let current;
+
+            if(protocol) {
+                current = protocol;
+                config.failOverProtocol = cu
+                    config.currentProtocol = current;
+            } else {
+                config.currentProtocol = config.failOverProtocol;
+                config.failOverProtocol = current;
+            }
+
+            sdkParams.protocol = current.toLowerCase();
+            asyncClient.logout();
+            initAsync();
+
+            fireEvent("switchProtocol", {
+                current: config.currentProtocol,
+                previous: config.failOverProtocol
+            });
+        }
+
+        return {
+            switchProtocol(protocol) {
+                switchProtocol(protocol)
+            },
+            increaseRetries() {
+                config.retries++;
+            },
+            canRetry(){
+                return canRetry();
+            },
+            getCurrentProtocol(){
+                return config.currentProtocol;
+            }
+        };
+    }
+
+
     /*******************************************************
      *            P R I V A T E   M E T H O D S            *
      *******************************************************/
@@ -1673,7 +1726,8 @@ function Chat(params) {
                     }
 
                     let msgTime = (parseInt(parseInt(messageContent.time) / 1000) * 1000000000) + parseInt(messageContent.timeNanos);
-                    store.threads.get(threadId).unreadCount.decrease(msgTime);
+                    if(store.threads.get(threadId))
+                        store.threads.get(threadId).unreadCount.decrease(msgTime);
 
                     if (messageContent.pinned) {
                         unPinMessage({
@@ -11679,10 +11733,11 @@ function Chat(params) {
 
     publicized.changeProtocol = function (proto = "websocket") {
         if(["webrtc", "websocket"].includes(proto)) {
-            if (proto != sdkParams.protocol) {
-                sdkParams.protocol = proto.toLowerCase();
-                asyncClient.logout();
-                initAsync();
+            if (proto != protocolSwitching.getCurrentProtocol()) {
+                protocolSwitching.switchProtocol(proto.toLowerCase());
+                // sdkParams.protocol = protocolSwitching.getCurrentProtocol();
+                // asyncClient.logout();
+                // initAsync();
             } else {
                 console.warn(`SDK is currently using the ${proto} protocol. Nothing to do.`)
             }

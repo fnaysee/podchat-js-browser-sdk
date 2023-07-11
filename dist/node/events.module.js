@@ -37,7 +37,8 @@ function ChatEvents(params) {
     systemEvents: {},
     chatReady: {},
     error: {},
-    chatState: {}
+    chatState: {},
+    switchProtocol: {}
   };
 
   var PodChatErrorException = function PodChatErrorException(error) {
