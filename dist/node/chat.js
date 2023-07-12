@@ -1864,7 +1864,7 @@ function Chat(params) {
           }
         });
 
-        if (_store.store.threads.get(threadId) && !_store.store.threads.get(threadId).lastSeenMessageTime.get() || _store.store.threads.get(threadId).lastSeenMessageTime.get() && threadObject.lastSeenMessageTime > _store.store.threads.get(threadId).lastSeenMessageTime.get() && threadObject.unreadCount < _store.store.threads.get(threadId).unreadCount.get()) {
+        if (_store.store.threads.get(threadId) && (!_store.store.threads.get(threadId).lastSeenMessageTime.get() || _store.store.threads.get(threadId).lastSeenMessageTime.get() && threadObject.lastSeenMessageTime > _store.store.threads.get(threadId).lastSeenMessageTime.get() && threadObject.unreadCount < _store.store.threads.get(threadId).unreadCount.get())) {
           var localThreadLastSeenUpdated = JSON.parse(JSON.stringify(messageContent));
 
           _store.store.threads.save(localThreadLastSeenUpdated);
