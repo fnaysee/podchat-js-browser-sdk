@@ -26,7 +26,7 @@ function ChatEvents(params) {
             chatReady: {},
             error: {},
             chatState: {},
-            switchProtocol: {}
+            autoSwitchAsyncProtocol:{}
         };
 
     var PodChatErrorException = function (error) {

@@ -204,7 +204,7 @@ function Chat(params) {
         chatSendQueue = [],
         chatWaitQueue = [],
         chatUploadQueue = [],
-        protocolSwitching =  new ProtocolSwitching();
+        protocolManager =  new ProtocolManager({protocol: sdkParams.protocol});
         //fullResponseObject = params.fullResponseObject || false,
         //webrtcConfig = (params.webrtcConfig ? params.webrtcConfig : null);
 
@@ -229,42 +229,60 @@ function Chat(params) {
             chatMessaging: chatMessaging
         }));
 
-    function ProtocolSwitching() {
-        let config = {
-            currentProtocol: 'websocket',
-            failOverProtocol: 'webrtc',
+    function ProtocolManager({protocol = 'auto'}) {
+        const config = {
+            switchingEnabled: (protocol == "auto"),
+            currentProtocol: (protocol == "auto" ? 'websocket' : protocol),
+            failOverProtocol: (protocol == "auto" || protocol == "websocket"  ? 'webrtc' : 'websocket'),
             retries: 0,
             allowedRetries: 3
         };
 
-        function canRetry(){
-            return config.retries < config.allowedRetries
+        function canRetry() {
+            return config.retries < config.allowedRetries;
         }
         function switchProtocol(protocol) {
-            let current;
+            // sdkParams.protocol = current.toLowerCase();
+            asyncClient.on('asyncDestroyed', function () {
+                let current;
 
-            if(protocol) {
-                current = protocol;
-                config.failOverProtocol = cu
+                if(protocol) {
+                    current = protocol.toLowerCase();
+                    config.failOverProtocol = (current == "webrtc" ? "websocket" : "webrtc")
                     config.currentProtocol = current;
-            } else {
-                config.currentProtocol = config.failOverProtocol;
-                config.failOverProtocol = current;
-            }
+                } else {
+                    current = config.currentProtocol;
+                    config.currentProtocol = config.failOverProtocol;
+                    config.failOverProtocol = current;
+                }
 
-            sdkParams.protocol = current.toLowerCase();
-            asyncClient.logout();
-            initAsync();
+                console.log(">> Switching protocol::: ", {current: config.currentProtocol, prev: config.failOverProtocol})
 
-            fireEvent("switchProtocol", {
-                current: config.currentProtocol,
-                previous: config.failOverProtocol
+                chatEvents.fireEvent("autoSwitchAsyncProtocol", {
+                    current: config.currentProtocol,
+                    previous: config.failOverProtocol
+                });
+
+                resetRetries();
+                initAsync();
             });
+
+            asyncClient.logout();
+        }
+
+        function resetRetries() {
+            config.retries = 0;
         }
 
         return {
             switchProtocol(protocol) {
-                switchProtocol(protocol)
+                if(protocol == 'auto'){
+                    config.switchingEnabled = true;
+                    switchProtocol("websocket")
+                } else {
+                    config.switchingEnabled = false;
+                    switchProtocol(protocol)
+                }
             },
             increaseRetries() {
                 config.retries++;
@@ -274,6 +292,14 @@ function Chat(params) {
             },
             getCurrentProtocol(){
                 return config.currentProtocol;
+            },
+            resetRetries(){
+                resetRetries();
+            },
+            maybeSwitchProtocol() {
+                if(!canRetry() && config.switchingEnabled) {
+                    switchProtocol();
+                }
             }
         };
     }
@@ -320,7 +346,7 @@ function Chat(params) {
             var asyncGetReadyTime = new Date().getTime();
 
             asyncClient = new Async({
-                protocol: sdkParams.protocol,
+                protocol: protocolManager.getCurrentProtocol(),//sdkParams.protocol,
                 queueHost: queueHost,
                 queuePort: queuePort,
                 queueUsername: queueUsername,
@@ -384,6 +410,7 @@ function Chat(params) {
 
                 switch (state.socketState) {
                     case 1: // CONNECTED
+                        protocolManager.resetRetries();
                         if (state.deviceRegister && state.serverRegister) {
                             // chatMessaging.chatState = true;
                             // chatMessaging.ping();
@@ -431,6 +458,13 @@ function Chat(params) {
                 peerId = newPeerId;
                 chatEvents.fireEvent('reconnect');
             });
+
+            asyncClient.on('reconnecting', function () {
+                sdkParams.consoleLogging && console.log("[SDK][event: asyncClient.reconnecting]")
+                protocolManager.increaseRetries();
+                protocolManager.maybeSwitchProtocol();
+            });
+
 
             asyncClient.on('message', function (params, ack) {
                 receivedAsyncMessageHandler(params);
@@ -11612,7 +11646,7 @@ function Chat(params) {
     publicized.generateUUID = Utility.generateUUID;
 
     publicized.logout = function () {
-        clearChatServerCaches();
+        // clearChatServerCaches();
 
         chatEvents.clearEventCallbacks();
 
@@ -11738,9 +11772,9 @@ function Chat(params) {
     };
 
     publicized.changeProtocol = function (proto = "websocket") {
-        if(["webrtc", "websocket"].includes(proto)) {
-            if (proto != protocolSwitching.getCurrentProtocol()) {
-                protocolSwitching.switchProtocol(proto.toLowerCase());
+        if(["webrtc", "websocket", "auto"].includes(proto)) {
+            if (proto != protocolManager.getCurrentProtocol()) {
+                protocolManager.switchProtocol(proto.toLowerCase());
                 // sdkParams.protocol = protocolSwitching.getCurrentProtocol();
                 // asyncClient.logout();
                 // initAsync();

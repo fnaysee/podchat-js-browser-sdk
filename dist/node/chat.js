@@ -216,7 +216,9 @@ function Chat(params) {
       chatSendQueue = [],
       chatWaitQueue = [],
       chatUploadQueue = [],
-      protocolSwitching = new ProtocolSwitching(); //fullResponseObject = params.fullResponseObject || false,
+      protocolManager = new ProtocolManager({
+    protocol: _sdkParams.sdkParams.protocol
+  }); //fullResponseObject = params.fullResponseObject || false,
   //webrtcConfig = (params.webrtcConfig ? params.webrtcConfig : null);
 
   if (!_sdkParams.sdkParams.consoleLogging) {
@@ -239,10 +241,13 @@ function Chat(params) {
     chatMessaging: chatMessaging
   }));
 
-  function ProtocolSwitching() {
+  function ProtocolManager(_ref) {
+    var _ref$protocol = _ref.protocol,
+        protocol = _ref$protocol === void 0 ? 'auto' : _ref$protocol;
     var config = {
-      currentProtocol: 'websocket',
-      failOverProtocol: 'webrtc',
+      switchingEnabled: protocol == "auto",
+      currentProtocol: protocol == "auto" ? 'websocket' : protocol,
+      failOverProtocol: protocol == "auto" || protocol == "websocket" ? 'webrtc' : 'websocket',
       retries: 0,
       allowedRetries: 3
     };
@@ -252,29 +257,52 @@ function Chat(params) {
     }
 
     function _switchProtocol(protocol) {
-      var current;
+      // sdkParams.protocol = current.toLowerCase();
+      asyncClient.on('asyncDestroyed', function () {
+        var current;
 
-      if (protocol) {
-        current = protocol;
-        config.failOverProtocol = cu;
-        config.currentProtocol = current;
-      } else {
-        config.currentProtocol = config.failOverProtocol;
-        config.failOverProtocol = current;
-      }
+        if (protocol) {
+          current = protocol.toLowerCase();
+          config.failOverProtocol = current == "webrtc" ? "websocket" : "webrtc";
+          config.currentProtocol = current;
+        } else {
+          current = config.currentProtocol;
+          config.currentProtocol = config.failOverProtocol;
+          config.failOverProtocol = current;
+        }
 
-      _sdkParams.sdkParams.protocol = current.toLowerCase();
-      asyncClient.logout();
-      initAsync();
-      fireEvent("switchProtocol", {
-        current: config.currentProtocol,
-        previous: config.failOverProtocol
+        console.log(">> Switching protocol::: ", {
+          current: config.currentProtocol,
+          prev: config.failOverProtocol
+        });
+
+        _events.chatEvents.fireEvent("autoSwitchAsyncProtocol", {
+          current: config.currentProtocol,
+          previous: config.failOverProtocol
+        });
+
+        _resetRetries();
+
+        initAsync();
       });
+      asyncClient.logout();
+    }
+
+    function _resetRetries() {
+      config.retries = 0;
     }
 
     return {
       switchProtocol: function switchProtocol(protocol) {
-        _switchProtocol(protocol);
+        if (protocol == 'auto') {
+          config.switchingEnabled = true;
+
+          _switchProtocol("websocket");
+        } else {
+          config.switchingEnabled = false;
+
+          _switchProtocol(protocol);
+        }
       },
       increaseRetries: function increaseRetries() {
         config.retries++;
@@ -284,6 +312,14 @@ function Chat(params) {
       },
       getCurrentProtocol: function getCurrentProtocol() {
         return config.currentProtocol;
+      },
+      resetRetries: function resetRetries() {
+        _resetRetries();
+      },
+      maybeSwitchProtocol: function maybeSwitchProtocol() {
+        if (!_canRetry() && config.switchingEnabled) {
+          _switchProtocol();
+        }
       }
     };
   }
@@ -326,7 +362,8 @@ function Chat(params) {
   initAsync = function initAsync() {
     var asyncGetReadyTime = new Date().getTime();
     asyncClient = new _podasyncWsOnly["default"]({
-      protocol: _sdkParams.sdkParams.protocol,
+      protocol: protocolManager.getCurrentProtocol(),
+      //sdkParams.protocol,
       queueHost: queueHost,
       queuePort: queuePort,
       queueUsername: queueUsername,
@@ -387,6 +424,8 @@ function Chat(params) {
       switch (state.socketState) {
         case 1:
           // CONNECTED
+          protocolManager.resetRetries();
+
           if (state.deviceRegister && state.serverRegister) {
             // chatMessaging.chatState = true;
             // chatMessaging.ping();
@@ -441,6 +480,11 @@ function Chat(params) {
       peerId = newPeerId;
 
       _events.chatEvents.fireEvent('reconnect');
+    });
+    asyncClient.on('reconnecting', function () {
+      _sdkParams.sdkParams.consoleLogging && console.log("[SDK][event: asyncClient.reconnecting]");
+      protocolManager.increaseRetries();
+      protocolManager.maybeSwitchProtocol();
     });
     asyncClient.on('message', function (params, ack) {
       receivedAsyncMessageHandler(params);
@@ -11717,8 +11761,7 @@ function Chat(params) {
   publicized.generateUUID = _utility["default"].generateUUID;
 
   publicized.logout = function () {
-    clearChatServerCaches();
-
+    // clearChatServerCaches();
     _events.chatEvents.clearEventCallbacks();
 
     chatMessaging.messagesCallbacks = {};
@@ -11811,8 +11854,8 @@ function Chat(params) {
     });
   };
 
-  publicized.archiveThread = function (_ref, callback) {
-    var threadId = _ref.threadId;
+  publicized.archiveThread = function (_ref2, callback) {
+    var threadId = _ref2.threadId;
     var sendData = {
       chatMessageVOType: _constants.chatMessageVOTypes.ARCHIVE_THREAD,
       typeCode: _sdkParams.sdkParams.generalTypeCode,
@@ -11827,8 +11870,8 @@ function Chat(params) {
     });
   };
 
-  publicized.unArchiveThread = function (_ref2, callback) {
-    var threadId = _ref2.threadId;
+  publicized.unArchiveThread = function (_ref3, callback) {
+    var threadId = _ref3.threadId;
     var sendData = {
       chatMessageVOType: _constants.chatMessageVOTypes.UNARCHIVE_THREAD,
       typeCode: _sdkParams.sdkParams.generalTypeCode,
@@ -11853,9 +11896,9 @@ function Chat(params) {
   publicized.changeProtocol = function () {
     var proto = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "websocket";
 
-    if (["webrtc", "websocket"].includes(proto)) {
-      if (proto != protocolSwitching.getCurrentProtocol()) {
-        protocolSwitching.switchProtocol(proto.toLowerCase()); // sdkParams.protocol = protocolSwitching.getCurrentProtocol();
+    if (["webrtc", "websocket", "auto"].includes(proto)) {
+      if (proto != protocolManager.getCurrentProtocol()) {
+        protocolManager.switchProtocol(proto.toLowerCase()); // sdkParams.protocol = protocolSwitching.getCurrentProtocol();
         // asyncClient.logout();
         // initAsync();
       } else {
