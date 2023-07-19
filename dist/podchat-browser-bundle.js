@@ -369,7 +369,6 @@ function Async(params) {
           socketReconnectRetryInterval = null;
           socketReconnectRetryInterval = setTimeout(function () {
             if (isLoggedOut) return;
-            fireEvent("reconnecting");
             webRTCClass.connect();
           }, 1000 * retryStep.get());
           if (retryStep.get() < 64) {
@@ -51830,7 +51829,7 @@ token:_sdkParams.sdkParams.token,subjectId:threadId};return chatMessaging.sendMe
 token:_sdkParams.sdkParams.token,subjectId:threadId};return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.version=function(){console.log("%c[SDK] Version: podchat-browser@"+_buildConfig["default"].version,"color:green; font-size:13px");console.log("%c[SDK] Build date:"+_buildConfig["default"].date,"color:green;font-size:13px");console.log("%c[SDK] Additional info: "+_buildConfig["default"].VersionInfo,"color:green;font-size:13px");return _buildConfig["default"];};publicized.changeProtocol=function(){var proto=arguments.length>0&&arguments[0]!==undefined?arguments[0]:"websocket";if(["webrtc","websocket","auto"].includes(proto)){if(proto!=protocolManager.getCurrentProtocol()){protocolManager.switchProtocol(proto.toLowerCase());// sdkParams.protocol = protocolSwitching.getCurrentProtocol();
 // asyncClient.logout();
 // initAsync();
-}else{console.warn("SDK is currently using the ".concat(proto," protocol. Nothing to do."));}}else{console.error("Protocol ".concat(proto," is not supported in SDK. Valid protocols: \"webrtc\", \"websocket\""));}};_store.store.events.on(_store.store.threads.eventsList.UNREAD_COUNT_UPDATED,function(thread){_events.chatEvents.fireEvent('threadEvents',{type:'UNREAD_COUNT_UPDATED',result:{threadId:thread.id,unreadCount:thread.unreadCount||0,lastSeenMessageTime:thread.lastSeenMessageTime||undefined}});});init();return publicized;}if(window){if(!window.POD){window.POD={};}window.POD.Chat=Chat;//For backward compatibility
+}else{console.warn("SDK is currently using the ".concat(proto," protocol. Nothing to do."));}}else{console.error("Protocol ".concat(proto," is not supported in SDK. Valid protocols: \"webrtc\", \"websocket\""));}};_store.store.events.on(_store.store.threads.eventsList.UNREAD_COUNT_UPDATED,function(thread){_events.chatEvents.fireEvent('threadEvents',{type:'UNREAD_COUNT_UPDATED',result:{threadId:thread.id,unreadCount:thread.unreadCount||0,lastSeenMessageTime:thread.lastSeenMessageTime||undefined}});});init();return publicized;}if(typeof module!=='undefined'&&typeof module.exports!=='undefined'){module.exports=Chat;}else{if(!window.POD){window.POD={};}window.POD.Chat=Chat;//For backward compatibility
 window.PodChat=Chat;}var _default=Chat;// })();
 exports["default"]=_default;
 

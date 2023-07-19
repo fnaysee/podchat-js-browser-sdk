@@ -11924,7 +11924,9 @@ function Chat(params) {
   return publicized;
 }
 
-if (window) {
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+  module.exports = Chat;
+} else {
   if (!window.POD) {
     window.POD = {};
   }
