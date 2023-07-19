@@ -577,17 +577,6 @@ function ChatUtility() {
     return str;
   };
 }
-/*    if (typeof module !== 'undefined' && typeof module.exports != 'undefined') {
-        module.exports = ChatUtility;
-    }
-    else {*/
-
-
-if (!window.POD) {
-  window.POD = {};
-}
-
-window.POD.ChatUtility = ChatUtility; // }
 
 var _default = new ChatUtility();
 

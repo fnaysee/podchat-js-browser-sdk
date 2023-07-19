@@ -561,13 +561,4 @@ function ChatUtility() {
     }
 }
 
-/*    if (typeof module !== 'undefined' && typeof module.exports != 'undefined') {
-        module.exports = ChatUtility;
-    }
-    else {*/
-if (!window.POD) {
-    window.POD = {};
-}
-window.POD.ChatUtility = ChatUtility;
-    // }
 export default new ChatUtility()
