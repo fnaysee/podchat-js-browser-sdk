@@ -11924,9 +11924,7 @@ function Chat(params) {
   return publicized;
 }
 
-if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
-  module.exports = Chat;
-} else {
+if (typeof window !== "undefined") {
   if (!window.POD) {
     window.POD = {};
   }
@@ -11936,6 +11934,5 @@ if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
   window.PodChat = Chat;
 }
 
-var _default = Chat; // })();
-
+var _default = Chat;
 exports["default"] = _default;

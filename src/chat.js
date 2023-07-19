@@ -11802,9 +11802,7 @@ function Chat(params) {
     return publicized;
 }
 
-if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
-    module.exports = Chat;
-} else {
+if(typeof window !== "undefined") {
     if (!window.POD) {
         window.POD = {};
     }
@@ -11814,4 +11812,3 @@ if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
 }
 
 export default Chat;
-// })();
