@@ -42,6 +42,7 @@ function Async(params) {
   var protocol = params.protocol || 'websocket',
     appId = params.appId || 'PodChat',
     deviceId = params.deviceId,
+    retryStepTimerTime = typeof params.retryStepTimerTime != "undefined" ? params.retryStepTimerTime : 0,
     eventCallbacks = {
       connect: {},
       disconnect: {},
@@ -108,7 +109,8 @@ function Async(params) {
     onSendLogging = params.asyncLogging && typeof params.asyncLogging.onMessageSend === 'boolean' ? params.asyncLogging.onMessageSend : false,
     workerId = params.asyncLogging && typeof parseInt(params.asyncLogging.workerId) === 'number' ? params.asyncLogging.workerId : 0,
     webrtcConfig = params.webrtcConfig ? params.webrtcConfig : null,
-    isLoggedOut = false;
+    isLoggedOut = false,
+    onStartWithRetryStepGreaterThanZero = params.onStartWithRetryStepGreaterThanZero;
   var reconnOnClose = {
     value: false,
     oldValue: null,
@@ -127,7 +129,7 @@ function Async(params) {
   };
   reconnOnClose.set(reconnectOnClose);
   var retryStep = {
-    value: 4,
+    value: retryStepTimerTime,
     get: function get() {
       return retryStep.value;
     },
@@ -142,14 +144,26 @@ function Async(params) {
    *******************************************************/
 
   var init = function init() {
-      switch (protocol) {
-        case 'websocket':
-          initSocket();
-          break;
-        case 'webrtc':
-          initWebrtc();
-          break;
+      if (retryStep.get() > 0) {
+        onStartWithRetryStepGreaterThanZero && onStartWithRetryStepGreaterThanZero({
+          socketState: socketStateType.CLOSED,
+          timeUntilReconnect: 1000 * retryStep.get(),
+          deviceRegister: false,
+          serverRegister: false,
+          peerId: peerId
+        });
       }
+      socketReconnectRetryInterval = setTimeout(function () {
+        if (isLoggedOut) return;
+        switch (protocol) {
+          case 'websocket':
+            initSocket();
+            break;
+          case 'webrtc':
+            initWebrtc();
+            break;
+        }
+      }, 1000 * retryStep.get());
     },
     asyncLogger = function asyncLogger(type, msg) {
       Utility.asyncLogger({
@@ -244,7 +258,9 @@ function Async(params) {
             if (isLoggedOut) return;
             socket.connect();
             setTimeout(function () {
-              fireEvent("reconnecting");
+              fireEvent("reconnecting", {
+                nextTime: retryStep.get()
+              });
             }, 5);
           }, 1000 * retryStep.get());
           if (retryStep.get() < 64) {
@@ -347,6 +363,7 @@ function Async(params) {
         isSocketOpen = false;
         isDeviceRegister = false;
         oldPeerId = peerId;
+        socketState = socketStateType.CLOSED;
         fireEvent('disconnect', event);
         if (reconnOnClose.get() || reconnOnClose.getOld()) {
           if (asyncLogging) {
@@ -357,7 +374,6 @@ function Async(params) {
             }
           }
           logLevel.debug && console.debug("[Async][async.js] on connection close, retryStep:", retryStep.get());
-          socketState = socketStateType.CLOSED;
           fireEvent('stateChange', {
             socketState: socketState,
             timeUntilReconnect: 1000 * retryStep.get(),
@@ -370,6 +386,11 @@ function Async(params) {
           socketReconnectRetryInterval = setTimeout(function () {
             if (isLoggedOut) return;
             webRTCClass.connect();
+            setTimeout(function () {
+              fireEvent("reconnecting", {
+                nextTime: retryStep.get()
+              });
+            }, 5);
           }, 1000 * retryStep.get());
           if (retryStep.get() < 64) {
             // retryStep += 3;
@@ -865,6 +886,9 @@ function Async(params) {
       //     webRTCClass.connect()
     }, 4000);
   };
+  this.setRetryTimerTime = function (seconds) {
+    retryStep.set(seconds);
+  };
   this.generateUUID = Utility.generateUUID;
   init();
 }
@@ -1282,6 +1306,7 @@ function PingManager(params) {
 }
 
 function connect() {
+  variables.isDestroyed = false;
   webrtcFunctions.createPeerConnection();
 }
 var webrtcFunctions = {
@@ -1440,6 +1465,7 @@ var handshakingFunctions = {
     var retries = variables.apiCallRetries.register;
     return new Promise(promiseHandler);
     function promiseHandler(resolve, reject) {
+      if (variables.isDestroyed) return;
       var registerEndPoint = getApiUrl() + defaultConfig.registerEndpoint;
       fetch(registerEndPoint, {
         method: "POST",
@@ -1474,12 +1500,13 @@ var handshakingFunctions = {
     }
   },
   getCandidates: function getCandidates(clientId) {
-    var addIceCandidateEndPoint = getApiUrl() + defaultConfig.getICEEndpoint;
-    addIceCandidateEndPoint += "clientId=" + clientId;
+    var getIceCandidateEndPoint = getApiUrl() + defaultConfig.getICEEndpoint;
+    getIceCandidateEndPoint += "clientId=" + clientId;
     var retries = variables.apiCallRetries.getIce;
     return new Promise(promiseHandler);
     function promiseHandler(resolve, reject) {
-      fetch(addIceCandidateEndPoint, {
+      if (variables.isDestroyed) return;
+      fetch(getIceCandidateEndPoint, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -1523,6 +1550,7 @@ var handshakingFunctions = {
       retries = variables.apiCallRetries.addIce;
     return new Promise(promiseHandler);
     function promiseHandler(resolve, reject) {
+      if (variables.isDestroyed) return;
       fetch(addIceCandidateEndPoint, {
         method: "POST",
         body: JSON.stringify({
@@ -1567,7 +1595,7 @@ function resetVariables() {
   variables.deviceId = null;
   variables.candidateManager.destroy();
   variables.candidateManager = new CandidatesSendQueueManager();
-  variables.isDestroyed = false;
+  // variables.isDestroyed = false;
   if (!variables.isDestroyed && variables.eventCallback["close"]) {
     variables.eventCallback["close"]();
   }
@@ -49089,7 +49117,7 @@ WildEmitter.mixin = function (constructor) {
 WildEmitter.mixin(WildEmitter);
 
 },{}],280:[function(require,module,exports){
-module.exports={"version":"12.9.6-snapshot.4","date":"۱۴۰۲/۴/۲۸","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.6-snapshot.4","date":"۱۴۰۲/۵/۱","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],281:[function(require,module,exports){
 "use strict";var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");var _typeof3=require("@babel/runtime/helpers/typeof");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _regenerator=_interopRequireDefault(require("@babel/runtime/regenerator"));var _asyncToGenerator2=_interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _constants=require("./lib/constants");var _kurentoUtils=_interopRequireDefault(require("kurento-utils"));var _utility=_interopRequireDefault(require("./utility/utility"));var _eventsModule=require("./events.module.js");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));var _errorHandler=_interopRequireWildcard(require("./lib/errorHandler"));var _sdkParams=require("./lib/sdkParams");function _getRequireWildcardCache(nodeInterop){if(typeof WeakMap!=="function")return null;var cacheBabelInterop=new WeakMap();var cacheNodeInterop=new WeakMap();return(_getRequireWildcardCache=function _getRequireWildcardCache(nodeInterop){return nodeInterop?cacheNodeInterop:cacheBabelInterop;})(nodeInterop);}function _interopRequireWildcard(obj,nodeInterop){if(!nodeInterop&&obj&&obj.__esModule){return obj;}if(obj===null||_typeof3(obj)!=="object"&&typeof obj!=="function"){return{"default":obj};}var cache=_getRequireWildcardCache(nodeInterop);if(cache&&cache.has(obj)){return cache.get(obj);}var newObj={};var hasPropertyDescriptor=Object.defineProperty&&Object.getOwnPropertyDescriptor;for(var key in obj){if(key!=="default"&&Object.prototype.hasOwnProperty.call(obj,key)){var desc=hasPropertyDescriptor?Object.getOwnPropertyDescriptor(obj,key):null;if(desc&&(desc.get||desc.set)){Object.defineProperty(newObj,key,desc);}else{newObj[key]=obj[key];}}}newObj["default"]=obj;if(cache){cache.set(obj,newObj);}return newObj;}function ChatCall(params){var _sdkParams$callOption,_sdkParams$callOption2;var//Utility = params.Utility,
 currentModuleInstance=this,asyncClient=params.asyncClient,//chatEvents = params.chatEvents,
@@ -49904,8 +49932,9 @@ minIntegerValue=Number.MAX_SAFE_INTEGER*-1,maxIntegerValue=Number.MAX_SAFE_INTEG
 //webrtcConfig = (params.webrtcConfig ? params.webrtcConfig : null);
 if(!_sdkParams.sdkParams.consoleLogging){/**
      * Disable kurento-utils logs
-     */window.Logger={error:function error(){},log:function log(){},debug:function debug(){}};}(0,_events.initEventHandler)(params);var chatMessaging=new _messaging["default"](Object.assign(params,{asyncClient:asyncClient})),callModule=new _call["default"](Object.assign(params,{asyncClient:asyncClient,chatMessaging:chatMessaging}));function ProtocolManager(_ref){var _ref$protocol=_ref.protocol,protocol=_ref$protocol===void 0?'auto':_ref$protocol;var config={switchingEnabled:protocol=="auto",currentProtocol:protocol=="auto"?'websocket':protocol,failOverProtocol:protocol=="auto"||protocol=="websocket"?'webrtc':'websocket',retries:0,allowedRetries:3};function _canRetry(){return config.retries<config.allowedRetries;}function _switchProtocol(protocol){// sdkParams.protocol = current.toLowerCase();
-asyncClient.on('asyncDestroyed',function(){var current;if(protocol){current=protocol.toLowerCase();config.failOverProtocol=current=="webrtc"?"websocket":"webrtc";config.currentProtocol=current;}else{current=config.currentProtocol;config.currentProtocol=config.failOverProtocol;config.failOverProtocol=current;}console.log(">> Switching protocol::: ",{current:config.currentProtocol,prev:config.failOverProtocol});_events.chatEvents.fireEvent("autoSwitchAsyncProtocol",{current:config.currentProtocol,previous:config.failOverProtocol});_resetRetries();initAsync();});asyncClient.logout();}function _resetRetries(){config.retries=0;}return{switchProtocol:function switchProtocol(protocol){if(protocol=='auto'){config.switchingEnabled=true;_switchProtocol("websocket");}else{config.switchingEnabled=false;_switchProtocol(protocol);}},increaseRetries:function increaseRetries(){config.retries++;},canRetry:function canRetry(){return _canRetry();},getCurrentProtocol:function getCurrentProtocol(){return config.currentProtocol;},resetRetries:function resetRetries(){_resetRetries();},maybeSwitchProtocol:function maybeSwitchProtocol(){if(!_canRetry()&&config.switchingEnabled){_switchProtocol();}}};}/*******************************************************
+     */window.Logger={error:function error(){},log:function log(){},debug:function debug(){}};}(0,_events.initEventHandler)(params);var chatMessaging=new _messaging["default"](Object.assign(params,{asyncClient:asyncClient})),callModule=new _call["default"](Object.assign(params,{asyncClient:asyncClient,chatMessaging:chatMessaging}));function ProtocolManager(_ref){var _ref$protocol=_ref.protocol,protocol=_ref$protocol===void 0?'auto':_ref$protocol;var config={switchingEnabled:protocol=="auto",currentProtocol:protocol=="auto"?'websocket':protocol,failOverProtocol:protocol=="auto"||protocol=="websocket"?'webrtc':'websocket',retries:0,allowedRetries:{websocket:2,webrtc:1},reconnectAsyncRequest:false,currentWaitTime:0};function _canRetry(){return config.retries<config.allowedRetries[config.currentProtocol];}function _switchProtocol(protocol){// sdkParams.protocol = current.toLowerCase();
+asyncClient.on('asyncDestroyed',function(){var current;if(protocol){current=protocol.toLowerCase();config.failOverProtocol=current=="webrtc"?"websocket":"webrtc";config.currentProtocol=current;}else{current=config.currentProtocol;config.currentProtocol=config.failOverProtocol;config.failOverProtocol=current;}console.log(">> Switching protocol::: ",{current:config.currentProtocol,prev:config.failOverProtocol});_events.chatEvents.fireEvent("autoSwitchAsyncProtocol",{current:config.currentProtocol,previous:config.failOverProtocol});_resetRetries();config.reconnectAsyncRequest=false;initAsync();});asyncClient.logout();}function _resetRetries(){config.retries=0;}var publics={switchProtocol:function switchProtocol(protocol){if(protocol=='auto'){config.switchingEnabled=true;_switchProtocol("websocket");}else{config.switchingEnabled=false;_switchProtocol(protocol);}},increaseRetries:function increaseRetries(){config.retries++;},canRetry:function canRetry(){return _canRetry();},getCurrentProtocol:function getCurrentProtocol(){return config.currentProtocol;},resetRetries:function resetRetries(){_resetRetries();},onAsyncIsReconnecting:function onAsyncIsReconnecting(event){publics.increaseRetries();if(config.currentWaitTime<64){config.currentWaitTime+=3;}//config.currentWaitTime = event.nextTime
+if(!_canRetry()&&config.switchingEnabled){_switchProtocol();}},getRetryStepTimerTime:function getRetryStepTimerTime(){if(config.switchingEnabled)return config.currentWaitTime;else return 4;},reconnectAsync:function reconnectAsync(){config.reconnectAsyncRequest=true;config.currentWaitTime=0;if(config.switchingEnabled){if(!_canRetry()){_switchProtocol();}else{_switchProtocol(config.currentProtocol);}}else{if(!_canRetry()){_switchProtocol();}else{_switchProtocol(config.currentProtocol);}}}};return publics;}/*******************************************************
    *            P R I V A T E   M E T H O D S            *
    *******************************************************/var init=function init(){/**
      * Initialize Cache Databases
@@ -49921,8 +49950,8 @@ if(_sdkParams.sdkParams.grantDeviceIdFromSSO){var getDeviceIdWithTokenTime=new D
    * @return {undefined}
    * @return {undefined}
    */initAsync=function initAsync(){var asyncGetReadyTime=new Date().getTime();asyncClient=new _podasyncWsOnly["default"]({protocol:protocolManager.getCurrentProtocol(),//sdkParams.protocol,
-queueHost:queueHost,queuePort:queuePort,queueUsername:queueUsername,queuePassword:queuePassword,queueReceive:queueReceive,queueSend:queueSend,queueConnectionTimeout:queueConnectionTimeout,socketAddress:_sdkParams.sdkParams.socketAddress,serverName:_sdkParams.sdkParams.serverName,deviceId:_sdkParams.sdkParams.deviceId,wsConnectionWaitTime:_sdkParams.sdkParams.wsConnectionWaitTime,connectionRetryInterval:_sdkParams.sdkParams.connectionRetryInterval,connectionCheckTimeout:_sdkParams.sdkParams.connectionCheckTimeout,connectionCheckTimeoutThreshold:_sdkParams.sdkParams.connectionCheckTimeoutThreshold,messageTtl:_sdkParams.sdkParams.messageTtl,reconnectOnClose:_sdkParams.sdkParams.reconnectOnClose,asyncLogging:_sdkParams.sdkParams.asyncLogging,logLevel:_sdkParams.sdkParams.consoleLogging?3:1,webrtcConfig:_sdkParams.sdkParams.webrtcConfig});callModule.asyncInitialized(asyncClient);chatMessaging.asyncInitialized(asyncClient);asyncClient.on('asyncReady',function(){if(_sdkParams.sdkParams.actualTimingLog){_utility["default"].chatStepLogger('Async Connection ',new Date().getTime()-asyncGetReadyTime);}peerId=asyncClient.getPeerId();if(!chatMessaging.userInfo){getUserAndUpdateSDKState();}else if(chatMessaging.userInfo.id>0){chatMessaging.chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();}_sdkParams.sdkParams.deliveryInterval&&clearInterval(_sdkParams.sdkParams.deliveryInterval);_sdkParams.sdkParams.deliveryInterval=setInterval(function(){if(Object.keys(_sdkParams.sdkParams.messagesDelivery).length){messagesDeliveryQueueHandler();}},_sdkParams.sdkParams.deliveryIntervalPitch);_sdkParams.sdkParams.seenInterval&&clearInterval(_sdkParams.sdkParams.seenInterval);_sdkParams.sdkParams.seenInterval=setInterval(function(){if(Object.keys(_sdkParams.sdkParams.messagesSeen).length){messagesSeenQueueHandler();}},_sdkParams.sdkParams.seenIntervalPitch);//shouldReconnectCall();
-});asyncClient.on('stateChange',function(state){_events.chatEvents.fireEvent('chatState',state);chatFullStateObject=state;switch(state.socketState){case 1:// CONNECTED
+queueHost:queueHost,queuePort:queuePort,queueUsername:queueUsername,queuePassword:queuePassword,queueReceive:queueReceive,queueSend:queueSend,queueConnectionTimeout:queueConnectionTimeout,socketAddress:_sdkParams.sdkParams.socketAddress,serverName:_sdkParams.sdkParams.serverName,deviceId:_sdkParams.sdkParams.deviceId,wsConnectionWaitTime:_sdkParams.sdkParams.wsConnectionWaitTime,connectionRetryInterval:_sdkParams.sdkParams.connectionRetryInterval,connectionCheckTimeout:_sdkParams.sdkParams.connectionCheckTimeout,connectionCheckTimeoutThreshold:_sdkParams.sdkParams.connectionCheckTimeoutThreshold,messageTtl:_sdkParams.sdkParams.messageTtl,reconnectOnClose:_sdkParams.sdkParams.reconnectOnClose,asyncLogging:_sdkParams.sdkParams.asyncLogging,logLevel:_sdkParams.sdkParams.consoleLogging?3:1,webrtcConfig:_sdkParams.sdkParams.webrtcConfig,retryStepTimerTime:protocolManager.getRetryStepTimerTime(),onStartWithRetryStepGreaterThanZero:onStateChange});callModule.asyncInitialized(asyncClient);chatMessaging.asyncInitialized(asyncClient);asyncClient.on('asyncReady',function(){if(_sdkParams.sdkParams.actualTimingLog){_utility["default"].chatStepLogger('Async Connection ',new Date().getTime()-asyncGetReadyTime);}peerId=asyncClient.getPeerId();if(!chatMessaging.userInfo){getUserAndUpdateSDKState();}else if(chatMessaging.userInfo.id>0){chatMessaging.chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();}_sdkParams.sdkParams.deliveryInterval&&clearInterval(_sdkParams.sdkParams.deliveryInterval);_sdkParams.sdkParams.deliveryInterval=setInterval(function(){if(Object.keys(_sdkParams.sdkParams.messagesDelivery).length){messagesDeliveryQueueHandler();}},_sdkParams.sdkParams.deliveryIntervalPitch);_sdkParams.sdkParams.seenInterval&&clearInterval(_sdkParams.sdkParams.seenInterval);_sdkParams.sdkParams.seenInterval=setInterval(function(){if(Object.keys(_sdkParams.sdkParams.messagesSeen).length){messagesSeenQueueHandler();}},_sdkParams.sdkParams.seenIntervalPitch);//shouldReconnectCall();
+});asyncClient.on('stateChange',onStateChange);function onStateChange(state){_events.chatEvents.fireEvent('chatState',state);chatFullStateObject=state;switch(state.socketState){case 1:// CONNECTED
 protocolManager.resetRetries();if(state.deviceRegister&&state.serverRegister){// chatMessaging.chatState = true;
 // chatMessaging.ping();
 chatMessaging.startChatPing();}break;case 0:// CONNECTING
@@ -49930,7 +49959,7 @@ chatMessaging.chatState=false;chatMessaging.stopChatPing();break;case 2:// CLOSI
 chatMessaging.chatState=false;chatMessaging.stopChatPing();break;case 3:// CLOSED
 chatMessaging.chatState=false;chatMessaging.stopChatPing();// TODO: Check if this is OK or not?!
 //chatMessaging.sendPingTimeout && clearTimeout(chatMessaging.sendPingTimeout);
-break;}});asyncClient.on('connect',function(newPeerId){asyncGetReadyTime=new Date().getTime();peerId=newPeerId;_events.chatEvents.fireEvent('connect');chatMessaging.ping();});asyncClient.on('disconnect',function(event){oldPeerId=peerId;peerId=undefined;_events.chatEvents.fireEvent('disconnect',event);_events.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:'Call Socket is closed!',error:event});});asyncClient.on('reconnect',function(newPeerId){peerId=newPeerId;_events.chatEvents.fireEvent('reconnect');});asyncClient.on('reconnecting',function(){_sdkParams.sdkParams.consoleLogging&&console.log("[SDK][event: asyncClient.reconnecting]");protocolManager.increaseRetries();protocolManager.maybeSwitchProtocol();});asyncClient.on('message',function(params,ack){receivedAsyncMessageHandler(params);ack&&ack();});asyncClient.on('error',function(error){_events.chatEvents.fireEvent('error',{code:error.errorCode,message:error.errorMessage,error:error.errorEvent});});},getUserAndUpdateSDKState=function getUserAndUpdateSDKState(){var getUserInfoTime=new Date().getTime();getUserInfo(function(userInfoResult){if(_sdkParams.sdkParams.actualTimingLog){_utility["default"].chatStepLogger('Get User Info ',new Date().getTime()-getUserInfoTime);}if(!userInfoResult.hasError){chatMessaging.userInfo=userInfoResult.result.user;// getAllThreads({
+break;}}asyncClient.on('connect',function(newPeerId){asyncGetReadyTime=new Date().getTime();peerId=newPeerId;_events.chatEvents.fireEvent('connect');chatMessaging.ping();});asyncClient.on('disconnect',function(event){oldPeerId=peerId;peerId=undefined;_events.chatEvents.fireEvent('disconnect',event);_events.chatEvents.fireEvent('callEvents',{type:'CALL_ERROR',code:7000,message:'Call Socket is closed!',error:event});});asyncClient.on('reconnect',function(newPeerId){peerId=newPeerId;_events.chatEvents.fireEvent('reconnect');});asyncClient.on('reconnecting',function(event){_sdkParams.sdkParams.consoleLogging&&console.log("[SDK][event: asyncClient.reconnecting]");protocolManager.onAsyncIsReconnecting(event);});asyncClient.on('message',function(params,ack){receivedAsyncMessageHandler(params);ack&&ack();});asyncClient.on('error',function(error){_events.chatEvents.fireEvent('error',{code:error.errorCode,message:error.errorMessage,error:error.errorEvent});});},getUserAndUpdateSDKState=function getUserAndUpdateSDKState(){var getUserInfoTime=new Date().getTime();getUserInfo(function(userInfoResult){if(_sdkParams.sdkParams.actualTimingLog){_utility["default"].chatStepLogger('Get User Info ',new Date().getTime()-getUserInfoTime);}if(!userInfoResult.hasError){chatMessaging.userInfo=userInfoResult.result.user;// getAllThreads({
 //     summary: true,
 //     cache: false
 // });
@@ -51807,7 +51836,7 @@ content:{count:count,offset:offset}};if(params){if((0,_typeof2["default"])(param
      * + locationPingRequest     {object}
      *    + content              {list} A map of { location: string, locationId: int }
      */var locationPingData={chatMessageVOType:_constants.chatMessageVOTypes.LOCATION_PING,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-pushMsgType:3,token:_sdkParams.sdkParams.token},content={};if(params){if(typeof params.location==='string'&&_sdkParams.sdkParams.locationPingTypes.hasOwnProperty(params.location.toUpperCase())){content.location=_sdkParams.sdkParams.locationPingTypes[params.location.toUpperCase()];if(params.location.toUpperCase()==='THREAD'){if(typeof params.threadId==='number'&&params.threadId>0){content.locationId=+params.threadId;}else{_events.chatEvents.fireEvent('error',{code:999,message:'You set the location to be a thread, you have to send a valid ThreadId'});return;}}}else{_events.chatEvents.fireEvent('error',{code:999,message:'Send a valid location type (CHAT / THREAD / CONTACTS)'});return;}locationPingData.content=JSON.stringify(content);}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to LocationPing!'});return;}return chatMessaging.sendMessage(locationPingData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.clearChatServerCaches=clearChatServerCaches;publicized.deleteCacheDatabases=deleteCacheDatabases;publicized.clearCacheDatabasesOfUser=clearCacheDatabasesOfUser;publicized.getChatState=function(){return chatFullStateObject;};publicized.reconnect=function(){asyncClient.reconnectSocket();};publicized.setToken=function(newToken){if(typeof newToken!=='undefined'){_sdkParams.sdkParams.token=newToken;_events.chatEvents.updateToken(_sdkParams.sdkParams.token);if(!chatMessaging.userInfo||!chatMessaging.userInfo.id){getUserAndUpdateSDKState();}}};publicized.generateUUID=_utility["default"].generateUUID;publicized.logout=function(){// clearChatServerCaches();
+pushMsgType:3,token:_sdkParams.sdkParams.token},content={};if(params){if(typeof params.location==='string'&&_sdkParams.sdkParams.locationPingTypes.hasOwnProperty(params.location.toUpperCase())){content.location=_sdkParams.sdkParams.locationPingTypes[params.location.toUpperCase()];if(params.location.toUpperCase()==='THREAD'){if(typeof params.threadId==='number'&&params.threadId>0){content.locationId=+params.threadId;}else{_events.chatEvents.fireEvent('error',{code:999,message:'You set the location to be a thread, you have to send a valid ThreadId'});return;}}}else{_events.chatEvents.fireEvent('error',{code:999,message:'Send a valid location type (CHAT / THREAD / CONTACTS)'});return;}locationPingData.content=JSON.stringify(content);}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to LocationPing!'});return;}return chatMessaging.sendMessage(locationPingData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.clearChatServerCaches=clearChatServerCaches;publicized.deleteCacheDatabases=deleteCacheDatabases;publicized.clearCacheDatabasesOfUser=clearCacheDatabasesOfUser;publicized.getChatState=function(){return chatFullStateObject;};publicized.reconnect=function(){protocolManager.reconnectAsync();};publicized.setToken=function(newToken){if(typeof newToken!=='undefined'){_sdkParams.sdkParams.token=newToken;_events.chatEvents.updateToken(_sdkParams.sdkParams.token);if(!chatMessaging.userInfo||!chatMessaging.userInfo.id){getUserAndUpdateSDKState();}}};publicized.generateUUID=_utility["default"].generateUUID;publicized.logout=function(){// clearChatServerCaches();
 _events.chatEvents.clearEventCallbacks();chatMessaging.messagesCallbacks={};chatMessaging.sendMessageCallbacks={};chatMessaging.threadCallbacks={};chatMessaging.stopChatPing();asyncClient.logout();};publicized.inviteeIdTypes=_constants.inviteeVOidTypes;/**
    * Check a turn server availability
    *
@@ -53110,6 +53139,7 @@ function ChatMessaging(params) {
    */
 
   this.startChatPing = function () {
+    _sdkParams.sdkParams.chatPingMessageInterval && clearInterval(_sdkParams.sdkParams.chatPingMessageInterval);
     _sdkParams.sdkParams.chatPingMessageInterval = setInterval(function () {
       currentModuleInstance.ping();
     }, 20000); //TODO: chatPingMessageInterval

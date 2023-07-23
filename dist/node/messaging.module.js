@@ -52,6 +52,7 @@ function ChatMessaging(params) {
    */
 
   this.startChatPing = function () {
+    _sdkParams.sdkParams.chatPingMessageInterval && clearInterval(_sdkParams.sdkParams.chatPingMessageInterval);
     _sdkParams.sdkParams.chatPingMessageInterval = setInterval(function () {
       currentModuleInstance.ping();
     }, 20000); //TODO: chatPingMessageInterval

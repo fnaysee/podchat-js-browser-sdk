@@ -36,6 +36,7 @@ import {sdkParams} from "./lib/sdkParams";
          * TODO: remove the interval when socket statet changes to closed
          */
         this.startChatPing = function () {
+            sdkParams.chatPingMessageInterval && clearInterval(sdkParams.chatPingMessageInterval);
             sdkParams.chatPingMessageInterval = setInterval(() => {
                 currentModuleInstance.ping();
             }, 20000) ;//TODO: chatPingMessageInterval

@@ -235,11 +235,16 @@ function Chat(params) {
             currentProtocol: (protocol == "auto" ? 'websocket' : protocol),
             failOverProtocol: (protocol == "auto" || protocol == "websocket"  ? 'webrtc' : 'websocket'),
             retries: 0,
-            allowedRetries: 3
+            allowedRetries: {
+                websocket: 2,
+                webrtc: 1
+            },
+            reconnectAsyncRequest: false,
+            currentWaitTime: 0
         };
 
         function canRetry() {
-            return config.retries < config.allowedRetries;
+            return config.retries < config.allowedRetries[config.currentProtocol];
         }
         function switchProtocol(protocol) {
             // sdkParams.protocol = current.toLowerCase();
@@ -264,6 +269,7 @@ function Chat(params) {
                 });
 
                 resetRetries();
+                config.reconnectAsyncRequest = false;
                 initAsync();
             });
 
@@ -274,7 +280,7 @@ function Chat(params) {
             config.retries = 0;
         }
 
-        return {
+        const publics =  {
             switchProtocol(protocol) {
                 if(protocol == 'auto'){
                     config.switchingEnabled = true;
@@ -296,12 +302,42 @@ function Chat(params) {
             resetRetries(){
                 resetRetries();
             },
-            maybeSwitchProtocol() {
+            onAsyncIsReconnecting(event) {
+                publics.increaseRetries();
+
+                if(config.currentWaitTime < 64) {
+                    config.currentWaitTime += 3;
+                }
+                //config.currentWaitTime = event.nextTime
                 if(!canRetry() && config.switchingEnabled) {
                     switchProtocol();
                 }
+            },
+            getRetryStepTimerTime() {
+                if(config.switchingEnabled)
+                    return config.currentWaitTime;
+                else return 4;
+            },
+            reconnectAsync() {
+                config.reconnectAsyncRequest = true;
+                config.currentWaitTime = 0;
+                if(config.switchingEnabled) {
+                    if(!canRetry()) {
+                        switchProtocol();
+                    } else {
+                        switchProtocol(config.currentProtocol);
+                    }
+                } else {
+                    if(!canRetry()) {
+                        switchProtocol();
+                    } else {
+                        switchProtocol(config.currentProtocol);
+                    }
+                }
             }
         };
+
+        return publics;
     }
 
 
@@ -365,7 +401,9 @@ function Chat(params) {
                 reconnectOnClose: sdkParams.reconnectOnClose,
                 asyncLogging: sdkParams.asyncLogging,
                 logLevel: (sdkParams.consoleLogging ? 3 : 1),
-                webrtcConfig: sdkParams.webrtcConfig
+                webrtcConfig: sdkParams.webrtcConfig,
+                retryStepTimerTime: protocolManager.getRetryStepTimerTime(),
+                onStartWithRetryStepGreaterThanZero: onStateChange
             });
             callModule.asyncInitialized(asyncClient);
             chatMessaging.asyncInitialized(asyncClient);
@@ -404,7 +442,8 @@ function Chat(params) {
                 //shouldReconnectCall();
             });
 
-            asyncClient.on('stateChange', function (state) {
+            asyncClient.on('stateChange', onStateChange);
+            function onStateChange(state) {
                 chatEvents.fireEvent('chatState', state);
                 chatFullStateObject = state;
 
@@ -432,7 +471,7 @@ function Chat(params) {
                         //chatMessaging.sendPingTimeout && clearTimeout(chatMessaging.sendPingTimeout);
                         break;
                 }
-            });
+            }
 
             asyncClient.on('connect', function (newPeerId) {
                 asyncGetReadyTime = new Date().getTime();
@@ -459,10 +498,9 @@ function Chat(params) {
                 chatEvents.fireEvent('reconnect');
             });
 
-            asyncClient.on('reconnecting', function () {
+            asyncClient.on('reconnecting', function (event) {
                 sdkParams.consoleLogging && console.log("[SDK][event: asyncClient.reconnecting]")
-                protocolManager.increaseRetries();
-                protocolManager.maybeSwitchProtocol();
+                protocolManager.onAsyncIsReconnecting(event);
             });
 
 
@@ -11630,7 +11668,7 @@ function Chat(params) {
     };
 
     publicized.reconnect = function () {
-        asyncClient.reconnectSocket();
+        protocolManager.reconnectAsync();
     };
 
     publicized.setToken = function (newToken) {
