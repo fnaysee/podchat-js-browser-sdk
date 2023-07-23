@@ -261,7 +261,7 @@ function Chat(params) {
                     config.failOverProtocol = current;
                 }
 
-                console.log(">> Switching protocol::: ", {current: config.currentProtocol, prev: config.failOverProtocol})
+                sdkParams.consoleLogging && console.log("[SDK]|/| switchProtocol: ", "config.currentProtocol: ", config.currentProtocol, "config.currentWaitTime: ", config.currentWaitTime)
 
                 chatEvents.fireEvent("autoSwitchAsyncProtocol", {
                     current: config.currentProtocol,
@@ -303,6 +303,7 @@ function Chat(params) {
                 resetRetries();
             },
             onAsyncIsReconnecting(event) {
+                sdkParams.consoleLogging && console.log("[SDK]|/| onAsyncIsReconnecting: ", "config.currentProtocol: ", config.currentProtocol, "config.currentWaitTime: ", config.currentWaitTime);
                 publics.increaseRetries();
 
                 if(config.currentWaitTime < 64) {
