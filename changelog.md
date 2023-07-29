@@ -3,11 +3,39 @@
 All notable changes to this project will be documented here.
 to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.ir/pod/pod-basic-sdk/chat-js-browser-sdk/-/blob/master/changelog.md)
 
-##[Unreleased]
+## [Unreleased]
+
+## [12.9.6] 29-07-2023
+## [12.9.6-snapshot.4] 19-07-2023
+## [12.9.6-snapshot.3] 19-07-2023
+## [12.9.6-snapshot.2] 19-07-2023
+
+### Added
+- Implemented mode: auto switch between async protocols
+
+### Fixed
+- window is undefined error in Next.js projects
+- Modified 31:LAST_SEEN_UPDATED unreadCount cache condition to prevent errors
+
+
+## [12.9.6-snapshot.1] 11-07-2023
+
+### Changed
+- Update podasync-ws-only@2.9.0-snapshot.10
+
+
+## [12.9.6-snapshot.0] 09-07-2023
+
+### Changed
+- Merge default count=25, offset=0
+- Merge sdkParams in separate module
+
+###Fixed
+- Fixed store error for not loaded thread on type 31 (unreadCount cache)
 
 ## [12.9.5] 2023-07-09
 
-## Changed
+### Changed
 - remove old cache
 - Modification on unreadCount cache to prevent unwanted higher unreadCount on event unread_count_updated
 
