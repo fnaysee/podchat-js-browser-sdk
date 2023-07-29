@@ -8,7 +8,7 @@
     "publish:snapshot": "npm run version:snapshot && npm run build && npm run commitVersionChanges && npm publish --tag snapshot",
     "version:snapshot": "npm version prerelease --preid snapshot",
     "publish:release": "npm run version:release && npm run build && npm run commitVersionChanges && npm publish",
-    "version:release": "npm version 12.9.6",
+    "version:release": "npm version 12.9.7",
     "build:browser": "browserify -t [ babelify ] src/chat.js > dist/podchat-browser-bundle.js",
     "build:npm": "babel src -d dist/node --copy-files",
     "commitVersionChanges": "git add . && git commit -m \"Version\" && npm run wait",
@@ -51,7 +51,7 @@
     "faker": "^5.5.3",
     "kurento-utils": "^6.16.0",
     "node-rsa": "^1.1.1",
-    "podasync-ws-only": "2.9.0-snapshot.10",
+    "podasync-ws-only": "2.9.0-snapshot.11",
     "webrtc-adapter": "^8.0.0"
   },
   "devDependencies": {
