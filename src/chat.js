@@ -204,6 +204,7 @@ function Chat(params) {
         chatSendQueue = [],
         chatWaitQueue = [],
         chatUploadQueue = [],
+        protocolSwitching = params.protocolSwitching,
         protocolManager =  new ProtocolManager({protocol: sdkParams.protocol});
         //fullResponseObject = params.fullResponseObject || false,
         //webrtcConfig = (params.webrtcConfig ? params.webrtcConfig : null);
@@ -236,8 +237,8 @@ function Chat(params) {
             failOverProtocol: (protocol == "auto" || protocol == "websocket"  ? 'webrtc' : 'websocket'),
             retries: 0,
             allowedRetries: {
-                websocket: 2,
-                webrtc: 1
+                websocket: (protocolSwitching && typeof protocolSwitching.websocket !== "undefined" ? protocolSwitching.websocket : 1),
+                webrtc: (protocolSwitching && typeof protocolSwitching.webrtc !== "undefined" ? protocolSwitching.webrtc : 1)
             },
             reconnectAsyncRequest: false,
             currentWaitTime: 0
@@ -248,7 +249,11 @@ function Chat(params) {
         }
         function switchProtocol(protocol) {
             // sdkParams.protocol = current.toLowerCase();
-            asyncClient.on('asyncDestroyed', function () {
+            // asyncClient.on('asyncDestroyed', function () {
+            //
+            // });
+
+            asyncClient.logout().then(()=>{
                 let current;
 
                 if(protocol) {
@@ -271,9 +276,7 @@ function Chat(params) {
                 resetRetries();
                 config.reconnectAsyncRequest = false;
                 initAsync();
-            });
-
-            asyncClient.logout();
+            })
         }
 
         function resetRetries() {
@@ -291,16 +294,17 @@ function Chat(params) {
                 }
             },
             increaseRetries() {
-                config.retries++;
+                config.retries += 1;
             },
-            canRetry(){
-                return canRetry();
-            },
+            canRetry,
             getCurrentProtocol(){
                 return config.currentProtocol;
             },
             resetRetries(){
                 resetRetries();
+            },
+            resetTimerTime(time) {
+                config.currentWaitTime = (typeof time != "undefined" ? time : 3);
             },
             onAsyncIsReconnecting(event) {
                 sdkParams.consoleLogging && console.log("[SDK]|/| onAsyncIsReconnecting: ", "config.currentProtocol: ", config.currentProtocol, "config.currentWaitTime: ", config.currentWaitTime);
@@ -451,6 +455,7 @@ function Chat(params) {
                 switch (state.socketState) {
                     case 1: // CONNECTED
                         protocolManager.resetRetries();
+                        protocolManager.resetTimerTime();
                         if (state.deviceRegister && state.serverRegister) {
                             // chatMessaging.chatState = true;
                             // chatMessaging.ping();

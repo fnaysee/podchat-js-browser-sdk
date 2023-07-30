@@ -216,6 +216,7 @@ function Chat(params) {
       chatSendQueue = [],
       chatWaitQueue = [],
       chatUploadQueue = [],
+      protocolSwitching = params.protocolSwitching,
       protocolManager = new ProtocolManager({
     protocol: _sdkParams.sdkParams.protocol
   }); //fullResponseObject = params.fullResponseObject || false,
@@ -250,21 +251,27 @@ function Chat(params) {
       failOverProtocol: protocol == "auto" || protocol == "websocket" ? 'webrtc' : 'websocket',
       retries: 0,
       allowedRetries: {
-        websocket: 2,
-        webrtc: 1
+        websocket: protocolSwitching && typeof protocolSwitching.websocket !== "undefined" ? protocolSwitching.websocket : 1,
+        webrtc: protocolSwitching && typeof protocolSwitching.webrtc !== "undefined" ? protocolSwitching.webrtc : 1
       },
       reconnectAsyncRequest: false,
       currentWaitTime: 0
     };
+    console.log(">> ProtocolManager allowedRetries: ", config.allowedRetries);
 
-    function _canRetry() {
+    function canRetry() {
       return config.retries < config.allowedRetries[config.currentProtocol];
     }
 
     function _switchProtocol(protocol) {
       // sdkParams.protocol = current.toLowerCase();
-      asyncClient.on('asyncDestroyed', function () {
+      // asyncClient.on('asyncDestroyed', function () {
+      //
+      // });
+      console.log("switchProtocol, asyncClient.logout() before");
+      asyncClient.logout().then(function () {
         var current;
+        console.log("switchProtocol, asyncClient.logout() after");
 
         if (protocol) {
           current = protocol.toLowerCase();
@@ -288,7 +295,6 @@ function Chat(params) {
         config.reconnectAsyncRequest = false;
         initAsync();
       });
-      asyncClient.logout();
     }
 
     function _resetRetries() {
@@ -308,16 +314,17 @@ function Chat(params) {
         }
       },
       increaseRetries: function increaseRetries() {
-        config.retries++;
+        config.retries += 1;
       },
-      canRetry: function canRetry() {
-        return _canRetry();
-      },
+      canRetry: canRetry,
       getCurrentProtocol: function getCurrentProtocol() {
         return config.currentProtocol;
       },
       resetRetries: function resetRetries() {
         _resetRetries();
+      },
+      resetTimerTime: function resetTimerTime(time) {
+        config.currentWaitTime = typeof time != "undefined" ? time : 6;
       },
       onAsyncIsReconnecting: function onAsyncIsReconnecting(event) {
         _sdkParams.sdkParams.consoleLogging && console.log("[SDK]|/| onAsyncIsReconnecting: ", "config.currentProtocol: ", config.currentProtocol, "config.currentWaitTime: ", config.currentWaitTime);
@@ -328,7 +335,7 @@ function Chat(params) {
         } //config.currentWaitTime = event.nextTime
 
 
-        if (!_canRetry() && config.switchingEnabled) {
+        if (!canRetry() && config.switchingEnabled) {
           _switchProtocol();
         }
       },
@@ -340,13 +347,13 @@ function Chat(params) {
         config.currentWaitTime = 0;
 
         if (config.switchingEnabled) {
-          if (!_canRetry()) {
+          if (!canRetry()) {
             _switchProtocol();
           } else {
             _switchProtocol(config.currentProtocol);
           }
         } else {
-          if (!_canRetry()) {
+          if (!canRetry()) {
             _switchProtocol();
           } else {
             _switchProtocol(config.currentProtocol);
@@ -462,6 +469,7 @@ function Chat(params) {
         case 1:
           // CONNECTED
           protocolManager.resetRetries();
+          protocolManager.resetTimerTime();
 
           if (state.deviceRegister && state.serverRegister) {
             // chatMessaging.chatState = true;
@@ -520,6 +528,7 @@ function Chat(params) {
       _events.chatEvents.fireEvent('reconnect');
     });
     asyncClient.on('reconnecting', function (event) {
+      console.log("|/ asyncClient.on('reconnecting')");
       _sdkParams.sdkParams.consoleLogging && console.log("[SDK][event: asyncClient.reconnecting]");
       protocolManager.onAsyncIsReconnecting(event);
     });
@@ -12156,9 +12165,6 @@ function Chat(params) {
           if (result.result && Object.values(result.result).length) {
             Object.entries(result.result).forEach(function (item) {
               formattedData[item[0]] = formatDataToMakeMessage(item[0], item[1]);
-            });
-            console.log({
-              formattedData: formattedData
             });
             result.result = formattedData;
           }
