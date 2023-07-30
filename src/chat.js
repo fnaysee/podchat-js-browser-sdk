@@ -1337,10 +1337,12 @@ function Chat(params) {
                     if (chatMessaging.sendMessageCallbacks[uniqueId] && chatMessaging.sendMessageCallbacks[uniqueId].onSent) {
                         chatMessaging.sendMessageCallbacks[uniqueId].onSent({
                             uniqueId: uniqueId,
-                            messageId: messageContent
+                            messageId: messageContent,
+                            threadId
                         });
                         delete (chatMessaging.sendMessageCallbacks[uniqueId].onSent);
-                        chatMessaging.threadCallbacks[threadId][uniqueId].onSent = true;
+                        if(chatMessaging.threadCallbacks[threadId])
+                            chatMessaging.threadCallbacks[threadId][uniqueId].onSent = true;
                     }
                     break;
 
@@ -2881,7 +2883,14 @@ function Chat(params) {
                         chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
                     }
                     break;
-
+                /**
+                 * Type 238    REPLY_PRIVATELY
+                 */
+                case chatMessageVOTypes.REPLY_PRIVATELY:
+                    if (chatMessaging.messagesCallbacks[uniqueId]) {
+                        chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+                    }
+                    break;
                 /**
                  * Type 999   All unknown errors
                  */
@@ -8650,6 +8659,38 @@ function Chat(params) {
             }
         });
     };
+    publicized.replyPrivately = function (params, callbacks) {
+        var metadata = {},
+            uniqueId;
+
+        if (typeof params.uniqueId !== 'undefined') {
+            uniqueId = params.uniqueId;
+        } else {
+            uniqueId = Utility.generateUUID();
+        }
+        putInChatSendQueue({
+            message: {
+                chatMessageVOType: chatMessageVOTypes.REPLY_PRIVATELY,
+                typeCode: sdkParams.generalTypeCode,
+                messageType: 1,
+                subjectId: params.threadId,
+                repliedTo: params.repliedTo,
+                content: params.content,
+                uniqueId: uniqueId,
+                systemMetadata: JSON.stringify(params.systemMetadata),
+                metadata: JSON.stringify(params.metadata),
+            },
+            callbacks: callbacks
+        }, function () {
+            chatSendQueueHandler();
+        }, true);
+        return {
+            uniqueId: uniqueId,
+            threadId: params.threadId,
+            participant: chatMessaging.userInfo,
+            content: params.content
+        };
+    }
 
     publicized.sendTextMessage = function (params, callbacks) {
         var metadata = {},

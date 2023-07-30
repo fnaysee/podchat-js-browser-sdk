@@ -1973,6 +1973,7 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
         <label for="sendTextMessage">Message :</label>
         <textarea type="text" name="sendTextMessage" id="sendTextMessage"></textarea>
         <button type="button" name="button" id="sendTextButton">Send Text Message</button>
+        <button type="button" name="button" id="replyPrivatelyButton">reply privately</button>
     </fieldset>
 </form>
 
@@ -2642,6 +2643,40 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
     /**
      * SEND FILE
      */
+    document.getElementById("replyPrivatelyButton")
+        .addEventListener("click", function (){
+            var instantResult = chatAgent.replyPrivately({
+                threadId: "58920",
+                repliedTo: "518880496",
+                messageType: 1,
+                systemMetadata: {
+                    id: new Date().getTime()
+                },
+                metadata: {
+                    custom_name: "John Doe"
+                },
+                content: {
+                    "text": "reply privately test 3",
+                    "invitees": [
+                        {
+                            "id": "31445",
+                            "idType": 5
+                        }
+                    ]
+                }
+            }, {
+                onSent: function (result) {
+                    console.log({result});
+                    console.log(result.uniqueId + " \t has been Sent!");
+                },
+                onDeliver: function (result) {
+                    console.log(result.uniqueId + " \t has been Delivered!");
+                },
+                onSeen: function (result) {
+                    console.log(result.uniqueId + " \t has been Seen!");
+                }
+            });
+        })
     document.getElementById("sendTextButton")
         .addEventListener("click", function () {
             var message = document.getElementById("sendTextMessage").value,

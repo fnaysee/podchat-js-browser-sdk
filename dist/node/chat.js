@@ -1325,10 +1325,11 @@ function Chat(params) {
         if (chatMessaging.sendMessageCallbacks[uniqueId] && chatMessaging.sendMessageCallbacks[uniqueId].onSent) {
           chatMessaging.sendMessageCallbacks[uniqueId].onSent({
             uniqueId: uniqueId,
-            messageId: messageContent
+            messageId: messageContent,
+            threadId: threadId
           });
           delete chatMessaging.sendMessageCallbacks[uniqueId].onSent;
-          chatMessaging.threadCallbacks[threadId][uniqueId].onSent = true;
+          if (chatMessaging.threadCallbacks[threadId]) chatMessaging.threadCallbacks[threadId][uniqueId].onSent = true;
         }
 
         break;
@@ -2981,6 +2982,17 @@ function Chat(params) {
         */
 
       case _constants.chatMessageVOTypes.CUSTOMER_INFO:
+        if (chatMessaging.messagesCallbacks[uniqueId]) {
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+        }
+
+        break;
+
+      /**
+       * Type 238    REPLY_PRIVATELY
+       */
+
+      case _constants.chatMessageVOTypes.REPLY_PRIVATELY:
         if (chatMessaging.messagesCallbacks[uniqueId]) {
           chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
         }
@@ -8679,6 +8691,40 @@ function Chat(params) {
         callback && callback(returnData);
       }
     });
+  };
+
+  publicized.replyPrivately = function (params, callbacks) {
+    var metadata = {},
+        uniqueId;
+
+    if (typeof params.uniqueId !== 'undefined') {
+      uniqueId = params.uniqueId;
+    } else {
+      uniqueId = _utility["default"].generateUUID();
+    }
+
+    putInChatSendQueue({
+      message: {
+        chatMessageVOType: _constants.chatMessageVOTypes.REPLY_PRIVATELY,
+        typeCode: _sdkParams.sdkParams.generalTypeCode,
+        messageType: 1,
+        subjectId: params.threadId,
+        repliedTo: params.repliedTo,
+        content: params.content,
+        uniqueId: uniqueId,
+        systemMetadata: JSON.stringify(params.systemMetadata),
+        metadata: JSON.stringify(params.metadata)
+      },
+      callbacks: callbacks
+    }, function () {
+      chatSendQueueHandler();
+    }, true);
+    return {
+      uniqueId: uniqueId,
+      threadId: params.threadId,
+      participant: chatMessaging.userInfo,
+      content: params.content
+    };
   };
 
   publicized.sendTextMessage = function (params, callbacks) {

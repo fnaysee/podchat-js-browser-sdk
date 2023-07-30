@@ -132,6 +132,7 @@ var chatMessageVOTypes = {
   CUSTOMER_INFO: 226,
   RECALL_THREAD_PARTICIPANT: 227,
   CALL_RECORDING_FAILED: 230,
+  REPLY_PRIVATELY: 238,
   ERROR: 999
 };
 exports.chatMessageVOTypes = chatMessageVOTypes;
