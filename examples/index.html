@@ -1977,6 +1977,7 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
         <textarea type="text" name="sendTextMessage" id="sendTextMessage"></textarea>
         <button type="button" name="button" id="sendTextButton">Send Text Message</button>
         <button type="button" name="button" id="replyPrivatelyButton">reply privately</button>
+        <button type="button" name="button" id="getPinMessage">get pin message</button>
     </fieldset>
 </form>
 
@@ -2642,7 +2643,18 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
                 }
             });
         });
+    /**
+     * SEND FILE
+     */
+    document.getElementById("getPinMessage")
+        .addEventListener("click", function (){
+            chatAgent.getPinMessages({
+                content: [58920]
+            }, function (result){
+                console.log("get pin message result: ", result)
+            })
 
+        })
     /**
      * SEND FILE
      */

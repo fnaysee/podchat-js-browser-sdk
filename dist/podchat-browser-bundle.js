@@ -49966,6 +49966,8 @@ break;/**
        */case _constants.chatMessageVOTypes.UNARCHIVE_THREAD:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
         * Type 226    CUSTOMER_INFO
         */case _constants.chatMessageVOTypes.CUSTOMER_INFO:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+       * Type 236    GET PIN MESSAGE
+       */case _constants.chatMessageVOTypes.GET_PIN_MESSAGE:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
        * Type 237    GET_THREAD_LIGHT
        */case _constants.chatMessageVOTypes.GET_THREAD_LIGHT:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
        * Type 238    REPLY_PRIVATELY
@@ -51481,7 +51483,8 @@ token:_sdkParams.sdkParams.token,subjectId:threadId};return chatMessaging.sendMe
 token:_sdkParams.sdkParams.token,subjectId:threadId};return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.version=function(){console.log("%c[SDK] Version: podchat-browser@"+_buildConfig["default"].version,"color:green; font-size:13px");console.log("%c[SDK] Build date:"+_buildConfig["default"].date,"color:green;font-size:13px");console.log("%c[SDK] Additional info: "+_buildConfig["default"].VersionInfo,"color:green;font-size:13px");return _buildConfig["default"];};publicized.changeProtocol=function(){var proto=arguments.length>0&&arguments[0]!==undefined?arguments[0]:"websocket";if(["webrtc","websocket","auto"].includes(proto)){if(proto!=protocolManager.getCurrentProtocol()){protocolManager.switchProtocol(proto.toLowerCase());// sdkParams.protocol = protocolSwitching.getCurrentProtocol();
 // asyncClient.logout();
 // initAsync();
-}else{console.warn("SDK is currently using the ".concat(proto," protocol. Nothing to do."));}}else{console.error("Protocol ".concat(proto," is not supported in SDK. Valid protocols: \"webrtc\", \"websocket\""));}};_store.store.events.on(_store.store.threads.eventsList.UNREAD_COUNT_UPDATED,function(thread){_events.chatEvents.fireEvent('threadEvents',{type:'UNREAD_COUNT_UPDATED',result:{threadId:thread.id,unreadCount:thread.unreadCount||0,lastSeenMessageTime:thread.lastSeenMessageTime||undefined}});});init();return publicized;}if(typeof window!=="undefined"){if(!window.POD){window.POD={};}window.POD.Chat=Chat;//For backward compatibility
+}else{console.warn("SDK is currently using the ".concat(proto," protocol. Nothing to do."));}}else{console.error("Protocol ".concat(proto," is not supported in SDK. Valid protocols: \"webrtc\", \"websocket\""));}};publicized.getPinMessages=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.GET_PIN_MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
+token:_sdkParams.sdkParams.token,content:params.content};return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){if(!result.hasError){var formattedData={};if(result.result&&Object.values(result.result).length){Object.entries(result.result).forEach(function(item){formattedData[item[0]]=formatDataToMakeMessage(item[0],item[1]);});console.log({formattedData:formattedData});result.result=formattedData;}}callback&&callback(result);}});};_store.store.events.on(_store.store.threads.eventsList.UNREAD_COUNT_UPDATED,function(thread){_events.chatEvents.fireEvent('threadEvents',{type:'UNREAD_COUNT_UPDATED',result:{threadId:thread.id,unreadCount:thread.unreadCount||0,lastSeenMessageTime:thread.lastSeenMessageTime||undefined}});});init();return publicized;}if(typeof window!=="undefined"){if(!window.POD){window.POD={};}window.POD.Chat=Chat;//For backward compatibility
 window.PodChat=Chat;}var _default=Chat;exports["default"]=_default;
 
 },{"./buildConfig.json":269,"./call.module":270,"./deprecateMethods":272,"./events.module":273,"./lib/call/deviceManager.js":274,"./lib/constants":275,"./lib/sdkParams":277,"./lib/store":279,"./messaging.module":281,"./utility/utility":282,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/toConsumableArray":9,"@babel/runtime/helpers/typeof":10,"dexie":125,"podasync-ws-only":211}],272:[function(require,module,exports){
@@ -52184,8 +52187,9 @@ var chatMessageVOTypes = {
   CUSTOMER_INFO: 226,
   RECALL_THREAD_PARTICIPANT: 227,
   CALL_RECORDING_FAILED: 230,
-  REPLY_PRIVATELY: 238,
+  GET_PIN_MESSAGE: 236,
   GET_THREAD_LIGHT: 237,
+  REPLY_PRIVATELY: 238,
   ERROR: 999
 };
 exports.chatMessageVOTypes = chatMessageVOTypes;

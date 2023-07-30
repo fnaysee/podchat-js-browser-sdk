@@ -2989,6 +2989,17 @@ function Chat(params) {
         break;
 
       /**
+       * Type 236    GET PIN MESSAGE
+       */
+
+      case _constants.chatMessageVOTypes.GET_PIN_MESSAGE:
+        if (chatMessaging.messagesCallbacks[uniqueId]) {
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+        }
+
+        break;
+
+      /**
        * Type 237    GET_THREAD_LIGHT
        */
 
@@ -12127,6 +12138,35 @@ function Chat(params) {
     } else {
       console.error("Protocol ".concat(proto, " is not supported in SDK. Valid protocols: \"webrtc\", \"websocket\""));
     }
+  };
+
+  publicized.getPinMessages = function (params, callback) {
+    var sendData = {
+      chatMessageVOType: _constants.chatMessageVOTypes.GET_PIN_MESSAGE,
+      typeCode: _sdkParams.sdkParams.generalTypeCode,
+      //params.typeCode,
+      token: _sdkParams.sdkParams.token,
+      content: params.content
+    };
+    return chatMessaging.sendMessage(sendData, {
+      onResult: function onResult(result) {
+        if (!result.hasError) {
+          var formattedData = {};
+
+          if (result.result && Object.values(result.result).length) {
+            Object.entries(result.result).forEach(function (item) {
+              formattedData[item[0]] = formatDataToMakeMessage(item[0], item[1]);
+            });
+            console.log({
+              formattedData: formattedData
+            });
+            result.result = formattedData;
+          }
+        }
+
+        callback && callback(result);
+      }
+    });
   };
 
   _store.store.events.on(_store.store.threads.eventsList.UNREAD_COUNT_UPDATED, function (thread) {

@@ -2884,6 +2884,15 @@ function Chat(params) {
                     }
                     break;
                 /**
+                 * Type 236    GET PIN MESSAGE
+                 */
+                case chatMessageVOTypes.GET_PIN_MESSAGE:
+                    if (chatMessaging.messagesCallbacks[uniqueId]) {
+                        chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+                    }
+                    break;
+
+                /**
                  * Type 237    GET_THREAD_LIGHT
                  */
                 case chatMessageVOTypes.GET_THREAD_LIGHT:
@@ -11994,6 +12003,29 @@ function Chat(params) {
             console.error(`Protocol ${proto} is not supported in SDK. Valid protocols: "webrtc", "websocket"`)
         }
     }
+    publicized.getPinMessages = function (params, callback) {
+        var sendData = {
+            chatMessageVOType: chatMessageVOTypes.GET_PIN_MESSAGE,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            token: sdkParams.token,
+            content: params.content
+        };
+
+        return chatMessaging.sendMessage(sendData, {
+            onResult: function (result) {
+                if(!result.hasError) {
+                    let formattedData = {};
+                    if(result.result && Object.values(result.result).length) {
+                        Object.entries(result.result).forEach(item => {
+                            formattedData[item[0]] = formatDataToMakeMessage(item[0], item[1]);
+                        });
+                        result.result = formattedData;
+                    }
+                }
+                callback && callback(result);
+            }
+        });
+    };
 
     store.events.on(store.threads.eventsList.UNREAD_COUNT_UPDATED, (thread) => {
         chatEvents.fireEvent('threadEvents', {
