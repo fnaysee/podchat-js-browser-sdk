@@ -2989,6 +2989,17 @@ function Chat(params) {
         break;
 
       /**
+       * Type 237    GET_THREAD_LIGHT
+       */
+
+      case _constants.chatMessageVOTypes.GET_THREAD_LIGHT:
+        if (chatMessaging.messagesCallbacks[uniqueId]) {
+          chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+        }
+
+        break;
+
+      /**
        * Type 238    REPLY_PRIVATELY
        */
 
@@ -11933,6 +11944,132 @@ function Chat(params) {
     return chatMessaging.sendMessage(sendData, {
       onResult: function onResult(result) {
         callback && callback(result);
+      }
+    });
+  };
+
+  publicized.getThreadsLight = function (params, callback) {
+    var count = 25,
+        offset = 0,
+        content = {};
+
+    if (params) {
+      if (parseInt(params.count) > 0) {
+        count = params.count;
+      }
+
+      if (parseInt(params.offset) > 0) {
+        offset = params.offset;
+      }
+
+      if (typeof params.threadName === 'string') {
+        content.name = params.threadName;
+      }
+
+      if (typeof params.username === 'string') {
+        content.username = params.username;
+      }
+
+      if (typeof params.cellphoneNumber === 'string') {
+        content.cellphoneNumber = params.cellphoneNumber;
+      }
+
+      if (Array.isArray(params.threadIds)) {
+        content.threadIds = params.threadIds;
+      }
+
+      if (typeof params["new"] === 'boolean') {
+        content["new"] = params["new"];
+      }
+
+      if (parseInt(params.creatorCoreUserId) > 0) {
+        content.creatorCoreUserId = params.creatorCoreUserId;
+      }
+
+      if (parseInt(params.partnerCoreUserId) > 0) {
+        content.partnerCoreUserId = params.partnerCoreUserId;
+      }
+
+      if (parseInt(params.partnerCoreContactId) > 0) {
+        content.partnerCoreContactId = params.partnerCoreContactId;
+      }
+
+      if (parseInt(params.fromTime) > 0 && parseInt(params.fromTime) < 9999999999999) {
+        content.fromTime = parseInt(params.fromTime);
+      }
+
+      if (parseInt(params.toTime) > 0 && parseInt(params.toTime) < 9999999999999) {
+        content.toTime = parseInt(params.toTime);
+      }
+
+      var functionLevelCache = typeof params.cache == 'boolean' ? params.cache : true;
+
+      if (typeof params.isGroup === 'boolean') {
+        content.isGroup = params.isGroup;
+      }
+
+      if (typeof params.type === 'number') {
+        content.type = params.type;
+      }
+    }
+
+    content.count = count;
+    content.offset = offset;
+    var sendMessageParams = {
+      chatMessageVOType: _constants.chatMessageVOTypes.GET_THREAD_LIGHT,
+      typeCode: _sdkParams.sdkParams.generalTypeCode,
+      //params.typeCode,
+      content: content
+    };
+    return chatMessaging.sendMessage(sendMessageParams, {
+      onResult: function onResult(result) {
+        var returnData = {
+          hasError: result.hasError,
+          cache: false,
+          errorMessage: result.errorMessage,
+          errorCode: result.errorCode,
+          uniqueId: result.uniqueId
+        };
+
+        if (!returnData.hasError) {
+          var messageContent = result.result,
+              messageLength = messageContent.length,
+              resultData = {
+            threads: [],
+            contentCount: result.contentCount,
+            hasNext: messageContent && !(messageLength < count),
+            //(offset + count < result.contentCount && messageLength > 0),
+            nextOffset: offset * 1 + messageLength * 1
+          },
+              threadData;
+
+          for (var i = 0; i < messageLength; i++) {
+            threadData = createThread(messageContent[i], false);
+
+            if (threadData) {
+              resultData.threads.push(threadData);
+            }
+          }
+
+          _store.store.threads.saveMany(resultData.threads);
+
+          returnData.result = resultData;
+        }
+
+        callback && callback(returnData);
+        /**
+         * Delete callback so if server pushes response before
+         * cache, cache won't send data again
+         */
+
+        callback = undefined;
+
+        if (!returnData.hasError && returnCache) {
+          _events.chatEvents.fireEvent('threadEvents', {
+            type: 'THREADS_LIST_CHANGE',
+            result: returnData.result
+          });
+        }
       }
     });
   };

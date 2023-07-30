@@ -133,6 +133,7 @@ var chatMessageVOTypes = {
   RECALL_THREAD_PARTICIPANT: 227,
   CALL_RECORDING_FAILED: 230,
   REPLY_PRIVATELY: 238,
+  GET_THREAD_LIGHT: 237,
   ERROR: 999
 };
 exports.chatMessageVOTypes = chatMessageVOTypes;
