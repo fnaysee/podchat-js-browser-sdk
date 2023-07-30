@@ -257,7 +257,6 @@ function Chat(params) {
       reconnectAsyncRequest: false,
       currentWaitTime: 0
     };
-    console.log(">> ProtocolManager allowedRetries: ", config.allowedRetries);
 
     function canRetry() {
       return config.retries < config.allowedRetries[config.currentProtocol];
@@ -268,10 +267,8 @@ function Chat(params) {
       // asyncClient.on('asyncDestroyed', function () {
       //
       // });
-      console.log("switchProtocol, asyncClient.logout() before");
       asyncClient.logout().then(function () {
         var current;
-        console.log("switchProtocol, asyncClient.logout() after");
 
         if (protocol) {
           current = protocol.toLowerCase();
@@ -324,7 +321,7 @@ function Chat(params) {
         _resetRetries();
       },
       resetTimerTime: function resetTimerTime(time) {
-        config.currentWaitTime = typeof time != "undefined" ? time : 6;
+        config.currentWaitTime = typeof time != "undefined" ? time : 3;
       },
       onAsyncIsReconnecting: function onAsyncIsReconnecting(event) {
         _sdkParams.sdkParams.consoleLogging && console.log("[SDK]|/| onAsyncIsReconnecting: ", "config.currentProtocol: ", config.currentProtocol, "config.currentWaitTime: ", config.currentWaitTime);
@@ -528,7 +525,6 @@ function Chat(params) {
       _events.chatEvents.fireEvent('reconnect');
     });
     asyncClient.on('reconnecting', function (event) {
-      console.log("|/ asyncClient.on('reconnecting')");
       _sdkParams.sdkParams.consoleLogging && console.log("[SDK][event: asyncClient.reconnecting]");
       protocolManager.onAsyncIsReconnecting(event);
     });
