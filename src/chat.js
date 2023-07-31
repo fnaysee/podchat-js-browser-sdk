@@ -11958,18 +11958,6 @@ function Chat(params) {
                 }
 
                 callback && callback(returnData);
-                /**
-                 * Delete callback so if server pushes response before
-                 * cache, cache won't send data again
-                 */
-                callback = undefined;
-
-                if (!returnData.hasError && returnCache) {
-                    chatEvents.fireEvent('threadEvents', {
-                        type: 'THREADS_LIST_CHANGE',
-                        result: returnData.result
-                    });
-                }
             }
         });
     }
@@ -12038,15 +12026,15 @@ function Chat(params) {
 
         return chatMessaging.sendMessage(sendData, {
             onResult: function (result) {
-                if(!result.hasError) {
-                    let formattedData = {};
-                    if(result.result && Object.values(result.result).length) {
-                        Object.entries(result.result).forEach(item => {
-                            formattedData[item[0]] = formatDataToMakeMessage(item[0], item[1]);
-                        });
-                        result.result = formattedData;
-                    }
-                }
+                // if(!result.hasError) {
+                //     let formattedData = {};
+                //     if(result.result && Object.values(result.result).length) {
+                //         Object.entries(result.result).forEach(item => {
+                //             formattedData[item[0]] = formatDataToMakeMessage(item[0], item[1]);
+                //         });
+                //         result.result = formattedData;
+                //     }
+                // }
                 callback && callback(result);
             }
         });
