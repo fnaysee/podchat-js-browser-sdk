@@ -1246,11 +1246,12 @@
                     break;
             }
         }
-
+        // 3432707,[{id:"nedahgh", idType:4}]
         function removeParticipants(threadId, participants) {
             chatAgent.removeParticipants({
                 threadId: threadId,
-                participantIds: participants
+                // participantIds: participants,
+                usernames: ["fntest2"]
             }, function (result) {
                 // console.log(result);
             });
@@ -1799,6 +1800,8 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
             // onlyNewMessages: true,
             threadId: document.getElementById('g-p2p').value});">Get History</a>
         <a class="btn" href="#" onclick="getThreadParticipants(document.getElementById('g-p2p').value)">Get Thread
+            Participants</a>
+        <a class="btn" href="#" onclick="removeParticipants()">remove
             Participants</a>
         <a class="btn" href="#" onclick="chatAgent.getThreadAdmins({threadId:document.getElementById('g-p2p').value}, function(res){
             console.log(res);

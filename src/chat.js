@@ -8383,6 +8383,16 @@ function Chat(params) {
                 sendMessageParams.subjectId = params.threadId;
             }
 
+            if (Array.isArray(params.usernames)) {
+                sendMessageParams.content = [];
+                for (var i = 0; i < params.usernames.length; i++) {
+                    sendMessageParams.content.push({
+                        id: params.usernames[i],
+                        idType: inviteeVOidTypes.TO_BE_USER_USERNAME
+                    });
+                }
+            }
+
             if (Array.isArray(params.participantIds)) {
                 sendMessageParams.content = params.participantIds;
             }
