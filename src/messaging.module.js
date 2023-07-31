@@ -157,7 +157,7 @@ import {sdkParams} from "./lib/sdkParams";
 
             if (typeof params.uniqueId != 'undefined') {
                 uniqueId = params.uniqueId;
-            } else if (params.chatMessageVOType !== chatMessageVOTypes.PING) {
+            } else {
                 uniqueId = Utility.generateUUID();
             }
 

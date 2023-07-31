@@ -52901,7 +52901,7 @@ function ChatMessaging(params) {
 
     if (typeof params.uniqueId != 'undefined') {
       uniqueId = params.uniqueId;
-    } else if (params.chatMessageVOType !== _constants.chatMessageVOTypes.PING) {
+    } else {
       uniqueId = _utility["default"].generateUUID();
     }
 
