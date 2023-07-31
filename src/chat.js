@@ -2888,6 +2888,16 @@ function Chat(params) {
                         chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
                     }
                     break;
+
+                /**
+                 * Type 234    LAST_MESSAGE_INFO
+                 */
+                case chatMessageVOTypes.LAST_MESSAGE_INFO:
+                    if (chatMessaging.messagesCallbacks[uniqueId]) {
+                        chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+                    }
+                    break;
+
                 /**
                  * Type 236    GET PIN MESSAGE
                  */
@@ -12031,6 +12041,30 @@ function Chat(params) {
             }
         });
     };
+
+    publicized.lastMessageInfo = function (params, callback) {
+        var sendData = {
+            chatMessageVOType: chatMessageVOTypes.LAST_MESSAGE_INFO,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            token: sdkParams.token,
+            content:params.content
+        };
+
+        return chatMessaging.sendMessage(sendData, {
+            onResult: function (result) {
+                if(!result.hasError) {
+                    let formattedData = {};
+                    if(result.result && Object.values(result.result).length) {
+                        Object.entries(result.result).forEach(item => {
+                            formattedData[item[0]] = formatDataToMakeMessage(item[0], item[1]);
+                        });
+                        result.result = formattedData;
+                    }
+                }
+                callback && callback(result);
+            }
+        });
+    }
 
     store.events.on(store.threads.eventsList.UNREAD_COUNT_UPDATED, (thread) => {
         chatEvents.fireEvent('threadEvents', {

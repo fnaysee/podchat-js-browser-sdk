@@ -1805,6 +1805,8 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
         })">Get Thread Admins</a>
         <a class="btn" href="#" onclick="leaveThread(document.getElementById('g-p2p').value)">Leave Thread</a>
         <br>
+        <button type="button" name="button" id="lastMessageInfoBtn">last message info</button>
+
         <br>
     </fieldset>
 </form>
@@ -2587,7 +2589,11 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
                 console.log(createThreadResult);
             });
         });
-
+    document.getElementById('lastMessageInfoBtn').addEventListener("click", function () {
+        chatAgent.lastMessageInfo({content: [58920]}, function (result){
+            console.log("last message info result:", result);
+        })
+    })
 
     /**
      * CREATE THREAD WITH FILE
