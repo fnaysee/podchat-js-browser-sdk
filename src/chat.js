@@ -205,8 +205,9 @@ function Chat(params) {
         chatWaitQueue = [],
         chatUploadQueue = [],
         protocolSwitching = params.protocolSwitching,
-        protocolManager =  new ProtocolManager({protocol: sdkParams.protocol});
-        //fullResponseObject = params.fullResponseObject || false,
+        protocolManager =  new ProtocolManager({protocol: sdkParams.protocol}),
+        msgLogCallback = typeof params.msgLogCallback == "function" ? params.msgLogCallback : null;
+    //fullResponseObject = params.fullResponseObject || false,
         //webrtcConfig = (params.webrtcConfig ? params.webrtcConfig : null);
 
     if(!sdkParams.consoleLogging) {
@@ -395,7 +396,8 @@ function Chat(params) {
                 logLevel: (sdkParams.consoleLogging ? 3 : 1),
                 webrtcConfig: sdkParams.webrtcConfig,
                 retryStepTimerTime: protocolManager.getRetryStepTimerTime(),
-                onStartWithRetryStepGreaterThanZero: onStateChange
+                onStartWithRetryStepGreaterThanZero: onStateChange,
+                msgLogCallback: msgLogCallback || null
             });
             callModule.asyncInitialized(asyncClient);
             chatMessaging.asyncInitialized(asyncClient);
