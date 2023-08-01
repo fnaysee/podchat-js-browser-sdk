@@ -315,9 +315,9 @@ function Chat(params) {
                 }
             },
             getRetryStepTimerTime() {
-                if(config.switchingEnabled)
-                    return config.currentWaitTime;
-                else return 4;
+                // if(config.switchingEnabled)
+                return config.currentWaitTime;
+                // else return 4;
             },
             reconnectAsync() {
                 config.reconnectAsyncRequest = true;
