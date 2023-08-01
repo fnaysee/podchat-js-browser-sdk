@@ -248,11 +248,6 @@ function Chat(params) {
             return config.retries < config.allowedRetries[config.currentProtocol];
         }
         function switchProtocol(protocol) {
-            // sdkParams.protocol = current.toLowerCase();
-            // asyncClient.on('asyncDestroyed', function () {
-            //
-            // });
-
             asyncClient.logout().then(()=>{
                 let current;
 
@@ -326,18 +321,10 @@ function Chat(params) {
             reconnectAsync() {
                 config.reconnectAsyncRequest = true;
                 config.currentWaitTime = 0;
-                if(config.switchingEnabled) {
-                    if(!canRetry()) {
-                        switchProtocol();
-                    } else {
-                        switchProtocol(config.currentProtocol);
-                    }
+                if(config.switchingEnabled && !canRetry()) {
+                    switchProtocol();
                 } else {
-                    if(!canRetry()) {
-                        switchProtocol();
-                    } else {
-                        switchProtocol(config.currentProtocol);
-                    }
+                    switchProtocol(config.currentProtocol);
                 }
             }
         };
