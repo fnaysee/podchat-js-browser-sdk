@@ -300,7 +300,7 @@ function Chat(params) {
                 resetRetries();
             },
             resetTimerTime(time) {
-                config.currentWaitTime = (typeof time != "undefined" ? time : 3);
+                config.currentWaitTime = (typeof time != "undefined" ? time : 0);
             },
             onAsyncIsReconnecting(event) {
                 sdkParams.consoleLogging && console.log("[SDK]|/| onAsyncIsReconnecting: ", "config.currentProtocol: ", config.currentProtocol, "config.currentWaitTime: ", config.currentWaitTime);
