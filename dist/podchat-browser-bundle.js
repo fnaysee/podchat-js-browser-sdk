@@ -41706,7 +41706,8 @@ function Async(params) {
   // }
 
   var Utility = new _utility["default"]();
-  var protocol = params.protocol || 'websocket',
+  var currentModuleInstance = this,
+    protocol = params.protocol || 'websocket',
     appId = params.appId || 'PodChat',
     deviceId = params.deviceId,
     retryStepTimerTime = typeof params.retryStepTimerTime != "undefined" ? params.retryStepTimerTime : 0,
@@ -41822,6 +41823,16 @@ function Async(params) {
       }
       socketReconnectRetryInterval = setTimeout(function () {
         if (isLoggedOut) return;
+        window.addEventListener('online', function () {
+          if (!isSocketOpen) {
+            currentModuleInstance.reconnectSocket();
+          }
+        });
+        window.addEventListener('offline', function () {
+          if (isSocketOpen) {
+            currentModuleInstance.reconnectSocket();
+          }
+        });
         switch (protocol) {
           case 'websocket':
             initSocket();
@@ -41854,113 +41865,15 @@ function Async(params) {
         connectionCheckTimeout: params.connectionCheckTimeout,
         connectionCheckTimeoutThreshold: params.connectionCheckTimeoutThreshold,
         logLevel: logLevel,
-        msgLogCallback: msgLogCallback
-      });
-      checkIfSocketHasOpennedTimeoutId = setTimeout(function () {
-        if (!isSocketOpen) {
-          fireEvent('error', {
-            errorCode: 4001,
-            errorMessage: 'Can not open Socket!'
-          });
-        }
-      }, 65000);
-      socket.on('open', function () {
-        checkIfSocketHasOpennedTimeoutId && clearTimeout(checkIfSocketHasOpennedTimeoutId);
-        socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-        socketReconnectRetryInterval = null;
-        socketReconnectCheck && clearTimeout(socketReconnectCheck);
-        isSocketOpen = true;
-        retryStep.set(0);
-        socketState = socketStateType.OPEN;
-        fireEvent('stateChange', {
-          socketState: socketState,
-          timeUntilReconnect: 0,
-          deviceRegister: isDeviceRegister,
-          serverRegister: isServerRegister,
-          peerId: peerId
-        });
-      });
-      socket.on('message', function (msg) {
-        handleSocketMessage(msg);
-        if (onReceiveLogging) {
-          asyncLogger('Receive', msg);
-        }
-      });
-      socket.on('close', function (event) {
-        isSocketOpen = false;
-        isDeviceRegister = false;
-        oldPeerId = peerId;
-        socketState = socketStateType.CLOSED;
-
-        // socketState = socketStateType.CLOSED;
-        //
-        // fireEvent('stateChange', {
-        //     socketState: socketState,
-        //     timeUntilReconnect: 0,
-        //     deviceRegister: isDeviceRegister,
-        //     serverRegister: isServerRegister,
-        //     peerId: peerId
-        // });
-
-        fireEvent('disconnect', event);
-        if (reconnOnClose.get() || reconnOnClose.getOld()) {
-          // reconnOnClose.set(reconnOnClose.getOld());
-          if (asyncLogging) {
-            if (workerId > 0) {
-              Utility.asyncStepLogger(workerId + '\t Reconnecting after ' + retryStep.get() + 's');
-            } else {
-              Utility.asyncStepLogger('Reconnecting after ' + retryStep.get() + 's');
-            }
-          }
-          logLevel.debug && console.debug("[Async][async.js] on socket close, retryStep:", retryStep.get());
-          fireEvent('stateChange', {
-            socketState: socketState,
-            timeUntilReconnect: 1000 * retryStep.get(),
-            deviceRegister: isDeviceRegister,
-            serverRegister: isServerRegister,
-            peerId: peerId
-          });
-          socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-          socketReconnectRetryInterval = null;
-          fireEvent("reconnecting", {
-            nextTime: retryStep.get()
-          });
-          socketReconnectRetryInterval = setTimeout(function () {
-            if (isLoggedOut) return;
-            socket.connect();
-          }, 1000 * retryStep.get());
-          if (retryStep.get() < 64) {
-            // retryStep += 3;
-            retryStep.set(retryStep.get() + 3);
-          }
-
-          // socketReconnectCheck && clearTimeout(socketReconnectCheck);
-          //
-          // socketReconnectCheck = setTimeout(function() {
-          //   if (!isSocketOpen) {
-          //     fireEvent("error", {
-          //       errorCode: 4001,
-          //       errorMessage: "Can not open Socket!"
-          //     });
-          //
-          //     socketState = socketStateType.CLOSED;
-          //     fireEvent("stateChange", {
-          //       socketState: socketState,
-          //       deviceRegister: isDeviceRegister,
-          //       serverRegister: isServerRegister,
-          //       peerId: peerId
-          //     });
-          //   }
-          // }, 65000);
-        } else {
+        msgLogCallback: msgLogCallback,
+        onOpen: function onOpen() {
+          checkIfSocketHasOpennedTimeoutId && clearTimeout(checkIfSocketHasOpennedTimeoutId);
           socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
           socketReconnectRetryInterval = null;
           socketReconnectCheck && clearTimeout(socketReconnectCheck);
-          fireEvent('error', {
-            errorCode: 4005,
-            errorMessage: 'Socket Closed!'
-          });
-          socketState = socketStateType.CLOSED;
+          isSocketOpen = true;
+          retryStep.set(0);
+          socketState = socketStateType.OPEN;
           fireEvent('stateChange', {
             socketState: socketState,
             timeUntilReconnect: 0,
@@ -41968,21 +41881,93 @@ function Async(params) {
             serverRegister: isServerRegister,
             peerId: peerId
           });
+        },
+        onMessage: function onMessage(msg) {
+          handleSocketMessage(msg);
+          if (onReceiveLogging) {
+            asyncLogger('Receive', msg);
+          }
+        },
+        onClose: function onClose(event) {
+          isSocketOpen = false;
+          isDeviceRegister = false;
+          oldPeerId = peerId;
+          socketState = socketStateType.CLOSED;
+
+          // socketState = socketStateType.CLOSED;
+          //
+          // fireEvent('stateChange', {
+          //     socketState: socketState,
+          //     timeUntilReconnect: 0,
+          //     deviceRegister: isDeviceRegister,
+          //     serverRegister: isServerRegister,
+          //     peerId: peerId
+          // });
+
+          fireEvent('disconnect', event);
+          if (reconnOnClose.get() || reconnOnClose.getOld()) {
+            // reconnOnClose.set(reconnOnClose.getOld());
+            if (asyncLogging) {
+              if (workerId > 0) {
+                Utility.asyncStepLogger(workerId + '\t Reconnecting after ' + retryStep.get() + 's');
+              } else {
+                Utility.asyncStepLogger('Reconnecting after ' + retryStep.get() + 's');
+              }
+            }
+            logLevel.debug && console.debug("[Async][async.js] on socket close, retryStep:", retryStep.get());
+            fireEvent('stateChange', {
+              socketState: socketState,
+              timeUntilReconnect: 1000 * retryStep.get(),
+              deviceRegister: isDeviceRegister,
+              serverRegister: isServerRegister,
+              peerId: peerId
+            });
+            socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+            socketReconnectRetryInterval = null;
+            fireEvent("reconnecting", {
+              nextTime: retryStep.get()
+            });
+            socket.destroy();
+            socketReconnectRetryInterval = setTimeout(function () {
+              if (isLoggedOut) return;
+              initSocket();
+            }, 1000 * retryStep.get());
+            if (retryStep.get() < 64) {
+              // retryStep += 3;
+              retryStep.set(retryStep.get() + 3);
+            }
+          } else {
+            socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+            socketReconnectRetryInterval = null;
+            socketReconnectCheck && clearTimeout(socketReconnectCheck);
+            fireEvent('error', {
+              errorCode: 4005,
+              errorMessage: 'Socket Closed!'
+            });
+            socketState = socketStateType.CLOSED;
+            fireEvent('stateChange', {
+              socketState: socketState,
+              timeUntilReconnect: 0,
+              deviceRegister: isDeviceRegister,
+              serverRegister: isServerRegister,
+              peerId: peerId
+            });
+          }
+        },
+        onError: function onError(error) {
+          fireEvent('error', {
+            errorCode: '',
+            errorMessage: '',
+            errorEvent: error
+          });
+        },
+        onCustomError: function onCustomError(error) {
+          fireEvent('error', {
+            errorCode: error.errorCode,
+            errorMessage: error.errorMessage,
+            errorEvent: error.errorEvent
+          });
         }
-      });
-      socket.on('customError', function (error) {
-        fireEvent('error', {
-          errorCode: error.errorCode,
-          errorMessage: error.errorMessage,
-          errorEvent: error.errorEvent
-        });
-      });
-      socket.on('error', function (error) {
-        fireEvent('error', {
-          errorCode: '',
-          errorMessage: '',
-          errorEvent: error
-        });
       });
       socket.connect();
     },
@@ -41995,9 +41980,101 @@ function Async(params) {
         //ping
         logLevel: logLevel,
         msgLogCallback: msgLogCallback,
-        connectionOpenWaitTime: params.connectionOpenWaitTime //timeout time to open
+        connectionOpenWaitTime: params.connectionOpenWaitTime,
+        //timeout time to open
+        onOpen: function onOpen() {
+          checkIfSocketHasOpennedTimeoutId && clearTimeout(checkIfSocketHasOpennedTimeoutId);
+          checkIfSocketHasOpennedTimeoutId = null;
+          socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+          socketReconnectRetryInterval = null;
+          socketReconnectCheck && clearTimeout(socketReconnectCheck);
+          isSocketOpen = true;
+          retryStep.set(0);
+          socketState = socketStateType.OPEN;
+          fireEvent('stateChange', {
+            socketState: socketState,
+            timeUntilReconnect: 0,
+            deviceRegister: isDeviceRegister,
+            serverRegister: isServerRegister,
+            peerId: peerId
+          });
+        },
+        onMessage: function onMessage(msg) {
+          handleSocketMessage(msg);
+          if (onReceiveLogging) {
+            asyncLogger('Receive', msg);
+          }
+        },
+        onClose: function onClose(event) {
+          isSocketOpen = false;
+          isDeviceRegister = false;
+          oldPeerId = peerId;
+          socketState = socketStateType.CLOSED;
+          fireEvent('disconnect', event);
+          if (reconnOnClose.get() || reconnOnClose.getOld()) {
+            if (asyncLogging) {
+              if (workerId > 0) {
+                Utility.asyncStepLogger(workerId + '\t Reconnecting after ' + retryStep.get() + 's');
+              } else {
+                Utility.asyncStepLogger('Reconnecting after ' + retryStep.get() + 's');
+              }
+            }
+            logLevel.debug && console.debug("[Async][async.js] on connection close, retryStep:", retryStep.get());
+            fireEvent('stateChange', {
+              socketState: socketState,
+              timeUntilReconnect: 1000 * retryStep.get(),
+              deviceRegister: isDeviceRegister,
+              serverRegister: isServerRegister,
+              peerId: peerId
+            });
+            socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+            socketReconnectRetryInterval = null;
+            fireEvent("reconnecting", {
+              nextTime: retryStep.get()
+            });
+            webRTCClass.destroy();
+            socketReconnectRetryInterval = setTimeout(function () {
+              if (isLoggedOut) return;
+              initWebrtc();
+              // webRTCClass.connect();
+            }, 1000 * retryStep.get());
+            if (retryStep.get() < 64) {
+              // retryStep += 3;
+              retryStep.set(retryStep.get() + 3);
+            }
+          } else {
+            socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+            socketReconnectRetryInterval = null;
+            socketReconnectCheck && clearTimeout(socketReconnectCheck);
+            fireEvent('error', {
+              errorCode: 4005,
+              errorMessage: 'Connection Closed!'
+            });
+            socketState = socketStateType.CLOSED;
+            fireEvent('stateChange', {
+              socketState: socketState,
+              timeUntilReconnect: 0,
+              deviceRegister: isDeviceRegister,
+              serverRegister: isServerRegister,
+              peerId: peerId
+            });
+          }
+        },
+        onCustomError: function onCustomError(error) {
+          fireEvent('error', {
+            errorCode: error.errorCode,
+            errorMessage: error.errorMessage,
+            errorEvent: error.errorEvent
+          });
+        },
+        onError: function onError(error) {
+          fireEvent('error', {
+            errorCode: '',
+            errorMessage: '',
+            errorEvent: error
+          });
+        }
       });
-
       checkIfSocketHasOpennedTimeoutId = setTimeout(function () {
         if (!isSocketOpen) {
           fireEvent('error', {
@@ -42006,96 +42083,6 @@ function Async(params) {
           });
         }
       }, 65000);
-      webRTCClass.on('open', function () {
-        checkIfSocketHasOpennedTimeoutId && clearTimeout(checkIfSocketHasOpennedTimeoutId);
-        checkIfSocketHasOpennedTimeoutId = null;
-        socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-        socketReconnectRetryInterval = null;
-        socketReconnectCheck && clearTimeout(socketReconnectCheck);
-        isSocketOpen = true;
-        retryStep.set(0);
-        socketState = socketStateType.OPEN;
-        fireEvent('stateChange', {
-          socketState: socketState,
-          timeUntilReconnect: 0,
-          deviceRegister: isDeviceRegister,
-          serverRegister: isServerRegister,
-          peerId: peerId
-        });
-      });
-      webRTCClass.on('message', function (msg) {
-        handleSocketMessage(msg);
-        if (onReceiveLogging) {
-          asyncLogger('Receive', msg);
-        }
-      });
-      webRTCClass.on('close', function (event) {
-        isSocketOpen = false;
-        isDeviceRegister = false;
-        oldPeerId = peerId;
-        socketState = socketStateType.CLOSED;
-        fireEvent('disconnect', event);
-        if (reconnOnClose.get() || reconnOnClose.getOld()) {
-          if (asyncLogging) {
-            if (workerId > 0) {
-              Utility.asyncStepLogger(workerId + '\t Reconnecting after ' + retryStep.get() + 's');
-            } else {
-              Utility.asyncStepLogger('Reconnecting after ' + retryStep.get() + 's');
-            }
-          }
-          logLevel.debug && console.debug("[Async][async.js] on connection close, retryStep:", retryStep.get());
-          fireEvent('stateChange', {
-            socketState: socketState,
-            timeUntilReconnect: 1000 * retryStep.get(),
-            deviceRegister: isDeviceRegister,
-            serverRegister: isServerRegister,
-            peerId: peerId
-          });
-          socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-          socketReconnectRetryInterval = null;
-          fireEvent("reconnecting", {
-            nextTime: retryStep.get()
-          });
-          socketReconnectRetryInterval = setTimeout(function () {
-            if (isLoggedOut) return;
-            webRTCClass.connect();
-          }, 1000 * retryStep.get());
-          if (retryStep.get() < 64) {
-            // retryStep += 3;
-            retryStep.set(retryStep.get() + 3);
-          }
-        } else {
-          socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-          socketReconnectRetryInterval = null;
-          socketReconnectCheck && clearTimeout(socketReconnectCheck);
-          fireEvent('error', {
-            errorCode: 4005,
-            errorMessage: 'Connection Closed!'
-          });
-          socketState = socketStateType.CLOSED;
-          fireEvent('stateChange', {
-            socketState: socketState,
-            timeUntilReconnect: 0,
-            deviceRegister: isDeviceRegister,
-            serverRegister: isServerRegister,
-            peerId: peerId
-          });
-        }
-      });
-      webRTCClass.on('customError', function (error) {
-        fireEvent('error', {
-          errorCode: error.errorCode,
-          errorMessage: error.errorMessage,
-          errorEvent: error.errorEvent
-        });
-      });
-      webRTCClass.on('error', function (error) {
-        fireEvent('error', {
-          errorCode: '',
-          errorMessage: '',
-          errorEvent: error
-        });
-      });
       webRTCClass.connect();
     },
     handleSocketMessage = function handleSocketMessage(msg) {
@@ -42420,7 +42407,7 @@ function Async(params) {
         });
         socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
         socketReconnectRetryInterval = null;
-        socket && socket.close();
+        socket && socket.destroy();
         break;
       case 'webrtc':
         socketState = socketStateType.CLOSED;
@@ -42433,7 +42420,7 @@ function Async(params) {
         });
         socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
         socketReconnectRetryInterval = null;
-        webRTCClass && webRTCClass.close();
+        webRTCClass && webRTCClass.destroy();
         break;
     }
   };
@@ -42468,8 +42455,9 @@ function Async(params) {
 
           if (socket) {
             socket.destroy();
-            socket.close();
+            // socket.destroy();
           }
+
           break;
         case 'webrtc':
           socketState = socketStateType.CLOSED;
@@ -42484,7 +42472,6 @@ function Async(params) {
           // reconnectOnClose = false;
           if (webRTCClass) {
             webRTCClass.destroy();
-            webRTCClass.close();
           }
           break;
       }
@@ -42499,51 +42486,30 @@ function Async(params) {
   };
   var reconnectSocketTimeout;
   this.reconnectSocket = function () {
-    oldPeerId = peerId;
-    isDeviceRegister = false;
     isSocketOpen = false;
-    clearTimeouts();
+    isDeviceRegister = false;
+    oldPeerId = peerId;
     socketState = socketStateType.CLOSED;
+    fireEvent('disconnect', {});
+    retryStep.set(3);
+    logLevel.debug && console.debug("[Async][async.js] on socket close, retryStep:", retryStep.get());
     fireEvent('stateChange', {
       socketState: socketState,
-      timeUntilReconnect: 0,
+      timeUntilReconnect: 1000 * retryStep.get(),
       deviceRegister: isDeviceRegister,
       serverRegister: isServerRegister,
       peerId: peerId
     });
     socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
     socketReconnectRetryInterval = null;
-    if (protocol === "websocket") socket && socket.close();else if (protocol == "webrtc") {
-      webRTCClass && webRTCClass.close();
-    }
-
-    // let tmpReconnectOnClose = reconnectOnClose;
-    // reconnectOnClose = false;
-    if (reconnOnClose.getOld() == null) reconnOnClose.setOld(reconnOnClose.get());
-    reconnOnClose.set(false);
-    retryStep.set(0);
-    if (protocol === "websocket") {
-      socket.connect();
-    } else if (protocol == "webrtc") webRTCClass.connect();
-    reconnectSocketTimeout && clearTimeout(reconnectSocketTimeout);
-    reconnectSocketTimeout = null;
-    reconnectSocketTimeout = setTimeout(function () {
-      if (isLoggedOut) return;
-      // retryStep = 4;
-      retryStep.set(0);
-      // reconnectOnClose = tmpReconnectOnClose;
-      reconnOnClose.set(reconnOnClose.getOld());
-      if (socketState != socketStateType.OPEN) {
-        if (protocol === "websocket") {
-          socket.connect();
-        } else if (protocol == "webrtc") webRTCClass.connect();
-      }
-
-      // if(protocol === "websocket")
-      //     socket.connect();
-      // else if(protocol == "webrtc")
-      //     webRTCClass.connect()
-    }, 4000);
+    fireEvent("reconnecting", {
+      nextTime: retryStep.get()
+    });
+    if (protocol == "websocket") socket.destroy();else if (protocol == "webrtc") webRTCClass.destroy();
+    if (isLoggedOut) return;
+    setTimeout(function () {
+      if (protocol == "websocket") initSocket();else if (protocol == "webrtc") initWebrtc();
+    }, 100);
   };
   this.setRetryTimerTime = function (seconds) {
     retryStep.set(seconds);
@@ -42557,290 +42523,269 @@ exports["default"] = _default;
 },{"../utility/logger.js":214,"../utility/utility.js":215,"./socket":212,"./webrtc":213,"@babel/runtime/helpers/interopRequireDefault":5}],212:[function(require,module,exports){
 "use strict";
 
-(function () {
-  /*
-   * Socket Module to connect and handle Socket functionalities
-   * @module Socket
-   *
-   * @param {Object} params
-   */
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Socket = Socket;
+function Socket(params) {
+  if (typeof WebSocket === "undefined" && typeof require !== "undefined" && typeof exports !== "undefined") {
+    WebSocket = require('isomorphic-ws');
+  }
 
-  function Socket(params) {
-    if (typeof WebSocket === "undefined" && typeof require !== "undefined" && typeof exports !== "undefined") {
-      WebSocket = require('isomorphic-ws');
-    }
+  /*******************************************************
+   *          P R I V A T E   V A R I A B L E S          *
+   *******************************************************/
 
-    /*******************************************************
-     *          P R I V A T E   V A R I A B L E S          *
-     *******************************************************/
-
-    var address = params.socketAddress,
-      wsConnectionWaitTime = params.wsConnectionWaitTime || 500,
-      connectionCheckTimeout = params.connectionCheckTimeout || 10000,
-      eventCallback = {},
-      socket,
-      waitForSocketToConnectTimeoutId,
-      socketRealTimeStatusInterval,
-      logLevel = params.logLevel,
-      pingController = new PingManager({
-        waitTime: connectionCheckTimeout
-      }),
-      socketWatchTimeout,
-      isDestroyed = false,
-      closeCodes = {
-        PING_FAILED: {
-          code: 4900,
-          reason: "Ping with server failed"
-        },
-        REQUEST_FROM_ASYNC_CLASS: {
-          code: 4901,
-          reason: "Close by sdk"
-        },
-        CONNECTION_OPEN_TIMEOUT: {
-          code: 4902,
-          reason: "Connection didn't open after a long time"
-        }
+  var address = params.socketAddress,
+    wsConnectionWaitTime = params.wsConnectionWaitTime || 500,
+    connectionCheckTimeout = params.connectionCheckTimeout || 10000,
+    socket,
+    waitForSocketToConnectTimeoutId,
+    socketRealTimeStatusInterval,
+    logLevel = params.logLevel,
+    pingController = new PingManager({
+      waitTime: connectionCheckTimeout
+    }),
+    socketWatchTimeout,
+    isDestroyed = false,
+    closeCodes = {
+      PING_FAILED: {
+        code: 4900,
+        reason: "Ping with server failed"
       },
-      msgLogCallback = params.msgLogCallback;
-    function PingManager(params) {
-      var config = {
-        normalWaitTime: params.waitTime,
-        lastRequestTimeoutId: null,
-        lastReceivedMessageTime: 0,
-        totalNoMessageCount: 0,
-        timeoutIds: {
-          first: null,
-          second: null,
-          third: null
-          //fourth: null
-        }
-      };
+      REQUEST_FROM_ASYNC_CLASS: {
+        code: 4901,
+        reason: "Close by sdk"
+      },
+      CONNECTION_OPEN_TIMEOUT: {
+        code: 4902,
+        reason: "Connection didn't open after a long time"
+      }
+    },
+    msgLogCallback = params.msgLogCallback,
+    onOpen = params.onOpen,
+    onClose = params.onClose,
+    onMessage = params.onMessage,
+    onCustomError = params.onCustomError,
+    onError = params.onError;
+  function PingManager(params) {
+    var config = {
+      normalWaitTime: params.waitTime,
+      lastRequestTimeoutId: null,
+      lastReceivedMessageTime: 0,
+      totalNoMessageCount: 0,
+      timeoutIds: {
+        first: null,
+        second: null,
+        third: null
+        //fourth: null
+      }
+    };
 
-      return {
-        resetPingLoop: function resetPingLoop() {
-          this.stopPingLoop();
-          this.setPingTimeout();
-        },
-        setPingTimeout: function setPingTimeout() {
-          config.timeoutIds.first = setTimeout(function () {
+    return {
+      resetPingLoop: function resetPingLoop() {
+        this.stopPingLoop();
+        this.setPingTimeout();
+      },
+      setPingTimeout: function setPingTimeout() {
+        config.timeoutIds.first = setTimeout(function () {
+          ping();
+          config.timeoutIds.second = setTimeout(function () {
             ping();
-            config.timeoutIds.second = setTimeout(function () {
-              ping();
-              config.timeoutIds.third = setTimeout(function () {
-                logLevel.debug && console.debug("[Async][Socket.js] Force closing socket.");
-                onCloseHandler(null);
-                // socket && socket.close();
-                closeTheSocket(closeCodes.PING_FAILED);
-              }, 2000);
+            config.timeoutIds.third = setTimeout(function () {
+              logLevel.debug && console.debug("[Async][Socket.js] Force closing socket.");
+              onCloseHandler(null);
+              // socket && socket.close();
+              closeTheSocket(closeCodes.PING_FAILED);
             }, 2000);
-          }, 8000);
-        },
-        stopPingLoop: function stopPingLoop() {
-          clearTimeout(config.timeoutIds.first);
-          clearTimeout(config.timeoutIds.second);
-          clearTimeout(config.timeoutIds.third);
-          // clearTimeout(config.timeoutIds.fourth);
+          }, 2000);
+        }, 8000);
+      },
+      stopPingLoop: function stopPingLoop() {
+        clearTimeout(config.timeoutIds.first);
+        clearTimeout(config.timeoutIds.second);
+        clearTimeout(config.timeoutIds.third);
+        // clearTimeout(config.timeoutIds.fourth);
+      }
+    };
+  }
+
+  /*******************************************************
+   *            P R I V A T E   M E T H O D S            *
+   *******************************************************/
+
+  var connect = function connect() {
+      try {
+        if (socket && socket.readyState == 1) {
+          return;
         }
-      };
-    }
+        socket = new WebSocket(address, []);
 
-    /*******************************************************
-     *            P R I V A T E   M E T H O D S            *
-     *******************************************************/
-
-    var connect = function connect() {
-        try {
-          if (socket && socket.readyState == 1) {
-            return;
-          }
-          socket = new WebSocket(address, []);
-
-          // socketRealTimeStatusInterval && clearInterval(socketRealTimeStatusInterval);
-          // socketRealTimeStatusInterval = setInterval(function() {
-          //   switch (socket.readyState) {
-          //     case 2:
-          //       onCloseHandler(null);
-          //       socketRealTimeStatusInterval && clearInterval(socketRealTimeStatusInterval);
-          //       break;
-          //     case 3:
-          //
-          //       break;
-          //   }
-          // }, 5000);
-
-          /**
-           * Watches the socket to make sure it's state changes to 1 in 5 seconds
-           */
-          socketWatchTimeout && clearTimeout(socketWatchTimeout);
-          socketWatchTimeout = setTimeout(function () {
-            // if(socket.readyState !== 1) {
-            logLevel.debug && console.debug("[Async][Socket.js] socketWatchTimeout triggered.");
-            onCloseHandler(null);
-            // socket && socket.close();
-            closeTheSocket(closeCodes.CONNECTION_OPEN_TIMEOUT);
-            // }
-          }, 5000);
-          socket.onopen = function (event) {
-            if (eventCallback["message"]) {
-              waitForSocketToConnect(function () {
-                pingController.resetPingLoop();
-                eventCallback["open"]();
-                socketWatchTimeout && clearTimeout(socketWatchTimeout);
-              });
-            } else {
-              onCloseHandler();
-              closeTheSocket();
-            }
-          };
-          socket.onmessage = function (event) {
-            msgLogCallback({
-              msg: event.data,
-              direction: "receive",
-              time: new Date().getTime()
-            });
-            if (eventCallback["message"]) {
+        /**
+         * Watches the socket to make sure it's state changes to 1 in 5 seconds
+         */
+        socketWatchTimeout && clearTimeout(socketWatchTimeout);
+        socketWatchTimeout = setTimeout(function () {
+          // if(socket.readyState !== 1) {
+          logLevel.debug && console.debug("[Async][Socket.js] socketWatchTimeout triggered.");
+          onCloseHandler(null);
+          // socket && socket.close();
+          closeTheSocket(closeCodes.CONNECTION_OPEN_TIMEOUT);
+          // }
+        }, 5000);
+        socket.onopen = function (event) {
+          if (onOpen) {
+            waitForSocketToConnect(function () {
               pingController.resetPingLoop();
-              var messageData = JSON.parse(event.data);
-              eventCallback["message"](messageData);
-            } else {
-              onCloseHandler();
-              closeTheSocket();
-            }
-          };
-          socket.onclose = function (event) {
-            pingController.stopPingLoop();
-            logLevel.debug && console.debug("[Async][Socket.js] socket.onclose happened. EventData:", event);
-            onCloseHandler(event);
+              onOpen();
+              socketWatchTimeout && clearTimeout(socketWatchTimeout);
+            });
+          } else {
+            onCloseHandler();
+            closeTheSocket();
+          }
+        };
+        socket.onmessage = function (event) {
+          msgLogCallback({
+            msg: event.data,
+            direction: "receive",
+            time: new Date().getTime()
+          });
+          if (onMessage) {
+            pingController.resetPingLoop();
+            var messageData = JSON.parse(event.data);
+            onMessage(messageData);
+          } else {
+            onCloseHandler();
+            closeTheSocket();
+          }
+        };
+        socket.onclose = function (event) {
+          pingController.stopPingLoop();
+          logLevel.debug && console.debug("[Async][Socket.js] socket.onclose happened. EventData:", event);
+          onCloseHandler(event);
+          closeTheSocket();
+          socketWatchTimeout && clearTimeout(socketWatchTimeout);
+        };
+        socket.onerror = function (event) {
+          logLevel.debug && console.debug("[Async][Socket.js] socket.onerror happened. EventData:", event);
+          if (onError) {
+            onError(event);
+            onCloseHandler();
             closeTheSocket();
             socketWatchTimeout && clearTimeout(socketWatchTimeout);
-          };
-          socket.onerror = function (event) {
-            logLevel.debug && console.debug("[Async][Socket.js] socket.onerror happened. EventData:", event);
-            if (eventCallback["error"]) {
-              eventCallback["error"](event);
-              onCloseHandler();
-              closeTheSocket();
-              socketWatchTimeout && clearTimeout(socketWatchTimeout);
-            }
-          };
-        } catch (error) {
-          eventCallback["customError"]({
-            errorCode: 4000,
-            errorMessage: "ERROR in WEBSOCKET!",
-            errorEvent: error
-          });
-        }
-      },
-      onCloseHandler = function onCloseHandler(event) {
-        pingController.stopPingLoop();
-        if (socket) {
-          socket.onclose = null;
-          socket.onmessage = null;
-          socket.onerror = null;
-          socket.onopen = null;
-          socket = null;
-        }
-      },
-      ping = function ping() {
-        sendData({
-          type: 0
+          }
+        };
+      } catch (error) {
+        onCustomError({
+          errorCode: 4000,
+          errorMessage: "ERROR in WEBSOCKET!",
+          errorEvent: error
         });
-      },
-      waitForSocketToConnect = function waitForSocketToConnect(callback) {
-        waitForSocketToConnectTimeoutId && clearTimeout(waitForSocketToConnectTimeoutId);
-        if (socket.readyState === 1) {
-          callback();
-        } else {
-          waitForSocketToConnectTimeoutId = setTimeout(function () {
-            if (socket.readyState === 1) {
-              callback();
-            } else {
-              waitForSocketToConnect(callback);
-            }
-          }, wsConnectionWaitTime);
-        }
-      },
-      sendData = function sendData(params) {
-        var data = {
-          type: params.type,
-          uniqueId: params.uniqueId
-        };
-        if (params.trackerId) {
-          data.trackerId = params.trackerId;
-        }
-        try {
-          if (params.content) {
-            data.content = JSON.stringify(params.content);
-          }
-          if (socket.readyState === 1) {
-            var stringData = JSON.stringify(data);
-            msgLogCallback({
-              msg: stringData,
-              direction: "send",
-              time: new Date().getTime()
-            });
-            socket.send(stringData);
-          }
-        } catch (error) {
-          eventCallback["customError"]({
-            errorCode: 4004,
-            errorMessage: "Error in Socket sendData!",
-            errorEvent: error
-          });
-        }
-      };
-
-    /*******************************************************
-     *             P U B L I C   M E T H O D S             *
-     *******************************************************/
-
-    this.on = function (messageName, callback) {
-      eventCallback[messageName] = callback;
-    };
-    this.emit = sendData;
-    this.connect = function () {
-      connect();
-    };
-    this.close = function () {
-      logLevel.debug && console.debug("[Async][Socket.js] Closing socket by call to this.close");
-      // socket && socket.close();
-      onCloseHandler(null);
-      closeTheSocket(closeCodes.REQUEST_FROM_ASYNC_CLASS);
-      socketWatchTimeout && clearTimeout(socketWatchTimeout);
-    };
-    this.destroy = function () {
-      isDestroyed = true;
-      for (var i in eventCallback) {
-        eventCallback[i] = undefined;
       }
-    };
-    function closeTheSocket(reason) {
+    },
+    onCloseHandler = function onCloseHandler(event) {
+      pingController.stopPingLoop();
       if (socket) {
-        var socketCloseErrorHandler = function socketCloseErrorHandler(err) {
-          console.error('Socket Close Error: ', err);
-        };
-        socket.on('error', socketCloseErrorHandler);
-        setTimeout(function () {
-          if (socket) {
-            if (reason) socket.close(reason.code, reason.reason);else socket.close();
-            socket.off("error", socketCloseErrorHandler);
+        socket.onclose = null;
+        socket.onmessage = null;
+        socket.onerror = null;
+        socket.onopen = null;
+        socket = null;
+      }
+    },
+    ping = function ping() {
+      sendData({
+        type: 0
+      });
+    },
+    waitForSocketToConnect = function waitForSocketToConnect(callback) {
+      waitForSocketToConnectTimeoutId && clearTimeout(waitForSocketToConnectTimeoutId);
+      if (socket.readyState === 1) {
+        callback();
+      } else {
+        waitForSocketToConnectTimeoutId = setTimeout(function () {
+          if (socket.readyState === 1) {
+            callback();
+          } else {
+            waitForSocketToConnect(callback);
           }
-        }, 20);
+        }, wsConnectionWaitTime);
       }
-      if (!isDestroyed && eventCallback["close"]) {
-        eventCallback["close"]();
+    },
+    sendData = function sendData(params) {
+      var data = {
+        type: params.type,
+        uniqueId: params.uniqueId
+      };
+      if (params.trackerId) {
+        data.trackerId = params.trackerId;
       }
+      try {
+        if (params.content) {
+          data.content = JSON.stringify(params.content);
+        }
+        if (socket.readyState === 1) {
+          var stringData = JSON.stringify(data);
+          msgLogCallback({
+            msg: stringData,
+            direction: "send",
+            time: new Date().getTime()
+          });
+          socket.send(stringData);
+        }
+      } catch (error) {
+        onCustomError({
+          errorCode: 4004,
+          errorMessage: "Error in Socket sendData!",
+          errorEvent: error
+        });
+      }
+    };
+
+  /*******************************************************
+   *             P U B L I C   M E T H O D S             *
+   *******************************************************/
+  var publicized = {};
+  publicized.emit = sendData;
+  publicized.connect = function () {
+    connect();
+  };
+  publicized.close = function () {
+    logLevel.debug && console.debug("[Async][Socket.js] Closing socket by call to this.close");
+    // socket && socket.close();
+    onCloseHandler(null);
+    closeTheSocket(closeCodes.REQUEST_FROM_ASYNC_CLASS);
+    socketWatchTimeout && clearTimeout(socketWatchTimeout);
+  };
+  publicized.destroy = function () {
+    isDestroyed = true;
+    publicized.close();
+    onClose = null;
+    onOpen = null;
+    onMessage = null;
+    onCustomError = null;
+  };
+  function closeTheSocket(reason) {
+    if (socket) {
+      var socketCloseErrorHandler = function socketCloseErrorHandler(err) {
+        console.error('Socket Close Error: ', err);
+      };
+      socket.on('error', socketCloseErrorHandler);
+      setTimeout(function () {
+        if (socket) {
+          if (reason) socket.close(reason.code, reason.reason);else socket.close();
+          socket.off("error", socketCloseErrorHandler);
+        }
+      }, 20);
+    }
+    if (!isDestroyed && onClose) {
+      onClose();
     }
   }
-  if (typeof module !== 'undefined' && typeof module.exports != "undefined") {
-    module.exports = Socket;
-  } else {
-    if (!window.POD) {
-      window.POD = {};
-    }
-    window.POD.Socket = Socket;
-  }
-})();
+  return publicized;
+}
+module.exports = Socket;
 },{"isomorphic-ws":189}],213:[function(require,module,exports){
 "use strict";
 
@@ -42851,471 +42796,6 @@ var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/
 var fflate = _interopRequireWildcard(require("fflate"));
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-var defaultConfig = {
-    protocol: "https",
-    baseUrl: "109.201.0.97",
-    basePath: "/webrtc/",
-    registerEndpoint: "register/",
-    addICEEndpoint: "add-ice/",
-    getICEEndpoint: "get-ice/?",
-    configuration: {
-      bundlePolicy: "balanced",
-      iceTransportPolicy: "relay",
-      iceServers: [{
-        "urls": "turn:turnsandbox.podstream.ir:3478",
-        "username": "mkhorrami",
-        "credential": "mkh_123456"
-      }]
-    },
-    connectionCheckTimeout: 10000,
-    logLevel: null,
-    msgLogCallback: null,
-    connectionOpenWaitTime: 7000
-  },
-  variables = {
-    peerConnection: null,
-    dataChannel: null,
-    pingController: new PingManager({
-      waitTime: defaultConfig.connectionCheckTimeout
-    }),
-    candidatesQueue: [],
-    // candidatesSendQueue: [],
-    candidateManager: new CandidatesSendQueueManager(),
-    clientId: null,
-    deviceId: null,
-    apiCallRetries: {
-      register: 3,
-      getIce: 3,
-      addIce: 5
-    },
-    eventCallback: {},
-    subdomain: null,
-    isDestroyed: false,
-    dataChannelOpenTimeout: null,
-    isDataChannelOpened: false
-  };
-function isDataChannelOpened() {
-  return variables.isDataChannelOpened;
-}
-function CandidatesSendQueueManager() {
-  var config = {
-    candidatesToSend: [],
-    alreadyReceivedServerCandidates: false,
-    reCheckTimeout: null
-  };
-  function trySendingCandidates() {
-    timoutCallback();
-    function timoutCallback() {
-      if (variables.peerConnection && variables.peerConnection.signalingState === 'stable') {
-        config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
-        if (config.candidatesToSend.length) {
-          var entry = config.candidatesToSend.shift();
-          handshakingFunctions.sendCandidate(entry).then(function (result) {
-            if (result.length) {
-              addServerCandidates(result);
-              config.alreadyReceivedServerCandidates = true;
-            }
-            trySendingCandidates();
-          });
-        } else if (!config.alreadyReceivedServerCandidates) {
-          handshakingFunctions.getCandidates(variables.clientId).then(function (result) {
-            addServerCandidates(result);
-          })["catch"]();
-        }
-      } else {
-        config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
-        config.reCheckTimeout = setTimeout(timoutCallback, 1000);
-      }
-    }
-  }
-  function addServerCandidates(candidates) {
-    for (var i in candidates) {
-      webrtcFunctions.putCandidateToQueue(candidates[i]);
-    }
-  }
-  return {
-    add: function add(candidate) {
-      config.candidatesToSend.push(candidate);
-      trySendingCandidates();
-    },
-    destroy: function destroy() {
-      config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
-    }
-  };
-}
-function PingManager(params) {
-  var config = {
-    normalWaitTime: params.waitTime,
-    lastRequestTimeoutId: null,
-    lastReceivedMessageTime: 0,
-    totalNoMessageCount: 0,
-    timeoutIds: {
-      first: null,
-      second: null,
-      third: null,
-      fourth: null
-    }
-  };
-  return {
-    resetPingLoop: function resetPingLoop() {
-      this.stopPingLoop();
-      this.setPingTimeout();
-    },
-    setPingTimeout: function setPingTimeout() {
-      config.timeoutIds.first = setTimeout(function () {
-        ping();
-        config.timeoutIds.second = setTimeout(function () {
-          ping();
-          config.timeoutIds.third = setTimeout(function () {
-            console.log("[Async][webrtc] Closing because of ping timeout.");
-            defaultConfig.logLevel.debug && console.debug("[Async][Webrtc.js] Force closing connection.");
-            publicized.close();
-          }, 2000);
-        }, 2000);
-      }, 8000);
-    },
-    stopPingLoop: function stopPingLoop() {
-      clearTimeout(config.timeoutIds.first);
-      clearTimeout(config.timeoutIds.second);
-      clearTimeout(config.timeoutIds.third);
-      // clearTimeout(config.timeoutIds.fourth);
-    }
-  };
-}
-
-function connect() {
-  variables.isDestroyed = false;
-  webrtcFunctions.createPeerConnection();
-  console.log("[Async][webrtc] defaultConfig.connectionOpenWaitTime", defaultConfig.connectionOpenWaitTime);
-  variables.dataChannelOpenTimeout = setTimeout(function () {
-    if (!isDataChannelOpened()) {
-      console.log("[Async][webrtc] Closing because of wait timeout.");
-      publicized.close();
-    }
-  }, defaultConfig.connectionOpenWaitTime);
-}
-var webrtcFunctions = {
-  createPeerConnection: function createPeerConnection() {
-    try {
-      variables.peerConnection = new RTCPeerConnection(defaultConfig.configuration);
-      console.log("[Async][webrtc] Created peer connection.");
-    } catch (error) {
-      publicized.close();
-      console.error("[Async][webrtc] Webrtc Peer Create Error: ", error.message);
-      return;
-    }
-    variables.peerConnection.addEventListener('signalingstatechange', webrtcFunctions.signalingStateChangeCallback);
-    variables.peerConnection.onicecandidate = function (event) {
-      if (event.candidate) {
-        variables.candidateManager.add(event.candidate);
-        webrtcFunctions.putCandidateToQueue(event.candidate);
-      }
-    };
-    webrtcFunctions.createDataChannel();
-    webrtcFunctions.generateSdpOffer().then(sendOfferToServer);
-    function sendOfferToServer(offer) {
-      handshakingFunctions.register(offer.sdp).then(processRegisterResult)["catch"]();
-      variables.peerConnection.setLocalDescription(offer)["catch"](function (error) {
-        return console.error(error);
-      });
-    }
-    function processRegisterResult(result) {
-      variables.clientId = result.clientId;
-      variables.deviceId = result.deviceId;
-      variables.subdomain = result.subDomain;
-      webrtcFunctions.processAnswer(result.sdpAnswer);
-    }
-  },
-  signalingStateChangeCallback: function signalingStateChangeCallback() {
-    if (variables.peerConnection && variables.peerConnection.signalingState === 'stable') {
-      // handshakingFunctions.getCandidates().catch()
-      webrtcFunctions.addTheCandidates();
-    }
-  },
-  createDataChannel: function createDataChannel() {
-    variables.dataChannel = variables.peerConnection.createDataChannel("dataChannel", {
-      ordered: false
-    });
-    variables.dataChannel.onopen = dataChannelCallbacks.onopen;
-    variables.dataChannel.onmessage = dataChannelCallbacks.onmessage;
-    variables.dataChannel.onerror = dataChannelCallbacks.onerror;
-    variables.dataChannel.onclose = dataChannelCallbacks.onclose;
-  },
-  generateSdpOffer: function generateSdpOffer() {
-    return new Promise(function (resolve, reject) {
-      variables.peerConnection.createOffer(function (offer) {
-        resolve(offer);
-      }, function (error) {
-        reject(error);
-        console.error(error);
-      }).then(function (r) {
-        console.log(r);
-        if (r) {
-          resolve(r);
-        }
-      });
-    });
-  },
-  processAnswer: function processAnswer(answer) {
-    var remoteDesc = {
-      type: "answer",
-      sdp: answer
-    };
-    variables.peerConnection.setRemoteDescription(new RTCSessionDescription(remoteDesc))["catch"](function (error) {
-      console.error(error);
-    });
-  },
-  addTheCandidates: function addTheCandidates() {
-    while (variables.candidatesQueue.length) {
-      var entry = variables.candidatesQueue.shift();
-      variables.peerConnection.addIceCandidate(entry.candidate);
-    }
-  },
-  putCandidateToQueue: function putCandidateToQueue(candidate) {
-    variables.candidatesQueue.push({
-      candidate: new RTCIceCandidate(candidate)
-    });
-    if (variables.peerConnection && variables.peerConnection.signalingState === 'stable') {
-      webrtcFunctions.addTheCandidates();
-    }
-  },
-  sendData: function sendData(params) {
-    if (!variables.dataChannel) {
-      console.error("Connection is closed, do not send messages.");
-      return;
-    }
-    var data = {
-      type: params.type,
-      uniqueId: params.uniqueId
-    };
-    if (params.trackerId) {
-      data.trackerId = params.trackerId;
-    }
-    try {
-      if (params.content) {
-        data.content = JSON.stringify(params.content);
-      }
-      if (variables.peerConnection && variables.peerConnection.signalingState === 'stable') {
-        //defaultConfig.logLevel.debug &&
-        // console.log("[Async][WebRTC] Send ", data);
-        var stringData = JSON.stringify(data);
-        defaultConfig.msgLogCallback && defaultConfig.msgLogCallback({
-          msg: stringData,
-          direction: "send",
-          time: new Date().getTime()
-        });
-        variables.dataChannel.send(stringData);
-      }
-    } catch (error) {
-      variables.eventCallback["customError"]({
-        errorCode: 4004,
-        errorMessage: "Error in channel send message!",
-        errorEvent: error
-      });
-    }
-  }
-};
-var dataChannelCallbacks = {
-  onopen: function onopen(event) {
-    console.log("[Async][webrtc] dataChannel open");
-    variables.isDataChannelOpened = true;
-    variables.pingController.resetPingLoop();
-    variables.eventCallback["open"]();
-    var deviceRegister = {
-      "type": "2",
-      "content": {
-        "deviceId": variables.deviceId,
-        "appId": "PodChat",
-        "refresh": false,
-        "renew": true
-      }
-    };
-    deviceRegister.content = JSON.stringify(deviceRegister.content);
-    variables.dataChannel.send(JSON.stringify(deviceRegister));
-  },
-  onmessage: function onmessage(event) {
-    variables.pingController.resetPingLoop();
-    decompressResponse(event.data).then(function (result) {
-      defaultConfig.msgLogCallback && defaultConfig.msgLogCallback({
-        msg: result,
-        direction: "receive",
-        time: new Date().getTime()
-      });
-      var messageData = JSON.parse(result);
-      // console.log("[Async][WebRTC] Receive ", result);
-      variables.eventCallback["message"](messageData);
-    });
-  },
-  onerror: function onerror(error) {
-    console.log("[Async][webrtc] dataChannel.onerror happened. EventData:", error);
-    defaultConfig.logLevel.debug && console.debug("[Async][webrtc] dataChannel.onerror happened. EventData:", error);
-    variables.eventCallback["error"]();
-    publicized.close();
-  },
-  onclose: function onclose(event) {
-    console.log("[Async][webrtc] dataChannel.onclose happened. EventData:", event);
-    publicized.close();
-  }
-};
-function getApiUrl() {
-  return (variables.subdomain ? variables.subdomain : defaultConfig.protocol + "://" + defaultConfig.baseUrl) + defaultConfig.basePath;
-}
-var handshakingFunctions = {
-  register: function register(offer) {
-    var retries = variables.apiCallRetries.register;
-    return new Promise(promiseHandler);
-    function promiseHandler(resolve, reject) {
-      if (variables.isDestroyed) return;
-      var registerEndPoint = getApiUrl() + defaultConfig.registerEndpoint;
-      fetch(registerEndPoint, {
-        method: "POST",
-        body: JSON.stringify({
-          offer: offer
-        }),
-        headers: {
-          "Content-Type": "application/json"
-          // 'Content-Type': 'application/x-www-form-urlencoded',
-        }
-      }).then(function (response) {
-        if (response.ok) return response.json();else if (retries) {
-          retryTheRequest(resolve, reject);
-          retries--;
-        } else reject();
-      }).then(function (result) {
-        return resolve(result);
-      })["catch"](function (err) {
-        if (retries) {
-          retryTheRequest(resolve, reject);
-          retries--;
-        } else {
-          publicized.close();
-        }
-        console.error(err);
-      });
-    }
-    function retryTheRequest(resolve, reject) {
-      setTimeout(function () {
-        promiseHandler(resolve, reject);
-      }, 1000);
-    }
-  },
-  getCandidates: function getCandidates(clientId) {
-    var getIceCandidateEndPoint = getApiUrl() + defaultConfig.getICEEndpoint;
-    getIceCandidateEndPoint += "clientId=" + clientId;
-    var retries = variables.apiCallRetries.getIce;
-    return new Promise(promiseHandler);
-    function promiseHandler(resolve, reject) {
-      if (variables.isDestroyed) return;
-      fetch(getIceCandidateEndPoint, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json"
-          // 'Content-Type': 'application/x-www-form-urlencoded',
-        }
-      }).then(function (response) {
-        if (response.ok) return response.json();else if (retries) {
-          retryTheRequest(resolve, reject);
-          retries--;
-        } else reject();
-      }).then(function (result) {
-        resolve(result.iceCandidates);
-        // if(result.iceCandidates && result.iceCandidates.length) {
-        //     // result.iceCandidates.forEach((item) => {
-        //     //     webrtcFunctions.putCandidateToQueue(item);
-        //     // });
-        //     resolve(result.iceCandidates)
-        // }
-        // else {
-        //     if(retries){
-        //         retryTheRequest(resolve, reject);
-        //         retries--;
-        //     } else reject();
-        // }
-      })["catch"](function (err) {
-        if (retries) {
-          retryTheRequest(resolve, reject);
-          retries--;
-        } else reject(err);
-        console.error(err);
-      });
-    }
-    function retryTheRequest(resolve, reject) {
-      setTimeout(function () {
-        promiseHandler(resolve, reject);
-      }, 1000);
-    }
-  },
-  sendCandidate: function sendCandidate(candidate) {
-    var addIceCandidateEndPoint = getApiUrl() + defaultConfig.addICEEndpoint,
-      retries = variables.apiCallRetries.addIce;
-    return new Promise(promiseHandler);
-    function promiseHandler(resolve, reject) {
-      if (variables.isDestroyed) return;
-      fetch(addIceCandidateEndPoint, {
-        method: "POST",
-        body: JSON.stringify({
-          "clientId": variables.clientId,
-          "candidate": candidate
-        }),
-        headers: {
-          "Content-Type": "application/json"
-          // 'Content-Type': 'application/x-www-form-urlencoded',
-        }
-      }).then(function (response) {
-        if (response.ok) return response.json();else if (retries) {
-          retryTheRequest(resolve, reject);
-          retries--;
-        } else reject();
-      }).then(function (result) {
-        resolve(result.iceCandidates);
-      })["catch"](function (err) {
-        if (retries) {
-          retryTheRequest(resolve, reject);
-          retries--;
-        } else reject(err);
-        console.error(err);
-      });
-    }
-    function retryTheRequest(resolve, reject) {
-      setTimeout(function () {
-        promiseHandler(resolve, reject);
-      }, 2000);
-    }
-  }
-};
-function resetVariables() {
-  variables.subdomain = null;
-  variables.pingController.stopPingLoop();
-  variables.dataChannel && variables.dataChannel.close();
-  variables.dataChannel = null;
-  variables.peerConnection && variables.peerConnection.close();
-  variables.peerConnection = null;
-  variables.candidatesQueue = [];
-  variables.clientId = null;
-  variables.deviceId = null;
-  variables.candidateManager.destroy();
-  variables.candidateManager = new CandidatesSendQueueManager();
-  variables.isDataChannelOpened = false;
-  clearTimeout(variables.dataChannelOpenTimeout);
-  // variables.isDestroyed = false;
-  if (!variables.isDestroyed && variables.eventCallback["close"]) {
-    variables.eventCallback["close"]();
-  }
-}
-function ping() {
-  webrtcFunctions.sendData({
-    type: 0
-  });
-}
-function removeCallbacks() {
-  if (variables.peerConnection) variables.peerConnection.onicecandidate = null;
-  if (variables.dataChannel) {
-    variables.dataChannel.onclose = null;
-    variables.dataChannel.onmessage = null;
-    variables.dataChannel.onerror = null;
-    variables.dataChannel.onopen = null;
-  }
-}
 function WebRTCClass(_ref) {
   var baseUrl = _ref.baseUrl,
     basePath = _ref.basePath,
@@ -43324,7 +42804,55 @@ function WebRTCClass(_ref) {
     connectionCheckTimeout = _ref$connectionCheckT === void 0 ? 10000 : _ref$connectionCheckT,
     logLevel = _ref.logLevel,
     msgLogCallback = _ref.msgLogCallback,
-    connectionOpenWaitTime = _ref.connectionOpenWaitTime;
+    connectionOpenWaitTime = _ref.connectionOpenWaitTime,
+    onOpen = _ref.onOpen,
+    onMessage = _ref.onMessage,
+    onError = _ref.onError,
+    onCustomError = _ref.onCustomError,
+    onClose = _ref.onClose;
+  var defaultConfig = {
+      protocol: "https",
+      baseUrl: "109.201.0.97",
+      basePath: "/webrtc/",
+      registerEndpoint: "register/",
+      addICEEndpoint: "add-ice/",
+      getICEEndpoint: "get-ice/?",
+      configuration: {
+        bundlePolicy: "balanced",
+        iceTransportPolicy: "relay",
+        iceServers: [{
+          "urls": "turn:turnsandbox.podstream.ir:3478",
+          "username": "mkhorrami",
+          "credential": "mkh_123456"
+        }]
+      },
+      connectionCheckTimeout: 10000,
+      logLevel: null,
+      msgLogCallback: null,
+      connectionOpenWaitTime: 7000
+    },
+    variables = {
+      peerConnection: null,
+      dataChannel: null,
+      pingController: new PingManager({
+        waitTime: defaultConfig.connectionCheckTimeout
+      }),
+      candidatesQueue: [],
+      // candidatesSendQueue: [],
+      candidateManager: new CandidatesSendQueueManager(),
+      clientId: null,
+      deviceId: null,
+      apiCallRetries: {
+        register: 3,
+        getIce: 3,
+        addIce: 5
+      },
+      eventCallback: {},
+      subdomain: null,
+      isDestroyed: false,
+      dataChannelOpenTimeout: null,
+      isDataChannelOpened: false
+    };
   var config = {};
   if (baseUrl) config.baseUrl = baseUrl;
   if (basePath) config.basePath = basePath;
@@ -43334,86 +42862,513 @@ function WebRTCClass(_ref) {
   if (connectionOpenWaitTime) config.connectionOpenWaitTime = connectionOpenWaitTime;
   defaultConfig = Object.assign(defaultConfig, config);
   defaultConfig.msgLogCallback = msgLogCallback;
-  return publicized;
-}
-var publicized = {
-  on: function on(messageName, callback) {
-    variables.eventCallback[messageName] = callback;
-  },
-  emit: webrtcFunctions.sendData,
-  connect: connect,
-  close: function close() {
-    removeCallbacks();
-    resetVariables();
-  },
-  destroy: function destroy() {
-    variables.isDestroyed = true;
-    for (var i in variables.eventCallback) {
-      delete variables.eventCallback[i];
+  function isDataChannelOpened() {
+    return variables.isDataChannelOpened;
+  }
+  function CandidatesSendQueueManager() {
+    var config = {
+      candidatesToSend: [],
+      alreadyReceivedServerCandidates: false,
+      reCheckTimeout: null
+    };
+    function trySendingCandidates() {
+      timoutCallback();
+      function timoutCallback() {
+        if (variables.peerConnection && variables.peerConnection.signalingState === 'stable') {
+          config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
+          if (config.candidatesToSend.length) {
+            var entry = config.candidatesToSend.shift();
+            handshakingFunctions.sendCandidate(entry).then(function (result) {
+              if (result.length) {
+                addServerCandidates(result);
+                config.alreadyReceivedServerCandidates = true;
+              }
+              trySendingCandidates();
+            });
+          } else if (!config.alreadyReceivedServerCandidates) {
+            handshakingFunctions.getCandidates(variables.clientId).then(function (result) {
+              addServerCandidates(result);
+            })["catch"]();
+          }
+        } else {
+          config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
+          config.reCheckTimeout = setTimeout(timoutCallback, 1000);
+        }
+      }
+    }
+    function addServerCandidates(candidates) {
+      for (var i in candidates) {
+        webrtcFunctions.putCandidateToQueue(candidates[i]);
+      }
+    }
+    return {
+      add: function add(candidate) {
+        config.candidatesToSend.push(candidate);
+        trySendingCandidates();
+      },
+      destroy: function destroy() {
+        config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
+      }
+    };
+  }
+  function PingManager(params) {
+    var config = {
+      normalWaitTime: params.waitTime,
+      lastRequestTimeoutId: null,
+      lastReceivedMessageTime: 0,
+      totalNoMessageCount: 0,
+      timeoutIds: {
+        first: null,
+        second: null,
+        third: null,
+        fourth: null
+      }
+    };
+    return {
+      resetPingLoop: function resetPingLoop() {
+        this.stopPingLoop();
+        this.setPingTimeout();
+      },
+      setPingTimeout: function setPingTimeout() {
+        config.timeoutIds.first = setTimeout(function () {
+          ping();
+          config.timeoutIds.second = setTimeout(function () {
+            ping();
+            config.timeoutIds.third = setTimeout(function () {
+              console.log("[Async][webrtc] Closing because of ping timeout.");
+              defaultConfig.logLevel.debug && console.debug("[Async][Webrtc.js] Force closing connection.");
+              publicized.close();
+            }, 2000);
+          }, 2000);
+        }, 8000);
+      },
+      stopPingLoop: function stopPingLoop() {
+        clearTimeout(config.timeoutIds.first);
+        clearTimeout(config.timeoutIds.second);
+        clearTimeout(config.timeoutIds.third);
+        // clearTimeout(config.timeoutIds.fourth);
+      }
+    };
+  }
+
+  function connect() {
+    variables.isDestroyed = false;
+    webrtcFunctions.createPeerConnection();
+    console.log("[Async][webrtc] defaultConfig.connectionOpenWaitTime", defaultConfig.connectionOpenWaitTime);
+    variables.dataChannelOpenTimeout = setTimeout(function () {
+      if (!isDataChannelOpened()) {
+        console.log("[Async][webrtc] Closing because of wait timeout.");
+        publicized.close();
+      }
+    }, defaultConfig.connectionOpenWaitTime);
+  }
+  var webrtcFunctions = {
+    createPeerConnection: function createPeerConnection() {
+      try {
+        variables.peerConnection = new RTCPeerConnection(defaultConfig.configuration);
+        console.log("[Async][webrtc] Created peer connection.");
+      } catch (error) {
+        publicized.close();
+        console.error("[Async][webrtc] Webrtc Peer Create Error: ", error.message);
+        return;
+      }
+      variables.peerConnection.addEventListener('signalingstatechange', webrtcFunctions.signalingStateChangeCallback);
+      variables.peerConnection.onicecandidate = function (event) {
+        if (event.candidate) {
+          variables.candidateManager.add(event.candidate);
+          webrtcFunctions.putCandidateToQueue(event.candidate);
+        }
+      };
+      webrtcFunctions.createDataChannel();
+      webrtcFunctions.generateSdpOffer().then(sendOfferToServer);
+      function sendOfferToServer(offer) {
+        handshakingFunctions.register(offer.sdp).then(processRegisterResult)["catch"]();
+        variables.peerConnection.setLocalDescription(offer)["catch"](function (error) {
+          return console.error(error);
+        });
+      }
+      function processRegisterResult(result) {
+        variables.clientId = result.clientId;
+        variables.deviceId = result.deviceId;
+        variables.subdomain = result.subDomain;
+        webrtcFunctions.processAnswer(result.sdpAnswer);
+      }
+    },
+    signalingStateChangeCallback: function signalingStateChangeCallback() {
+      if (variables.peerConnection && variables.peerConnection.signalingState === 'stable') {
+        // handshakingFunctions.getCandidates().catch()
+        webrtcFunctions.addTheCandidates();
+      }
+    },
+    createDataChannel: function createDataChannel() {
+      variables.dataChannel = variables.peerConnection.createDataChannel("dataChannel", {
+        ordered: false
+      });
+      variables.dataChannel.onopen = dataChannelCallbacks.onopen;
+      variables.dataChannel.onmessage = dataChannelCallbacks.onmessage;
+      variables.dataChannel.onerror = dataChannelCallbacks.onerror;
+      variables.dataChannel.onclose = dataChannelCallbacks.onclose;
+    },
+    generateSdpOffer: function generateSdpOffer() {
+      return new Promise(function (resolve, reject) {
+        variables.peerConnection.createOffer(function (offer) {
+          resolve(offer);
+        }, function (error) {
+          reject(error);
+          console.error(error);
+        }).then(function (r) {
+          console.log(r);
+          if (r) {
+            resolve(r);
+          }
+        });
+      });
+    },
+    processAnswer: function processAnswer(answer) {
+      var remoteDesc = {
+        type: "answer",
+        sdp: answer
+      };
+      variables.peerConnection.setRemoteDescription(new RTCSessionDescription(remoteDesc))["catch"](function (error) {
+        console.error(error);
+      });
+    },
+    addTheCandidates: function addTheCandidates() {
+      while (variables.candidatesQueue.length) {
+        var entry = variables.candidatesQueue.shift();
+        variables.peerConnection.addIceCandidate(entry.candidate);
+      }
+    },
+    putCandidateToQueue: function putCandidateToQueue(candidate) {
+      variables.candidatesQueue.push({
+        candidate: new RTCIceCandidate(candidate)
+      });
+      if (variables.peerConnection && variables.peerConnection.signalingState === 'stable') {
+        webrtcFunctions.addTheCandidates();
+      }
+    },
+    sendData: function sendData(params) {
+      if (!variables.dataChannel) {
+        console.error("Connection is closed, do not send messages.");
+        return;
+      }
+      var data = {
+        type: params.type,
+        uniqueId: params.uniqueId
+      };
+      if (params.trackerId) {
+        data.trackerId = params.trackerId;
+      }
+      try {
+        if (params.content) {
+          data.content = JSON.stringify(params.content);
+        }
+        if (variables.peerConnection && variables.peerConnection.signalingState === 'stable') {
+          //defaultConfig.logLevel.debug &&
+          // console.log("[Async][WebRTC] Send ", data);
+          var stringData = JSON.stringify(data);
+          defaultConfig.msgLogCallback && defaultConfig.msgLogCallback({
+            msg: stringData,
+            direction: "send",
+            time: new Date().getTime()
+          });
+          variables.dataChannel.send(stringData);
+        }
+      } catch (error) {
+        onCustomError({
+          errorCode: 4004,
+          errorMessage: "Error in channel send message!",
+          errorEvent: error
+        });
+      }
+    }
+  };
+  var dataChannelCallbacks = {
+    onopen: function onopen(event) {
+      console.log("[Async][webrtc] dataChannel open");
+      variables.isDataChannelOpened = true;
+      variables.pingController.resetPingLoop();
+      onOpen();
+      var deviceRegister = {
+        "type": "2",
+        "content": {
+          "deviceId": variables.deviceId,
+          "appId": "PodChat",
+          "refresh": false,
+          "renew": true
+        }
+      };
+      deviceRegister.content = JSON.stringify(deviceRegister.content);
+      variables.dataChannel.send(JSON.stringify(deviceRegister));
+    },
+    onmessage: function onmessage(event) {
+      variables.pingController.resetPingLoop();
+      decompressResponse(event.data).then(function (result) {
+        defaultConfig.msgLogCallback && defaultConfig.msgLogCallback({
+          msg: result,
+          direction: "receive",
+          time: new Date().getTime()
+        });
+        var messageData = JSON.parse(result);
+        // console.log("[Async][WebRTC] Receive ", result);
+        onMessage(messageData);
+      });
+    },
+    onerror: function onerror(error) {
+      console.log("[Async][webrtc] dataChannel.onerror happened. EventData:", error);
+      defaultConfig.logLevel.debug && console.debug("[Async][webrtc] dataChannel.onerror happened. EventData:", error);
+      onError();
+      publicized.close();
+    },
+    onclose: function onclose(event) {
+      console.log("[Async][webrtc] dataChannel.onclose happened. EventData:", event);
+      publicized.close();
+    }
+  };
+  function getApiUrl() {
+    return (variables.subdomain ? variables.subdomain : defaultConfig.protocol + "://" + defaultConfig.baseUrl) + defaultConfig.basePath;
+  }
+  var handshakingFunctions = {
+    register: function register(offer) {
+      var retries = variables.apiCallRetries.register;
+      return new Promise(promiseHandler);
+      function promiseHandler(resolve, reject) {
+        if (variables.isDestroyed) return;
+        var registerEndPoint = getApiUrl() + defaultConfig.registerEndpoint;
+        fetch(registerEndPoint, {
+          method: "POST",
+          body: JSON.stringify({
+            offer: offer
+          }),
+          headers: {
+            "Content-Type": "application/json"
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+          }
+        }).then(function (response) {
+          if (response.ok) return response.json();else if (retries) {
+            retryTheRequest(resolve, reject);
+            retries--;
+          } else reject();
+        }).then(function (result) {
+          return resolve(result);
+        })["catch"](function (err) {
+          if (retries) {
+            retryTheRequest(resolve, reject);
+            retries--;
+          } else {
+            publicized.close();
+          }
+          console.error(err);
+        });
+      }
+      function retryTheRequest(resolve, reject) {
+        setTimeout(function () {
+          promiseHandler(resolve, reject);
+        }, 1000);
+      }
+    },
+    getCandidates: function getCandidates(clientId) {
+      var getIceCandidateEndPoint = getApiUrl() + defaultConfig.getICEEndpoint;
+      getIceCandidateEndPoint += "clientId=" + clientId;
+      var retries = variables.apiCallRetries.getIce;
+      return new Promise(promiseHandler);
+      function promiseHandler(resolve, reject) {
+        if (variables.isDestroyed) return;
+        fetch(getIceCandidateEndPoint, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json"
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+          }
+        }).then(function (response) {
+          if (response.ok) return response.json();else if (retries) {
+            retryTheRequest(resolve, reject);
+            retries--;
+          } else reject();
+        }).then(function (result) {
+          resolve(result.iceCandidates);
+          // if(result.iceCandidates && result.iceCandidates.length) {
+          //     // result.iceCandidates.forEach((item) => {
+          //     //     webrtcFunctions.putCandidateToQueue(item);
+          //     // });
+          //     resolve(result.iceCandidates)
+          // }
+          // else {
+          //     if(retries){
+          //         retryTheRequest(resolve, reject);
+          //         retries--;
+          //     } else reject();
+          // }
+        })["catch"](function (err) {
+          if (retries) {
+            retryTheRequest(resolve, reject);
+            retries--;
+          } else reject(err);
+          console.error(err);
+        });
+      }
+      function retryTheRequest(resolve, reject) {
+        setTimeout(function () {
+          promiseHandler(resolve, reject);
+        }, 1000);
+      }
+    },
+    sendCandidate: function sendCandidate(candidate) {
+      var addIceCandidateEndPoint = getApiUrl() + defaultConfig.addICEEndpoint,
+        retries = variables.apiCallRetries.addIce;
+      return new Promise(promiseHandler);
+      function promiseHandler(resolve, reject) {
+        if (variables.isDestroyed) return;
+        fetch(addIceCandidateEndPoint, {
+          method: "POST",
+          body: JSON.stringify({
+            "clientId": variables.clientId,
+            "candidate": candidate
+          }),
+          headers: {
+            "Content-Type": "application/json"
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+          }
+        }).then(function (response) {
+          if (response.ok) return response.json();else if (retries) {
+            retryTheRequest(resolve, reject);
+            retries--;
+          } else reject();
+        }).then(function (result) {
+          resolve(result.iceCandidates);
+        })["catch"](function (err) {
+          if (retries) {
+            retryTheRequest(resolve, reject);
+            retries--;
+          } else reject(err);
+          console.error(err);
+        });
+      }
+      function retryTheRequest(resolve, reject) {
+        setTimeout(function () {
+          promiseHandler(resolve, reject);
+        }, 2000);
+      }
+    }
+  };
+  function resetVariables() {
+    variables.subdomain = null;
+    variables.pingController.stopPingLoop();
+    variables.dataChannel && variables.dataChannel.close();
+    variables.dataChannel = null;
+    variables.peerConnection && variables.peerConnection.close();
+    variables.peerConnection = null;
+    variables.candidatesQueue = [];
+    variables.clientId = null;
+    variables.deviceId = null;
+    variables.candidateManager.destroy();
+    variables.candidateManager = new CandidatesSendQueueManager();
+    variables.isDataChannelOpened = false;
+    clearTimeout(variables.dataChannelOpenTimeout);
+    // variables.isDestroyed = false;
+    if (!variables.isDestroyed && onClose) {
+      onClose();
     }
   }
-};
-
-/**
- * Decompress results
- */
-function decompress(_x, _x2) {
-  return _decompress.apply(this, arguments);
-}
-function _decompress() {
-  _decompress = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(byteArray, encoding) {
-    var result, res;
-    return _regenerator["default"].wrap(function _callee$(_context) {
-      while (1) switch (_context.prev = _context.next) {
-        case 0:
-          result = fflate.decompressSync(new Uint8Array(byteArray));
-          res = new TextDecoder().decode(result);
-          return _context.abrupt("return", res);
-        case 3:
-        case "end":
-          return _context.stop();
-      }
-    }, _callee);
-  }));
-  return _decompress.apply(this, arguments);
-}
-function decompressResponse(_x3) {
-  return _decompressResponse.apply(this, arguments);
-} //utility
-/**
- * Base64Url string to array buffer
- * - b64u->b64->biStr->byte[]->arrBuff
- * @param base64Url
- * @returns {ArrayBufferLike}
- * @private
- */
-function _decompressResponse() {
-  _decompressResponse = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(compressedData) {
-    return _regenerator["default"].wrap(function _callee2$(_context2) {
-      while (1) switch (_context2.prev = _context2.next) {
-        case 0:
-          _context2.next = 2;
-          return decompress(_base64UrlToArrayBuffer(compressedData), 'gzip');
-        case 2:
-          return _context2.abrupt("return", _context2.sent);
-        case 3:
-        case "end":
-          return _context2.stop();
-      }
-    }, _callee2);
-  }));
-  return _decompressResponse.apply(this, arguments);
-}
-function _base64UrlToArrayBuffer(base64) {
-  // console.log('array buffer from base64Url:', base64);
-  var binaryString = window.atob(base64);
-  var length = binaryString.length;
-  var bytes = new Uint8Array(length);
-  for (var i = 0; i < length; i++) {
-    bytes[i] = binaryString.charCodeAt(i);
+  function ping() {
+    webrtcFunctions.sendData({
+      type: 0
+    });
   }
-  // console.log('array buffer:', bytes.buffer);
-  return bytes.buffer;
+  function removeCallbacks() {
+    if (variables.peerConnection) variables.peerConnection.onicecandidate = null;
+    if (variables.dataChannel) {
+      variables.dataChannel.onclose = null;
+      variables.dataChannel.onmessage = null;
+      variables.dataChannel.onerror = null;
+      variables.dataChannel.onopen = null;
+    }
+  }
+  var publicized = {};
+  // publicized.on: function (messageName, callback) {
+  //         variables.eventCallback[messageName] = callback;
+  //     },
+  publicized.emit = webrtcFunctions.sendData;
+  publicized.connect = connect;
+  publicized.close = function () {
+    removeCallbacks();
+    resetVariables();
+  };
+  publicized.destroy = function () {
+    variables.isDestroyed = true;
+    publicized.close();
+    onOpen = null;
+    onClose = null;
+    onMessage = null;
+    onError = null;
+    onCustomError = null;
+    // for (let i in variables.eventCallback) {
+    //     delete variables.eventCallback[i];
+    // }
+  };
+
+  /**
+   * Decompress results
+   */
+  function decompress(_x, _x2) {
+    return _decompress.apply(this, arguments);
+  }
+  function _decompress() {
+    _decompress = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(byteArray, encoding) {
+      var result, res;
+      return _regenerator["default"].wrap(function _callee$(_context) {
+        while (1) switch (_context.prev = _context.next) {
+          case 0:
+            result = fflate.decompressSync(new Uint8Array(byteArray));
+            res = new TextDecoder().decode(result);
+            return _context.abrupt("return", res);
+          case 3:
+          case "end":
+            return _context.stop();
+        }
+      }, _callee);
+    }));
+    return _decompress.apply(this, arguments);
+  }
+  function decompressResponse(_x3) {
+    return _decompressResponse.apply(this, arguments);
+  } //utility
+  /**
+   * Base64Url string to array buffer
+   * - b64u->b64->biStr->byte[]->arrBuff
+   * @param base64Url
+   * @returns {ArrayBufferLike}
+   * @private
+   */
+  function _decompressResponse() {
+    _decompressResponse = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(compressedData) {
+      return _regenerator["default"].wrap(function _callee2$(_context2) {
+        while (1) switch (_context2.prev = _context2.next) {
+          case 0:
+            _context2.next = 2;
+            return decompress(_base64UrlToArrayBuffer(compressedData), 'gzip');
+          case 2:
+            return _context2.abrupt("return", _context2.sent);
+          case 3:
+          case "end":
+            return _context2.stop();
+        }
+      }, _callee2);
+    }));
+    return _decompressResponse.apply(this, arguments);
+  }
+  function _base64UrlToArrayBuffer(base64) {
+    // console.log('array buffer from base64Url:', base64);
+    var binaryString = window.atob(base64);
+    var length = binaryString.length;
+    var bytes = new Uint8Array(length);
+    for (var i = 0; i < length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    // console.log('array buffer:', bytes.buffer);
+    return bytes.buffer;
+  }
+  return publicized;
 }
 module.exports = WebRTCClass;
 },{"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":10,"@babel/runtime/regenerator":12,"fflate":151}],214:[function(require,module,exports){
@@ -48720,7 +48675,7 @@ WildEmitter.mixin = function (constructor) {
 WildEmitter.mixin(WildEmitter);
 
 },{}],269:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.5","date":"۱۴۰۲/۵/۱۴","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.7-snapshot.5","date":"۱۴۰۲/۵/۱۵","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],270:[function(require,module,exports){
 "use strict";var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");var _typeof3=require("@babel/runtime/helpers/typeof");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _regenerator=_interopRequireDefault(require("@babel/runtime/regenerator"));var _asyncToGenerator2=_interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _constants=require("./lib/constants");var _kurentoUtils=_interopRequireDefault(require("kurento-utils"));var _utility=_interopRequireDefault(require("./utility/utility"));var _eventsModule=require("./events.module.js");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));var _errorHandler=_interopRequireWildcard(require("./lib/errorHandler"));var _sdkParams=require("./lib/sdkParams");function _getRequireWildcardCache(nodeInterop){if(typeof WeakMap!=="function")return null;var cacheBabelInterop=new WeakMap();var cacheNodeInterop=new WeakMap();return(_getRequireWildcardCache=function _getRequireWildcardCache(nodeInterop){return nodeInterop?cacheNodeInterop:cacheBabelInterop;})(nodeInterop);}function _interopRequireWildcard(obj,nodeInterop){if(!nodeInterop&&obj&&obj.__esModule){return obj;}if(obj===null||_typeof3(obj)!=="object"&&typeof obj!=="function"){return{"default":obj};}var cache=_getRequireWildcardCache(nodeInterop);if(cache&&cache.has(obj)){return cache.get(obj);}var newObj={};var hasPropertyDescriptor=Object.defineProperty&&Object.getOwnPropertyDescriptor;for(var key in obj){if(key!=="default"&&Object.prototype.hasOwnProperty.call(obj,key)){var desc=hasPropertyDescriptor?Object.getOwnPropertyDescriptor(obj,key):null;if(desc&&(desc.get||desc.set)){Object.defineProperty(newObj,key,desc);}else{newObj[key]=obj[key];}}}newObj["default"]=obj;if(cache){cache.set(obj,newObj);}return newObj;}function ChatCall(params){var _sdkParams$callOption,_sdkParams$callOption2;var//Utility = params.Utility,
 currentModuleInstance=this,asyncClient=params.asyncClient,//chatEvents = params.chatEvents,
@@ -49538,7 +49493,8 @@ if(!_sdkParams.sdkParams.consoleLogging){/**
          */window.Logger={error:function error(){},log:function log(){},debug:function debug(){}};}(0,_events.initEventHandler)(params);var chatMessaging=new _messaging["default"](Object.assign(params,{asyncClient:asyncClient})),callModule=new _call["default"](Object.assign(params,{asyncClient:asyncClient,chatMessaging:chatMessaging}));function ProtocolManager(_ref){var _ref$protocol=_ref.protocol,protocol=_ref$protocol===void 0?'auto':_ref$protocol;var config={switchingEnabled:protocol=="auto",currentProtocol:protocol=="auto"?'websocket':protocol,failOverProtocol:protocol=="auto"||protocol=="websocket"?'webrtc':'websocket',retries:0,allowedRetries:{websocket:protocolSwitching&&typeof protocolSwitching.websocket!=="undefined"?protocolSwitching.websocket:1,webrtc:protocolSwitching&&typeof protocolSwitching.webrtc!=="undefined"?protocolSwitching.webrtc:1},reconnectAsyncRequest:false,currentWaitTime:0};function canRetry(){return config.retries<config.allowedRetries[config.currentProtocol];}function _switchProtocol(protocol){asyncClient.logout().then(function(){var current;if(protocol){current=protocol.toLowerCase();config.failOverProtocol=current=="webrtc"?"websocket":"webrtc";config.currentProtocol=current;}else{current=config.currentProtocol;config.currentProtocol=config.failOverProtocol;config.failOverProtocol=current;}_sdkParams.sdkParams.consoleLogging&&console.log("[SDK]|/| switchProtocol: ","config.currentProtocol: ",config.currentProtocol,"config.currentWaitTime: ",config.currentWaitTime);_events.chatEvents.fireEvent("autoSwitchAsyncProtocol",{current:config.currentProtocol,previous:config.failOverProtocol});_resetRetries();config.reconnectAsyncRequest=false;initAsync();});}function _resetRetries(){config.retries=0;}var publics={switchProtocol:function switchProtocol(protocol){if(protocol=='auto'){config.switchingEnabled=true;_switchProtocol("websocket");}else{config.switchingEnabled=false;_switchProtocol(protocol);}},increaseRetries:function increaseRetries(){config.retries+=1;},canRetry:canRetry,getCurrentProtocol:function getCurrentProtocol(){return config.currentProtocol;},resetRetries:function resetRetries(){_resetRetries();},resetTimerTime:function resetTimerTime(time){config.currentWaitTime=typeof time!="undefined"?time:0;},onAsyncIsReconnecting:function onAsyncIsReconnecting(event){_sdkParams.sdkParams.consoleLogging&&console.log("[SDK]|/| onAsyncIsReconnecting: ","config.currentProtocol: ",config.currentProtocol,"config.currentWaitTime: ",config.currentWaitTime);publics.increaseRetries();if(config.currentWaitTime<64){config.currentWaitTime+=3;}//config.currentWaitTime = event.nextTime
 if(!canRetry()&&config.switchingEnabled){_switchProtocol();}},getRetryStepTimerTime:function getRetryStepTimerTime(){// if(config.switchingEnabled)
 return config.currentWaitTime;// else return 4;
-},reconnectAsync:function reconnectAsync(){config.reconnectAsyncRequest=true;config.currentWaitTime=0;if(config.switchingEnabled&&!canRetry()){_switchProtocol();}else{_switchProtocol(config.currentProtocol);}}};return publics;}/*******************************************************
+},reconnectAsync:function reconnectAsync(){config.reconnectAsyncRequest=true;config.currentWaitTime=0;if(config.switchingEnabled&&!canRetry()){_switchProtocol();}else{// switchProtocol(config.currentProtocol);
+asyncClient.reconnectSocket();}}};return publics;}/*******************************************************
      *            P R I V A T E   M E T H O D S            *
      *******************************************************/var init=function init(){/**
              * Initialize Cache Databases

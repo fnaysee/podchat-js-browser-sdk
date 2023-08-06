@@ -325,7 +325,8 @@ function Chat(params) {
                 if(config.switchingEnabled && !canRetry()) {
                     switchProtocol();
                 } else {
-                    switchProtocol(config.currentProtocol);
+                    // switchProtocol(config.currentProtocol);
+                    asyncClient.reconnectSocket()
                 }
             }
         };
