@@ -241,14 +241,13 @@ function Chat(params) {
                 websocket: (protocolSwitching && typeof protocolSwitching.websocket !== "undefined" ? protocolSwitching.websocket : 1),
                 webrtc: (protocolSwitching && typeof protocolSwitching.webrtc !== "undefined" ? protocolSwitching.webrtc : 1)
             },
-            reconnectAsyncRequest: false,
             currentWaitTime: 0
         };
 
         function canRetry() {
             return config.retries < config.allowedRetries[config.currentProtocol];
         }
-        function switchProtocol(protocol) {
+        function switchProtocol(protocol, canResetRetries = true) {
             asyncClient.logout().then(()=>{
                 let current;
 
@@ -269,8 +268,8 @@ function Chat(params) {
                     previous: config.failOverProtocol
                 });
 
-                resetRetries();
-                config.reconnectAsyncRequest = false;
+                if(canResetRetries)
+                    resetRetries();
                 initAsync();
             })
         }
@@ -320,10 +319,16 @@ function Chat(params) {
                 // else return 4;
             },
             reconnectAsync() {
-                config.reconnectAsyncRequest = true;
-                config.currentWaitTime = 0;
-                if(config.switchingEnabled && !canRetry()) {
-                    switchProtocol();
+                publics.resetTimerTime();
+
+                if(config.switchingEnabled) {
+                    if(canRetry()) {
+                        publics.increaseRetries();
+                        switchProtocol(config.currentProtocol, false);
+                        // asyncClient.reconnectSocket();
+                    } else {
+                        switchProtocol();
+                    }
                 } else {
                     // switchProtocol(config.currentProtocol);
                     asyncClient.reconnectSocket()
