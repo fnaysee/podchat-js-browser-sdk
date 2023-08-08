@@ -245,7 +245,7 @@ function Chat(params) {
         };
 
         function canRetry() {
-            return config.retries < config.allowedRetries[config.currentProtocol];
+            return config.retries <= config.allowedRetries[config.currentProtocol];
         }
         function switchProtocol(protocol, canResetRetries = true) {
             asyncClient.logout().then(()=>{
@@ -269,7 +269,7 @@ function Chat(params) {
                 });
 
                 if(canResetRetries)
-                    resetRetries();
+                    config.retries = 1;
                 initAsync();
             })
         }
@@ -308,15 +308,12 @@ function Chat(params) {
                 if(config.currentWaitTime < 64) {
                     config.currentWaitTime += 3;
                 }
-                //config.currentWaitTime = event.nextTime
                 if(!canRetry() && config.switchingEnabled) {
                     switchProtocol();
                 }
             },
             getRetryStepTimerTime() {
-                // if(config.switchingEnabled)
                 return config.currentWaitTime;
-                // else return 4;
             },
             reconnectAsync() {
                 publics.resetTimerTime();
@@ -381,7 +378,7 @@ function Chat(params) {
             var asyncGetReadyTime = new Date().getTime();
 
             asyncClient = new Async({
-                protocol: protocolManager.getCurrentProtocol(),//sdkParams.protocol,
+                protocol: protocolManager.getCurrentProtocol(),
                 queueHost: queueHost,
                 queuePort: queuePort,
                 queueUsername: queueUsername,
