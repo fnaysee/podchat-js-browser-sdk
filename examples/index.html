@@ -15,7 +15,7 @@
     <script type="text/javascript">
         // Development
         var PodChat = window.POD.Chat;
-        var env = 'main'; // main | sandbox | integration
+        var env = 'sandbox'; // main | sandbox | integration
 
         var params = {
             appId: new Date().getTime(),
@@ -2084,6 +2084,7 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
         <label for="sendFileDescriptionReply">Description: </label>
         <textarea type="text" name="sendFileDescription" id="sendFileDescriptionReply"></textarea>
         <button type="button" name="button" id="sendFileMessageReply">Reply File Message</button>
+        <button type="button" name="button" id="sendFileMessageReplyPrivately">Reply File Message Privately</button>
     </fieldset>
 </form>
 
@@ -2668,26 +2669,25 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
      */
     document.getElementById("replyPrivatelyButton")
         .addEventListener("click", function (){
-            var instantResult = chatAgent.replyPrivately({
-                threadId: "58920",
-                repliedTo: "518880496",
-                messageType: 1,
-                systemMetadata: {
-                    id: new Date().getTime()
-                },
-                metadata: {
-                    custom_name: "John Doe"
-                },
-                content: {
-                    "text": "reply privately test 3",
-                    "invitees": [
-                        {
-                            "id": "31445",
-                            "idType": 5
-                        }
-                    ]
-                }
-            }, {
+          let replyPrivatelyParams = {
+              threadId: "58920",
+              repliedTo: "518891600",
+              messageType: 1,
+              systemMetadata: {
+                  id: new Date().getTime()
+              },
+              metadata: {
+                  custom_name: "John Doe"
+              },
+              textMessage : "reply privately test 3",
+              invitees: [
+                  {
+                      "id": "31445",
+                      "idType": chatAgent.inviteeIdTypes.TO_BE_USER_ID
+                  }
+              ]
+            };
+            var instantResult = chatAgent.replyPrivately( replyPrivatelyParams, {
                 onSent: function (result) {
                     console.log({result});
                     console.log(result.uniqueId + " \t has been Sent!");
@@ -2893,6 +2893,48 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
                 repliedTo: repliedTo,
                 file: image,
                 content: content,
+                userGroupHash: userGroupHash,
+                messageType: messageType,
+                metadata: {
+                    custom_name: "John Doe"
+                }
+            }, {
+                onSent: function (result) {
+                    console.log(result.uniqueId + " \t has been Sent!");
+                },
+                onDeliver: function (result) {
+                    console.log(result.uniqueId + " \t has been Delivered!");
+                },
+                onSeen: function (result) {
+                    console.log(result.uniqueId + " \t has been Seen!");
+                }
+            });
+
+            console.log("Instant Reply File Message Results", instantResult);
+        });
+
+document.getElementById("sendFileMessageReplyPrivately")
+        .addEventListener("click", function () {
+            var fileInput = document.getElementById("sendFileInputReply"),
+                image = fileInput.files[0],
+                // content = document.getElementById("sendFileDescriptionReply").value,
+                thread = document.getElementById("sendFileThreadReply").value,
+                repliedTo = document.getElementById("sendFileMesageRepliedTo").value,
+                messageType = document.getElementById("sendFileMessageTypeReply").value,
+                userGroupHash = document.getElementById("sendFileUserGroupHashReply").value;
+
+            var instantResult = chatAgent.replyFileMessagePrivately({
+                threadId: thread,
+                repliedTo: repliedTo,
+                file: image,
+                // content: content,
+                textMessage : "reply privately test 3",
+                invitees: [
+                    {
+                        "id": "31445",
+                        "idType": chatAgent.inviteeIdTypes.TO_BE_USER_ID
+                    }
+                ],
                 userGroupHash: userGroupHash,
                 messageType: messageType,
                 metadata: {
