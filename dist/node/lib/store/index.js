@@ -11,6 +11,7 @@ var _eventEmitter = require("./eventEmitter");
 
 var store = {
   threads: _threads.threadsList,
-  events: _eventEmitter.storeEvents
+  events: _eventEmitter.storeEvents,
+  deviceId: null
 };
 exports.store = store;

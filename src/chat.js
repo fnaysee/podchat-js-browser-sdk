@@ -400,8 +400,17 @@ function Chat(params) {
                 webrtcConfig: sdkParams.webrtcConfig,
                 retryStepTimerTime: protocolManager.getRetryStepTimerTime(),
                 onStartWithRetryStepGreaterThanZero: onStateChange,
-                msgLogCallback: msgLogCallback || null
+                msgLogCallback: msgLogCallback || null,
+                onDeviceId
             });
+
+            function onDeviceId(deviceId) {
+                if (!sdkParams.deviceId) {
+                    sdkParams.deviceId = deviceId;
+                }
+
+                asyncClient.registerDevice(sdkParams.deviceId);
+            }
             callModule.asyncInitialized(asyncClient);
             chatMessaging.asyncInitialized(asyncClient);
 
