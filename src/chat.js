@@ -8609,6 +8609,10 @@ function Chat(params) {
         } else {
             uniqueId = Utility.generateUUID();
         }
+        let sendContentParams = {
+            "text": params.textMessage,
+            "invitees": params.invitees
+        }
         putInChatSendQueue({
             message: {
                 chatMessageVOType: chatMessageVOTypes.REPLY_PRIVATELY,
@@ -8616,7 +8620,7 @@ function Chat(params) {
                 messageType: 1,
                 subjectId: params.threadId,
                 repliedTo: params.repliedTo,
-                content: params.content,
+                content: sendContentParams,
                 uniqueId: uniqueId,
                 systemMetadata: JSON.stringify(params.systemMetadata),
                 metadata: JSON.stringify(params.metadata),
