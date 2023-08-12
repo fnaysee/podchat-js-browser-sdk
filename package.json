@@ -51,7 +51,7 @@
     "faker": "^5.5.3",
     "kurento-utils": "^6.16.0",
     "node-rsa": "^1.1.1",
-    "podasync-ws-only": "2.9.0-snapshot.19",
+    "podasync-ws-only": "2.9.0-snapshot.20",
     "webrtc-adapter": "^8.0.0"
   },
   "devDependencies": {
