@@ -1982,6 +1982,10 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
         <button type="button" name="button" id="sendTextButton">Send Text Message</button>
         <button type="button" name="button" id="replyPrivatelyButton">reply privately</button>
         <button type="button" name="button" id="getPinMessage">get pin message</button>
+        <button type="button" name="button" id="addReaction">Add Reaction</button>
+        <button type="button" name="button" id="removeReaction">Remove Reaction</button>
+        <button type="button" name="button" id="replaceReaction">Replace Reaction</button>
+        <button type="button" name="button" id="reactionList">Reaction list</button>
     </fieldset>
 </form>
 
@@ -2653,7 +2657,7 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
             });
         });
     /**
-     * SEND FILE
+     * Get Pin Message
      */
     document.getElementById("getPinMessage")
         .addEventListener("click", function (){
@@ -2665,13 +2669,13 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
 
         })
     /**
-     * SEND FILE
+     * Reply Text Message Privately
      */
     document.getElementById("replyPrivatelyButton")
         .addEventListener("click", function (){
           let replyPrivatelyParams = {
               threadId: "58920",
-              repliedTo: "518891600",
+              repliedTo: "518892511",
               messageType: 1,
               systemMetadata: {
                   id: new Date().getTime()
@@ -2679,15 +2683,16 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
               metadata: {
                   custom_name: "John Doe"
               },
-              textMessage : "reply privately test 3",
-              invitees: [
-                  {
-                      "id": "31445",
-                      "idType": chatAgent.inviteeIdTypes.TO_BE_USER_ID
-                  }
-              ]
+              textMessage : "reply privately test",
+              // invitees: [
+              //     {
+              //         "id": "31445",
+              //         "idType": chatAgent.inviteeIdTypes.TO_BE_USER_ID
+              //     }
+              // ],
+              targetThreadId: 53370
             };
-            var instantResult = chatAgent.replyPrivately( replyPrivatelyParams, {
+            var instantResult = chatAgent.replyTextMessagePrivately( replyPrivatelyParams, {
                 onSent: function (result) {
                     console.log({result});
                     console.log(result.uniqueId + " \t has been Sent!");
@@ -2722,7 +2727,60 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
                 }
             });
         });
-
+    /**
+     * ADD REACTION
+     */
+    document.getElementById("addReaction")
+        .addEventListener("click", function () {
+            chatAgent.addReaction({
+                threadId: 58920,
+                messageId: 518892511,
+                reaction: chatAgent.emojiTypes.LIKE
+            }, function (result) {
+                console.log("add reaction...", result)
+                console.log(result);
+            });
+        });
+    /**
+     * REMOVE REACTION
+     */
+    document.getElementById("removeReaction")
+        .addEventListener("click", function () {
+            chatAgent.removeReaction({
+                threadId: 58920,
+                reactionId: 47
+            }, function (result) {
+                console.log("remove reaction...", result)
+                console.log(result);
+            });
+        });
+    /**
+     * REPLACE REACTION
+     */
+    document.getElementById("replaceReaction")
+        .addEventListener("click", function () {
+            chatAgent.replaceReaction({
+                reaction: chatAgent.emojiTypes.HAPPY,
+                threadId: 58920,
+                reactionId: 47
+            }, function (result) {
+                console.log("replace reaction...", result)
+                console.log(result);
+            });
+        });
+    /**
+     * REACTION LIST
+     */
+    document.getElementById("reactionList")
+        .addEventListener("click", function () {
+            chatAgent.getReactionList({
+                threadId: 58920,
+                messageId: 518892511
+            }, function (result) {
+                console.log("reaction list...", result)
+                console.log(result);
+            });
+        });
     /**
      * ADD PARTICIPANTS
      */
@@ -2913,7 +2971,7 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
             console.log("Instant Reply File Message Results", instantResult);
         });
 
-document.getElementById("sendFileMessageReplyPrivately")
+    document.getElementById("sendFileMessageReplyPrivately")
         .addEventListener("click", function () {
             var fileInput = document.getElementById("sendFileInputReply"),
                 image = fileInput.files[0],
@@ -2935,6 +2993,7 @@ document.getElementById("sendFileMessageReplyPrivately")
                         "idType": chatAgent.inviteeIdTypes.TO_BE_USER_ID
                     }
                 ],
+                targetThreadId: 53370,
                 userGroupHash: userGroupHash,
                 messageType: messageType,
                 metadata: {

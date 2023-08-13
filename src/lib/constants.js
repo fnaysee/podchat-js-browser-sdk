@@ -130,7 +130,10 @@ const chatMessageVOTypes = {
     GET_PIN_MESSAGE: 236,
     GET_THREAD_LIGHT: 237,
     REPLY_PRIVATELY: 238,
-
+    ADD_REACTION: 239,
+    REPLACE_REACTION: 240,
+    REMOVE_REACTION: 241,
+    REACTION_LIST: 242,
     ERROR: 999
 };
 
@@ -220,6 +223,12 @@ const callStickerTypes = {
     POWER: 'power',
     BORED: 'bored'
 };
+const emojiTypes = {
+    HI_FIVE: 1,
+    LIKE: 2,
+    HAPPY: 3,
+    CRY: 4
+}
 
 export {
     chatMessageVOTypes,
@@ -230,5 +239,6 @@ export {
     systemMessageTypes,
     imageMimeTypes,
     imageExtentions,
-    callStickerTypes
+    callStickerTypes,
+    emojiTypes
 }

@@ -19,7 +19,8 @@ import {
     systemMessageTypes,
     imageMimeTypes,
     imageExtentions,
-    callStickerTypes
+    callStickerTypes,
+    emojiTypes
 } from "./lib/constants";
 
 import deviceManager from "./lib/call/deviceManager.js";
@@ -2924,6 +2925,59 @@ function Chat(params) {
                         chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
                     }
                     break;
+
+                /**
+                 * Type 239    ADD_REACTION
+                 */
+                case chatMessageVOTypes.ADD_REACTION:
+                    if (chatMessaging.messagesCallbacks[uniqueId]) {
+                        chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+                    }
+
+                    chatEvents.fireEvent('messageEvents', {
+                        type: 'ADD_REACTION',
+                        result: messageContent
+                    });
+
+                    break;
+
+                /**
+                 * Type 240    REPLACE_REACTION
+                 */
+                case chatMessageVOTypes.REPLACE_REACTION:
+                    if (chatMessaging.messagesCallbacks[uniqueId]) {
+                        chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+                    }
+
+                    chatEvents.fireEvent('messageEvents', {
+                        type: 'REPLACE_REACTION',
+                        result: messageContent
+                    });
+                    break;
+
+                /**
+                 * Type 241    REMOVE_REACTION
+                 */
+                case chatMessageVOTypes.REMOVE_REACTION:
+                    if (chatMessaging.messagesCallbacks[uniqueId]) {
+                        chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+                    }
+
+                    chatEvents.fireEvent('messageEvents', {
+                        type: 'REMOVE_REACTION',
+                        result: messageContent
+                    });
+                    break;
+
+                /**
+                 * Type 242    REACTION_LIST
+                 */
+                case chatMessageVOTypes.REACTION_LIST:
+                    if (chatMessaging.messagesCallbacks[uniqueId]) {
+                        chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+                    }
+                    break;
+
                 /**
                  * Type 999   All unknown errors
                  */
@@ -8600,7 +8654,7 @@ function Chat(params) {
             }
         });
     };
-    publicized.replyPrivately = function (params, callbacks) {
+    publicized.replyTextMessagePrivately = function (params, callbacks) {
         var metadata = {},
             uniqueId;
 
@@ -8609,10 +8663,19 @@ function Chat(params) {
         } else {
             uniqueId = Utility.generateUUID();
         }
+
         let sendContentParams = {
-            "text": params.textMessage,
-            "invitees": params.invitees
+            text: params.textMessage
+        };
+
+        if (typeof params.invitees !== 'undefined' && params.invitees) {
+            sendContentParams.invitees = params.invitees;
         }
+
+        if (typeof params.targetThreadId !== 'undefined' && params.targetThreadId) {
+            sendContentParams.targetThreadId = params.targetThreadId;
+        }
+
         putInChatSendQueue({
             message: {
                 chatMessageVOType: chatMessageVOTypes.REPLY_PRIVATELY,
@@ -8633,7 +8696,7 @@ function Chat(params) {
             uniqueId: uniqueId,
             threadId: params.threadId,
             participant: chatMessaging.userInfo,
-            content: params.content
+            content: sendContentParams
         };
     }
 
@@ -9180,6 +9243,7 @@ function Chat(params) {
             });
         });
     };
+
     publicized.replyFileMessagePrivately = function (params, callbacks) {
         var metadata = {file: {}},
             fileUploadParams = {},
@@ -9200,9 +9264,17 @@ function Chat(params) {
         }, function (uploadHandlerResult, uploadHandlerMetadata, fileType, fileExtension) {
             fileUploadParams = Object.assign(fileUploadParams, uploadHandlerResult);
             let sendContentParams = {
-                "text": params.textMessage,
-                "invitees": params.invitees
+                text: params.textMessage
+            };
+
+            if (typeof params.invitees !== 'undefined' && params.invitees) {
+                sendContentParams.invitees = params.invitees;
             }
+
+            if (typeof params.targetThreadId !== 'undefined' && params.targetThreadId) {
+                sendContentParams.targetThreadId = params.targetThreadId;
+            }
+
             putInChatUploadQueue({
                 message: {
                     chatMessageVOType: chatMessageVOTypes.REPLY_PRIVATELY,
@@ -11968,6 +12040,94 @@ function Chat(params) {
             typeCode: sdkParams.generalTypeCode, //params.typeCode,
             token: sdkParams.token,
             subjectId: threadId
+        };
+
+        return chatMessaging.sendMessage(sendData, {
+            onResult: function (result) {
+                callback && callback(result);
+            }
+        });
+    };
+    publicized.emojiTypes = emojiTypes;
+    publicized.addReaction = function (params, callback) {
+        let sendData = {
+            chatMessageVOType: chatMessageVOTypes.ADD_REACTION,
+            subjectId: params.threadId,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            content: {
+                messageId: params.messageId,
+                reaction: params.reaction
+            },
+            token: sdkParams.token
+        };
+
+        return chatMessaging.sendMessage(sendData, {
+            onResult: function (result) {
+                callback && callback(result);
+            }
+        });
+    };
+
+    publicized.replaceReaction = function (params, callback) {
+        let sendData = {
+            chatMessageVOType: chatMessageVOTypes.REPLACE_REACTION,
+            subjectId: params.threadId,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            content: {
+                reactionId: params.reactionId,
+                reaction: params.reaction
+            },
+            token: sdkParams.token
+        };
+
+        return chatMessaging.sendMessage(sendData, {
+            onResult: function (result) {
+                callback && callback(result);
+            }
+        });
+    };
+
+    publicized.removeReaction = function (params, callback) {
+        let sendData = {
+            chatMessageVOType: chatMessageVOTypes.REMOVE_REACTION,
+            subjectId: params.threadId,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            content: {
+                reactionId: params.reactionId
+            },
+            token: sdkParams.token
+        };
+
+        return chatMessaging.sendMessage(sendData, {
+            onResult: function (result) {
+                callback && callback(result);
+            }
+        });
+    };
+
+    publicized.getReactionList = function (params, callback) {
+        let count = 20,
+            offset = 0
+
+        if (params) {
+            if (parseInt(params.count) > 0) {
+                count = params.count;
+            }
+
+            if (parseInt(params.offset) > 0) {
+                offset = params.offset;
+            }
+        }
+        let sendData = {
+            chatMessageVOType: chatMessageVOTypes.REACTION_LIST,
+            subjectId: params.threadId,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            content: {
+                messageId : params.messageId,
+                count : count,
+                offset : offset
+            },
+            token: sdkParams.token
         };
 
         return chatMessaging.sendMessage(sendData, {
