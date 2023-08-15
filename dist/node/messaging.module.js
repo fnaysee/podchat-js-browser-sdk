@@ -52,10 +52,11 @@ function ChatMessaging(params) {
   /**
    * sendPingTimeout removed,
    *
-   * TODO: remove the interval when socket statet changes to closed
+   * TODO: remove the interval when socket state changes to closed
    */
 
   this.startChatPing = function () {
+    _sdkParams.sdkParams.chatPingMessageInterval && clearInterval(_sdkParams.sdkParams.chatPingMessageInterval);
     _sdkParams.sdkParams.chatPingMessageInterval = setInterval(function () {
       currentModuleInstance.ping();
     }, 20000); //TODO: chatPingMessageInterval
