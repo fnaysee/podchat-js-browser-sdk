@@ -5,7 +5,7 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.raiseError = exports.init = exports.errorList = exports["default"] = void 0;
+exports.raiseError = exports.errorList = exports["default"] = void 0;
 
 var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
 
@@ -98,13 +98,6 @@ var errorList = {
   }
 };
 exports.errorList = errorList;
-var messagingModule;
-
-var init = function init(params) {
-  messagingModule = params.chatMessaging;
-};
-
-exports.init = init;
 
 var handleError = function handleError(error) {
   var item = Object.values(errorList).filter(function (item) {

@@ -1,15 +1,11 @@
 import Utility from "./utility/utility"
 import {sdkParams} from "./lib/sdkParams";
-// import Sentry from "./lib/sentry.js"
 
-let chatEvents = null;
+let chatEvents = new ChatEvents();
 
-function ChatEvents(params) {
-    var currentModuleInstance = this,
-        //Utility = params.Utility,
-        // consoleLogging = params.consoleLogging,
-        token = params.token,
-        eventCallbacks = {
+function ChatEvents() {
+        let
+            eventCallbacks = {
             connect: {},
             disconnect: {},
             reconnect: {},
@@ -33,14 +29,10 @@ function ChatEvents(params) {
         this.code = error.error ? error.error.code : error.code;
         this.message = error.error ? error.error.message : error.message;
         this.uniqueId = error.uniqueId ? error.uniqueId : '';
-        this.token = token;
+        this.token = sdkParams.token;
         this.error =  JSON.stringify((error.error ? error.error : error));
         this.environmentDetails = error.environmentDetails
     };
-
-    this.updateToken = function (newToken) {
-        token = newToken;
-    }
 
     /**
      * Fire Event
@@ -102,9 +94,9 @@ function ChatEvents(params) {
     }
 }
 
-function initEventHandler(params) {
+function initEventHandler() {
     if(!chatEvents) {
-        chatEvents = new ChatEvents(params)
+        chatEvents = new ChatEvents()
     }
 
     return chatEvents;

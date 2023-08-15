@@ -81,11 +81,7 @@ const errorList = {
             message: "[SDK] Invalid sticker name. Use SDK.callStickerTypes"
     },
 };
-let messagingModule;
 
-const init = function (params) {
-    messagingModule = params.chatMessaging;
-}
 
 const handleError = function (error) {
     let item = Object.values(errorList).filter(item => item.code == error);
@@ -117,4 +113,4 @@ const raiseError = function (errorObject, callback, fireEvent = false, {
 }
 
 export default handleError
-export { init, errorList, raiseError }
+export {errorList, raiseError}

@@ -12,16 +12,11 @@ var _utility = _interopRequireDefault(require("./utility/utility"));
 
 var _sdkParams = require("./lib/sdkParams");
 
-// import Sentry from "./lib/sentry.js"
-var chatEvents = null;
+var chatEvents = new ChatEvents();
 exports.chatEvents = chatEvents;
 
-function ChatEvents(params) {
-  var currentModuleInstance = this,
-      //Utility = params.Utility,
-  // consoleLogging = params.consoleLogging,
-  token = params.token,
-      eventCallbacks = {
+function ChatEvents() {
+  var eventCallbacks = {
     connect: {},
     disconnect: {},
     reconnect: {},
@@ -45,13 +40,9 @@ function ChatEvents(params) {
     this.code = error.error ? error.error.code : error.code;
     this.message = error.error ? error.error.message : error.message;
     this.uniqueId = error.uniqueId ? error.uniqueId : '';
-    this.token = token;
+    this.token = _sdkParams.sdkParams.token;
     this.error = JSON.stringify(error.error ? error.error : error);
     this.environmentDetails = error.environmentDetails;
-  };
-
-  this.updateToken = function (newToken) {
-    token = newToken;
   };
   /**
    * Fire Event
@@ -115,9 +106,9 @@ function ChatEvents(params) {
   };
 }
 
-function initEventHandler(params) {
+function initEventHandler() {
   if (!chatEvents) {
-    exports.chatEvents = chatEvents = new ChatEvents(params);
+    exports.chatEvents = chatEvents = new ChatEvents();
   }
 
   return chatEvents;

@@ -3,47 +3,49 @@ import DOMPurify from 'dompurify'
 import Utility from "./utility/utility"
 import {errorList, raiseError} from "./lib/errorHandler";
 import {sdkParams} from "./lib/sdkParams";
-// (function () {
+import {store} from "./lib/store";
+
+let chatMessaging = null;
+
+/**
+ * Communicates with chat server
+ * @param params
+ * @constructor
+ */
+function ChatMessaging(params) {
+    var currentModuleInstance = this,
+        asyncClient = params.asyncClient;
+        //Utility = params.Utility,
+        // consoleLogging = sdkParams.consoleLogging,
+        //generalTypeCode = sdkParams.generalTypeCode,
+        //chatPingMessageInterval = params.chatPingMessageInterval,
+        //asyncRequestTimeout = params.asyncRequestTimeout,
+        //messageTtl = params.messageTtl,
+        //serverName = params.serverName,
+        //msgPriority = params.msgPriority,
+        //typeCodeOwnerId = sdkParams.typeCodeOwnerId || null;
+
+    this.threadCallbacks = {};
+    this.sendMessageCallbacks = {};
+    // this.messagesCallbacks = {};
+    // this.asyncRequestTimeouts = {};
+    // this.sendPingTimeout = null;
+    this.chatState = false;
+    this.userInfo = null;
+
     /**
-     * Communicates with chat server
-     * @param params
-     * @constructor
+     * sendPingTimeout removed,
+     *
+     * TODO: remove the interval when socket statet changes to closed
      */
-    function ChatMessaging(params) {
-        var currentModuleInstance = this,
-            asyncClient = params.asyncClient;
-            //Utility = params.Utility,
-            // consoleLogging = sdkParams.consoleLogging,
-            //generalTypeCode = sdkParams.generalTypeCode,
-            //chatPingMessageInterval = params.chatPingMessageInterval,
-            //asyncRequestTimeout = params.asyncRequestTimeout,
-            //messageTtl = params.messageTtl,
-            //serverName = params.serverName,
-            //msgPriority = params.msgPriority,
-            //typeCodeOwnerId = sdkParams.typeCodeOwnerId || null;
-
-        this.threadCallbacks = {};
-        this.sendMessageCallbacks = {};
-        this.messagesCallbacks = {};
-        this.asyncRequestTimeouts = {};
-        // this.sendPingTimeout = null;
-        this.chatState = false;
-        this.userInfo = null;
-
-        /**
-         * sendPingTimeout removed,
-         *
-         * TODO: remove the interval when socket statet changes to closed
-         */
-        this.startChatPing = function () {
-            sdkParams.chatPingMessageInterval && clearInterval(sdkParams.chatPingMessageInterval);
-            sdkParams.chatPingMessageInterval = setInterval(() => {
-                currentModuleInstance.ping();
-            }, 20000) ;//TODO: chatPingMessageInterval
-        }
-        this.stopChatPing = function() {
-            clearInterval(sdkParams.chatPingMessageInterval);
-        }
+    this.startChatPing = function () {
+        sdkParams.chatPingMessageInterval = setInterval(() => {
+            currentModuleInstance.ping();
+        }, 20000) ;//TODO: chatPingMessageInterval
+    }
+    this.stopChatPing = function() {
+        clearInterval(sdkParams.chatPingMessageInterval);
+    }
 
         this.asyncInitialized = function (client) {
             asyncClient = client
@@ -155,11 +157,11 @@ import {sdkParams} from "./lib/sdkParams";
 
             var uniqueId;
 
-            if (typeof params.uniqueId != 'undefined') {
-                uniqueId = params.uniqueId;
-            } else {
-                uniqueId = Utility.generateUUID();
-            }
+        if (typeof params.uniqueId != 'undefined') {
+            uniqueId = params.uniqueId;
+        } else if (params.chatMessageVOType !== chatMessageVOTypes.PING) {
+            uniqueId = Utility.generateUUID();
+        }
 
             if (Array.isArray(uniqueId)) {
                 messageVO.uniqueId = JSON.stringify(uniqueId);
@@ -167,38 +169,38 @@ import {sdkParams} from "./lib/sdkParams";
                 messageVO.uniqueId = uniqueId;
             }
 
-            if (typeof callbacks == 'object') {
-                if (callbacks.onSeen || callbacks.onDeliver || callbacks.onSent) {
-                    if (!currentModuleInstance.threadCallbacks[threadId]) {
-                        currentModuleInstance.threadCallbacks[threadId] = {};
-                    }
-
-                    currentModuleInstance.threadCallbacks[threadId][uniqueId] = {};
-
-                    currentModuleInstance.sendMessageCallbacks[uniqueId] = {};
-
-                    if (callbacks.onSent) {
-                        currentModuleInstance.sendMessageCallbacks[uniqueId].onSent = callbacks.onSent;
-                        currentModuleInstance.threadCallbacks[threadId][uniqueId].onSent = false;
-                        currentModuleInstance.threadCallbacks[threadId][uniqueId].uniqueId = uniqueId;
-                    }
-
-                    if (callbacks.onSeen) {
-                        currentModuleInstance.sendMessageCallbacks[uniqueId].onSeen = callbacks.onSeen;
-                        currentModuleInstance.threadCallbacks[threadId][uniqueId].onSeen = false;
-                    }
-
-                    if (callbacks.onDeliver) {
-                        currentModuleInstance.sendMessageCallbacks[uniqueId].onDeliver = callbacks.onDeliver;
-                        currentModuleInstance.threadCallbacks[threadId][uniqueId].onDeliver = false;
-                    }
-
-                } else if (callbacks.onResult) {
-                    currentModuleInstance.messagesCallbacks[uniqueId] = callbacks.onResult;
+        if (typeof callbacks == 'object') {
+            if (callbacks.onSeen || callbacks.onDeliver || callbacks.onSent) {
+                if (!store.threadCallbacks[threadId]) {
+                    store.threadCallbacks[threadId] = {};
                 }
-            } else if (typeof callbacks == 'function') {
-                currentModuleInstance.messagesCallbacks[uniqueId] = callbacks;
+
+                store.threadCallbacks[threadId][uniqueId] = {};
+
+                store.sendMessageCallbacks[uniqueId] = {};
+
+                if (callbacks.onSent) {
+                    store.sendMessageCallbacks[uniqueId].onSent = callbacks.onSent;
+                    store.threadCallbacks[threadId][uniqueId].onSent = false;
+                    store.threadCallbacks[threadId][uniqueId].uniqueId = uniqueId;
+                }
+
+                if (callbacks.onSeen) {
+                    store.sendMessageCallbacks[uniqueId].onSeen = callbacks.onSeen;
+                    store.threadCallbacks[threadId][uniqueId].onSeen = false;
+                }
+
+                if (callbacks.onDeliver) {
+                    store.sendMessageCallbacks[uniqueId].onDeliver = callbacks.onDeliver;
+                    store.threadCallbacks[threadId][uniqueId].onDeliver = false;
+                }
+
+            } else if (callbacks.onResult) {
+                store.messagesCallbacks[uniqueId] = callbacks.onResult;
             }
+        } else if (typeof callbacks == 'function') {
+            store.messagesCallbacks[uniqueId] = callbacks;
+        }
 
             /**
              * Message to send through async SDK
@@ -238,94 +240,94 @@ import {sdkParams} from "./lib/sdkParams";
                         callbacks.onResult(res);
                     }
 
-                    if (currentModuleInstance.messagesCallbacks[uniqueId]) {
-                        delete currentModuleInstance.messagesCallbacks[uniqueId];
-                    }
+                if (store.messagesCallbacks[uniqueId]) {
+                    delete store.messagesCallbacks[uniqueId];
                 }
-            });
-
-            if (sdkParams.asyncRequestTimeout > 0) {
-                currentModuleInstance.asyncRequestTimeouts[uniqueId] && clearTimeout(currentModuleInstance.asyncRequestTimeouts[uniqueId]);
-                currentModuleInstance.asyncRequestTimeouts[uniqueId] = setTimeout(function () {
-                    if (typeof callbacks == 'function') {
-                        callbacks({
-                            hasError: true,
-                            errorCode: 408,
-                            errorMessage: 'Async Request Timed Out!'
-                        });
-                    } else if (typeof callbacks == 'object' && typeof callbacks.onResult == 'function') {
-                        callbacks.onResult({
-                            hasError: true,
-                            errorCode: 408,
-                            errorMessage: 'Async Request Timed Out!'
-                        });
-                    }
-
-                    if (currentModuleInstance.messagesCallbacks[uniqueId]) {
-                        delete currentModuleInstance.messagesCallbacks[uniqueId];
-                    }
-                    if (currentModuleInstance.sendMessageCallbacks[uniqueId]) {
-                        delete currentModuleInstance.sendMessageCallbacks[uniqueId];
-                    }
-                    if (!!currentModuleInstance.threadCallbacks[threadId] && currentModuleInstance.threadCallbacks[threadId][uniqueId]) {
-                        currentModuleInstance.threadCallbacks[threadId][uniqueId] = {};
-                        delete currentModuleInstance.threadCallbacks[threadId][uniqueId];
-                    }
-
-                }, sdkParams.asyncRequestTimeout);
             }
+        });
+
+        if (sdkParams.asyncRequestTimeout > 0) {
+            store.asyncRequestTimeouts[uniqueId] && clearTimeout(store.asyncRequestTimeouts[uniqueId]);
+            store.asyncRequestTimeouts[uniqueId] = setTimeout(function () {
+                if (typeof callbacks == 'function') {
+                    callbacks({
+                        hasError: true,
+                        errorCode: 408,
+                        errorMessage: 'Async Request Timed Out!'
+                    });
+                } else if (typeof callbacks == 'object' && typeof callbacks.onResult == 'function') {
+                    callbacks.onResult({
+                        hasError: true,
+                        errorCode: 408,
+                        errorMessage: 'Async Request Timed Out!'
+                    });
+                }
+
+                if (store.messagesCallbacks[uniqueId]) {
+                    delete store.messagesCallbacks[uniqueId];
+                }
+                if (store.sendMessageCallbacks[uniqueId]) {
+                    delete store.sendMessageCallbacks[uniqueId];
+                }
+                if (!!store.threadCallbacks[threadId] && store.threadCallbacks[threadId][uniqueId]) {
+                    store.threadCallbacks[threadId][uniqueId] = {};
+                    delete store.threadCallbacks[threadId][uniqueId];
+                }
+
+            }, sdkParams.asyncRequestTimeout);
+        }
 
 /*          currentModuleInstance.sendPingTimeout && clearTimeout(currentModuleInstance.sendPingTimeout);
-            currentModuleInstance.sendPingTimeout = setTimeout(function () {
-                currentModuleInstance.ping();
-            }, chatPingMessageInterval); */
+        currentModuleInstance.sendPingTimeout = setTimeout(function () {
+            currentModuleInstance.ping();
+        }, chatPingMessageInterval); */
 
             recursiveCallback && recursiveCallback();
 
-            return {
-                uniqueId: uniqueId,
-                threadId: threadId,
-                participant: currentModuleInstance.userInfo,
-                content: params.content
-            };
-        }
-
-        /**
-         * Ping
-         *
-         * This Function sends ping message to keep user connected to
-         * chat server and updates its status
-         *
-         * @access private
-         *
-         * @return {undefined}
-         */
-        this.ping = function () {
-            if (currentModuleInstance.chatState && typeof currentModuleInstance.userInfo !== 'undefined') {
-                /**
-                 * Ping messages should be sent ASAP, because
-                 * we don't want to wait for send queue, we send them
-                 * right through async from here
-                 */
-                currentModuleInstance.sendMessage({
-                    chatMessageVOType: chatMessageVOTypes.PING,
-                    pushMsgType: 3
-                });
-            }
-            /*else {
-                currentModuleInstance.sendPingTimeout && clearTimeout(currentModuleInstance.sendPingTimeout);
-            }*/
+        return {
+            uniqueId: uniqueId,
+            threadId: threadId,
+            participant: currentModuleInstance.userInfo?.id,// currentModuleInstance.userInfo,
+            content: params.content
         };
-
     }
 
-    // if (typeof module !== 'undefined' && typeof module.exports != 'undefined') {
-    //     module.exports = ChatMessaging;
-    // } else {
-    //     if (!window.POD) {
-    //         window.POD = {};
-    //     }
-    //     window.POD.ChatMessaging = ChatMessaging;
-    // }
-// })();
+    /**
+     * Ping
+     *
+     * This Function sends ping message to keep user connected to
+     * chat server and updates its status
+     *
+     * @access private
+     *
+     * @return {undefined}
+     */
+    this.ping = function () {
+        if (currentModuleInstance.chatState && typeof currentModuleInstance.userInfo !== 'undefined') {
+            /**
+             * Ping messages should be sent ASAP, because
+             * we don't want to wait for send queue, we send them
+             * right through async from here
+             */
+            currentModuleInstance.sendMessage({
+                chatMessageVOType: chatMessageVOTypes.PING,
+                pushMsgType: 3
+            });
+        }
+    };
+
+}
+
+function initChatMessaging(params) {
+    if(!chatMessaging) {
+        chatMessaging = new ChatMessaging(params)
+    }
+
+    return chatMessaging;
+}
+
+function messenger(){
+    return chatMessaging;
+}
 export default ChatMessaging;
+export {messenger, initChatMessaging}

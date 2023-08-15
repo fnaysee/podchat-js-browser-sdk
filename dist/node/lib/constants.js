@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.systemMessageTypes = exports.inviteeVOidTypes = exports.imageMimeTypes = exports.imageExtentions = exports.emojiTypes = exports.createThreadTypes = exports.chatMessageVOTypes = exports.chatMessageTypes = exports.callStickerTypes = exports.assistantActionTypes = void 0;
+exports.systemMessageTypes = exports.inviteeVOidTypes = exports.imageMimeTypes = exports.imageExtentions = exports.emojiTypes = exports.createThreadTypes = exports.chatMessageVOTypes = exports.chatMessageTypes = exports.callStickerTypes = exports.callMetaDataTypes = exports.assistantActionTypes = void 0;
 var chatMessageVOTypes = {
   CREATE_THREAD: 1,
   MESSAGE: 2,
@@ -222,3 +222,10 @@ var emojiTypes = {
   CRY: 4
 };
 exports.emojiTypes = emojiTypes;
+var callMetaDataTypes = {
+  POORCONNECTION: 1,
+  POORCONNECTIONRESOLVED: 2,
+  CUSTOMUSERMETADATA: 3,
+  SCREENSHAREMETADATA: 4
+};
+exports.callMetaDataTypes = callMetaDataTypes;

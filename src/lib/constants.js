@@ -230,6 +230,13 @@ const emojiTypes = {
     CRY: 4
 }
 
+const callMetaDataTypes = {
+    POORCONNECTION: 1,
+    POORCONNECTIONRESOLVED: 2,
+    CUSTOMUSERMETADATA: 3,
+    SCREENSHAREMETADATA: 4
+}
+
 export {
     chatMessageVOTypes,
     inviteeVOidTypes,
@@ -240,5 +247,6 @@ export {
     imageMimeTypes,
     imageExtentions,
     callStickerTypes,
-    emojiTypes
+    emojiTypes,
+    callMetaDataTypes
 }

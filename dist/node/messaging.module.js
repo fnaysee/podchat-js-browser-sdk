@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports["default"] = void 0;
+exports.initChatMessaging = initChatMessaging;
+exports.messenger = messenger;
 
 var _typeof2 = _interopRequireDefault(require("@babel/runtime/helpers/typeof"));
 
@@ -19,13 +21,15 @@ var _errorHandler = require("./lib/errorHandler");
 
 var _sdkParams = require("./lib/sdkParams");
 
-// (function () {
+var _store = require("./lib/store");
 
+var chatMessaging = null;
 /**
  * Communicates with chat server
  * @param params
  * @constructor
  */
+
 function ChatMessaging(params) {
   var currentModuleInstance = this,
       asyncClient = params.asyncClient; //Utility = params.Utility,
@@ -39,9 +43,9 @@ function ChatMessaging(params) {
   //typeCodeOwnerId = sdkParams.typeCodeOwnerId || null;
 
   this.threadCallbacks = {};
-  this.sendMessageCallbacks = {};
-  this.messagesCallbacks = {};
-  this.asyncRequestTimeouts = {}; // this.sendPingTimeout = null;
+  this.sendMessageCallbacks = {}; // this.messagesCallbacks = {};
+  // this.asyncRequestTimeouts = {};
+  // this.sendPingTimeout = null;
 
   this.chatState = false;
   this.userInfo = null;
@@ -52,7 +56,6 @@ function ChatMessaging(params) {
    */
 
   this.startChatPing = function () {
-    _sdkParams.sdkParams.chatPingMessageInterval && clearInterval(_sdkParams.sdkParams.chatPingMessageInterval);
     _sdkParams.sdkParams.chatPingMessageInterval = setInterval(function () {
       currentModuleInstance.ping();
     }, 20000); //TODO: chatPingMessageInterval
@@ -91,6 +94,8 @@ function ChatMessaging(params) {
 
 
   this.sendMessage = function (params, callbacks, recursiveCallback) {
+    var _currentModuleInstanc;
+
     if (!currentModuleInstance.chatState && _constants.chatMessageVOTypes.USER_INFO != params.chatMessageVOType) {
       var clbck;
 
@@ -177,7 +182,7 @@ function ChatMessaging(params) {
 
     if (typeof params.uniqueId != 'undefined') {
       uniqueId = params.uniqueId;
-    } else {
+    } else if (params.chatMessageVOType !== _constants.chatMessageVOTypes.PING) {
       uniqueId = _utility["default"].generateUUID();
     }
 
@@ -189,33 +194,33 @@ function ChatMessaging(params) {
 
     if ((0, _typeof2["default"])(callbacks) == 'object') {
       if (callbacks.onSeen || callbacks.onDeliver || callbacks.onSent) {
-        if (!currentModuleInstance.threadCallbacks[threadId]) {
-          currentModuleInstance.threadCallbacks[threadId] = {};
+        if (!_store.store.threadCallbacks[threadId]) {
+          _store.store.threadCallbacks[threadId] = {};
         }
 
-        currentModuleInstance.threadCallbacks[threadId][uniqueId] = {};
-        currentModuleInstance.sendMessageCallbacks[uniqueId] = {};
+        _store.store.threadCallbacks[threadId][uniqueId] = {};
+        _store.store.sendMessageCallbacks[uniqueId] = {};
 
         if (callbacks.onSent) {
-          currentModuleInstance.sendMessageCallbacks[uniqueId].onSent = callbacks.onSent;
-          currentModuleInstance.threadCallbacks[threadId][uniqueId].onSent = false;
-          currentModuleInstance.threadCallbacks[threadId][uniqueId].uniqueId = uniqueId;
+          _store.store.sendMessageCallbacks[uniqueId].onSent = callbacks.onSent;
+          _store.store.threadCallbacks[threadId][uniqueId].onSent = false;
+          _store.store.threadCallbacks[threadId][uniqueId].uniqueId = uniqueId;
         }
 
         if (callbacks.onSeen) {
-          currentModuleInstance.sendMessageCallbacks[uniqueId].onSeen = callbacks.onSeen;
-          currentModuleInstance.threadCallbacks[threadId][uniqueId].onSeen = false;
+          _store.store.sendMessageCallbacks[uniqueId].onSeen = callbacks.onSeen;
+          _store.store.threadCallbacks[threadId][uniqueId].onSeen = false;
         }
 
         if (callbacks.onDeliver) {
-          currentModuleInstance.sendMessageCallbacks[uniqueId].onDeliver = callbacks.onDeliver;
-          currentModuleInstance.threadCallbacks[threadId][uniqueId].onDeliver = false;
+          _store.store.sendMessageCallbacks[uniqueId].onDeliver = callbacks.onDeliver;
+          _store.store.threadCallbacks[threadId][uniqueId].onDeliver = false;
         }
       } else if (callbacks.onResult) {
-        currentModuleInstance.messagesCallbacks[uniqueId] = callbacks.onResult;
+        _store.store.messagesCallbacks[uniqueId] = callbacks.onResult;
       }
     } else if (typeof callbacks == 'function') {
-      currentModuleInstance.messagesCallbacks[uniqueId] = callbacks;
+      _store.store.messagesCallbacks[uniqueId] = callbacks;
     }
     /**
      * Message to send through async SDK
@@ -251,15 +256,15 @@ function ChatMessaging(params) {
           callbacks.onResult(res);
         }
 
-        if (currentModuleInstance.messagesCallbacks[uniqueId]) {
-          delete currentModuleInstance.messagesCallbacks[uniqueId];
+        if (_store.store.messagesCallbacks[uniqueId]) {
+          delete _store.store.messagesCallbacks[uniqueId];
         }
       }
     });
 
     if (_sdkParams.sdkParams.asyncRequestTimeout > 0) {
-      currentModuleInstance.asyncRequestTimeouts[uniqueId] && clearTimeout(currentModuleInstance.asyncRequestTimeouts[uniqueId]);
-      currentModuleInstance.asyncRequestTimeouts[uniqueId] = setTimeout(function () {
+      _store.store.asyncRequestTimeouts[uniqueId] && clearTimeout(_store.store.asyncRequestTimeouts[uniqueId]);
+      _store.store.asyncRequestTimeouts[uniqueId] = setTimeout(function () {
         if (typeof callbacks == 'function') {
           callbacks({
             hasError: true,
@@ -274,31 +279,32 @@ function ChatMessaging(params) {
           });
         }
 
-        if (currentModuleInstance.messagesCallbacks[uniqueId]) {
-          delete currentModuleInstance.messagesCallbacks[uniqueId];
+        if (_store.store.messagesCallbacks[uniqueId]) {
+          delete _store.store.messagesCallbacks[uniqueId];
         }
 
-        if (currentModuleInstance.sendMessageCallbacks[uniqueId]) {
-          delete currentModuleInstance.sendMessageCallbacks[uniqueId];
+        if (_store.store.sendMessageCallbacks[uniqueId]) {
+          delete _store.store.sendMessageCallbacks[uniqueId];
         }
 
-        if (!!currentModuleInstance.threadCallbacks[threadId] && currentModuleInstance.threadCallbacks[threadId][uniqueId]) {
-          currentModuleInstance.threadCallbacks[threadId][uniqueId] = {};
-          delete currentModuleInstance.threadCallbacks[threadId][uniqueId];
+        if (!!_store.store.threadCallbacks[threadId] && _store.store.threadCallbacks[threadId][uniqueId]) {
+          _store.store.threadCallbacks[threadId][uniqueId] = {};
+          delete _store.store.threadCallbacks[threadId][uniqueId];
         }
       }, _sdkParams.sdkParams.asyncRequestTimeout);
     }
     /*          currentModuleInstance.sendPingTimeout && clearTimeout(currentModuleInstance.sendPingTimeout);
-                currentModuleInstance.sendPingTimeout = setTimeout(function () {
-                    currentModuleInstance.ping();
-                }, chatPingMessageInterval); */
+            currentModuleInstance.sendPingTimeout = setTimeout(function () {
+                currentModuleInstance.ping();
+            }, chatPingMessageInterval); */
 
 
     recursiveCallback && recursiveCallback();
     return {
       uniqueId: uniqueId,
       threadId: threadId,
-      participant: currentModuleInstance.userInfo,
+      participant: (_currentModuleInstanc = currentModuleInstance.userInfo) === null || _currentModuleInstanc === void 0 ? void 0 : _currentModuleInstanc.id,
+      // currentModuleInstance.userInfo,
       content: params.content
     };
   };
@@ -326,21 +332,20 @@ function ChatMessaging(params) {
         pushMsgType: 3
       });
     }
-    /*else {
-        currentModuleInstance.sendPingTimeout && clearTimeout(currentModuleInstance.sendPingTimeout);
-    }*/
-
   };
-} // if (typeof module !== 'undefined' && typeof module.exports != 'undefined') {
-//     module.exports = ChatMessaging;
-// } else {
-//     if (!window.POD) {
-//         window.POD = {};
-//     }
-//     window.POD.ChatMessaging = ChatMessaging;
-// }
-// })();
+}
 
+function initChatMessaging(params) {
+  if (!chatMessaging) {
+    chatMessaging = new ChatMessaging(params);
+  }
+
+  return chatMessaging;
+}
+
+function messenger() {
+  return chatMessaging;
+}
 
 var _default = ChatMessaging;
 exports["default"] = _default;
