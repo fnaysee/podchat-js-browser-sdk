@@ -2190,7 +2190,10 @@ function ChatCall(params) {
             if (Array.isArray(params.userIds) && params.userIds.length) {
                 for(let i in params.userIds) {
                     let user = currentCall().users().get(params.userIds[i]);
-                    user.destroyVideo();
+                    if(user.user().id != "screenShare"){
+                        user.destroyVideo();
+                    }
+
                     // callStateController.deactivateParticipantStream(
                     //     params.userIds[i],
                     //     'video',
@@ -2213,8 +2216,7 @@ function ChatCall(params) {
             if (Array.isArray(params.userIds) && params.userIds.length) {
                 for( let i in params.userIds) {
                     let user = currentCall().users().get(params.userIds[i]);
-
-                    if (!user || !user.video)
+                    if (!user || !user.user().video)
                         continue;
 
                     user.startVideo(user.user().topicSend);

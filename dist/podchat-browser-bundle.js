@@ -46504,11 +46504,15 @@ function ChatCall(params) {
       if (Array.isArray(params.userIds) && params.userIds.length) {
         for (var i in params.userIds) {
           var user = (0, _sharedData.currentCall)().users().get(params.userIds[i]);
-          user.destroyVideo(); // callStateController.deactivateParticipantStream(
+
+          if (user.user().id != "screenShare") {
+            user.destroyVideo();
+          } // callStateController.deactivateParticipantStream(
           //     params.userIds[i],
           //     'video',
           //     'video'
           // );
+
         }
 
         callback && callback({
@@ -46530,7 +46534,7 @@ function ChatCall(params) {
       if (Array.isArray(params.userIds) && params.userIds.length) {
         for (var i in params.userIds) {
           var user = (0, _sharedData.currentCall)().users().get(params.userIds[i]);
-          if (!user || !user.video) continue;
+          if (!user || !user.user().video) continue;
           user.startVideo(user.user().topicSend);
         }
 
