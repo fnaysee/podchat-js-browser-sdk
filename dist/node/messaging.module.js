@@ -52,7 +52,6 @@ function ChatMessaging(params) {
   /**
    * sendPingTimeout removed,
    *
-   * TODO: remove the interval when socket state changes to closed
    */
 
   this.startChatPing = function () {

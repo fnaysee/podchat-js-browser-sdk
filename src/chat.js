@@ -1348,7 +1348,8 @@ function Chat(params) {
                             messageId: messageContent
                         });
                         delete (store.sendMessageCallbacks[uniqueId].onSent);
-                        store.threadCallbacks[threadId][uniqueId].onSent = true;
+                        if(store.threadCallbacks[threadId] && store.threadCallbacks[threadId][uniqueId])
+                            store.threadCallbacks[threadId][uniqueId].onSent = true;
                     }
                     break;
 

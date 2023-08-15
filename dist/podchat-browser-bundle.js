@@ -47019,7 +47019,7 @@ renew:false,keyAlgorithm:'aes',keySize:256};if(params){if(params.keyAlgorithm!==
                  * Type 2    Message
                  */case _constants.chatMessageVOTypes.MESSAGE:newMessageHandler(threadId,messageContent);break;/**
                  * Type 3    Message Sent
-                 */case _constants.chatMessageVOTypes.SENT:if(_store.store.sendMessageCallbacks[uniqueId]&&_store.store.sendMessageCallbacks[uniqueId].onSent){_store.store.sendMessageCallbacks[uniqueId].onSent({uniqueId:uniqueId,messageId:messageContent});delete _store.store.sendMessageCallbacks[uniqueId].onSent;_store.store.threadCallbacks[threadId][uniqueId].onSent=true;}break;/**
+                 */case _constants.chatMessageVOTypes.SENT:if(_store.store.sendMessageCallbacks[uniqueId]&&_store.store.sendMessageCallbacks[uniqueId].onSent){_store.store.sendMessageCallbacks[uniqueId].onSent({uniqueId:uniqueId,messageId:messageContent});delete _store.store.sendMessageCallbacks[uniqueId].onSent;if(_store.store.threadCallbacks[threadId]&&_store.store.threadCallbacks[threadId][uniqueId])_store.store.threadCallbacks[threadId][uniqueId].onSent=true;}break;/**
                  * Type 4    Message Delivery
                  */case _constants.chatMessageVOTypes.DELIVERY:var threadObject={id:messageContent.conversationId,lastSeenMessageId:messageContent.messageId,lastSeenMessageTime:messageContent.messageTime,lastParticipantId:messageContent.participantId};_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadObject}});// if (fullResponseObject) {
 //     getHistory({
@@ -53906,7 +53906,6 @@ function ChatMessaging(params) {
   /**
    * sendPingTimeout removed,
    *
-   * TODO: remove the interval when socket state changes to closed
    */
 
   this.startChatPing = function () {
