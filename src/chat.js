@@ -3829,6 +3829,9 @@ function Chat(params) {
                 replyInfo.participant = formatDataToMakeParticipant(messageContent.participant, threadId);
             }
 
+            if (messageContent.replyPrivatelyInfoVO) {
+                replyInfo.replyPrivatelyInfoVO = messageContent.replyPrivatelyInfoVO;
+            }
             // return replyInfo;
             return JSON.parse(JSON.stringify(replyInfo));
         },
