@@ -482,7 +482,7 @@ function CallScreenShare(user) {
         userId: config.user.userId,
         topic: config.user.videoTopicName,
         mediaType: 'video',
-        direction: _callsList.callsManager.get(config.callId).screenShareInfo.iAmOwner() ? 'send' : 'receive',
+        direction: (0, _callsList.callsManager)().get(config.callId).screenShareInfo.iAmOwner() ? 'send' : 'receive',
         user: config.user,
         isScreenShare: true
       });
@@ -581,8 +581,7 @@ function CallScreenShare(user) {
   };
 
   function setup(user) {
-    var iAmOwner = _callsList.callsManager.get(config.callId).screenShareInfo.iAmOwner();
-
+    var iAmOwner = (0, _callsList.callsManager)().get(config.callId).screenShareInfo.iAmOwner();
     var obj = {
       video: true,
       callId: user.callId,

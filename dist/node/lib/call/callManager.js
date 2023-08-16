@@ -132,9 +132,8 @@ function CallManager(_ref) {
       if (res.done === 'TRUE') {
         _sharedData.callStopQueue.callStarted = true; // callController.startCall(params);
       } else {
-        _callsList.callsManager.removeItem(config.callId); // endCall({callId: config.callId});
+        (0, _callsList.callsManager)().removeItem(config.callId); // endCall({callId: config.callId});
         // callStop(true, true);
-
       }
     };
 
@@ -841,8 +840,7 @@ function CallManager(_ref) {
                   callId: config.callId
                 });
 
-                _callsList.callsManager.removeItem(config.callId);
-
+                (0, _callsList.callsManager)().removeItem(config.callId);
                 return _context.abrupt("return");
 
               case 5:
@@ -857,8 +855,7 @@ function CallManager(_ref) {
                 }
 
                 // await callStop();
-                _callsList.callsManager.removeItem(config.callId);
-
+                (0, _callsList.callsManager)().removeItem(config.callId);
                 _context.next = 13;
                 break;
 

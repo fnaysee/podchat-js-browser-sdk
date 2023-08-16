@@ -100,7 +100,7 @@ function endCall(params, callback) {
 }
 
 function endScreenShare(params, callback) {
-  var cCall = _callsList.callsManager.get(_callsList.callsManager.currentCallId);
+  var cCall = (0, _callsList.callsManager)().get((0, _callsList.callsManager)().currentCallId);
 
   if (!cCall) {
     (0, _errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID, callback, true, {});
@@ -113,7 +113,7 @@ function endScreenShare(params, callback) {
     //params.typeCode,
     pushMsgType: 3,
     token: _sdkParams.sdkParams.token,
-    subjectId: _callsList.callsManager.currentCallId
+    subjectId: (0, _callsList.callsManager)().currentCallId
   };
 
   if (!sendData.subjectId) {
@@ -163,7 +163,7 @@ function calculateScreenSize(_ref) {
 }
 
 function currentCall() {
-  return _callsList.callsManager.get(_callsList.callsManager.currentCallId);
+  return (0, _callsList.callsManager)().get(_callsList.callsManager.currentCallId);
 }
 
 function currentCallMyUser() {

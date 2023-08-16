@@ -25,7 +25,7 @@ function DevicePauseStopManager({userId, mediaType, timeout, callId}) {
             if(config.paused) {
                 config.stopped = true;
 
-                callsManager.get(callId).users.get(userId).destroyAudio()
+                callsManager().get(callId).users.get(userId).destroyAudio()
                 //     .deactivateParticipantStream(
                 //     config.userId,
                 //     config.mediaType,

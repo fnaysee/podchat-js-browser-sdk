@@ -37,13 +37,11 @@ function DevicePauseStopManager(_ref) {
 
       if (config.paused) {
         config.stopped = true;
-
-        _callsList.callsManager.get(callId).users.get(userId).destroyAudio(); //     .deactivateParticipantStream(
+        (0, _callsList.callsManager)().get(callId).users.get(userId).destroyAudio(); //     .deactivateParticipantStream(
         //     config.userId,
         //     config.mediaType,
         //     (config.mediaType === 'video' ? 'video' : 'mute')
         // );
-
       } //}, config.timeout);
 
     },

@@ -41,7 +41,7 @@ function CallUsers(_ref) {
   function startCall() {
     for (var i in config.list) {
       if (i === "screenShare") {
-        if (_callsList.callsManager.get(config.callId).screenShareInfo.isStarted()) addScreenShareToCall('receive', false);
+        if ((0, _callsList.callsManager)().get(config.callId).screenShareInfo.isStarted()) addScreenShareToCall('receive', false);
         continue;
       }
 
@@ -133,14 +133,14 @@ function CallUsers(_ref) {
       var me = _store.store.user().id,
           callUIElements = {};
 
-      if (!_callsList.callsManager.get(config.callId)) return;
+      if (!(0, _callsList.callsManager)().get(config.callId)) return;
 
       for (var i in config.list) {
         var tags = {};
 
         if (config.list[i] && config.list[i].getHTMLElements()) {
           tags.container = config.list[i].getHTMLElements().container;
-          if (i === 'screenShare' && _callsList.callsManager.get(config.callId).screenShareInfo.isStarted() || i != 'screenShare' && config.list[i].user().video && config.list[i].getHTMLElements()[config.list[i].user().videoTopicName]) tags.video = config.list[i].getHTMLElements()[config.list[i].user().videoTopicName];
+          if (i === 'screenShare' && (0, _callsList.callsManager)().get(config.callId).screenShareInfo.isStarted() || i != 'screenShare' && config.list[i].user().video && config.list[i].getHTMLElements()[config.list[i].user().videoTopicName]) tags.video = config.list[i].getHTMLElements()[config.list[i].user().videoTopicName];
           if (!config.list[i].mute && config.list[i].getHTMLElements()[config.list[i].user().audioTopicName]) tags.audio = config.list[i].getHTMLElements()[config.list[i].user().audioTopicName];
           callUIElements[i] = tags;
         }

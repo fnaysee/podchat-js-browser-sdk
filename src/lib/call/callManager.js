@@ -108,7 +108,7 @@ function CallManager({callId, callConfig}) {
                     callStopQueue.callStarted = true;
                     // callController.startCall(params);
                 } else {
-                    callsManager.removeItem(config.callId);
+                    callsManager().removeItem(config.callId);
                     // endCall({callId: config.callId});
                     // callStop(true, true);
                 }
@@ -755,7 +755,7 @@ function CallManager({callId, callConfig}) {
                     type: 'CALL_ENDED',
                     callId: config.callId
                 });
-                callsManager.removeItem(config.callId);
+                callsManager().removeItem(config.callId);
                 return;
             }
 
@@ -763,7 +763,7 @@ function CallManager({callId, callConfig}) {
                 //console.log("chatMessageVOTypes.LEAVE_CALL: ", messageContent[0].userId, store.user().id)
                 if (messageContent[0].userId == store.user().id) {
                     // await callStop();
-                    callsManager.removeItem(config.callId);
+                    callsManager().removeItem(config.callId);
                 } else {
                     await config.users.removeItem(messageContent[0].userId);
                     if (config.screenShareInfo.isStarted() && config.screenShareInfo.getOwner() === messageContent[0].userId) {

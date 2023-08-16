@@ -14,11 +14,11 @@ function CallsList() {
                 await publicized.destroyAllCalls();
             }
 
-            callsManager.currentCallId = callId;
+            callsManager().currentCallId = callId;
             config.list[callId] = new CallManager({callId, callConfig});
         },
         async removeItem(callId) {
-            callsManager.currentCallId = null;
+            callsManager().currentCallId = null;
             if(config.list[callId]) {
                 await config.list[callId].destroy();
                 delete config.list[callId];
@@ -52,6 +52,10 @@ function CallsList() {
     return publicized;
 }
 
-const callsManager = new CallsList();
+const callsMgr = new CallsList();
+
+function callsManager() {
+    return callsMgr;
+}
 
 export {callsManager}

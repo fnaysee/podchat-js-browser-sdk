@@ -63,7 +63,7 @@ function CallTopicManager(_ref) {
   };
 
   function currentCall() {
-    return _callsList.callsManager.get(config.callId);
+    return (0, _callsList.callsManager)().get(config.callId);
   }
 
   var metadataInstance = new _topicMetaDataManager.topicMetaDataManager({
@@ -737,7 +737,7 @@ function CallTopicManager(_ref) {
     },
     stopTopicOnServer: function stopTopicOnServer() {
       return new Promise(function (resolve) {
-        _callsList.callsManager.get(config.callId).sendCallMessage({
+        (0, _callsList.callsManager)().get(config.callId).sendCallMessage({
           id: 'STOP',
           topic: config.topic
         }, function (result) {

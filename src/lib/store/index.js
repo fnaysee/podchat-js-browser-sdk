@@ -1,7 +1,6 @@
 import {threadsList} from "./threads";
 import {storeEvents} from "./eventEmitter";
 import {user} from "./user";
-import {callsManager} from "../call/callsList";
 
 let store = {
     threads: threadsList,
@@ -10,8 +9,7 @@ let store = {
     threadCallbacks: {},
     sendMessageCallbacks: {},
     messagesCallbacks: {},
-    asyncRequestTimeouts: {},
-    callsManager: callsManager
+    asyncRequestTimeouts: {}
 };
 
 export {store}

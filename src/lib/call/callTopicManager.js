@@ -38,7 +38,7 @@ function CallTopicManager(
     };
 
     function currentCall() {
-        return callsManager.get(config.callId)
+        return callsManager().get(config.callId)
     }
 
     const metadataInstance = new topicMetaDataManager({
@@ -679,7 +679,7 @@ function CallTopicManager(
         },
         stopTopicOnServer() {
             return new Promise(resolve => {
-                callsManager.get(config.callId).sendCallMessage({
+                callsManager().get(config.callId).sendCallMessage({
                     id: 'STOP',
                     topic: config.topic
                 }, function (result) {

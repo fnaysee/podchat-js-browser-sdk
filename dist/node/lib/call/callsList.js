@@ -5,7 +5,7 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.callsManager = void 0;
+exports.callsManager = callsManager;
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
@@ -40,7 +40,7 @@ function CallsList() {
                 return publicized.destroyAllCalls();
 
               case 3:
-                callsManager.currentCallId = callId;
+                callsManager().currentCallId = callId;
                 config.list[callId] = new _callManager.CallManager({
                   callId: callId,
                   callConfig: callConfig
@@ -60,7 +60,7 @@ function CallsList() {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                callsManager.currentCallId = null;
+                callsManager().currentCallId = null;
 
                 if (!config.list[callId]) {
                   _context2.next = 5;
@@ -110,5 +110,8 @@ function CallsList() {
   return publicized;
 }
 
-var callsManager = new CallsList();
-exports.callsManager = callsManager;
+var callsMgr = new CallsList();
+
+function callsManager() {
+  return callsMgr;
+}

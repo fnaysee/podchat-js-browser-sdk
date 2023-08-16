@@ -218,7 +218,7 @@ function ChatCall(params) {
             }
 
             // message.uniqueId = uniqueId;
-            message.chatId = callsManager.currentCallId;
+            message.chatId = callsManager().currentCallId;
 
             let data = {
                 type: 3,
@@ -442,7 +442,7 @@ function ChatCall(params) {
             sendCallMessage({
                 id: 'SENDMETADATA',
                 message: JSON.stringify(message),
-                chatId: callsManager.currentCallId
+                chatId: callsManager().currentCallId
             }, null, {});
         },
 
@@ -453,12 +453,12 @@ function ChatCall(params) {
                     callTurnIp: sharedVariables.callTurnIp,
 
                 },
-                isJanus: callsManager.currentCallId && callServerController.isJanus(),
+                isJanus: callsManager().currentCallId && callServerController.isJanus(),
                 screenShareInfo: {
                     isStarted: screenShareInfo.isStarted(),
                     iAmOwner: screenShareInfo.iAmOwner(),
                 },
-                callId: callsManager.currentCallId,
+                callId: callsManager().currentCallId,
                 startCallInfo: currentCallParams,
                 customData
             }
@@ -469,7 +469,7 @@ function ChatCall(params) {
             : callMessage.content
 
         if(jsonMessage.chatId){
-            callsManager.routeCallMessage(jsonMessage.chatId, jsonMessage);
+            callsManager().routeCallMessage(jsonMessage.chatId, jsonMessage);
         } else {
             sdkParams.consoleLogging && console.warn("[SDK] Skipping call message, no chatId is available. ", {jsonMessage})
         }
@@ -480,8 +480,8 @@ function ChatCall(params) {
 
         sharedVariables.asyncClient.on('asyncReady', function (){
             // callStateController.maybeReconnectAllTopics();
-            if(callsManager.currentCallId) {
-                callsManager.get(callsManager.currentCallId).onChatConnectionReconnect();
+            if(callsManager().currentCallId) {
+                callsManager().get(callsManager().currentCallId).onChatConnectionReconnect();
             }
         })
     };
@@ -520,7 +520,7 @@ function ChatCall(params) {
     }
 
     this.handleChatMessages = function(type, messageContent, contentCount, threadId, uniqueId) {
-        sdkParams.consoleLogging && console.debug("[SDK][CALL_MODULE][handleChatMessages]", "type:", type, "threadId:", threadId, "currentCallId:", callsManager.currentCallId, "latestCallRequestId:", latestCallRequestId,  "shouldNotProcessChatMessage:", shouldNotProcessChatMessage(type, threadId))
+        sdkParams.consoleLogging && console.debug("[SDK][CALL_MODULE][handleChatMessages]", "type:", type, "threadId:", threadId, "currentCallId:", callsManager().currentCallId, "latestCallRequestId:", latestCallRequestId,  "shouldNotProcessChatMessage:", shouldNotProcessChatMessage(type, threadId))
         if(shouldNotProcessChatMessage(type, threadId)) {
             return;
         }
@@ -626,17 +626,17 @@ function ChatCall(params) {
                     return;
                 }
 
-                callsManager.currentCallId = threadId;
+                callsManager().currentCallId = threadId;
                 processChatStartCallEvent(type, messageContent, contentCount, threadId, uniqueId);
-                // if(callsManager.currentCallId) {
-                //     endCall({callId: callsManager.currentCallId});
+                // if(callsManager().currentCallId) {
+                //     endCall({callId: callsManager().currentCallId});
                 //     // callStop( true, false);
                 //     setTimeout(()=>{
-                //         callsManager.currentCallId = threadId;
+                //         callsManager().currentCallId = threadId;
                 //         processChatStartCallEvent(type, messageContent, contentCount, threadId, uniqueId);
                 //     }, 5000);
                 // } else {
-                //     callsManager.currentCallId = threadId;
+                //     callsManager().currentCallId = threadId;
                 //     processChatStartCallEvent(type, messageContent, contentCount, threadId, uniqueId);
                 // }
 
@@ -655,7 +655,7 @@ function ChatCall(params) {
                     result: messageContent
                 });
 
-                callsManager.removeItem(threadId);
+                callsManager().removeItem(threadId);
                 // callStop();
 
                 break;
@@ -673,8 +673,8 @@ function ChatCall(params) {
                     callId: threadId
                 });
 
-                if(threadId === callsManager.currentCallId && callStopQueue.callStarted) {
-                    callsManager.removeItem(threadId);
+                if(threadId === callsManager().currentCallId && callStopQueue.callStarted) {
+                    callsManager().removeItem(threadId);
                     // callStop();
                 }
 
@@ -709,7 +709,7 @@ function ChatCall(params) {
              * Type 79    Call Partner Connects
              */
             case chatMessageVOTypes.CONNECT:
-                if(!callsManager.currentCallId)
+                if(!callsManager().currentCallId)
                     return;
 
                 if (store.messagesCallbacks[uniqueId]) {
@@ -775,10 +775,10 @@ function ChatCall(params) {
              * 2. Other person has left the call (GroupCall)
              */
             case chatMessageVOTypes.LEAVE_CALL:
-                if(callsManager.currentCallId != threadId)
+                if(callsManager().currentCallId != threadId)
                     return;
 
-                callsManager.get(threadId).handleParticipantLeft(messageContent, threadId);
+                callsManager().get(threadId).handleParticipantLeft(messageContent, threadId);
 
                 break;
 
@@ -796,10 +796,10 @@ function ChatCall(params) {
              * Type 94    Call Participant Joined
              */
             case chatMessageVOTypes.CALL_PARTICIPANT_JOINED:
-                if(callsManager.currentCallId != threadId)
+                if(callsManager().currentCallId != threadId)
                     return;
 
-                callsManager.get(threadId).handleParticipantJoin(messageContent);
+                callsManager().get(threadId).handleParticipantJoin(messageContent);
 
                 chatEvents.fireEvent('callEvents', {
                     type: 'CALL_PARTICIPANT_JOINED',
@@ -836,8 +836,8 @@ function ChatCall(params) {
                     result: messageContent
                 });
 
-                if(threadId === callsManager.currentCallId) {
-                    callsManager.removeItem(threadId);
+                if(threadId === callsManager().currentCallId) {
+                    callsManager().removeItem(threadId);
                 }
 
                 break;
@@ -850,10 +850,10 @@ function ChatCall(params) {
                     store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                 }
 
-                if(!callsManager.currentCallId)
+                if(!callsManager().currentCallId)
                     return;
 
-                callsManager.get(threadId).handleParticipantMute(messageContent);
+                callsManager().get(threadId).handleParticipantMute(messageContent);
 
                 break;
 
@@ -865,7 +865,7 @@ function ChatCall(params) {
                     store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                 }
 
-                callsManager.get(threadId).handleParticipantUnMute(messageContent);
+                callsManager().get(threadId).handleParticipantUnMute(messageContent);
 
                 break;
 
@@ -919,10 +919,10 @@ function ChatCall(params) {
                     store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                 }
 
-                if(!callsManager.currentCallId)
+                if(!callsManager().currentCallId)
                     return;
 
-                callsManager.get(threadId).handleParticipantVideoOn(messageContent);
+                callsManager().get(threadId).handleParticipantVideoOn(messageContent);
 
                 break;
 
@@ -934,10 +934,10 @@ function ChatCall(params) {
                     store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                 }
 
-                if(!callsManager.currentCallId)
+                if(!callsManager().currentCallId)
                     return;
 
-                callsManager.get(threadId).handleParticipantVideoOff(messageContent);
+                callsManager().get(threadId).handleParticipantVideoOff(messageContent);
 
                 break;
 
@@ -982,10 +982,10 @@ function ChatCall(params) {
              * Type 123   Start Screen Share
              */
             case chatMessageVOTypes.START_SCREEN_SHARE:
-                if(!callsManager.currentCallId)
+                if(!callsManager().currentCallId)
                     return;
 
-                callsManager.get(threadId).handleStartScreenShare(messageContent);
+                callsManager().get(threadId).handleStartScreenShare(messageContent);
 
                 if (store.messagesCallbacks[uniqueId]) {
                         store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
@@ -998,8 +998,8 @@ function ChatCall(params) {
              */
             case chatMessageVOTypes.END_SCREEN_SHARE:
                 // screenShareInfo.setIAmOwner(false);
-                if(callsManager.currentCallId)
-                    callsManager.get(threadId).handleEndScreenShare(messageContent);
+                if(callsManager().currentCallId)
+                    callsManager().get(threadId).handleEndScreenShare(messageContent);
 
                 break;
 
@@ -1147,7 +1147,7 @@ function ChatCall(params) {
                 cameraPaused: joinCallParams.cameraPaused
             };
 
-            callsManager.addItem(threadId, options);
+            callsManager().addItem(threadId, options);
         } else {
             chatEvents.fireEvent('callEvents', {
                 type: 'CALL_ERROR',
@@ -1253,7 +1253,7 @@ function ChatCall(params) {
                             callId: metaData.currentCallId
                         });
                     }
-                }, sharedVariables.callNoAnswerTimeout, {callInstance: currentModuleInstance, currentCallId: callsManager.currentCallId});
+                }, sharedVariables.callNoAnswerTimeout, {callInstance: currentModuleInstance, currentCallId: callsManager().currentCallId});
             }
 
             messenger().sendMessage(startCallData, {
@@ -1360,7 +1360,7 @@ function ChatCall(params) {
                             callId: metaData.currentCallId
                         });
                     }
-                }, sharedVariables.callNoAnswerTimeout, {callInstance: currentModuleInstance, currentCallId: callsManager.currentCallId});
+                }, sharedVariables.callNoAnswerTimeout, {callInstance: currentModuleInstance, currentCallId: callsManager().currentCallId});
             }
 
             messenger().sendMessage(startCallData, {
@@ -1581,7 +1581,7 @@ function ChatCall(params) {
             chatMessageVOType: chatMessageVOTypes.START_SCREEN_SHARE,
             typeCode: sdkParams.generalTypeCode, //params.typeCode,
             pushMsgType: 3,
-            subjectId: callsManager.currentCallId,
+            subjectId: callsManager().currentCallId,
             token: sdkParams.token
         };
 
@@ -1606,7 +1606,7 @@ function ChatCall(params) {
     this.endScreenShare = endScreenShare;
 
     this.resizeScreenShare = function (params, callback) {
-        let cCall = callsManager.get(callsManager.currentCallId);
+        let cCall = callsManager().get(callsManager().currentCallId);
         let result = {}
 
         if(!cCall) {
@@ -2095,7 +2095,7 @@ function ChatCall(params) {
             return;
         }
 
-        let call = callsManager.get(callsManager.currentCallId);
+        let call = callsManager().get(callsManager().currentCallId);
         if(!call) {
             chatEvents.fireEvent('error', {
                 code: 999,
@@ -2151,7 +2151,7 @@ function ChatCall(params) {
             return;
         }
 
-        let call = callsManager.get(callsManager.currentCallId);
+        let call = callsManager().get(callsManager().currentCallId);
         if(!call) {
             chatEvents.fireEvent('error', {
                 code: 999,
@@ -2238,7 +2238,7 @@ function ChatCall(params) {
      */
     this.pauseCamera = function (params, callback) {
         // let me = callUsers[store.user().id];
-        // let currentCall = callsManager.get(callsManager.currentCallId);
+        // let currentCall = callsManager().get(callsManager().currentCallId);
         if(!currentCall())
             return;
 
@@ -2251,7 +2251,7 @@ function ChatCall(params) {
     };
 
     this.resumeCamera = function (params, callback) {
-        // let currentCall = callsManager.get(callsManager.currentCallId);
+        // let currentCall = callsManager().get(callsManager().currentCallId);
         if(!currentCall())
             return;
 
@@ -2269,7 +2269,7 @@ function ChatCall(params) {
      * @param callback
      */
     this.pauseMice = function (params, callback) {
-        let currentCall = callsManager.get(callsManager.currentCallId);
+        let currentCall = callsManager().get(callsManager().currentCallId);
         let me = currentCall.users.get(store.user().id);
 
         if(!currentCall || !me || !me.user().audioTopicName || !me.audioTopicManager().getPeer())//!me.peers[me.videoTopicName]
@@ -2280,7 +2280,7 @@ function ChatCall(params) {
     };
 
     this.resumeMice = function (params, callback) {
-        let currentCall = callsManager.get(callsManager.currentCallId);
+        let currentCall = callsManager().get(callsManager().currentCallId);
         let me = currentCall.users.get(store.user().id);
 
         if(!currentCall || !me || !me.user().audioTopicName || !me.audioTopicManager().getPeer())//!me.peers[me.videoTopicName]
@@ -2343,7 +2343,7 @@ function ChatCall(params) {
             content: [
                 sticker
             ],
-            subjectId: callsManager.currentCallId
+            subjectId: callsManager().currentCallId
         };
 
         if(!sendMessageParams.subjectId) {
@@ -2368,7 +2368,7 @@ function ChatCall(params) {
             chatMessageVOType: chatMessageVOTypes.RECALL_THREAD_PARTICIPANT,
             typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: null,
-            subjectId: callsManager.currentCallId,
+            subjectId: callsManager().currentCallId,
         };
 
         if(!invitees || !Array.isArray(invitees) || !invitees.length) {
@@ -2392,12 +2392,12 @@ function ChatCall(params) {
     this.deviceManager = deviceManager
 
     this.resetCallStream = async function({userId, streamType = 'audio'}, callback) {
-        if(!callsManager.currentCallId) {
+        if(!callsManager().currentCallId) {
             callback && callback({hasError: true});
             return;
         }
 
-        let user = callsManager.get(callsManager.currentCallId).users().get(userId);
+        let user = callsManager().get(callsManager().currentCallId).users().get(userId);
 
         if(!user){
             callback && callback({hasError: true});

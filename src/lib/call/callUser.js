@@ -292,7 +292,7 @@ function CallScreenShare(user) {
                 userId: config.user.userId,
                 topic: config.user.videoTopicName,
                 mediaType: 'video',
-                direction: (callsManager.get(config.callId).screenShareInfo.iAmOwner() ? 'send' : 'receive'),
+                direction: (callsManager().get(config.callId).screenShareInfo.iAmOwner() ? 'send' : 'receive'),
                 user: config.user,
                 isScreenShare: true
             });
@@ -332,7 +332,7 @@ function CallScreenShare(user) {
     }
 
     function setup(user) {
-        let iAmOwner = callsManager.get(config.callId).screenShareInfo.iAmOwner();
+        let iAmOwner = callsManager().get(config.callId).screenShareInfo.iAmOwner();
 
         let obj = {
             video: true,

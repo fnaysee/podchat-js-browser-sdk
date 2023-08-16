@@ -21,7 +21,7 @@ function CallUsers({callId}) {
     function startCall() {
         for (let i in config.list) {
             if (i === "screenShare") {
-                if (callsManager.get(config.callId).screenShareInfo.isStarted())
+                if (callsManager().get(config.callId).screenShareInfo.isStarted())
                     addScreenShareToCall('receive', false);
 
                 continue;
@@ -94,14 +94,14 @@ function CallUsers({callId}) {
             let me = store.user().id
                 , callUIElements = {};
 
-            if (!callsManager.get(config.callId))
+            if (!callsManager().get(config.callId))
                 return;
 
             for (let i in config.list) {
                 let tags = {};
                 if (config.list[i] && config.list[i].getHTMLElements()) {
                     tags.container = config.list[i].getHTMLElements().container;
-                    if ((i === 'screenShare' && callsManager.get(config.callId).screenShareInfo.isStarted())
+                    if ((i === 'screenShare' && callsManager().get(config.callId).screenShareInfo.isStarted())
                         || i != 'screenShare' && config.list[i].user().video && config.list[i].getHTMLElements()[config.list[i].user().videoTopicName])
                         tags.video = config.list[i].getHTMLElements()[config.list[i].user().videoTopicName];
                     if (!config.list[i].mute && config.list[i].getHTMLElements()[config.list[i].user().audioTopicName])

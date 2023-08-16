@@ -11,8 +11,6 @@ var _eventEmitter = require("./eventEmitter");
 
 var _user = require("./user");
 
-var _callsList = require("../call/callsList");
-
 var store = {
   threads: _threads.threadsList,
   events: _eventEmitter.storeEvents,
@@ -20,7 +18,6 @@ var store = {
   threadCallbacks: {},
   sendMessageCallbacks: {},
   messagesCallbacks: {},
-  asyncRequestTimeouts: {},
-  callsManager: _callsList.callsManager
+  asyncRequestTimeouts: {}
 };
 exports.store = store;
