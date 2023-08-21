@@ -47250,6 +47250,8 @@ break;/**
                  */case _constants.chatMessageVOTypes.REMOVE_REACTION:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}_events.chatEvents.fireEvent('messageEvents',{type:'REMOVE_REACTION',result:messageContent});break;/**
                  * Type 242    REACTION_LIST
                  */case _constants.chatMessageVOTypes.REACTION_LIST:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+                 Type 244   REACTION_COUNT
+                 */case _constants.chatMessageVOTypes.REACTION_COUNT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,messageContent.message,messageContent.code,messageContent,0));}break;/**
                  * Type 999   All unknown errors
                  */case _constants.chatMessageVOTypes.ERROR:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(true,messageContent.message,messageContent.code,messageContent,0));}/**
                      * If error code is 21, Token is invalid &
@@ -48720,11 +48722,12 @@ content:[userId],token:_sdkParams.sdkParams.token};return(0,_messaging.messenger
 content:content};return(0,_messaging.messenger)().sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode,uniqueId:result.uniqueId};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={threads:[],contentCount:result.contentCount,hasNext:messageContent&&!(messageLength<count),//(offset + count < result.contentCount && messageLength > 0),
 nextOffset:offset*1+messageLength*1},threadData;for(var i=0;i<messageLength;i++){threadData=createThread(messageContent[i],false);if(threadData){resultData.threads.push(threadData);}}_store.store.threads.saveMany(resultData.threads);returnData.result=resultData;}callback&&callback(returnData);}});};publicized.archiveThread=function(_ref2,callback){var threadId=_ref2.threadId;var sendData={chatMessageVOType:_constants.chatMessageVOTypes.ARCHIVE_THREAD,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 token:_sdkParams.sdkParams.token,subjectId:threadId};return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.unArchiveThread=function(_ref3,callback){var threadId=_ref3.threadId;var sendData={chatMessageVOType:_constants.chatMessageVOTypes.UNARCHIVE_THREAD,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-token:_sdkParams.sdkParams.token,subjectId:threadId};return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.emojiTypes=_constants.emojiTypes;publicized.addReaction=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.ADD_REACTION,subjectId:params.threadId,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
+token:_sdkParams.sdkParams.token,subjectId:threadId};return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.chatStickerTypes=_constants.chatStickerTypes;publicized.addReaction=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.ADD_REACTION,subjectId:params.threadId,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 content:{messageId:params.messageId,reaction:params.reaction},token:_sdkParams.sdkParams.token};return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.replaceReaction=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.REPLACE_REACTION,subjectId:params.threadId,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 content:{reactionId:params.reactionId,reaction:params.reaction},token:_sdkParams.sdkParams.token};return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.removeReaction=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.REMOVE_REACTION,subjectId:params.threadId,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 content:{reactionId:params.reactionId},token:_sdkParams.sdkParams.token};return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.getReactionList=function(params,callback){var count=20,offset=0;if(params){if(parseInt(params.count)>0){count=params.count;}if(parseInt(params.offset)>0){offset=params.offset;}}var sendData={chatMessageVOType:_constants.chatMessageVOTypes.REACTION_LIST,subjectId:params.threadId,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:{messageId:params.messageId,count:count,offset:offset},token:_sdkParams.sdkParams.token};return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.version=function(){console.log("%c[SDK] Version: podchat-browser@"+_buildConfig["default"].version,"color:green; font-size:13px");console.log("%c[SDK] Build date:"+_buildConfig["default"].date,"color:green;font-size:13px");console.log("%c[SDK] Additional info: "+_buildConfig["default"].VersionInfo,"color:green;font-size:13px");return _buildConfig["default"];};publicized.changeProtocol=function(){var proto=arguments.length>0&&arguments[0]!==undefined?arguments[0]:"websocket";if(["webrtc","websocket","auto"].includes(proto)){if(proto!=protocolManager.getCurrentProtocol()){protocolManager.switchProtocol(proto.toLowerCase());// sdkParams.protocol = protocolSwitching.getCurrentProtocol();
+content:{messageId:params.messageId,count:count,offset:offset},token:_sdkParams.sdkParams.token};return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.getReactionsSummaries=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.REACTION_COUNT,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
+token:_sdkParams.sdkParams.token,subjectId:params.threadId,content:params.messageIds};return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.version=function(){console.log("%c[SDK] Version: podchat-browser@"+_buildConfig["default"].version,"color:green; font-size:13px");console.log("%c[SDK] Build date:"+_buildConfig["default"].date,"color:green;font-size:13px");console.log("%c[SDK] Additional info: "+_buildConfig["default"].VersionInfo,"color:green;font-size:13px");return _buildConfig["default"];};publicized.changeProtocol=function(){var proto=arguments.length>0&&arguments[0]!==undefined?arguments[0]:"websocket";if(["webrtc","websocket","auto"].includes(proto)){if(proto!=protocolManager.getCurrentProtocol()){protocolManager.switchProtocol(proto.toLowerCase());// sdkParams.protocol = protocolSwitching.getCurrentProtocol();
 // asyncClient.logout();
 // initAsync();
 }else{console.warn("SDK is currently using the ".concat(proto," protocol. Nothing to do."));}}else{console.error("Protocol ".concat(proto," is not supported in SDK. Valid protocols: \"webrtc\", \"websocket\""));}};publicized.getPinMessages=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.GET_PIN_MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
@@ -53116,7 +53119,7 @@ function topicMetaDataManager(params) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.systemMessageTypes = exports.inviteeVOidTypes = exports.imageMimeTypes = exports.imageExtentions = exports.emojiTypes = exports.createThreadTypes = exports.chatMessageVOTypes = exports.chatMessageTypes = exports.callStickerTypes = exports.callMetaDataTypes = exports.assistantActionTypes = void 0;
+exports.systemMessageTypes = exports.inviteeVOidTypes = exports.imageMimeTypes = exports.imageExtentions = exports.createThreadTypes = exports.chatStickerTypes = exports.chatMessageVOTypes = exports.chatMessageTypes = exports.callStickerTypes = exports.callMetaDataTypes = exports.assistantActionTypes = void 0;
 var chatMessageVOTypes = {
   CREATE_THREAD: 1,
   MESSAGE: 2,
@@ -53253,6 +53256,7 @@ var chatMessageVOTypes = {
   REPLACE_REACTION: 240,
   REMOVE_REACTION: 241,
   REACTION_LIST: 242,
+  REACTION_COUNT: 244,
   ERROR: 999
 };
 exports.chatMessageVOTypes = chatMessageVOTypes;
@@ -53328,13 +53332,13 @@ var callStickerTypes = {
   BORED: 'bored'
 };
 exports.callStickerTypes = callStickerTypes;
-var emojiTypes = {
+var chatStickerTypes = {
   HI_FIVE: 1,
   LIKE: 2,
   HAPPY: 3,
   CRY: 4
 };
-exports.emojiTypes = emojiTypes;
+exports.chatStickerTypes = chatStickerTypes;
 var callMetaDataTypes = {
   POORCONNECTION: 1,
   POORCONNECTIONRESOLVED: 2,
@@ -53798,23 +53802,10 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.setSDKUser = setSDKUser;
 exports.user = user;
-
-function User(user) {
-  var config = {
-    user: user
-  };
-  return {
-    id: user.id,
-    get: function get() {
-      return config.user;
-    }
-  };
-}
-
 var localUser = null;
 
 function setSDKUser(serverUSer) {
-  localUser = serverUSer; //new User(serverUSer);
+  localUser = serverUSer;
 }
 
 function user() {

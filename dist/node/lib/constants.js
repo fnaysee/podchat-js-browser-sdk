@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.systemMessageTypes = exports.inviteeVOidTypes = exports.imageMimeTypes = exports.imageExtentions = exports.emojiTypes = exports.createThreadTypes = exports.chatMessageVOTypes = exports.chatMessageTypes = exports.callStickerTypes = exports.callMetaDataTypes = exports.assistantActionTypes = void 0;
+exports.systemMessageTypes = exports.inviteeVOidTypes = exports.imageMimeTypes = exports.imageExtentions = exports.createThreadTypes = exports.chatStickerTypes = exports.chatMessageVOTypes = exports.chatMessageTypes = exports.callStickerTypes = exports.callMetaDataTypes = exports.assistantActionTypes = void 0;
 var chatMessageVOTypes = {
   CREATE_THREAD: 1,
   MESSAGE: 2,
@@ -140,6 +140,7 @@ var chatMessageVOTypes = {
   REPLACE_REACTION: 240,
   REMOVE_REACTION: 241,
   REACTION_LIST: 242,
+  REACTION_COUNT: 244,
   ERROR: 999
 };
 exports.chatMessageVOTypes = chatMessageVOTypes;
@@ -215,13 +216,13 @@ var callStickerTypes = {
   BORED: 'bored'
 };
 exports.callStickerTypes = callStickerTypes;
-var emojiTypes = {
+var chatStickerTypes = {
   HI_FIVE: 1,
   LIKE: 2,
   HAPPY: 3,
   CRY: 4
 };
-exports.emojiTypes = emojiTypes;
+exports.chatStickerTypes = chatStickerTypes;
 var callMetaDataTypes = {
   POORCONNECTION: 1,
   POORCONNECTIONRESOLVED: 2,

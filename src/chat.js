@@ -19,7 +19,7 @@ import {
     imageMimeTypes,
     imageExtentions,
     callStickerTypes,
-    emojiTypes
+    chatStickerTypes
 } from "./lib/constants";
 
 import deviceManager from "./lib/call/deviceManager.js";
@@ -2978,6 +2978,14 @@ function Chat(params) {
                     }
                     break;
 
+                /**
+                 Type 244   REACTION_COUNT
+                 */
+                case chatMessageVOTypes.REACTION_COUNT:
+                    if (store.messagesCallbacks[uniqueId]) {
+                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, messageContent.message, messageContent.code, messageContent, 0));
+                    }
+                    break;
                 /**
                  * Type 999   All unknown errors
                  */
@@ -12050,7 +12058,7 @@ function Chat(params) {
             }
         });
     };
-    publicized.emojiTypes = emojiTypes;
+    publicized.chatStickerTypes = chatStickerTypes;
     publicized.addReaction = function (params, callback) {
         let sendData = {
             chatMessageVOType: chatMessageVOTypes.ADD_REACTION,
@@ -12133,6 +12141,21 @@ function Chat(params) {
         };
 
         return messenger().sendMessage(sendData, {
+            onResult: function (result) {
+                callback && callback(result);
+            }
+        });
+    };
+
+    publicized.getReactionsSummaries = function (params, callback) {
+        var sendData = {
+            chatMessageVOType: chatMessageVOTypes.REACTION_COUNT,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            token: sdkParams.token,
+            subjectId: params.threadId,
+            content: params.messageIds
+        };
+        return messenger().sendMessage(sendData,  {
             onResult: function (result) {
                 callback && callback(result);
             }

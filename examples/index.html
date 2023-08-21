@@ -1986,6 +1986,7 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
         <button type="button" name="button" id="removeReaction">Remove Reaction</button>
         <button type="button" name="button" id="replaceReaction">Replace Reaction</button>
         <button type="button" name="button" id="reactionList">Reaction list</button>
+        <button type="button" name="button" id="reactionsSummariesButton">Reactions Summaries</button>
     </fieldset>
 </form>
 
@@ -2735,7 +2736,7 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
             chatAgent.addReaction({
                 threadId: 58920,
                 messageId: 518892511,
-                reaction: chatAgent.emojiTypes.LIKE
+                reaction: chatAgent.chatStickerTypes.LIKE
             }, function (result) {
                 console.log("add reaction...", result)
                 console.log(result);
@@ -2760,7 +2761,7 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
     document.getElementById("replaceReaction")
         .addEventListener("click", function () {
             chatAgent.replaceReaction({
-                reaction: chatAgent.emojiTypes.HAPPY,
+                reaction: chatAgent.chatStickerTypes.HAPPY,
                 threadId: 58920,
                 reactionId: 47
             }, function (result) {
@@ -2781,6 +2782,19 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
                 console.log(result);
             });
         });
+    /**
+     * REACTION COUNT
+     */
+    document.getElementById("reactionsSummariesButton")
+        .addEventListener("click", function () {
+            let instantResult = chatAgent.getReactionsSummaries({
+                threadId: 58920,
+                messageIds: [518892511] // list of messageIds
+            }, function (result) {
+                console.log("[SDK] chatAgent.getReactionsSummaries, ", {result})
+            });
+        });
+
     /**
      * ADD PARTICIPANTS
      */
