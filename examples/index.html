@@ -2776,7 +2776,9 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
         .addEventListener("click", function () {
             chatAgent.getReactionList({
                 threadId: 58920,
-                messageId: 518892511
+                messageId: 518892511,
+                count: 20,
+                offset: 0
             }, function (result) {
                 console.log("reaction list...", result)
                 console.log(result);
@@ -2791,7 +2793,7 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
                 threadId: 58920,
                 messageIds: [518892511] // list of messageIds
             }, function (result) {
-                console.log("[SDK] chatAgent.getReactionsSummaries, ", {result})
+                console.log("Reactions summaries... ", {result})
             });
         });
 
