@@ -1,6 +1,5 @@
 'use strict';
 
-import Async from "podasync-ws-only"
 import Utility from "./utility/utility"
 import ChatCall from "./call.module"
 import {sdkParams} from "./lib/sdkParams";
@@ -8,6 +7,7 @@ import ChatEvents, { initEventHandler, chatEvents } from "./events.module"
 import {initChatMessaging, messenger} from "./messaging.module"
 import buildConfig from "./buildConfig.json"
 import {deprecatedString, printIsDeprecate} from "./deprecateMethods";
+import {async} from "./lib/async/async";
 
 import {
     chatMessageVOTypes,
@@ -69,9 +69,9 @@ function Chat(params) {
 
     sdkParams.callRequestTimeout = (typeof params.callRequestTimeout === 'number' && params.callRequestTimeout >= 0) ? params.callRequestTimeout : 10000
     sdkParams.callOptions = params.callOptions;
+    sdkParams.protocolSwitching = params.protocolSwitching;
 
-    var asyncClient,
-        peerId,
+    var peerId,
         oldPeerId,
         //deviceId,
         //db,
@@ -224,13 +224,9 @@ function Chat(params) {
     }
 
     initEventHandler();
-    initChatMessaging(Object.assign(params, {
-        asyncClient: asyncClient,
-    }));
+    initChatMessaging(params);
 
-    var callModule = new ChatCall(Object.assign(params, {
-        asyncClient: asyncClient
-    }));
+    var callModule = new ChatCall(params);
 
     function ProtocolManager({protocol = 'auto'}) {
         const config = {
@@ -249,7 +245,7 @@ function Chat(params) {
             return config.retries <= config.allowedRetries[config.currentProtocol];
         }
         function switchProtocol(protocol, canResetRetries = true) {
-            asyncClient.logout().then(()=>{
+            async().logout().then(()=>{
                 let current;
 
                 if(protocol) {
@@ -271,6 +267,7 @@ function Chat(params) {
 
                 if(canResetRetries)
                     config.retries = 1;
+
                 initAsync();
             })
         }
@@ -323,13 +320,13 @@ function Chat(params) {
                     if(canRetry()) {
                         publics.increaseRetries();
                         switchProtocol(config.currentProtocol, false);
-                        // asyncClient.reconnectSocket();
+                        // async().reconnectSocket();
                     } else {
                         switchProtocol();
                     }
                 } else {
                     // switchProtocol(config.currentProtocol);
-                    asyncClient.reconnectSocket()
+                    async().reconnectSocket()
                 }
             }
         };
@@ -378,49 +375,62 @@ function Chat(params) {
         initAsync = function () {
             var asyncGetReadyTime = new Date().getTime();
 
-            asyncClient = new Async({
-                protocol: protocolManager.getCurrentProtocol(),
-                queueHost: queueHost,
-                queuePort: queuePort,
-                queueUsername: queueUsername,
-                queuePassword: queuePassword,
-                queueReceive: queueReceive,
-                queueSend: queueSend,
-                queueConnectionTimeout: queueConnectionTimeout,
-                socketAddress: sdkParams.socketAddress,
-                serverName: sdkParams.serverName,
-                deviceId: sdkParams.deviceId,
-                wsConnectionWaitTime: sdkParams.wsConnectionWaitTime,
-                connectionRetryInterval: sdkParams.connectionRetryInterval,
-                connectionCheckTimeout: sdkParams.connectionCheckTimeout,
-                connectionCheckTimeoutThreshold: sdkParams.connectionCheckTimeoutThreshold,
-                messageTtl: sdkParams.messageTtl,
-                reconnectOnClose: sdkParams.reconnectOnClose,
-                asyncLogging: sdkParams.asyncLogging,
-                logLevel: (sdkParams.consoleLogging ? 3 : 1),
-                webrtcConfig: sdkParams.webrtcConfig,
-                retryStepTimerTime: protocolManager.getRetryStepTimerTime(),
-                onStartWithRetryStepGreaterThanZero: onStateChange,
-                msgLogCallback: msgLogCallback || null,
+            initAsync({
+                protocolManager,
+                queueHost,
+                queuePort,
+                queueUsername,
+                queuePassword,
+                queueReceive,
+                queueSend,
+                queueConnectionTimeout,
+                onStateChange,
+                msgLogCallback,
                 onDeviceId
-            });
+            })
+
+            // async() = new Async({
+            //     protocol: protocolManager.getCurrentProtocol(),
+            //     queueHost: queueHost,
+            //     queuePort: queuePort,
+            //     queueUsername: queueUsername,
+            //     queuePassword: queuePassword,
+            //     queueReceive: queueReceive,
+            //     queueSend: queueSend,
+            //     queueConnectionTimeout: queueConnectionTimeout,
+            //     socketAddress: sdkParams.socketAddress,
+            //     serverName: sdkParams.serverName,
+            //     deviceId: sdkParams.deviceId,
+            //     wsConnectionWaitTime: sdkParams.wsConnectionWaitTime,
+            //     connectionRetryInterval: sdkParams.connectionRetryInterval,
+            //     connectionCheckTimeout: sdkParams.connectionCheckTimeout,
+            //     connectionCheckTimeoutThreshold: sdkParams.connectionCheckTimeoutThreshold,
+            //     messageTtl: sdkParams.messageTtl,
+            //     reconnectOnClose: sdkParams.reconnectOnClose,
+            //     asyncLogging: sdkParams.asyncLogging,
+            //     logLevel: (sdkParams.consoleLogging ? 3 : 1),
+            //     webrtcConfig: sdkParams.webrtcConfig,
+            //     retryStepTimerTime: protocolManager.getRetryStepTimerTime(),
+            //     onStartWithRetryStepGreaterThanZero: onStateChange,
+            //     msgLogCallback: msgLogCallback || null,
+            //     onDeviceId
+            // });
 
             function onDeviceId(deviceId) {
                 if (!sdkParams.deviceId) {
                     sdkParams.deviceId = deviceId;
                 }
 
-                asyncClient.registerDevice(sdkParams.deviceId);
+                async().registerDevice(sdkParams.deviceId);
             }
-            callModule.asyncInitialized(asyncClient);
-            messenger().asyncInitialized(asyncClient);
+            callModule.asyncInitialized();
 
-            asyncClient.on('asyncReady', function () {
+            async().on('asyncReady', function () {
                 if (sdkParams.actualTimingLog) {
                     Utility.chatStepLogger('Async Connection ', new Date().getTime() - asyncGetReadyTime);
                 }
 
-                peerId = asyncClient.getPeerId();
+                peerId = async().getPeerId();
 
                 if (!store.user()) {
                     getUserAndUpdateSDKState();
@@ -449,7 +459,7 @@ function Chat(params) {
                 //shouldReconnectCall();
             });
 
-            asyncClient.on('stateChange', onStateChange);
+            async().on('stateChange', onStateChange);
             function onStateChange(state) {
                 chatEvents.fireEvent('chatState', state);
                 chatFullStateObject = state;
@@ -481,14 +491,14 @@ function Chat(params) {
                 }
             }
 
-            asyncClient.on('connect', function (newPeerId) {
+            async().on('connect', function (newPeerId) {
                 asyncGetReadyTime = new Date().getTime();
                 peerId = newPeerId;
                 chatEvents.fireEvent('connect');
                 messenger().ping();
             });
 
-            asyncClient.on('disconnect', function (event) {
+            async().on('disconnect', function (event) {
                 oldPeerId = peerId;
                 peerId = undefined;
                 chatEvents.fireEvent('disconnect', event);
@@ -501,23 +511,23 @@ function Chat(params) {
                 });
             });
 
-            asyncClient.on('reconnect', function (newPeerId) {
+            async().on('reconnect', function (newPeerId) {
                 peerId = newPeerId;
                 chatEvents.fireEvent('reconnect');
             });
 
-            asyncClient.on('reconnecting', function (event) {
-                sdkParams.consoleLogging && console.log("[SDK][event: asyncClient.reconnecting]")
+            async().on('reconnecting', function (event) {
+                sdkParams.consoleLogging && console.log("[SDK][event: async.reconnecting]")
                 protocolManager.onAsyncIsReconnecting(event);
             });
 
 
-            asyncClient.on('message', function (params, ack) {
+            async().on('message', function (params, ack) {
                 receivedAsyncMessageHandler(params);
                 ack && ack();
             });
 
-            asyncClient.on('error', function (error) {
+            async().on('error', function (error) {
                 chatEvents.fireEvent('error', {
                     code: error.errorCode,
                     message: error.errorMessage,
@@ -2993,7 +3003,7 @@ function Chat(params) {
                     if (messageContent.code === 21) {
                         // TODO: Temporarily removed due to unknown side-effects
                         // messenger().chatState = false;
-                        // asyncClient.logout();
+                        // async().logout();
                         // clearChatServerCaches();
                     }
 
@@ -11809,7 +11819,7 @@ function Chat(params) {
     };
 
     publicized.reconnect = function () {
-        asyncClient.reconnectSocket();
+        async().reconnectSocket();
     };
 
     publicized.setToken = function (newToken) {
@@ -11833,7 +11843,7 @@ function Chat(params) {
         store.threadCallbacks = {};
         messenger().stopChatPing();
 
-        asyncClient.logout();
+        async().logout();
     };
 
     publicized.inviteeIdTypes = inviteeVOidTypes;
@@ -12151,7 +12161,7 @@ function Chat(params) {
             if (proto != protocolManager.getCurrentProtocol()) {
                 protocolManager.switchProtocol(proto.toLowerCase());
                 // sdkParams.protocol = protocolSwitching.getCurrentProtocol();
-                // asyncClient.logout();
+                // async().logout();
                 // initAsync();
             } else {
                 console.warn(`SDK is currently using the ${proto} protocol. Nothing to do.`)

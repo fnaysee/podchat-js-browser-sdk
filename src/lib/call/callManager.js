@@ -13,6 +13,7 @@ import {callMetaDataTypes, chatMessageVOTypes} from "../constants";
 import {errorList, raiseError} from "../errorHandler";
 import {callsManager} from "./callsList";
 import {DeviceManager} from "./deviceManager2";
+import {async} from "../async/async";
 
 function CallManager({callId, callConfig}) {
     const config = {
@@ -174,7 +175,7 @@ function CallManager({callId, callConfig}) {
             store.messagesCallbacks[message.uniqueId] = callback;
         }
 
-        sharedVariables.asyncClient.send(data, function (res) {
+        async().send(data, function (res) {
         });
 
         if (timeoutTime || sharedVariables.globalCallRequestTimeout > 0) {

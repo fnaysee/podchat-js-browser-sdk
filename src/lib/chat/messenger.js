@@ -1,18 +1,13 @@
-import {chatMessageVOTypes} from "../constants";
-import {errorList, raiseError} from "../errorHandler";
 import {sdkParams} from "../sdkParams";
 import DOMPurify from "dompurify";
 import Utility from "../../utility/utility";
 import {store} from "../store";
-import {asyncClient} from "../async/async";
+import {async} from "../async/async";
 
 class Messenger {
-    constructor() {
-        this._chatSendQueue = [];
-        this._chatState = false;
-    }
+    constructor() {}
 
-    sendChatMessage(params) {
+    sendMessage(params) {
         /**
          * + ChatMessage        {object}
          *    - token           {string}
@@ -28,17 +23,15 @@ class Messenger {
          *    - systemMedadata  {string}
          *    - repliedTo       {int}
          */
-        var threadId = null;
-
-        var asyncPriority = (params.asyncPriority > 0)
-            ? params.asyncPriority
-            : sdkParams.msgPriority;
-
-        var messageVO = {
-            type: params.chatMessageVOType,
-            token: sdkParams.token,
-            tokenIssuer: 1
-        };
+        let threadId = null,
+            asyncPriority = (params.asyncPriority > 0)
+                ? params.asyncPriority
+                : sdkParams.msgPriority,
+            messageVO = {
+                type: params.chatMessageVOType,
+                token: sdkParams.token,
+                tokenIssuer: 1
+            };
 
         if (params.typeCode || sdkParams.generalTypeCode) {
             messageVO.typeCode = sdkParams.generalTypeCode;//params.typeCode;
@@ -80,7 +73,7 @@ class Messenger {
             messageVO.repliedTo = params.repliedTo;
         }
 
-        var uniqueId;
+        let uniqueId;
 
         if (typeof params.uniqueId != 'undefined') {
             uniqueId = params.uniqueId;
@@ -124,7 +117,7 @@ class Messenger {
             uniqueId: messageVO.uniqueId
         };
 
-        asyncClient().send(data, function (res) {});
+        async().send(data);
 
         if (sdkParams.asyncRequestTimeout > 0) {}
 
@@ -136,184 +129,13 @@ class Messenger {
         };
     }
 
-    /**
-     * Chat Send Message Queue Handler
-     *
-     * Whenever something pushes into cahtSendQueue
-     * this function invokes and does the message
-     * sending progress throught async
-     *
-     * @access private
-     *
-     * @return {undefined}
-     */
-    _chatSendQueueHandler = function () {
-        if (this._chatSendQueue.length) {
-            var messageToBeSend = this._chatSendQueue[0];
-
-            /**
-             * Getting chatSendQueue from either cache or
-             * memory and scrolling through the send queue
-             * to send all the messages which are waiting
-             * for this._chatState to become TRUE
-             *
-             * There is a small possibility that a Message
-             * wouldn't make it through network, so it Will
-             * not reach chat server. To avoid losing those
-             * messages, we put a clone of every message
-             * in waitQ, and when ack of the message comes,
-             * we delete that message from waitQ. otherwise
-             * we assume that these messages have been failed to
-             * send and keep them to be either canceled or resent
-             * by user later. When user calls getHistory(), they
-             * will have failed messages alongside with typical
-             * messages history.
-             */
-            if (this._chatState) {
-                this._getChatSendQueue(0, function (chatSendQueue) {
-                    this._deleteFromChatSentQueue(messageToBeSend,
-                         () => {
-                            this.sendMessage(messageToBeSend.message, messageToBeSend.callbacks, function () {
-                                if (chatSendQueue.length) {
-                                    this._chatSendQueueHandler();
-                                }
-                            });
-                        });
-                });
-            }
-        }
-    }
-
-    /**
-     * Get Chat Send Queue
-     *
-     * This function returns chat send queue
-     *
-     * @access private
-     *
-     * @return {array}  An array of messages on sendQueue
-     */
-    _getChatSendQueue = function (threadId, callback) {
-        if (threadId) {
-            var tempSendQueue = [];
-
-            for (var i = 0; i < this._chatSendQueue.length; i++) {
-                if (this._chatSendQueue[i].threadId === threadId) {
-                    tempSendQueue.push(this._chatSendQueue[i]);
-                }
-            }
-            callback && callback(tempSendQueue);
-        } else {
-            callback && callback(this._chatSendQueue);
-        }
-    }
-
-    /**
-     * Delete an Item from Chat Send Queue
-     *
-     * This function gets an item and deletes it
-     * from Chat Send Queue
-     *
-     * @access private
-     *
-     * @return {undefined}
-     */
-    _deleteFromChatSentQueue = function (item, callback) {
-        for (var i = 0; i < this._chatSendQueue.length; i++) {
-            if (this._chatSendQueue[i].message.uniqueId === item.message.uniqueId) {
-                this._chatSendQueue.splice(i, 1);
-            }
-        }
-        callback && callback();
-    }
-
-    putInMessagesDeliveryQueue = function (threadId, messageId) {
-        if (sdkParams.messagesDelivery.hasOwnProperty(threadId)
-            && typeof sdkParams.messagesDelivery[threadId] === 'number'
-            && !!sdkParams.messagesDelivery[threadId]) {
-            if (sdkParams.messagesDelivery[threadId] < messageId) {
-                sdkParams.messagesDelivery[threadId] = messageId;
-            }
-        } else {
-            sdkParams.messagesDelivery[threadId] = messageId;
-        }
-    }
-
-    putInMessagesSeenQueue = function (threadId, messageId) {
-        if (sdkParams.messagesSeen.hasOwnProperty(threadId)
-            && typeof sdkParams.messagesSeen[threadId] === 'number'
-            && !!sdkParams.messagesSeen[threadId]) {
-            if (sdkParams.messagesSeen[threadId] < messageId) {
-                sdkParams.messagesSeen[threadId] = messageId;
-            }
-        } else {
-            sdkParams.messagesSeen[threadId] = messageId;
-        }
-    }
-
-    /**
-     * Messages Delivery Queue Handler
-     *
-     * Whenever something pushes into messagesDelivery
-     * this function invokes and does the message
-     * delivery progress throught async
-     *
-     * @access private
-     *
-     * @return {undefined}
-     */
-    messagesDeliveryQueueHandler = function () {
-        if (Object.keys(sdkParams.messagesDelivery).length) {
-            if (this._chatState) {
-                for (var key in sdkParams.messagesDelivery) {
-                    deliver({
-                        messageId: sdkParams.messagesDelivery[key]
-                    });
-
-                    delete sdkParams.messagesDelivery[key];
-                }
-            }
-        }
-    }
-
-    /**
-     * Messages Seen Queue Handler
-     *
-     * Whenever something pushes into messagesSeen
-     * this function invokes and does the message
-     * seen progress throught async
-     *
-     * @access private
-     *
-     * @return {undefined}
-     */
-    messagesSeenQueueHandler = function () {
-        if (Object.keys(sdkParams.messagesSeen).length) {
-            if (this._chatState) {
-                for (var key in sdkParams.messagesSeen) {
-                    seen({
-                        messageId: sdkParams.messagesSeen[key]
-                    });
-
-                    delete sdkParams.messagesSeen[key];
-                }
-            }
-        }
-    }
-
-    handleChatMessage(params) {
+    processChatMessage() {
 
     }
 }
 
 let messenger = new Messenger()
 
-function sendChatMessage(params){
-    return messenger.sendChatMessage(params)
-}
-function handleChatMessage(params){
-    return messenger.handleChatMessage(params)
-}
 
 
-export {sendChatMessage, handleChatMessage}
+export {messenger}

@@ -4,6 +4,7 @@ import Utility from "./utility/utility"
 import {errorList, raiseError} from "./lib/errorHandler";
 import {sdkParams} from "./lib/sdkParams";
 import {store} from "./lib/store";
+import {async} from "./lib/async/async";
 
 let chatMessaging = null;
 
@@ -13,8 +14,7 @@ let chatMessaging = null;
  * @constructor
  */
 function ChatMessaging(params) {
-    var currentModuleInstance = this,
-        asyncClient = params.asyncClient;
+    var currentModuleInstance = this;
     //Utility = params.Utility,
     // consoleLogging = sdkParams.consoleLogging,
     //generalTypeCode = sdkParams.generalTypeCode,
@@ -45,10 +45,6 @@ function ChatMessaging(params) {
     }
     this.stopChatPing = function () {
         clearInterval(sdkParams.chatPingMessageInterval);
-    }
-
-    this.asyncInitialized = function (client) {
-        asyncClient = client
     }
 
     /**
@@ -232,7 +228,7 @@ function ChatMessaging(params) {
             uniqueId: messageVO.uniqueId
         };
 
-        asyncClient.send(data, function (res) {
+        async().send(data, function (res) {
             if (!res.hasError && callbacks) {
                 if (typeof callbacks == 'function') {
                     callbacks(res);
@@ -320,7 +316,7 @@ function ChatMessaging(params) {
 
 function initChatMessaging(params) {
     if (!chatMessaging) {
-        chatMessaging = new ChatMessaging(params)
+        chatMessaging = new ChatMessaging(params);
     }
 
     return chatMessaging;

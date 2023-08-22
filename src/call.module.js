@@ -19,6 +19,7 @@ import {
 } from "./lib/call/sharedData";
 import {store} from "./lib/store";
 import {messenger} from "./messaging.module";
+import {async} from "./lib/async/async";
 
 function ChatCall(params) {
     var //Utility = params.Utility,
@@ -234,7 +235,7 @@ function ChatCall(params) {
                 store.messagesCallbacks[message.uniqueId] = callback;
             }
 
-            sharedVariables.asyncClient.send(data, function (res) {
+            async().send(data, function (res) {
                 if (!res.hasError && callback) {
                     // if (typeof callback == 'function') {
                     //     callback(res);
@@ -475,10 +476,8 @@ function ChatCall(params) {
         }
     };
 
-    this.asyncInitialized = function (async) {
-        sharedVariables.asyncClient = async;
-
-        sharedVariables.asyncClient.on('asyncReady', function (){
+    this.asyncInitialized = function () {
+        async().on('asyncReady', function (){
             // callStateController.maybeReconnectAllTopics();
             if(callsManager().currentCallId) {
                 callsManager().get(callsManager().currentCallId).onChatConnectionReconnect();

@@ -36,7 +36,6 @@ const sharedVariables = {
     currentCallId: null,
     callNoAnswerTimeout: null,
     callStreamCloseTimeout: null,
-    asyncClient: null,
     callOptions: null,
     startScreenSharetParams: {
         quality: 3

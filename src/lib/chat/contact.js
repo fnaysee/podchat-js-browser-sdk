@@ -1,49 +1,48 @@
 import {chatMessageVOTypes} from "../constants";
 import {sdkParams} from "../sdkParams";
 import {chatEvents} from "../../events.module";
+import {api2} from "./index";
+import Utility from "../../utility/utility";
 
-function get() {
-    var count = 25,
+function get(
+    {
+        count = 25,
         offset = 0,
-        content = {},
-        returnCache = false;
-
-    if (params) {
-        if (parseInt(params.count) > 0) {
-            count = parseInt(params.count);
-        }
-        if (parseInt(params.offset) > 0) {
-            offset = parseInt(params.offset);
-        }
-        if (typeof params.query === 'string') {
-            content.query = params.query;
-        }
-        if (typeof params.email === 'string') {
-            content.email = params.email;
-        }
-        if (typeof params.cellphoneNumber === 'string') {
-            content.cellphoneNumber = params.cellphoneNumber;
-        }
-        if (parseInt(params.contactId) > 0) {
-            content.id = params.contactId;
-        }
-        if (typeof params.uniqueId === 'string') {
-            content.uniqueId = params.uniqueId;
-        }
-        if (typeof params.username === 'string') {
-            content.username = params.username;
-        }
-        if (typeof params.coreUserId !== "undefined") {
-            content.coreUserId = params.coreUserId;
-        }
-
-        var functionLevelCache = (typeof params.cache == 'boolean') ? params.cache : true;
+        query = null,
+        email = null,
+        cellphoneNumber = null,
+        contactId = null,
+        username = null,
+        coreUserId = null
     }
+) {
+    let content = {};
 
+    content.uniqueId =  Utility.generateUUID();
     content.size = count;
     content.offset = offset;
+    content.query = query;
 
-    var sendMessageParams = {
+    if (typeof query === 'string') {
+        content.query = query;
+    }
+    if (typeof email === 'string') {
+        content.email = email;
+    }
+    if (typeof cellphoneNumber === 'string') {
+        content.cellphoneNumber = cellphoneNumber;
+    }
+    if (parseInt(contactId) > 0) {
+        content.id = contactId;
+    }
+    if (typeof username === 'string') {
+        content.username = username;
+    }
+    if (typeof coreUserId !== "undefined") {
+        content.coreUserId = coreUserId;
+    }
+
+    let sendMessageParams = {
         chatMessageVOType: chatMessageVOTypes.GET_CONTACTS,
         typeCode: sdkParams.generalTypeCode, //params.typeCode,
         content: content
@@ -52,14 +51,12 @@ function get() {
     /**
      * Retrieve Contacts from server
      */
-    return chatMessaging.sendMessage(sendMessageParams);
+    return api2.messenger.sendMessage(sendMessageParams);
 }
-function getResultHandler() {
-
-}
-
 
 const contact = {
     get,
-    getResultHandler
+    onGetResult: null
 }
+
+export {contact}
