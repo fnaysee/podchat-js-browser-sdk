@@ -3,7 +3,6 @@ import {sdkParams} from "../sdkParams";
 import {api2} from "../chat";
 
 class AsyncClient {
-    _async = null;
     _peerId = null;
     _chatFullStateObject = {};
 
@@ -45,8 +44,6 @@ class AsyncClient {
             onStartWithRetryStepGreaterThanZero: onStateChange,
             msgLogCallback: msgLogCallback || null
         });
-        this._chatFullStateObject = {};
-
         this._bindMessageListener();
         // this._bindListeners();
     }
@@ -187,7 +184,7 @@ function async() {
     return asyncClassInstance.client;
 }
 
-function initAsync(
+function initAsyncClient(
     {
        protocolManager,
        queueHost,
@@ -216,4 +213,4 @@ function initAsync(
     });
 }
 
-export {async, initAsync}
+export {async, initAsyncClient}

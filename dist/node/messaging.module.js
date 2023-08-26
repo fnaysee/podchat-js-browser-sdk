@@ -23,6 +23,8 @@ var _sdkParams = require("./lib/sdkParams");
 
 var _store = require("./lib/store");
 
+var _async = require("./lib/async/async");
+
 var chatMessaging = null;
 /**
  * Communicates with chat server
@@ -31,8 +33,7 @@ var chatMessaging = null;
  */
 
 function ChatMessaging(params) {
-  var currentModuleInstance = this,
-      asyncClient = params.asyncClient; //Utility = params.Utility,
+  var currentModuleInstance = this; //Utility = params.Utility,
   // consoleLogging = sdkParams.consoleLogging,
   //generalTypeCode = sdkParams.generalTypeCode,
   //chatPingMessageInterval = params.chatPingMessageInterval,
@@ -63,10 +64,6 @@ function ChatMessaging(params) {
 
   this.stopChatPing = function () {
     clearInterval(_sdkParams.sdkParams.chatPingMessageInterval);
-  };
-
-  this.asyncInitialized = function (client) {
-    asyncClient = client;
   };
   /**
    * Send Message
@@ -248,7 +245,7 @@ function ChatMessaging(params) {
       },
       uniqueId: messageVO.uniqueId
     };
-    asyncClient.send(data, function (res) {
+    (0, _async.async)().send(data, function (res) {
       if (!res.hasError && callbacks) {
         if (typeof callbacks == 'function') {
           callbacks(res);

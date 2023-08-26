@@ -39,6 +39,8 @@ var _store = require("./lib/store");
 
 var _messaging = require("./messaging.module");
 
+var _async = require("./lib/async/async");
+
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof3(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
@@ -215,7 +217,7 @@ function ChatCall(params) {
       _store.store.messagesCallbacks[message.uniqueId] = callback;
     }
 
-    _sharedData.sharedVariables.asyncClient.send(data, function (res) {
+    (0, _async.async)().send(data, function (res) {
       if (!res.hasError && callback) {// if (typeof callback == 'function') {
         //     callback(res);
         // }
@@ -456,10 +458,8 @@ function ChatCall(params) {
     }
   };
 
-  this.asyncInitialized = function (async) {
-    _sharedData.sharedVariables.asyncClient = async;
-
-    _sharedData.sharedVariables.asyncClient.on('asyncReady', function () {
+  this.asyncInitialized = function () {
+    (0, _async.async)().on('asyncReady', function () {
       // callStateController.maybeReconnectAllTopics();
       if ((0, _callsList.callsManager)().currentCallId) {
         (0, _callsList.callsManager)().get((0, _callsList.callsManager)().currentCallId).onChatConnectionReconnect();

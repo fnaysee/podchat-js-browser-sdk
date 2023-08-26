@@ -7,7 +7,7 @@ import ChatEvents, { initEventHandler, chatEvents } from "./events.module"
 import {initChatMessaging, messenger} from "./messaging.module"
 import buildConfig from "./buildConfig.json"
 import {deprecatedString, printIsDeprecate} from "./deprecateMethods";
-import {async} from "./lib/async/async";
+import {async, initAsyncClient} from "./lib/async/async";
 
 import {
     chatMessageVOTypes,
@@ -375,7 +375,7 @@ function Chat(params) {
         initAsync = function () {
             var asyncGetReadyTime = new Date().getTime();
 
-            initAsync({
+            initAsyncClient({
                 protocolManager,
                 queueHost,
                 queuePort,
