@@ -90,7 +90,23 @@
                 onMessageSend: false,
                 actualTiming: false
             },
-            clientName: 'SDK Default example'
+            clientName: 'SDK Default example',
+            protocol: 'webrtc',
+            protocolSwitching: {
+                webrtc: 1,
+                websocket: 2
+            },
+            webrtcConfig: {
+                baseUrl: "async-webrtc.pod.ir", //  https://msgkhatam.pod.ir/webrtc/",// https://async-webrtc.pod.ir/webrtc/ //"https://172.16.110.26/webrtc/",//"http://localhost:3000/webrtc/",//"http://109.201.0.97/webrtc/",
+                basePath: "/webrtc/",
+                configuration: {
+                    bundlePolicy: "balanced",
+                    iceTransportPolicy: "relay",
+                    iceServers: [{
+                        "urls": "turn:turn1-async.podstream.ir:3478", "username": "mkhorrami", "credential": "mkh_123456"
+                    }]
+                }
+            },
         };
 
         var chatAgent = new PodChat(params);

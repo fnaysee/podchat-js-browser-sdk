@@ -7199,47 +7199,48 @@ function Chat(params) {
          * @return {array}  An array of messages on Wait Queue
          */
         getChatWaitQueue = function (threadId, active, callback) {
-            if (active && threadId > 0) {
-                var uniqueIds = [],
-                    queueToBeSent = [];
-
-                for (var i = 0; i < chatWaitQueue.length; i++) {
-                    if (chatWaitQueue[i].subjectId == threadId) {
-                        queueToBeSent.push(chatWaitQueue[i]);
-                        uniqueIds.push(chatWaitQueue[i].uniqueId);
-                    }
-                }
-
-                if (uniqueIds.length) {
-                    messenger().sendMessage({
-                        chatMessageVOType: chatMessageVOTypes.GET_HISTORY,
-                        content: {
-                            uniqueIds: uniqueIds
-                        },
-                        subjectId: threadId
-                    }, {
-                        onResult: function (result) {
-                            if (!result.hasError) {
-                                var messageContent = result.result;
-
-                                for (var i = 0; i < messageContent.length; i++) {
-                                    for (var j = 0; j < uniqueIds.length; j++) {
-                                        if (uniqueIds[j] === messageContent[i].uniqueId) {
-                                            uniqueIds.splice(j, 1);
-                                            queueToBeSent.splice(j, 1);
-                                        }
-                                    }
-                                }
-                                callback && callback(queueToBeSent);
-                            }
-                        }
-                    });
-                } else {
-                    callback && callback([]);
-                }
-            } else {
-                callback && callback([]);
-            }
+            callback && callback([]);
+            // if (active && threadId > 0) {
+            //     var uniqueIds = [],
+            //         queueToBeSent = [];
+            //
+            //     for (var i = 0; i < chatWaitQueue.length; i++) {
+            //         if (chatWaitQueue[i].subjectId == threadId) {
+            //             queueToBeSent.push(chatWaitQueue[i]);
+            //             uniqueIds.push(chatWaitQueue[i].uniqueId);
+            //         }
+            //     }
+            //
+            //     if (uniqueIds.length) {
+            //         messenger().sendMessage({
+            //             chatMessageVOType: chatMessageVOTypes.GET_HISTORY,
+            //             content: {
+            //                 uniqueIds: uniqueIds
+            //             },
+            //             subjectId: threadId
+            //         }, {
+            //             onResult: function (result) {
+            //                 if (!result.hasError) {
+            //                     var messageContent = result.result;
+            //
+            //                     for (var i = 0; i < messageContent.length; i++) {
+            //                         for (var j = 0; j < uniqueIds.length; j++) {
+            //                             if (uniqueIds[j] === messageContent[i].uniqueId) {
+            //                                 uniqueIds.splice(j, 1);
+            //                                 queueToBeSent.splice(j, 1);
+            //                             }
+            //                         }
+            //                     }
+            //                 }
+            //             }
+            //         });
+            //         callback && callback([]);
+            //     } else {
+            //         callback && callback([]);
+            //     }
+            // } else {
+            //     callback && callback([]);
+            // }
         },
 
         /**

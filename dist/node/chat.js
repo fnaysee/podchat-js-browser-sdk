@@ -1544,7 +1544,48 @@ if((0,_typeof2["default"])(callbacks)==='object'&&callbacks.hasOwnProperty('onFi
          * @access private
          *
          * @return {array}  An array of messages on Wait Queue
-         */getChatWaitQueue=function getChatWaitQueue(threadId,active,callback){if(active&&threadId>0){var uniqueIds=[],queueToBeSent=[];for(var i=0;i<chatWaitQueue.length;i++){if(chatWaitQueue[i].subjectId==threadId){queueToBeSent.push(chatWaitQueue[i]);uniqueIds.push(chatWaitQueue[i].uniqueId);}}if(uniqueIds.length){(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.GET_HISTORY,content:{uniqueIds:uniqueIds},subjectId:threadId},{onResult:function onResult(result){if(!result.hasError){var messageContent=result.result;for(var i=0;i<messageContent.length;i++){for(var j=0;j<uniqueIds.length;j++){if(uniqueIds[j]===messageContent[i].uniqueId){uniqueIds.splice(j,1);queueToBeSent.splice(j,1);}}}callback&&callback(queueToBeSent);}}});}else{callback&&callback([]);}}else{callback&&callback([]);}},/**
+         */getChatWaitQueue=function getChatWaitQueue(threadId,active,callback){callback&&callback([]);// if (active && threadId > 0) {
+//     var uniqueIds = [],
+//         queueToBeSent = [];
+//
+//     for (var i = 0; i < chatWaitQueue.length; i++) {
+//         if (chatWaitQueue[i].subjectId == threadId) {
+//             queueToBeSent.push(chatWaitQueue[i]);
+//             uniqueIds.push(chatWaitQueue[i].uniqueId);
+//         }
+//     }
+//
+//     if (uniqueIds.length) {
+//         messenger().sendMessage({
+//             chatMessageVOType: chatMessageVOTypes.GET_HISTORY,
+//             content: {
+//                 uniqueIds: uniqueIds
+//             },
+//             subjectId: threadId
+//         }, {
+//             onResult: function (result) {
+//                 if (!result.hasError) {
+//                     var messageContent = result.result;
+//
+//                     for (var i = 0; i < messageContent.length; i++) {
+//                         for (var j = 0; j < uniqueIds.length; j++) {
+//                             if (uniqueIds[j] === messageContent[i].uniqueId) {
+//                                 uniqueIds.splice(j, 1);
+//                                 queueToBeSent.splice(j, 1);
+//                             }
+//                         }
+//                     }
+//                 }
+//             }
+//         });
+//         callback && callback([]);
+//     } else {
+//         callback && callback([]);
+//     }
+// } else {
+//     callback && callback([]);
+// }
+},/**
          * Get Chat Upload Queue
          *
          * This function checks if cache is enabled on client's
