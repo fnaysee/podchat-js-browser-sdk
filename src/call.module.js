@@ -800,12 +800,6 @@ function ChatCall(params) {
                     return;
 
                 callsManager().get(threadId).handleParticipantJoin(messageContent);
-
-                chatEvents.fireEvent('callEvents', {
-                    type: 'CALL_PARTICIPANT_JOINED',
-                    result: messageContent
-                });
-
                 break;
 
             /**

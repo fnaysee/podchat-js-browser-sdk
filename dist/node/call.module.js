@@ -772,12 +772,6 @@ function ChatCall(params) {
       case _constants.chatMessageVOTypes.CALL_PARTICIPANT_JOINED:
         if ((0, _callsList.callsManager)().currentCallId != threadId) return;
         (0, _callsList.callsManager)().get(threadId).handleParticipantJoin(messageContent);
-
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'CALL_PARTICIPANT_JOINED',
-          result: messageContent
-        });
-
         break;
 
       /**
