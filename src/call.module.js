@@ -1256,6 +1256,8 @@ function ChatCall(params) {
                 }, sharedVariables.callNoAnswerTimeout, {callInstance: currentModuleInstance, currentCallId: callsManager().currentCallId});
             }
 
+            callsManager().destroyAllCalls();
+
             messenger().sendMessage(startCallData, {
                 onResult: function (result) {
                     callback && callback(result);

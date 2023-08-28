@@ -2930,8 +2930,8 @@ function Chat(params) {
                  * Type 239    ADD_REACTION
                  */
                 case chatMessageVOTypes.ADD_REACTION:
-                    if (messenger().messagesCallbacks[uniqueId]) {
-                        messenger().messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+                    if (store.messagesCallbacks[uniqueId]) {
+                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
                     }
 
                     chatEvents.fireEvent('messageEvents', {

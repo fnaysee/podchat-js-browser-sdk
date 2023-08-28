@@ -1264,6 +1264,7 @@ function ChatCall(params) {
                   });
                 }
 
+                (0, _callsList.callsManager)().destroyAllCalls();
                 (0, _messaging.messenger)().sendMessage(startCallData, {
                   onResult: function onResult(result) {
                     callback && callback(result);

@@ -497,7 +497,7 @@ break;/**
                  * Type 238    REPLY_PRIVATELY
                  */case _constants.chatMessageVOTypes.REPLY_PRIVATELY:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
                  * Type 239    ADD_REACTION
-                 */case _constants.chatMessageVOTypes.ADD_REACTION:if((0,_messaging.messenger)().messagesCallbacks[uniqueId]){(0,_messaging.messenger)().messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}_events.chatEvents.fireEvent('messageEvents',{type:'ADD_REACTION',result:messageContent});break;/**
+                 */case _constants.chatMessageVOTypes.ADD_REACTION:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}_events.chatEvents.fireEvent('messageEvents',{type:'ADD_REACTION',result:messageContent});break;/**
                  * Type 240    REPLACE_REACTION
                  */case _constants.chatMessageVOTypes.REPLACE_REACTION:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}_events.chatEvents.fireEvent('messageEvents',{type:'REPLACE_REACTION',result:messageContent});break;/**
                  * Type 241    REMOVE_REACTION

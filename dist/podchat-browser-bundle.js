@@ -44517,7 +44517,7 @@ WildEmitter.mixin = function (constructor) {
 WildEmitter.mixin(WildEmitter);
 
 },{}],272:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.16","date":"۱۴۰۲/۶/۵","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.7-snapshot.16","date":"۱۴۰۲/۶/۶","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],273:[function(require,module,exports){
 "use strict";
 
@@ -45831,6 +45831,7 @@ function ChatCall(params) {
                   });
                 }
 
+                (0, _callsList.callsManager)().destroyAllCalls();
                 (0, _messaging.messenger)().sendMessage(startCallData, {
                   onResult: function onResult(result) {
                     callback && callback(result);
@@ -47624,7 +47625,7 @@ break;/**
                  * Type 238    REPLY_PRIVATELY
                  */case _constants.chatMessageVOTypes.REPLY_PRIVATELY:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
                  * Type 239    ADD_REACTION
-                 */case _constants.chatMessageVOTypes.ADD_REACTION:if((0,_messaging.messenger)().messagesCallbacks[uniqueId]){(0,_messaging.messenger)().messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}_events.chatEvents.fireEvent('messageEvents',{type:'ADD_REACTION',result:messageContent});break;/**
+                 */case _constants.chatMessageVOTypes.ADD_REACTION:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}_events.chatEvents.fireEvent('messageEvents',{type:'ADD_REACTION',result:messageContent});break;/**
                  * Type 240    REPLACE_REACTION
                  */case _constants.chatMessageVOTypes.REPLACE_REACTION:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}_events.chatEvents.fireEvent('messageEvents',{type:'REPLACE_REACTION',result:messageContent});break;/**
                  * Type 241    REMOVE_REACTION
@@ -50934,6 +50935,16 @@ function CallTopicManager(_ref) {
           user = config.user;
 
       config.peer.peerConnection.onconnectionstatechange = function () {
+        _events.chatEvents.fireEvent("callStreamEvents", {
+          type: 'WEBRTC_CONNECTION_STATE_CHANGE',
+          callId: config.callId,
+          userId: user.id,
+          topic: config.topic,
+          direction: config.direction,
+          connectionState: config.peer.peerConnection.connectionState,
+          mediaType: config.mediaType
+        });
+
         if (!user || !config.peer || publicized.isDestroyed()) {
           return; //avoid log errors
         }

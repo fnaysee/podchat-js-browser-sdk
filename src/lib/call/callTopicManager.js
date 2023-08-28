@@ -307,6 +307,16 @@ function CallTopicManager(
                 user = config.user;
 
             config.peer.peerConnection.onconnectionstatechange = function () {
+                chatEvents.fireEvent("callStreamEvents", {
+                    type: 'WEBRTC_CONNECTION_STATE_CHANGE',
+                    callId: config.callId,
+                    userId: user.id,
+                    topic: config.topic,
+                    direction: config.direction,
+                    connectionState: config.peer.peerConnection.connectionState,
+                    mediaType: config.mediaType
+                });
+
                 if(!user || !config.peer || publicized.isDestroyed()) {
                     return; //avoid log errors
                 }

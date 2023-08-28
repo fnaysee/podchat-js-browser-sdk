@@ -360,6 +360,16 @@ function CallTopicManager(_ref) {
           user = config.user;
 
       config.peer.peerConnection.onconnectionstatechange = function () {
+        _events.chatEvents.fireEvent("callStreamEvents", {
+          type: 'WEBRTC_CONNECTION_STATE_CHANGE',
+          callId: config.callId,
+          userId: user.id,
+          topic: config.topic,
+          direction: config.direction,
+          connectionState: config.peer.peerConnection.connectionState,
+          mediaType: config.mediaType
+        });
+
         if (!user || !config.peer || publicized.isDestroyed()) {
           return; //avoid log errors
         }
