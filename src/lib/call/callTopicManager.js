@@ -310,7 +310,7 @@ function CallTopicManager(
                 chatEvents.fireEvent("callStreamEvents", {
                     type: 'WEBRTC_CONNECTION_STATE_CHANGE',
                     callId: config.callId,
-                    userId: user.id,
+                    userId: config.userId,
                     topic: config.topic,
                     direction: config.direction,
                     connectionState: config.peer.peerConnection.connectionState,
