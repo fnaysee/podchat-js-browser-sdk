@@ -2522,6 +2522,7 @@ function Chat(params) {
                 case chatMessageVOTypes.GET_CALLS_TO_JOIN:
                 case chatMessageVOTypes.SWITCH_TO_GROUP_CALL_REQUEST:
                 case chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE:
+                case chatMessageVOTypes.INQUIRY_CALL:
                 case chatMessageVOTypes.CALL_RECORDING_FAILED:
                     callModule.handleChatMessages(type, messageContent, contentCount, threadId, uniqueId);
                     break;
@@ -11672,6 +11673,8 @@ function Chat(params) {
     publicized.recallThreadParticipant = callModule.recallThreadParticipant;
 
     publicized.deviceManager = callModule.deviceManager;
+
+    publicized.inquiryCallParticipants = callModule.inquiryCallParticipants;
 
     publicized.resetCallStream = callModule.resetCallStream;
 

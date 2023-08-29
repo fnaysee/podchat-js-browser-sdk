@@ -11,6 +11,8 @@ exports["default"] = void 0;
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
+var _objectDestructuringEmpty2 = _interopRequireDefault(require("@babel/runtime/helpers/objectDestructuringEmpty"));
+
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 
 var _typeof2 = _interopRequireDefault(require("@babel/runtime/helpers/typeof"));
@@ -1073,6 +1075,17 @@ function ChatCall(params) {
         break;
 
       /**
+      * Type 228   INQUIRY_CALL
+      */
+
+      case _constants.chatMessageVOTypes.INQUIRY_CALL:
+        if (_store.store.messagesCallbacks[uniqueId]) {
+          _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+        }
+
+        break;
+
+      /**
        * Type 230    CALL_RECORDING_FAILED
        */
 
@@ -1993,6 +2006,57 @@ function ChatCall(params) {
       return;
     }
   };
+  /**
+   * This method inquiries call participants from call servers
+   */
+
+
+  this.inquiryCallParticipants = function (_ref5, callback) {
+    (0, _objectDestructuringEmpty2["default"])(_ref5);
+    var sendMessageParams = {
+      chatMessageVOType: _constants.chatMessageVOTypes.INQUIRY_CALL,
+      typeCode: _sdkParams.sdkParams.generalTypeCode,
+      //params.typeCode,
+      subjectId: (0, _callsList.callsManager)().currentCallId,
+      content: {}
+    };
+    return (0, _messaging.messenger)().sendMessage(sendMessageParams, {
+      onResult: function onResult(result) {
+        var returnData = {
+          hasError: result.hasError,
+          cache: false,
+          errorMessage: result.errorMessage,
+          errorCode: result.errorCode
+        };
+
+        if (!returnData.hasError) {
+          var messageContent = result.result,
+              messageLength = messageContent.length,
+              resultData = {
+            participants: reformatCallParticipants(messageContent),
+            contentCount: result.contentCount
+          };
+          returnData.result = resultData;
+        }
+
+        callback && callback(returnData);
+        /**
+         * Delete callback so if server pushes response before
+         * cache, cache won't send data again
+         */
+
+        callback = undefined;
+        returnData.result.callId = (0, _callsList.callsManager)().currentCallId;
+
+        if (!returnData.hasError) {
+          _eventsModule.chatEvents.fireEvent('callEvents', {
+            type: 'ACTIVE_CALL_PARTICIPANTS',
+            result: returnData.result
+          });
+        }
+      }
+    });
+  };
 
   this.addCallParticipants = function (params, callback) {
     /**
@@ -2435,9 +2499,9 @@ function ChatCall(params) {
     }
   };
 
-  this.sendCallSticker = function (_ref5, callback) {
-    var _ref5$sticker = _ref5.sticker,
-        sticker = _ref5$sticker === void 0 ? _constants.callStickerTypes.RAISE_HAND : _ref5$sticker;
+  this.sendCallSticker = function (_ref6, callback) {
+    var _ref6$sticker = _ref6.sticker,
+        sticker = _ref6$sticker === void 0 ? _constants.callStickerTypes.RAISE_HAND : _ref6$sticker;
     var sendMessageParams = {
       chatMessageVOType: _constants.chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE,
       typeCode: _sdkParams.sdkParams.generalTypeCode,
@@ -2463,8 +2527,8 @@ function ChatCall(params) {
     });
   };
 
-  this.recallThreadParticipant = function (_ref6, callback) {
-    var invitees = _ref6.invitees;
+  this.recallThreadParticipant = function (_ref7, callback) {
+    var invitees = _ref7.invitees;
     var sendData = {
       chatMessageVOType: _constants.chatMessageVOTypes.RECALL_THREAD_PARTICIPANT,
       typeCode: _sdkParams.sdkParams.generalTypeCode,
@@ -2494,14 +2558,14 @@ function ChatCall(params) {
   this.deviceManager = _deviceManager["default"];
 
   this.resetCallStream = /*#__PURE__*/function () {
-    var _ref8 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(_ref7, callback) {
-      var userId, _ref7$streamType, streamType, user;
+    var _ref9 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(_ref8, callback) {
+      var userId, _ref8$streamType, streamType, user;
 
       return _regenerator["default"].wrap(function _callee4$(_context4) {
         while (1) {
           switch (_context4.prev = _context4.next) {
             case 0:
-              userId = _ref7.userId, _ref7$streamType = _ref7.streamType, streamType = _ref7$streamType === void 0 ? 'audio' : _ref7$streamType;
+              userId = _ref8.userId, _ref8$streamType = _ref8.streamType, streamType = _ref8$streamType === void 0 ? 'audio' : _ref8$streamType;
 
               if ((0, _callsList.callsManager)().currentCallId) {
                 _context4.next = 4;
@@ -2544,7 +2608,7 @@ function ChatCall(params) {
     }));
 
     return function (_x7, _x8) {
-      return _ref8.apply(this, arguments);
+      return _ref9.apply(this, arguments);
     };
   }();
 }

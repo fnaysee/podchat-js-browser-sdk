@@ -1091,6 +1091,16 @@ function ChatCall(params) {
                 }
                 break;
 
+             /**
+             * Type 228   INQUIRY_CALL
+             */
+            case chatMessageVOTypes.INQUIRY_CALL:
+                if (store.messagesCallbacks[uniqueId]) {
+                    store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+                }
+
+                break;
+
             /**
              * Type 230    CALL_RECORDING_FAILED
              */
@@ -1884,6 +1894,56 @@ function ChatCall(params) {
             });
             return;
         }
+    };
+
+    /**
+     * This method inquiries call participants from call servers
+     */
+    this.inquiryCallParticipants = function ({}, callback) {
+        let sendMessageParams = {
+            chatMessageVOType: chatMessageVOTypes.INQUIRY_CALL,
+            typeCode: sdkParams.generalTypeCode,//params.typeCode,
+            subjectId: callsManager().currentCallId,
+            content: {}
+        };
+
+        return messenger().sendMessage(sendMessageParams, {
+            onResult: function (result) {
+                let returnData = {
+                    hasError: result.hasError,
+                    cache: false,
+                    errorMessage: result.errorMessage,
+                    errorCode: result.errorCode
+                };
+
+                if (!returnData.hasError) {
+                    let messageContent = result.result,
+                        messageLength = messageContent.length,
+                        resultData = {
+                            participants: reformatCallParticipants(messageContent),
+                            contentCount: result.contentCount,
+                        };
+
+                    returnData.result = resultData;
+                }
+
+                callback && callback(returnData);
+                /**
+                 * Delete callback so if server pushes response before
+                 * cache, cache won't send data again
+                 */
+                callback = undefined;
+
+                returnData.result.callId = callsManager().currentCallId;
+
+                if (!returnData.hasError) {
+                    chatEvents.fireEvent('callEvents', {
+                        type: 'ACTIVE_CALL_PARTICIPANTS',
+                        result: returnData.result
+                    });
+                }
+            }
+        });
     };
 
     this.addCallParticipants = function (params, callback) {
