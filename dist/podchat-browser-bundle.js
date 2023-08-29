@@ -1451,6 +1451,7 @@ function WebRTCClass(_ref) {
           variables.dataChannel.send(stringData);
         }
       } catch (error) {
+        asyncLogCallback && asyncLogCallback("webrtc", "webrtcFunctions.sendData.catch", error);
         onCustomError({
           errorCode: 4004,
           errorMessage: "Error in channel send message!",
@@ -44517,7 +44518,7 @@ WildEmitter.mixin = function (constructor) {
 WildEmitter.mixin(WildEmitter);
 
 },{}],272:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.18","date":"۱۴۰۲/۶/۶","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.7-snapshot.18","date":"۱۴۰۲/۶/۷","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],273:[function(require,module,exports){
 "use strict";
 
