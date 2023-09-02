@@ -23,12 +23,18 @@ function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "functio
 
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
+var instanceId = 0;
+
 function MediaStreamManager() {
+  console.log({
+    instanceId: instanceId
+  });
+  instanceId++;
   var deviceStreams = {
     videoIn: null,
     audioIn: null,
     audioOut: null,
-    screenShare: null
+    screenShare1: null
   };
   return {
     setAudioInput: function setAudioInput(stream) {
@@ -38,7 +44,8 @@ function MediaStreamManager() {
       deviceStreams.videoIn = stream;
     },
     setScreenShareInput: function setScreenShareInput(stream) {
-      deviceStreams.screenShare = stream;
+      console.log("sss setScreenShareInput", stream);
+      deviceStreams.screenShare1 = stream;
     },
     getVideoInput: function getVideoInput() {
       return deviceStreams.videoIn;
@@ -47,7 +54,8 @@ function MediaStreamManager() {
       return deviceStreams.audioIn;
     },
     getScreenShareInput: function getScreenShareInput() {
-      return deviceStreams.screenShare;
+      console.log("sss getScreenShareInput", deviceStreams);
+      return deviceStreams.screenShare1;
     },
     stopAudioInput: function stopAudioInput() {
       return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
@@ -111,20 +119,22 @@ function MediaStreamManager() {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
+                console.log("sss stopScreenShareInput");
+
                 if (deviceStreams.screenShare) {
-                  _context3.next = 2;
+                  _context3.next = 3;
                   break;
                 }
 
                 return _context3.abrupt("return");
 
-              case 2:
+              case 3:
                 deviceStreams.screenShare.getTracks().forEach(function (track) {
                   track.stop();
                 });
                 deviceStreams.screenShare = null;
 
-              case 4:
+              case 5:
               case "end":
                 return _context3.stop();
             }
@@ -199,19 +209,11 @@ function DeviceManager() {
           closeStream = _ref2$closeStream === void 0 ? false : _ref2$closeStream;
       var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
       return new Promise(function (resolve, reject) {
-        console.log("grantScreenSharePermission", 1);
-
         if (config.mediaStreams.getScreenShareInput()) {
-          console.log("grantScreenSharePermission", 2);
-
           if (!config.mediaStreams.getScreenShareInput().active) {
-            console.log("grantScreenSharePermission", 3); //config.mediaStreams.stopScreenShareInput();
-
-            resolve(config.mediaStreams.getScreenShareInput());
-            return;
+            config.mediaStreams.stopScreenShareInput(); // resolve(config.mediaStreams.getScreenShareInput());
           } else {
-            console.log("grantScreenSharePermission", 4); // console.log("exists resolving")
-
+            // console.log("exists resolving")
             resolve(config.mediaStreams.getScreenShareInput());
             return;
           }

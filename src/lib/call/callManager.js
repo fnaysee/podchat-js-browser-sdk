@@ -5,14 +5,13 @@ import {store} from "../store";
 import {
     sharedVariables,
     callStopQueue,
-    joinCallParams, endCall, endScreenShare, calculateScreenSize
+    joinCallParams, endCall, calculateScreenSize
 } from "./sharedData";
 import Utility from "../../utility/utility";
 import {CallServerManager} from "./callServerManager";
-import {callMetaDataTypes, chatMessageVOTypes} from "../constants";
+import {callMetaDataTypes} from "../constants";
 import {errorList, raiseError} from "../errorHandler";
 import {callsManager} from "./callsList";
-import {DeviceManager} from "./deviceManager2";
 
 function CallManager({callId, callConfig}) {
     const config = {
@@ -33,7 +32,8 @@ function CallManager({callId, callConfig}) {
                 let callVideo = (typeof callConfig.video === 'boolean') ? callConfig.video : true,
                     callMute = (typeof callConfig.mute === 'boolean') ? callConfig.mute : false;
 
-                config.deviceManager = new DeviceManager();
+                config.deviceManager = sharedVariables.deviceManager;
+                sharedVariables.deviceManager = null;
 
                 if (callConfig.selfData) {
                     callConfig.selfData.callId = config.callId;

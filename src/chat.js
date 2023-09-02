@@ -11821,6 +11821,7 @@ function Chat(params) {
     };
 
     publicized.reconnect = function () {
+        alert("Method: publicized.reconnect is called.");
         asyncClient.reconnectSocket();
     };
 

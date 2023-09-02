@@ -1,5 +1,7 @@
 "use strict";
 
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -24,6 +26,8 @@ var _messaging = require("../../messaging.module");
 var _callsList = require("./callsList");
 
 var _store = require("../store");
+
+var _deviceManager = _interopRequireDefault(require("./deviceManager"));
 
 var callStopQueue = {
   callStarted: false
@@ -62,7 +66,8 @@ var sharedVariables = {
   callOptions: null,
   startScreenSharetParams: {
     quality: 3
-  }
+  },
+  deviceManager: null
 };
 exports.sharedVariables = sharedVariables;
 
@@ -163,7 +168,7 @@ function calculateScreenSize(_ref) {
 }
 
 function currentCall() {
-  return (0, _callsList.callsManager)().get(_callsList.callsManager.currentCallId);
+  return (0, _callsList.callsManager)().get((0, _callsList.callsManager)().currentCallId);
 }
 
 function currentCallMyUser() {
