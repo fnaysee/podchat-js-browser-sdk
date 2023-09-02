@@ -2,7 +2,7 @@ import {chatMessageVOTypes, inviteeVOidTypes, callStickerTypes, callMetaDataType
 import KurentoUtils from 'kurento-utils'
 import Utility from "./utility/utility"
 import {chatEvents} from "./events.module.js";
-import deviceManager from "./lib/call/deviceManager.js";
+
 import errorHandler, {errorList, raiseError} from "./lib/errorHandler";
 import {sdkParams} from "./lib/sdkParams";
 
@@ -19,6 +19,7 @@ import {
 } from "./lib/call/sharedData";
 import {store} from "./lib/store";
 import {messenger} from "./messaging.module";
+import {DeviceManager} from "./lib/call/deviceManager2";
 
 function ChatCall(params) {
     var //Utility = params.Utility,
@@ -1229,8 +1230,9 @@ function ChatCall(params) {
 
         joinCallParams.cameraPaused = (typeof params.cameraPaused === 'boolean') ? params.cameraPaused : false;
         callRequestController.iRequestedCall = true;
-
-        deviceManager.grantUserMediaDevicesPermissions({
+        if(!sharedVariables.deviceManager)
+            sharedVariables.deviceManager = new DeviceManager();
+        sharedVariables.deviceManager.grantUserMediaDevicesPermissions({
             video: params.type == 'video',
             audio: !params.mute,
             closeStream: true
@@ -1338,8 +1340,9 @@ function ChatCall(params) {
 
         joinCallParams.cameraPaused = (typeof params.cameraPaused === 'boolean') ? params.cameraPaused : false;
         callRequestController.iRequestedCall = true;
-
-        deviceManager.grantUserMediaDevicesPermissions({
+        if(!sharedVariables.deviceManager)
+            sharedVariables.deviceManager = new DeviceManager();
+        sharedVariables.deviceManager.grantUserMediaDevicesPermissions({
             video: params.type == 'video',
             audio: !params.mute,
             closeStream: true
@@ -1459,7 +1462,10 @@ function ChatCall(params) {
         sharedVariables.acceptedCallId = parseInt(params.callId);
         callRequestController.iAcceptedCall = true;
 
-        deviceManager.grantUserMediaDevicesPermissions({
+        if(!sharedVariables.deviceManager)
+            sharedVariables.deviceManager = new DeviceManager();
+
+        sharedVariables.deviceManager.grantUserMediaDevicesPermissions({
             video: params.video,
             audio: !params.mute,
             closeStream: true
@@ -1604,8 +1610,23 @@ function ChatCall(params) {
             sharedVariables.startScreenSharetParams.quality = params.quality;
         }
 
-        return messenger().sendMessage(sendData, function (result) {
-            callback && callback(result);
+        currentCall().deviceManager().grantScreenSharePermission({
+            video: params.video,
+            audio: !params.mute,
+            closeStream: false
+        }, function (result) {
+            if (result.hasError) {
+                callback && callback({
+                    hasError: true,
+                    errorCode: result.errorCode,
+                    errorMessage: result.errorMessage,
+                });
+                return;
+            }
+
+            return messenger().sendMessage(sendData, function (result) {
+                callback && callback(result);
+            });
         });
     };
 
@@ -2164,11 +2185,6 @@ function ChatCall(params) {
         if(user
             && user.videoTopicManager()
             && user.videoTopicManager().getPeer()
-
-            && (
-                user.videoTopicManager().isPeerConnecting()
-                || user.videoTopicManager().isPeerDisconnected()
-            )
         ) {
             chatEvents.fireEvent('error', {
                 code: 999,
@@ -2445,7 +2461,7 @@ function ChatCall(params) {
         });
     };
 
-    this.deviceManager = deviceManager
+    this.deviceManager = (sharedVariables.deviceManager ? sharedVariables.deviceManager : ( currentCall() ? currentCall().deviceManager() : null))
 
     this.resetCallStream = async function({userId, streamType = 'audio'}, callback) {
         if(!callsManager().currentCallId) {

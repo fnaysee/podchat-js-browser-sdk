@@ -29,6 +29,8 @@ var _messaging = require("../../messaging.module");
 
 var _callsList = require("./callsList");
 
+var _webrtcPeer = require("./webrtcPeer");
+
 function CallTopicManager(_ref) {
   var callId = _ref.callId,
       userId = _ref.userId,
@@ -169,7 +171,7 @@ function CallTopicManager(_ref) {
 
         var options = {
           mediaConstraints: mediaConstraints,
-          iceTransportPolicy: 'relay',
+          // iceTransportPolicy: 'relay',
           onicecandidate: function onicecandidate(candidate) {
             topicManager.watchForIceCandidates(candidate);
           },
@@ -177,17 +179,18 @@ function CallTopicManager(_ref) {
             iceServers: currentCall().getTurnServer(currentCall().callConfig())
           }
         };
-        options[config.direction === 'send' ? 'localVideo' : 'remoteVideo'] = config.htmlElement;
+        options.streamElement = config.htmlElement;
 
         if (config.direction === 'send') {
           if (config.mediaType === 'video') {
             if (config.isScreenShare) {
-              currentCall().deviceManager().grantScreenSharePermission({
-                closeStream: false
-              }).then(function (stream) {
-                stream.getVideoTracks()[0].addEventListener("ended", onScreenShareEndCallback);
+              // currentCall().deviceManager().grantScreenSharePermission({closeStream: false}).then(stream => {
+              var stream = currentCall().deviceManager().mediaStreams.getScreenShareInput();
 
-                function onScreenShareEndCallback(event) {
+              if (!stream) {
+                reject("Error: could not find screenShareInput");
+              } else {
+                var onScreenShareEndCallback = function onScreenShareEndCallback(event) {
                   // Click on browser UI stop sharing button
                   if (publicized.isDestroyed()) return;
                   stream.getVideoTracks()[0].removeEventListener("ended", onScreenShareEndCallback);
@@ -197,22 +200,25 @@ function CallTopicManager(_ref) {
                       callId: config.callId
                     });
                   }
-                }
+                };
 
-                options.videoStream = stream;
+                stream.getVideoTracks()[0].addEventListener("ended", onScreenShareEndCallback);
+                options.stream = stream;
                 options.sendSource = 'screen';
                 resolve(options);
-              })["catch"](function (error) {
-                var errorString = "[SDK][grantScreenSharePermission][catch] " + JSON.stringify(error);
-                console.error(errorString);
-                currentCall().raiseCallError(_errorHandler.errorList.SCREENSHARE_PERMISSION_ERROR, null, true);
-                publicized.explainUserMediaError(error, 'video', 'screen'); //resolve(options);
-              });
+              } // }).catch(function (error) {
+              //     let errorString = "[SDK][grantScreenSharePermission][catch] " + JSON.stringify(error)
+              //     console.error(errorString);
+              //     currentCall().raiseCallError(errorList.SCREENSHARE_PERMISSION_ERROR, null, true);
+              //     publicized.explainUserMediaError(error, 'video', 'screen');
+              //     //resolve(options);
+              // });
+
             } else {
               currentCall().deviceManager().grantUserMediaDevicesPermissions({
                 video: true
               }).then(function () {
-                options.videoStream = currentCall().deviceManager().mediaStreams.getVideoInput();
+                options.stream = currentCall().deviceManager().mediaStreams.getVideoInput();
                 resolve(options);
               })["catch"](function (error) {
                 reject(error);
@@ -224,7 +230,7 @@ function CallTopicManager(_ref) {
             }).then(function () {
               var audioInput = currentCall().deviceManager().mediaStreams.getAudioInput();
               currentCall().deviceManager().watchAudioInputStream(currentCall().raiseCallError);
-              options.audioStream = audioInput;
+              options.stream = audioInput;
               resolve(options);
             })["catch"](function (error) {
               reject(error);
@@ -262,13 +268,20 @@ function CallTopicManager(_ref) {
       }));
     },
     establishPeerConnection: function establishPeerConnection(options) {
-      console.log(config.topic, 4, "establishPeerConnection");
       var WebRtcFunction = config.direction === 'send' ? 'WebRtcPeerSendonly' : 'WebRtcPeerRecvonly',
           manager = this,
           user = config.user,
           topicElement = config.htmlElement;
       config.state = peerStates.CONNECTING;
-      config.peer = new _kurentoUtils["default"].WebRtcPeer[WebRtcFunction](options, function (err) {
+      config.peer = new _webrtcPeer.WebrtcPeerConnection({
+        direction: config.direction,
+        mediaType: config.mediaType,
+        stream: options.stream,
+        streamElement: options.streamElement,
+        rtcPeerConfig: options.configuration,
+        connectionStateChange: publicized.onConnectionStateChange,
+        iceConnectionStateChange: publicized.onIceConnectionStateChange
+      }, function (err) {
         _sdkParams.sdkParams.consoleLogging && console.debug("[SDK][establishPeerConnection][KurentoUtils.WebRtcPeer][WebRtcFunction]: ", {
           options: options
         }, "userId: ", config.userId, "topic: ", config.topic, "direction: ", config.direction);
@@ -286,8 +299,6 @@ function CallTopicManager(_ref) {
 
           return;
         }
-
-        manager.watchRTCPeerConnection();
 
         if (config.direction === 'send') {
           //publicized.startMedia();
@@ -311,8 +322,7 @@ function CallTopicManager(_ref) {
           });
         } else {
           config.peer.generateOffer(function (err, sdpOffer) {
-            _sdkParams.sdkParams.consoleLogging && console.debug("[SDK][establishPeerConnection][generateOffer] GenerateOffer:: ", " sdpOffer: ", sdpOffer, " err: ", err);
-
+            // sdkParams.consoleLogging && console.debug("[SDK][establishPeerConnection][generateOffer] GenerateOffer:: ", " sdpOffer: ", sdpOffer, " err: ", err);
             if (err) {
               var _errorString = "[SDK][start/WebRc " + config.direction + "  " + config.mediaType + " Peer/generateOffer] " + err;
 
@@ -336,6 +346,133 @@ function CallTopicManager(_ref) {
         }
       });
     },
+    onConnectionStateChange: function onConnectionStateChange() {
+      _events.chatEvents.fireEvent("callStreamEvents", {
+        type: 'WEBRTC_CONNECTION_STATE_CHANGE',
+        callId: config.callId,
+        userId: config.userId,
+        topic: config.topic,
+        direction: config.direction,
+        connectionState: config.peer.peerConnection.connectionState,
+        mediaType: config.mediaType
+      });
+
+      if (!config.peer || publicized.isDestroyed()) {
+        return; //avoid log errors
+      }
+
+      _sdkParams.sdkParams.consoleLogging && console.log("[SDK][peerConnection.onconnectionstatechange] ", "peer: ", config.topic, " peerConnection.connectionState: ", config.peer.peerConnection.connectionState);
+
+      if (config.peer.peerConnection.connectionState === 'disconnected') {
+        publicized.removeConnectionQualityInterval();
+        publicized.removeAudioWatcherInterval();
+      }
+
+      if (config.peer.peerConnection.connectionState === "failed") {
+        if (publicized.isPeerFailed()) return;
+        config.state = peerStates.FAILED;
+
+        _events.chatEvents.fireEvent('callEvents', {
+          type: 'CALL_STATUS',
+          errorCode: 7000,
+          errorMessage: "Call Peer (".concat(config.topic, ") has failed!"),
+          errorInfo: config.peer
+        });
+
+        if ((0, _messaging.messenger)().chatState) {
+          publicized.shouldReconnectTopic();
+        }
+      }
+
+      if (config.peer.peerConnection.connectionState === 'connected') {
+        config.state = peerStates.CONNECTED;
+
+        if (config.direction === 'send' && !config.topicMetaData.connectionQualityInterval) {
+          config.topicMetaData.connectionQualityInterval = setInterval(function () {
+            publicized.checkConnectionQuality();
+          }, 1000);
+        }
+      }
+    },
+    onIceConnectionStateChange: function onIceConnectionStateChange() {
+      if (!config.peer || publicized.isDestroyed()) {
+        return; //avoid log errors
+      }
+
+      _sdkParams.sdkParams.consoleLogging && console.log("[SDK][oniceconnectionstatechange] ", "peer: ", config.topic, " peerConnection.connectionState: ", config.peer.peerConnection.iceConnectionState);
+
+      if (config.peer.peerConnection.iceConnectionState === 'disconnected') {
+        config.state = peerStates.DISCONNECTED;
+
+        _events.chatEvents.fireEvent('callEvents', {
+          type: 'CALL_STATUS',
+          errorCode: 7000,
+          errorMessage: "Call Peer (".concat(config.topic, ") is disconnected!"),
+          errorInfo: config.peer
+        });
+
+        _sdkParams.sdkParams.consoleLogging && console.log('[SDK][oniceconnectionstatechange]:[disconnected] Internet connection failed, Reconnect your call, topic:', config.topic);
+      }
+
+      if (config.peer.peerConnection.iceConnectionState === "failed") {
+        if (publicized.isPeerFailed()) return;
+        config.state = peerStates.FAILED;
+
+        _events.chatEvents.fireEvent('callEvents', {
+          type: 'CALL_STATUS',
+          errorCode: 7000,
+          errorMessage: "Call Peer (".concat(config.topic, ") has failed!"),
+          errorInfo: config.peer
+        });
+
+        if ((0, _messaging.messenger)().chatState) {
+          publicized.shouldReconnectTopic();
+        }
+      }
+
+      if (config.peer.peerConnection.iceConnectionState === "connected") {
+        config.state = peerStates.CONNECTED;
+
+        if (config.mediaType === 'audio') {
+          publicized.watchAudioLevel();
+        }
+
+        if (config.direction === 'send' && !config.topicMetaData.connectionQualityInterval) {
+          config.topicMetaData.connectionQualityInterval = setInterval(function () {
+            // if(config.mediaType === 'video' )
+            publicized.checkConnectionQuality(); // else
+            //     manager.checkAudioConnectionQuality();
+          }, 1000);
+        }
+
+        if (config.mediaType === 'video') {
+          /*if(config.direction === 'send') {
+              user.topicMetaData[config.topic].connectionQualityInterval = setInterval(function() {
+                  manager.checkConnectionQuality()
+              }, 1000);
+          }*/
+          if (config.direction === 'receive') {
+            _events.chatEvents.fireEvent("callEvents", {
+              type: "RECEIVE_VIDEO_CONNECTION_ESTABLISHED",
+              userId: config.userId
+            });
+          }
+        }
+
+        if (config.direction === 'receive' && config.mediaType === 'audio') {
+          publicized.watchAudioLevel();
+        }
+
+        config.state = peerStates.CONNECTED; // callRequestController.callEstablishedInMySide = true;
+
+        _events.chatEvents.fireEvent('callEvents', {
+          type: 'CALL_STATUS',
+          errorCode: 7000,
+          errorMessage: "Call Peer (".concat(config.topic, ") has connected!"),
+          errorInfo: config.peer
+        });
+      }
+    },
     sendSDPOfferRequestMessage: function sendSDPOfferRequestMessage(sdpOffer, retries) {
       currentCall().sendCallMessage({
         id: config.direction === 'send' ? 'SEND_SDP_OFFER' : 'RECIVE_SDP_OFFER',
@@ -353,140 +490,6 @@ function CallTopicManager(_ref) {
         timeoutTime: 4000,
         timeoutRetriesCount: 5
       });
-    },
-    watchRTCPeerConnection: function watchRTCPeerConnection() {
-      _sdkParams.sdkParams.consoleLogging && console.log("[SDK][watchRTCPeerConnection] called with: ", "userId: ", config.userId, "topic: ", config.topic, "mediaType: ", config.mediaType, "direction: ", config.direction);
-      var manager = this,
-          user = config.user;
-
-      config.peer.peerConnection.onconnectionstatechange = function () {
-        _events.chatEvents.fireEvent("callStreamEvents", {
-          type: 'WEBRTC_CONNECTION_STATE_CHANGE',
-          callId: config.callId,
-          userId: config.userId,
-          topic: config.topic,
-          direction: config.direction,
-          connectionState: config.peer.peerConnection.connectionState,
-          mediaType: config.mediaType
-        });
-
-        if (!user || !config.peer || publicized.isDestroyed()) {
-          return; //avoid log errors
-        }
-
-        _sdkParams.sdkParams.consoleLogging && console.log("[SDK][peerConnection.onconnectionstatechange] ", "peer: ", config.topic, " peerConnection.connectionState: ", config.peer.peerConnection.connectionState);
-
-        if (config.peer.peerConnection.connectionState === 'disconnected') {
-          manager.removeConnectionQualityInterval();
-          manager.removeAudioWatcherInterval();
-        }
-
-        if (config.peer.peerConnection.connectionState === "failed") {
-          if (publicized.isPeerFailed()) return;
-          config.state = peerStates.FAILED;
-
-          _events.chatEvents.fireEvent('callEvents', {
-            type: 'CALL_STATUS',
-            errorCode: 7000,
-            errorMessage: "Call Peer (".concat(config.topic, ") has failed!"),
-            errorInfo: config.peer
-          });
-
-          if ((0, _messaging.messenger)().chatState) {
-            manager.shouldReconnectTopic();
-          }
-        }
-
-        if (config.peer.peerConnection.connectionState === 'connected') {
-          config.state = peerStates.CONNECTED;
-
-          if (config.direction === 'send' && !config.topicMetaData.connectionQualityInterval) {
-            config.topicMetaData.connectionQualityInterval = setInterval(function () {
-              manager.checkConnectionQuality();
-            }, 1000);
-          }
-        }
-      };
-
-      config.peer.peerConnection.oniceconnectionstatechange = function () {
-        if (!user || !config.peer || publicized.isDestroyed()) {
-          return; //avoid log errors
-        }
-
-        _sdkParams.sdkParams.consoleLogging && console.log("[SDK][oniceconnectionstatechange] ", "peer: ", config.topic, " peerConnection.connectionState: ", config.peer.peerConnection.iceConnectionState);
-
-        if (config.peer.peerConnection.iceConnectionState === 'disconnected') {
-          config.state = peerStates.DISCONNECTED;
-
-          _events.chatEvents.fireEvent('callEvents', {
-            type: 'CALL_STATUS',
-            errorCode: 7000,
-            errorMessage: "Call Peer (".concat(config.topic, ") is disconnected!"),
-            errorInfo: config.peer
-          });
-
-          _sdkParams.sdkParams.consoleLogging && console.log('[SDK][oniceconnectionstatechange]:[disconnected] Internet connection failed, Reconnect your call, topic:', config.topic);
-        }
-
-        if (config.peer.peerConnection.iceConnectionState === "failed") {
-          if (publicized.isPeerFailed()) return;
-          config.state = peerStates.FAILED;
-
-          _events.chatEvents.fireEvent('callEvents', {
-            type: 'CALL_STATUS',
-            errorCode: 7000,
-            errorMessage: "Call Peer (".concat(config.topic, ") has failed!"),
-            errorInfo: config.peer
-          });
-
-          if ((0, _messaging.messenger)().chatState) {
-            manager.shouldReconnectTopic();
-          }
-        }
-
-        if (config.peer.peerConnection.iceConnectionState === "connected") {
-          config.state = peerStates.CONNECTED;
-
-          if (config.mediaType === 'audio') {
-            manager.watchAudioLevel();
-          }
-
-          if (config.direction === 'send' && !config.topicMetaData.connectionQualityInterval) {
-            config.topicMetaData.connectionQualityInterval = setInterval(function () {
-              // if(config.mediaType === 'video' )
-              manager.checkConnectionQuality(); // else
-              //     manager.checkAudioConnectionQuality();
-            }, 1000);
-          }
-
-          if (config.mediaType === 'video') {
-            /*if(config.direction === 'send') {
-                user.topicMetaData[config.topic].connectionQualityInterval = setInterval(function() {
-                    manager.checkConnectionQuality()
-                }, 1000);
-            }*/
-            if (config.direction === 'receive') {
-              _events.chatEvents.fireEvent("callEvents", {
-                type: "RECEIVE_VIDEO_CONNECTION_ESTABLISHED",
-                userId: config.userId
-              });
-            }
-          }
-
-          if (config.direction === 'receive' && config.mediaType === 'audio') {
-            manager.watchAudioLevel();
-          }
-
-          config.state = peerStates.CONNECTED; // callRequestController.callEstablishedInMySide = true;
-
-          _events.chatEvents.fireEvent('callEvents', {
-            type: 'CALL_STATUS',
-            errorCode: 7000,
-            errorMessage: "Call Peer (".concat(config.topic, ") has connected!"),
-            errorInfo: config.peer
-          });
-        }
-      };
     },
     watchAudioLevel: function watchAudioLevel() {
       var manager = this,

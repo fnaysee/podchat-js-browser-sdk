@@ -117,7 +117,6 @@ function CallUsers({callId}) {
         },
         findUserIdByTopic(topic) {
             for (let i in config.list) {
-                console.log("findUserIdByTopic:: ", topic, config.list[i].user().videoTopicName, config.list[i].user().audioTopicName)
                 if (config.list[i] && (config.list[i].user().videoTopicName === topic || config.list[i].user().audioTopicName === topic)) {
                     return i;
                 }

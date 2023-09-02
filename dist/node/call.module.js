@@ -25,8 +25,6 @@ var _utility = _interopRequireDefault(require("./utility/utility"));
 
 var _eventsModule = require("./events.module.js");
 
-var _deviceManager = _interopRequireDefault(require("./lib/call/deviceManager.js"));
-
 var _errorHandler = _interopRequireWildcard(require("./lib/errorHandler"));
 
 var _sdkParams = require("./lib/sdkParams");
@@ -40,6 +38,8 @@ var _sharedData = require("./lib/call/sharedData");
 var _store = require("./lib/store");
 
 var _messaging = require("./messaging.module");
+
+var _deviceManager = require("./lib/call/deviceManager2");
 
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 
@@ -1237,8 +1237,9 @@ function ChatCall(params) {
             case 23:
               _sharedData.joinCallParams.cameraPaused = typeof params.cameraPaused === 'boolean' ? params.cameraPaused : false;
               callRequestController.iRequestedCall = true;
+              if (!_sharedData.sharedVariables.deviceManager) _sharedData.sharedVariables.deviceManager = new _deviceManager.DeviceManager();
 
-              _deviceManager["default"].grantUserMediaDevicesPermissions({
+              _sharedData.sharedVariables.deviceManager.grantUserMediaDevicesPermissions({
                 video: params.type == 'video',
                 audio: !params.mute,
                 closeStream: true
@@ -1279,7 +1280,7 @@ function ChatCall(params) {
                 });
               });
 
-            case 26:
+            case 27:
             case "end":
               return _context.stop();
           }
@@ -1385,8 +1386,9 @@ function ChatCall(params) {
             case 22:
               _sharedData.joinCallParams.cameraPaused = typeof params.cameraPaused === 'boolean' ? params.cameraPaused : false;
               callRequestController.iRequestedCall = true;
+              if (!_sharedData.sharedVariables.deviceManager) _sharedData.sharedVariables.deviceManager = new _deviceManager.DeviceManager();
 
-              _deviceManager["default"].grantUserMediaDevicesPermissions({
+              _sharedData.sharedVariables.deviceManager.grantUserMediaDevicesPermissions({
                 video: params.type == 'video',
                 audio: !params.mute,
                 closeStream: true
@@ -1426,7 +1428,7 @@ function ChatCall(params) {
                 });
               });
 
-            case 25:
+            case 26:
             case "end":
               return _context2.stop();
           }
@@ -1544,8 +1546,9 @@ function ChatCall(params) {
             case 18:
               _sharedData.sharedVariables.acceptedCallId = parseInt(params.callId);
               callRequestController.iAcceptedCall = true;
+              if (!_sharedData.sharedVariables.deviceManager) _sharedData.sharedVariables.deviceManager = new _deviceManager.DeviceManager();
 
-              _deviceManager["default"].grantUserMediaDevicesPermissions({
+              _sharedData.sharedVariables.deviceManager.grantUserMediaDevicesPermissions({
                 video: params.video,
                 audio: !params.mute,
                 closeStream: true
@@ -1566,7 +1569,7 @@ function ChatCall(params) {
                 });
               });
 
-            case 21:
+            case 22:
             case "end":
               return _context3.stop();
           }
@@ -1710,8 +1713,23 @@ function ChatCall(params) {
       _sharedData.sharedVariables.startScreenSharetParams.quality = params.quality;
     }
 
-    return (0, _messaging.messenger)().sendMessage(sendData, function (result) {
-      callback && callback(result);
+    (0, _sharedData.currentCall)().deviceManager().grantScreenSharePermission({
+      video: params.video,
+      audio: !params.mute,
+      closeStream: false
+    }, function (result) {
+      if (result.hasError) {
+        callback && callback({
+          hasError: true,
+          errorCode: result.errorCode,
+          errorMessage: result.errorMessage
+        });
+        return;
+      }
+
+      return (0, _messaging.messenger)().sendMessage(sendData, function (result) {
+        callback && callback(result);
+      });
     });
   };
 
@@ -2287,7 +2305,7 @@ function ChatCall(params) {
 
     var user = call.users().get(_store.store.user().id); //callUsers[store.user().id];
 
-    if (user && user.videoTopicManager() && user.videoTopicManager().getPeer() && (user.videoTopicManager().isPeerConnecting() || user.videoTopicManager().isPeerDisconnected())) {
+    if (user && user.videoTopicManager() && user.videoTopicManager().getPeer()) {
       _eventsModule.chatEvents.fireEvent('error', {
         code: 999,
         message: 'Video stream is already open!'
@@ -2555,7 +2573,7 @@ function ChatCall(params) {
     });
   };
 
-  this.deviceManager = _deviceManager["default"];
+  this.deviceManager = _sharedData.sharedVariables.deviceManager ? _sharedData.sharedVariables.deviceManager : (0, _sharedData.currentCall)() ? (0, _sharedData.currentCall)().deviceManager() : null;
 
   this.resetCallStream = /*#__PURE__*/function () {
     var _ref9 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(_ref8, callback) {

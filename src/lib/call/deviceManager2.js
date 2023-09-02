@@ -125,16 +125,12 @@ function DeviceManager () {
         },
         grantScreenSharePermission({closeStream = false}, callback = null) {
             return new Promise((resolve, reject) => {
-                console.log("grantScreenSharePermission", 1)
                 if (config.mediaStreams.getScreenShareInput()) {
-                    console.log("grantScreenSharePermission", 2)
                     if (!config.mediaStreams.getScreenShareInput().active) {
-                        console.log("grantScreenSharePermission", 3)
-                        //config.mediaStreams.stopScreenShareInput();
-                        resolve(config.mediaStreams.getScreenShareInput());
-                        return;
+                        config.mediaStreams.stopScreenShareInput();
+                        // resolve(config.mediaStreams.getScreenShareInput());
+
                     } else {
-                        console.log("grantScreenSharePermission", 4)
                         // console.log("exists resolving")
                         resolve(config.mediaStreams.getScreenShareInput());
                         return;

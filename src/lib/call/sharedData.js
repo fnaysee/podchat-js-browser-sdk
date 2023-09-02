@@ -41,6 +41,7 @@ const sharedVariables = {
     startScreenSharetParams: {
         quality: 3
     },
+    deviceManager: null
 }
 
 
@@ -140,7 +141,7 @@ function calculateScreenSize({quality = 3 }) {
 }
 
 function currentCall() {
-    return callsManager().get(callsManager.currentCallId);
+    return callsManager().get(callsManager().currentCallId);
 }
 
 function currentCallMyUser() {
