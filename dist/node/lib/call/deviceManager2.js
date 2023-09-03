@@ -23,18 +23,12 @@ function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "functio
 
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
-var instanceId = 0;
-
 function MediaStreamManager() {
-  console.log({
-    instanceId: instanceId
-  });
-  instanceId++;
   var deviceStreams = {
     videoIn: null,
     audioIn: null,
     audioOut: null,
-    screenShare1: null
+    screenShare: null
   };
   return {
     setAudioInput: function setAudioInput(stream) {
@@ -44,8 +38,7 @@ function MediaStreamManager() {
       deviceStreams.videoIn = stream;
     },
     setScreenShareInput: function setScreenShareInput(stream) {
-      console.log("sss setScreenShareInput", stream);
-      deviceStreams.screenShare1 = stream;
+      deviceStreams.screenShare = stream;
     },
     getVideoInput: function getVideoInput() {
       return deviceStreams.videoIn;
@@ -54,8 +47,7 @@ function MediaStreamManager() {
       return deviceStreams.audioIn;
     },
     getScreenShareInput: function getScreenShareInput() {
-      console.log("sss getScreenShareInput", deviceStreams);
-      return deviceStreams.screenShare1;
+      return deviceStreams.screenShare;
     },
     stopAudioInput: function stopAudioInput() {
       return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
@@ -119,22 +111,20 @@ function MediaStreamManager() {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                console.log("sss stopScreenShareInput");
-
                 if (deviceStreams.screenShare) {
-                  _context3.next = 3;
+                  _context3.next = 2;
                   break;
                 }
 
                 return _context3.abrupt("return");
 
-              case 3:
+              case 2:
                 deviceStreams.screenShare.getTracks().forEach(function (track) {
                   track.stop();
                 });
                 deviceStreams.screenShare = null;
 
-              case 5:
+              case 4:
               case "end":
                 return _context3.stop();
             }

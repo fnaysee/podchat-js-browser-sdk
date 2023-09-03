@@ -1,7 +1,5 @@
 "use strict";
 
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -26,8 +24,6 @@ var _messaging = require("../../messaging.module");
 var _callsList = require("./callsList");
 
 var _store = require("../store");
-
-var _deviceManager = _interopRequireDefault(require("./deviceManager"));
 
 var callStopQueue = {
   callStarted: false

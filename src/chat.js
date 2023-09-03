@@ -8,6 +8,7 @@ import ChatEvents, { initEventHandler, chatEvents } from "./events.module"
 import {initChatMessaging, messenger} from "./messaging.module"
 import buildConfig from "./buildConfig.json"
 import {deprecatedString, printIsDeprecate} from "./deprecateMethods";
+import xss from "xss"
 
 import {
     chatMessageVOTypes,
@@ -3939,7 +3940,7 @@ function Chat(params) {
                     : undefined,
                 uniqueId: pushMessageVO.uniqueId,
                 previousId: pushMessageVO.previousId,
-                message: pushMessageVO.message,
+                message: filterXSS(pushMessageVO.message),
                 messageType: pushMessageVO.messageType,
                 edited: pushMessageVO.edited,
                 editable: pushMessageVO.editable,
@@ -4020,7 +4021,7 @@ function Chat(params) {
                 timeNanos: pushMessageVO.timeNanos,
                 sender: pushMessageVO.sender,
                 messageId: pushMessageVO.messageId,
-                text: pushMessageVO.text,
+                text: filterXSS(pushMessageVO.text),
                 metadata: pushMessageVO.metadata,
                 systemMetadata: pushMessageVO.systemMetadata,
             };
@@ -6928,7 +6929,7 @@ function Chat(params) {
                             messageType: (params.messageType && typeof params.messageType.toUpperCase() !== 'undefined' && chatMessageTypes[params.messageType.toUpperCase()] > 0) ? chatMessageTypes[params.messageType.toUpperCase()] : 1,
                             subjectId: params.threadId,
                             repliedTo: params.repliedTo,
-                            content: params.content,
+                            content: filterXSS(params.content),
                             metadata: JSON.stringify(objectDeepMerger(uploadHandlerMetadata, params.metadata)),
                             systemMetadata: JSON.stringify(params.systemMetadata),
                             uniqueId: fileUniqueId,
@@ -8678,7 +8679,7 @@ function Chat(params) {
         }
 
         let sendContentParams = {
-            text: params.textMessage
+            text: filterXSS(params.textMessage)
         };
 
         if (typeof params.invitees !== 'undefined' && params.invitees) {
@@ -8730,7 +8731,7 @@ function Chat(params) {
                 messageType: (params.messageType && typeof params.messageType.toUpperCase() !== 'undefined' && chatMessageTypes[params.messageType.toUpperCase()] > 0) ? chatMessageTypes[params.messageType.toUpperCase()] : chatMessageTypes.TEXT,
                 subjectId: params.threadId,
                 repliedTo: params.repliedTo,
-                content: params.textMessage,
+                content: filterXSS(params.textMessage),
                 uniqueId: uniqueId,
                 systemMetadata: JSON.stringify(params.systemMetadata),
                 metadata: JSON.stringify(metadata),
@@ -9034,7 +9035,7 @@ function Chat(params) {
             messageType: params.messageType,
             subjectId: params.messageId,
             repliedTo: params.repliedTo,
-            content: params.content,
+            content: filterXSS(params.content),
             uniqueId: params.uniqueId,
             metadata: params.metadata,
             systemMetadata: params.systemMetadata,
@@ -9162,7 +9163,7 @@ function Chat(params) {
                 messageType: 1,
                 subjectId: params.threadId,
                 repliedTo: params.repliedTo,
-                content: params.textMessage,
+                content: filterXSS(params.textMessage),
                 uniqueId: uniqueId,
                 systemMetadata: JSON.stringify(params.systemMetadata),
                 metadata: JSON.stringify(params.metadata),
@@ -9207,7 +9208,7 @@ function Chat(params) {
                     messageType: (params.messageType && typeof params.messageType.toUpperCase() !== 'undefined' && chatMessageTypes[params.messageType.toUpperCase()] > 0) ? chatMessageTypes[params.messageType.toUpperCase()] : 1,
                     subjectId: params.threadId,
                     repliedTo: params.repliedTo,
-                    content: params.content,
+                    content: filterXSS(params.content),
                     metadata: JSON.stringify(uploadHandlerMetadata),
                     systemMetadata: JSON.stringify(params.systemMetadata),
                     uniqueId: fileUniqueId,
@@ -9277,7 +9278,7 @@ function Chat(params) {
         }, function (uploadHandlerResult, uploadHandlerMetadata, fileType, fileExtension) {
             fileUploadParams = Object.assign(fileUploadParams, uploadHandlerResult);
             let sendContentParams = {
-                text: params.textMessage
+                text: filterXSS(params.textMessage)
             };
 
             if (typeof params.invitees !== 'undefined' && params.invitees) {
@@ -11821,7 +11822,6 @@ function Chat(params) {
     };
 
     publicized.reconnect = function () {
-        alert("Method: publicized.reconnect is called.");
         asyncClient.reconnectSocket();
     };
 
