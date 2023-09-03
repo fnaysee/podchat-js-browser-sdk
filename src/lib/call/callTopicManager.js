@@ -151,36 +151,39 @@ function CallTopicManager(
                 if(config.direction === 'send') {
                     if(config.mediaType === 'video') {
                         if(config.isScreenShare) {
-                            // currentCall().deviceManager().grantScreenSharePermission({closeStream: false}).then(stream => {
-                            let stream = currentCall().deviceManager().mediaStreams.getScreenShareInput();
-                            if(!stream) {
-                                reject("Error: could not find screenShareInput")
-                            } else {
-                                stream.getVideoTracks()[0].addEventListener("ended", onScreenShareEndCallback);
+                            currentCall().deviceManager().grantScreenSharePermission({closeStream: false}).then(stream => {
+                                // let stream = currentCall().deviceManager().mediaStreams.getScreenShareInput();
+                                if(!stream) {
+                                    reject("Error: could not find screenShareInput")
+                                } else {
+                                    stream.getVideoTracks()[0].addEventListener("ended", onScreenShareEndCallback);
 
-                                function onScreenShareEndCallback(event) { // Click on browser UI stop sharing button
-                                    if (publicized.isDestroyed())
-                                        return;
+                                    function onScreenShareEndCallback(event) { // Click on browser UI stop sharing button
+                                        if (publicized.isDestroyed())
+                                            return;
 
-                                    stream.getVideoTracks()[0].removeEventListener("ended", onScreenShareEndCallback);
-                                    if (!publicized.isDestroyed() && config.peer) {
-                                        endScreenShare({
-                                            callId: config.callId
-                                        });
+                                        stream.getVideoTracks()[0].removeEventListener("ended", onScreenShareEndCallback);
+                                        if (!publicized.isDestroyed() && config.peer) {
+                                            endScreenShare({
+                                                callId: config.callId
+                                            });
+                                        }
                                     }
-                                }
 
-                                options.stream = stream;
-                                options.sendSource = 'screen';
-                                resolve(options);
-                            }
-                            // }).catch(function (error) {
-                            //     let errorString = "[SDK][grantScreenSharePermission][catch] " + JSON.stringify(error)
-                            //     console.error(errorString);
-                            //     currentCall().raiseCallError(errorList.SCREENSHARE_PERMISSION_ERROR, null, true);
-                            //     publicized.explainUserMediaError(error, 'video', 'screen');
-                            //     //resolve(options);
-                            // });
+                                    options.stream = stream;
+                                    options.sendSource = 'screen';
+                                    resolve(options);
+                                }
+                            }).catch(function (error) {
+                                let errorString = "[SDK][grantScreenSharePermission][catch] " + JSON.stringify(error)
+                                console.error(errorString);
+                                currentCall().raiseCallError(errorList.SCREENSHARE_PERMISSION_ERROR, null, true);
+                                publicized.explainUserMediaError(error, 'video', 'screen');
+                                //resolve(options);
+                                endScreenShare({
+                                    callId: config.callId
+                                });
+                            });
                         } else {
                             currentCall().deviceManager().grantUserMediaDevicesPermissions({video: true}).then(() => {
                                 options.stream = currentCall().deviceManager().mediaStreams.getVideoInput();

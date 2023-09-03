@@ -184,36 +184,40 @@ function CallTopicManager(_ref) {
         if (config.direction === 'send') {
           if (config.mediaType === 'video') {
             if (config.isScreenShare) {
-              // currentCall().deviceManager().grantScreenSharePermission({closeStream: false}).then(stream => {
-              var stream = currentCall().deviceManager().mediaStreams.getScreenShareInput();
+              currentCall().deviceManager().grantScreenSharePermission({
+                closeStream: false
+              }).then(function (stream) {
+                // let stream = currentCall().deviceManager().mediaStreams.getScreenShareInput();
+                if (!stream) {
+                  reject("Error: could not find screenShareInput");
+                } else {
+                  var onScreenShareEndCallback = function onScreenShareEndCallback(event) {
+                    // Click on browser UI stop sharing button
+                    if (publicized.isDestroyed()) return;
+                    stream.getVideoTracks()[0].removeEventListener("ended", onScreenShareEndCallback);
 
-              if (!stream) {
-                reject("Error: could not find screenShareInput");
-              } else {
-                var onScreenShareEndCallback = function onScreenShareEndCallback(event) {
-                  // Click on browser UI stop sharing button
-                  if (publicized.isDestroyed()) return;
-                  stream.getVideoTracks()[0].removeEventListener("ended", onScreenShareEndCallback);
+                    if (!publicized.isDestroyed() && config.peer) {
+                      (0, _sharedData.endScreenShare)({
+                        callId: config.callId
+                      });
+                    }
+                  };
 
-                  if (!publicized.isDestroyed() && config.peer) {
-                    (0, _sharedData.endScreenShare)({
-                      callId: config.callId
-                    });
-                  }
-                };
+                  stream.getVideoTracks()[0].addEventListener("ended", onScreenShareEndCallback);
+                  options.stream = stream;
+                  options.sendSource = 'screen';
+                  resolve(options);
+                }
+              })["catch"](function (error) {
+                var errorString = "[SDK][grantScreenSharePermission][catch] " + JSON.stringify(error);
+                console.error(errorString);
+                currentCall().raiseCallError(_errorHandler.errorList.SCREENSHARE_PERMISSION_ERROR, null, true);
+                publicized.explainUserMediaError(error, 'video', 'screen'); //resolve(options);
 
-                stream.getVideoTracks()[0].addEventListener("ended", onScreenShareEndCallback);
-                options.stream = stream;
-                options.sendSource = 'screen';
-                resolve(options);
-              } // }).catch(function (error) {
-              //     let errorString = "[SDK][grantScreenSharePermission][catch] " + JSON.stringify(error)
-              //     console.error(errorString);
-              //     currentCall().raiseCallError(errorList.SCREENSHARE_PERMISSION_ERROR, null, true);
-              //     publicized.explainUserMediaError(error, 'video', 'screen');
-              //     //resolve(options);
-              // });
-
+                (0, _sharedData.endScreenShare)({
+                  callId: config.callId
+                });
+              });
             } else {
               currentCall().deviceManager().grantUserMediaDevicesPermissions({
                 video: true
