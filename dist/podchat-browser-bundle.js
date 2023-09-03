@@ -113,7 +113,8 @@ function Async(params) {
     onStartWithRetryStepGreaterThanZero = params.onStartWithRetryStepGreaterThanZero,
     asyncLogCallback = typeof params.asyncLogCallback == "function" ? params.asyncLogCallback : null,
     msgLogCallback = typeof params.msgLogCallback == "function" ? params.msgLogCallback : null,
-    onDeviceId = typeof params.onDeviceId == "function" ? params.onDeviceId : null;
+    onDeviceId = typeof params.onDeviceId == "function" ? params.onDeviceId : null,
+    isConnecting = false;
   var reconnOnClose = {
     value: false,
     oldValue: null,
@@ -161,30 +162,25 @@ function Async(params) {
         window.addEventListener('online', function () {
           asyncLogCallback && asyncLogCallback("async", "window.online", "");
           if (!isSocketOpen) {
+            alert('window.online reconnectSocket()');
             currentModuleInstance.reconnectSocket();
           }
         });
         window.addEventListener('offline', function () {
           asyncLogCallback && asyncLogCallback("async", "window.offline", "");
           if (isSocketOpen) {
+            alert('window.offline, reconnectSocket()');
             currentModuleInstance.reconnectSocket();
           }
         });
         fireEvent('stateChange', {
           socketState: socketStateType.CONNECTING,
-          timeUntilReconnect: 0,
+          timeUntilReconnect: 1000 * retryStep.get(),
           deviceRegister: false,
           serverRegister: false,
           peerId: peerId
         });
-        switch (protocol) {
-          case 'websocket':
-            initSocket();
-            break;
-          case 'webrtc':
-            initWebrtc();
-            break;
-        }
+        maybeReconnect();
         if (retryStep.get() < 64) {
           // retryStep += 3;
           retryStep.set(retryStep.get() + 3);
@@ -216,6 +212,7 @@ function Async(params) {
         msgLogCallback: msgLogCallback,
         asyncLogCallback: asyncLogCallback,
         onOpen: function onOpen() {
+          isConnecting = false;
           checkIfSocketHasOpennedTimeoutId && clearTimeout(checkIfSocketHasOpennedTimeoutId);
           socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
           socketReconnectRetryInterval = null;
@@ -243,6 +240,7 @@ function Async(params) {
           isDeviceRegister = false;
           oldPeerId = peerId;
           socketState = socketStateType.CLOSED;
+          isConnecting = false;
 
           // socketState = socketStateType.CLOSED;
           //
@@ -280,14 +278,7 @@ function Async(params) {
             socket.destroy();
             socketReconnectRetryInterval = setTimeout(function () {
               if (isLoggedOut) return;
-              fireEvent('stateChange', {
-                socketState: socketStateType.CONNECTING,
-                timeUntilReconnect: 0,
-                deviceRegister: false,
-                serverRegister: false,
-                peerId: peerId
-              });
-              initSocket();
+              maybeReconnect();
             }, 1000 * retryStep.get());
             if (retryStep.get() < 64) {
               // retryStep += 3;
@@ -341,6 +332,7 @@ function Async(params) {
         connectionOpenWaitTime: params.connectionOpenWaitTime,
         //timeout time to open
         onOpen: function onOpen(newDeviceId) {
+          isConnecting = false;
           checkIfSocketHasOpennedTimeoutId && clearTimeout(checkIfSocketHasOpennedTimeoutId);
           checkIfSocketHasOpennedTimeoutId = null;
           socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
@@ -374,6 +366,7 @@ function Async(params) {
           isDeviceRegister = false;
           oldPeerId = peerId;
           socketState = socketStateType.CLOSED;
+          isConnecting = false;
           fireEvent('disconnect', event);
           if (reconnOnClose.get() || reconnOnClose.getOld()) {
             if (asyncLogging) {
@@ -400,15 +393,8 @@ function Async(params) {
             asyncLogCallback && asyncLogCallback("async", "closed.reconnect", "before: " + retryStep.get());
             socketReconnectRetryInterval = setTimeout(function () {
               if (isLoggedOut) return;
-              fireEvent('stateChange', {
-                socketState: socketStateType.CONNECTING,
-                timeUntilReconnect: 0,
-                deviceRegister: false,
-                serverRegister: false,
-                peerId: peerId
-              });
               asyncLogCallback && asyncLogCallback("async", "closed.reconnect", "after");
-              initWebrtc();
+              maybeReconnect();
               // webRTCClass.connect();
             }, 1000 * retryStep.get());
             if (retryStep.get() < 64) {
@@ -709,6 +695,19 @@ function Async(params) {
       // }
     };
 
+  function maybeReconnect() {
+    if (isConnecting) return;
+    isConnecting = true;
+    switch (protocol) {
+      case 'websocket':
+        initSocket();
+        break;
+      case 'webrtc':
+        initWebrtc();
+        break;
+    }
+  }
+
   /*******************************************************
    *             P U B L I C   M E T H O D S             *
    *******************************************************/
@@ -858,6 +857,7 @@ function Async(params) {
   };
   var reconnectSocketTimeout;
   this.reconnectSocket = function () {
+    if (isConnecting) return;
     isSocketOpen = false;
     isDeviceRegister = false;
     oldPeerId = peerId;
@@ -887,7 +887,7 @@ function Async(params) {
         serverRegister: false,
         peerId: peerId
       });
-      if (protocol == "websocket") initSocket();else if (protocol == "webrtc") initWebrtc();
+      maybeReconnect();
       if (retryStep.get() < 64) {
         // retryStep += 3;
         retryStep.set(3);
@@ -1236,8 +1236,7 @@ function WebRTCClass(_ref) {
       subdomain: null,
       isDestroyed: false,
       dataChannelOpenTimeout: null,
-      isDataChannelOpened: false,
-      isClosing: false
+      isDataChannelOpened: false
     };
   var config = {};
   if (baseUrl) config.baseUrl = baseUrl;
@@ -1341,7 +1340,7 @@ function WebRTCClass(_ref) {
   function connect() {
     variables.isDestroyed = false;
     webrtcFunctions.createPeerConnection();
-    console.log('man mioftam pas hastam.2');
+    console.log("[Async][webrtc] defaultConfig.connectionOpenWaitTime", defaultConfig.connectionOpenWaitTime);
   }
   function waitForConnectionToOpen() {
     variables.dataChannelOpenTimeout = setTimeout(function () {
@@ -1686,8 +1685,6 @@ function WebRTCClass(_ref) {
   publicized.emit = webrtcFunctions.sendData;
   publicized.connect = connect;
   publicized.close = function () {
-    if (variables.isClosing) return;
-    variables.isClosing = true;
     asyncLogCallback && asyncLogCallback("webrtc", "publicized.close", "closing");
     removeCallbacks();
     resetVariables();
@@ -5607,7 +5604,7 @@ Entity.prototype.encode = function encode(data, enc, /* internal */ reporter) {
   return this._getEncoder(enc).encode(data, reporter);
 };
 
-},{"./decoders":36,"./encoders":39,"inherits":199}],29:[function(require,module,exports){
+},{"./decoders":36,"./encoders":39,"inherits":204}],29:[function(require,module,exports){
 'use strict';
 
 const inherits = require('inherits');
@@ -5762,7 +5759,7 @@ EncoderBuffer.prototype.join = function join(out, offset) {
   return out;
 };
 
-},{"../base/reporter":32,"inherits":199,"safer-buffer":233}],30:[function(require,module,exports){
+},{"../base/reporter":32,"inherits":204,"safer-buffer":238}],30:[function(require,module,exports){
 'use strict';
 
 const base = exports;
@@ -6412,7 +6409,7 @@ Node.prototype._isPrintstr = function isPrintstr(str) {
   return /^[A-Za-z0-9 '()+,-./:=?]*$/.test(str);
 };
 
-},{"../base/buffer":29,"../base/reporter":32,"minimalistic-assert":207}],32:[function(require,module,exports){
+},{"../base/buffer":29,"../base/reporter":32,"minimalistic-assert":212}],32:[function(require,module,exports){
 'use strict';
 
 const inherits = require('inherits');
@@ -6537,7 +6534,7 @@ ReporterError.prototype.rethrow = function rethrow(msg) {
   return this;
 };
 
-},{"inherits":199}],33:[function(require,module,exports){
+},{"inherits":204}],33:[function(require,module,exports){
 'use strict';
 
 // Helper
@@ -6957,7 +6954,7 @@ function derDecodeLen(buf, primitive, fail) {
   return len;
 }
 
-},{"../base/buffer":29,"../base/node":31,"../constants/der":33,"bn.js":41,"inherits":199}],36:[function(require,module,exports){
+},{"../base/buffer":29,"../base/node":31,"../constants/der":33,"bn.js":41,"inherits":204}],36:[function(require,module,exports){
 'use strict';
 
 const decoders = exports;
@@ -7018,7 +7015,7 @@ PEMDecoder.prototype.decode = function decode(data, options) {
   return DERDecoder.prototype.decode.call(this, input, options);
 };
 
-},{"./der":35,"inherits":199,"safer-buffer":233}],38:[function(require,module,exports){
+},{"./der":35,"inherits":204,"safer-buffer":238}],38:[function(require,module,exports){
 'use strict';
 
 const inherits = require('inherits');
@@ -7315,7 +7312,7 @@ function encodeTag(tag, primitive, cls, reporter) {
   return res;
 }
 
-},{"../base/node":31,"../constants/der":33,"inherits":199,"safer-buffer":233}],39:[function(require,module,exports){
+},{"../base/node":31,"../constants/der":33,"inherits":204,"safer-buffer":238}],39:[function(require,module,exports){
 'use strict';
 
 const encoders = exports;
@@ -7348,7 +7345,7 @@ PEMEncoder.prototype.encode = function encode(data, options) {
   return out.join('\n');
 };
 
-},{"./der":38,"inherits":199}],41:[function(require,module,exports){
+},{"./der":38,"inherits":204}],41:[function(require,module,exports){
 (function (module, exports) {
   'use strict';
 
@@ -14796,7 +14793,7 @@ AES.prototype.scrub = function () {
 
 module.exports.AES = AES
 
-},{"safe-buffer":232}],47:[function(require,module,exports){
+},{"safe-buffer":237}],47:[function(require,module,exports){
 var aes = require('./aes')
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('cipher-base')
@@ -14915,7 +14912,7 @@ StreamCipher.prototype.setAAD = function setAAD (buf) {
 
 module.exports = StreamCipher
 
-},{"./aes":46,"./ghash":51,"./incr32":52,"buffer-xor":89,"cipher-base":91,"inherits":199,"safe-buffer":232}],48:[function(require,module,exports){
+},{"./aes":46,"./ghash":51,"./incr32":52,"buffer-xor":89,"cipher-base":91,"inherits":204,"safe-buffer":237}],48:[function(require,module,exports){
 var ciphers = require('./encrypter')
 var deciphers = require('./decrypter')
 var modes = require('./modes/list.json')
@@ -15056,7 +15053,7 @@ function createDecipher (suite, password) {
 exports.createDecipher = createDecipher
 exports.createDecipheriv = createDecipheriv
 
-},{"./aes":46,"./authCipher":47,"./modes":59,"./streamCipher":62,"cipher-base":91,"evp_bytestokey":163,"inherits":199,"safe-buffer":232}],50:[function(require,module,exports){
+},{"./aes":46,"./authCipher":47,"./modes":59,"./streamCipher":62,"cipher-base":91,"evp_bytestokey":168,"inherits":204,"safe-buffer":237}],50:[function(require,module,exports){
 var MODES = require('./modes')
 var AuthCipher = require('./authCipher')
 var Buffer = require('safe-buffer').Buffer
@@ -15172,7 +15169,7 @@ function createCipher (suite, password) {
 exports.createCipheriv = createCipheriv
 exports.createCipher = createCipher
 
-},{"./aes":46,"./authCipher":47,"./modes":59,"./streamCipher":62,"cipher-base":91,"evp_bytestokey":163,"inherits":199,"safe-buffer":232}],51:[function(require,module,exports){
+},{"./aes":46,"./authCipher":47,"./modes":59,"./streamCipher":62,"cipher-base":91,"evp_bytestokey":168,"inherits":204,"safe-buffer":237}],51:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var ZEROES = Buffer.alloc(16, 0)
 
@@ -15263,7 +15260,7 @@ GHASH.prototype.final = function (abl, bl) {
 
 module.exports = GHASH
 
-},{"safe-buffer":232}],52:[function(require,module,exports){
+},{"safe-buffer":237}],52:[function(require,module,exports){
 function incr32 (iv) {
   var len = iv.length
   var item
@@ -15334,7 +15331,7 @@ exports.encrypt = function (self, data, decrypt) {
   return out
 }
 
-},{"buffer-xor":89,"safe-buffer":232}],55:[function(require,module,exports){
+},{"buffer-xor":89,"safe-buffer":237}],55:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 function encryptByte (self, byteParam, decrypt) {
@@ -15378,7 +15375,7 @@ exports.encrypt = function (self, chunk, decrypt) {
   return out
 }
 
-},{"safe-buffer":232}],56:[function(require,module,exports){
+},{"safe-buffer":237}],56:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 function encryptByte (self, byteParam, decrypt) {
@@ -15405,7 +15402,7 @@ exports.encrypt = function (self, chunk, decrypt) {
   return out
 }
 
-},{"safe-buffer":232}],57:[function(require,module,exports){
+},{"safe-buffer":237}],57:[function(require,module,exports){
 var xor = require('buffer-xor')
 var Buffer = require('safe-buffer').Buffer
 var incr32 = require('../incr32')
@@ -15437,7 +15434,7 @@ exports.encrypt = function (self, chunk) {
   return xor(chunk, pad)
 }
 
-},{"../incr32":52,"buffer-xor":89,"safe-buffer":232}],58:[function(require,module,exports){
+},{"../incr32":52,"buffer-xor":89,"safe-buffer":237}],58:[function(require,module,exports){
 exports.encrypt = function (self, block) {
   return self._cipher.encryptBlock(block)
 }
@@ -15708,7 +15705,7 @@ StreamCipher.prototype._final = function () {
 
 module.exports = StreamCipher
 
-},{"./aes":46,"cipher-base":91,"inherits":199,"safe-buffer":232}],63:[function(require,module,exports){
+},{"./aes":46,"cipher-base":91,"inherits":204,"safe-buffer":237}],63:[function(require,module,exports){
 var DES = require('browserify-des')
 var aes = require('browserify-aes/browser')
 var aesModes = require('browserify-aes/modes')
@@ -15777,7 +15774,7 @@ exports.createDecipher = exports.Decipher = createDecipher
 exports.createDecipheriv = exports.Decipheriv = createDecipheriv
 exports.listCiphers = exports.getCiphers = getCiphers
 
-},{"browserify-aes/browser":48,"browserify-aes/modes":59,"browserify-des":64,"browserify-des/modes":65,"evp_bytestokey":163}],64:[function(require,module,exports){
+},{"browserify-aes/browser":48,"browserify-aes/modes":59,"browserify-des":64,"browserify-des/modes":65,"evp_bytestokey":168}],64:[function(require,module,exports){
 var CipherBase = require('cipher-base')
 var des = require('des.js')
 var inherits = require('inherits')
@@ -15829,7 +15826,7 @@ DES.prototype._final = function () {
   return Buffer.from(this._des.final())
 }
 
-},{"cipher-base":91,"des.js":133,"inherits":199,"safe-buffer":232}],65:[function(require,module,exports){
+},{"cipher-base":91,"des.js":138,"inherits":204,"safe-buffer":237}],65:[function(require,module,exports){
 exports['des-ecb'] = {
   key: 8,
   iv: 0
@@ -15894,7 +15891,7 @@ crt.getr = getr
 module.exports = crt
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"bn.js":43,"buffer":90,"randombytes":229}],67:[function(require,module,exports){
+},{"bn.js":43,"buffer":90,"randombytes":234}],67:[function(require,module,exports){
 module.exports = require('./browser/algorithms.json')
 
 },{"./browser/algorithms.json":68}],68:[function(require,module,exports){
@@ -16155,7 +16152,7 @@ module.exports = {
   createVerify: createVerify
 }
 
-},{"./algorithms.json":68,"./sign":71,"./verify":72,"create-hash":94,"inherits":199,"readable-stream":87,"safe-buffer":88}],71:[function(require,module,exports){
+},{"./algorithms.json":68,"./sign":71,"./verify":72,"create-hash":94,"inherits":204,"readable-stream":87,"safe-buffer":88}],71:[function(require,module,exports){
 // much of this based on https://github.com/indutny/self-signed/blob/gh-pages/lib/rsa.js
 var Buffer = require('safe-buffer').Buffer
 var createHmac = require('create-hmac')
@@ -16300,7 +16297,7 @@ module.exports = sign
 module.exports.getKey = getKey
 module.exports.makeKey = makeKey
 
-},{"./curves.json":69,"bn.js":43,"browserify-rsa":66,"create-hmac":96,"elliptic":145,"parse-asn1":214,"safe-buffer":88}],72:[function(require,module,exports){
+},{"./curves.json":69,"bn.js":43,"browserify-rsa":66,"create-hmac":96,"elliptic":150,"parse-asn1":219,"safe-buffer":88}],72:[function(require,module,exports){
 // much of this based on https://github.com/indutny/self-signed/blob/gh-pages/lib/rsa.js
 var Buffer = require('safe-buffer').Buffer
 var BN = require('bn.js')
@@ -16386,7 +16383,7 @@ function checkValue (b, q) {
 
 module.exports = verify
 
-},{"./curves.json":69,"bn.js":43,"elliptic":145,"parse-asn1":214,"safe-buffer":88}],73:[function(require,module,exports){
+},{"./curves.json":69,"bn.js":43,"elliptic":150,"parse-asn1":219,"safe-buffer":88}],73:[function(require,module,exports){
 'use strict';
 
 function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
@@ -16657,7 +16654,7 @@ Object.defineProperty(Duplex.prototype, 'destroyed', {
   }
 });
 }).call(this)}).call(this,require('_process'))
-},{"./_stream_readable":76,"./_stream_writable":78,"_process":221,"inherits":199}],75:[function(require,module,exports){
+},{"./_stream_readable":76,"./_stream_writable":78,"_process":226,"inherits":204}],75:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -16697,7 +16694,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":77,"inherits":199}],76:[function(require,module,exports){
+},{"./_stream_transform":77,"inherits":204}],76:[function(require,module,exports){
 (function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -17824,7 +17821,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":73,"./_stream_duplex":74,"./internal/streams/async_iterator":79,"./internal/streams/buffer_list":80,"./internal/streams/destroy":81,"./internal/streams/from":83,"./internal/streams/state":85,"./internal/streams/stream":86,"_process":221,"buffer":90,"events":162,"inherits":199,"string_decoder/":265,"util":45}],77:[function(require,module,exports){
+},{"../errors":73,"./_stream_duplex":74,"./internal/streams/async_iterator":79,"./internal/streams/buffer_list":80,"./internal/streams/destroy":81,"./internal/streams/from":83,"./internal/streams/state":85,"./internal/streams/stream":86,"_process":226,"buffer":90,"events":167,"inherits":204,"string_decoder/":270,"util":45}],77:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -18026,7 +18023,7 @@ function done(stream, er, data) {
   if (stream._transformState.transforming) throw new ERR_TRANSFORM_ALREADY_TRANSFORMING();
   return stream.push(null);
 }
-},{"../errors":73,"./_stream_duplex":74,"inherits":199}],78:[function(require,module,exports){
+},{"../errors":73,"./_stream_duplex":74,"inherits":204}],78:[function(require,module,exports){
 (function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -18726,7 +18723,7 @@ Writable.prototype._destroy = function (err, cb) {
   cb(err);
 };
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":73,"./_stream_duplex":74,"./internal/streams/destroy":81,"./internal/streams/state":85,"./internal/streams/stream":86,"_process":221,"buffer":90,"inherits":199,"util-deprecate":268}],79:[function(require,module,exports){
+},{"../errors":73,"./_stream_duplex":74,"./internal/streams/destroy":81,"./internal/streams/state":85,"./internal/streams/stream":86,"_process":226,"buffer":90,"inherits":204,"util-deprecate":273}],79:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -18936,7 +18933,7 @@ var createReadableStreamAsyncIterator = function createReadableStreamAsyncIterat
 
 module.exports = createReadableStreamAsyncIterator;
 }).call(this)}).call(this,require('_process'))
-},{"./end-of-stream":82,"_process":221}],80:[function(require,module,exports){
+},{"./end-of-stream":82,"_process":226}],80:[function(require,module,exports){
 'use strict';
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -19255,7 +19252,7 @@ module.exports = {
   errorOrDestroy: errorOrDestroy
 };
 }).call(this)}).call(this,require('_process'))
-},{"_process":221}],82:[function(require,module,exports){
+},{"_process":226}],82:[function(require,module,exports){
 // Ported from https://github.com/mafintosh/end-of-stream with
 // permission from the author, Mathias Buus (@mafintosh).
 'use strict';
@@ -19494,7 +19491,7 @@ module.exports = {
 },{"../../../errors":73}],86:[function(require,module,exports){
 module.exports = require('events').EventEmitter;
 
-},{"events":162}],87:[function(require,module,exports){
+},{"events":167}],87:[function(require,module,exports){
 exports = module.exports = require('./lib/_stream_readable.js');
 exports.Stream = exports;
 exports.Readable = exports;
@@ -21367,7 +21364,7 @@ function numberIsNaN (obj) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"base64-js":42,"buffer":90,"ieee754":198}],91:[function(require,module,exports){
+},{"base64-js":42,"buffer":90,"ieee754":203}],91:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('stream').Transform
 var StringDecoder = require('string_decoder').StringDecoder
@@ -21468,7 +21465,7 @@ CipherBase.prototype._toString = function (value, enc, fin) {
 
 module.exports = CipherBase
 
-},{"inherits":199,"safe-buffer":232,"stream":250,"string_decoder":265}],92:[function(require,module,exports){
+},{"inherits":204,"safe-buffer":237,"stream":255,"string_decoder":270}],92:[function(require,module,exports){
 (function (Buffer){(function (){
 var elliptic = require('elliptic')
 var BN = require('bn.js')
@@ -21596,7 +21593,7 @@ function formatReturnValue (bn, enc, len) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"bn.js":93,"buffer":90,"elliptic":145}],93:[function(require,module,exports){
+},{"bn.js":93,"buffer":90,"elliptic":150}],93:[function(require,module,exports){
 arguments[4][41][0].apply(exports,arguments)
 },{"buffer":45,"dup":41}],94:[function(require,module,exports){
 'use strict'
@@ -21630,14 +21627,14 @@ module.exports = function createHash (alg) {
   return new Hash(sha(alg))
 }
 
-},{"cipher-base":91,"inherits":199,"md5.js":203,"ripemd160":231,"sha.js":243}],95:[function(require,module,exports){
+},{"cipher-base":91,"inherits":204,"md5.js":208,"ripemd160":236,"sha.js":248}],95:[function(require,module,exports){
 var MD5 = require('md5.js')
 
 module.exports = function (buffer) {
   return new MD5().update(buffer).digest()
 }
 
-},{"md5.js":203}],96:[function(require,module,exports){
+},{"md5.js":208}],96:[function(require,module,exports){
 'use strict'
 var inherits = require('inherits')
 var Legacy = require('./legacy')
@@ -21701,7 +21698,7 @@ module.exports = function createHmac (alg, key) {
   return new Hmac(alg, key)
 }
 
-},{"./legacy":97,"cipher-base":91,"create-hash/md5":95,"inherits":199,"ripemd160":231,"safe-buffer":232,"sha.js":243}],97:[function(require,module,exports){
+},{"./legacy":97,"cipher-base":91,"create-hash/md5":95,"inherits":204,"ripemd160":236,"safe-buffer":237,"sha.js":248}],97:[function(require,module,exports){
 'use strict'
 var inherits = require('inherits')
 var Buffer = require('safe-buffer').Buffer
@@ -21749,7 +21746,7 @@ Hmac.prototype._final = function () {
 }
 module.exports = Hmac
 
-},{"cipher-base":91,"inherits":199,"safe-buffer":232}],98:[function(require,module,exports){
+},{"cipher-base":91,"inherits":204,"safe-buffer":237}],98:[function(require,module,exports){
 'use strict'
 
 exports.randomBytes = exports.rng = exports.pseudoRandomBytes = exports.prng = require('randombytes')
@@ -21848,7 +21845,7 @@ exports.constants = {
   'POINT_CONVERSION_HYBRID': 6
 }
 
-},{"browserify-cipher":63,"browserify-sign":70,"browserify-sign/algos":67,"create-ecdh":92,"create-hash":94,"create-hmac":96,"diffie-hellman":139,"pbkdf2":215,"public-encrypt":222,"randombytes":229,"randomfill":230}],99:[function(require,module,exports){
+},{"browserify-cipher":63,"browserify-sign":70,"browserify-sign/algos":67,"create-ecdh":92,"create-hash":94,"create-hmac":96,"diffie-hellman":144,"pbkdf2":220,"public-encrypt":227,"randombytes":234,"randomfill":235}],99:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -28534,6 +28531,665 @@ exports.constants = {
 
 }));
 },{"./core":101}],133:[function(require,module,exports){
+/**
+ * cssfilter
+ *
+ * @author 老雷<leizongmin@gmail.com>
+ */
+
+var DEFAULT = require('./default');
+var parseStyle = require('./parser');
+var _ = require('./util');
+
+
+/**
+ * 返回值是否为空
+ *
+ * @param {Object} obj
+ * @return {Boolean}
+ */
+function isNull (obj) {
+  return (obj === undefined || obj === null);
+}
+
+/**
+ * 浅拷贝对象
+ *
+ * @param {Object} obj
+ * @return {Object}
+ */
+function shallowCopyObject (obj) {
+  var ret = {};
+  for (var i in obj) {
+    ret[i] = obj[i];
+  }
+  return ret;
+}
+
+/**
+ * 创建CSS过滤器
+ *
+ * @param {Object} options
+ *   - {Object} whiteList
+ *   - {Function} onAttr
+ *   - {Function} onIgnoreAttr
+ *   - {Function} safeAttrValue
+ */
+function FilterCSS (options) {
+  options = shallowCopyObject(options || {});
+  options.whiteList = options.whiteList || DEFAULT.whiteList;
+  options.onAttr = options.onAttr || DEFAULT.onAttr;
+  options.onIgnoreAttr = options.onIgnoreAttr || DEFAULT.onIgnoreAttr;
+  options.safeAttrValue = options.safeAttrValue || DEFAULT.safeAttrValue;
+  this.options = options;
+}
+
+FilterCSS.prototype.process = function (css) {
+  // 兼容各种奇葩输入
+  css = css || '';
+  css = css.toString();
+  if (!css) return '';
+
+  var me = this;
+  var options = me.options;
+  var whiteList = options.whiteList;
+  var onAttr = options.onAttr;
+  var onIgnoreAttr = options.onIgnoreAttr;
+  var safeAttrValue = options.safeAttrValue;
+
+  var retCSS = parseStyle(css, function (sourcePosition, position, name, value, source) {
+
+    var check = whiteList[name];
+    var isWhite = false;
+    if (check === true) isWhite = check;
+    else if (typeof check === 'function') isWhite = check(value);
+    else if (check instanceof RegExp) isWhite = check.test(value);
+    if (isWhite !== true) isWhite = false;
+
+    // 如果过滤后 value 为空则直接忽略
+    value = safeAttrValue(name, value);
+    if (!value) return;
+
+    var opts = {
+      position: position,
+      sourcePosition: sourcePosition,
+      source: source,
+      isWhite: isWhite
+    };
+
+    if (isWhite) {
+
+      var ret = onAttr(name, value, opts);
+      if (isNull(ret)) {
+        return name + ':' + value;
+      } else {
+        return ret;
+      }
+
+    } else {
+
+      var ret = onIgnoreAttr(name, value, opts);
+      if (!isNull(ret)) {
+        return ret;
+      }
+
+    }
+  });
+
+  return retCSS;
+};
+
+
+module.exports = FilterCSS;
+
+},{"./default":134,"./parser":136,"./util":137}],134:[function(require,module,exports){
+/**
+ * cssfilter
+ *
+ * @author 老雷<leizongmin@gmail.com>
+ */
+
+function getDefaultWhiteList () {
+  // 白名单值说明：
+  // true: 允许该属性
+  // Function: function (val) { } 返回true表示允许该属性，其他值均表示不允许
+  // RegExp: regexp.test(val) 返回true表示允许该属性，其他值均表示不允许
+  // 除上面列出的值外均表示不允许
+  var whiteList = {};
+
+  whiteList['align-content'] = false; // default: auto
+  whiteList['align-items'] = false; // default: auto
+  whiteList['align-self'] = false; // default: auto
+  whiteList['alignment-adjust'] = false; // default: auto
+  whiteList['alignment-baseline'] = false; // default: baseline
+  whiteList['all'] = false; // default: depending on individual properties
+  whiteList['anchor-point'] = false; // default: none
+  whiteList['animation'] = false; // default: depending on individual properties
+  whiteList['animation-delay'] = false; // default: 0
+  whiteList['animation-direction'] = false; // default: normal
+  whiteList['animation-duration'] = false; // default: 0
+  whiteList['animation-fill-mode'] = false; // default: none
+  whiteList['animation-iteration-count'] = false; // default: 1
+  whiteList['animation-name'] = false; // default: none
+  whiteList['animation-play-state'] = false; // default: running
+  whiteList['animation-timing-function'] = false; // default: ease
+  whiteList['azimuth'] = false; // default: center
+  whiteList['backface-visibility'] = false; // default: visible
+  whiteList['background'] = true; // default: depending on individual properties
+  whiteList['background-attachment'] = true; // default: scroll
+  whiteList['background-clip'] = true; // default: border-box
+  whiteList['background-color'] = true; // default: transparent
+  whiteList['background-image'] = true; // default: none
+  whiteList['background-origin'] = true; // default: padding-box
+  whiteList['background-position'] = true; // default: 0% 0%
+  whiteList['background-repeat'] = true; // default: repeat
+  whiteList['background-size'] = true; // default: auto
+  whiteList['baseline-shift'] = false; // default: baseline
+  whiteList['binding'] = false; // default: none
+  whiteList['bleed'] = false; // default: 6pt
+  whiteList['bookmark-label'] = false; // default: content()
+  whiteList['bookmark-level'] = false; // default: none
+  whiteList['bookmark-state'] = false; // default: open
+  whiteList['border'] = true; // default: depending on individual properties
+  whiteList['border-bottom'] = true; // default: depending on individual properties
+  whiteList['border-bottom-color'] = true; // default: current color
+  whiteList['border-bottom-left-radius'] = true; // default: 0
+  whiteList['border-bottom-right-radius'] = true; // default: 0
+  whiteList['border-bottom-style'] = true; // default: none
+  whiteList['border-bottom-width'] = true; // default: medium
+  whiteList['border-collapse'] = true; // default: separate
+  whiteList['border-color'] = true; // default: depending on individual properties
+  whiteList['border-image'] = true; // default: none
+  whiteList['border-image-outset'] = true; // default: 0
+  whiteList['border-image-repeat'] = true; // default: stretch
+  whiteList['border-image-slice'] = true; // default: 100%
+  whiteList['border-image-source'] = true; // default: none
+  whiteList['border-image-width'] = true; // default: 1
+  whiteList['border-left'] = true; // default: depending on individual properties
+  whiteList['border-left-color'] = true; // default: current color
+  whiteList['border-left-style'] = true; // default: none
+  whiteList['border-left-width'] = true; // default: medium
+  whiteList['border-radius'] = true; // default: 0
+  whiteList['border-right'] = true; // default: depending on individual properties
+  whiteList['border-right-color'] = true; // default: current color
+  whiteList['border-right-style'] = true; // default: none
+  whiteList['border-right-width'] = true; // default: medium
+  whiteList['border-spacing'] = true; // default: 0
+  whiteList['border-style'] = true; // default: depending on individual properties
+  whiteList['border-top'] = true; // default: depending on individual properties
+  whiteList['border-top-color'] = true; // default: current color
+  whiteList['border-top-left-radius'] = true; // default: 0
+  whiteList['border-top-right-radius'] = true; // default: 0
+  whiteList['border-top-style'] = true; // default: none
+  whiteList['border-top-width'] = true; // default: medium
+  whiteList['border-width'] = true; // default: depending on individual properties
+  whiteList['bottom'] = false; // default: auto
+  whiteList['box-decoration-break'] = true; // default: slice
+  whiteList['box-shadow'] = true; // default: none
+  whiteList['box-sizing'] = true; // default: content-box
+  whiteList['box-snap'] = true; // default: none
+  whiteList['box-suppress'] = true; // default: show
+  whiteList['break-after'] = true; // default: auto
+  whiteList['break-before'] = true; // default: auto
+  whiteList['break-inside'] = true; // default: auto
+  whiteList['caption-side'] = false; // default: top
+  whiteList['chains'] = false; // default: none
+  whiteList['clear'] = true; // default: none
+  whiteList['clip'] = false; // default: auto
+  whiteList['clip-path'] = false; // default: none
+  whiteList['clip-rule'] = false; // default: nonzero
+  whiteList['color'] = true; // default: implementation dependent
+  whiteList['color-interpolation-filters'] = true; // default: auto
+  whiteList['column-count'] = false; // default: auto
+  whiteList['column-fill'] = false; // default: balance
+  whiteList['column-gap'] = false; // default: normal
+  whiteList['column-rule'] = false; // default: depending on individual properties
+  whiteList['column-rule-color'] = false; // default: current color
+  whiteList['column-rule-style'] = false; // default: medium
+  whiteList['column-rule-width'] = false; // default: medium
+  whiteList['column-span'] = false; // default: none
+  whiteList['column-width'] = false; // default: auto
+  whiteList['columns'] = false; // default: depending on individual properties
+  whiteList['contain'] = false; // default: none
+  whiteList['content'] = false; // default: normal
+  whiteList['counter-increment'] = false; // default: none
+  whiteList['counter-reset'] = false; // default: none
+  whiteList['counter-set'] = false; // default: none
+  whiteList['crop'] = false; // default: auto
+  whiteList['cue'] = false; // default: depending on individual properties
+  whiteList['cue-after'] = false; // default: none
+  whiteList['cue-before'] = false; // default: none
+  whiteList['cursor'] = false; // default: auto
+  whiteList['direction'] = false; // default: ltr
+  whiteList['display'] = true; // default: depending on individual properties
+  whiteList['display-inside'] = true; // default: auto
+  whiteList['display-list'] = true; // default: none
+  whiteList['display-outside'] = true; // default: inline-level
+  whiteList['dominant-baseline'] = false; // default: auto
+  whiteList['elevation'] = false; // default: level
+  whiteList['empty-cells'] = false; // default: show
+  whiteList['filter'] = false; // default: none
+  whiteList['flex'] = false; // default: depending on individual properties
+  whiteList['flex-basis'] = false; // default: auto
+  whiteList['flex-direction'] = false; // default: row
+  whiteList['flex-flow'] = false; // default: depending on individual properties
+  whiteList['flex-grow'] = false; // default: 0
+  whiteList['flex-shrink'] = false; // default: 1
+  whiteList['flex-wrap'] = false; // default: nowrap
+  whiteList['float'] = false; // default: none
+  whiteList['float-offset'] = false; // default: 0 0
+  whiteList['flood-color'] = false; // default: black
+  whiteList['flood-opacity'] = false; // default: 1
+  whiteList['flow-from'] = false; // default: none
+  whiteList['flow-into'] = false; // default: none
+  whiteList['font'] = true; // default: depending on individual properties
+  whiteList['font-family'] = true; // default: implementation dependent
+  whiteList['font-feature-settings'] = true; // default: normal
+  whiteList['font-kerning'] = true; // default: auto
+  whiteList['font-language-override'] = true; // default: normal
+  whiteList['font-size'] = true; // default: medium
+  whiteList['font-size-adjust'] = true; // default: none
+  whiteList['font-stretch'] = true; // default: normal
+  whiteList['font-style'] = true; // default: normal
+  whiteList['font-synthesis'] = true; // default: weight style
+  whiteList['font-variant'] = true; // default: normal
+  whiteList['font-variant-alternates'] = true; // default: normal
+  whiteList['font-variant-caps'] = true; // default: normal
+  whiteList['font-variant-east-asian'] = true; // default: normal
+  whiteList['font-variant-ligatures'] = true; // default: normal
+  whiteList['font-variant-numeric'] = true; // default: normal
+  whiteList['font-variant-position'] = true; // default: normal
+  whiteList['font-weight'] = true; // default: normal
+  whiteList['grid'] = false; // default: depending on individual properties
+  whiteList['grid-area'] = false; // default: depending on individual properties
+  whiteList['grid-auto-columns'] = false; // default: auto
+  whiteList['grid-auto-flow'] = false; // default: none
+  whiteList['grid-auto-rows'] = false; // default: auto
+  whiteList['grid-column'] = false; // default: depending on individual properties
+  whiteList['grid-column-end'] = false; // default: auto
+  whiteList['grid-column-start'] = false; // default: auto
+  whiteList['grid-row'] = false; // default: depending on individual properties
+  whiteList['grid-row-end'] = false; // default: auto
+  whiteList['grid-row-start'] = false; // default: auto
+  whiteList['grid-template'] = false; // default: depending on individual properties
+  whiteList['grid-template-areas'] = false; // default: none
+  whiteList['grid-template-columns'] = false; // default: none
+  whiteList['grid-template-rows'] = false; // default: none
+  whiteList['hanging-punctuation'] = false; // default: none
+  whiteList['height'] = true; // default: auto
+  whiteList['hyphens'] = false; // default: manual
+  whiteList['icon'] = false; // default: auto
+  whiteList['image-orientation'] = false; // default: auto
+  whiteList['image-resolution'] = false; // default: normal
+  whiteList['ime-mode'] = false; // default: auto
+  whiteList['initial-letters'] = false; // default: normal
+  whiteList['inline-box-align'] = false; // default: last
+  whiteList['justify-content'] = false; // default: auto
+  whiteList['justify-items'] = false; // default: auto
+  whiteList['justify-self'] = false; // default: auto
+  whiteList['left'] = false; // default: auto
+  whiteList['letter-spacing'] = true; // default: normal
+  whiteList['lighting-color'] = true; // default: white
+  whiteList['line-box-contain'] = false; // default: block inline replaced
+  whiteList['line-break'] = false; // default: auto
+  whiteList['line-grid'] = false; // default: match-parent
+  whiteList['line-height'] = false; // default: normal
+  whiteList['line-snap'] = false; // default: none
+  whiteList['line-stacking'] = false; // default: depending on individual properties
+  whiteList['line-stacking-ruby'] = false; // default: exclude-ruby
+  whiteList['line-stacking-shift'] = false; // default: consider-shifts
+  whiteList['line-stacking-strategy'] = false; // default: inline-line-height
+  whiteList['list-style'] = true; // default: depending on individual properties
+  whiteList['list-style-image'] = true; // default: none
+  whiteList['list-style-position'] = true; // default: outside
+  whiteList['list-style-type'] = true; // default: disc
+  whiteList['margin'] = true; // default: depending on individual properties
+  whiteList['margin-bottom'] = true; // default: 0
+  whiteList['margin-left'] = true; // default: 0
+  whiteList['margin-right'] = true; // default: 0
+  whiteList['margin-top'] = true; // default: 0
+  whiteList['marker-offset'] = false; // default: auto
+  whiteList['marker-side'] = false; // default: list-item
+  whiteList['marks'] = false; // default: none
+  whiteList['mask'] = false; // default: border-box
+  whiteList['mask-box'] = false; // default: see individual properties
+  whiteList['mask-box-outset'] = false; // default: 0
+  whiteList['mask-box-repeat'] = false; // default: stretch
+  whiteList['mask-box-slice'] = false; // default: 0 fill
+  whiteList['mask-box-source'] = false; // default: none
+  whiteList['mask-box-width'] = false; // default: auto
+  whiteList['mask-clip'] = false; // default: border-box
+  whiteList['mask-image'] = false; // default: none
+  whiteList['mask-origin'] = false; // default: border-box
+  whiteList['mask-position'] = false; // default: center
+  whiteList['mask-repeat'] = false; // default: no-repeat
+  whiteList['mask-size'] = false; // default: border-box
+  whiteList['mask-source-type'] = false; // default: auto
+  whiteList['mask-type'] = false; // default: luminance
+  whiteList['max-height'] = true; // default: none
+  whiteList['max-lines'] = false; // default: none
+  whiteList['max-width'] = true; // default: none
+  whiteList['min-height'] = true; // default: 0
+  whiteList['min-width'] = true; // default: 0
+  whiteList['move-to'] = false; // default: normal
+  whiteList['nav-down'] = false; // default: auto
+  whiteList['nav-index'] = false; // default: auto
+  whiteList['nav-left'] = false; // default: auto
+  whiteList['nav-right'] = false; // default: auto
+  whiteList['nav-up'] = false; // default: auto
+  whiteList['object-fit'] = false; // default: fill
+  whiteList['object-position'] = false; // default: 50% 50%
+  whiteList['opacity'] = false; // default: 1
+  whiteList['order'] = false; // default: 0
+  whiteList['orphans'] = false; // default: 2
+  whiteList['outline'] = false; // default: depending on individual properties
+  whiteList['outline-color'] = false; // default: invert
+  whiteList['outline-offset'] = false; // default: 0
+  whiteList['outline-style'] = false; // default: none
+  whiteList['outline-width'] = false; // default: medium
+  whiteList['overflow'] = false; // default: depending on individual properties
+  whiteList['overflow-wrap'] = false; // default: normal
+  whiteList['overflow-x'] = false; // default: visible
+  whiteList['overflow-y'] = false; // default: visible
+  whiteList['padding'] = true; // default: depending on individual properties
+  whiteList['padding-bottom'] = true; // default: 0
+  whiteList['padding-left'] = true; // default: 0
+  whiteList['padding-right'] = true; // default: 0
+  whiteList['padding-top'] = true; // default: 0
+  whiteList['page'] = false; // default: auto
+  whiteList['page-break-after'] = false; // default: auto
+  whiteList['page-break-before'] = false; // default: auto
+  whiteList['page-break-inside'] = false; // default: auto
+  whiteList['page-policy'] = false; // default: start
+  whiteList['pause'] = false; // default: implementation dependent
+  whiteList['pause-after'] = false; // default: implementation dependent
+  whiteList['pause-before'] = false; // default: implementation dependent
+  whiteList['perspective'] = false; // default: none
+  whiteList['perspective-origin'] = false; // default: 50% 50%
+  whiteList['pitch'] = false; // default: medium
+  whiteList['pitch-range'] = false; // default: 50
+  whiteList['play-during'] = false; // default: auto
+  whiteList['position'] = false; // default: static
+  whiteList['presentation-level'] = false; // default: 0
+  whiteList['quotes'] = false; // default: text
+  whiteList['region-fragment'] = false; // default: auto
+  whiteList['resize'] = false; // default: none
+  whiteList['rest'] = false; // default: depending on individual properties
+  whiteList['rest-after'] = false; // default: none
+  whiteList['rest-before'] = false; // default: none
+  whiteList['richness'] = false; // default: 50
+  whiteList['right'] = false; // default: auto
+  whiteList['rotation'] = false; // default: 0
+  whiteList['rotation-point'] = false; // default: 50% 50%
+  whiteList['ruby-align'] = false; // default: auto
+  whiteList['ruby-merge'] = false; // default: separate
+  whiteList['ruby-position'] = false; // default: before
+  whiteList['shape-image-threshold'] = false; // default: 0.0
+  whiteList['shape-outside'] = false; // default: none
+  whiteList['shape-margin'] = false; // default: 0
+  whiteList['size'] = false; // default: auto
+  whiteList['speak'] = false; // default: auto
+  whiteList['speak-as'] = false; // default: normal
+  whiteList['speak-header'] = false; // default: once
+  whiteList['speak-numeral'] = false; // default: continuous
+  whiteList['speak-punctuation'] = false; // default: none
+  whiteList['speech-rate'] = false; // default: medium
+  whiteList['stress'] = false; // default: 50
+  whiteList['string-set'] = false; // default: none
+  whiteList['tab-size'] = false; // default: 8
+  whiteList['table-layout'] = false; // default: auto
+  whiteList['text-align'] = true; // default: start
+  whiteList['text-align-last'] = true; // default: auto
+  whiteList['text-combine-upright'] = true; // default: none
+  whiteList['text-decoration'] = true; // default: none
+  whiteList['text-decoration-color'] = true; // default: currentColor
+  whiteList['text-decoration-line'] = true; // default: none
+  whiteList['text-decoration-skip'] = true; // default: objects
+  whiteList['text-decoration-style'] = true; // default: solid
+  whiteList['text-emphasis'] = true; // default: depending on individual properties
+  whiteList['text-emphasis-color'] = true; // default: currentColor
+  whiteList['text-emphasis-position'] = true; // default: over right
+  whiteList['text-emphasis-style'] = true; // default: none
+  whiteList['text-height'] = true; // default: auto
+  whiteList['text-indent'] = true; // default: 0
+  whiteList['text-justify'] = true; // default: auto
+  whiteList['text-orientation'] = true; // default: mixed
+  whiteList['text-overflow'] = true; // default: clip
+  whiteList['text-shadow'] = true; // default: none
+  whiteList['text-space-collapse'] = true; // default: collapse
+  whiteList['text-transform'] = true; // default: none
+  whiteList['text-underline-position'] = true; // default: auto
+  whiteList['text-wrap'] = true; // default: normal
+  whiteList['top'] = false; // default: auto
+  whiteList['transform'] = false; // default: none
+  whiteList['transform-origin'] = false; // default: 50% 50% 0
+  whiteList['transform-style'] = false; // default: flat
+  whiteList['transition'] = false; // default: depending on individual properties
+  whiteList['transition-delay'] = false; // default: 0s
+  whiteList['transition-duration'] = false; // default: 0s
+  whiteList['transition-property'] = false; // default: all
+  whiteList['transition-timing-function'] = false; // default: ease
+  whiteList['unicode-bidi'] = false; // default: normal
+  whiteList['vertical-align'] = false; // default: baseline
+  whiteList['visibility'] = false; // default: visible
+  whiteList['voice-balance'] = false; // default: center
+  whiteList['voice-duration'] = false; // default: auto
+  whiteList['voice-family'] = false; // default: implementation dependent
+  whiteList['voice-pitch'] = false; // default: medium
+  whiteList['voice-range'] = false; // default: medium
+  whiteList['voice-rate'] = false; // default: normal
+  whiteList['voice-stress'] = false; // default: normal
+  whiteList['voice-volume'] = false; // default: medium
+  whiteList['volume'] = false; // default: medium
+  whiteList['white-space'] = false; // default: normal
+  whiteList['widows'] = false; // default: 2
+  whiteList['width'] = true; // default: auto
+  whiteList['will-change'] = false; // default: auto
+  whiteList['word-break'] = true; // default: normal
+  whiteList['word-spacing'] = true; // default: normal
+  whiteList['word-wrap'] = true; // default: normal
+  whiteList['wrap-flow'] = false; // default: auto
+  whiteList['wrap-through'] = false; // default: wrap
+  whiteList['writing-mode'] = false; // default: horizontal-tb
+  whiteList['z-index'] = false; // default: auto
+
+  return whiteList;
+}
+
+
+/**
+ * 匹配到白名单上的一个属性时
+ *
+ * @param {String} name
+ * @param {String} value
+ * @param {Object} options
+ * @return {String}
+ */
+function onAttr (name, value, options) {
+  // do nothing
+}
+
+/**
+ * 匹配到不在白名单上的一个属性时
+ *
+ * @param {String} name
+ * @param {String} value
+ * @param {Object} options
+ * @return {String}
+ */
+function onIgnoreAttr (name, value, options) {
+  // do nothing
+}
+
+var REGEXP_URL_JAVASCRIPT = /javascript\s*\:/img;
+
+/**
+ * 过滤属性值
+ *
+ * @param {String} name
+ * @param {String} value
+ * @return {String}
+ */
+function safeAttrValue(name, value) {
+  if (REGEXP_URL_JAVASCRIPT.test(value)) return '';
+  return value;
+}
+
+
+exports.whiteList = getDefaultWhiteList();
+exports.getDefaultWhiteList = getDefaultWhiteList;
+exports.onAttr = onAttr;
+exports.onIgnoreAttr = onIgnoreAttr;
+exports.safeAttrValue = safeAttrValue;
+
+},{}],135:[function(require,module,exports){
+/**
+ * cssfilter
+ *
+ * @author 老雷<leizongmin@gmail.com>
+ */
+
+var DEFAULT = require('./default');
+var FilterCSS = require('./css');
+
+
+/**
+ * XSS过滤
+ *
+ * @param {String} css 要过滤的CSS代码
+ * @param {Object} options 选项：whiteList, onAttr, onIgnoreAttr
+ * @return {String}
+ */
+function filterCSS (html, options) {
+  var xss = new FilterCSS(options);
+  return xss.process(html);
+}
+
+
+// 输出
+exports = module.exports = filterCSS;
+exports.FilterCSS = FilterCSS;
+for (var i in DEFAULT) exports[i] = DEFAULT[i];
+
+// 在浏览器端使用
+if (typeof window !== 'undefined') {
+  window.filterCSS = module.exports;
+}
+
+},{"./css":133,"./default":134}],136:[function(require,module,exports){
+/**
+ * cssfilter
+ *
+ * @author 老雷<leizongmin@gmail.com>
+ */
+
+var _ = require('./util');
+
+
+/**
+ * 解析style
+ *
+ * @param {String} css
+ * @param {Function} onAttr 处理属性的函数
+ *   参数格式： function (sourcePosition, position, name, value, source)
+ * @return {String}
+ */
+function parseStyle (css, onAttr) {
+  css = _.trimRight(css);
+  if (css[css.length - 1] !== ';') css += ';';
+  var cssLength = css.length;
+  var isParenthesisOpen = false;
+  var lastPos = 0;
+  var i = 0;
+  var retCSS = '';
+
+  function addNewAttr () {
+    // 如果没有正常的闭合圆括号，则直接忽略当前属性
+    if (!isParenthesisOpen) {
+      var source = _.trim(css.slice(lastPos, i));
+      var j = source.indexOf(':');
+      if (j !== -1) {
+        var name = _.trim(source.slice(0, j));
+        var value = _.trim(source.slice(j + 1));
+        // 必须有属性名称
+        if (name) {
+          var ret = onAttr(lastPos, retCSS.length, name, value, source);
+          if (ret) retCSS += ret + '; ';
+        }
+      }
+    }
+    lastPos = i + 1;
+  }
+
+  for (; i < cssLength; i++) {
+    var c = css[i];
+    if (c === '/' && css[i + 1] === '*') {
+      // 备注开始
+      var j = css.indexOf('*/', i + 2);
+      // 如果没有正常的备注结束，则后面的部分全部跳过
+      if (j === -1) break;
+      // 直接将当前位置调到备注结尾，并且初始化状态
+      i = j + 1;
+      lastPos = i + 1;
+      isParenthesisOpen = false;
+    } else if (c === '(') {
+      isParenthesisOpen = true;
+    } else if (c === ')') {
+      isParenthesisOpen = false;
+    } else if (c === ';') {
+      if (isParenthesisOpen) {
+        // 在圆括号里面，忽略
+      } else {
+        addNewAttr();
+      }
+    } else if (c === '\n') {
+      addNewAttr();
+    }
+  }
+
+  return _.trim(retCSS);
+}
+
+module.exports = parseStyle;
+
+},{"./util":137}],137:[function(require,module,exports){
+module.exports = {
+  indexOf: function (arr, item) {
+    var i, j;
+    if (Array.prototype.indexOf) {
+      return arr.indexOf(item);
+    }
+    for (i = 0, j = arr.length; i < j; i++) {
+      if (arr[i] === item) {
+        return i;
+      }
+    }
+    return -1;
+  },
+  forEach: function (arr, fn, scope) {
+    var i, j;
+    if (Array.prototype.forEach) {
+      return arr.forEach(fn, scope);
+    }
+    for (i = 0, j = arr.length; i < j; i++) {
+      fn.call(scope, arr[i], i, arr);
+    }
+  },
+  trim: function (str) {
+    if (String.prototype.trim) {
+      return str.trim();
+    }
+    return str.replace(/(^\s*)|(\s*$)/g, '');
+  },
+  trimRight: function (str) {
+    if (String.prototype.trimRight) {
+      return str.trimRight();
+    }
+    return str.replace(/(\s*$)/g, '');
+  }
+};
+
+},{}],138:[function(require,module,exports){
 'use strict';
 
 exports.utils = require('./des/utils');
@@ -28542,7 +29198,7 @@ exports.DES = require('./des/des');
 exports.CBC = require('./des/cbc');
 exports.EDE = require('./des/ede');
 
-},{"./des/cbc":134,"./des/cipher":135,"./des/des":136,"./des/ede":137,"./des/utils":138}],134:[function(require,module,exports){
+},{"./des/cbc":139,"./des/cipher":140,"./des/des":141,"./des/ede":142,"./des/utils":143}],139:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -28609,7 +29265,7 @@ proto._update = function _update(inp, inOff, out, outOff) {
   }
 };
 
-},{"inherits":199,"minimalistic-assert":207}],135:[function(require,module,exports){
+},{"inherits":204,"minimalistic-assert":212}],140:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -28752,7 +29408,7 @@ Cipher.prototype._finalDecrypt = function _finalDecrypt() {
   return this._unpad(out);
 };
 
-},{"minimalistic-assert":207}],136:[function(require,module,exports){
+},{"minimalistic-assert":212}],141:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -28896,7 +29552,7 @@ DES.prototype._decrypt = function _decrypt(state, lStart, rStart, out, off) {
   utils.rip(l, r, out, off);
 };
 
-},{"./cipher":135,"./utils":138,"inherits":199,"minimalistic-assert":207}],137:[function(require,module,exports){
+},{"./cipher":140,"./utils":143,"inherits":204,"minimalistic-assert":212}],142:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -28952,7 +29608,7 @@ EDE.prototype._update = function _update(inp, inOff, out, outOff) {
 EDE.prototype._pad = DES.prototype._pad;
 EDE.prototype._unpad = DES.prototype._unpad;
 
-},{"./cipher":135,"./des":136,"inherits":199,"minimalistic-assert":207}],138:[function(require,module,exports){
+},{"./cipher":140,"./des":141,"inherits":204,"minimalistic-assert":212}],143:[function(require,module,exports){
 'use strict';
 
 exports.readUInt32BE = function readUInt32BE(bytes, off) {
@@ -29210,7 +29866,7 @@ exports.padSplit = function padSplit(num, size, group) {
   return out.join(' ');
 };
 
-},{}],139:[function(require,module,exports){
+},{}],144:[function(require,module,exports){
 (function (Buffer){(function (){
 var generatePrime = require('./lib/generatePrime')
 var primes = require('./lib/primes.json')
@@ -29256,7 +29912,7 @@ exports.DiffieHellmanGroup = exports.createDiffieHellmanGroup = exports.getDiffi
 exports.createDiffieHellman = exports.DiffieHellman = createDiffieHellman
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"./lib/dh":140,"./lib/generatePrime":141,"./lib/primes.json":142,"buffer":90}],140:[function(require,module,exports){
+},{"./lib/dh":145,"./lib/generatePrime":146,"./lib/primes.json":147,"buffer":90}],145:[function(require,module,exports){
 (function (Buffer){(function (){
 var BN = require('bn.js');
 var MillerRabin = require('miller-rabin');
@@ -29424,7 +30080,7 @@ function formatReturnValue(bn, enc) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"./generatePrime":141,"bn.js":143,"buffer":90,"miller-rabin":205,"randombytes":229}],141:[function(require,module,exports){
+},{"./generatePrime":146,"bn.js":148,"buffer":90,"miller-rabin":210,"randombytes":234}],146:[function(require,module,exports){
 var randomBytes = require('randombytes');
 module.exports = findPrime;
 findPrime.simpleSieve = simpleSieve;
@@ -29531,7 +30187,7 @@ function findPrime(bits, gen) {
 
 }
 
-},{"bn.js":143,"miller-rabin":205,"randombytes":229}],142:[function(require,module,exports){
+},{"bn.js":148,"miller-rabin":210,"randombytes":234}],147:[function(require,module,exports){
 module.exports={
     "modp1": {
         "gen": "02",
@@ -29566,9 +30222,9 @@ module.exports={
         "prime": "ffffffffffffffffc90fdaa22168c234c4c6628b80dc1cd129024e088a67cc74020bbea63b139b22514a08798e3404ddef9519b3cd3a431b302b0a6df25f14374fe1356d6d51c245e485b576625e7ec6f44c42e9a637ed6b0bff5cb6f406b7edee386bfb5a899fa5ae9f24117c4b1fe649286651ece45b3dc2007cb8a163bf0598da48361c55d39a69163fa8fd24cf5f83655d23dca3ad961c62f356208552bb9ed529077096966d670c354e4abc9804f1746c08ca18217c32905e462e36ce3be39e772c180e86039b2783a2ec07a28fb5c55df06f4c52c9de2bcbf6955817183995497cea956ae515d2261898fa051015728e5a8aaac42dad33170d04507a33a85521abdf1cba64ecfb850458dbef0a8aea71575d060c7db3970f85a6e1e4c7abf5ae8cdb0933d71e8c94e04a25619dcee3d2261ad2ee6bf12ffa06d98a0864d87602733ec86a64521f2b18177b200cbbe117577a615d6c770988c0bad946e208e24fa074e5ab3143db5bfce0fd108e4b82d120a92108011a723c12a787e6d788719a10bdba5b2699c327186af4e23c1a946834b6150bda2583e9ca2ad44ce8dbbbc2db04de8ef92e8efc141fbecaa6287c59474e6bc05d99b2964fa090c3a2233ba186515be7ed1f612970cee2d7afb81bdd762170481cd0069127d5b05aa993b4ea988d8fddc186ffb7dc90a6c08f4df435c93402849236c3fab4d27c7026c1d4dcb2602646dec9751e763dba37bdf8ff9406ad9e530ee5db382f413001aeb06a53ed9027d831179727b0865a8918da3edbebcf9b14ed44ce6cbaced4bb1bdb7f1447e6cc254b332051512bd7af426fb8f401378cd2bf5983ca01c64b92ecf032ea15d1721d03f482d7ce6e74fef6d55e702f46980c82b5a84031900b1c9e59e7c97fbec7e8f323a97a7e36cc88be0f1d45b7ff585ac54bd407b22b4154aacc8f6d7ebf48e1d814cc5ed20f8037e0a79715eef29be32806a1d58bb7c5da76f550aa3d8a1fbff0eb19ccb1a313d55cda56c9ec2ef29632387fe8d76e3c0468043e8f663f4860ee12bf2d5b0b7474d6e694f91e6dbe115974a3926f12fee5e438777cb6a932df8cd8bec4d073b931ba3bc832b68d9dd300741fa7bf8afc47ed2576f6936ba424663aab639c5ae4f5683423b4742bf1c978238f16cbe39d652de3fdb8befc848ad922222e04a4037c0713eb57a81a23f0c73473fc646cea306b4bcbc8862f8385ddfa9d4b7fa2c087e879683303ed5bdd3a062b3cf5b3a278a66d2a13f83f44f82ddf310ee074ab6a364597e899a0255dc164f31cc50846851df9ab48195ded7ea1b1d510bd7ee74d73faf36bc31ecfa268359046f4eb879f924009438b481c6cd7889a002ed5ee382bc9190da6fc026e479558e4475677e9aa9e3050e2765694dfc81f56e880b96e7160c980dd98edd3dfffffffffffffffff"
     }
 }
-},{}],143:[function(require,module,exports){
+},{}],148:[function(require,module,exports){
 arguments[4][41][0].apply(exports,arguments)
-},{"buffer":45,"dup":41}],144:[function(require,module,exports){
+},{"buffer":45,"dup":41}],149:[function(require,module,exports){
 /*! @license DOMPurify 2.3.3 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/2.3.3/LICENSE */
 
 (function (global, factory) {
@@ -30968,7 +31624,7 @@ arguments[4][41][0].apply(exports,arguments)
 }));
 
 
-},{}],145:[function(require,module,exports){
+},{}],150:[function(require,module,exports){
 'use strict';
 
 var elliptic = exports;
@@ -30983,7 +31639,7 @@ elliptic.curves = require('./elliptic/curves');
 elliptic.ec = require('./elliptic/ec');
 elliptic.eddsa = require('./elliptic/eddsa');
 
-},{"../package.json":161,"./elliptic/curve":148,"./elliptic/curves":151,"./elliptic/ec":152,"./elliptic/eddsa":155,"./elliptic/utils":159,"brorand":44}],146:[function(require,module,exports){
+},{"../package.json":166,"./elliptic/curve":153,"./elliptic/curves":156,"./elliptic/ec":157,"./elliptic/eddsa":160,"./elliptic/utils":164,"brorand":44}],151:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -31366,7 +32022,7 @@ BasePoint.prototype.dblp = function dblp(k) {
   return r;
 };
 
-},{"../utils":159,"bn.js":160}],147:[function(require,module,exports){
+},{"../utils":164,"bn.js":165}],152:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -31803,7 +32459,7 @@ Point.prototype.eqXToP = function eqXToP(x) {
 Point.prototype.toP = Point.prototype.normalize;
 Point.prototype.mixedAdd = Point.prototype.add;
 
-},{"../utils":159,"./base":146,"bn.js":160,"inherits":199}],148:[function(require,module,exports){
+},{"../utils":164,"./base":151,"bn.js":165,"inherits":204}],153:[function(require,module,exports){
 'use strict';
 
 var curve = exports;
@@ -31813,7 +32469,7 @@ curve.short = require('./short');
 curve.mont = require('./mont');
 curve.edwards = require('./edwards');
 
-},{"./base":146,"./edwards":147,"./mont":149,"./short":150}],149:[function(require,module,exports){
+},{"./base":151,"./edwards":152,"./mont":154,"./short":155}],154:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -31993,7 +32649,7 @@ Point.prototype.getX = function getX() {
   return this.x.fromRed();
 };
 
-},{"../utils":159,"./base":146,"bn.js":160,"inherits":199}],150:[function(require,module,exports){
+},{"../utils":164,"./base":151,"bn.js":165,"inherits":204}],155:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -32933,7 +33589,7 @@ JPoint.prototype.isInfinity = function isInfinity() {
   return this.z.cmpn(0) === 0;
 };
 
-},{"../utils":159,"./base":146,"bn.js":160,"inherits":199}],151:[function(require,module,exports){
+},{"../utils":164,"./base":151,"bn.js":165,"inherits":204}],156:[function(require,module,exports){
 'use strict';
 
 var curves = exports;
@@ -33141,7 +33797,7 @@ defineCurve('secp256k1', {
   ],
 });
 
-},{"./curve":148,"./precomputed/secp256k1":158,"./utils":159,"hash.js":185}],152:[function(require,module,exports){
+},{"./curve":153,"./precomputed/secp256k1":163,"./utils":164,"hash.js":190}],157:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -33386,7 +34042,7 @@ EC.prototype.getKeyRecoveryParam = function(e, signature, Q, enc) {
   throw new Error('Unable to find valid recovery factor');
 };
 
-},{"../curves":151,"../utils":159,"./key":153,"./signature":154,"bn.js":160,"brorand":44,"hmac-drbg":197}],153:[function(require,module,exports){
+},{"../curves":156,"../utils":164,"./key":158,"./signature":159,"bn.js":165,"brorand":44,"hmac-drbg":202}],158:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -33509,7 +34165,7 @@ KeyPair.prototype.inspect = function inspect() {
          ' pub: ' + (this.pub && this.pub.inspect()) + ' >';
 };
 
-},{"../utils":159,"bn.js":160}],154:[function(require,module,exports){
+},{"../utils":164,"bn.js":165}],159:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -33677,7 +34333,7 @@ Signature.prototype.toDER = function toDER(enc) {
   return utils.encode(res, enc);
 };
 
-},{"../utils":159,"bn.js":160}],155:[function(require,module,exports){
+},{"../utils":164,"bn.js":165}],160:[function(require,module,exports){
 'use strict';
 
 var hash = require('hash.js');
@@ -33797,7 +34453,7 @@ EDDSA.prototype.isPoint = function isPoint(val) {
   return val instanceof this.pointClass;
 };
 
-},{"../curves":151,"../utils":159,"./key":156,"./signature":157,"hash.js":185}],156:[function(require,module,exports){
+},{"../curves":156,"../utils":164,"./key":161,"./signature":162,"hash.js":190}],161:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -33894,7 +34550,7 @@ KeyPair.prototype.getPublic = function getPublic(enc) {
 
 module.exports = KeyPair;
 
-},{"../utils":159}],157:[function(require,module,exports){
+},{"../utils":164}],162:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -33961,7 +34617,7 @@ Signature.prototype.toHex = function toHex() {
 
 module.exports = Signature;
 
-},{"../utils":159,"bn.js":160}],158:[function(require,module,exports){
+},{"../utils":164,"bn.js":165}],163:[function(require,module,exports){
 module.exports = {
   doubles: {
     step: 4,
@@ -34743,7 +35399,7 @@ module.exports = {
   },
 };
 
-},{}],159:[function(require,module,exports){
+},{}],164:[function(require,module,exports){
 'use strict';
 
 var utils = exports;
@@ -34864,9 +35520,9 @@ function intFromLE(bytes) {
 utils.intFromLE = intFromLE;
 
 
-},{"bn.js":160,"minimalistic-assert":207,"minimalistic-crypto-utils":208}],160:[function(require,module,exports){
+},{"bn.js":165,"minimalistic-assert":212,"minimalistic-crypto-utils":213}],165:[function(require,module,exports){
 arguments[4][41][0].apply(exports,arguments)
-},{"buffer":45,"dup":41}],161:[function(require,module,exports){
+},{"buffer":45,"dup":41}],166:[function(require,module,exports){
 module.exports={
   "_args": [
     [
@@ -34957,7 +35613,7 @@ module.exports={
   "version": "6.5.4"
 }
 
-},{}],162:[function(require,module,exports){
+},{}],167:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -35456,7 +36112,7 @@ function eventTargetAgnosticAddListener(emitter, name, listener, flags) {
   }
 }
 
-},{}],163:[function(require,module,exports){
+},{}],168:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var MD5 = require('md5.js')
 
@@ -35503,7 +36159,7 @@ function EVP_BytesToKey (password, salt, keyBits, ivLen) {
 
 module.exports = EVP_BytesToKey
 
-},{"md5.js":203,"safe-buffer":232}],164:[function(require,module,exports){
+},{"md5.js":208,"safe-buffer":237}],169:[function(require,module,exports){
 /* jshint node: true */
 'use strict';
 
@@ -35611,7 +36267,7 @@ var freeice = function(opts) {
 };
 
 module.exports = freeice;
-},{"./stun.json":165,"./turn.json":166,"normalice":209}],165:[function(require,module,exports){
+},{"./stun.json":170,"./turn.json":171,"normalice":214}],170:[function(require,module,exports){
 module.exports=[
   "stun.l.google.com:19302",
   "stun1.l.google.com:19302",
@@ -35628,10 +36284,10 @@ module.exports=[
   "stun.voxgratia.org"
 ]
 
-},{}],166:[function(require,module,exports){
+},{}],171:[function(require,module,exports){
 module.exports=[]
 
-},{}],167:[function(require,module,exports){
+},{}],172:[function(require,module,exports){
 var WildEmitter = require('wildemitter');
 
 function getMaxVolume (analyser, fftBins) {
@@ -35776,7 +36432,7 @@ module.exports = function(stream, options) {
   return harker;
 }
 
-},{"wildemitter":272}],168:[function(require,module,exports){
+},{"wildemitter":277}],173:[function(require,module,exports){
 'use strict'
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('readable-stream').Transform
@@ -35873,39 +36529,39 @@ HashBase.prototype._digest = function () {
 
 module.exports = HashBase
 
-},{"inherits":199,"readable-stream":183,"safe-buffer":184}],169:[function(require,module,exports){
+},{"inherits":204,"readable-stream":188,"safe-buffer":189}],174:[function(require,module,exports){
 arguments[4][73][0].apply(exports,arguments)
-},{"dup":73}],170:[function(require,module,exports){
+},{"dup":73}],175:[function(require,module,exports){
 arguments[4][74][0].apply(exports,arguments)
-},{"./_stream_readable":172,"./_stream_writable":174,"_process":221,"dup":74,"inherits":199}],171:[function(require,module,exports){
+},{"./_stream_readable":177,"./_stream_writable":179,"_process":226,"dup":74,"inherits":204}],176:[function(require,module,exports){
 arguments[4][75][0].apply(exports,arguments)
-},{"./_stream_transform":173,"dup":75,"inherits":199}],172:[function(require,module,exports){
+},{"./_stream_transform":178,"dup":75,"inherits":204}],177:[function(require,module,exports){
 arguments[4][76][0].apply(exports,arguments)
-},{"../errors":169,"./_stream_duplex":170,"./internal/streams/async_iterator":175,"./internal/streams/buffer_list":176,"./internal/streams/destroy":177,"./internal/streams/from":179,"./internal/streams/state":181,"./internal/streams/stream":182,"_process":221,"buffer":90,"dup":76,"events":162,"inherits":199,"string_decoder/":265,"util":45}],173:[function(require,module,exports){
+},{"../errors":174,"./_stream_duplex":175,"./internal/streams/async_iterator":180,"./internal/streams/buffer_list":181,"./internal/streams/destroy":182,"./internal/streams/from":184,"./internal/streams/state":186,"./internal/streams/stream":187,"_process":226,"buffer":90,"dup":76,"events":167,"inherits":204,"string_decoder/":270,"util":45}],178:[function(require,module,exports){
 arguments[4][77][0].apply(exports,arguments)
-},{"../errors":169,"./_stream_duplex":170,"dup":77,"inherits":199}],174:[function(require,module,exports){
+},{"../errors":174,"./_stream_duplex":175,"dup":77,"inherits":204}],179:[function(require,module,exports){
 arguments[4][78][0].apply(exports,arguments)
-},{"../errors":169,"./_stream_duplex":170,"./internal/streams/destroy":177,"./internal/streams/state":181,"./internal/streams/stream":182,"_process":221,"buffer":90,"dup":78,"inherits":199,"util-deprecate":268}],175:[function(require,module,exports){
+},{"../errors":174,"./_stream_duplex":175,"./internal/streams/destroy":182,"./internal/streams/state":186,"./internal/streams/stream":187,"_process":226,"buffer":90,"dup":78,"inherits":204,"util-deprecate":273}],180:[function(require,module,exports){
 arguments[4][79][0].apply(exports,arguments)
-},{"./end-of-stream":178,"_process":221,"dup":79}],176:[function(require,module,exports){
+},{"./end-of-stream":183,"_process":226,"dup":79}],181:[function(require,module,exports){
 arguments[4][80][0].apply(exports,arguments)
-},{"buffer":90,"dup":80,"util":45}],177:[function(require,module,exports){
+},{"buffer":90,"dup":80,"util":45}],182:[function(require,module,exports){
 arguments[4][81][0].apply(exports,arguments)
-},{"_process":221,"dup":81}],178:[function(require,module,exports){
+},{"_process":226,"dup":81}],183:[function(require,module,exports){
 arguments[4][82][0].apply(exports,arguments)
-},{"../../../errors":169,"dup":82}],179:[function(require,module,exports){
+},{"../../../errors":174,"dup":82}],184:[function(require,module,exports){
 arguments[4][83][0].apply(exports,arguments)
-},{"dup":83}],180:[function(require,module,exports){
+},{"dup":83}],185:[function(require,module,exports){
 arguments[4][84][0].apply(exports,arguments)
-},{"../../../errors":169,"./end-of-stream":178,"dup":84}],181:[function(require,module,exports){
+},{"../../../errors":174,"./end-of-stream":183,"dup":84}],186:[function(require,module,exports){
 arguments[4][85][0].apply(exports,arguments)
-},{"../../../errors":169,"dup":85}],182:[function(require,module,exports){
+},{"../../../errors":174,"dup":85}],187:[function(require,module,exports){
 arguments[4][86][0].apply(exports,arguments)
-},{"dup":86,"events":162}],183:[function(require,module,exports){
+},{"dup":86,"events":167}],188:[function(require,module,exports){
 arguments[4][87][0].apply(exports,arguments)
-},{"./lib/_stream_duplex.js":170,"./lib/_stream_passthrough.js":171,"./lib/_stream_readable.js":172,"./lib/_stream_transform.js":173,"./lib/_stream_writable.js":174,"./lib/internal/streams/end-of-stream.js":178,"./lib/internal/streams/pipeline.js":180,"dup":87}],184:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":175,"./lib/_stream_passthrough.js":176,"./lib/_stream_readable.js":177,"./lib/_stream_transform.js":178,"./lib/_stream_writable.js":179,"./lib/internal/streams/end-of-stream.js":183,"./lib/internal/streams/pipeline.js":185,"dup":87}],189:[function(require,module,exports){
 arguments[4][88][0].apply(exports,arguments)
-},{"buffer":90,"dup":88}],185:[function(require,module,exports){
+},{"buffer":90,"dup":88}],190:[function(require,module,exports){
 var hash = exports;
 
 hash.utils = require('./hash/utils');
@@ -35922,7 +36578,7 @@ hash.sha384 = hash.sha.sha384;
 hash.sha512 = hash.sha.sha512;
 hash.ripemd160 = hash.ripemd.ripemd160;
 
-},{"./hash/common":186,"./hash/hmac":187,"./hash/ripemd":188,"./hash/sha":189,"./hash/utils":196}],186:[function(require,module,exports){
+},{"./hash/common":191,"./hash/hmac":192,"./hash/ripemd":193,"./hash/sha":194,"./hash/utils":201}],191:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -36016,7 +36672,7 @@ BlockHash.prototype._pad = function pad() {
   return res;
 };
 
-},{"./utils":196,"minimalistic-assert":207}],187:[function(require,module,exports){
+},{"./utils":201,"minimalistic-assert":212}],192:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -36065,7 +36721,7 @@ Hmac.prototype.digest = function digest(enc) {
   return this.outer.digest(enc);
 };
 
-},{"./utils":196,"minimalistic-assert":207}],188:[function(require,module,exports){
+},{"./utils":201,"minimalistic-assert":212}],193:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -36213,7 +36869,7 @@ var sh = [
   8, 5, 12, 9, 12, 5, 14, 6, 8, 13, 6, 5, 15, 13, 11, 11
 ];
 
-},{"./common":186,"./utils":196}],189:[function(require,module,exports){
+},{"./common":191,"./utils":201}],194:[function(require,module,exports){
 'use strict';
 
 exports.sha1 = require('./sha/1');
@@ -36222,7 +36878,7 @@ exports.sha256 = require('./sha/256');
 exports.sha384 = require('./sha/384');
 exports.sha512 = require('./sha/512');
 
-},{"./sha/1":190,"./sha/224":191,"./sha/256":192,"./sha/384":193,"./sha/512":194}],190:[function(require,module,exports){
+},{"./sha/1":195,"./sha/224":196,"./sha/256":197,"./sha/384":198,"./sha/512":199}],195:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -36298,7 +36954,7 @@ SHA1.prototype._digest = function digest(enc) {
     return utils.split32(this.h, 'big');
 };
 
-},{"../common":186,"../utils":196,"./common":195}],191:[function(require,module,exports){
+},{"../common":191,"../utils":201,"./common":200}],196:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -36330,7 +36986,7 @@ SHA224.prototype._digest = function digest(enc) {
 };
 
 
-},{"../utils":196,"./256":192}],192:[function(require,module,exports){
+},{"../utils":201,"./256":197}],197:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -36437,7 +37093,7 @@ SHA256.prototype._digest = function digest(enc) {
     return utils.split32(this.h, 'big');
 };
 
-},{"../common":186,"../utils":196,"./common":195,"minimalistic-assert":207}],193:[function(require,module,exports){
+},{"../common":191,"../utils":201,"./common":200,"minimalistic-assert":212}],198:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -36474,7 +37130,7 @@ SHA384.prototype._digest = function digest(enc) {
     return utils.split32(this.h.slice(0, 12), 'big');
 };
 
-},{"../utils":196,"./512":194}],194:[function(require,module,exports){
+},{"../utils":201,"./512":199}],199:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -36806,7 +37462,7 @@ function g1_512_lo(xh, xl) {
   return r;
 }
 
-},{"../common":186,"../utils":196,"minimalistic-assert":207}],195:[function(require,module,exports){
+},{"../common":191,"../utils":201,"minimalistic-assert":212}],200:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -36857,7 +37513,7 @@ function g1_256(x) {
 }
 exports.g1_256 = g1_256;
 
-},{"../utils":196}],196:[function(require,module,exports){
+},{"../utils":201}],201:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -37137,7 +37793,7 @@ function shr64_lo(ah, al, num) {
 }
 exports.shr64_lo = shr64_lo;
 
-},{"inherits":199,"minimalistic-assert":207}],197:[function(require,module,exports){
+},{"inherits":204,"minimalistic-assert":212}],202:[function(require,module,exports){
 'use strict';
 
 var hash = require('hash.js');
@@ -37252,7 +37908,7 @@ HmacDRBG.prototype.generate = function generate(len, enc, add, addEnc) {
   return utils.encode(res, enc);
 };
 
-},{"hash.js":185,"minimalistic-assert":207,"minimalistic-crypto-utils":208}],198:[function(require,module,exports){
+},{"hash.js":190,"minimalistic-assert":212,"minimalistic-crypto-utils":213}],203:[function(require,module,exports){
 /*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
@@ -37339,7 +37995,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],199:[function(require,module,exports){
+},{}],204:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -37368,10 +38024,10 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],200:[function(require,module,exports){
+},{}],205:[function(require,module,exports){
 // Does nothing at all.
 
-},{}],201:[function(require,module,exports){
+},{}],206:[function(require,module,exports){
 /*
  * (C) Copyright 2014-2015 Kurento (http://kurento.org/)
  *
@@ -38293,7 +38949,7 @@ exports.WebRtcPeerSendonly = WebRtcPeerSendonly
 exports.WebRtcPeerSendrecv = WebRtcPeerSendrecv
 exports.hark = harkUtils
 
-},{"events":162,"freeice":164,"hark":167,"inherits":199,"kurento-browser-extensions":200,"merge":204,"sdp-translator":239,"ua-parser-js":267,"uuid/v4":271}],202:[function(require,module,exports){
+},{"events":167,"freeice":169,"hark":172,"inherits":204,"kurento-browser-extensions":205,"merge":209,"sdp-translator":244,"ua-parser-js":272,"uuid/v4":276}],207:[function(require,module,exports){
 /*
  * (C) Copyright 2014 Kurento (http://kurento.org/)
  *
@@ -38325,7 +38981,7 @@ var WebRtcPeer = require('./WebRtcPeer');
 
 exports.WebRtcPeer = WebRtcPeer;
 
-},{"./WebRtcPeer":201}],203:[function(require,module,exports){
+},{"./WebRtcPeer":206}],208:[function(require,module,exports){
 'use strict'
 var inherits = require('inherits')
 var HashBase = require('hash-base')
@@ -38473,7 +39129,7 @@ function fnI (a, b, c, d, m, k, s) {
 
 module.exports = MD5
 
-},{"hash-base":168,"inherits":199,"safe-buffer":232}],204:[function(require,module,exports){
+},{"hash-base":173,"inherits":204,"safe-buffer":237}],209:[function(require,module,exports){
 /*!
  * @name JavaScript/NodeJS Merge v1.2.1
  * @author yeikos
@@ -38651,7 +39307,7 @@ module.exports = MD5
 	}
 
 })(typeof module === 'object' && module && typeof module.exports === 'object' && module.exports);
-},{}],205:[function(require,module,exports){
+},{}],210:[function(require,module,exports){
 var bn = require('bn.js');
 var brorand = require('brorand');
 
@@ -38768,9 +39424,9 @@ MillerRabin.prototype.getDivisor = function getDivisor(n, k) {
   return false;
 };
 
-},{"bn.js":206,"brorand":44}],206:[function(require,module,exports){
+},{"bn.js":211,"brorand":44}],211:[function(require,module,exports){
 arguments[4][41][0].apply(exports,arguments)
-},{"buffer":45,"dup":41}],207:[function(require,module,exports){
+},{"buffer":45,"dup":41}],212:[function(require,module,exports){
 module.exports = assert;
 
 function assert(val, msg) {
@@ -38783,7 +39439,7 @@ assert.equal = function assertEqual(l, r, msg) {
     throw new Error(msg || ('Assertion failed: ' + l + ' != ' + r));
 };
 
-},{}],208:[function(require,module,exports){
+},{}],213:[function(require,module,exports){
 'use strict';
 
 var utils = exports;
@@ -38843,7 +39499,7 @@ utils.encode = function encode(arr, enc) {
     return arr;
 };
 
-},{}],209:[function(require,module,exports){
+},{}],214:[function(require,module,exports){
 /**
   # normalice
 
@@ -38905,7 +39561,7 @@ module.exports = function(input) {
   return output;
 };
 
-},{}],210:[function(require,module,exports){
+},{}],215:[function(require,module,exports){
 module.exports={"2.16.840.1.101.3.4.1.1": "aes-128-ecb",
 "2.16.840.1.101.3.4.1.2": "aes-128-cbc",
 "2.16.840.1.101.3.4.1.3": "aes-128-ofb",
@@ -38919,7 +39575,7 @@ module.exports={"2.16.840.1.101.3.4.1.1": "aes-128-ecb",
 "2.16.840.1.101.3.4.1.43": "aes-256-ofb",
 "2.16.840.1.101.3.4.1.44": "aes-256-cfb"
 }
-},{}],211:[function(require,module,exports){
+},{}],216:[function(require,module,exports){
 // from https://github.com/indutny/self-signed/blob/gh-pages/lib/asn1.js
 // Fedor, you are amazing.
 'use strict'
@@ -39043,7 +39699,7 @@ exports.signature = asn1.define('signature', function () {
   )
 })
 
-},{"./certificate":212,"asn1.js":27}],212:[function(require,module,exports){
+},{"./certificate":217,"asn1.js":27}],217:[function(require,module,exports){
 // from https://github.com/Rantanen/node-dtls/blob/25a7dc861bda38cfeac93a723500eea4f0ac2e86/Certificate.js
 // thanks to @Rantanen
 
@@ -39134,7 +39790,7 @@ var X509Certificate = asn.define('X509Certificate', function () {
 
 module.exports = X509Certificate
 
-},{"asn1.js":27}],213:[function(require,module,exports){
+},{"asn1.js":27}],218:[function(require,module,exports){
 // adapted from https://github.com/apatil/pemstrip
 var findProc = /Proc-Type: 4,ENCRYPTED[\n\r]+DEK-Info: AES-((?:128)|(?:192)|(?:256))-CBC,([0-9A-H]+)[\n\r]+([0-9A-z\n\r+/=]+)[\n\r]+/m
 var startRegex = /^-----BEGIN ((?:.*? KEY)|CERTIFICATE)-----/m
@@ -39167,7 +39823,7 @@ module.exports = function (okey, password) {
   }
 }
 
-},{"browserify-aes":48,"evp_bytestokey":163,"safe-buffer":232}],214:[function(require,module,exports){
+},{"browserify-aes":48,"evp_bytestokey":168,"safe-buffer":237}],219:[function(require,module,exports){
 var asn1 = require('./asn1')
 var aesid = require('./aesid.json')
 var fixProc = require('./fixProc')
@@ -39276,11 +39932,11 @@ function decrypt (data, password) {
   return Buffer.concat(out)
 }
 
-},{"./aesid.json":210,"./asn1":211,"./fixProc":213,"browserify-aes":48,"pbkdf2":215,"safe-buffer":232}],215:[function(require,module,exports){
+},{"./aesid.json":215,"./asn1":216,"./fixProc":218,"browserify-aes":48,"pbkdf2":220,"safe-buffer":237}],220:[function(require,module,exports){
 exports.pbkdf2 = require('./lib/async')
 exports.pbkdf2Sync = require('./lib/sync')
 
-},{"./lib/async":216,"./lib/sync":219}],216:[function(require,module,exports){
+},{"./lib/async":221,"./lib/sync":224}],221:[function(require,module,exports){
 (function (global){(function (){
 var Buffer = require('safe-buffer').Buffer
 
@@ -39402,7 +40058,7 @@ module.exports = function (password, salt, iterations, keylen, digest, callback)
 }
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./default-encoding":217,"./precondition":218,"./sync":219,"./to-buffer":220,"safe-buffer":232}],217:[function(require,module,exports){
+},{"./default-encoding":222,"./precondition":223,"./sync":224,"./to-buffer":225,"safe-buffer":237}],222:[function(require,module,exports){
 (function (process,global){(function (){
 var defaultEncoding
 /* istanbul ignore next */
@@ -39418,7 +40074,7 @@ if (global.process && global.process.browser) {
 module.exports = defaultEncoding
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":221}],218:[function(require,module,exports){
+},{"_process":226}],223:[function(require,module,exports){
 var MAX_ALLOC = Math.pow(2, 30) - 1 // default in iojs
 
 module.exports = function (iterations, keylen) {
@@ -39439,7 +40095,7 @@ module.exports = function (iterations, keylen) {
   }
 }
 
-},{}],219:[function(require,module,exports){
+},{}],224:[function(require,module,exports){
 var md5 = require('create-hash/md5')
 var RIPEMD160 = require('ripemd160')
 var sha = require('sha.js')
@@ -39546,7 +40202,7 @@ function pbkdf2 (password, salt, iterations, keylen, digest) {
 
 module.exports = pbkdf2
 
-},{"./default-encoding":217,"./precondition":218,"./to-buffer":220,"create-hash/md5":95,"ripemd160":231,"safe-buffer":232,"sha.js":243}],220:[function(require,module,exports){
+},{"./default-encoding":222,"./precondition":223,"./to-buffer":225,"create-hash/md5":95,"ripemd160":236,"safe-buffer":237,"sha.js":248}],225:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 module.exports = function (thing, encoding, name) {
@@ -39561,7 +40217,7 @@ module.exports = function (thing, encoding, name) {
   }
 }
 
-},{"safe-buffer":232}],221:[function(require,module,exports){
+},{"safe-buffer":237}],226:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -39747,7 +40403,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],222:[function(require,module,exports){
+},{}],227:[function(require,module,exports){
 exports.publicEncrypt = require('./publicEncrypt')
 exports.privateDecrypt = require('./privateDecrypt')
 
@@ -39759,7 +40415,7 @@ exports.publicDecrypt = function publicDecrypt (key, buf) {
   return exports.privateDecrypt(key, buf, true)
 }
 
-},{"./privateDecrypt":225,"./publicEncrypt":226}],223:[function(require,module,exports){
+},{"./privateDecrypt":230,"./publicEncrypt":231}],228:[function(require,module,exports){
 var createHash = require('create-hash')
 var Buffer = require('safe-buffer').Buffer
 
@@ -39780,9 +40436,9 @@ function i2ops (c) {
   return out
 }
 
-},{"create-hash":94,"safe-buffer":232}],224:[function(require,module,exports){
+},{"create-hash":94,"safe-buffer":237}],229:[function(require,module,exports){
 arguments[4][41][0].apply(exports,arguments)
-},{"buffer":45,"dup":41}],225:[function(require,module,exports){
+},{"buffer":45,"dup":41}],230:[function(require,module,exports){
 var parseKeys = require('parse-asn1')
 var mgf = require('./mgf')
 var xor = require('./xor')
@@ -39889,7 +40545,7 @@ function compare (a, b) {
   return dif
 }
 
-},{"./mgf":223,"./withPublic":227,"./xor":228,"bn.js":224,"browserify-rsa":66,"create-hash":94,"parse-asn1":214,"safe-buffer":232}],226:[function(require,module,exports){
+},{"./mgf":228,"./withPublic":232,"./xor":233,"bn.js":229,"browserify-rsa":66,"create-hash":94,"parse-asn1":219,"safe-buffer":237}],231:[function(require,module,exports){
 var parseKeys = require('parse-asn1')
 var randomBytes = require('randombytes')
 var createHash = require('create-hash')
@@ -39979,7 +40635,7 @@ function nonZero (len) {
   return out
 }
 
-},{"./mgf":223,"./withPublic":227,"./xor":228,"bn.js":224,"browserify-rsa":66,"create-hash":94,"parse-asn1":214,"randombytes":229,"safe-buffer":232}],227:[function(require,module,exports){
+},{"./mgf":228,"./withPublic":232,"./xor":233,"bn.js":229,"browserify-rsa":66,"create-hash":94,"parse-asn1":219,"randombytes":234,"safe-buffer":237}],232:[function(require,module,exports){
 var BN = require('bn.js')
 var Buffer = require('safe-buffer').Buffer
 
@@ -39993,7 +40649,7 @@ function withPublic (paddedMsg, key) {
 
 module.exports = withPublic
 
-},{"bn.js":224,"safe-buffer":232}],228:[function(require,module,exports){
+},{"bn.js":229,"safe-buffer":237}],233:[function(require,module,exports){
 module.exports = function xor (a, b) {
   var len = a.length
   var i = -1
@@ -40003,7 +40659,7 @@ module.exports = function xor (a, b) {
   return a
 }
 
-},{}],229:[function(require,module,exports){
+},{}],234:[function(require,module,exports){
 (function (process,global){(function (){
 'use strict'
 
@@ -40057,7 +40713,7 @@ function randomBytes (size, cb) {
 }
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":221,"safe-buffer":232}],230:[function(require,module,exports){
+},{"_process":226,"safe-buffer":237}],235:[function(require,module,exports){
 (function (process,global){(function (){
 'use strict'
 
@@ -40169,7 +40825,7 @@ function randomFillSync (buf, offset, size) {
 }
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":221,"randombytes":229,"safe-buffer":232}],231:[function(require,module,exports){
+},{"_process":226,"randombytes":234,"safe-buffer":237}],236:[function(require,module,exports){
 'use strict'
 var Buffer = require('buffer').Buffer
 var inherits = require('inherits')
@@ -40334,7 +40990,7 @@ function fn5 (a, b, c, d, e, m, k, s) {
 
 module.exports = RIPEMD160
 
-},{"buffer":90,"hash-base":168,"inherits":199}],232:[function(require,module,exports){
+},{"buffer":90,"hash-base":173,"inherits":204}],237:[function(require,module,exports){
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
 var Buffer = buffer.Buffer
@@ -40398,7 +41054,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-},{"buffer":90}],233:[function(require,module,exports){
+},{"buffer":90}],238:[function(require,module,exports){
 (function (process){(function (){
 /* eslint-disable node/no-deprecated-api */
 
@@ -40479,7 +41135,7 @@ if (!safer.constants) {
 module.exports = safer
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":221,"buffer":90}],234:[function(require,module,exports){
+},{"_process":226,"buffer":90}],239:[function(require,module,exports){
 var grammar = module.exports = {
   v: [{
       name: 'version',
@@ -40738,7 +41394,7 @@ Object.keys(grammar).forEach(function (key) {
   });
 });
 
-},{}],235:[function(require,module,exports){
+},{}],240:[function(require,module,exports){
 var parser = require('./parser');
 var writer = require('./writer');
 
@@ -40748,7 +41404,7 @@ exports.parseFmtpConfig = parser.parseFmtpConfig;
 exports.parsePayloads = parser.parsePayloads;
 exports.parseRemoteCandidates = parser.parseRemoteCandidates;
 
-},{"./parser":236,"./writer":237}],236:[function(require,module,exports){
+},{"./parser":241,"./writer":242}],241:[function(require,module,exports){
 var toIntIfInt = function (v) {
   return String(Number(v)) === v ? Number(v) : v;
 };
@@ -40843,7 +41499,7 @@ exports.parseRemoteCandidates = function (str) {
   return candidates;
 };
 
-},{"./grammar":234}],237:[function(require,module,exports){
+},{"./grammar":239}],242:[function(require,module,exports){
 var grammar = require('./grammar');
 
 // customized util.format - discards excess arguments and can void middle ones
@@ -40959,7 +41615,7 @@ module.exports = function (session, opts) {
   return sdp.join('\r\n') + '\r\n';
 };
 
-},{"./grammar":234}],238:[function(require,module,exports){
+},{"./grammar":239}],243:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -41000,7 +41656,7 @@ module.exports = function arrayEquals(array) {
 };
 
 
-},{}],239:[function(require,module,exports){
+},{}],244:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -41018,7 +41674,7 @@ module.exports = function arrayEquals(array) {
 
 exports.Interop = require('./interop');
 
-},{"./interop":240}],240:[function(require,module,exports){
+},{"./interop":245}],245:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -41903,7 +42559,7 @@ Interop.prototype.toUnifiedPlan = function(desc) {
     //#endregion
 };
 
-},{"./array-equals":238,"./transform":241}],241:[function(require,module,exports){
+},{"./array-equals":243,"./transform":246}],246:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -42017,7 +42673,7 @@ exports.parse = function(sdp) {
 };
 
 
-},{"sdp-transform":235}],242:[function(require,module,exports){
+},{"sdp-transform":240}],247:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 // prototype class for hash functions
@@ -42100,7 +42756,7 @@ Hash.prototype._update = function () {
 
 module.exports = Hash
 
-},{"safe-buffer":232}],243:[function(require,module,exports){
+},{"safe-buffer":237}],248:[function(require,module,exports){
 var exports = module.exports = function SHA (algorithm) {
   algorithm = algorithm.toLowerCase()
 
@@ -42117,7 +42773,7 @@ exports.sha256 = require('./sha256')
 exports.sha384 = require('./sha384')
 exports.sha512 = require('./sha512')
 
-},{"./sha":244,"./sha1":245,"./sha224":246,"./sha256":247,"./sha384":248,"./sha512":249}],244:[function(require,module,exports){
+},{"./sha":249,"./sha1":250,"./sha224":251,"./sha256":252,"./sha384":253,"./sha512":254}],249:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-0, as defined
  * in FIPS PUB 180-1
@@ -42213,7 +42869,7 @@ Sha.prototype._hash = function () {
 
 module.exports = Sha
 
-},{"./hash":242,"inherits":199,"safe-buffer":232}],245:[function(require,module,exports){
+},{"./hash":247,"inherits":204,"safe-buffer":237}],250:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
  * in FIPS PUB 180-1
@@ -42314,7 +42970,7 @@ Sha1.prototype._hash = function () {
 
 module.exports = Sha1
 
-},{"./hash":242,"inherits":199,"safe-buffer":232}],246:[function(require,module,exports){
+},{"./hash":247,"inherits":204,"safe-buffer":237}],251:[function(require,module,exports){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
  * in FIPS 180-2
@@ -42369,7 +43025,7 @@ Sha224.prototype._hash = function () {
 
 module.exports = Sha224
 
-},{"./hash":242,"./sha256":247,"inherits":199,"safe-buffer":232}],247:[function(require,module,exports){
+},{"./hash":247,"./sha256":252,"inherits":204,"safe-buffer":237}],252:[function(require,module,exports){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
  * in FIPS 180-2
@@ -42506,7 +43162,7 @@ Sha256.prototype._hash = function () {
 
 module.exports = Sha256
 
-},{"./hash":242,"inherits":199,"safe-buffer":232}],248:[function(require,module,exports){
+},{"./hash":247,"inherits":204,"safe-buffer":237}],253:[function(require,module,exports){
 var inherits = require('inherits')
 var SHA512 = require('./sha512')
 var Hash = require('./hash')
@@ -42565,7 +43221,7 @@ Sha384.prototype._hash = function () {
 
 module.exports = Sha384
 
-},{"./hash":242,"./sha512":249,"inherits":199,"safe-buffer":232}],249:[function(require,module,exports){
+},{"./hash":247,"./sha512":254,"inherits":204,"safe-buffer":237}],254:[function(require,module,exports){
 var inherits = require('inherits')
 var Hash = require('./hash')
 var Buffer = require('safe-buffer').Buffer
@@ -42827,7 +43483,7 @@ Sha512.prototype._hash = function () {
 
 module.exports = Sha512
 
-},{"./hash":242,"inherits":199,"safe-buffer":232}],250:[function(require,module,exports){
+},{"./hash":247,"inherits":204,"safe-buffer":237}],255:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -42958,35 +43614,35 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":162,"inherits":199,"readable-stream/lib/_stream_duplex.js":252,"readable-stream/lib/_stream_passthrough.js":253,"readable-stream/lib/_stream_readable.js":254,"readable-stream/lib/_stream_transform.js":255,"readable-stream/lib/_stream_writable.js":256,"readable-stream/lib/internal/streams/end-of-stream.js":260,"readable-stream/lib/internal/streams/pipeline.js":262}],251:[function(require,module,exports){
+},{"events":167,"inherits":204,"readable-stream/lib/_stream_duplex.js":257,"readable-stream/lib/_stream_passthrough.js":258,"readable-stream/lib/_stream_readable.js":259,"readable-stream/lib/_stream_transform.js":260,"readable-stream/lib/_stream_writable.js":261,"readable-stream/lib/internal/streams/end-of-stream.js":265,"readable-stream/lib/internal/streams/pipeline.js":267}],256:[function(require,module,exports){
 arguments[4][73][0].apply(exports,arguments)
-},{"dup":73}],252:[function(require,module,exports){
+},{"dup":73}],257:[function(require,module,exports){
 arguments[4][74][0].apply(exports,arguments)
-},{"./_stream_readable":254,"./_stream_writable":256,"_process":221,"dup":74,"inherits":199}],253:[function(require,module,exports){
+},{"./_stream_readable":259,"./_stream_writable":261,"_process":226,"dup":74,"inherits":204}],258:[function(require,module,exports){
 arguments[4][75][0].apply(exports,arguments)
-},{"./_stream_transform":255,"dup":75,"inherits":199}],254:[function(require,module,exports){
+},{"./_stream_transform":260,"dup":75,"inherits":204}],259:[function(require,module,exports){
 arguments[4][76][0].apply(exports,arguments)
-},{"../errors":251,"./_stream_duplex":252,"./internal/streams/async_iterator":257,"./internal/streams/buffer_list":258,"./internal/streams/destroy":259,"./internal/streams/from":261,"./internal/streams/state":263,"./internal/streams/stream":264,"_process":221,"buffer":90,"dup":76,"events":162,"inherits":199,"string_decoder/":265,"util":45}],255:[function(require,module,exports){
+},{"../errors":256,"./_stream_duplex":257,"./internal/streams/async_iterator":262,"./internal/streams/buffer_list":263,"./internal/streams/destroy":264,"./internal/streams/from":266,"./internal/streams/state":268,"./internal/streams/stream":269,"_process":226,"buffer":90,"dup":76,"events":167,"inherits":204,"string_decoder/":270,"util":45}],260:[function(require,module,exports){
 arguments[4][77][0].apply(exports,arguments)
-},{"../errors":251,"./_stream_duplex":252,"dup":77,"inherits":199}],256:[function(require,module,exports){
+},{"../errors":256,"./_stream_duplex":257,"dup":77,"inherits":204}],261:[function(require,module,exports){
 arguments[4][78][0].apply(exports,arguments)
-},{"../errors":251,"./_stream_duplex":252,"./internal/streams/destroy":259,"./internal/streams/state":263,"./internal/streams/stream":264,"_process":221,"buffer":90,"dup":78,"inherits":199,"util-deprecate":268}],257:[function(require,module,exports){
+},{"../errors":256,"./_stream_duplex":257,"./internal/streams/destroy":264,"./internal/streams/state":268,"./internal/streams/stream":269,"_process":226,"buffer":90,"dup":78,"inherits":204,"util-deprecate":273}],262:[function(require,module,exports){
 arguments[4][79][0].apply(exports,arguments)
-},{"./end-of-stream":260,"_process":221,"dup":79}],258:[function(require,module,exports){
+},{"./end-of-stream":265,"_process":226,"dup":79}],263:[function(require,module,exports){
 arguments[4][80][0].apply(exports,arguments)
-},{"buffer":90,"dup":80,"util":45}],259:[function(require,module,exports){
+},{"buffer":90,"dup":80,"util":45}],264:[function(require,module,exports){
 arguments[4][81][0].apply(exports,arguments)
-},{"_process":221,"dup":81}],260:[function(require,module,exports){
+},{"_process":226,"dup":81}],265:[function(require,module,exports){
 arguments[4][82][0].apply(exports,arguments)
-},{"../../../errors":251,"dup":82}],261:[function(require,module,exports){
+},{"../../../errors":256,"dup":82}],266:[function(require,module,exports){
 arguments[4][83][0].apply(exports,arguments)
-},{"dup":83}],262:[function(require,module,exports){
+},{"dup":83}],267:[function(require,module,exports){
 arguments[4][84][0].apply(exports,arguments)
-},{"../../../errors":251,"./end-of-stream":260,"dup":84}],263:[function(require,module,exports){
+},{"../../../errors":256,"./end-of-stream":265,"dup":84}],268:[function(require,module,exports){
 arguments[4][85][0].apply(exports,arguments)
-},{"../../../errors":251,"dup":85}],264:[function(require,module,exports){
+},{"../../../errors":256,"dup":85}],269:[function(require,module,exports){
 arguments[4][86][0].apply(exports,arguments)
-},{"dup":86,"events":162}],265:[function(require,module,exports){
+},{"dup":86,"events":167}],270:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -43283,9 +43939,9 @@ function simpleWrite(buf) {
 function simpleEnd(buf) {
   return buf && buf.length ? this.write(buf) : '';
 }
-},{"safe-buffer":266}],266:[function(require,module,exports){
+},{"safe-buffer":271}],271:[function(require,module,exports){
 arguments[4][88][0].apply(exports,arguments)
-},{"buffer":90,"dup":88}],267:[function(require,module,exports){
+},{"buffer":90,"dup":88}],272:[function(require,module,exports){
 /*!
  * UAParser.js v0.7.24
  * Lightweight JavaScript-based User-Agent string parser
@@ -44224,7 +44880,7 @@ arguments[4][88][0].apply(exports,arguments)
 
 })(typeof window === 'object' ? window : this);
 
-},{}],268:[function(require,module,exports){
+},{}],273:[function(require,module,exports){
 (function (global){(function (){
 
 /**
@@ -44295,7 +44951,7 @@ function config (name) {
 }
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],269:[function(require,module,exports){
+},{}],274:[function(require,module,exports){
 /**
  * Convert array of 16 byte values to UUID string format of the form:
  * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
@@ -44323,7 +44979,7 @@ function bytesToUuid(buf, offset) {
 
 module.exports = bytesToUuid;
 
-},{}],270:[function(require,module,exports){
+},{}],275:[function(require,module,exports){
 // Unique ID creation requires a high quality random # generator.  In the
 // browser this is a little complicated due to unknown quality of Math.random()
 // and inconsistent support for the `crypto` API.  We do the best we can via
@@ -44359,7 +45015,7 @@ if (getRandomValues) {
   };
 }
 
-},{}],271:[function(require,module,exports){
+},{}],276:[function(require,module,exports){
 var rng = require('./lib/rng');
 var bytesToUuid = require('./lib/bytesToUuid');
 
@@ -44390,7 +45046,7 @@ function v4(options, buf, offset) {
 
 module.exports = v4;
 
-},{"./lib/bytesToUuid":269,"./lib/rng":270}],272:[function(require,module,exports){
+},{"./lib/bytesToUuid":274,"./lib/rng":275}],277:[function(require,module,exports){
 /*
 WildEmitter.js is a slim little event emitter by @henrikjoreteg largely based
 on @visionmedia's Emitter from UI Kit.
@@ -44547,9 +45203,1049 @@ WildEmitter.mixin = function (constructor) {
 
 WildEmitter.mixin(WildEmitter);
 
-},{}],273:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.18","date":"۱۴۰۲/۶/۱۱","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
-},{}],274:[function(require,module,exports){
+},{}],278:[function(require,module,exports){
+/**
+ * default settings
+ *
+ * @author Zongmin Lei<leizongmin@gmail.com>
+ */
+
+var FilterCSS = require("cssfilter").FilterCSS;
+var getDefaultCSSWhiteList = require("cssfilter").getDefaultWhiteList;
+var _ = require("./util");
+
+function getDefaultWhiteList() {
+  return {
+    a: ["target", "href", "title"],
+    abbr: ["title"],
+    address: [],
+    area: ["shape", "coords", "href", "alt"],
+    article: [],
+    aside: [],
+    audio: [
+      "autoplay",
+      "controls",
+      "crossorigin",
+      "loop",
+      "muted",
+      "preload",
+      "src",
+    ],
+    b: [],
+    bdi: ["dir"],
+    bdo: ["dir"],
+    big: [],
+    blockquote: ["cite"],
+    br: [],
+    caption: [],
+    center: [],
+    cite: [],
+    code: [],
+    col: ["align", "valign", "span", "width"],
+    colgroup: ["align", "valign", "span", "width"],
+    dd: [],
+    del: ["datetime"],
+    details: ["open"],
+    div: [],
+    dl: [],
+    dt: [],
+    em: [],
+    figcaption: [],
+    figure: [],
+    font: ["color", "size", "face"],
+    footer: [],
+    h1: [],
+    h2: [],
+    h3: [],
+    h4: [],
+    h5: [],
+    h6: [],
+    header: [],
+    hr: [],
+    i: [],
+    img: ["src", "alt", "title", "width", "height"],
+    ins: ["datetime"],
+    li: [],
+    mark: [],
+    nav: [],
+    ol: [],
+    p: [],
+    pre: [],
+    s: [],
+    section: [],
+    small: [],
+    span: [],
+    sub: [],
+    summary: [],
+    sup: [],
+    strong: [],
+    strike: [],
+    table: ["width", "border", "align", "valign"],
+    tbody: ["align", "valign"],
+    td: ["width", "rowspan", "colspan", "align", "valign"],
+    tfoot: ["align", "valign"],
+    th: ["width", "rowspan", "colspan", "align", "valign"],
+    thead: ["align", "valign"],
+    tr: ["rowspan", "align", "valign"],
+    tt: [],
+    u: [],
+    ul: [],
+    video: [
+      "autoplay",
+      "controls",
+      "crossorigin",
+      "loop",
+      "muted",
+      "playsinline",
+      "poster",
+      "preload",
+      "src",
+      "height",
+      "width",
+    ],
+  };
+}
+
+var defaultCSSFilter = new FilterCSS();
+
+/**
+ * default onTag function
+ *
+ * @param {String} tag
+ * @param {String} html
+ * @param {Object} options
+ * @return {String}
+ */
+function onTag(tag, html, options) {
+  // do nothing
+}
+
+/**
+ * default onIgnoreTag function
+ *
+ * @param {String} tag
+ * @param {String} html
+ * @param {Object} options
+ * @return {String}
+ */
+function onIgnoreTag(tag, html, options) {
+  // do nothing
+}
+
+/**
+ * default onTagAttr function
+ *
+ * @param {String} tag
+ * @param {String} name
+ * @param {String} value
+ * @return {String}
+ */
+function onTagAttr(tag, name, value) {
+  // do nothing
+}
+
+/**
+ * default onIgnoreTagAttr function
+ *
+ * @param {String} tag
+ * @param {String} name
+ * @param {String} value
+ * @return {String}
+ */
+function onIgnoreTagAttr(tag, name, value) {
+  // do nothing
+}
+
+/**
+ * default escapeHtml function
+ *
+ * @param {String} html
+ */
+function escapeHtml(html) {
+  return html.replace(REGEXP_LT, "&lt;").replace(REGEXP_GT, "&gt;");
+}
+
+/**
+ * default safeAttrValue function
+ *
+ * @param {String} tag
+ * @param {String} name
+ * @param {String} value
+ * @param {Object} cssFilter
+ * @return {String}
+ */
+function safeAttrValue(tag, name, value, cssFilter) {
+  // unescape attribute value firstly
+  value = friendlyAttrValue(value);
+
+  if (name === "href" || name === "src") {
+    // filter `href` and `src` attribute
+    // only allow the value that starts with `http://` | `https://` | `mailto:` | `/` | `#`
+    value = _.trim(value);
+    if (value === "#") return "#";
+    if (
+      !(
+        value.substr(0, 7) === "http://" ||
+        value.substr(0, 8) === "https://" ||
+        value.substr(0, 7) === "mailto:" ||
+        value.substr(0, 4) === "tel:" ||
+        value.substr(0, 11) === "data:image/" ||
+        value.substr(0, 6) === "ftp://" ||
+        value.substr(0, 2) === "./" ||
+        value.substr(0, 3) === "../" ||
+        value[0] === "#" ||
+        value[0] === "/"
+      )
+    ) {
+      return "";
+    }
+  } else if (name === "background") {
+    // filter `background` attribute (maybe no use)
+    // `javascript:`
+    REGEXP_DEFAULT_ON_TAG_ATTR_4.lastIndex = 0;
+    if (REGEXP_DEFAULT_ON_TAG_ATTR_4.test(value)) {
+      return "";
+    }
+  } else if (name === "style") {
+    // `expression()`
+    REGEXP_DEFAULT_ON_TAG_ATTR_7.lastIndex = 0;
+    if (REGEXP_DEFAULT_ON_TAG_ATTR_7.test(value)) {
+      return "";
+    }
+    // `url()`
+    REGEXP_DEFAULT_ON_TAG_ATTR_8.lastIndex = 0;
+    if (REGEXP_DEFAULT_ON_TAG_ATTR_8.test(value)) {
+      REGEXP_DEFAULT_ON_TAG_ATTR_4.lastIndex = 0;
+      if (REGEXP_DEFAULT_ON_TAG_ATTR_4.test(value)) {
+        return "";
+      }
+    }
+    if (cssFilter !== false) {
+      cssFilter = cssFilter || defaultCSSFilter;
+      value = cssFilter.process(value);
+    }
+  }
+
+  // escape `<>"` before returns
+  value = escapeAttrValue(value);
+  return value;
+}
+
+// RegExp list
+var REGEXP_LT = /</g;
+var REGEXP_GT = />/g;
+var REGEXP_QUOTE = /"/g;
+var REGEXP_QUOTE_2 = /&quot;/g;
+var REGEXP_ATTR_VALUE_1 = /&#([a-zA-Z0-9]*);?/gim;
+var REGEXP_ATTR_VALUE_COLON = /&colon;?/gim;
+var REGEXP_ATTR_VALUE_NEWLINE = /&newline;?/gim;
+// var REGEXP_DEFAULT_ON_TAG_ATTR_3 = /\/\*|\*\//gm;
+var REGEXP_DEFAULT_ON_TAG_ATTR_4 =
+  /((j\s*a\s*v\s*a|v\s*b|l\s*i\s*v\s*e)\s*s\s*c\s*r\s*i\s*p\s*t\s*|m\s*o\s*c\s*h\s*a):/gi;
+// var REGEXP_DEFAULT_ON_TAG_ATTR_5 = /^[\s"'`]*(d\s*a\s*t\s*a\s*)\:/gi;
+// var REGEXP_DEFAULT_ON_TAG_ATTR_6 = /^[\s"'`]*(d\s*a\s*t\s*a\s*)\:\s*image\//gi;
+var REGEXP_DEFAULT_ON_TAG_ATTR_7 =
+  /e\s*x\s*p\s*r\s*e\s*s\s*s\s*i\s*o\s*n\s*\(.*/gi;
+var REGEXP_DEFAULT_ON_TAG_ATTR_8 = /u\s*r\s*l\s*\(.*/gi;
+
+/**
+ * escape double quote
+ *
+ * @param {String} str
+ * @return {String} str
+ */
+function escapeQuote(str) {
+  return str.replace(REGEXP_QUOTE, "&quot;");
+}
+
+/**
+ * unescape double quote
+ *
+ * @param {String} str
+ * @return {String} str
+ */
+function unescapeQuote(str) {
+  return str.replace(REGEXP_QUOTE_2, '"');
+}
+
+/**
+ * escape html entities
+ *
+ * @param {String} str
+ * @return {String}
+ */
+function escapeHtmlEntities(str) {
+  return str.replace(REGEXP_ATTR_VALUE_1, function replaceUnicode(str, code) {
+    return code[0] === "x" || code[0] === "X"
+      ? String.fromCharCode(parseInt(code.substr(1), 16))
+      : String.fromCharCode(parseInt(code, 10));
+  });
+}
+
+/**
+ * escape html5 new danger entities
+ *
+ * @param {String} str
+ * @return {String}
+ */
+function escapeDangerHtml5Entities(str) {
+  return str
+    .replace(REGEXP_ATTR_VALUE_COLON, ":")
+    .replace(REGEXP_ATTR_VALUE_NEWLINE, " ");
+}
+
+/**
+ * clear nonprintable characters
+ *
+ * @param {String} str
+ * @return {String}
+ */
+function clearNonPrintableCharacter(str) {
+  var str2 = "";
+  for (var i = 0, len = str.length; i < len; i++) {
+    str2 += str.charCodeAt(i) < 32 ? " " : str.charAt(i);
+  }
+  return _.trim(str2);
+}
+
+/**
+ * get friendly attribute value
+ *
+ * @param {String} str
+ * @return {String}
+ */
+function friendlyAttrValue(str) {
+  str = unescapeQuote(str);
+  str = escapeHtmlEntities(str);
+  str = escapeDangerHtml5Entities(str);
+  str = clearNonPrintableCharacter(str);
+  return str;
+}
+
+/**
+ * unescape attribute value
+ *
+ * @param {String} str
+ * @return {String}
+ */
+function escapeAttrValue(str) {
+  str = escapeQuote(str);
+  str = escapeHtml(str);
+  return str;
+}
+
+/**
+ * `onIgnoreTag` function for removing all the tags that are not in whitelist
+ */
+function onIgnoreTagStripAll() {
+  return "";
+}
+
+/**
+ * remove tag body
+ * specify a `tags` list, if the tag is not in the `tags` list then process by the specify function (optional)
+ *
+ * @param {array} tags
+ * @param {function} next
+ */
+function StripTagBody(tags, next) {
+  if (typeof next !== "function") {
+    next = function () {};
+  }
+
+  var isRemoveAllTag = !Array.isArray(tags);
+  function isRemoveTag(tag) {
+    if (isRemoveAllTag) return true;
+    return _.indexOf(tags, tag) !== -1;
+  }
+
+  var removeList = [];
+  var posStart = false;
+
+  return {
+    onIgnoreTag: function (tag, html, options) {
+      if (isRemoveTag(tag)) {
+        if (options.isClosing) {
+          var ret = "[/removed]";
+          var end = options.position + ret.length;
+          removeList.push([
+            posStart !== false ? posStart : options.position,
+            end,
+          ]);
+          posStart = false;
+          return ret;
+        } else {
+          if (!posStart) {
+            posStart = options.position;
+          }
+          return "[removed]";
+        }
+      } else {
+        return next(tag, html, options);
+      }
+    },
+    remove: function (html) {
+      var rethtml = "";
+      var lastPos = 0;
+      _.forEach(removeList, function (pos) {
+        rethtml += html.slice(lastPos, pos[0]);
+        lastPos = pos[1];
+      });
+      rethtml += html.slice(lastPos);
+      return rethtml;
+    },
+  };
+}
+
+/**
+ * remove html comments
+ *
+ * @param {String} html
+ * @return {String}
+ */
+function stripCommentTag(html) {
+  var retHtml = "";
+  var lastPos = 0;
+  while (lastPos < html.length) {
+    var i = html.indexOf("<!--", lastPos);
+    if (i === -1) {
+      retHtml += html.slice(lastPos);
+      break;
+    }
+    retHtml += html.slice(lastPos, i);
+    var j = html.indexOf("-->", i);
+    if (j === -1) {
+      break;
+    }
+    lastPos = j + 3;
+  }
+  return retHtml;
+}
+
+/**
+ * remove invisible characters
+ *
+ * @param {String} html
+ * @return {String}
+ */
+function stripBlankChar(html) {
+  var chars = html.split("");
+  chars = chars.filter(function (char) {
+    var c = char.charCodeAt(0);
+    if (c === 127) return false;
+    if (c <= 31) {
+      if (c === 10 || c === 13) return true;
+      return false;
+    }
+    return true;
+  });
+  return chars.join("");
+}
+
+exports.whiteList = getDefaultWhiteList();
+exports.getDefaultWhiteList = getDefaultWhiteList;
+exports.onTag = onTag;
+exports.onIgnoreTag = onIgnoreTag;
+exports.onTagAttr = onTagAttr;
+exports.onIgnoreTagAttr = onIgnoreTagAttr;
+exports.safeAttrValue = safeAttrValue;
+exports.escapeHtml = escapeHtml;
+exports.escapeQuote = escapeQuote;
+exports.unescapeQuote = unescapeQuote;
+exports.escapeHtmlEntities = escapeHtmlEntities;
+exports.escapeDangerHtml5Entities = escapeDangerHtml5Entities;
+exports.clearNonPrintableCharacter = clearNonPrintableCharacter;
+exports.friendlyAttrValue = friendlyAttrValue;
+exports.escapeAttrValue = escapeAttrValue;
+exports.onIgnoreTagStripAll = onIgnoreTagStripAll;
+exports.StripTagBody = StripTagBody;
+exports.stripCommentTag = stripCommentTag;
+exports.stripBlankChar = stripBlankChar;
+exports.cssFilter = defaultCSSFilter;
+exports.getDefaultCSSWhiteList = getDefaultCSSWhiteList;
+
+},{"./util":281,"cssfilter":135}],279:[function(require,module,exports){
+/**
+ * xss
+ *
+ * @author Zongmin Lei<leizongmin@gmail.com>
+ */
+
+var DEFAULT = require("./default");
+var parser = require("./parser");
+var FilterXSS = require("./xss");
+
+/**
+ * filter xss function
+ *
+ * @param {String} html
+ * @param {Object} options { whiteList, onTag, onTagAttr, onIgnoreTag, onIgnoreTagAttr, safeAttrValue, escapeHtml }
+ * @return {String}
+ */
+function filterXSS(html, options) {
+  var xss = new FilterXSS(options);
+  return xss.process(html);
+}
+
+exports = module.exports = filterXSS;
+exports.filterXSS = filterXSS;
+exports.FilterXSS = FilterXSS;
+
+(function () {
+  for (var i in DEFAULT) {
+    exports[i] = DEFAULT[i];
+  }
+  for (var j in parser) {
+    exports[j] = parser[j];
+  }
+})();
+
+// using `xss` on the browser, output `filterXSS` to the globals
+if (typeof window !== "undefined") {
+  window.filterXSS = module.exports;
+}
+
+// using `xss` on the WebWorker, output `filterXSS` to the globals
+function isWorkerEnv() {
+  return (
+    typeof self !== "undefined" &&
+    typeof DedicatedWorkerGlobalScope !== "undefined" &&
+    self instanceof DedicatedWorkerGlobalScope
+  );
+}
+if (isWorkerEnv()) {
+  self.filterXSS = module.exports;
+}
+
+},{"./default":278,"./parser":280,"./xss":282}],280:[function(require,module,exports){
+/**
+ * Simple HTML Parser
+ *
+ * @author Zongmin Lei<leizongmin@gmail.com>
+ */
+
+var _ = require("./util");
+
+/**
+ * get tag name
+ *
+ * @param {String} html e.g. '<a hef="#">'
+ * @return {String}
+ */
+function getTagName(html) {
+  var i = _.spaceIndex(html);
+  var tagName;
+  if (i === -1) {
+    tagName = html.slice(1, -1);
+  } else {
+    tagName = html.slice(1, i + 1);
+  }
+  tagName = _.trim(tagName).toLowerCase();
+  if (tagName.slice(0, 1) === "/") tagName = tagName.slice(1);
+  if (tagName.slice(-1) === "/") tagName = tagName.slice(0, -1);
+  return tagName;
+}
+
+/**
+ * is close tag?
+ *
+ * @param {String} html 如：'<a hef="#">'
+ * @return {Boolean}
+ */
+function isClosing(html) {
+  return html.slice(0, 2) === "</";
+}
+
+/**
+ * parse input html and returns processed html
+ *
+ * @param {String} html
+ * @param {Function} onTag e.g. function (sourcePosition, position, tag, html, isClosing)
+ * @param {Function} escapeHtml
+ * @return {String}
+ */
+function parseTag(html, onTag, escapeHtml) {
+  "use strict";
+
+  var rethtml = "";
+  var lastPos = 0;
+  var tagStart = false;
+  var quoteStart = false;
+  var currentPos = 0;
+  var len = html.length;
+  var currentTagName = "";
+  var currentHtml = "";
+
+  chariterator: for (currentPos = 0; currentPos < len; currentPos++) {
+    var c = html.charAt(currentPos);
+    if (tagStart === false) {
+      if (c === "<") {
+        tagStart = currentPos;
+        continue;
+      }
+    } else {
+      if (quoteStart === false) {
+        if (c === "<") {
+          rethtml += escapeHtml(html.slice(lastPos, currentPos));
+          tagStart = currentPos;
+          lastPos = currentPos;
+          continue;
+        }
+        if (c === ">" || currentPos === len - 1) {
+          rethtml += escapeHtml(html.slice(lastPos, tagStart));
+          currentHtml = html.slice(tagStart, currentPos + 1);
+          currentTagName = getTagName(currentHtml);
+          rethtml += onTag(
+            tagStart,
+            rethtml.length,
+            currentTagName,
+            currentHtml,
+            isClosing(currentHtml)
+          );
+          lastPos = currentPos + 1;
+          tagStart = false;
+          continue;
+        }
+        if (c === '"' || c === "'") {
+          var i = 1;
+          var ic = html.charAt(currentPos - i);
+
+          while (ic.trim() === "" || ic === "=") {
+            if (ic === "=") {
+              quoteStart = c;
+              continue chariterator;
+            }
+            ic = html.charAt(currentPos - ++i);
+          }
+        }
+      } else {
+        if (c === quoteStart) {
+          quoteStart = false;
+          continue;
+        }
+      }
+    }
+  }
+  if (lastPos < len) {
+    rethtml += escapeHtml(html.substr(lastPos));
+  }
+
+  return rethtml;
+}
+
+var REGEXP_ILLEGAL_ATTR_NAME = /[^a-zA-Z0-9\\_:.-]/gim;
+
+/**
+ * parse input attributes and returns processed attributes
+ *
+ * @param {String} html e.g. `href="#" target="_blank"`
+ * @param {Function} onAttr e.g. `function (name, value)`
+ * @return {String}
+ */
+function parseAttr(html, onAttr) {
+  "use strict";
+
+  var lastPos = 0;
+  var lastMarkPos = 0;
+  var retAttrs = [];
+  var tmpName = false;
+  var len = html.length;
+
+  function addAttr(name, value) {
+    name = _.trim(name);
+    name = name.replace(REGEXP_ILLEGAL_ATTR_NAME, "").toLowerCase();
+    if (name.length < 1) return;
+    var ret = onAttr(name, value || "");
+    if (ret) retAttrs.push(ret);
+  }
+
+  // 逐个分析字符
+  for (var i = 0; i < len; i++) {
+    var c = html.charAt(i);
+    var v, j;
+    if (tmpName === false && c === "=") {
+      tmpName = html.slice(lastPos, i);
+      lastPos = i + 1;
+      lastMarkPos = html.charAt(lastPos) === '"' || html.charAt(lastPos) === "'" ? lastPos : findNextQuotationMark(html, i + 1);
+      continue;
+    }
+    if (tmpName !== false) {
+      if (
+        i === lastMarkPos
+      ) {
+        j = html.indexOf(c, i + 1);
+        if (j === -1) {
+          break;
+        } else {
+          v = _.trim(html.slice(lastMarkPos + 1, j));
+          addAttr(tmpName, v);
+          tmpName = false;
+          i = j;
+          lastPos = i + 1;
+          continue;
+        }
+      }
+    }
+    if (/\s|\n|\t/.test(c)) {
+      html = html.replace(/\s|\n|\t/g, " ");
+      if (tmpName === false) {
+        j = findNextEqual(html, i);
+        if (j === -1) {
+          v = _.trim(html.slice(lastPos, i));
+          addAttr(v);
+          tmpName = false;
+          lastPos = i + 1;
+          continue;
+        } else {
+          i = j - 1;
+          continue;
+        }
+      } else {
+        j = findBeforeEqual(html, i - 1);
+        if (j === -1) {
+          v = _.trim(html.slice(lastPos, i));
+          v = stripQuoteWrap(v);
+          addAttr(tmpName, v);
+          tmpName = false;
+          lastPos = i + 1;
+          continue;
+        } else {
+          continue;
+        }
+      }
+    }
+  }
+
+  if (lastPos < html.length) {
+    if (tmpName === false) {
+      addAttr(html.slice(lastPos));
+    } else {
+      addAttr(tmpName, stripQuoteWrap(_.trim(html.slice(lastPos))));
+    }
+  }
+
+  return _.trim(retAttrs.join(" "));
+}
+
+function findNextEqual(str, i) {
+  for (; i < str.length; i++) {
+    var c = str[i];
+    if (c === " ") continue;
+    if (c === "=") return i;
+    return -1;
+  }
+}
+
+function findNextQuotationMark(str, i) {
+  for (; i < str.length; i++) {
+    var c = str[i];
+    if (c === " ") continue;
+    if (c === "'" || c === '"') return i;
+    return -1;
+  }
+}
+
+function findBeforeEqual(str, i) {
+  for (; i > 0; i--) {
+    var c = str[i];
+    if (c === " ") continue;
+    if (c === "=") return i;
+    return -1;
+  }
+}
+
+function isQuoteWrapString(text) {
+  if (
+    (text[0] === '"' && text[text.length - 1] === '"') ||
+    (text[0] === "'" && text[text.length - 1] === "'")
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function stripQuoteWrap(text) {
+  if (isQuoteWrapString(text)) {
+    return text.substr(1, text.length - 2);
+  } else {
+    return text;
+  }
+}
+
+exports.parseTag = parseTag;
+exports.parseAttr = parseAttr;
+
+},{"./util":281}],281:[function(require,module,exports){
+module.exports = {
+  indexOf: function (arr, item) {
+    var i, j;
+    if (Array.prototype.indexOf) {
+      return arr.indexOf(item);
+    }
+    for (i = 0, j = arr.length; i < j; i++) {
+      if (arr[i] === item) {
+        return i;
+      }
+    }
+    return -1;
+  },
+  forEach: function (arr, fn, scope) {
+    var i, j;
+    if (Array.prototype.forEach) {
+      return arr.forEach(fn, scope);
+    }
+    for (i = 0, j = arr.length; i < j; i++) {
+      fn.call(scope, arr[i], i, arr);
+    }
+  },
+  trim: function (str) {
+    if (String.prototype.trim) {
+      return str.trim();
+    }
+    return str.replace(/(^\s*)|(\s*$)/g, "");
+  },
+  spaceIndex: function (str) {
+    var reg = /\s|\n|\t/;
+    var match = reg.exec(str);
+    return match ? match.index : -1;
+  },
+};
+
+},{}],282:[function(require,module,exports){
+/**
+ * filter xss
+ *
+ * @author Zongmin Lei<leizongmin@gmail.com>
+ */
+
+var FilterCSS = require("cssfilter").FilterCSS;
+var DEFAULT = require("./default");
+var parser = require("./parser");
+var parseTag = parser.parseTag;
+var parseAttr = parser.parseAttr;
+var _ = require("./util");
+
+/**
+ * returns `true` if the input value is `undefined` or `null`
+ *
+ * @param {Object} obj
+ * @return {Boolean}
+ */
+function isNull(obj) {
+  return obj === undefined || obj === null;
+}
+
+/**
+ * get attributes for a tag
+ *
+ * @param {String} html
+ * @return {Object}
+ *   - {String} html
+ *   - {Boolean} closing
+ */
+function getAttrs(html) {
+  var i = _.spaceIndex(html);
+  if (i === -1) {
+    return {
+      html: "",
+      closing: html[html.length - 2] === "/",
+    };
+  }
+  html = _.trim(html.slice(i + 1, -1));
+  var isClosing = html[html.length - 1] === "/";
+  if (isClosing) html = _.trim(html.slice(0, -1));
+  return {
+    html: html,
+    closing: isClosing,
+  };
+}
+
+/**
+ * shallow copy
+ *
+ * @param {Object} obj
+ * @return {Object}
+ */
+function shallowCopyObject(obj) {
+  var ret = {};
+  for (var i in obj) {
+    ret[i] = obj[i];
+  }
+  return ret;
+}
+
+function keysToLowerCase(obj) {
+  var ret = {};
+  for (var i in obj) {
+    if (Array.isArray(obj[i])) {
+      ret[i.toLowerCase()] = obj[i].map(function (item) {
+        return item.toLowerCase();
+      });
+    } else {
+      ret[i.toLowerCase()] = obj[i];
+    }
+  }
+  return ret;
+}
+
+/**
+ * FilterXSS class
+ *
+ * @param {Object} options
+ *        whiteList (or allowList), onTag, onTagAttr, onIgnoreTag,
+ *        onIgnoreTagAttr, safeAttrValue, escapeHtml
+ *        stripIgnoreTagBody, allowCommentTag, stripBlankChar
+ *        css{whiteList, onAttr, onIgnoreAttr} `css=false` means don't use `cssfilter`
+ */
+function FilterXSS(options) {
+  options = shallowCopyObject(options || {});
+
+  if (options.stripIgnoreTag) {
+    if (options.onIgnoreTag) {
+      console.error(
+        'Notes: cannot use these two options "stripIgnoreTag" and "onIgnoreTag" at the same time'
+      );
+    }
+    options.onIgnoreTag = DEFAULT.onIgnoreTagStripAll;
+  }
+  if (options.whiteList || options.allowList) {
+    options.whiteList = keysToLowerCase(options.whiteList || options.allowList);
+  } else {
+    options.whiteList = DEFAULT.whiteList;
+  }
+
+  options.onTag = options.onTag || DEFAULT.onTag;
+  options.onTagAttr = options.onTagAttr || DEFAULT.onTagAttr;
+  options.onIgnoreTag = options.onIgnoreTag || DEFAULT.onIgnoreTag;
+  options.onIgnoreTagAttr = options.onIgnoreTagAttr || DEFAULT.onIgnoreTagAttr;
+  options.safeAttrValue = options.safeAttrValue || DEFAULT.safeAttrValue;
+  options.escapeHtml = options.escapeHtml || DEFAULT.escapeHtml;
+  this.options = options;
+
+  if (options.css === false) {
+    this.cssFilter = false;
+  } else {
+    options.css = options.css || {};
+    this.cssFilter = new FilterCSS(options.css);
+  }
+}
+
+/**
+ * start process and returns result
+ *
+ * @param {String} html
+ * @return {String}
+ */
+FilterXSS.prototype.process = function (html) {
+  // compatible with the input
+  html = html || "";
+  html = html.toString();
+  if (!html) return "";
+
+  var me = this;
+  var options = me.options;
+  var whiteList = options.whiteList;
+  var onTag = options.onTag;
+  var onIgnoreTag = options.onIgnoreTag;
+  var onTagAttr = options.onTagAttr;
+  var onIgnoreTagAttr = options.onIgnoreTagAttr;
+  var safeAttrValue = options.safeAttrValue;
+  var escapeHtml = options.escapeHtml;
+  var cssFilter = me.cssFilter;
+
+  // remove invisible characters
+  if (options.stripBlankChar) {
+    html = DEFAULT.stripBlankChar(html);
+  }
+
+  // remove html comments
+  if (!options.allowCommentTag) {
+    html = DEFAULT.stripCommentTag(html);
+  }
+
+  // if enable stripIgnoreTagBody
+  var stripIgnoreTagBody = false;
+  if (options.stripIgnoreTagBody) {
+    stripIgnoreTagBody = DEFAULT.StripTagBody(
+      options.stripIgnoreTagBody,
+      onIgnoreTag
+    );
+    onIgnoreTag = stripIgnoreTagBody.onIgnoreTag;
+  }
+
+  var retHtml = parseTag(
+    html,
+    function (sourcePosition, position, tag, html, isClosing) {
+      var info = {
+        sourcePosition: sourcePosition,
+        position: position,
+        isClosing: isClosing,
+        isWhite: Object.prototype.hasOwnProperty.call(whiteList, tag),
+      };
+
+      // call `onTag()`
+      var ret = onTag(tag, html, info);
+      if (!isNull(ret)) return ret;
+
+      if (info.isWhite) {
+        if (info.isClosing) {
+          return "</" + tag + ">";
+        }
+
+        var attrs = getAttrs(html);
+        var whiteAttrList = whiteList[tag];
+        var attrsHtml = parseAttr(attrs.html, function (name, value) {
+          // call `onTagAttr()`
+          var isWhiteAttr = _.indexOf(whiteAttrList, name) !== -1;
+          var ret = onTagAttr(tag, name, value, isWhiteAttr);
+          if (!isNull(ret)) return ret;
+
+          if (isWhiteAttr) {
+            // call `safeAttrValue()`
+            value = safeAttrValue(tag, name, value, cssFilter);
+            if (value) {
+              return name + '="' + value + '"';
+            } else {
+              return name;
+            }
+          } else {
+            // call `onIgnoreTagAttr()`
+            ret = onIgnoreTagAttr(tag, name, value, isWhiteAttr);
+            if (!isNull(ret)) return ret;
+            return;
+          }
+        });
+
+        // build new tag html
+        html = "<" + tag;
+        if (attrsHtml) html += " " + attrsHtml;
+        if (attrs.closing) html += " /";
+        html += ">";
+        return html;
+      } else {
+        // call `onIgnoreTag()`
+        ret = onIgnoreTag(tag, html, info);
+        if (!isNull(ret)) return ret;
+        return escapeHtml(html);
+      }
+    },
+    escapeHtml
+  );
+
+  // if enable stripIgnoreTagBody
+  if (stripIgnoreTagBody) {
+    retHtml = stripIgnoreTagBody.remove(retHtml);
+  }
+
+  return retHtml;
+};
+
+module.exports = FilterXSS;
+
+},{"./default":278,"./parser":280,"./util":281,"cssfilter":135}],283:[function(require,module,exports){
+module.exports={"version":"12.9.7-snapshot.21","date":"۱۴۰۲/۶/۱۲","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+},{}],284:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -47232,8 +48928,8 @@ function ChatCall(params) {
 var _default = ChatCall;
 exports["default"] = _default;
 
-},{"./events.module.js":277,"./lib/call/callServerManager":279,"./lib/call/callsList":283,"./lib/call/deviceManager2":285,"./lib/call/sharedData":287,"./lib/constants":290,"./lib/errorHandler":291,"./lib/sdkParams":292,"./lib/store":294,"./messaging.module":297,"./utility/utility":298,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/interopRequireDefault":18,"@babel/runtime/helpers/objectDestructuringEmpty":21,"@babel/runtime/helpers/typeof":24,"@babel/runtime/regenerator":26,"kurento-utils":202}],275:[function(require,module,exports){
-'use strict';var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");var _typeof3=require("@babel/runtime/helpers/typeof");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _podasyncWsOnly=_interopRequireDefault(require("podasync-ws-only"));var _utility=_interopRequireDefault(require("./utility/utility"));var _call=_interopRequireDefault(require("./call.module"));var _sdkParams=require("./lib/sdkParams");var _events=_interopRequireWildcard(require("./events.module"));var _messaging=require("./messaging.module");var _buildConfig=_interopRequireDefault(require("./buildConfig.json"));var _deprecateMethods=require("./deprecateMethods");var _constants=require("./lib/constants");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));var _store=require("./lib/store");var _user=require("./lib/store/user");function _getRequireWildcardCache(nodeInterop){if(typeof WeakMap!=="function")return null;var cacheBabelInterop=new WeakMap();var cacheNodeInterop=new WeakMap();return(_getRequireWildcardCache=function _getRequireWildcardCache(nodeInterop){return nodeInterop?cacheNodeInterop:cacheBabelInterop;})(nodeInterop);}function _interopRequireWildcard(obj,nodeInterop){if(!nodeInterop&&obj&&obj.__esModule){return obj;}if(obj===null||_typeof3(obj)!=="object"&&typeof obj!=="function"){return{"default":obj};}var cache=_getRequireWildcardCache(nodeInterop);if(cache&&cache.has(obj)){return cache.get(obj);}var newObj={};var hasPropertyDescriptor=Object.defineProperty&&Object.getOwnPropertyDescriptor;for(var key in obj){if(key!=="default"&&Object.prototype.hasOwnProperty.call(obj,key)){var desc=hasPropertyDescriptor?Object.getOwnPropertyDescriptor(obj,key):null;if(desc&&(desc.get||desc.set)){Object.defineProperty(newObj,key,desc);}else{newObj[key]=obj[key];}}}newObj["default"]=obj;if(cache){cache.set(obj,newObj);}return newObj;}function Chat(params){/*******************************************************
+},{"./events.module.js":287,"./lib/call/callServerManager":289,"./lib/call/callsList":293,"./lib/call/deviceManager2":295,"./lib/call/sharedData":297,"./lib/constants":300,"./lib/errorHandler":301,"./lib/sdkParams":302,"./lib/store":304,"./messaging.module":307,"./utility/utility":308,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/interopRequireDefault":18,"@babel/runtime/helpers/objectDestructuringEmpty":21,"@babel/runtime/helpers/typeof":24,"@babel/runtime/regenerator":26,"kurento-utils":207}],285:[function(require,module,exports){
+'use strict';var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");var _typeof3=require("@babel/runtime/helpers/typeof");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _podasyncWsOnly=_interopRequireDefault(require("podasync-ws-only"));var _utility=_interopRequireDefault(require("./utility/utility"));var _call=_interopRequireDefault(require("./call.module"));var _sdkParams=require("./lib/sdkParams");var _events=_interopRequireWildcard(require("./events.module"));var _messaging=require("./messaging.module");var _buildConfig=_interopRequireDefault(require("./buildConfig.json"));var _deprecateMethods=require("./deprecateMethods");var _xss=_interopRequireDefault(require("xss"));var _constants=require("./lib/constants");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));var _store=require("./lib/store");var _user=require("./lib/store/user");function _getRequireWildcardCache(nodeInterop){if(typeof WeakMap!=="function")return null;var cacheBabelInterop=new WeakMap();var cacheNodeInterop=new WeakMap();return(_getRequireWildcardCache=function _getRequireWildcardCache(nodeInterop){return nodeInterop?cacheNodeInterop:cacheBabelInterop;})(nodeInterop);}function _interopRequireWildcard(obj,nodeInterop){if(!nodeInterop&&obj&&obj.__esModule){return obj;}if(obj===null||_typeof3(obj)!=="object"&&typeof obj!=="function"){return{"default":obj};}var cache=_getRequireWildcardCache(nodeInterop);if(cache&&cache.has(obj)){return cache.get(obj);}var newObj={};var hasPropertyDescriptor=Object.defineProperty&&Object.getOwnPropertyDescriptor;for(var key in obj){if(key!=="default"&&Object.prototype.hasOwnProperty.call(obj,key)){var desc=hasPropertyDescriptor?Object.getOwnPropertyDescriptor(obj,key):null;if(desc&&(desc.get||desc.set)){Object.defineProperty(newObj,key,desc);}else{newObj[key]=obj[key];}}}newObj["default"]=obj;if(cache){cache.set(obj,newObj);}return newObj;}function Chat(params){/*******************************************************
      *          P R I V A T E   V A R I A B L E S          *
      *******************************************************/_sdkParams.sdkParams.token=params.token||"111";_sdkParams.sdkParams.generalTypeCode=params.typeCode||'default';_sdkParams.sdkParams.typeCodeOwnerId=params.typeCodeOwnerId||null;_sdkParams.sdkParams.mapApiKey=params.mapApiKey||'8b77db18704aa646ee5aaea13e7370f4f88b9e8c';_sdkParams.sdkParams.productEnv=typeof navigator!='undefined'?navigator.product:'undefined';_sdkParams.sdkParams.forceWaitQueueInMemory=params.forceWaitQueueInMemory&&typeof params.forceWaitQueueInMemory==='boolean'?params.forceWaitQueueInMemory:false;_sdkParams.sdkParams.grantDeviceIdFromSSO=params.grantDeviceIdFromSSO&&typeof params.grantDeviceIdFromSSO==='boolean'?params.grantDeviceIdFromSSO:false;_sdkParams.sdkParams.deliveryIntervalPitch=params.deliveryIntervalPitch||2000;_sdkParams.sdkParams.seenIntervalPitch=params.seenIntervalPitch||2000;_sdkParams.sdkParams.systemMessageIntervalPitch=params.systemMessageIntervalPitch||1000;_sdkParams.sdkParams.socketAddress=params.socketAddress;_sdkParams.sdkParams.serverName=params.serverName;_sdkParams.sdkParams.wsConnectionWaitTime=params.wsConnectionWaitTime;_sdkParams.sdkParams.connectionRetryInterval=params.connectionRetryInterval;_sdkParams.sdkParams.msgPriority=params.msgPriority;_sdkParams.sdkParams.messageTtl=params.messageTtl||10000;_sdkParams.sdkParams.reconnectOnClose=params.reconnectOnClose;_sdkParams.sdkParams.asyncLogging=params.asyncLogging;_sdkParams.sdkParams.connectionCheckTimeout=params.connectionCheckTimeout;_sdkParams.sdkParams.httpRequestTimeout=params.httpRequestTimeout>=0?params.httpRequestTimeout:0;_sdkParams.sdkParams.asyncRequestTimeout=typeof params.asyncRequestTimeout==='number'&&params.asyncRequestTimeout>=0?params.asyncRequestTimeout:0;_sdkParams.sdkParams.connectionCheckTimeoutThreshold=params.connectionCheckTimeoutThreshold;_sdkParams.sdkParams.httpUploadRequestTimeout=params.httpUploadRequestTimeout>=0?params.httpUploadRequestTimeout:0;_sdkParams.sdkParams.actualTimingLog=params.asyncLogging.actualTiming&&typeof params.asyncLogging.actualTiming==='boolean'?params.asyncLogging.actualTiming:false;_sdkParams.sdkParams.consoleLogging=params.asyncLogging.consoleLogging&&typeof params.asyncLogging.consoleLogging==='boolean'?params.asyncLogging.consoleLogging:false;_sdkParams.sdkParams.fullResponseObject=params.fullResponseObject||false;_sdkParams.sdkParams.webrtcConfig=params.webrtcConfig?params.webrtcConfig:null;_sdkParams.sdkParams.chatPingMessageInterval=params.chatPingMessageInterval;_sdkParams.sdkParams.protocol=params.protocol;_sdkParams.sdkParams.callRequestTimeout=typeof params.callRequestTimeout==='number'&&params.callRequestTimeout>=0?params.callRequestTimeout:10000;_sdkParams.sdkParams.callOptions=params.callOptions;var asyncClient,peerId,oldPeerId,//deviceId,
 //db,
@@ -48126,7 +49822,7 @@ return JSON.parse(JSON.stringify(forwardInfo));},/**
              *    - systemMetadata               {string}
              *    - time                         {int}
              *    - timeNanos                    {int}
-             */if(fromCache||pushMessageVO.time.toString().length>14){var time=pushMessageVO.time,timeMiliSeconds=parseInt(pushMessageVO.time/1000000);}else{var time=pushMessageVO.timeNanos?parseInt(parseInt(pushMessageVO.time)/1000)*1000000000+parseInt(pushMessageVO.timeNanos):parseInt(pushMessageVO.time),timeMiliSeconds=parseInt(pushMessageVO.time);}var message={id:pushMessageVO.id,threadId:threadId,ownerId:pushMessageVO.ownerId?pushMessageVO.ownerId:undefined,uniqueId:pushMessageVO.uniqueId,previousId:pushMessageVO.previousId,message:pushMessageVO.message,messageType:pushMessageVO.messageType,edited:pushMessageVO.edited,editable:pushMessageVO.editable,deletable:pushMessageVO.deletable,delivered:pushMessageVO.delivered,seen:pushMessageVO.seen,mentioned:pushMessageVO.mentioned,pinned:pushMessageVO.pinned,participant:undefined,conversation:undefined,replyInfo:undefined,forwardInfo:undefined,metadata:pushMessageVO.metadata,systemMetadata:pushMessageVO.systemMetadata,time:time,timeMiliSeconds:timeMiliSeconds,timeNanos:parseInt(pushMessageVO.timeNanos),callHistory:pushMessageVO.callHistoryVO};if(pushMessageVO.participant){message.ownerId=pushMessageVO.participant.id;}else if(pushMessageVO.participantVO){message.ownerId=pushMessageVO.participantVO.id;}if(pushMessageVO.conversation){message.conversation=formatDataToMakeConversation(pushMessageVO.conversation);message.threadId=pushMessageVO.conversation.id;}if(pushMessageVO.replyInfoVO||pushMessageVO.replyInfo){message.replyInfo=pushMessageVO.replyInfoVO?formatDataToMakeReplyInfo(pushMessageVO.replyInfoVO,threadId):formatDataToMakeReplyInfo(pushMessageVO.replyInfo,threadId);}if(pushMessageVO.forwardInfo){message.forwardInfo=formatDataToMakeForwardInfo(pushMessageVO.forwardInfo,threadId);}if(pushMessageVO.participant){message.participant=formatDataToMakeParticipant(pushMessageVO.participant,threadId);}// return message;
+             */if(fromCache||pushMessageVO.time.toString().length>14){var time=pushMessageVO.time,timeMiliSeconds=parseInt(pushMessageVO.time/1000000);}else{var time=pushMessageVO.timeNanos?parseInt(parseInt(pushMessageVO.time)/1000)*1000000000+parseInt(pushMessageVO.timeNanos):parseInt(pushMessageVO.time),timeMiliSeconds=parseInt(pushMessageVO.time);}var message={id:pushMessageVO.id,threadId:threadId,ownerId:pushMessageVO.ownerId?pushMessageVO.ownerId:undefined,uniqueId:pushMessageVO.uniqueId,previousId:pushMessageVO.previousId,message:filterXSS(pushMessageVO.message),messageType:pushMessageVO.messageType,edited:pushMessageVO.edited,editable:pushMessageVO.editable,deletable:pushMessageVO.deletable,delivered:pushMessageVO.delivered,seen:pushMessageVO.seen,mentioned:pushMessageVO.mentioned,pinned:pushMessageVO.pinned,participant:undefined,conversation:undefined,replyInfo:undefined,forwardInfo:undefined,metadata:pushMessageVO.metadata,systemMetadata:pushMessageVO.systemMetadata,time:time,timeMiliSeconds:timeMiliSeconds,timeNanos:parseInt(pushMessageVO.timeNanos),callHistory:pushMessageVO.callHistoryVO};if(pushMessageVO.participant){message.ownerId=pushMessageVO.participant.id;}else if(pushMessageVO.participantVO){message.ownerId=pushMessageVO.participantVO.id;}if(pushMessageVO.conversation){message.conversation=formatDataToMakeConversation(pushMessageVO.conversation);message.threadId=pushMessageVO.conversation.id;}if(pushMessageVO.replyInfoVO||pushMessageVO.replyInfo){message.replyInfo=pushMessageVO.replyInfoVO?formatDataToMakeReplyInfo(pushMessageVO.replyInfoVO,threadId):formatDataToMakeReplyInfo(pushMessageVO.replyInfo,threadId);}if(pushMessageVO.forwardInfo){message.forwardInfo=formatDataToMakeForwardInfo(pushMessageVO.forwardInfo,threadId);}if(pushMessageVO.participant){message.participant=formatDataToMakeParticipant(pushMessageVO.participant,threadId);}// return message;
 return JSON.parse(JSON.stringify(message));},/**
          * Format Data To Make Pin Message
          *
@@ -48144,7 +49840,7 @@ return JSON.parse(JSON.stringify(message));},/**
              *    - sender                       {int}
              *    - text                         {string}
              *    - notifyAll                    {boolean}
-             */pushMessageVO.time=pushMessageVO.timeNanos?parseInt(parseInt(pushMessageVO.time)/1000)*1000000000+parseInt(pushMessageVO.timeNanos):parseInt(pushMessageVO.time);var pinMessage={threadId:threadId,time:pushMessageVO.time,timeNanos:pushMessageVO.timeNanos,sender:pushMessageVO.sender,messageId:pushMessageVO.messageId,text:pushMessageVO.text,metadata:pushMessageVO.metadata,systemMetadata:pushMessageVO.systemMetadata};if(typeof pushMessageVO.notifyAll==='boolean'){pinMessage.notifyAll=pushMessageVO.notifyAll;}// return pinMessage;
+             */pushMessageVO.time=pushMessageVO.timeNanos?parseInt(parseInt(pushMessageVO.time)/1000)*1000000000+parseInt(pushMessageVO.timeNanos):parseInt(pushMessageVO.time);var pinMessage={threadId:threadId,time:pushMessageVO.time,timeNanos:pushMessageVO.timeNanos,sender:pushMessageVO.sender,messageId:pushMessageVO.messageId,text:filterXSS(pushMessageVO.text),metadata:pushMessageVO.metadata,systemMetadata:pushMessageVO.systemMetadata};if(typeof pushMessageVO.notifyAll==='boolean'){pinMessage.notifyAll=pushMessageVO.notifyAll;}// return pinMessage;
 return JSON.parse(JSON.stringify(pinMessage));},/**
          * Reformat Thread History
          *
@@ -48607,7 +50303,7 @@ uploadImageData.userGroupHash=params.userGroupHash;}else{callback({hasError:true
          *
          * @return {object} Uploaded Image Object
          */uploadImageToPodspaceUserGroupNew=function uploadImageToPodspaceUserGroupNew(params,callback){var fileName,fileType,fileSize,fileWidth=0,fileHeight=0,fileExtension,uploadUniqueId,uploadThreadId;var continueImageUpload=function continueImageUpload(params){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.file=params.image;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to send a image file!'});return;}if(typeof params.userGroupHash=='string'){uploadImageData.userGroupHash=params.userGroupHash;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to enter a userGroupHash to be able to upload on PodSpace!'});return;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.filename=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}uploadImageData.x=parseInt(params.xC)||0;uploadImageData.y=parseInt(params.yC)||0;uploadImageData.height=parseInt(params.hC)||fileHeight;uploadImageData.weight=parseInt(params.wC)||fileWidth;}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_IMAGE_TO_USERGROUP_NEW.replace('{userGroupHash}',uploadImageData.userGroupHash),method:'POST',headers:{'Authorization':'Bearer '+_sdkParams.sdkParams.token},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(response.status<400){response.result.actualHeight=fileHeight;response.result.actualWidth=fileWidth;callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:_store.store.user(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}};fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();var reader=new FileReader();reader.onload=function(e){var image=new Image();image.onload=function(){fileWidth=this.width;fileHeight=this.height;continueImageUpload(params);};image.src=e.target.result;};reader.readAsDataURL(params.image);},sendFileMessage=function sendFileMessage(params,callbacks){var metadata={file:{}},fileUploadParams={},fileUniqueId=typeof params.fileUniqueId=='string'&&params.fileUniqueId.length>0?params.fileUniqueId:_utility["default"].generateUUID();if(params){if(!params.userGroupHash||params.userGroupHash.length===0||typeof params.userGroupHash!=='string'){_events.chatEvents.fireEvent('error',{code:6304,message:CHAT_ERRORS[6304]});return;}else{fileUploadParams.userGroupHash=params.userGroupHash;}return chatUploadHandler({threadId:params.threadId,file:params.file,fileUniqueId:fileUniqueId},function(uploadHandlerResult,uploadHandlerMetadata,fileType,fileExtension){fileUploadParams=Object.assign(fileUploadParams,uploadHandlerResult);putInChatUploadQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-messageType:params.messageType&&typeof params.messageType.toUpperCase()!=='undefined'&&_constants.chatMessageTypes[params.messageType.toUpperCase()]>0?_constants.chatMessageTypes[params.messageType.toUpperCase()]:1,subjectId:params.threadId,repliedTo:params.repliedTo,content:params.content,metadata:JSON.stringify(objectDeepMerger(uploadHandlerMetadata,params.metadata)),systemMetadata:JSON.stringify(params.systemMetadata),uniqueId:fileUniqueId,pushMsgType:3},callbacks:callbacks},function(){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){uploadImageToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){// Send onFileUpload callback result
+messageType:params.messageType&&typeof params.messageType.toUpperCase()!=='undefined'&&_constants.chatMessageTypes[params.messageType.toUpperCase()]>0?_constants.chatMessageTypes[params.messageType.toUpperCase()]:1,subjectId:params.threadId,repliedTo:params.repliedTo,content:filterXSS(params.content),metadata:JSON.stringify(objectDeepMerger(uploadHandlerMetadata,params.metadata)),systemMetadata:JSON.stringify(params.systemMetadata),uniqueId:fileUniqueId,pushMsgType:3},callbacks:callbacks},function(){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){uploadImageToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){// Send onFileUpload callback result
 if((0,_typeof2["default"])(callbacks)==='object'&&callbacks.hasOwnProperty('onFileUpload')){callbacks.onFileUpload&&callbacks.onFileUpload({name:result.result.name,hashCode:result.result.hash,parentHash:result.result.parentHash,size:result.result.size,actualHeight:result.result.actualHeight,actualWidth:result.result.actualWidth,link:"".concat(SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS,"/api/images/").concat(result.result.hash,"?checkUserGroupAccess=true")});}metadata['name']=result.result.name;metadata['fileHash']=result.result.hash;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;metadata['file']['actualHeight']=result.result.actualHeight;metadata['file']['actualWidth']=result.result.actualWidth;metadata['file']['link']="".concat(SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS,"/api/images/").concat(result.result.hash,"?checkUserGroupAccess=true");transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}else{uploadFileToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){metadata['fileHash']=result.result.hash;metadata['name']=result.result.name;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}});});}},/**
          * Delete Cache Database
          *
@@ -48998,8 +50694,8 @@ content:[]};if(params){if(parseInt(params.threadId)>0){sendMessageParams.subject
          *       -forwardedUniqueIds  {string}
          */var content={};if(params){if(typeof params.title==='string'){content.title=params.title;}if(typeof params.type==='string'){var threadType=params.type;content.type=_constants.createThreadTypes[threadType];}if(typeof params.uniqueName==='string'){content.uniqueName=params.uniqueName;}if(Array.isArray(params.invitees)){content.invitees=[];for(var i=0;i<params.invitees.length;i++){var tempInvitee=formatDataToMakeInvitee(params.invitees[i]);if(tempInvitee){content.invitees.push(tempInvitee);}}}if(typeof params.image==='string'){content.image=params.image;}if(typeof params.description==='string'){content.description=params.description;}if(typeof params.metadata==='string'){content.metadata=params.metadata;}else if((0,_typeof2["default"])(params.metadata)==='object'){try{content.metadata=JSON.stringify(params.metadata);}catch(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);}}if((0,_typeof2["default"])(params.message)=='object'){content.message={};if(typeof params.message.text==='string'){content.message.text=params.message.text;}if(typeof params.message.uniqueId==='string'){content.message.uniqueId=params.message.uniqueId;}if(params.message.type>0){content.message.messageType=params.message.type;}if(params.message.repliedTo>0){content.message.repliedTo=params.message.repliedTo;}if(typeof params.message.metadata==='string'){content.message.metadata=params.message.metadata;}else if((0,_typeof2["default"])(params.message.metadata)==='object'){content.message.metadata=JSON.stringify(params.message.metadata);}if(typeof params.message.systemMetadata==='string'){content.message.systemMetadata=params.message.systemMetadata;}else if((0,_typeof2["default"])(params.message.systemMetadata)==='object'){content.message.systemMetadata=JSON.stringify(params.message.systemMetadata);}if(Array.isArray(params.message.forwardedMessageIds)){content.message.forwardedMessageIds=params.message.forwardedMessageIds;content.message.forwardedUniqueIds=[];for(var i=0;i<params.message.forwardedMessageIds.length;i++){content.message.forwardedUniqueIds.push(_utility["default"].generateUUID());}}}}var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.CREATE_THREAD,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 content:content};return(0,_messaging.messenger)().sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}callback&&callback(returnData);}});};publicized.createSelfThread=function(params,callback){var content={type:_constants.createThreadTypes['SELF']};if(params){if(typeof params.description==='string'){content.description=params.description;}if(typeof params.metadata==='string'){content.metadata=params.metadata;}else if((0,_typeof2["default"])(params.metadata)==='object'){try{content.metadata=JSON.stringify(params.metadata);}catch(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);}}if((0,_typeof2["default"])(params.message)=='object'){content.message={};if(typeof params.message.text==='string'){content.message.text=params.message.text;}if(typeof params.message.uniqueId==='string'){content.message.uniqueId=params.message.uniqueId;}if(params.message.type>0){content.message.messageType=params.message.type;}if(params.message.repliedTo>0){content.message.repliedTo=params.message.repliedTo;}if(typeof params.message.metadata==='string'){content.message.metadata=params.message.metadata;}else if((0,_typeof2["default"])(params.message.metadata)==='object'){content.message.metadata=JSON.stringify(params.message.metadata);}if(typeof params.message.systemMetadata==='string'){content.message.systemMetadata=params.message.systemMetadata;}else if((0,_typeof2["default"])(params.message.systemMetadata)==='object'){content.message.systemMetadata=JSON.stringify(params.message.systemMetadata);}if(Array.isArray(params.message.forwardedMessageIds)){content.message.forwardedMessageIds=params.message.forwardedMessageIds;content.message.forwardedUniqueIds=[];for(var i=0;i<params.message.forwardedMessageIds.length;i++){content.message.forwardedUniqueIds.push(_utility["default"].generateUUID());}}}}var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.CREATE_THREAD,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:content};return(0,_messaging.messenger)().sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}callback&&callback(returnData);}});};publicized.replyTextMessagePrivately=function(params,callbacks){var metadata={},uniqueId;if(typeof params.uniqueId!=='undefined'){uniqueId=params.uniqueId;}else{uniqueId=_utility["default"].generateUUID();}var sendContentParams={text:params.textMessage};if(typeof params.invitees!=='undefined'&&params.invitees){sendContentParams.invitees=params.invitees;}if(typeof params.targetThreadId!=='undefined'&&params.targetThreadId){sendContentParams.targetThreadId=params.targetThreadId;}putInChatSendQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.REPLY_PRIVATELY,typeCode:_sdkParams.sdkParams.generalTypeCode,messageType:1,subjectId:params.threadId,repliedTo:params.repliedTo,content:sendContentParams,uniqueId:uniqueId,systemMetadata:JSON.stringify(params.systemMetadata),metadata:JSON.stringify(params.metadata)},callbacks:callbacks},function(){chatSendQueueHandler();},true);return{uniqueId:uniqueId,threadId:params.threadId,participant:_store.store.user(),content:sendContentParams};};publicized.sendTextMessage=function(params,callbacks){var metadata={},uniqueId;if(typeof params.uniqueId!=='undefined'){uniqueId=params.uniqueId;}else{uniqueId=_utility["default"].generateUUID();}putInChatSendQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-messageType:params.messageType&&typeof params.messageType.toUpperCase()!=='undefined'&&_constants.chatMessageTypes[params.messageType.toUpperCase()]>0?_constants.chatMessageTypes[params.messageType.toUpperCase()]:_constants.chatMessageTypes.TEXT,subjectId:params.threadId,repliedTo:params.repliedTo,content:params.textMessage,uniqueId:uniqueId,systemMetadata:JSON.stringify(params.systemMetadata),metadata:JSON.stringify(metadata),pushMsgType:3},callbacks:callbacks},function(){chatSendQueueHandler();});return{uniqueId:uniqueId,threadId:params.threadId,participant:_store.store.user(),content:params.content};};publicized.sendBotMessage=function(params,callbacks){var metadata={};return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.BOT_MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
+content:content};return(0,_messaging.messenger)().sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}callback&&callback(returnData);}});};publicized.replyTextMessagePrivately=function(params,callbacks){var metadata={},uniqueId;if(typeof params.uniqueId!=='undefined'){uniqueId=params.uniqueId;}else{uniqueId=_utility["default"].generateUUID();}var sendContentParams={text:filterXSS(params.textMessage)};if(typeof params.invitees!=='undefined'&&params.invitees){sendContentParams.invitees=params.invitees;}if(typeof params.targetThreadId!=='undefined'&&params.targetThreadId){sendContentParams.targetThreadId=params.targetThreadId;}putInChatSendQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.REPLY_PRIVATELY,typeCode:_sdkParams.sdkParams.generalTypeCode,messageType:1,subjectId:params.threadId,repliedTo:params.repliedTo,content:sendContentParams,uniqueId:uniqueId,systemMetadata:JSON.stringify(params.systemMetadata),metadata:JSON.stringify(params.metadata)},callbacks:callbacks},function(){chatSendQueueHandler();},true);return{uniqueId:uniqueId,threadId:params.threadId,participant:_store.store.user(),content:sendContentParams};};publicized.sendTextMessage=function(params,callbacks){var metadata={},uniqueId;if(typeof params.uniqueId!=='undefined'){uniqueId=params.uniqueId;}else{uniqueId=_utility["default"].generateUUID();}putInChatSendQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
+messageType:params.messageType&&typeof params.messageType.toUpperCase()!=='undefined'&&_constants.chatMessageTypes[params.messageType.toUpperCase()]>0?_constants.chatMessageTypes[params.messageType.toUpperCase()]:_constants.chatMessageTypes.TEXT,subjectId:params.threadId,repliedTo:params.repliedTo,content:filterXSS(params.textMessage),uniqueId:uniqueId,systemMetadata:JSON.stringify(params.systemMetadata),metadata:JSON.stringify(metadata),pushMsgType:3},callbacks:callbacks},function(){chatSendQueueHandler();});return{uniqueId:uniqueId,threadId:params.threadId,participant:_store.store.user(),content:params.content};};publicized.sendBotMessage=function(params,callbacks){var metadata={};return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.BOT_MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 subjectId:params.messageId,content:params.content,uniqueId:params.uniqueId,metadata:metadata,pushMsgType:3},callbacks);};publicized.sendFileMessage=sendFileMessage;publicized.createThreadWithFileMessage=function(params,createThreadCallback,sendFileMessageCallback){/**
          * + CreateThreadRequest      {object}
          *    + invitees              {object}
@@ -49029,11 +50725,11 @@ content:content};return(0,_messaging.messenger)().sendMessage(sendMessageParams,
 };if(params){if(parseInt(params.threadId)>0){clearHistoryParams.subjectId=params.threadId;}}return(0,_messaging.messenger)().sendMessage(clearHistoryParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){returnData.result={thread:result.result};}callback&&callback(returnData);}});};publicized.getImage=getImage;publicized.getFile=getFile;publicized.getFileFromPodspace=getFileFromPodspaceNew;//getFileFromPodspace;
 publicized.getImageFromPodspace=getImageFromPodspaceNew;//getImageFromPodspace;
 publicized.uploadFile=uploadFile;publicized.uploadImage=uploadImage;publicized.uploadFileToPodspace=uploadFileToPodspaceNew;publicized.uploadImageToPodspace=uploadImageToPodspaceNew;publicized.cancelFileUpload=cancelFileUpload;publicized.cancelFileDownload=cancelFileDownload;publicized.editMessage=function(params,callback){return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.EDIT_MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-messageType:params.messageType,subjectId:params.messageId,repliedTo:params.repliedTo,content:params.content,uniqueId:params.uniqueId,metadata:params.metadata,systemMetadata:params.systemMetadata,pushMsgType:3},{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result,resultData={editedMessage:formatDataToMakeMessage(undefined,messageContent)};returnData.result=resultData;}callback&&callback(returnData);}});};publicized.deleteMessage=function(params,callback){return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.DELETE_MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
+messageType:params.messageType,subjectId:params.messageId,repliedTo:params.repliedTo,content:filterXSS(params.content),uniqueId:params.uniqueId,metadata:params.metadata,systemMetadata:params.systemMetadata,pushMsgType:3},{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result,resultData={editedMessage:formatDataToMakeMessage(undefined,messageContent)};returnData.result=resultData;}callback&&callback(returnData);}});};publicized.deleteMessage=function(params,callback){return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.DELETE_MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 subjectId:params.messageId,uniqueId:params.uniqueId,content:JSON.stringify({'deleteForAll':typeof params.deleteForAll==='boolean'?params.deleteForAll:false}),pushMsgType:3},{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){returnData.result={deletedMessage:{id:result.result.id,pinned:result.result.pinned,mentioned:result.result.mentioned,messageType:result.result.messageType,edited:result.result.edited,editable:result.result.editable,deletable:result.result.deletable}};}callback&&callback(returnData);}});};publicized.deleteMultipleMessages=function(params,callback){var messageIdsList=params.messageIds,uniqueIdsList=[];for(var i in messageIdsList){var uniqueId=_utility["default"].generateUUID();uniqueIdsList.push(uniqueId);_store.store.messagesCallbacks[uniqueId]=function(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){returnData.result={deletedMessage:{id:result.result.id,pinned:result.result.pinned,mentioned:result.result.mentioned,messageType:result.result.messageType,edited:result.result.edited,editable:result.result.editable,deletable:result.result.deletable}};}callback&&callback(returnData);};}return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.DELETE_MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 content:{uniqueIds:uniqueIdsList,ids:messageIdsList,deleteForAll:typeof params.deleteForAll==='boolean'?params.deleteForAll:false},pushMsgType:3});};publicized.replyTextMessage=function(params,callbacks){var uniqueId;if(typeof params.uniqueId!=='undefined'){uniqueId=params.uniqueId;}else{uniqueId=_utility["default"].generateUUID();}putInChatSendQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-messageType:1,subjectId:params.threadId,repliedTo:params.repliedTo,content:params.textMessage,uniqueId:uniqueId,systemMetadata:JSON.stringify(params.systemMetadata),metadata:JSON.stringify(params.metadata),pushMsgType:3},callbacks:callbacks},function(){chatSendQueueHandler();});return{uniqueId:uniqueId,threadId:params.threadId,participant:_store.store.user(),content:params.content};};publicized.replyFileMessage=function(params,callbacks){var metadata={file:{}},fileUploadParams={},fileUniqueId=_utility["default"].generateUUID();if(!params.userGroupHash||params.userGroupHash.length===0||typeof params.userGroupHash!=='string'){_events.chatEvents.fireEvent('error',{code:6304,message:CHAT_ERRORS[6304]});return;}else{fileUploadParams.userGroupHash=params.userGroupHash;}return chatUploadHandler({threadId:params.threadId,file:params.file,fileUniqueId:fileUniqueId},function(uploadHandlerResult,uploadHandlerMetadata,fileType,fileExtension){fileUploadParams=Object.assign(fileUploadParams,uploadHandlerResult);putInChatUploadQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-messageType:params.messageType&&typeof params.messageType.toUpperCase()!=='undefined'&&_constants.chatMessageTypes[params.messageType.toUpperCase()]>0?_constants.chatMessageTypes[params.messageType.toUpperCase()]:1,subjectId:params.threadId,repliedTo:params.repliedTo,content:params.content,metadata:JSON.stringify(uploadHandlerMetadata),systemMetadata:JSON.stringify(params.systemMetadata),uniqueId:fileUniqueId,pushMsgType:3},callbacks:callbacks},function(){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){uploadImageToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){metadata['name']=result.result.name;metadata['fileHash']=result.result.hash;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['actualHeight']=result.result.actualHeight;metadata['file']['actualWidth']=result.result.actualWidth;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;metadata['file']['link']="".concat(SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS,"/api/images/").concat(result.result.hash,"?checkUserGroupAccess=true");transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}else{uploadFileToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){metadata['fileHash']=result.result.hash;metadata['name']=result.result.name;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}});});};publicized.replyFileMessagePrivately=function(params,callbacks){var metadata={file:{}},fileUploadParams={},fileUniqueId=_utility["default"].generateUUID();if(!params.userGroupHash||params.userGroupHash.length===0||typeof params.userGroupHash!=='string'){_events.chatEvents.fireEvent('error',{code:6304,message:CHAT_ERRORS[6304]});return;}else{fileUploadParams.userGroupHash=params.userGroupHash;}return chatUploadHandler({threadId:params.threadId,file:params.file,fileUniqueId:fileUniqueId},function(uploadHandlerResult,uploadHandlerMetadata,fileType,fileExtension){fileUploadParams=Object.assign(fileUploadParams,uploadHandlerResult);var sendContentParams={text:params.textMessage};if(typeof params.invitees!=='undefined'&&params.invitees){sendContentParams.invitees=params.invitees;}if(typeof params.targetThreadId!=='undefined'&&params.targetThreadId){sendContentParams.targetThreadId=params.targetThreadId;}putInChatUploadQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.REPLY_PRIVATELY,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
+messageType:1,subjectId:params.threadId,repliedTo:params.repliedTo,content:filterXSS(params.textMessage),uniqueId:uniqueId,systemMetadata:JSON.stringify(params.systemMetadata),metadata:JSON.stringify(params.metadata),pushMsgType:3},callbacks:callbacks},function(){chatSendQueueHandler();});return{uniqueId:uniqueId,threadId:params.threadId,participant:_store.store.user(),content:params.content};};publicized.replyFileMessage=function(params,callbacks){var metadata={file:{}},fileUploadParams={},fileUniqueId=_utility["default"].generateUUID();if(!params.userGroupHash||params.userGroupHash.length===0||typeof params.userGroupHash!=='string'){_events.chatEvents.fireEvent('error',{code:6304,message:CHAT_ERRORS[6304]});return;}else{fileUploadParams.userGroupHash=params.userGroupHash;}return chatUploadHandler({threadId:params.threadId,file:params.file,fileUniqueId:fileUniqueId},function(uploadHandlerResult,uploadHandlerMetadata,fileType,fileExtension){fileUploadParams=Object.assign(fileUploadParams,uploadHandlerResult);putInChatUploadQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
+messageType:params.messageType&&typeof params.messageType.toUpperCase()!=='undefined'&&_constants.chatMessageTypes[params.messageType.toUpperCase()]>0?_constants.chatMessageTypes[params.messageType.toUpperCase()]:1,subjectId:params.threadId,repliedTo:params.repliedTo,content:filterXSS(params.content),metadata:JSON.stringify(uploadHandlerMetadata),systemMetadata:JSON.stringify(params.systemMetadata),uniqueId:fileUniqueId,pushMsgType:3},callbacks:callbacks},function(){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){uploadImageToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){metadata['name']=result.result.name;metadata['fileHash']=result.result.hash;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['actualHeight']=result.result.actualHeight;metadata['file']['actualWidth']=result.result.actualWidth;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;metadata['file']['link']="".concat(SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS,"/api/images/").concat(result.result.hash,"?checkUserGroupAccess=true");transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}else{uploadFileToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){metadata['fileHash']=result.result.hash;metadata['name']=result.result.name;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}});});};publicized.replyFileMessagePrivately=function(params,callbacks){var metadata={file:{}},fileUploadParams={},fileUniqueId=_utility["default"].generateUUID();if(!params.userGroupHash||params.userGroupHash.length===0||typeof params.userGroupHash!=='string'){_events.chatEvents.fireEvent('error',{code:6304,message:CHAT_ERRORS[6304]});return;}else{fileUploadParams.userGroupHash=params.userGroupHash;}return chatUploadHandler({threadId:params.threadId,file:params.file,fileUniqueId:fileUniqueId},function(uploadHandlerResult,uploadHandlerMetadata,fileType,fileExtension){fileUploadParams=Object.assign(fileUploadParams,uploadHandlerResult);var sendContentParams={text:filterXSS(params.textMessage)};if(typeof params.invitees!=='undefined'&&params.invitees){sendContentParams.invitees=params.invitees;}if(typeof params.targetThreadId!=='undefined'&&params.targetThreadId){sendContentParams.targetThreadId=params.targetThreadId;}putInChatUploadQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.REPLY_PRIVATELY,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 messageType:params.messageType&&typeof params.messageType.toUpperCase()!=='undefined'&&_constants.chatMessageTypes[params.messageType.toUpperCase()]>0?_constants.chatMessageTypes[params.messageType.toUpperCase()]:1,subjectId:params.threadId,repliedTo:params.repliedTo,content:sendContentParams,metadata:JSON.stringify(uploadHandlerMetadata),systemMetadata:JSON.stringify(params.systemMetadata),uniqueId:fileUniqueId,pushMsgType:3},callbacks:callbacks},function(){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){uploadImageToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){metadata['name']=result.result.name;metadata['fileHash']=result.result.hash;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['actualHeight']=result.result.actualHeight;metadata['file']['actualWidth']=result.result.actualWidth;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;metadata['file']['link']="".concat(SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS,"/api/images/").concat(result.result.hash,"?checkUserGroupAccess=true");transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}else{uploadFileToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){metadata['fileHash']=result.result.hash;metadata['name']=result.result.name;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}});});};publicized.forwardMessage=function(params,callbacks){var threadId=params.threadId,messageIdsList=params.messageIds,uniqueIdsList=[];for(var i in messageIdsList){if(!_store.store.threadCallbacks[threadId]){_store.store.threadCallbacks[threadId]={};}var uniqueId=_utility["default"].generateUUID();uniqueIdsList.push(uniqueId);_store.store.threadCallbacks[threadId][uniqueId]={};_store.store.sendMessageCallbacks[uniqueId]={};if(callbacks.onSent){_store.store.sendMessageCallbacks[uniqueId].onSent=callbacks.onSent;_store.store.threadCallbacks[threadId][uniqueId].onSent=false;_store.store.threadCallbacks[threadId][uniqueId].uniqueId=uniqueId;}if(callbacks.onSeen){_store.store.sendMessageCallbacks[uniqueId].onSeen=callbacks.onSeen;_store.store.threadCallbacks[threadId][uniqueId].onSeen=false;}if(callbacks.onDeliver){_store.store.sendMessageCallbacks[uniqueId].onDeliver=callbacks.onDeliver;_store.store.threadCallbacks[threadId][uniqueId].onDeliver=false;}}putInChatSendQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.FORWARD_MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 subjectId:params.threadId,repliedTo:params.repliedTo,content:messageIdsList,uniqueId:uniqueIdsList,metadata:JSON.stringify(params.metadata),pushMsgType:3},callbacks:callbacks},function(){chatSendQueueHandler();},true);};publicized.deliver=function(params){return putInMessagesDeliveryQueue(params.threadId,params.messageId);};publicized.seen=function(params){return putInMessagesSeenQueue(params.threadId,params.messageId);};publicized.startTyping=function(params){var uniqueId=_utility["default"].generateUUID();if(parseInt(params.threadId)>0){var threadId=params.threadId;}_sdkParams.sdkParams.isTypingInterval&&clearInterval(_sdkParams.sdkParams.isTypingInterval);_sdkParams.sdkParams.isTypingInterval=setInterval(function(){sendSystemMessage({content:JSON.stringify({type:_constants.systemMessageTypes.IS_TYPING}),threadId:threadId,uniqueId:uniqueId});},_sdkParams.sdkParams.systemMessageIntervalPitch);};publicized.stopTyping=function(){_sdkParams.sdkParams.isTypingInterval&&clearInterval(_sdkParams.sdkParams.isTypingInterval);};publicized.getMessageDeliveredList=function(params,callback){var deliveryListData={chatMessageVOType:_constants.chatMessageVOTypes.GET_MESSAGE_DELIVERY_PARTICIPANTS,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 content:{},pushMsgType:3,token:_sdkParams.sdkParams.token,timeout:params.timeout};if(params){if(parseInt(params.messageId)>0){deliveryListData.content.messageId=params.messageId;}}return(0,_messaging.messenger)().sendMessage(deliveryListData,{onResult:function onResult(result){if((0,_typeof2["default"])(result.result)=='object'){for(var i=0;i<result.result.length;i++){result.result[i]=formatDataToMakeUser(result.result[i]);}}callback&&callback(result);}});};publicized.getMessageSeenList=function(params,callback){var seenListData={chatMessageVOType:_constants.chatMessageVOTypes.GET_MESSAGE_SEEN_PARTICIPANTS,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
@@ -49266,7 +50962,7 @@ token:_sdkParams.sdkParams.token,content:params.content};return(0,_messaging.mes
 window.PodChat=Chat;}var _default=Chat;// })();
 exports["default"]=_default;
 
-},{"./buildConfig.json":273,"./call.module":274,"./deprecateMethods":276,"./events.module":277,"./lib/call/deviceManager.js":284,"./lib/constants":290,"./lib/sdkParams":292,"./lib/store":294,"./lib/store/user":296,"./messaging.module":297,"./utility/utility":298,"@babel/runtime/helpers/interopRequireDefault":18,"@babel/runtime/helpers/toConsumableArray":23,"@babel/runtime/helpers/typeof":24,"podasync-ws-only":1}],276:[function(require,module,exports){
+},{"./buildConfig.json":283,"./call.module":284,"./deprecateMethods":286,"./events.module":287,"./lib/call/deviceManager.js":294,"./lib/constants":300,"./lib/sdkParams":302,"./lib/store":304,"./lib/store/user":306,"./messaging.module":307,"./utility/utility":308,"@babel/runtime/helpers/interopRequireDefault":18,"@babel/runtime/helpers/toConsumableArray":23,"@babel/runtime/helpers/typeof":24,"podasync-ws-only":1,"xss":279}],286:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -49337,7 +51033,7 @@ function printIsDeprecate(key) {
   console.warn("||| Method: " + deprecatedString[key].methodName + " is deprecated! " + (deprecatedString[key].replacementString ? " use " + deprecatedString[key].replacementString + "instead. " : "") + (deprecatedString[key].deprecationDate ? " Deprecation Date: " + deprecatedString[key].deprecationDate : ""));
 }
 
-},{}],277:[function(require,module,exports){
+},{}],287:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -49457,7 +51153,7 @@ function initEventHandler() {
 var _default = ChatEvents;
 exports["default"] = _default;
 
-},{"./lib/sdkParams":292,"./utility/utility":298,"@babel/runtime/helpers/interopRequireDefault":18}],278:[function(require,module,exports){
+},{"./lib/sdkParams":302,"./utility/utility":308,"@babel/runtime/helpers/interopRequireDefault":18}],288:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -50636,7 +52332,7 @@ function ScreenShareStateManager() {
   };
 }
 
-},{"../../events.module":277,"../../utility/utility":298,"../constants":290,"../errorHandler":291,"../sdkParams":292,"../store":294,"./callServerManager":279,"./callUsers":282,"./callsList":283,"./sharedData":287,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/defineProperty":17,"@babel/runtime/helpers/interopRequireDefault":18,"@babel/runtime/regenerator":26}],279:[function(require,module,exports){
+},{"../../events.module":287,"../../utility/utility":308,"../constants":300,"../errorHandler":301,"../sdkParams":302,"../store":304,"./callServerManager":289,"./callUsers":292,"./callsList":293,"./sharedData":297,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/defineProperty":17,"@babel/runtime/helpers/interopRequireDefault":18,"@babel/runtime/regenerator":26}],289:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -50678,7 +52374,7 @@ function CallServerManager() {
 var callServerController = new CallServerManager();
 exports.callServerController = callServerController;
 
-},{"../sdkParams":292}],280:[function(require,module,exports){
+},{"../sdkParams":302}],290:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -51644,7 +53340,7 @@ function CallTopicManager(_ref) {
   return publicized;
 }
 
-},{"../../events.module":277,"../../messaging.module":297,"../errorHandler":291,"../sdkParams":292,"./callsList":283,"./sharedData":287,"./topicMetaDataManager":288,"./webrtcPeer":289,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/interopRequireDefault":18,"@babel/runtime/helpers/toConsumableArray":23,"@babel/runtime/regenerator":26,"kurento-utils":202}],281:[function(require,module,exports){
+},{"../../events.module":287,"../../messaging.module":307,"../errorHandler":301,"../sdkParams":302,"./callsList":293,"./sharedData":297,"./topicMetaDataManager":298,"./webrtcPeer":299,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/interopRequireDefault":18,"@babel/runtime/helpers/toConsumableArray":23,"@babel/runtime/regenerator":26,"kurento-utils":207}],291:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -52267,7 +53963,7 @@ function CallScreenShare(user) {
   return publicized;
 }
 
-},{"../sdkParams":292,"../store":294,"./callTopicManager":280,"./callsList":283,"./deviceStartStopManager":286,"./sharedData":287,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/interopRequireDefault":18,"@babel/runtime/regenerator":26}],282:[function(require,module,exports){
+},{"../sdkParams":302,"../store":304,"./callTopicManager":290,"./callsList":293,"./deviceStartStopManager":296,"./sharedData":297,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/interopRequireDefault":18,"@babel/runtime/regenerator":26}],292:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -52453,7 +54149,7 @@ function CallUsers(_ref) {
   return publicized;
 }
 
-},{"../../events.module":277,"../../messaging.module":297,"../store":294,"./callUser":281,"./callsList":283,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/interopRequireDefault":18,"@babel/runtime/regenerator":26}],283:[function(require,module,exports){
+},{"../../events.module":287,"../../messaging.module":307,"../store":304,"./callUser":291,"./callsList":293,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/interopRequireDefault":18,"@babel/runtime/regenerator":26}],293:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -52572,7 +54268,7 @@ function callsManager() {
   return callsMgr;
 }
 
-},{"../sdkParams":292,"./callManager":278,"./sharedData":287,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/interopRequireDefault":18,"@babel/runtime/regenerator":26}],284:[function(require,module,exports){
+},{"../sdkParams":302,"./callManager":288,"./sharedData":297,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/interopRequireDefault":18,"@babel/runtime/regenerator":26}],294:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -52937,7 +54633,7 @@ var deviceManager = {
 var _default = deviceManager;
 exports["default"] = _default;
 
-},{"../../events.module.js":277,"../constants.js":290,"../errorHandler.js":291,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/interopRequireDefault":18,"@babel/runtime/helpers/typeof":24,"@babel/runtime/regenerator":26}],285:[function(require,module,exports){
+},{"../../events.module.js":287,"../constants.js":300,"../errorHandler.js":301,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/interopRequireDefault":18,"@babel/runtime/helpers/typeof":24,"@babel/runtime/regenerator":26}],295:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -53009,18 +54705,12 @@ function _interopRequireWildcard(obj, nodeInterop) {
   return newObj;
 }
 
-var instanceId = 0;
-
 function MediaStreamManager() {
-  console.log({
-    instanceId: instanceId
-  });
-  instanceId++;
   var deviceStreams = {
     videoIn: null,
     audioIn: null,
     audioOut: null,
-    screenShare1: null
+    screenShare: null
   };
   return {
     setAudioInput: function setAudioInput(stream) {
@@ -53030,8 +54720,7 @@ function MediaStreamManager() {
       deviceStreams.videoIn = stream;
     },
     setScreenShareInput: function setScreenShareInput(stream) {
-      console.log("sss setScreenShareInput", stream);
-      deviceStreams.screenShare1 = stream;
+      deviceStreams.screenShare = stream;
     },
     getVideoInput: function getVideoInput() {
       return deviceStreams.videoIn;
@@ -53040,8 +54729,7 @@ function MediaStreamManager() {
       return deviceStreams.audioIn;
     },
     getScreenShareInput: function getScreenShareInput() {
-      console.log("sss getScreenShareInput", deviceStreams);
-      return deviceStreams.screenShare1;
+      return deviceStreams.screenShare;
     },
     stopAudioInput: function stopAudioInput() {
       return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
@@ -53105,22 +54793,20 @@ function MediaStreamManager() {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                console.log("sss stopScreenShareInput");
-
                 if (deviceStreams.screenShare) {
-                  _context3.next = 3;
+                  _context3.next = 2;
                   break;
                 }
 
                 return _context3.abrupt("return");
 
-              case 3:
+              case 2:
                 deviceStreams.screenShare.getTracks().forEach(function (track) {
                   track.stop();
                 });
                 deviceStreams.screenShare = null;
 
-              case 5:
+              case 4:
               case "end":
                 return _context3.stop();
             }
@@ -53360,7 +55046,7 @@ function DeviceManager() {
 
 ;
 
-},{"../../events.module.js":277,"../constants.js":290,"../errorHandler.js":291,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/interopRequireDefault":18,"@babel/runtime/helpers/typeof":24,"@babel/runtime/regenerator":26}],286:[function(require,module,exports){
+},{"../../events.module.js":287,"../constants.js":300,"../errorHandler.js":301,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/interopRequireDefault":18,"@babel/runtime/helpers/typeof":24,"@babel/runtime/regenerator":26}],296:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -53438,10 +55124,8 @@ function DevicePauseStopManager(_ref) {
   };
 }
 
-},{"../store":294,"./callsList":283}],287:[function(require,module,exports){
+},{"../store":304,"./callsList":293}],297:[function(require,module,exports){
 "use strict";
-
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -53467,8 +55151,6 @@ var _messaging = require("../../messaging.module");
 var _callsList = require("./callsList");
 
 var _store = require("../store");
-
-var _deviceManager = _interopRequireDefault(require("./deviceManager"));
 
 var callStopQueue = {
   callStarted: false
@@ -53616,7 +55298,7 @@ function currentCallMyUser() {
   return currentCall().users().get(_store.store.user().id);
 }
 
-},{"../../events.module":277,"../../messaging.module":297,"../constants":290,"../errorHandler":291,"../sdkParams":292,"../store":294,"./callsList":283,"./deviceManager":284,"@babel/runtime/helpers/interopRequireDefault":18}],288:[function(require,module,exports){
+},{"../../events.module":287,"../../messaging.module":307,"../constants":300,"../errorHandler":301,"../sdkParams":302,"../store":304,"./callsList":293}],298:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -53660,7 +55342,7 @@ function topicMetaDataManager(params) {
   };
 }
 
-},{}],289:[function(require,module,exports){
+},{}],299:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -53903,7 +55585,7 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
   };
 }
 
-},{}],290:[function(require,module,exports){
+},{}],300:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -54138,7 +55820,7 @@ var callMetaDataTypes = {
 };
 exports.callMetaDataTypes = callMetaDataTypes;
 
-},{}],291:[function(require,module,exports){
+},{}],301:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -54301,7 +55983,7 @@ exports.raiseError = raiseError;
 var _default = handleError;
 exports["default"] = _default;
 
-},{"../events.module":277,"@babel/runtime/helpers/defineProperty":17,"@babel/runtime/helpers/interopRequireDefault":18}],292:[function(require,module,exports){
+},{"../events.module":287,"@babel/runtime/helpers/defineProperty":17,"@babel/runtime/helpers/interopRequireDefault":18}],302:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -54356,7 +56038,7 @@ var sdkParams = {
 };
 exports.sdkParams = sdkParams;
 
-},{}],293:[function(require,module,exports){
+},{}],303:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -54382,7 +56064,7 @@ var storeEvents = {
 };
 exports.storeEvents = storeEvents;
 
-},{"@babel/runtime/helpers/interopRequireDefault":18,"events":162}],294:[function(require,module,exports){
+},{"@babel/runtime/helpers/interopRequireDefault":18,"events":167}],304:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -54407,7 +56089,7 @@ var store = {
 };
 exports.store = store;
 
-},{"./eventEmitter":293,"./threads":295,"./user":296}],295:[function(require,module,exports){
+},{"./eventEmitter":303,"./threads":305,"./user":306}],305:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -54585,7 +56267,7 @@ function ThreadObject(thread) {
   };
 }
 
-},{"./eventEmitter":293,"@babel/runtime/helpers/defineProperty":17,"@babel/runtime/helpers/interopRequireDefault":18}],296:[function(require,module,exports){
+},{"./eventEmitter":303,"@babel/runtime/helpers/defineProperty":17,"@babel/runtime/helpers/interopRequireDefault":18}],306:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -54603,7 +56285,7 @@ function user() {
   return localUser;
 }
 
-},{}],297:[function(require,module,exports){
+},{}],307:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -54956,7 +56638,7 @@ function messenger() {
 var _default = ChatMessaging;
 exports["default"] = _default;
 
-},{"./lib/constants":290,"./lib/errorHandler":291,"./lib/sdkParams":292,"./lib/store":294,"./utility/utility":298,"@babel/runtime/helpers/interopRequireDefault":18,"@babel/runtime/helpers/typeof":24,"dompurify":144}],298:[function(require,module,exports){
+},{"./lib/constants":300,"./lib/errorHandler":301,"./lib/sdkParams":302,"./lib/store":304,"./utility/utility":308,"@babel/runtime/helpers/interopRequireDefault":18,"@babel/runtime/helpers/typeof":24,"dompurify":149}],308:[function(require,module,exports){
 (function (global){(function (){
 "use strict";
 
@@ -55543,4 +57225,4 @@ var _default = new ChatUtility();
 exports["default"] = _default;
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"@babel/runtime/helpers/interopRequireDefault":18,"@babel/runtime/helpers/typeof":24,"crypto-js":107}]},{},[275]);
+},{"@babel/runtime/helpers/interopRequireDefault":18,"@babel/runtime/helpers/typeof":24,"crypto-js":107}]},{},[285]);
