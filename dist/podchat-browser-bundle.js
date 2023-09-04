@@ -45841,7 +45841,7 @@ FilterXSS.prototype.process = function (html) {
 module.exports = FilterXSS;
 
 },{"./default":273,"./parser":275,"./util":276,"cssfilter":122}],278:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.23","date":"۱۴۰۲/۶/۱۲","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.7-snapshot.23","date":"۱۴۰۲/۶/۱۳","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],279:[function(require,module,exports){
 "use strict";
 
@@ -50895,7 +50895,6 @@ function CallManager(_ref) {
 
   function createSessionInChat() {
     _sharedData.callStopQueue.callStarted = true;
-    startCall();
 
     var message = {
       id: 'CREATE_SESSION',
@@ -50915,10 +50914,6 @@ function CallManager(_ref) {
       timeoutTime: 4000,
       timeoutRetriesCount: 5
     });
-  }
-
-  function startCall() {
-    config.users.startCall();
   }
 
   function callStop() {
@@ -53605,59 +53600,6 @@ function CallUsers(_ref) {
     return config.list[userId];
   }
 
-  function startCall() {
-    for (var i in config.list) {
-      if (i === "screenShare") {
-        if ((0, _callsList.callsManager)().get(config.callId).screenShareInfo.isStarted()) addScreenShareToCall('receive', false);
-        continue;
-      }
-
-      if (config.list[i].video) {
-        config.list[i].startParticipantVideo(i);
-      }
-
-      if (config.list[i].mute !== undefined && !config.list[i].mute) {
-        config.list[i].startParticipantAudio(i);
-      }
-    }
-  }
-
-  function addScreenShareToCall(direction, shareScreen) {
-    if (direction !== config.list["screenShare"].direction) {
-      config.list['screenShare'].direction = direction;
-      config.list['screenShare'].videoTopicManager().setDirection(direction);
-    }
-
-    config.list['screenShare'].videoTopicManager().setIsScreenShare(shareScreen);
-    var screenShare = config.list["screenShare"];
-
-    if (!screenShare.videoTopicManager.getPeer()) {
-      if (!screenShare.htmlElements[screenShare.videoTopicName]) {
-        config.list['screenShare'].generateHTMLElements('screenShare');
-      }
-
-      setTimeout(function () {
-        config.list['screenShare'].appendUserToCallDiv('screenShare');
-        screenShare.videoTopicManager.createTopic();
-      });
-
-      _events.chatEvents.fireEvent('callEvents', {
-        type: 'CALL_DIVS',
-        result: config.generateCallUIList()
-      });
-    } else {
-      screenShare.videoTopicManager().removeTopic();
-
-      if (!screenShare.htmlElements[screenShare.user().videoTopicName]) {
-        config.list['screenShare'].generateHTMLElements('screenShare');
-      }
-
-      config.list['screenShare'].appendUserToCallDiv();
-      screenShare.videoTopicManager().createTopic();
-      config.list['screenShare'].videoTopicManager().startMedia(); // startMedia(screenShare.htmlElements[screenShare.videoTopicName])
-    }
-  }
-
   var publicized = {
     addItem: function addItem(memberObject) {
       var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "user";
@@ -53695,7 +53637,6 @@ function CallUsers(_ref) {
       return config.list;
     },
     getHTMLElements: getHTMLElements,
-    startCall: startCall,
     generateCallUIList: function generateCallUIList() {
       var me = _store.store.user().id,
           callUIElements = {};

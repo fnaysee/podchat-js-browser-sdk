@@ -120,7 +120,6 @@ function CallManager(_ref) {
 
   function createSessionInChat() {
     _sharedData.callStopQueue.callStarted = true;
-    startCall();
 
     var message = {
       id: 'CREATE_SESSION',
@@ -140,10 +139,6 @@ function CallManager(_ref) {
       timeoutTime: 4000,
       timeoutRetriesCount: 5
     });
-  }
-
-  function startCall() {
-    config.users.startCall();
   }
 
   function callStop() {

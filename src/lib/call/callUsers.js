@@ -18,58 +18,6 @@ function CallUsers({callId}) {
         return config.list[userId];
     }
 
-    function startCall() {
-        for (let i in config.list) {
-            if (i === "screenShare") {
-                if (callsManager().get(config.callId).screenShareInfo.isStarted())
-                    addScreenShareToCall('receive', false);
-
-                continue;
-            }
-
-            if (config.list[i].video) {
-                config.list[i].startParticipantVideo(i);
-            }
-
-            if (config.list[i].mute !== undefined && !config.list[i].mute) {
-                config.list[i].startParticipantAudio(i);
-            }
-        }
-    }
-
-    function addScreenShareToCall(direction, shareScreen) {
-        if (direction !== config.list["screenShare"].direction) {
-            config.list['screenShare'].direction = direction;
-            config.list['screenShare'].videoTopicManager().setDirection(direction);
-        }
-        config.list['screenShare'].videoTopicManager().setIsScreenShare(shareScreen);
-
-        let screenShare = config.list["screenShare"];
-        if (!screenShare.videoTopicManager.getPeer()) {
-            if (!screenShare.htmlElements[screenShare.videoTopicName]) {
-                config.list['screenShare'].generateHTMLElements('screenShare');
-            }
-            setTimeout(function () {
-                config.list['screenShare'].appendUserToCallDiv('screenShare');
-                screenShare.videoTopicManager.createTopic();
-            });
-            chatEvents.fireEvent('callEvents', {
-                type: 'CALL_DIVS',
-                result: config.generateCallUIList()
-            });
-        } else {
-            screenShare.videoTopicManager().removeTopic();
-            if (!screenShare.htmlElements[screenShare.user().videoTopicName]) {
-                config.list['screenShare'].generateHTMLElements('screenShare');
-            }
-            config.list['screenShare'].appendUserToCallDiv();
-            screenShare.videoTopicManager().createTopic();
-
-            config.list['screenShare'].videoTopicManager().startMedia()
-            // startMedia(screenShare.htmlElements[screenShare.videoTopicName])
-        }
-    }
-
     const publicized = {
         addItem(memberObject, type = "user") {
             if (type == 'user')
@@ -89,7 +37,6 @@ function CallUsers({callId}) {
             return config.list
         },
         getHTMLElements,
-        startCall,
         generateCallUIList: function () {
             let me = store.user().id
                 , callUIElements = {};

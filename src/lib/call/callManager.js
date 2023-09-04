@@ -96,7 +96,6 @@ function CallManager({callId, callConfig}) {
 
     function createSessionInChat() {
         callStopQueue.callStarted = true;
-        startCall();
 
         let message = {
                 id: 'CREATE_SESSION',
@@ -119,10 +118,6 @@ function CallManager({callId, callConfig}) {
                 timeoutRetriesCount: 5
             }
         )
-    }
-
-    function startCall() {
-        config.users.startCall();
     }
 
     async function callStop(resetCurrentCallId = true, resetCameraPaused = true) {
