@@ -12082,6 +12082,23 @@ function Chat(params) {
             }
         });
     };
+    publicized.getMyReaction = function (params, callback) {
+        let sendData = {
+            chatMessageVOType: chatMessageVOTypes.GET_MY_REACTION,
+            subjectId: params.threadId,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            content: {
+                messageId: params.messageId
+            },
+            token: sdkParams.token
+        };
+
+        return messenger().sendMessage(sendData, {
+            onResult: function (result) {
+                callback && callback(result);
+            }
+        });
+    };
 
     publicized.replaceReaction = function (params, callback) {
         let sendData = {

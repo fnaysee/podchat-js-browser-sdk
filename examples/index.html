@@ -1999,6 +1999,7 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
         <button type="button" name="button" id="replyPrivatelyButton">reply privately</button>
         <button type="button" name="button" id="getPinMessage">get pin message</button>
         <button type="button" name="button" id="addReaction">Add Reaction</button>
+        <button type="button" name="button" id="getMyReaction">Get My Reaction</button>
         <button type="button" name="button" id="removeReaction">Remove Reaction</button>
         <button type="button" name="button" id="replaceReaction">Replace Reaction</button>
         <button type="button" name="button" id="reactionList">Reaction list</button>
@@ -2758,6 +2759,20 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
                 console.log(result);
             });
         });
+        /**
+     * Get My Reaction
+     */
+    document.getElementById("getMyReaction")
+        .addEventListener("click", function () {
+            chatAgent.getMyReaction({
+                threadId: 58920,
+                messageId: 518904677,
+            }, function (result) {
+                console.log("Get my reaction...", result)
+                console.log(result);
+            });
+        });
+
     /**
      * REMOVE REACTION
      */
