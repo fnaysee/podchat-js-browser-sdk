@@ -2979,6 +2979,14 @@ function Chat(params) {
                         store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
                     }
                     break;
+                /**
+                 * Type 243   Get My Reaction
+                 */
+                case chatMessageVOTypes.GET_MY_REACTION:
+                    if (store.messagesCallbacks[uniqueId]) {
+                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+                    }
+                    break;
 
                 /**
                  Type 244   REACTION_COUNT

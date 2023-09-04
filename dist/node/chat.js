@@ -504,6 +504,8 @@ break;/**
                  */case _constants.chatMessageVOTypes.REMOVE_REACTION:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}_events.chatEvents.fireEvent('messageEvents',{type:'REMOVE_REACTION',result:messageContent});break;/**
                  * Type 242    REACTION_LIST
                  */case _constants.chatMessageVOTypes.REACTION_LIST:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+                 * Type 243   Get My Reaction
+                 */case _constants.chatMessageVOTypes.GET_MY_REACTION:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
                  Type 244   REACTION_COUNT
                  */case _constants.chatMessageVOTypes.REACTION_COUNT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,messageContent.message,messageContent.code,messageContent,0));}break;/**
                  * Type 999   All unknown errors
