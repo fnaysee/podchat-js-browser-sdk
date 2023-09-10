@@ -9,6 +9,11 @@ const errorList = {
         code: 12002,
         message:"[SDK] Async is not connected"
     },
+    REQUEST_BLOCKED: {
+        code: 12003,
+        message:`[SDK] Requests to {methodName} has been blocked for next {seconds} seconds.`,
+        variables: ['{methodName}', '{seconds}']
+    },
     /**
      * 12350-12399
      */
@@ -78,7 +83,7 @@ const errorList = {
      */
     INVALID_STICKER_NAME: {
         code: 12700,
-            message: "[SDK] Invalid sticker name. Use SDK.callStickerTypes"
+        message: "[SDK] Invalid sticker name. Use SDK.callStickerTypes"
     },
 };
 
@@ -90,6 +95,13 @@ const handleError = function (error) {
 
     return item[0];
 };
+
+function getFilledErrorObject(errorObject) {
+    for(let i in errorObject.variables) {
+        errorObject.message = errorObject.message.replace(errorObject.variables[i], errorObject.replacements[i])
+    }
+    return errorObject;
+}
 
 const raiseError = function (errorObject, callback, fireEvent = false, {
     eventName = 'error',
@@ -113,4 +125,4 @@ const raiseError = function (errorObject, callback, fireEvent = false, {
 }
 
 export default handleError
-export {errorList, raiseError}
+export {errorList, raiseError, getFilledErrorObject}

@@ -73,7 +73,8 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
 
       stream.getTracks().forEach(function (track) {
         config.peerConnection.addTrack(track, stream);
-      });
+      }); // if(config.mediaType === "video")
+
       streamElement.play();
     }
 
@@ -105,7 +106,7 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
 
   function setRemoteStream() {
     if (config.direction != 'send') {
-      config.streamElement.pause();
+      // config.streamElement.pause()
       var _stream = config.peerConnection.getRemoteStreams()[0];
       config.streamElement.srcObject = _stream;
       config.streamElement.load();

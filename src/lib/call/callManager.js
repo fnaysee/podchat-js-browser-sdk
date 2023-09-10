@@ -785,10 +785,11 @@ function CallManager({callId, callConfig}) {
                     // )
                 }
             }
-
-            chatEvents.fireEvent('callEvents', {
-                type: 'CALL_DIVS',
-                result: config.users.generateCallUIList()
+            setTimeout(function () {
+                chatEvents.fireEvent('callEvents', {
+                    type: 'CALL_DIVS',
+                    result: config.users.generateCallUIList()
+                });
             });
 
             chatEvents.fireEvent('callEvents', {
@@ -796,7 +797,7 @@ function CallManager({callId, callConfig}) {
                 result: messageContent
             });
         },
-        handleParticipantUnMute(messageContent) {
+        async handleParticipantUnMute(messageContent) {
             let myId = store.user().id;
 
             if (Array.isArray(messageContent)) {
@@ -804,30 +805,36 @@ function CallManager({callId, callConfig}) {
                     let user = config.users.get(messageContent[i].userId)
                     if (user) {
                         if(user.audioTopicManager()) {
-                            continue;
-                        } else {
-                            user.startAudio(messageContent[i].sendTopic);
+                            await user.stopAudio();
                         }
+
+                        user.startAudio(messageContent[i].sendTopic);
                     }
                 }
             }
-
-            chatEvents.fireEvent('callEvents', {
-                type: 'CALL_DIVS',
-                result: config.users.generateCallUIList()
-            });
+            setTimeout(function () {
+                chatEvents.fireEvent('callEvents', {
+                    type: 'CALL_DIVS',
+                    result: config.users.generateCallUIList()
+                });
+            })
 
             chatEvents.fireEvent('callEvents', {
                 type: 'CALL_PARTICIPANT_UNMUTE',
                 result: messageContent
             });
         },
-        handleParticipantVideoOn(messageContent) {
+        async handleParticipantVideoOn(messageContent) {
             if (Array.isArray(messageContent)) {
                 for (let i in messageContent) {
                     let user = config.users.get(messageContent[i].userId);
-                    if(user)
+                    if(user){
+                        if(user.audioTopicManager()) {
+                            await user.stopAudio();
+                        }
                         user.startVideo(messageContent[i].sendTopic);
+                    }
+
                 }
             }
 

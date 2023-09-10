@@ -17,8 +17,6 @@ var _errorHandler = require("../errorHandler");
 
 var _sdkParams = require("../sdkParams");
 
-var _kurentoUtils = _interopRequireDefault(require("kurento-utils"));
-
 var _events = require("../../events.module");
 
 var _topicMetaDataManager = require("./topicMetaDataManager");
@@ -172,14 +170,18 @@ function CallTopicManager(_ref) {
         var options = {
           mediaConstraints: mediaConstraints,
           // iceTransportPolicy: 'relay',
-          onicecandidate: function onicecandidate(candidate) {
-            topicManager.watchForIceCandidates(candidate);
-          },
+          // onicecandidate: (candidate) => {
+          //     topicManager.watchForIceCandidates(candidate)
+          // },
           configuration: {
             iceServers: currentCall().getTurnServer(currentCall().callConfig())
           }
-        };
-        options.streamElement = config.htmlElement;
+        }; //
+        // if(config.mediaType == 'audio' && config.direction == 'send'){
+        //     options.streamElement = new Audio();
+        // } else {
+
+        options.streamElement = config.htmlElement; // }
 
         if (config.direction === 'send') {
           if (config.mediaType === 'video') {
@@ -247,30 +249,27 @@ function CallTopicManager(_ref) {
         _sdkParams.sdkParams.consoleLogging && console.log("[SDK][getSdpOfferOptions] ", "topic: ", config.topic, "mediaType: ", config.mediaType, "direction: ", config.direction, "options: ", options);
       });
     },
-    watchForIceCandidates: function watchForIceCandidates(candidate) {
-      var manager = this;
-
-      if (metadataInstance.isIceCandidateIntervalSet()) {
-        return;
-      } //callUsers[config.userId].topicMetaData[config.topic].interval
-
-
-      metadataInstance.setIceCandidateInterval(setInterval(function () {
-        if (config.topicMetaData.sdpAnswerReceived === true) {
-          _sdkParams.sdkParams.consoleLogging && console.log("[SDK][watchForIceCandidates][setInterval] sdpAnswerReceived, topic:", config.topic);
-          config.topicMetaData.sdpAnswerReceived = false; // manager.removeTopicIceCandidateInterval();
-
-          metadataInstance.clearIceCandidateInterval();
-          currentCall().sendCallMessage({
-            id: 'ADD_ICE_CANDIDATE',
-            topic: config.topic,
-            candidateDto: candidate
-          }, null, {});
-        }
-      }, 500, {
-        candidate: candidate
-      }));
-    },
+    // watchForIceCandidates: function (candidate) {
+    //     let manager = this;
+    //
+    //     if (metadataInstance.isIceCandidateIntervalSet()) {
+    //         return;
+    //     }
+    //     //callUsers[config.userId].topicMetaData[config.topic].interval
+    //     metadataInstance.setIceCandidateInterval(setInterval(function () {
+    //         if (config.topicMetaData.sdpAnswerReceived === true) {
+    //             sdkParams.consoleLogging && console.log("[SDK][watchForIceCandidates][setInterval] sdpAnswerReceived, topic:", config.topic)
+    //             config.topicMetaData.sdpAnswerReceived = false;
+    //             // manager.removeTopicIceCandidateInterval();
+    //             metadataInstance.clearIceCandidateInterval();
+    //             currentCall().sendCallMessage({
+    //                 id: 'ADD_ICE_CANDIDATE',
+    //                 topic: config.topic,
+    //                 candidateDto: candidate
+    //             }, null, {})
+    //         }
+    //     }, 500, {candidate: candidate}));
+    // },
     establishPeerConnection: function establishPeerConnection(options) {
       var WebRtcFunction = config.direction === 'send' ? 'WebRtcPeerSendonly' : 'WebRtcPeerRecvonly',
           manager = this,

@@ -65,7 +65,7 @@ function WebrtcPeerConnection({
             stream.getTracks().forEach(function (track) {
                 config.peerConnection.addTrack(track, stream)
             });
-
+            // if(config.mediaType === "video")
             streamElement.play();
         }
 
@@ -96,7 +96,7 @@ function WebrtcPeerConnection({
 
     function setRemoteStream() {
         if (config.direction != 'send') {
-            config.streamElement.pause()
+            // config.streamElement.pause()
 
             let stream = config.peerConnection.getRemoteStreams()[0]
             config.streamElement.srcObject = stream
@@ -197,7 +197,7 @@ function WebrtcPeerConnection({
             config.peerConnection.setRemoteDescription(answer)
                 .then(() => {
                     if (config.direction != 'send') {
-                        setRemoteStream()
+                        setRemoteStream();
                     }
 
                     callback && callback();

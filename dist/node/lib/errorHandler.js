@@ -5,7 +5,9 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.raiseError = exports.errorList = exports["default"] = void 0;
+exports.errorList = exports["default"] = void 0;
+exports.getFilledErrorObject = getFilledErrorObject;
+exports.raiseError = void 0;
 
 var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
 
@@ -23,6 +25,11 @@ var errorList = {
   SOCKET_NOT_CONNECTED: {
     code: 12002,
     message: "[SDK] Async is not connected"
+  },
+  REQUEST_BLOCKED: {
+    code: 12003,
+    message: "[SDK] Requests to {methodName} has been blocked for next {seconds} seconds.",
+    variables: ['{methodName}', '{seconds}']
   },
 
   /**
@@ -106,6 +113,14 @@ var handleError = function handleError(error) {
   if (!item.length) return {};
   return item[0];
 };
+
+function getFilledErrorObject(errorObject) {
+  for (var i in errorObject.variables) {
+    errorObject.message = errorObject.message.replace(errorObject.variables[i], errorObject.replacements[i]);
+  }
+
+  return errorObject;
+}
 
 var raiseError = function raiseError(errorObject, callback) {
   var fireEvent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;

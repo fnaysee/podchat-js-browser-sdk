@@ -45841,7 +45841,7 @@ FilterXSS.prototype.process = function (html) {
 module.exports = FilterXSS;
 
 },{"./default":273,"./parser":275,"./util":276,"cssfilter":122}],278:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.25","date":"۱۴۰۲/۶/۱۳","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.7-snapshot.25","date":"۱۴۰۲/۶/۱۹","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],279:[function(require,module,exports){
 "use strict";
 
@@ -45855,6 +45855,8 @@ Object.defineProperty(exports, "__esModule", {
 exports["default"] = void 0;
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
+
+var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
 
 var _objectDestructuringEmpty2 = _interopRequireDefault(require("@babel/runtime/helpers/objectDestructuringEmpty"));
 
@@ -45885,6 +45887,8 @@ var _store = require("./lib/store");
 var _messaging = require("./messaging.module");
 
 var _deviceManager = require("./lib/call/deviceManager2");
+
+var requestBlocker = _interopRequireWildcard(require("./lib/requestBlocker"));
 
 function _getRequireWildcardCache(nodeInterop) {
   if (typeof WeakMap !== "function") return null;
@@ -45934,6 +45938,32 @@ function _interopRequireWildcard(obj, nodeInterop) {
   }
 
   return newObj;
+}
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    enumerableOnly && (symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    })), keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = null != arguments[i] ? arguments[i] : {};
+    i % 2 ? ownKeys(Object(source), !0).forEach(function (key) {
+      (0, _defineProperty2["default"])(target, key, source[key]);
+    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) {
+      Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+    });
+  }
+
+  return target;
 }
 
 function ChatCall(params) {
@@ -46563,6 +46593,8 @@ function ChatCall(params) {
         if (_store.store.messagesCallbacks[uniqueId]) {
           _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
+
+        messageContent.uniqueId = uniqueId;
 
         _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'CALL_PARTICIPANT_RECONNECTING',
@@ -48075,16 +48107,25 @@ function ChatCall(params) {
   };
 
   this.muteCallParticipants = function (params, callback) {
+    if (requestBlocker.isKeyBlocked(requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE)) {
+      (0, _errorHandler.raiseError)((0, _errorHandler.getFilledErrorObject)(_objectSpread(_objectSpread({}, _errorHandler.errorList.REQUEST_BLOCKED), {}, {
+        replacements: ['muteCallParticipants', requestBlocker.getRemainingTime(requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE)]
+      })), callback, true, {});
+      return;
+    }
     /**
      * + muteCallParticipantsRequest     {object}
      *    - subjectId                   {int}
      *    + content                     {list} List of Participants UserIds
      */
+
+
     var sendMessageParams = {
       chatMessageVOType: _constants.chatMessageVOTypes.MUTE_CALL_PARTICIPANT,
       typeCode: _sdkParams.sdkParams.generalTypeCode,
       //params.typeCode,
-      content: []
+      content: [],
+      uniqueId: _utility["default"].generateUUID()
     };
 
     if (params) {
@@ -48097,6 +48138,10 @@ function ChatCall(params) {
       }
     }
 
+    requestBlocker.add({
+      key: requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE,
+      uniqueId: sendMessageParams.uniqueId
+    });
     return (0, _messaging.messenger)().sendMessage(sendMessageParams, {
       onResult: function onResult(result) {
         var returnData = {
@@ -48117,16 +48162,25 @@ function ChatCall(params) {
   };
 
   this.unMuteCallParticipants = function (params, callback) {
+    if (requestBlocker.isKeyBlocked(requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE)) {
+      (0, _errorHandler.raiseError)((0, _errorHandler.getFilledErrorObject)(_objectSpread(_objectSpread({}, _errorHandler.errorList.REQUEST_BLOCKED), {}, {
+        replacements: ['unMuteCallParticipants', requestBlocker.getRemainingTime(requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE)]
+      })), callback, true, {});
+      return;
+    }
     /**
      * + unMuteCallParticipantsRequest     {object}
      *    - subjectId                   {int}
      *    + content                     {list} List of Participants UserIds
      */
+
+
     var sendMessageParams = {
       chatMessageVOType: _constants.chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT,
       typeCode: _sdkParams.sdkParams.generalTypeCode,
       //params.typeCode,
-      content: []
+      content: [],
+      uniqueId: _utility["default"].generateUUID()
     };
 
     if (params) {
@@ -48139,6 +48193,10 @@ function ChatCall(params) {
       }
     }
 
+    requestBlocker.add({
+      key: requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE,
+      uniqueId: sendMessageParams.uniqueId
+    });
     return (0, _messaging.messenger)().sendMessage(sendMessageParams, {
       onResult: function onResult(result) {
         var returnData = {
@@ -48159,12 +48217,20 @@ function ChatCall(params) {
   };
 
   this.turnOnVideoCall = function (params, callback) {
+    if (requestBlocker.isKeyBlocked(requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE)) {
+      (0, _errorHandler.raiseError)((0, _errorHandler.getFilledErrorObject)(_objectSpread(_objectSpread({}, _errorHandler.errorList.REQUEST_BLOCKED), {}, {
+        replacements: ['turnOnVideoCall', requestBlocker.getRemainingTime(requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE)]
+      })), callback, true, {});
+      return;
+    }
+
     var turnOnVideoData = {
       chatMessageVOType: _constants.chatMessageVOTypes.TURN_ON_VIDEO_CALL,
       typeCode: _sdkParams.sdkParams.generalTypeCode,
       //params.typeCode,
       pushMsgType: 3,
-      token: _sdkParams.sdkParams.token
+      token: _sdkParams.sdkParams.token,
+      uniqueId: _utility["default"].generateUUID()
     };
 
     if (params) {
@@ -48205,6 +48271,10 @@ function ChatCall(params) {
       return;
     }
 
+    requestBlocker.add({
+      key: requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE,
+      uniqueId: turnOnVideoData.uniqueId
+    });
     return (0, _messaging.messenger)().sendMessage(turnOnVideoData, {
       onResult: function onResult(result) {
         callback && callback(result);
@@ -48213,12 +48283,20 @@ function ChatCall(params) {
   };
 
   this.turnOffVideoCall = function (params, callback) {
+    if (requestBlocker.isKeyBlocked(requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE)) {
+      (0, _errorHandler.raiseError)((0, _errorHandler.getFilledErrorObject)(_objectSpread(_objectSpread({}, _errorHandler.errorList.REQUEST_BLOCKED), {}, {
+        replacements: ['turnOffVideoCall', requestBlocker.getRemainingTime(requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE)]
+      })), callback, true, {});
+      return;
+    }
+
     var turnOffVideoData = {
       chatMessageVOType: _constants.chatMessageVOTypes.TURN_OFF_VIDEO_CALL,
       typeCode: _sdkParams.sdkParams.generalTypeCode,
       //params.typeCode,
       pushMsgType: 3,
-      token: _sdkParams.sdkParams.token
+      token: _sdkParams.sdkParams.token,
+      uniqueId: _utility["default"].generateUUID()
     };
 
     if (params) {
@@ -48259,6 +48337,10 @@ function ChatCall(params) {
       return;
     }
 
+    requestBlocker.add({
+      key: requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE,
+      uniqueId: turnOffVideoData.uniqueId
+    });
     return (0, _messaging.messenger)().sendMessage(turnOffVideoData, {
       onResult: function onResult(result) {
         callback && callback(result);
@@ -48525,7 +48607,7 @@ function ChatCall(params) {
 var _default = ChatCall;
 exports["default"] = _default;
 
-},{"./events.module.js":282,"./lib/call/callServerManager":284,"./lib/call/callsList":288,"./lib/call/deviceManager2":290,"./lib/call/sharedData":292,"./lib/constants":295,"./lib/errorHandler":296,"./lib/sdkParams":297,"./lib/store":299,"./messaging.module":302,"./utility/utility":303,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/objectDestructuringEmpty":8,"@babel/runtime/helpers/typeof":11,"@babel/runtime/regenerator":13,"kurento-utils":197}],280:[function(require,module,exports){
+},{"./events.module.js":282,"./lib/call/callServerManager":284,"./lib/call/callsList":288,"./lib/call/deviceManager2":290,"./lib/call/sharedData":292,"./lib/constants":295,"./lib/errorHandler":296,"./lib/requestBlocker":297,"./lib/sdkParams":298,"./lib/store":300,"./messaging.module":303,"./utility/utility":304,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/defineProperty":4,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/objectDestructuringEmpty":8,"@babel/runtime/helpers/typeof":11,"@babel/runtime/regenerator":13,"kurento-utils":197}],280:[function(require,module,exports){
 'use strict';var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");var _typeof3=require("@babel/runtime/helpers/typeof");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _podasyncWsOnly=_interopRequireDefault(require("podasync-ws-only"));var _utility=_interopRequireDefault(require("./utility/utility"));var _call=_interopRequireDefault(require("./call.module"));var _sdkParams=require("./lib/sdkParams");var _events=_interopRequireWildcard(require("./events.module"));var _messaging=require("./messaging.module");var _buildConfig=_interopRequireDefault(require("./buildConfig.json"));var _deprecateMethods=require("./deprecateMethods");var _xss=_interopRequireDefault(require("xss"));var _constants=require("./lib/constants");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));var _store=require("./lib/store");var _user=require("./lib/store/user");function _getRequireWildcardCache(nodeInterop){if(typeof WeakMap!=="function")return null;var cacheBabelInterop=new WeakMap();var cacheNodeInterop=new WeakMap();return(_getRequireWildcardCache=function _getRequireWildcardCache(nodeInterop){return nodeInterop?cacheNodeInterop:cacheBabelInterop;})(nodeInterop);}function _interopRequireWildcard(obj,nodeInterop){if(!nodeInterop&&obj&&obj.__esModule){return obj;}if(obj===null||_typeof3(obj)!=="object"&&typeof obj!=="function"){return{"default":obj};}var cache=_getRequireWildcardCache(nodeInterop);if(cache&&cache.has(obj)){return cache.get(obj);}var newObj={};var hasPropertyDescriptor=Object.defineProperty&&Object.getOwnPropertyDescriptor;for(var key in obj){if(key!=="default"&&Object.prototype.hasOwnProperty.call(obj,key)){var desc=hasPropertyDescriptor?Object.getOwnPropertyDescriptor(obj,key):null;if(desc&&(desc.get||desc.set)){Object.defineProperty(newObj,key,desc);}else{newObj[key]=obj[key];}}}newObj["default"]=obj;if(cache){cache.set(obj,newObj);}return newObj;}function Chat(params){/*******************************************************
      *          P R I V A T E   V A R I A B L E S          *
      *******************************************************/_sdkParams.sdkParams.token=params.token||"111";_sdkParams.sdkParams.generalTypeCode=params.typeCode||'default';_sdkParams.sdkParams.typeCodeOwnerId=params.typeCodeOwnerId||null;_sdkParams.sdkParams.mapApiKey=params.mapApiKey||'8b77db18704aa646ee5aaea13e7370f4f88b9e8c';_sdkParams.sdkParams.productEnv=typeof navigator!='undefined'?navigator.product:'undefined';_sdkParams.sdkParams.forceWaitQueueInMemory=params.forceWaitQueueInMemory&&typeof params.forceWaitQueueInMemory==='boolean'?params.forceWaitQueueInMemory:false;_sdkParams.sdkParams.grantDeviceIdFromSSO=params.grantDeviceIdFromSSO&&typeof params.grantDeviceIdFromSSO==='boolean'?params.grantDeviceIdFromSSO:false;_sdkParams.sdkParams.deliveryIntervalPitch=params.deliveryIntervalPitch||2000;_sdkParams.sdkParams.seenIntervalPitch=params.seenIntervalPitch||2000;_sdkParams.sdkParams.systemMessageIntervalPitch=params.systemMessageIntervalPitch||1000;_sdkParams.sdkParams.socketAddress=params.socketAddress;_sdkParams.sdkParams.serverName=params.serverName;_sdkParams.sdkParams.wsConnectionWaitTime=params.wsConnectionWaitTime;_sdkParams.sdkParams.connectionRetryInterval=params.connectionRetryInterval;_sdkParams.sdkParams.msgPriority=params.msgPriority;_sdkParams.sdkParams.messageTtl=params.messageTtl||10000;_sdkParams.sdkParams.reconnectOnClose=params.reconnectOnClose;_sdkParams.sdkParams.asyncLogging=params.asyncLogging;_sdkParams.sdkParams.connectionCheckTimeout=params.connectionCheckTimeout;_sdkParams.sdkParams.httpRequestTimeout=params.httpRequestTimeout>=0?params.httpRequestTimeout:0;_sdkParams.sdkParams.asyncRequestTimeout=typeof params.asyncRequestTimeout==='number'&&params.asyncRequestTimeout>=0?params.asyncRequestTimeout:0;_sdkParams.sdkParams.connectionCheckTimeoutThreshold=params.connectionCheckTimeoutThreshold;_sdkParams.sdkParams.httpUploadRequestTimeout=params.httpUploadRequestTimeout>=0?params.httpUploadRequestTimeout:0;_sdkParams.sdkParams.actualTimingLog=params.asyncLogging.actualTiming&&typeof params.asyncLogging.actualTiming==='boolean'?params.asyncLogging.actualTiming:false;_sdkParams.sdkParams.consoleLogging=params.asyncLogging.consoleLogging&&typeof params.asyncLogging.consoleLogging==='boolean'?params.asyncLogging.consoleLogging:false;_sdkParams.sdkParams.fullResponseObject=params.fullResponseObject||false;_sdkParams.sdkParams.webrtcConfig=params.webrtcConfig?params.webrtcConfig:null;_sdkParams.sdkParams.chatPingMessageInterval=params.chatPingMessageInterval;_sdkParams.sdkParams.protocol=params.protocol;_sdkParams.sdkParams.callRequestTimeout=typeof params.callRequestTimeout==='number'&&params.callRequestTimeout>=0?params.callRequestTimeout:10000;_sdkParams.sdkParams.callOptions=params.callOptions;var asyncClient,peerId,oldPeerId,//deviceId,
@@ -50562,7 +50644,7 @@ token:_sdkParams.sdkParams.token,content:params.content};return(0,_messaging.mes
 window.PodChat=Chat;}var _default=Chat;// })();
 exports["default"]=_default;
 
-},{"./buildConfig.json":278,"./call.module":279,"./deprecateMethods":281,"./events.module":282,"./lib/call/deviceManager.js":289,"./lib/constants":295,"./lib/sdkParams":297,"./lib/store":299,"./lib/store/user":301,"./messaging.module":302,"./utility/utility":303,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/toConsumableArray":10,"@babel/runtime/helpers/typeof":11,"podasync-ws-only":216,"xss":274}],281:[function(require,module,exports){
+},{"./buildConfig.json":278,"./call.module":279,"./deprecateMethods":281,"./events.module":282,"./lib/call/deviceManager.js":289,"./lib/constants":295,"./lib/sdkParams":298,"./lib/store":300,"./lib/store/user":302,"./messaging.module":303,"./utility/utility":304,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/toConsumableArray":10,"@babel/runtime/helpers/typeof":11,"podasync-ws-only":216,"xss":274}],281:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -50753,7 +50835,7 @@ function initEventHandler() {
 var _default = ChatEvents;
 exports["default"] = _default;
 
-},{"./lib/sdkParams":297,"./utility/utility":303,"@babel/runtime/helpers/interopRequireDefault":5}],283:[function(require,module,exports){
+},{"./lib/sdkParams":298,"./utility/utility":304,"@babel/runtime/helpers/interopRequireDefault":5}],283:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -50924,17 +51006,17 @@ function CallManager(_ref) {
   }
 
   function _callStop() {
-    _callStop = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3() {
+    _callStop = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5() {
       var resetCurrentCallId,
           resetCameraPaused,
-          _args3 = arguments;
-      return _regenerator["default"].wrap(function _callee3$(_context3) {
+          _args5 = arguments;
+      return _regenerator["default"].wrap(function _callee5$(_context5) {
         while (1) {
-          switch (_context3.prev = _context3.next) {
+          switch (_context5.prev = _context5.next) {
             case 0:
-              resetCurrentCallId = _args3.length > 0 && _args3[0] !== undefined ? _args3[0] : true;
-              resetCameraPaused = _args3.length > 1 && _args3[1] !== undefined ? _args3[1] : true;
-              _context3.next = 4;
+              resetCurrentCallId = _args5.length > 0 && _args5[0] !== undefined ? _args5[0] : true;
+              resetCameraPaused = _args5.length > 1 && _args5[1] !== undefined ? _args5[1] : true;
+              _context5.next = 4;
               return config.users.destroy();
 
             case 4:
@@ -50952,10 +51034,10 @@ function CallManager(_ref) {
 
             case 9:
             case "end":
-              return _context3.stop();
+              return _context5.stop();
           }
         }
-      }, _callee3);
+      }, _callee5);
     }));
     return _callStop.apply(this, arguments);
   }
@@ -51667,51 +51749,6 @@ function CallManager(_ref) {
         }
       }
 
-      _events.chatEvents.fireEvent('callEvents', {
-        type: 'CALL_DIVS',
-        result: config.users.generateCallUIList()
-      });
-
-      _events.chatEvents.fireEvent('callEvents', {
-        type: 'CALL_PARTICIPANT_MUTE',
-        result: messageContent
-      });
-    },
-    handleParticipantUnMute: function handleParticipantUnMute(messageContent) {
-      var myId = _store.store.user().id;
-
-      if (Array.isArray(messageContent)) {
-        for (var i in messageContent) {
-          var user = config.users.get(messageContent[i].userId);
-
-          if (user) {
-            if (user.audioTopicManager()) {
-              continue;
-            } else {
-              user.startAudio(messageContent[i].sendTopic);
-            }
-          }
-        }
-      }
-
-      _events.chatEvents.fireEvent('callEvents', {
-        type: 'CALL_DIVS',
-        result: config.users.generateCallUIList()
-      });
-
-      _events.chatEvents.fireEvent('callEvents', {
-        type: 'CALL_PARTICIPANT_UNMUTE',
-        result: messageContent
-      });
-    },
-    handleParticipantVideoOn: function handleParticipantVideoOn(messageContent) {
-      if (Array.isArray(messageContent)) {
-        for (var i in messageContent) {
-          var user = config.users.get(messageContent[i].userId);
-          if (user) user.startVideo(messageContent[i].sendTopic);
-        }
-      }
-
       setTimeout(function () {
         _events.chatEvents.fireEvent('callEvents', {
           type: 'CALL_DIVS',
@@ -51720,9 +51757,139 @@ function CallManager(_ref) {
       });
 
       _events.chatEvents.fireEvent('callEvents', {
-        type: 'TURN_ON_VIDEO_CALL',
+        type: 'CALL_PARTICIPANT_MUTE',
         result: messageContent
       });
+    },
+    handleParticipantUnMute: function handleParticipantUnMute(messageContent) {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
+        var myId, i, user;
+        return _regenerator["default"].wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                myId = _store.store.user().id;
+
+                if (!Array.isArray(messageContent)) {
+                  _context2.next = 13;
+                  break;
+                }
+
+                _context2.t0 = _regenerator["default"].keys(messageContent);
+
+              case 3:
+                if ((_context2.t1 = _context2.t0()).done) {
+                  _context2.next = 13;
+                  break;
+                }
+
+                i = _context2.t1.value;
+                user = config.users.get(messageContent[i].userId);
+
+                if (!user) {
+                  _context2.next = 11;
+                  break;
+                }
+
+                if (!user.audioTopicManager()) {
+                  _context2.next = 10;
+                  break;
+                }
+
+                _context2.next = 10;
+                return user.stopAudio();
+
+              case 10:
+                user.startAudio(messageContent[i].sendTopic);
+
+              case 11:
+                _context2.next = 3;
+                break;
+
+              case 13:
+                setTimeout(function () {
+                  _events.chatEvents.fireEvent('callEvents', {
+                    type: 'CALL_DIVS',
+                    result: config.users.generateCallUIList()
+                  });
+                });
+
+                _events.chatEvents.fireEvent('callEvents', {
+                  type: 'CALL_PARTICIPANT_UNMUTE',
+                  result: messageContent
+                });
+
+              case 15:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }))();
+    },
+    handleParticipantVideoOn: function handleParticipantVideoOn(messageContent) {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3() {
+        var i, user;
+        return _regenerator["default"].wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                if (!Array.isArray(messageContent)) {
+                  _context3.next = 12;
+                  break;
+                }
+
+                _context3.t0 = _regenerator["default"].keys(messageContent);
+
+              case 2:
+                if ((_context3.t1 = _context3.t0()).done) {
+                  _context3.next = 12;
+                  break;
+                }
+
+                i = _context3.t1.value;
+                user = config.users.get(messageContent[i].userId);
+
+                if (!user) {
+                  _context3.next = 10;
+                  break;
+                }
+
+                if (!user.audioTopicManager()) {
+                  _context3.next = 9;
+                  break;
+                }
+
+                _context3.next = 9;
+                return user.stopAudio();
+
+              case 9:
+                user.startVideo(messageContent[i].sendTopic);
+
+              case 10:
+                _context3.next = 2;
+                break;
+
+              case 12:
+                setTimeout(function () {
+                  _events.chatEvents.fireEvent('callEvents', {
+                    type: 'CALL_DIVS',
+                    result: config.users.generateCallUIList()
+                  });
+                });
+
+                _events.chatEvents.fireEvent('callEvents', {
+                  type: 'TURN_ON_VIDEO_CALL',
+                  result: messageContent
+                });
+
+              case 14:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3);
+      }))();
     },
     handleParticipantVideoOff: function handleParticipantVideoOff(messageContent) {
       if (Array.isArray(messageContent)) {
@@ -51795,18 +51962,18 @@ function CallManager(_ref) {
       });
     },
     handleEndScreenShare: function handleEndScreenShare(messageContent) {
-      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
-        return _regenerator["default"].wrap(function _callee2$(_context2) {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4() {
+        return _regenerator["default"].wrap(function _callee4$(_context4) {
           while (1) {
-            switch (_context2.prev = _context2.next) {
+            switch (_context4.prev = _context4.next) {
               case 0:
                 config.screenShareInfo.setIsStarted(false);
                 config.screenShareInfo.setOwner(messageContent.screenOwner.id);
-                _context2.next = 4;
+                _context4.next = 4;
                 return config.users.removeItem('screenShare');
 
               case 4:
-                _context2.next = 6;
+                _context4.next = 6;
                 return config.deviceManager.mediaStreams.stopScreenShareInput();
 
               case 6:
@@ -51822,10 +51989,10 @@ function CallManager(_ref) {
 
               case 8:
               case "end":
-                return _context2.stop();
+                return _context4.stop();
             }
           }
-        }, _callee2);
+        }, _callee4);
       }))();
     },
     onChatConnectionReconnect: function onChatConnectionReconnect() {
@@ -51927,7 +52094,7 @@ function ScreenShareStateManager() {
   };
 }
 
-},{"../../events.module":282,"../../utility/utility":303,"../constants":295,"../errorHandler":296,"../sdkParams":297,"../store":299,"./callServerManager":284,"./callUsers":287,"./callsList":288,"./sharedData":292,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/defineProperty":4,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/regenerator":13}],284:[function(require,module,exports){
+},{"../../events.module":282,"../../utility/utility":304,"../constants":295,"../errorHandler":296,"../sdkParams":298,"../store":300,"./callServerManager":284,"./callUsers":287,"./callsList":288,"./sharedData":292,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/defineProperty":4,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/regenerator":13}],284:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -51969,7 +52136,7 @@ function CallServerManager() {
 var callServerController = new CallServerManager();
 exports.callServerController = callServerController;
 
-},{"../sdkParams":297}],285:[function(require,module,exports){
+},{"../sdkParams":298}],285:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -51988,8 +52155,6 @@ var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers
 var _errorHandler = require("../errorHandler");
 
 var _sdkParams = require("../sdkParams");
-
-var _kurentoUtils = _interopRequireDefault(require("kurento-utils"));
 
 var _events = require("../../events.module");
 
@@ -52144,14 +52309,18 @@ function CallTopicManager(_ref) {
         var options = {
           mediaConstraints: mediaConstraints,
           // iceTransportPolicy: 'relay',
-          onicecandidate: function onicecandidate(candidate) {
-            topicManager.watchForIceCandidates(candidate);
-          },
+          // onicecandidate: (candidate) => {
+          //     topicManager.watchForIceCandidates(candidate)
+          // },
           configuration: {
             iceServers: currentCall().getTurnServer(currentCall().callConfig())
           }
-        };
-        options.streamElement = config.htmlElement;
+        }; //
+        // if(config.mediaType == 'audio' && config.direction == 'send'){
+        //     options.streamElement = new Audio();
+        // } else {
+
+        options.streamElement = config.htmlElement; // }
 
         if (config.direction === 'send') {
           if (config.mediaType === 'video') {
@@ -52219,30 +52388,27 @@ function CallTopicManager(_ref) {
         _sdkParams.sdkParams.consoleLogging && console.log("[SDK][getSdpOfferOptions] ", "topic: ", config.topic, "mediaType: ", config.mediaType, "direction: ", config.direction, "options: ", options);
       });
     },
-    watchForIceCandidates: function watchForIceCandidates(candidate) {
-      var manager = this;
-
-      if (metadataInstance.isIceCandidateIntervalSet()) {
-        return;
-      } //callUsers[config.userId].topicMetaData[config.topic].interval
-
-
-      metadataInstance.setIceCandidateInterval(setInterval(function () {
-        if (config.topicMetaData.sdpAnswerReceived === true) {
-          _sdkParams.sdkParams.consoleLogging && console.log("[SDK][watchForIceCandidates][setInterval] sdpAnswerReceived, topic:", config.topic);
-          config.topicMetaData.sdpAnswerReceived = false; // manager.removeTopicIceCandidateInterval();
-
-          metadataInstance.clearIceCandidateInterval();
-          currentCall().sendCallMessage({
-            id: 'ADD_ICE_CANDIDATE',
-            topic: config.topic,
-            candidateDto: candidate
-          }, null, {});
-        }
-      }, 500, {
-        candidate: candidate
-      }));
-    },
+    // watchForIceCandidates: function (candidate) {
+    //     let manager = this;
+    //
+    //     if (metadataInstance.isIceCandidateIntervalSet()) {
+    //         return;
+    //     }
+    //     //callUsers[config.userId].topicMetaData[config.topic].interval
+    //     metadataInstance.setIceCandidateInterval(setInterval(function () {
+    //         if (config.topicMetaData.sdpAnswerReceived === true) {
+    //             sdkParams.consoleLogging && console.log("[SDK][watchForIceCandidates][setInterval] sdpAnswerReceived, topic:", config.topic)
+    //             config.topicMetaData.sdpAnswerReceived = false;
+    //             // manager.removeTopicIceCandidateInterval();
+    //             metadataInstance.clearIceCandidateInterval();
+    //             currentCall().sendCallMessage({
+    //                 id: 'ADD_ICE_CANDIDATE',
+    //                 topic: config.topic,
+    //                 candidateDto: candidate
+    //             }, null, {})
+    //         }
+    //     }, 500, {candidate: candidate}));
+    // },
     establishPeerConnection: function establishPeerConnection(options) {
       var WebRtcFunction = config.direction === 'send' ? 'WebRtcPeerSendonly' : 'WebRtcPeerRecvonly',
           manager = this,
@@ -52939,7 +53105,7 @@ function CallTopicManager(_ref) {
   return publicized;
 }
 
-},{"../../events.module":282,"../../messaging.module":302,"../errorHandler":296,"../sdkParams":297,"./callsList":288,"./sharedData":292,"./topicMetaDataManager":293,"./webrtcPeer":294,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/toConsumableArray":10,"@babel/runtime/regenerator":13,"kurento-utils":197}],286:[function(require,module,exports){
+},{"../../events.module":282,"../../messaging.module":303,"../errorHandler":296,"../sdkParams":298,"./callsList":288,"./sharedData":292,"./topicMetaDataManager":293,"./webrtcPeer":294,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/toConsumableArray":10,"@babel/runtime/regenerator":13}],286:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -53562,7 +53728,7 @@ function CallScreenShare(user) {
   return publicized;
 }
 
-},{"../sdkParams":297,"../store":299,"./callTopicManager":285,"./callsList":288,"./deviceStartStopManager":291,"./sharedData":292,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/regenerator":13}],287:[function(require,module,exports){
+},{"../sdkParams":298,"../store":300,"./callTopicManager":285,"./callsList":288,"./deviceStartStopManager":291,"./sharedData":292,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/regenerator":13}],287:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -53694,7 +53860,7 @@ function CallUsers(_ref) {
   return publicized;
 }
 
-},{"../../events.module":282,"../../messaging.module":302,"../store":299,"./callUser":286,"./callsList":288,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/regenerator":13}],288:[function(require,module,exports){
+},{"../../events.module":282,"../../messaging.module":303,"../store":300,"./callUser":286,"./callsList":288,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/regenerator":13}],288:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -53813,7 +53979,7 @@ function callsManager() {
   return callsMgr;
 }
 
-},{"../sdkParams":297,"./callManager":283,"./sharedData":292,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/regenerator":13}],289:[function(require,module,exports){
+},{"../sdkParams":298,"./callManager":283,"./sharedData":292,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/regenerator":13}],289:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -54669,7 +54835,7 @@ function DevicePauseStopManager(_ref) {
   };
 }
 
-},{"../store":299,"./callsList":288}],292:[function(require,module,exports){
+},{"../store":300,"./callsList":288}],292:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -54843,7 +55009,7 @@ function currentCallMyUser() {
   return currentCall().users().get(_store.store.user().id);
 }
 
-},{"../../events.module":282,"../../messaging.module":302,"../constants":295,"../errorHandler":296,"../sdkParams":297,"../store":299,"./callsList":288}],293:[function(require,module,exports){
+},{"../../events.module":282,"../../messaging.module":303,"../constants":295,"../errorHandler":296,"../sdkParams":298,"../store":300,"./callsList":288}],293:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -54963,7 +55129,8 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
 
       stream.getTracks().forEach(function (track) {
         config.peerConnection.addTrack(track, stream);
-      });
+      }); // if(config.mediaType === "video")
+
       streamElement.play();
     }
 
@@ -54995,7 +55162,7 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
 
   function setRemoteStream() {
     if (config.direction != 'send') {
-      config.streamElement.pause();
+      // config.streamElement.pause()
       var _stream = config.peerConnection.getRemoteStreams()[0];
       config.streamElement.srcObject = _stream;
       config.streamElement.load();
@@ -55374,7 +55541,9 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.raiseError = exports.errorList = exports["default"] = void 0;
+exports.errorList = exports["default"] = void 0;
+exports.getFilledErrorObject = getFilledErrorObject;
+exports.raiseError = void 0;
 
 var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
 
@@ -55414,6 +55583,11 @@ var errorList = {
   SOCKET_NOT_CONNECTED: {
     code: 12002,
     message: "[SDK] Async is not connected"
+  },
+  REQUEST_BLOCKED: {
+    code: 12003,
+    message: "[SDK] Requests to {methodName} has been blocked for next {seconds} seconds.",
+    variables: ['{methodName}', '{seconds}']
   },
 
   /**
@@ -55498,6 +55672,14 @@ var handleError = function handleError(error) {
   return item[0];
 };
 
+function getFilledErrorObject(errorObject) {
+  for (var i in errorObject.variables) {
+    errorObject.message = errorObject.message.replace(errorObject.variables[i], errorObject.replacements[i]);
+  }
+
+  return errorObject;
+}
+
 var raiseError = function raiseError(errorObject, callback) {
   var fireEvent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
@@ -55530,6 +55712,103 @@ var _default = handleError;
 exports["default"] = _default;
 
 },{"../events.module":282,"@babel/runtime/helpers/defineProperty":4,"@babel/runtime/helpers/interopRequireDefault":5}],297:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.add = add;
+exports.getRemainingTime = getRemainingTime;
+exports.isKeyBlocked = isKeyBlocked;
+exports.limitedTypes = void 0;
+exports.remove = remove;
+var requestsList = [];
+var limitedTypes = {
+  START_STOP_CALL: "START_STOP_CALL",
+  START_STOP_VIDEO_VOICE: 'START_STOP_VIDEO_VOICE'
+};
+exports.limitedTypes = limitedTypes;
+
+function find(key) {
+  return requestsList.find(function (item) {
+    return item && item.key == key;
+  });
+}
+
+function add(_ref) {
+  var uniqueId = _ref.uniqueId,
+      _ref$time = _ref.time,
+      time = _ref$time === void 0 ? null : _ref$time,
+      key = _ref.key,
+      _ref$blockTimeSeconds = _ref.blockTimeSeconds,
+      blockTimeSeconds = _ref$blockTimeSeconds === void 0 ? 1 : _ref$blockTimeSeconds; // if(!uniqueId)
+  //     uniqueId = Utility.generateUUID();
+
+  if (!time) time = new Date().getTime(); // chatEvents.fireEvent("requestBlocker", {
+  //     type: "REQUESTS_BLOCKED",
+  //     key: key
+  // });
+
+  blockTimeSeconds *= 1000;
+  requestsList.push({
+    uniqueId: uniqueId,
+    time: time,
+    key: key,
+    blockTimeSeconds: blockTimeSeconds,
+    timeout: setTimeout(function () {
+      remove(uniqueId);
+    }, blockTimeSeconds)
+  });
+}
+
+function isKeyBlocked(key) {
+  var filteredRequest = find(key);
+
+  if (!filteredRequest) {
+    return false;
+  }
+
+  var cTime = new Date().getTime();
+
+  if (filteredRequest.time + filteredRequest.blockTimeSeconds > cTime) {
+    // alert(`Request Blocked
+    // \nSDK Prevents fast calls to specific apis. Please prevent this in your UI.
+    // \nCurrent api can be requested after at least ${filteredRequests[i].blockTimeSeconds} seconds.`);
+    return true;
+  } else {
+    remove(filteredRequest.uniqueId);
+  }
+
+  return false;
+}
+
+function remove(uniqueId) {
+  var index = requestsList.findIndex(function (item) {
+    return item && item.uniqueId == uniqueId;
+  });
+
+  if (index > -1) {
+    // if(requestsList[index].time + 8000 < new Date().getTime()) {
+    clearTimeout(requestsList[index].timeout);
+    delete requestsList[index]; // }
+  }
+}
+
+function getRemainingTime(key) {
+  var filteredRequest = find(key);
+
+  if (!filteredRequest) {
+    return 0;
+  }
+
+  var cTime = new Date().getTime();
+  console.log({
+    filteredRequest: filteredRequest
+  }, filteredRequest.time + filteredRequest.blockTimeSeconds - cTime);
+  return new Date(filteredRequest.time + filteredRequest.blockTimeSeconds - cTime).getSeconds();
+}
+
+},{}],298:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -55584,7 +55863,7 @@ var sdkParams = {
 };
 exports.sdkParams = sdkParams;
 
-},{}],298:[function(require,module,exports){
+},{}],299:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -55610,7 +55889,7 @@ var storeEvents = {
 };
 exports.storeEvents = storeEvents;
 
-},{"@babel/runtime/helpers/interopRequireDefault":5,"events":154}],299:[function(require,module,exports){
+},{"@babel/runtime/helpers/interopRequireDefault":5,"events":154}],300:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -55635,7 +55914,7 @@ var store = {
 };
 exports.store = store;
 
-},{"./eventEmitter":298,"./threads":300,"./user":301}],300:[function(require,module,exports){
+},{"./eventEmitter":299,"./threads":301,"./user":302}],301:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -55813,7 +56092,7 @@ function ThreadObject(thread) {
   };
 }
 
-},{"./eventEmitter":298,"@babel/runtime/helpers/defineProperty":4,"@babel/runtime/helpers/interopRequireDefault":5}],301:[function(require,module,exports){
+},{"./eventEmitter":299,"@babel/runtime/helpers/defineProperty":4,"@babel/runtime/helpers/interopRequireDefault":5}],302:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -55831,7 +56110,7 @@ function user() {
   return localUser;
 }
 
-},{}],302:[function(require,module,exports){
+},{}],303:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -56184,7 +56463,7 @@ function messenger() {
 var _default = ChatMessaging;
 exports["default"] = _default;
 
-},{"./lib/constants":295,"./lib/errorHandler":296,"./lib/sdkParams":297,"./lib/store":299,"./utility/utility":303,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":11,"dompurify":136}],303:[function(require,module,exports){
+},{"./lib/constants":295,"./lib/errorHandler":296,"./lib/sdkParams":298,"./lib/store":300,"./utility/utility":304,"@babel/runtime/helpers/interopRequireDefault":5,"@babel/runtime/helpers/typeof":11,"dompurify":136}],304:[function(require,module,exports){
 (function (global){(function (){
 "use strict";
 

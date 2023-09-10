@@ -11,6 +11,8 @@ exports["default"] = void 0;
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
+var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
+
 var _objectDestructuringEmpty2 = _interopRequireDefault(require("@babel/runtime/helpers/objectDestructuringEmpty"));
 
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
@@ -41,9 +43,15 @@ var _messaging = require("./messaging.module");
 
 var _deviceManager = require("./lib/call/deviceManager2");
 
+var requestBlocker = _interopRequireWildcard(require("./lib/requestBlocker"));
+
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof3(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 
 function ChatCall(params) {
   var _sdkParams$callOption, _sdkParams$callOption2;
@@ -672,6 +680,8 @@ function ChatCall(params) {
         if (_store.store.messagesCallbacks[uniqueId]) {
           _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
+
+        messageContent.uniqueId = uniqueId;
 
         _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'CALL_PARTICIPANT_RECONNECTING',
@@ -2184,16 +2194,25 @@ function ChatCall(params) {
   };
 
   this.muteCallParticipants = function (params, callback) {
+    if (requestBlocker.isKeyBlocked(requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE)) {
+      (0, _errorHandler.raiseError)((0, _errorHandler.getFilledErrorObject)(_objectSpread(_objectSpread({}, _errorHandler.errorList.REQUEST_BLOCKED), {}, {
+        replacements: ['muteCallParticipants', requestBlocker.getRemainingTime(requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE)]
+      })), callback, true, {});
+      return;
+    }
     /**
      * + muteCallParticipantsRequest     {object}
      *    - subjectId                   {int}
      *    + content                     {list} List of Participants UserIds
      */
+
+
     var sendMessageParams = {
       chatMessageVOType: _constants.chatMessageVOTypes.MUTE_CALL_PARTICIPANT,
       typeCode: _sdkParams.sdkParams.generalTypeCode,
       //params.typeCode,
-      content: []
+      content: [],
+      uniqueId: _utility["default"].generateUUID()
     };
 
     if (params) {
@@ -2206,6 +2225,10 @@ function ChatCall(params) {
       }
     }
 
+    requestBlocker.add({
+      key: requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE,
+      uniqueId: sendMessageParams.uniqueId
+    });
     return (0, _messaging.messenger)().sendMessage(sendMessageParams, {
       onResult: function onResult(result) {
         var returnData = {
@@ -2226,16 +2249,25 @@ function ChatCall(params) {
   };
 
   this.unMuteCallParticipants = function (params, callback) {
+    if (requestBlocker.isKeyBlocked(requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE)) {
+      (0, _errorHandler.raiseError)((0, _errorHandler.getFilledErrorObject)(_objectSpread(_objectSpread({}, _errorHandler.errorList.REQUEST_BLOCKED), {}, {
+        replacements: ['unMuteCallParticipants', requestBlocker.getRemainingTime(requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE)]
+      })), callback, true, {});
+      return;
+    }
     /**
      * + unMuteCallParticipantsRequest     {object}
      *    - subjectId                   {int}
      *    + content                     {list} List of Participants UserIds
      */
+
+
     var sendMessageParams = {
       chatMessageVOType: _constants.chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT,
       typeCode: _sdkParams.sdkParams.generalTypeCode,
       //params.typeCode,
-      content: []
+      content: [],
+      uniqueId: _utility["default"].generateUUID()
     };
 
     if (params) {
@@ -2248,6 +2280,10 @@ function ChatCall(params) {
       }
     }
 
+    requestBlocker.add({
+      key: requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE,
+      uniqueId: sendMessageParams.uniqueId
+    });
     return (0, _messaging.messenger)().sendMessage(sendMessageParams, {
       onResult: function onResult(result) {
         var returnData = {
@@ -2268,12 +2304,20 @@ function ChatCall(params) {
   };
 
   this.turnOnVideoCall = function (params, callback) {
+    if (requestBlocker.isKeyBlocked(requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE)) {
+      (0, _errorHandler.raiseError)((0, _errorHandler.getFilledErrorObject)(_objectSpread(_objectSpread({}, _errorHandler.errorList.REQUEST_BLOCKED), {}, {
+        replacements: ['turnOnVideoCall', requestBlocker.getRemainingTime(requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE)]
+      })), callback, true, {});
+      return;
+    }
+
     var turnOnVideoData = {
       chatMessageVOType: _constants.chatMessageVOTypes.TURN_ON_VIDEO_CALL,
       typeCode: _sdkParams.sdkParams.generalTypeCode,
       //params.typeCode,
       pushMsgType: 3,
-      token: _sdkParams.sdkParams.token
+      token: _sdkParams.sdkParams.token,
+      uniqueId: _utility["default"].generateUUID()
     };
 
     if (params) {
@@ -2314,6 +2358,10 @@ function ChatCall(params) {
       return;
     }
 
+    requestBlocker.add({
+      key: requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE,
+      uniqueId: turnOnVideoData.uniqueId
+    });
     return (0, _messaging.messenger)().sendMessage(turnOnVideoData, {
       onResult: function onResult(result) {
         callback && callback(result);
@@ -2322,12 +2370,20 @@ function ChatCall(params) {
   };
 
   this.turnOffVideoCall = function (params, callback) {
+    if (requestBlocker.isKeyBlocked(requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE)) {
+      (0, _errorHandler.raiseError)((0, _errorHandler.getFilledErrorObject)(_objectSpread(_objectSpread({}, _errorHandler.errorList.REQUEST_BLOCKED), {}, {
+        replacements: ['turnOffVideoCall', requestBlocker.getRemainingTime(requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE)]
+      })), callback, true, {});
+      return;
+    }
+
     var turnOffVideoData = {
       chatMessageVOType: _constants.chatMessageVOTypes.TURN_OFF_VIDEO_CALL,
       typeCode: _sdkParams.sdkParams.generalTypeCode,
       //params.typeCode,
       pushMsgType: 3,
-      token: _sdkParams.sdkParams.token
+      token: _sdkParams.sdkParams.token,
+      uniqueId: _utility["default"].generateUUID()
     };
 
     if (params) {
@@ -2368,6 +2424,10 @@ function ChatCall(params) {
       return;
     }
 
+    requestBlocker.add({
+      key: requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE,
+      uniqueId: turnOffVideoData.uniqueId
+    });
     return (0, _messaging.messenger)().sendMessage(turnOffVideoData, {
       onResult: function onResult(result) {
         callback && callback(result);

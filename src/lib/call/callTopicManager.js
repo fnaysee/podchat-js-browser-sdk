@@ -1,6 +1,5 @@
 import {errorList} from "../errorHandler";
 import {sdkParams} from "../sdkParams";
-import KurentoUtils from "kurento-utils";
 import {chatEvents} from "../../events.module";
 import {topicMetaDataManager} from "./topicMetaDataManager";
 import {
@@ -138,15 +137,19 @@ function CallTopicManager(
                 let options = {
                     mediaConstraints: mediaConstraints,
                     // iceTransportPolicy: 'relay',
-                    onicecandidate: (candidate) => {
-                        topicManager.watchForIceCandidates(candidate)
-                    },
+                    // onicecandidate: (candidate) => {
+                    //     topicManager.watchForIceCandidates(candidate)
+                    // },
                     configuration: {
                         iceServers: currentCall().getTurnServer(currentCall().callConfig())
                     }
                 };
-
+                //
+                // if(config.mediaType == 'audio' && config.direction == 'send'){
+                //     options.streamElement = new Audio();
+                // } else {
                 options.streamElement = config.htmlElement;
+                // }
 
                 if(config.direction === 'send') {
                     if(config.mediaType === 'video') {
@@ -209,27 +212,27 @@ function CallTopicManager(
                 sdkParams.consoleLogging && console.log("[SDK][getSdpOfferOptions] ", "topic: ", config.topic, "mediaType: ", config.mediaType, "direction: ", config.direction, "options: ", options);
             });
         },
-        watchForIceCandidates: function (candidate) {
-            let manager = this;
-
-            if (metadataInstance.isIceCandidateIntervalSet()) {
-                return;
-            }
-            //callUsers[config.userId].topicMetaData[config.topic].interval
-            metadataInstance.setIceCandidateInterval(setInterval(function () {
-                if (config.topicMetaData.sdpAnswerReceived === true) {
-                    sdkParams.consoleLogging && console.log("[SDK][watchForIceCandidates][setInterval] sdpAnswerReceived, topic:", config.topic)
-                    config.topicMetaData.sdpAnswerReceived = false;
-                    // manager.removeTopicIceCandidateInterval();
-                    metadataInstance.clearIceCandidateInterval();
-                    currentCall().sendCallMessage({
-                        id: 'ADD_ICE_CANDIDATE',
-                        topic: config.topic,
-                        candidateDto: candidate
-                    }, null, {})
-                }
-            }, 500, {candidate: candidate}));
-        },
+        // watchForIceCandidates: function (candidate) {
+        //     let manager = this;
+        //
+        //     if (metadataInstance.isIceCandidateIntervalSet()) {
+        //         return;
+        //     }
+        //     //callUsers[config.userId].topicMetaData[config.topic].interval
+        //     metadataInstance.setIceCandidateInterval(setInterval(function () {
+        //         if (config.topicMetaData.sdpAnswerReceived === true) {
+        //             sdkParams.consoleLogging && console.log("[SDK][watchForIceCandidates][setInterval] sdpAnswerReceived, topic:", config.topic)
+        //             config.topicMetaData.sdpAnswerReceived = false;
+        //             // manager.removeTopicIceCandidateInterval();
+        //             metadataInstance.clearIceCandidateInterval();
+        //             currentCall().sendCallMessage({
+        //                 id: 'ADD_ICE_CANDIDATE',
+        //                 topic: config.topic,
+        //                 candidateDto: candidate
+        //             }, null, {})
+        //         }
+        //     }, 500, {candidate: candidate}));
+        // },
         establishPeerConnection: function (options) {
             let WebRtcFunction = config.direction === 'send' ? 'WebRtcPeerSendonly' : 'WebRtcPeerRecvonly',
                 manager = this,
