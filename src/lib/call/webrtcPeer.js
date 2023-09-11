@@ -29,6 +29,11 @@ function WebrtcPeerConnection({
         config.peerConnection.onconnectionstatechange = connectionStateChange;
         config.peerConnection.oniceconnectionstatechange = iceConnectionStateChange;
         config.peerConnection.addEventListener('signalingstatechange', signalingStateChangeCallback);
+        config.peerConnection.addEventListener('track', async (event) => {
+            const [remoteStream] = event.streams;
+            onTrackCallback(remoteStream);
+        });
+
 
         if (!config.peerConnection.getLocalStreams && config.peerConnection.getSenders) {
             config.peerConnection.getLocalStreams = function () {
