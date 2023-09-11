@@ -18,11 +18,11 @@ function CallsList() {
             config.list[callId] = new CallManager({callId, callConfig});
         },
         async removeItem(callId) {
-            callsManager().currentCallId = null;
             if(config.list[callId]) {
                 await config.list[callId].destroy();
                 delete config.list[callId];
             }
+            callsManager().currentCallId = null;
         },
         get(id) {
             return config.list[id]
