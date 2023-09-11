@@ -85,10 +85,16 @@ function CallUser(user) {
                 topic: 'Vo-' + config.user.topicSend,
                 mediaType: 'audio',
                 direction: (config.user.userId === store.user().id ? 'send' : 'receive'),
-                user: config.user
+                user: config.user,
+                onHTMLElement(el) {
+                    console.log('im called', el, config.user.audioTopicName, config.htmlElements[config.user.audioTopicName])
+                    config.htmlElements[config.user.audioTopicName] = el;
+                    publicized.appendUserToCallDiv();
+                }
             });
-            await publicized.appendUserToCallDiv(generateAudioElement());
-            config.audioTopicManager.createTopic();
+            setImmediate(()=>{
+                config.audioTopicManager.createTopic();
+            })
         },
         async startVideo(sendTopic) {
             if(config.videoTopicManager)
@@ -102,10 +108,16 @@ function CallUser(user) {
                 topic: 'Vi-' + config.user.topicSend,
                 mediaType: 'video',
                 direction: (config.user.userId === store.user().id ? 'send' : 'receive'),
-                user: config.user
+                user: config.user,
+                onHTMLElement(el) {
+                    config.htmlElements[config.user.videoTopicName] = el;
+                    publicized.appendUserToCallDiv();
+                }
             });
-            await publicized.appendUserToCallDiv(generateVideoElement());
-            config.videoTopicManager.createTopic();
+            // await publicized.appendUserToCallDiv(generateVideoElement());
+            setImmediate(()=> {
+                config.videoTopicManager.createTopic();
+            });
         },
         async reconnectTopic(media) {
             if(media == 'audio') {
@@ -195,19 +207,6 @@ function CallUser(user) {
             publicized.startAudio(config.user.topicSend);
     }
 
-    function generateAudioElement() {
-        if (typeof config.user.mute !== 'undefined' && !config.user.mute && !config.htmlElements[config.user.audioTopicName]) {
-            let el = config.audioTopicManager.getHtmlElement();
-            config.htmlElements[config.user.audioTopicName] = el;
-        }
-    }
-    function generateVideoElement() {
-        if (config.user.video && !config.htmlElements[config.user.videoTopicName]) {
-            let el = config.videoTopicManager.getHtmlElement();
-            config.htmlElements[config.user.videoTopicName] = el;
-        }
-    }
-
     function generateContainerElement() {
         if (!config.htmlElements.container) {
             config.htmlElements.container = document.createElement('div');
@@ -294,13 +293,16 @@ function CallScreenShare(user) {
                 mediaType: 'video',
                 direction: (callsManager().get(config.callId).screenShareInfo.iAmOwner() ? 'send' : 'receive'),
                 user: config.user,
-                isScreenShare: true
+                isScreenShare: true,
+                onHTMLElement(el) {
+                    config.htmlElements[config.user.videoTopicName] = el;
+                    publicized.appendUserToCallDiv();
+                }
             });
-
-            publicized.appendUserToCallDiv(generateVideoElement());
-            setTimeout(()=>{
+            // publicized.appendUserToCallDiv(generateVideoElement());
+            setImmediate(()=> {
                 config.videoTopicManager.createTopic();
-            }, 200)
+            })
         },
         async reconnectTopic(media) {
             await config.videoTopicManager.stopTopicOnServer();

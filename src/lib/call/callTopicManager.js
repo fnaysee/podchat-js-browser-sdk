@@ -12,7 +12,8 @@ import {WebrtcPeerConnection} from "./webrtcPeer";
 
 function CallTopicManager(
     {
-        callId, userId, user, topic, mediaType, direction, deviceManager, isScreenShare
+        callId, userId, user, topic, mediaType, direction, deviceManager, isScreenShare,
+        onHTMLElement
     }) {
     const config = {
         callId,
