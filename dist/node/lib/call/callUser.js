@@ -478,11 +478,14 @@ function CallScreenShare(user) {
         user: config.user,
         isScreenShare: true,
         onHTMLElement: function onHTMLElement(el) {
-          publicized.appendUserToCallDiv(el);
+          config.htmlElements[config.user.videoTopicName] = el;
+          publicized.appendUserToCallDiv();
         }
       }); // publicized.appendUserToCallDiv(generateVideoElement());
 
-      config.videoTopicManager.createTopic();
+      setImmediate(function () {
+        config.videoTopicManager.createTopic();
+      });
     },
     reconnectTopic: function reconnectTopic(media) {
       return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee9() {

@@ -135,7 +135,6 @@ function CallTopicManager(_ref) {
         _el.setAttribute('controls', '');
       }
 
-      console.log('getHtmlElement() streamElement', config.htmlElement, config.htmlElement.currentTime);
       return config.htmlElement;
     },
     setPeerState: function setPeerState(state) {
@@ -291,7 +290,6 @@ function CallTopicManager(_ref) {
         rtcPeerConfig: options.configuration,
         connectionStateChange: publicized.onConnectionStateChange,
         iceConnectionStateChange: publicized.onIceConnectionStateChange,
-        startMediaCallback: publicized.startMedia,
         onTrackCallback: addStreamTrackToElement
       }, function (err) {
         _sdkParams.sdkParams.consoleLogging && console.debug("[SDK][establishPeerConnection][KurentoUtils.WebRtcPeer][WebRtcFunction]: ", {

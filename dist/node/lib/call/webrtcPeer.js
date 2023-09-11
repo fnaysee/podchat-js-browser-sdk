@@ -56,14 +56,10 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                console.log('streamElement ontrack', {
-                  event: event
-                });
                 _event$streams = (0, _slicedToArray2["default"])(event.streams, 1), remoteStream = _event$streams[0];
-                console.log('streamElement ontrack currentTime: ', remoteStream.currentTime);
                 onTrackCallback(remoteStream);
 
-              case 4:
+              case 2:
               case "end":
                 return _context.stop();
             }
@@ -220,9 +216,9 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
       }
 
       config.peerConnection.setRemoteDescription(answer).then(function () {
-        if (config.direction != 'send') {//setRemoteStream()
-        }
-
+        // if (config.direction != 'send') {
+        //setRemoteStream()
+        // }
         callback && callback();
       }, function (error) {
         // console.log("config.peerConnection.setRemoteDescription",
