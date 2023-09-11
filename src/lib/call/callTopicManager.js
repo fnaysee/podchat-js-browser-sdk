@@ -3,7 +3,8 @@ import {sdkParams} from "../sdkParams";
 import {chatEvents} from "../../events.module";
 import {topicMetaDataManager} from "./topicMetaDataManager";
 import {
-    callStopQueue, endScreenShare,
+    currentCall,
+    endScreenShare,
     sharedVariables
 } from "./sharedData";
 import {messenger} from "../../messaging.module";
