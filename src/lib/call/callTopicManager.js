@@ -73,13 +73,16 @@ function CallTopicManager(
     function addStreamTrackToElement(stream) {
         config.dataStream = stream;
         let htmlElement = publicized.getHtmlElement();
-        if (mediaType == 'video') htmlElement.mute = true;
+        if (mediaType == 'video')
+            htmlElement.mute = true;
+
         if(config.mediaType === "video" || (config.mediaType === "audio" && config.direction === "receive"))
             htmlElement.srcObject = stream;
 
         if (config.mediaType === 'audio') {
             publicized.watchAudioLevel();
         }
+
         // config.htmlElement.srcObject = stream;
         onHTMLElement(htmlElement);
         // htmlElement.load();
