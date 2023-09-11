@@ -627,7 +627,8 @@ function ChatCall(params) {
                     });
                     return;
                 }
-
+                callRequestController.iRequestedCall = false;
+                callRequestController.iAcceptedCall = false;
                 callsManager().currentCallId = threadId;
                 processChatStartCallEvent(type, messageContent, contentCount, threadId, uniqueId);
                 // if(callsManager().currentCallId) {

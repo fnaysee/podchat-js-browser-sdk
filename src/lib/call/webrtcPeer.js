@@ -17,6 +17,7 @@ function WebrtcPeerConnection({
         stream,
         candidatesQueue: [],
     };
+
     function createPeer() {
         try {
             config.peerConnection = new RTCPeerConnection(config.rtcPeerConfig);

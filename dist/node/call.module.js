@@ -608,6 +608,8 @@ function ChatCall(params) {
           return;
         }
 
+        callRequestController.iRequestedCall = false;
+        callRequestController.iAcceptedCall = false;
         (0, _callsList.callsManager)().currentCallId = threadId;
         processChatStartCallEvent(type, messageContent, contentCount, threadId, uniqueId); // if(callsManager().currentCallId) {
         //     endCall({callId: callsManager().currentCallId});

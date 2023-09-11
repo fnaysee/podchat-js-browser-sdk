@@ -46658,6 +46658,8 @@ function ChatCall(params) {
           return;
         }
 
+        callRequestController.iRequestedCall = false;
+        callRequestController.iAcceptedCall = false;
         (0, _callsList.callsManager)().currentCallId = threadId;
         processChatStartCallEvent(type, messageContent, contentCount, threadId, uniqueId); // if(callsManager().currentCallId) {
         //     endCall({callId: callsManager().currentCallId});
@@ -53118,7 +53120,6 @@ function CallTopicManager(_ref) {
     },
     startMedia: function startMedia() {
       _sdkParams.sdkParams.consoleLogging && console.log("[SDK][startMedia] called with: ", config.htmlElement);
-      console.log('htmlElement 1 time', config.htmlElement.currentTime);
       config.htmlElement.play()["catch"](function (err) {
         if (err.name === 'NotAllowedError') {
           _events.chatEvents.fireEvent('callEvents', {
@@ -53129,10 +53130,6 @@ function CallTopicManager(_ref) {
           });
         }
       });
-      console.log('htmlElement 2 time', config.htmlElement.currentTime);
-      setTimeout(function () {
-        console.log('htmlElement 3 time', config.htmlElement.currentTime);
-      }, 100);
     },
     restartMediaOnKeyFrame: function restartMediaOnKeyFrame(userId, timeouts) {
       if ((0, _sharedData.currentCall)().callServerController().isJanus()) return;
