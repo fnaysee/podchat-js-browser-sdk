@@ -2496,7 +2496,7 @@ function ChatCall(params) {
     // let me = callUsers[store.user().id];
     // let currentCall = callsManager().get(callsManager().currentCallId);
     if (!(0, _sharedData.currentCall)()) return;
-    var me = (0, _sharedData.currentCall)().users.get(_store.store.user().id);
+    var me = (0, _sharedData.currentCall)().users().get(_store.store.user().id);
     if (!me || !me.user().video || !me.videoTopicManager().getPeer()) return;
     me.videoTopicManager().pauseSendStream();
     callback && callback();
@@ -2505,10 +2505,10 @@ function ChatCall(params) {
   this.resumeCamera = function (params, callback) {
     // let currentCall = callsManager().get(callsManager().currentCallId);
     if (!(0, _sharedData.currentCall)()) return;
-    var me = (0, _sharedData.currentCall)().users.get(_store.store.user().id);
+    var me = (0, _sharedData.currentCall)().users().get(_store.store.user().id);
     if (!me || !me.user().videoTopicName || !me.videoTopicManager().getPeer()) //!me.peers[me.videoTopicName]
       return;
-    me.videoTopicManager().pauseSendStream();
+    me.videoTopicManager().resumeSendStream();
     callback && callback();
   };
   /**
@@ -2519,20 +2519,18 @@ function ChatCall(params) {
 
 
   this.pauseMice = function (params, callback) {
-    var currentCall = (0, _callsList.callsManager)().get((0, _callsList.callsManager)().currentCallId);
-    var me = currentCall.users.get(_store.store.user().id);
-    if (!currentCall || !me || !me.user().audioTopicName || !me.audioTopicManager().getPeer()) //!me.peers[me.videoTopicName]
+    var me = (0, _sharedData.currentCall)().users().get(_store.store.user().id);
+    if (!(0, _sharedData.currentCall)() || !me || !me.user().audioTopicName || !me.audioTopicManager().getPeer()) //!me.peers[me.videoTopicName]
       return;
-    me.audioTopicManager().getPeer().getLocalStream().getTracks()[0].enabled = false;
+    me.audioTopicManager().pauseSendStream();
     callback && callback();
   };
 
   this.resumeMice = function (params, callback) {
-    var currentCall = (0, _callsList.callsManager)().get((0, _callsList.callsManager)().currentCallId);
-    var me = currentCall.users.get(_store.store.user().id);
-    if (!currentCall || !me || !me.user().audioTopicName || !me.audioTopicManager().getPeer()) //!me.peers[me.videoTopicName]
+    var me = (0, _sharedData.currentCall)().users().get(_store.store.user().id);
+    if (!_sharedData.currentCall || !me || !me.user().audioTopicName || !me.audioTopicManager().getPeer()) //!me.peers[me.videoTopicName]
       return;
-    me.audioTopicManager().getPeer().getLocalStream().getTracks()[0].enabled = false;
+    me.audioTopicManager().resumeSendStream();
     callback && callback();
   };
 

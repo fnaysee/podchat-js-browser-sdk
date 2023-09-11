@@ -2349,7 +2349,7 @@ function ChatCall(params) {
         if(!currentCall())
             return;
 
-        let me = currentCall().users.get(store.user().id);
+        let me = currentCall().users().get(store.user().id);
         if(!me || !me.user().video || !me.videoTopicManager().getPeer())
             return;
 
@@ -2362,11 +2362,11 @@ function ChatCall(params) {
         if(!currentCall())
             return;
 
-        let me = currentCall().users.get(store.user().id);
+        let me = currentCall().users().get(store.user().id);
         if(!me || !me.user().videoTopicName || !me.videoTopicManager().getPeer())//!me.peers[me.videoTopicName]
             return;
 
-        me.videoTopicManager().pauseSendStream();
+        me.videoTopicManager().resumeSendStream();
         callback && callback();
     };
 
@@ -2376,24 +2376,22 @@ function ChatCall(params) {
      * @param callback
      */
     this.pauseMice = function (params, callback) {
-        let currentCall = callsManager().get(callsManager().currentCallId);
-        let me = currentCall.users.get(store.user().id);
+        let me = currentCall().users().get(store.user().id);
 
-        if(!currentCall || !me || !me.user().audioTopicName || !me.audioTopicManager().getPeer())//!me.peers[me.videoTopicName]
+        if(!currentCall() || !me || !me.user().audioTopicName || !me.audioTopicManager().getPeer())//!me.peers[me.videoTopicName]
             return;
 
-        me.audioTopicManager().getPeer().getLocalStream().getTracks()[0].enabled = false;
+        me.audioTopicManager().pauseSendStream();
         callback && callback();
     };
 
     this.resumeMice = function (params, callback) {
-        let currentCall = callsManager().get(callsManager().currentCallId);
-        let me = currentCall.users.get(store.user().id);
+        let me = currentCall().users().get(store.user().id);
 
         if(!currentCall || !me || !me.user().audioTopicName || !me.audioTopicManager().getPeer())//!me.peers[me.videoTopicName]
             return;
 
-        me.audioTopicManager().getPeer().getLocalStream().getTracks()[0].enabled = false;
+        me.audioTopicManager().resumeSendStream();
         callback && callback();
     };
 
