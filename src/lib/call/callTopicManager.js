@@ -10,6 +10,7 @@ import {
 import {messenger} from "../../messaging.module";
 import {callsManager} from "./callsList";
 import {WebrtcPeerConnection} from "./webrtcPeer";
+import Utility from "../../utility/utility";
 
 function CallTopicManager(
     {
@@ -85,6 +86,7 @@ function CallTopicManager(
 
     const publicized = {
         getHtmlElement() {
+            let elementUniqueId = Utility.generateUUID();
             if (config.mediaType === 'video' && config.user.video && !config.htmlElement) {
                 config.htmlElement = document.createElement('video');
                 let el = config.htmlElement;
@@ -92,6 +94,7 @@ function CallTopicManager(
                 el.setAttribute('class', sharedVariables.callVideoTagClassName);
                 el.setAttribute('playsinline', '');
                 el.setAttribute('muted', '');
+                el.setAttribute('data-uniqueId', elementUniqueId);
                 el.setAttribute('width', sharedVariables.callVideoMinWidth + 'px');
                 el.setAttribute('height', sharedVariables.callVideoMinHeight + 'px');
             } else if (config.mediaType === 'audio' && typeof config.user.mute !== 'undefined' && !config.user.mute && !config.htmlElement) {
@@ -100,6 +103,7 @@ function CallTopicManager(
                 el.setAttribute('id', 'uiRemoteAudio-' + config.user.audioTopicName);
                 el.setAttribute('class', sharedVariables.callAudioTagClassName);
                 el.setAttribute('autoplay', '');
+                el.setAttribute('data-uniqueId', elementUniqueId);
                 if(config.user.direction === 'send')
                     el.setAttribute('muted', '');
                 el.setAttribute('controls', '');
@@ -157,12 +161,6 @@ function CallTopicManager(
                         iceServers: currentCall().getTurnServer(currentCall().callConfig())
                     }
                 };
-                //
-                // if(config.mediaType == 'audio' && config.direction == 'send'){
-                //     options.streamElement = new Audio();
-                // } else {
-                options.streamElement = config.htmlElement;
-                // }
 
                 if(config.direction === 'send') {
                     if(config.mediaType === 'video') {
@@ -247,8 +245,7 @@ function CallTopicManager(
         //     }, 500, {candidate: candidate}));
         // },
         establishPeerConnection: function (options) {
-            let WebRtcFunction = config.direction === 'send' ? 'WebRtcPeerSendonly' : 'WebRtcPeerRecvonly',
-                manager = this,
+            let manager = this,
                 user = config.user,
                 topicElement = config.htmlElement;
 
@@ -740,7 +737,7 @@ function CallTopicManager(
                 config.peer.dispose();
                 config.peer = null;
                 config.state = peerStates.DISCONNECTED;
-                if(config.direction === 'send' && !config.isScreenShare) {
+                if(config.direction === 'send') {
                     if(config.mediaType === 'audio')
                         await currentCall().deviceManager().mediaStreams.stopAudioInput();
                     if(config.mediaType === 'video'){
@@ -749,10 +746,9 @@ function CallTopicManager(
                             //} else {
                             await currentCall().deviceManager().mediaStreams.stopVideoInput();
                             //}
+                        } else {
+                            await currentCall().deviceManager().mediaStreams.stopScreenShareInput()
                         }
-                        // else {
-                        //     await currentCall().deviceManager().mediaStreams.stopScreenShareInput()
-                        // }
                     }
                 }
             }
