@@ -52334,7 +52334,8 @@ function CallTopicManager(_ref) {
       poorConnectionResolvedCount: 0,
       isConnectionPoor: false
     },
-    isDestroyed: false
+    isDestroyed: false,
+    dataStream: null
   };
   var metadataInstance = new _topicMetaDataManager.topicMetaDataManager({
     userId: userId,
@@ -52367,9 +52368,15 @@ function CallTopicManager(_ref) {
   }
 
   function addStreamTrackToElement(stream) {
+    config.dataStream = stream;
     var htmlElement = publicized.getHtmlElement();
     if (mediaType == 'video') htmlElement.mute = true;
-    if (config.mediaType === "video" || config.mediaType === "audio" && config.direction === "receive") htmlElement.srcObject = stream; // config.htmlElement.srcObject = stream;
+    if (config.mediaType === "video" || config.mediaType === "audio" && config.direction === "receive") htmlElement.srcObject = stream;
+
+    if (config.mediaType === 'audio') {
+      publicized.watchAudioLevel();
+    } // config.htmlElement.srcObject = stream;
+
 
     onHTMLElement(htmlElement); // htmlElement.load();
 
@@ -52715,34 +52722,19 @@ function CallTopicManager(_ref) {
       if (config.peer.peerConnection.iceConnectionState === "connected") {
         config.state = peerStates.CONNECTED;
 
-        if (config.mediaType === 'audio') {
-          publicized.watchAudioLevel();
-        }
-
         if (config.direction === 'send' && !config.topicMetaData.connectionQualityInterval) {
           config.topicMetaData.connectionQualityInterval = setInterval(function () {
-            // if(config.mediaType === 'video' )
-            publicized.checkConnectionQuality(); // else
-            //     manager.checkAudioConnectionQuality();
+            publicized.checkConnectionQuality();
           }, 1000);
         }
 
         if (config.mediaType === 'video') {
-          /*if(config.direction === 'send') {
-              user.topicMetaData[config.topic].connectionQualityInterval = setInterval(function() {
-                  manager.checkConnectionQuality()
-              }, 1000);
-          }*/
           if (config.direction === 'receive') {
             _events.chatEvents.fireEvent("callEvents", {
               type: "RECEIVE_VIDEO_CONNECTION_ESTABLISHED",
               userId: config.userId
             });
           }
-        }
-
-        if (config.direction === 'receive' && config.mediaType === 'audio') {
-          publicized.watchAudioLevel();
         }
 
         config.state = peerStates.CONNECTED; // callRequestController.callEstablishedInMySide = true;
@@ -52774,17 +52766,8 @@ function CallTopicManager(_ref) {
       });
     },
     watchAudioLevel: function watchAudioLevel() {
-      var manager = this,
-          audioCtx = new AudioContext(),
-          stream = config.direction === 'receive' ? config.peer.getRemoteStream() : config.peer.getLocalStream();
-
-      if (config.peer && !stream) {
-        setTimeout(function () {
-          manager.watchAudioLevel();
-        }, 500);
-        return;
-      }
-
+      var audioCtx = new AudioContext(),
+          stream = config.dataStream;
       var user = config.user,
           topicMetadata = config.topicMetaData; // Create and configure the audio pipeline
 

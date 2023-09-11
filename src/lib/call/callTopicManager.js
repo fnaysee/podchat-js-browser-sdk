@@ -37,7 +37,8 @@ function CallTopicManager(
             poorConnectionResolvedCount: 0,
             isConnectionPoor: false
         },
-        isDestroyed: false
+        isDestroyed: false,
+        dataStream: null
     };
 
     const metadataInstance = new topicMetaDataManager({
@@ -70,10 +71,15 @@ function CallTopicManager(
     }
 
     function addStreamTrackToElement(stream) {
+        config.dataStream = stream;
         let htmlElement = publicized.getHtmlElement();
         if (mediaType == 'video') htmlElement.mute = true;
         if(config.mediaType === "video" || (config.mediaType === "audio" && config.direction === "receive"))
             htmlElement.srcObject = stream;
+
+        if (config.mediaType === 'audio') {
+            publicized.watchAudioLevel();
+        }
         // config.htmlElement.srcObject = stream;
         onHTMLElement(htmlElement);
         // htmlElement.load();
@@ -395,24 +401,12 @@ function CallTopicManager(
 
             if (config.peer.peerConnection.iceConnectionState === "connected") {
                 config.state = peerStates.CONNECTED;
-                if (config.mediaType === 'audio') {
-                    publicized.watchAudioLevel();
-                }
                 if(config.direction === 'send' && !config.topicMetaData.connectionQualityInterval) {
                     config.topicMetaData.connectionQualityInterval = setInterval(function() {
-                        // if(config.mediaType === 'video' )
                         publicized.checkConnectionQuality();
-                        // else
-                        //     manager.checkAudioConnectionQuality();
                     }, 1000);
                 }
                 if(config.mediaType === 'video' ) {
-                    /*if(config.direction === 'send') {
-                        user.topicMetaData[config.topic].connectionQualityInterval = setInterval(function() {
-                            manager.checkConnectionQuality()
-                        }, 1000);
-                    }*/
-
                     if(config.direction === 'receive') {
                         chatEvents.fireEvent("callEvents", {
                             type: "RECEIVE_VIDEO_CONNECTION_ESTABLISHED",
@@ -421,9 +415,6 @@ function CallTopicManager(
                     }
                 }
 
-                if (config.direction === 'receive' && config.mediaType === 'audio') {
-                    publicized.watchAudioLevel();
-                }
                 config.state = peerStates.CONNECTED;
                 // callRequestController.callEstablishedInMySide = true;
                 chatEvents.fireEvent('callEvents', {
@@ -450,15 +441,8 @@ function CallTopicManager(
             }, {timeoutTime: 4000, timeoutRetriesCount: 5});
         },
         watchAudioLevel: function () {
-            const manager = this
-                , audioCtx = new AudioContext()
-                , stream = config.direction === 'receive' ? config.peer.getRemoteStream() : config.peer.getLocalStream();
-            if(config.peer && !stream) {
-                setTimeout(function (){
-                    manager.watchAudioLevel();
-                }, 500)
-                return
-            }
+            const audioCtx = new AudioContext()
+                , stream = config.dataStream;
 
             let user = config.user,
                 topicMetadata = config.topicMetaData
