@@ -257,7 +257,7 @@ function CallManager({callId, callConfig}) {
             });
 
             topicManager.topicMetaData().sdpAnswerReceived = true;
-            topicManager.startMedia()
+            // topicManager.startMedia()
             if (userObj.isScreenShare() || userObj.isMe()) {
                 topicManager.restartMediaOnKeyFrame(userId, [2000, 4000, 8000, 12000]);
             }
@@ -313,7 +313,7 @@ function CallManager({callId, callConfig}) {
 
             if (topicManager.metadata().isIceCandidateIntervalSet()) {
                 topicManager.topicMetaData().sdpAnswerReceived = true;
-                topicManager.startMedia()
+                // topicManager.startMedia()
                 if (userId == 'screenShare' || userId == store.user().id) {
                     topicManager.restartMediaOnKeyFrame(userId, [2000, 4000, 8000, 12000, 20000]);
                 }
