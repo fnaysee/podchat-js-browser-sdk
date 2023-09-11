@@ -29,6 +29,8 @@ var _callsList = require("./callsList");
 
 var _webrtcPeer = require("./webrtcPeer");
 
+var _utility = _interopRequireDefault(require("../../utility/utility"));
+
 function CallTopicManager(_ref) {
   var callId = _ref.callId,
       userId = _ref.userId,
@@ -37,7 +39,8 @@ function CallTopicManager(_ref) {
       mediaType = _ref.mediaType,
       direction = _ref.direction,
       deviceManager = _ref.deviceManager,
-      isScreenShare = _ref.isScreenShare;
+      isScreenShare = _ref.isScreenShare,
+      onHTMLElement = _ref.onHTMLElement;
   var config = {
     callId: callId,
     userId: userId,
@@ -61,11 +64,6 @@ function CallTopicManager(_ref) {
     },
     isDestroyed: false
   };
-
-  function currentCall() {
-    return (0, _callsList.callsManager)().get(config.callId);
-  }
-
   var metadataInstance = new _topicMetaDataManager.topicMetaDataManager({
     userId: userId,
     topic: topic
@@ -96,8 +94,20 @@ function CallTopicManager(_ref) {
     delete config.htmlElement;
   }
 
+  function addStreamTrackToElement(stream) {
+    var htmlElement = publicized.getHtmlElement();
+    if (mediaType == 'video') htmlElement.mute = true;
+    if (config.mediaType === "video" || config.mediaType === "audio" && config.direction === "receive") htmlElement.srcObject = stream; // config.htmlElement.srcObject = stream;
+
+    onHTMLElement(htmlElement); // htmlElement.load();
+
+    publicized.startMedia();
+  }
+
   var publicized = {
     getHtmlElement: function getHtmlElement() {
+      var elementUniqueId = _utility["default"].generateUUID();
+
       if (config.mediaType === 'video' && config.user.video && !config.htmlElement) {
         config.htmlElement = document.createElement('video');
         var el = config.htmlElement;
@@ -105,6 +115,7 @@ function CallTopicManager(_ref) {
         el.setAttribute('class', _sharedData.sharedVariables.callVideoTagClassName);
         el.setAttribute('playsinline', '');
         el.setAttribute('muted', '');
+        el.setAttribute('data-uniqueId', elementUniqueId);
         el.setAttribute('width', _sharedData.sharedVariables.callVideoMinWidth + 'px');
         el.setAttribute('height', _sharedData.sharedVariables.callVideoMinHeight + 'px');
       } else if (config.mediaType === 'audio' && typeof config.user.mute !== 'undefined' && !config.user.mute && !config.htmlElement) {
@@ -117,11 +128,14 @@ function CallTopicManager(_ref) {
 
         _el.setAttribute('autoplay', '');
 
+        _el.setAttribute('data-uniqueId', elementUniqueId);
+
         if (config.user.direction === 'send') _el.setAttribute('muted', '');
 
         _el.setAttribute('controls', '');
       }
 
+      console.log('getHtmlElement() streamElement', config.htmlElement, config.htmlElement.currentTime);
       return config.htmlElement;
     },
     setPeerState: function setPeerState(state) {
@@ -174,19 +188,14 @@ function CallTopicManager(_ref) {
           //     topicManager.watchForIceCandidates(candidate)
           // },
           configuration: {
-            iceServers: currentCall().getTurnServer(currentCall().callConfig())
+            iceServers: (0, _sharedData.currentCall)().getTurnServer((0, _sharedData.currentCall)().callConfig())
           }
-        }; //
-        // if(config.mediaType == 'audio' && config.direction == 'send'){
-        //     options.streamElement = new Audio();
-        // } else {
-
-        options.streamElement = config.htmlElement; // }
+        };
 
         if (config.direction === 'send') {
           if (config.mediaType === 'video') {
             if (config.isScreenShare) {
-              currentCall().deviceManager().grantScreenSharePermission({
+              (0, _sharedData.currentCall)().deviceManager().grantScreenSharePermission({
                 closeStream: false
               }).then(function (stream) {
                 // let stream = currentCall().deviceManager().mediaStreams.getScreenShareInput();
@@ -213,7 +222,7 @@ function CallTopicManager(_ref) {
               })["catch"](function (error) {
                 var errorString = "[SDK][grantScreenSharePermission][catch] " + JSON.stringify(error);
                 console.error(errorString);
-                currentCall().raiseCallError(_errorHandler.errorList.SCREENSHARE_PERMISSION_ERROR, null, true);
+                (0, _sharedData.currentCall)().raiseCallError(_errorHandler.errorList.SCREENSHARE_PERMISSION_ERROR, null, true);
                 publicized.explainUserMediaError(error, 'video', 'screen'); //resolve(options);
 
                 (0, _sharedData.endScreenShare)({
@@ -221,21 +230,21 @@ function CallTopicManager(_ref) {
                 });
               });
             } else {
-              currentCall().deviceManager().grantUserMediaDevicesPermissions({
+              (0, _sharedData.currentCall)().deviceManager().grantUserMediaDevicesPermissions({
                 video: true
               }).then(function () {
-                options.stream = currentCall().deviceManager().mediaStreams.getVideoInput();
+                options.stream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getVideoInput();
                 resolve(options);
               })["catch"](function (error) {
                 reject(error);
               });
             }
           } else if (config.mediaType === 'audio') {
-            currentCall().deviceManager().grantUserMediaDevicesPermissions({
+            (0, _sharedData.currentCall)().deviceManager().grantUserMediaDevicesPermissions({
               audio: true
             }).then(function () {
-              var audioInput = currentCall().deviceManager().mediaStreams.getAudioInput();
-              currentCall().deviceManager().watchAudioInputStream(currentCall().raiseCallError);
+              var audioInput = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getAudioInput();
+              (0, _sharedData.currentCall)().deviceManager().watchAudioInputStream((0, _sharedData.currentCall)().raiseCallError);
               options.stream = audioInput;
               resolve(options);
             })["catch"](function (error) {
@@ -271,8 +280,7 @@ function CallTopicManager(_ref) {
     //     }, 500, {candidate: candidate}));
     // },
     establishPeerConnection: function establishPeerConnection(options) {
-      var WebRtcFunction = config.direction === 'send' ? 'WebRtcPeerSendonly' : 'WebRtcPeerRecvonly',
-          manager = this,
+      var manager = this,
           user = config.user,
           topicElement = config.htmlElement;
       config.state = peerStates.CONNECTING;
@@ -280,10 +288,11 @@ function CallTopicManager(_ref) {
         direction: config.direction,
         mediaType: config.mediaType,
         stream: options.stream,
-        streamElement: options.streamElement,
         rtcPeerConfig: options.configuration,
         connectionStateChange: publicized.onConnectionStateChange,
-        iceConnectionStateChange: publicized.onIceConnectionStateChange
+        iceConnectionStateChange: publicized.onIceConnectionStateChange,
+        startMediaCallback: publicized.startMedia,
+        onTrackCallback: addStreamTrackToElement
       }, function (err) {
         _sdkParams.sdkParams.consoleLogging && console.debug("[SDK][establishPeerConnection][KurentoUtils.WebRtcPeer][WebRtcFunction]: ", {
           options: options
@@ -297,7 +306,7 @@ function CallTopicManager(_ref) {
             type: 'CALL_ERROR',
             code: 7000,
             message: errorString,
-            environmentDetails: currentCall().getCallDetails()
+            environmentDetails: (0, _sharedData.currentCall)().getCallDetails()
           });
 
           return;
@@ -305,18 +314,18 @@ function CallTopicManager(_ref) {
 
         if (config.direction === 'send') {
           //publicized.startMedia();
-          if (currentCall().users().get(config.userId).user().cameraPaused) {
+          if ((0, _sharedData.currentCall)().users().get(config.userId).user().cameraPaused) {
             publicized.pauseSendStream();
           }
         }
 
-        if (currentCall().callServerController().isJanus() && config.direction === 'receive') {
+        if ((0, _sharedData.currentCall)().callServerController().isJanus() && config.direction === 'receive') {
           var msgParams = {
             id: 'REGISTER_RECV_NOTIFICATION',
             topic: config.topic,
             mediaType: config.mediaType === 'video' ? 2 : 1
           };
-          currentCall().sendCallMessage(msgParams, null, {
+          (0, _sharedData.currentCall)().sendCallMessage(msgParams, null, {
             timeoutTime: 4000,
             timeoutRetriesCount: 5 // timeoutCallback(){
             //     sendCallMessage(msgParams, null, {});
@@ -335,7 +344,7 @@ function CallTopicManager(_ref) {
                 type: 'CALL_ERROR',
                 code: 7000,
                 message: _errorString,
-                environmentDetails: currentCall().getCallDetails()
+                environmentDetails: (0, _sharedData.currentCall)().getCallDetails()
               });
 
               return;
@@ -477,7 +486,7 @@ function CallTopicManager(_ref) {
       }
     },
     sendSDPOfferRequestMessage: function sendSDPOfferRequestMessage(sdpOffer, retries) {
-      currentCall().sendCallMessage({
+      (0, _sharedData.currentCall)().sendCallMessage({
         id: config.direction === 'send' ? 'SEND_SDP_OFFER' : 'RECIVE_SDP_OFFER',
         sdpOffer: sdpOffer,
         useComedia: true,
@@ -574,7 +583,7 @@ function CallTopicManager(_ref) {
       }
     },
     checkConnectionQuality: function checkConnectionQuality() {
-      if (!currentCall() || !currentCall().users().get(config.userId) || !config.peer || !config.peer.peerConnection) {
+      if (!(0, _sharedData.currentCall)() || !(0, _sharedData.currentCall)().users().get(config.userId) || !config.peer || !config.peer.peerConnection) {
         this.removeConnectionQualityInterval();
         this.removeAudioWatcherInterval();
         return;
@@ -593,7 +602,7 @@ function CallTopicManager(_ref) {
             // sorted to the top above
             if (!report['roundTripTime'] || report['roundTripTime'] > 1) {
               if (topicMetadata.poorConnectionCount === 10) {
-                currentCall().sendQualityCheckEvent({
+                (0, _sharedData.currentCall)().sendQualityCheckEvent({
                   userId: config.userId,
                   topic: config.topic,
                   mediaType: config.mediaType,
@@ -603,7 +612,7 @@ function CallTopicManager(_ref) {
 
               if (topicMetadata.poorConnectionCount > 3 && !topicMetadata.isConnectionPoor) {
                 _sdkParams.sdkParams.consoleLogging && console.log('[SDK][checkConnectionQuality] Poor connection detected...');
-                currentCall().sendQualityCheckEvent({
+                (0, _sharedData.currentCall)().sendQualityCheckEvent({
                   userId: config.userId,
                   topic: config.topic,
                   mediaType: config.mediaType
@@ -619,7 +628,7 @@ function CallTopicManager(_ref) {
                 topicMetadata.poorConnectionResolvedCount = 0;
                 topicMetadata.poorConnectionCount = 0;
                 topicMetadata.isConnectionPoor = false;
-                currentCall().sendQualityCheckEvent({
+                (0, _sharedData.currentCall)().sendQualityCheckEvent({
                   userId: config.userId,
                   topic: config.topic,
                   mediaType: config.mediaType,
@@ -661,7 +670,7 @@ function CallTopicManager(_ref) {
             errorInfo: config.peer
           });
 
-          currentCall().users().get(config.userId).reconnectTopic(config.mediaType);
+          (0, _sharedData.currentCall)().users().get(config.userId).reconnectTopic(config.mediaType);
         }
       }
     },
@@ -679,7 +688,7 @@ function CallTopicManager(_ref) {
           type: 'CALL_ERROR',
           code: 7000,
           message: "Missing " + (deviceType === 'video' ? 'webcam' : 'mice') + " for required tracks",
-          environmentDetails: currentCall().getCallDetails()
+          environmentDetails: (0, _sharedData.currentCall)().getCallDetails()
         });
 
         alert("Missing " + (deviceType === 'video' ? 'webcam' : 'mice') + " for required tracks");
@@ -689,7 +698,7 @@ function CallTopicManager(_ref) {
           type: 'CALL_ERROR',
           code: 7000,
           message: (deviceType === 'video' ? 'Webcam' : 'Mice') + " is already in use",
-          environmentDetails: currentCall().getCallDetails()
+          environmentDetails: (0, _sharedData.currentCall)().getCallDetails()
         });
 
         alert((deviceType === 'video' ? 'Webcam' : 'Mice') + " is already in use");
@@ -699,7 +708,7 @@ function CallTopicManager(_ref) {
           type: 'CALL_ERROR',
           code: 7000,
           message: (deviceType === 'video' ? 'Webcam' : 'Mice') + " doesn't provide required tracks",
-          environmentDetails: currentCall().getCallDetails()
+          environmentDetails: (0, _sharedData.currentCall)().getCallDetails()
         });
 
         alert((deviceType === 'video' ? 'Webcam' : 'Mice') + " doesn't provide required tracks");
@@ -709,7 +718,7 @@ function CallTopicManager(_ref) {
           type: 'CALL_ERROR',
           code: 7000,
           message: (deviceType === 'video' ? deviceSource === 'screen' ? 'ScreenShare' : 'Webcam' : 'Mice') + " permission has been denied by the user",
-          environmentDetails: currentCall().getCallDetails()
+          environmentDetails: (0, _sharedData.currentCall)().getCallDetails()
         });
 
         alert((deviceType === 'video' ? deviceSource === 'screen' ? 'ScreenShare' : 'Webcam' : 'Mice') + " permission has been denied by the user");
@@ -719,7 +728,7 @@ function CallTopicManager(_ref) {
           type: 'CALL_ERROR',
           code: 7000,
           message: "No media tracks have been requested",
-          environmentDetails: currentCall().getCallDetails()
+          environmentDetails: (0, _sharedData.currentCall)().getCallDetails()
         });
 
         return "No media tracks have been requested";
@@ -728,7 +737,7 @@ function CallTopicManager(_ref) {
           type: 'CALL_ERROR',
           code: 7000,
           message: "Unknown error: " + err,
-          environmentDetails: currentCall().getCallDetails()
+          environmentDetails: (0, _sharedData.currentCall)().getCallDetails()
         });
 
         return "Unknown error: " + err;
@@ -776,7 +785,7 @@ function CallTopicManager(_ref) {
                 manager = this;
 
                 if (!config.peer) {
-                  _context.next = 18;
+                  _context.next = 22;
                   break;
                 }
 
@@ -790,8 +799,8 @@ function CallTopicManager(_ref) {
                 config.peer = null;
                 config.state = peerStates.DISCONNECTED;
 
-                if (!(config.direction === 'send' && !config.isScreenShare)) {
-                  _context.next = 18;
+                if (!(config.direction === 'send')) {
+                  _context.next = 22;
                   break;
                 }
 
@@ -801,23 +810,31 @@ function CallTopicManager(_ref) {
                 }
 
                 _context.next = 14;
-                return currentCall().deviceManager().mediaStreams.stopAudioInput();
+                return (0, _sharedData.currentCall)().deviceManager().mediaStreams.stopAudioInput();
 
               case 14:
                 if (!(config.mediaType === 'video')) {
-                  _context.next = 18;
+                  _context.next = 22;
                   break;
                 }
 
                 if (config.isScreenShare) {
-                  _context.next = 18;
+                  _context.next = 20;
                   break;
                 }
 
                 _context.next = 18;
-                return currentCall().deviceManager().mediaStreams.stopVideoInput();
+                return (0, _sharedData.currentCall)().deviceManager().mediaStreams.stopVideoInput();
 
               case 18:
+                _context.next = 22;
+                break;
+
+              case 20:
+                _context.next = 22;
+                return (0, _sharedData.currentCall)().deviceManager().mediaStreams.stopScreenShareInput();
+
+              case 22:
               case "end":
                 return _context.stop();
             }
@@ -854,13 +871,13 @@ function CallTopicManager(_ref) {
             type: 'CALL_ERROR',
             code: 7000,
             message: "[startMedia] Browser doesn't allow playing media: " + err,
-            environmentDetails: currentCall().getCallDetails()
+            environmentDetails: (0, _sharedData.currentCall)().getCallDetails()
           });
         }
       });
     },
     restartMediaOnKeyFrame: function restartMediaOnKeyFrame(userId, timeouts) {
-      if (currentCall().callServerController().isJanus()) return;
+      if ((0, _sharedData.currentCall)().callServerController().isJanus()) return;
 
       for (var i = 0; i < timeouts.length; i++) {
         setTimeout(function () {
@@ -869,7 +886,7 @@ function CallTopicManager(_ref) {
       }
     },
     restartMedia: function restartMedia() {
-      if (!publicized.isDestroyed() && !currentCall().users().get(config.userId).user().cameraPaused && config.mediaType == 'video') {
+      if (!publicized.isDestroyed() && !(0, _sharedData.currentCall)().users().get(config.userId).user().cameraPaused && config.mediaType == 'video') {
         _sdkParams.sdkParams.consoleLogging && console.log('[SDK] Sending Key Frame ...');
         var videoElement = config.htmlElement;
 
@@ -877,8 +894,8 @@ function CallTopicManager(_ref) {
 
         if (videoElement) {
           var videoTrack = videoElement.srcObject.getTracks()[0];
-          var width = _isScreenShare ? currentCall().screenShareInfo.getWidth() : _sharedData.sharedVariables.callVideoMinWidth,
-              height = _isScreenShare ? currentCall().screenShareInfo.getHeight() : _sharedData.sharedVariables.callVideoMinHeight,
+          var width = _isScreenShare ? (0, _sharedData.currentCall)().screenShareInfo.getWidth() : _sharedData.sharedVariables.callVideoMinWidth,
+              height = _isScreenShare ? (0, _sharedData.currentCall)().screenShareInfo.getHeight() : _sharedData.sharedVariables.callVideoMinHeight,
               rand = Math.random(),
               newWidth = width - 5,
               newHeight = height - 5;

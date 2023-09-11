@@ -40,10 +40,6 @@ function CallTopicManager(
         isDestroyed: false
     };
 
-    function currentCall() {
-        return callsManager().get(config.callId)
-    }
-
     const metadataInstance = new topicMetaDataManager({
         userId,
         topic

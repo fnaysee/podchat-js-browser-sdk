@@ -60,18 +60,19 @@ function CallsList() {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                callsManager().currentCallId = null;
-
                 if (!config.list[callId]) {
-                  _context2.next = 5;
+                  _context2.next = 4;
                   break;
                 }
 
-                _context2.next = 4;
+                _context2.next = 3;
                 return config.list[callId].destroy();
 
-              case 4:
+              case 3:
                 delete config.list[callId];
+
+              case 4:
+                callsManager().currentCallId = null;
 
               case 5:
               case "end":
