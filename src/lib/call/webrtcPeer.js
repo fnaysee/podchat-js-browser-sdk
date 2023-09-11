@@ -3,9 +3,9 @@ function WebrtcPeerConnection({
     mediaType = 'video',
     rtcPeerConfig,
     stream,
-    streamElement,
     connectionStateChange = null,
     iceConnectionStateChange = null,
+    onTrackCallback
 }, onCreatePeerCallback) {
     const config = {
         rtcPeerConfig,
@@ -15,7 +15,6 @@ function WebrtcPeerConnection({
         peerConnection: null,
         dataChannel: null,
         stream,
-        streamElement,
         candidatesQueue: [],
     };
     function createPeer() {
@@ -55,18 +54,13 @@ function WebrtcPeerConnection({
                 '[SDK][WebRtcModule] The peer connection object is in "closed" state. This is most likely due to an invocation of the dispose method before accepting in the dialogue'
             )
         }
-        if(mediaType == 'video')
-            streamElement.mute = true;
 
         if(direction === 'send') {
-            if(config.mediaType === "video")
-                streamElement.srcObject = stream;
-            // config.streamElement.mute = true;
-            stream.getTracks().forEach(function (track) {
-                config.peerConnection.addTrack(track, stream)
-            });
+            stream.getTracks().forEach(addTrackToPeer);
+
             // if(config.mediaType === "video")
-            streamElement.play();
+            //     onTrackCallback(stream);
+            onTrackCallback(stream);
         }
 
         setTimeout(()=>{
@@ -75,6 +69,10 @@ function WebrtcPeerConnection({
     }
 
     createPeer();
+
+    function addTrackToPeer(track){
+        config.peerConnection.addTrack(track, stream)
+    }
 
     function signalingStateChangeCallback() {
         switch (config.peerConnection.signalingState) {
@@ -91,17 +89,6 @@ function WebrtcPeerConnection({
         while (config.candidatesQueue.length) {
             let entry = config.candidatesQueue.shift();
             config.peerConnection.addIceCandidate(entry.candidate, entry.callback, entry.callback);
-        }
-    }
-
-    function setRemoteStream() {
-        if (config.direction != 'send') {
-            // config.streamElement.pause()
-
-            let stream = config.peerConnection.getRemoteStreams()[0]
-            config.streamElement.srcObject = stream
-            config.streamElement.load();
-            config.streamElement.play();
         }
     }
 
@@ -171,7 +158,7 @@ function WebrtcPeerConnection({
             }
 
             config.peerConnection.setRemoteDescription(offer).then(function () {
-                return setRemoteStream()
+                return; //setRemoteStream()
             }).then(function () {
                 return config.peerConnection.createAnswer()
             }).then(function (answer) {
@@ -196,9 +183,9 @@ function WebrtcPeerConnection({
 
             config.peerConnection.setRemoteDescription(answer)
                 .then(() => {
-                    if (config.direction != 'send') {
-                        setRemoteStream();
-                    }
+                    // if (config.direction != 'send') {
+                        //setRemoteStream()
+                    // }
 
                     callback && callback();
                 }, error => {

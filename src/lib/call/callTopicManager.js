@@ -70,6 +70,17 @@ function CallTopicManager(
         delete config.htmlElement;
     }
 
+    function addStreamTrackToElement(stream) {
+        let htmlElement = publicized.getHtmlElement();
+        if (mediaType == 'video') htmlElement.mute = true;
+        if(config.mediaType === "video" || (config.mediaType === "audio" && config.direction === "receive"))
+            htmlElement.srcObject = stream;
+        // config.htmlElement.srcObject = stream;
+        onHTMLElement(htmlElement);
+        // htmlElement.load();
+        publicized.startMedia();
+    }
+
     const publicized = {
         getHtmlElement() {
             if (config.mediaType === 'video' && config.user.video && !config.htmlElement) {
@@ -244,10 +255,10 @@ function CallTopicManager(
                 direction: config.direction,
                 mediaType: config.mediaType,
                 stream: options.stream,
-                streamElement: options.streamElement,
                 rtcPeerConfig: options.configuration,
                 connectionStateChange: publicized.onConnectionStateChange,
-                iceConnectionStateChange: publicized.onIceConnectionStateChange
+                iceConnectionStateChange: publicized.onIceConnectionStateChange,
+                onTrackCallback: addStreamTrackToElement
             }, function (err) {
                 sdkParams.consoleLogging && console.debug("[SDK][establishPeerConnection][KurentoUtils.WebRtcPeer][WebRtcFunction]: ", {options}, "userId: ", config.userId, "topic: ", config.topic, "direction: ", config.direction);
 
