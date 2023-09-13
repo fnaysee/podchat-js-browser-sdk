@@ -53,12 +53,17 @@ function CallTopicManager(
     }
 
     function removeStreamHTML() {
+        if(!config.htmlElement)
+            return;
+
         const stream = config.htmlElement.srcObject;
+
         if (!!stream) {
             const tracks = stream.getTracks();
 
             if (!!tracks) {
                 tracks.forEach(function (track) {
+                    console.log('unmute::: callId: ', config.callId, ' user: ', config.user.id, ' stopping track ', {track});
                     track.stop();
                 });
             }
@@ -68,6 +73,7 @@ function CallTopicManager(
 
         config.htmlElement.remove();
         delete config.htmlElement;
+        console.log('unmute::: callId: ', config.callId, ' user: ', config.user.id, ' removed htmlElement ');
     }
 
     function addStreamTrackToElement(stream) {
@@ -83,10 +89,10 @@ function CallTopicManager(
             publicized.watchAudioLevel();
         }
 
-        // config.htmlElement.srcObject = stream;
         onHTMLElement(htmlElement);
-        // htmlElement.load();
-        publicized.startMedia();
+        setImmediate(()=>{
+            publicized.startMedia();
+        })
     }
 
     const publicized = {
@@ -102,6 +108,7 @@ function CallTopicManager(
                 el.setAttribute('data-uniqueId', elementUniqueId);
                 el.setAttribute('width', sharedVariables.callVideoMinWidth + 'px');
                 el.setAttribute('height', sharedVariables.callVideoMinHeight + 'px');
+                el.setAttribute('controls', '');
             } else if (config.mediaType === 'audio' && typeof config.user.mute !== 'undefined' && !config.user.mute && !config.htmlElement) {
                 config.htmlElement = document.createElement('audio');
                 let el = config.htmlElement;
@@ -255,6 +262,7 @@ function CallTopicManager(
                 topicElement = config.htmlElement;
 
             config.state = peerStates.CONNECTING;
+            console.log('unmute::: callId: ', config.callId, 'user: ', config.user.userId, ' establishPeerConnection: new WebrtcPeerConnection ');
             config.peer = new WebrtcPeerConnection({
                 direction: config.direction,
                 mediaType: config.mediaType,
@@ -679,14 +687,18 @@ function CallTopicManager(
             }
         },
         createTopic: function () {
-            console.log(config.topic, 3, "createTopic");
             let manager = this;
             if(config.peer) {
                 return;
             }
 
+            if(mediaType === 'audio')
+                console.log('unmute::: callId: ', config.callId, 'user: ', config.user.userId, ' createTopic ');
+
+
             this.generateSdpOfferOptions().then(function (options) {
                 sdkParams.consoleLogging && console.debug("[SDK][generateSdpOfferOptions] Options for this request have been resolved: ", {options}, "userId: ", config.userId, "topic: ", config.topic, "direction: ", config.direction);
+                console.log('unmute::: callId: ', config.callId, 'user: ', config.user.userId, ' createTopic.generateSdpOfferOptions ', {options});
                 manager.establishPeerConnection(options);
             }).catch(error => {
                 console.error(error)
@@ -709,20 +721,16 @@ function CallTopicManager(
         },
         removeTopic: async function () {
             let manager = this;
-            if(config.peer) {
-                config.sdpOfferRequestSent = false;
-                // this.removeTopicIceCandidateInterval();
-                metadataInstance.clearIceCandidateInterval();
-                manager.removeConnectionQualityInterval();
-                manager.removeAudioWatcherInterval();
+            console.log('unmute::: callId: ', config.callId, 'user: ', config.user.id, ' removeTopic ');
 
-                removeStreamHTML();
-                config.peer.dispose();
-                config.peer = null;
-                config.state = peerStates.DISCONNECTED;
+            if(config.peer) {
+                console.log('unmute::: callId: ', config.callId, 'user: ', config.user.id, ' removeTopic peer exists');
+
                 if(config.direction === 'send') {
-                    if(config.mediaType === 'audio')
+                    if(config.mediaType === 'audio') {
+                        console.log('unmute::: callId: ', config.callId, 'user: ', config.user.id, ' removeTopic deviceManager stopAudioInput');
                         await currentCall().deviceManager().mediaStreams.stopAudioInput();
+                    }
                     if(config.mediaType === 'video'){
                         if(!config.isScreenShare) {
                             // await config.deviceManager.mediaStreams.stopScreenShareInput()
@@ -734,6 +742,15 @@ function CallTopicManager(
                         }
                     }
                 }
+                // config.sdpOfferRequestSent = false;
+                // metadataInstance.clearIceCandidateInterval();
+                manager.removeConnectionQualityInterval();
+                manager.removeAudioWatcherInterval();
+                removeStreamHTML();
+                console.log('unmute::: callId: ', config.callId, 'user: ', config.user.id, ' dispose peer');
+                config.peer.dispose();
+                config.peer = null;
+                config.state = peerStates.DISCONNECTED;
             }
         },
         topicMetaData() {
@@ -752,6 +769,8 @@ function CallTopicManager(
         },
         startMedia: function () {
             sdkParams.consoleLogging && console.log("[SDK][startMedia] called with: ", config.htmlElement);
+            if(!config.htmlElement)
+                return;
             config.htmlElement.play().catch((err) => {
                 if (err.name === 'NotAllowedError') {
                     chatEvents.fireEvent('callEvents', {

@@ -10,8 +10,9 @@ import {
 import Utility from "../../utility/utility";
 import {CallServerManager} from "./callServerManager";
 import {callMetaDataTypes} from "../constants";
-import {errorList, raiseError} from "../errorHandler";
+import {errorList, getFilledErrorObject, raiseError} from "../errorHandler";
 import {callsManager} from "./callsList";
+import * as requestBlocker from "../requestBlocker";
 
 function CallManager({callId, callConfig}) {
     const config = {
@@ -278,11 +279,14 @@ function CallManager({callId, callConfig}) {
 
         if (jsonMessage.topic.indexOf('Vi-') !== -1 || jsonMessage.topic.indexOf('screen-Share') !== -1) {
             topicManager = userObj.videoTopicManager();
-            peer = topicManager.getPeer();
         } else if (jsonMessage.topic.indexOf('Vo-') !== -1) {
             topicManager = userObj.audioTopicManager();
-            peer = topicManager.getPeer();
         }
+
+        if(!topicManager)
+            return;
+
+        peer = topicManager.getPeer();
 
         if (peer == null) {
             chatEvents.fireEvent('callEvents', {
@@ -332,10 +336,15 @@ function CallManager({callId, callConfig}) {
         let peer; //= callUsers[userId].peers[jsonMessage.topic];
 
         if (jsonMessage.topic.indexOf('Vi-') > -1 || jsonMessage.topic.indexOf('screen-Share') !== -1) {
-            peer = config.users.get(userId).videoTopicManager().getPeer();
+            peer = config.users.get(userId).videoTopicManager();
         } else if (jsonMessage.topic.indexOf('Vo-') > -1) {
-            peer = config.users.get(userId).audioTopicManager().getPeer();
+            peer = config.users.get(userId).audioTopicManager();
         }
+
+        if(!peer)
+            return;
+
+        peer = peer.getPeer();
 
         if (peer == null) {
             chatEvents.fireEvent('callEvents', {
@@ -477,6 +486,16 @@ function CallManager({callId, callConfig}) {
             message: JSON.stringify(message),
             chatId: config.callId
         }, null, {});
+    }
+    function handleError(jsonMessage, sendingTopic, receiveTopic) {
+        const errMessage = jsonMessage.message;
+
+        chatEvents.fireEvent('callEvents', {
+            type: 'CALL_ERROR',
+            code: 7000,
+            message: "Kurento error: " + errMessage,
+            environmentDetails: getCallDetails()
+        });
     }
 
     const publicized = {
@@ -656,7 +675,7 @@ function CallManager({callId, callConfig}) {
                     break;
 
                 case 'ERROR':
-                    handleError(message, params.sendingTopic, params.receiveTopic);
+                    publicized.raiseCallError(getFilledErrorObject({...errorList.CALL_SERVER_ERROR, replacements:[JSON.stringify(message)]}), null, true);
                     break;
 
                 case 'SEND_SDP_OFFER':
@@ -800,14 +819,18 @@ function CallManager({callId, callConfig}) {
         async handleParticipantUnMute(messageContent) {
             let myId = store.user().id;
 
+            console.log('unmute::: callId: ', config.callId);
             if (Array.isArray(messageContent)) {
                 for (let i in messageContent) {
-                    let user = config.users.get(messageContent[i].userId)
+                    let user = config.users.get(messageContent[i].userId);
+                    console.log('unmute::: callId: ', config.callId, 'user: ', user.user().id);
+
                     if (user) {
                         if(user.audioTopicManager()) {
+                            console.log('unmute::: callId: ', config.callId, 'user: ', user.user().id, ' calling user.stopAudio');
                             await user.stopAudio();
                         }
-
+                        console.log('unmute::: callId: ', config.callId, 'user: ', user.user().id, ' calling user.startAudio');
                         user.startAudio(messageContent[i].sendTopic);
                     }
                 }

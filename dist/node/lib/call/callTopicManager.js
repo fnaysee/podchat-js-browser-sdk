@@ -77,6 +77,7 @@ function CallTopicManager(_ref) {
   };
 
   function removeStreamHTML() {
+    if (!config.htmlElement) return;
     var stream = config.htmlElement.srcObject;
 
     if (!!stream) {
@@ -103,12 +104,12 @@ function CallTopicManager(_ref) {
 
     if (config.mediaType === 'audio') {
       publicized.watchAudioLevel();
-    } // config.htmlElement.srcObject = stream;
+    }
 
-
-    onHTMLElement(htmlElement); // htmlElement.load();
-
-    publicized.startMedia();
+    onHTMLElement(htmlElement);
+    setImmediate(function () {
+      publicized.startMedia();
+    });
   }
 
   var publicized = {
@@ -125,6 +126,7 @@ function CallTopicManager(_ref) {
         el.setAttribute('data-uniqueId', elementUniqueId);
         el.setAttribute('width', _sharedData.sharedVariables.callVideoMinWidth + 'px');
         el.setAttribute('height', _sharedData.sharedVariables.callVideoMinHeight + 'px');
+        el.setAttribute('controls', '');
       } else if (config.mediaType === 'audio' && typeof config.user.mute !== 'undefined' && !config.user.mute && !config.htmlElement) {
         config.htmlElement = document.createElement('audio');
         var _el = config.htmlElement;
@@ -766,13 +768,48 @@ function CallTopicManager(_ref) {
                 manager = this;
 
                 if (!config.peer) {
-                  _context.next = 22;
+                  _context.next = 20;
                   break;
                 }
 
-                config.sdpOfferRequestSent = false; // this.removeTopicIceCandidateInterval();
+                if (!(config.direction === 'send')) {
+                  _context.next = 14;
+                  break;
+                }
 
-                metadataInstance.clearIceCandidateInterval();
+                if (!(config.mediaType === 'audio')) {
+                  _context.next = 6;
+                  break;
+                }
+
+                _context.next = 6;
+                return (0, _sharedData.currentCall)().deviceManager().mediaStreams.stopAudioInput();
+
+              case 6:
+                if (!(config.mediaType === 'video')) {
+                  _context.next = 14;
+                  break;
+                }
+
+                if (config.isScreenShare) {
+                  _context.next = 12;
+                  break;
+                }
+
+                _context.next = 10;
+                return (0, _sharedData.currentCall)().deviceManager().mediaStreams.stopVideoInput();
+
+              case 10:
+                _context.next = 14;
+                break;
+
+              case 12:
+                _context.next = 14;
+                return (0, _sharedData.currentCall)().deviceManager().mediaStreams.stopScreenShareInput();
+
+              case 14:
+                // config.sdpOfferRequestSent = false;
+                // metadataInstance.clearIceCandidateInterval();
                 manager.removeConnectionQualityInterval();
                 manager.removeAudioWatcherInterval();
                 removeStreamHTML();
@@ -780,42 +817,7 @@ function CallTopicManager(_ref) {
                 config.peer = null;
                 config.state = peerStates.DISCONNECTED;
 
-                if (!(config.direction === 'send')) {
-                  _context.next = 22;
-                  break;
-                }
-
-                if (!(config.mediaType === 'audio')) {
-                  _context.next = 14;
-                  break;
-                }
-
-                _context.next = 14;
-                return (0, _sharedData.currentCall)().deviceManager().mediaStreams.stopAudioInput();
-
-              case 14:
-                if (!(config.mediaType === 'video')) {
-                  _context.next = 22;
-                  break;
-                }
-
-                if (config.isScreenShare) {
-                  _context.next = 20;
-                  break;
-                }
-
-                _context.next = 18;
-                return (0, _sharedData.currentCall)().deviceManager().mediaStreams.stopVideoInput();
-
-              case 18:
-                _context.next = 22;
-                break;
-
               case 20:
-                _context.next = 22;
-                return (0, _sharedData.currentCall)().deviceManager().mediaStreams.stopScreenShareInput();
-
-              case 22:
               case "end":
                 return _context.stop();
             }
@@ -846,6 +848,7 @@ function CallTopicManager(_ref) {
     },
     startMedia: function startMedia() {
       _sdkParams.sdkParams.consoleLogging && console.log("[SDK][startMedia] called with: ", config.htmlElement);
+      if (!config.htmlElement) return;
       config.htmlElement.play()["catch"](function (err) {
         if (err.name === 'NotAllowedError') {
           _events.chatEvents.fireEvent('callEvents', {

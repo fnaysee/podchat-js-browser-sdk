@@ -77,6 +77,7 @@ function CallUser(user) {
             if(config.audioTopicManager)
                 return;
 
+            console.log('unmute::: callId: ', config.callId, 'user: ', config.user.userId, ' startAudio ', {sendTopic}, config.user);
             config.user.audioTopicName = 'Vo-' + sendTopic;
             config.user.mute = false;
             config.audioTopicManager = new CallTopicManager({
@@ -87,14 +88,12 @@ function CallUser(user) {
                 direction: (config.user.userId === store.user().id ? 'send' : 'receive'),
                 user: config.user,
                 onHTMLElement(el) {
-                    console.log('im called', el, config.user.audioTopicName, config.htmlElements[config.user.audioTopicName])
                     config.htmlElements[config.user.audioTopicName] = el;
+                    console.log('unmute::: callId: ', config.callId, 'user: ', config.user.userId, ' startAudio ', {sendTopic}, config.user);
                     publicized.appendUserToCallDiv();
                 }
             });
-            setImmediate(()=>{
-                config.audioTopicManager.createTopic();
-            })
+            config.audioTopicManager.createTopic();
         },
         async startVideo(sendTopic) {
             if(config.videoTopicManager)
@@ -150,7 +149,9 @@ function CallUser(user) {
             if(!config.audioTopicManager)
                 return;
 
+            console.log('unmute::: callId: ', config.callId, 'user: ', user.user.userId, ' destroyAudio()...');
             await config.audioTopicManager.destroy();
+            console.log('unmute::: callId: ', config.callId, 'user: ', user.user.userId, ' audioTopicManager destroyed...');
             delete config.htmlElements[config.user.audioTopicName];
             config.audioTopicManager = null;
         },

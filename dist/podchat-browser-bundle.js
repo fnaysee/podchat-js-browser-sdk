@@ -45978,7 +45978,7 @@ FilterXSS.prototype.process = function (html) {
 module.exports = FilterXSS;
 
 },{"./default":278,"./parser":280,"./util":281,"cssfilter":126}],283:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.25","date":"۱۴۰۲/۶/۲۰","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.7-snapshot.25","date":"۱۴۰۲/۶/۲۱","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],284:[function(require,module,exports){
 "use strict";
 
@@ -50977,6 +50977,8 @@ exports["default"] = _default;
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 
+var _typeof = require("@babel/runtime/helpers/typeof");
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -51007,6 +51009,58 @@ var _constants = require("../constants");
 var _errorHandler = require("../errorHandler");
 
 var _callsList = require("./callsList");
+
+var requestBlocker = _interopRequireWildcard(require("../requestBlocker"));
+
+function _getRequireWildcardCache(nodeInterop) {
+  if (typeof WeakMap !== "function") return null;
+  var cacheBabelInterop = new WeakMap();
+  var cacheNodeInterop = new WeakMap();
+  return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) {
+    return nodeInterop ? cacheNodeInterop : cacheBabelInterop;
+  })(nodeInterop);
+}
+
+function _interopRequireWildcard(obj, nodeInterop) {
+  if (!nodeInterop && obj && obj.__esModule) {
+    return obj;
+  }
+
+  if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") {
+    return {
+      "default": obj
+    };
+  }
+
+  var cache = _getRequireWildcardCache(nodeInterop);
+
+  if (cache && cache.has(obj)) {
+    return cache.get(obj);
+  }
+
+  var newObj = {};
+  var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
+
+  for (var key in obj) {
+    if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) {
+      var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
+
+      if (desc && (desc.get || desc.set)) {
+        Object.defineProperty(newObj, key, desc);
+      } else {
+        newObj[key] = obj[key];
+      }
+    }
+  }
+
+  newObj["default"] = obj;
+
+  if (cache) {
+    cache.set(obj, newObj);
+  }
+
+  return newObj;
+}
 
 function ownKeys(object, enumerableOnly) {
   var keys = Object.keys(object);
@@ -51323,11 +51377,12 @@ function CallManager(_ref) {
 
     if (jsonMessage.topic.indexOf('Vi-') !== -1 || jsonMessage.topic.indexOf('screen-Share') !== -1) {
       topicManager = userObj.videoTopicManager();
-      peer = topicManager.getPeer();
     } else if (jsonMessage.topic.indexOf('Vo-') !== -1) {
       topicManager = userObj.audioTopicManager();
-      peer = topicManager.getPeer();
     }
+
+    if (!topicManager) return;
+    peer = topicManager.getPeer();
 
     if (peer == null) {
       _events.chatEvents.fireEvent('callEvents', {
@@ -51380,10 +51435,13 @@ function CallManager(_ref) {
     var peer; //= callUsers[userId].peers[jsonMessage.topic];
 
     if (jsonMessage.topic.indexOf('Vi-') > -1 || jsonMessage.topic.indexOf('screen-Share') !== -1) {
-      peer = config.users.get(userId).videoTopicManager().getPeer();
+      peer = config.users.get(userId).videoTopicManager();
     } else if (jsonMessage.topic.indexOf('Vo-') > -1) {
-      peer = config.users.get(userId).audioTopicManager().getPeer();
+      peer = config.users.get(userId).audioTopicManager();
     }
+
+    if (!peer) return;
+    peer = peer.getPeer();
 
     if (peer == null) {
       _events.chatEvents.fireEvent('callEvents', {
@@ -51532,6 +51590,17 @@ function CallManager(_ref) {
       message: JSON.stringify(message),
       chatId: config.callId
     }, null, {});
+  }
+
+  function handleError(jsonMessage, sendingTopic, receiveTopic) {
+    var errMessage = jsonMessage.message;
+
+    _events.chatEvents.fireEvent('callEvents', {
+      type: 'CALL_ERROR',
+      code: 7000,
+      message: "Kurento error: " + errMessage,
+      environmentDetails: getCallDetails()
+    });
   }
 
   var publicized = {
@@ -51720,7 +51789,9 @@ function CallManager(_ref) {
           break;
 
         case 'ERROR':
-          handleError(message, params.sendingTopic, params.receiveTopic);
+          publicized.raiseCallError((0, _errorHandler.getFilledErrorObject)(_objectSpread(_objectSpread({}, _errorHandler.errorList.CALL_SERVER_ERROR), {}, {
+            replacements: [JSON.stringify(message)]
+          })), null, true);
           break;
 
         case 'SEND_SDP_OFFER':
@@ -52229,7 +52300,7 @@ function ScreenShareStateManager() {
   };
 }
 
-},{"../../events.module":287,"../../utility/utility":309,"../constants":300,"../errorHandler":301,"../sdkParams":303,"../store":305,"./callServerManager":289,"./callUsers":292,"./callsList":293,"./sharedData":297,"@babel/runtime/helpers/asyncToGenerator":4,"@babel/runtime/helpers/defineProperty":5,"@babel/runtime/helpers/interopRequireDefault":6,"@babel/runtime/regenerator":17}],289:[function(require,module,exports){
+},{"../../events.module":287,"../../utility/utility":309,"../constants":300,"../errorHandler":301,"../requestBlocker":302,"../sdkParams":303,"../store":305,"./callServerManager":289,"./callUsers":292,"./callsList":293,"./sharedData":297,"@babel/runtime/helpers/asyncToGenerator":4,"@babel/runtime/helpers/defineProperty":5,"@babel/runtime/helpers/interopRequireDefault":6,"@babel/runtime/helpers/typeof":15,"@babel/runtime/regenerator":17}],289:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -52272,6 +52343,7 @@ var callServerController = new CallServerManager();
 exports.callServerController = callServerController;
 
 },{"../sdkParams":303}],290:[function(require,module,exports){
+(function (setImmediate){(function (){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -52351,6 +52423,7 @@ function CallTopicManager(_ref) {
   };
 
   function removeStreamHTML() {
+    if (!config.htmlElement) return;
     var stream = config.htmlElement.srcObject;
 
     if (!!stream) {
@@ -52377,12 +52450,12 @@ function CallTopicManager(_ref) {
 
     if (config.mediaType === 'audio') {
       publicized.watchAudioLevel();
-    } // config.htmlElement.srcObject = stream;
+    }
 
-
-    onHTMLElement(htmlElement); // htmlElement.load();
-
-    publicized.startMedia();
+    onHTMLElement(htmlElement);
+    setImmediate(function () {
+      publicized.startMedia();
+    });
   }
 
   var publicized = {
@@ -52399,6 +52472,7 @@ function CallTopicManager(_ref) {
         el.setAttribute('data-uniqueId', elementUniqueId);
         el.setAttribute('width', _sharedData.sharedVariables.callVideoMinWidth + 'px');
         el.setAttribute('height', _sharedData.sharedVariables.callVideoMinHeight + 'px');
+        el.setAttribute('controls', '');
       } else if (config.mediaType === 'audio' && typeof config.user.mute !== 'undefined' && !config.user.mute && !config.htmlElement) {
         config.htmlElement = document.createElement('audio');
         var _el = config.htmlElement;
@@ -53040,13 +53114,48 @@ function CallTopicManager(_ref) {
                 manager = this;
 
                 if (!config.peer) {
-                  _context.next = 22;
+                  _context.next = 20;
                   break;
                 }
 
-                config.sdpOfferRequestSent = false; // this.removeTopicIceCandidateInterval();
+                if (!(config.direction === 'send')) {
+                  _context.next = 14;
+                  break;
+                }
 
-                metadataInstance.clearIceCandidateInterval();
+                if (!(config.mediaType === 'audio')) {
+                  _context.next = 6;
+                  break;
+                }
+
+                _context.next = 6;
+                return (0, _sharedData.currentCall)().deviceManager().mediaStreams.stopAudioInput();
+
+              case 6:
+                if (!(config.mediaType === 'video')) {
+                  _context.next = 14;
+                  break;
+                }
+
+                if (config.isScreenShare) {
+                  _context.next = 12;
+                  break;
+                }
+
+                _context.next = 10;
+                return (0, _sharedData.currentCall)().deviceManager().mediaStreams.stopVideoInput();
+
+              case 10:
+                _context.next = 14;
+                break;
+
+              case 12:
+                _context.next = 14;
+                return (0, _sharedData.currentCall)().deviceManager().mediaStreams.stopScreenShareInput();
+
+              case 14:
+                // config.sdpOfferRequestSent = false;
+                // metadataInstance.clearIceCandidateInterval();
                 manager.removeConnectionQualityInterval();
                 manager.removeAudioWatcherInterval();
                 removeStreamHTML();
@@ -53054,42 +53163,7 @@ function CallTopicManager(_ref) {
                 config.peer = null;
                 config.state = peerStates.DISCONNECTED;
 
-                if (!(config.direction === 'send')) {
-                  _context.next = 22;
-                  break;
-                }
-
-                if (!(config.mediaType === 'audio')) {
-                  _context.next = 14;
-                  break;
-                }
-
-                _context.next = 14;
-                return (0, _sharedData.currentCall)().deviceManager().mediaStreams.stopAudioInput();
-
-              case 14:
-                if (!(config.mediaType === 'video')) {
-                  _context.next = 22;
-                  break;
-                }
-
-                if (config.isScreenShare) {
-                  _context.next = 20;
-                  break;
-                }
-
-                _context.next = 18;
-                return (0, _sharedData.currentCall)().deviceManager().mediaStreams.stopVideoInput();
-
-              case 18:
-                _context.next = 22;
-                break;
-
               case 20:
-                _context.next = 22;
-                return (0, _sharedData.currentCall)().deviceManager().mediaStreams.stopScreenShareInput();
-
-              case 22:
               case "end":
                 return _context.stop();
             }
@@ -53120,6 +53194,7 @@ function CallTopicManager(_ref) {
     },
     startMedia: function startMedia() {
       _sdkParams.sdkParams.consoleLogging && console.log("[SDK][startMedia] called with: ", config.htmlElement);
+      if (!config.htmlElement) return;
       config.htmlElement.play()["catch"](function (err) {
         if (err.name === 'NotAllowedError') {
           _events.chatEvents.fireEvent('callEvents', {
@@ -53238,7 +53313,8 @@ function CallTopicManager(_ref) {
   return publicized;
 }
 
-},{"../../events.module":287,"../../messaging.module":308,"../../utility/utility":309,"../errorHandler":301,"../sdkParams":303,"./callsList":293,"./sharedData":297,"./topicMetaDataManager":298,"./webrtcPeer":299,"@babel/runtime/helpers/asyncToGenerator":4,"@babel/runtime/helpers/interopRequireDefault":6,"@babel/runtime/helpers/toConsumableArray":14,"@babel/runtime/regenerator":17}],291:[function(require,module,exports){
+}).call(this)}).call(this,require("timers").setImmediate)
+},{"../../events.module":287,"../../messaging.module":308,"../../utility/utility":309,"../errorHandler":301,"../sdkParams":303,"./callsList":293,"./sharedData":297,"./topicMetaDataManager":298,"./webrtcPeer":299,"@babel/runtime/helpers/asyncToGenerator":4,"@babel/runtime/helpers/interopRequireDefault":6,"@babel/runtime/helpers/toConsumableArray":14,"@babel/runtime/regenerator":17,"timers":271}],291:[function(require,module,exports){
 (function (setImmediate){(function (){
 "use strict";
 
@@ -55201,6 +55277,10 @@ var _slicedToArray2 = _interopRequireDefault(require("@babel/runtime/helpers/sli
 
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 
+var _utility = _interopRequireDefault(require("../../utility/utility"));
+
+var mynum = 3494609296;
+
 function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
   var _ref$direction = _ref.direction,
       direction = _ref$direction === void 0 ? 'send' : _ref$direction,
@@ -55213,6 +55293,7 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
       _ref$iceConnectionSta = _ref.iceConnectionStateChange,
       iceConnectionStateChange = _ref$iceConnectionSta === void 0 ? null : _ref$iceConnectionSta,
       onTrackCallback = _ref.onTrackCallback;
+  mynum++;
   var config = {
     rtcPeerConfig: rtcPeerConfig,
     direction: direction,
@@ -55221,7 +55302,8 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
     peerConnection: null,
     dataChannel: null,
     stream: stream,
-    candidatesQueue: []
+    candidatesQueue: [],
+    mynum: mynum
   };
 
   function createPeer() {
@@ -55238,16 +55320,17 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
     config.peerConnection.addEventListener('signalingstatechange', signalingStateChangeCallback);
     config.peerConnection.addEventListener('track', /*#__PURE__*/function () {
       var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(event) {
-        var _event$streams, remoteStream;
+        var _event$streams, remoteStream, newStream;
 
         return _regenerator["default"].wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
                 _event$streams = (0, _slicedToArray2["default"])(event.streams, 1), remoteStream = _event$streams[0];
-                onTrackCallback(remoteStream);
+                newStream = new MediaStream([event.receiver.track]);
+                onTrackCallback(newStream);
 
-              case 2:
+              case 3:
               case "end":
                 return _context.stop();
             }
@@ -55314,7 +55397,6 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
   }
 
   function addTheCandidates() {
-    // console.log("[SDK][WebRtcModule][addTheCandidates] adding the candidates")
     while (config.candidatesQueue.length) {
       var entry = config.candidatesQueue.shift();
       config.peerConnection.addIceCandidate(entry.candidate, entry.callback, entry.callback);
@@ -55326,11 +55408,21 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
     dispose: function dispose() {
       if (config.peerConnection) {
         if (config.peerConnection.signalingState === 'closed') return;
-        config.peerConnection.getLocalStreams().forEach(function (stream) {
-          return stream.getTracks().forEach(function (track) {
-            return track.stop && track.stop();
+
+        if (direction == 'send') {
+          config.peerConnection.getLocalStreams().forEach(function (stream) {
+            return stream.getTracks().forEach(function (track) {
+              return track.stop && track.stop();
+            });
           });
-        });
+        } else {
+          config.peerConnection.getRemoteStreams().forEach(function (stream) {
+            return stream.getTracks().forEach(function (track) {
+              return track.stop && track.stop();
+            });
+          });
+        }
+
         config.peerConnection.close();
       }
     },
@@ -55342,17 +55434,7 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
       } else {
         config.peerConnection.addTransceiver(config.mediaType, {
           direction: 'recvonly'
-        }); // if (config.mediaType == 'audio') {
-        //     config.peerConnection.addTransceiver('audio', {
-        //         direction: 'recvonly'
-        //     });
-        // }
-        //
-        // if (config.mediaType == 'video') {
-        //     config.peerConnection.addTransceiver('video', {
-        //         direction: 'recvonly'
-        //     });
-        // }
+        });
       }
 
       config.peerConnection.createOffer().then(function (offer) {
@@ -55361,7 +55443,6 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
         callback && callback(error, null);
       }).then(function (result) {
         //TODO: handle set offer result
-        // console.debug("[SDK][WebRtcModule] Set offer done. result: ", result);
         callback && callback(null, config.peerConnection.localDescription.sdp);
       }, function (error) {
         //TODO: handle set offer failed
@@ -55374,7 +55455,7 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
       var offer = new RTCSessionDescription({
         type: 'offer',
         sdp: sdpOffer
-      }); // console.debug('[SDK][WebRtcModule] SDP offer received, setting remote description')
+      });
 
       if (config.peerConnection.signalingState === 'closed') {
         return callback('[SDK][WebRtcModule] PeerConnection is closed');
@@ -55394,15 +55475,18 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
       })["catch"](callback);
     },
     processAnswer: function processAnswer(sdpAnswer, callback) {
-      var answer = new RTCSessionDescription({
-        type: 'answer',
-        sdp: sdpAnswer
-      });
-
       if (config.peerConnection.signalingState === 'closed') {
         return callback('[SDK][WebRtcModule] PeerConnection is closed');
       }
 
+      if (config.peerConnection.signalingState === 'stable') {
+        return callback('[SDK][WebRtcModule] PeerConnection is already stable');
+      }
+
+      var answer = new RTCSessionDescription({
+        type: 'answer',
+        sdp: sdpAnswer
+      });
       config.peerConnection.setRemoteDescription(answer).then(function () {
         // if (config.direction != 'send') {
         //setRemoteStream()
@@ -55447,7 +55531,7 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
   };
 }
 
-},{"@babel/runtime/helpers/asyncToGenerator":4,"@babel/runtime/helpers/interopRequireDefault":6,"@babel/runtime/helpers/slicedToArray":13,"@babel/runtime/regenerator":17}],300:[function(require,module,exports){
+},{"../../utility/utility":309,"@babel/runtime/helpers/asyncToGenerator":4,"@babel/runtime/helpers/interopRequireDefault":6,"@babel/runtime/helpers/slicedToArray":13,"@babel/runtime/regenerator":17}],300:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -55738,6 +55822,11 @@ var errorList = {
     code: 12003,
     message: "[SDK] Requests to {methodName} has been blocked for next {seconds} seconds.",
     variables: ['{methodName}', '{seconds}']
+  },
+  CALL_SERVER_ERROR: {
+    code: 12004,
+    message: "[SDK] ERROR from call server: {errorMessage}",
+    variables: ['{errorMessage}']
   },
 
   /**

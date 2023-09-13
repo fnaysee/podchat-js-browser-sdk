@@ -13,6 +13,10 @@ var _slicedToArray2 = _interopRequireDefault(require("@babel/runtime/helpers/sli
 
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 
+var _utility = _interopRequireDefault(require("../../utility/utility"));
+
+var mynum = 3494609296;
+
 function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
   var _ref$direction = _ref.direction,
       direction = _ref$direction === void 0 ? 'send' : _ref$direction,
@@ -25,6 +29,7 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
       _ref$iceConnectionSta = _ref.iceConnectionStateChange,
       iceConnectionStateChange = _ref$iceConnectionSta === void 0 ? null : _ref$iceConnectionSta,
       onTrackCallback = _ref.onTrackCallback;
+  mynum++;
   var config = {
     rtcPeerConfig: rtcPeerConfig,
     direction: direction,
@@ -33,7 +38,8 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
     peerConnection: null,
     dataChannel: null,
     stream: stream,
-    candidatesQueue: []
+    candidatesQueue: [],
+    mynum: mynum
   };
 
   function createPeer() {
@@ -50,16 +56,17 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
     config.peerConnection.addEventListener('signalingstatechange', signalingStateChangeCallback);
     config.peerConnection.addEventListener('track', /*#__PURE__*/function () {
       var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(event) {
-        var _event$streams, remoteStream;
+        var _event$streams, remoteStream, newStream;
 
         return _regenerator["default"].wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
                 _event$streams = (0, _slicedToArray2["default"])(event.streams, 1), remoteStream = _event$streams[0];
-                onTrackCallback(remoteStream);
+                newStream = new MediaStream([event.receiver.track]);
+                onTrackCallback(newStream);
 
-              case 2:
+              case 3:
               case "end":
                 return _context.stop();
             }
@@ -126,7 +133,6 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
   }
 
   function addTheCandidates() {
-    // console.log("[SDK][WebRtcModule][addTheCandidates] adding the candidates")
     while (config.candidatesQueue.length) {
       var entry = config.candidatesQueue.shift();
       config.peerConnection.addIceCandidate(entry.candidate, entry.callback, entry.callback);
@@ -138,11 +144,21 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
     dispose: function dispose() {
       if (config.peerConnection) {
         if (config.peerConnection.signalingState === 'closed') return;
-        config.peerConnection.getLocalStreams().forEach(function (stream) {
-          return stream.getTracks().forEach(function (track) {
-            return track.stop && track.stop();
+
+        if (direction == 'send') {
+          config.peerConnection.getLocalStreams().forEach(function (stream) {
+            return stream.getTracks().forEach(function (track) {
+              return track.stop && track.stop();
+            });
           });
-        });
+        } else {
+          config.peerConnection.getRemoteStreams().forEach(function (stream) {
+            return stream.getTracks().forEach(function (track) {
+              return track.stop && track.stop();
+            });
+          });
+        }
+
         config.peerConnection.close();
       }
     },
@@ -154,17 +170,7 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
       } else {
         config.peerConnection.addTransceiver(config.mediaType, {
           direction: 'recvonly'
-        }); // if (config.mediaType == 'audio') {
-        //     config.peerConnection.addTransceiver('audio', {
-        //         direction: 'recvonly'
-        //     });
-        // }
-        //
-        // if (config.mediaType == 'video') {
-        //     config.peerConnection.addTransceiver('video', {
-        //         direction: 'recvonly'
-        //     });
-        // }
+        });
       }
 
       config.peerConnection.createOffer().then(function (offer) {
@@ -173,7 +179,6 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
         callback && callback(error, null);
       }).then(function (result) {
         //TODO: handle set offer result
-        // console.debug("[SDK][WebRtcModule] Set offer done. result: ", result);
         callback && callback(null, config.peerConnection.localDescription.sdp);
       }, function (error) {
         //TODO: handle set offer failed
@@ -186,7 +191,7 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
       var offer = new RTCSessionDescription({
         type: 'offer',
         sdp: sdpOffer
-      }); // console.debug('[SDK][WebRtcModule] SDP offer received, setting remote description')
+      });
 
       if (config.peerConnection.signalingState === 'closed') {
         return callback('[SDK][WebRtcModule] PeerConnection is closed');
@@ -206,15 +211,18 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
       })["catch"](callback);
     },
     processAnswer: function processAnswer(sdpAnswer, callback) {
-      var answer = new RTCSessionDescription({
-        type: 'answer',
-        sdp: sdpAnswer
-      });
-
       if (config.peerConnection.signalingState === 'closed') {
         return callback('[SDK][WebRtcModule] PeerConnection is closed');
       }
 
+      if (config.peerConnection.signalingState === 'stable') {
+        return callback('[SDK][WebRtcModule] PeerConnection is already stable');
+      }
+
+      var answer = new RTCSessionDescription({
+        type: 'answer',
+        sdp: sdpAnswer
+      });
       config.peerConnection.setRemoteDescription(answer).then(function () {
         // if (config.direction != 'send') {
         //setRemoteStream()

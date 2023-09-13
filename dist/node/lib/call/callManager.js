@@ -2,6 +2,8 @@
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 
+var _typeof = require("@babel/runtime/helpers/typeof");
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -32,6 +34,12 @@ var _constants = require("../constants");
 var _errorHandler = require("../errorHandler");
 
 var _callsList = require("./callsList");
+
+var requestBlocker = _interopRequireWildcard(require("../requestBlocker"));
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
@@ -326,11 +334,12 @@ function CallManager(_ref) {
 
     if (jsonMessage.topic.indexOf('Vi-') !== -1 || jsonMessage.topic.indexOf('screen-Share') !== -1) {
       topicManager = userObj.videoTopicManager();
-      peer = topicManager.getPeer();
     } else if (jsonMessage.topic.indexOf('Vo-') !== -1) {
       topicManager = userObj.audioTopicManager();
-      peer = topicManager.getPeer();
     }
+
+    if (!topicManager) return;
+    peer = topicManager.getPeer();
 
     if (peer == null) {
       _events.chatEvents.fireEvent('callEvents', {
@@ -383,10 +392,13 @@ function CallManager(_ref) {
     var peer; //= callUsers[userId].peers[jsonMessage.topic];
 
     if (jsonMessage.topic.indexOf('Vi-') > -1 || jsonMessage.topic.indexOf('screen-Share') !== -1) {
-      peer = config.users.get(userId).videoTopicManager().getPeer();
+      peer = config.users.get(userId).videoTopicManager();
     } else if (jsonMessage.topic.indexOf('Vo-') > -1) {
-      peer = config.users.get(userId).audioTopicManager().getPeer();
+      peer = config.users.get(userId).audioTopicManager();
     }
+
+    if (!peer) return;
+    peer = peer.getPeer();
 
     if (peer == null) {
       _events.chatEvents.fireEvent('callEvents', {
@@ -535,6 +547,17 @@ function CallManager(_ref) {
       message: JSON.stringify(message),
       chatId: config.callId
     }, null, {});
+  }
+
+  function handleError(jsonMessage, sendingTopic, receiveTopic) {
+    var errMessage = jsonMessage.message;
+
+    _events.chatEvents.fireEvent('callEvents', {
+      type: 'CALL_ERROR',
+      code: 7000,
+      message: "Kurento error: " + errMessage,
+      environmentDetails: getCallDetails()
+    });
   }
 
   var publicized = {
@@ -723,7 +746,9 @@ function CallManager(_ref) {
           break;
 
         case 'ERROR':
-          handleError(message, params.sendingTopic, params.receiveTopic);
+          publicized.raiseCallError((0, _errorHandler.getFilledErrorObject)(_objectSpread(_objectSpread({}, _errorHandler.errorList.CALL_SERVER_ERROR), {}, {
+            replacements: [JSON.stringify(message)]
+          })), null, true);
           break;
 
         case 'SEND_SDP_OFFER':
