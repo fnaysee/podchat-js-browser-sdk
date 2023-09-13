@@ -1,3 +1,6 @@
+import Utility from "../../utility/utility";
+
+let mynum = 3494609296;
 function WebrtcPeerConnection({
     direction = 'send',
     mediaType = 'video',
@@ -7,6 +10,7 @@ function WebrtcPeerConnection({
     iceConnectionStateChange = null,
     onTrackCallback
 }, onCreatePeerCallback) {
+    mynum++;
     const config = {
         rtcPeerConfig,
         direction,
@@ -16,12 +20,16 @@ function WebrtcPeerConnection({
         dataChannel: null,
         stream,
         candidatesQueue: [],
+        mynum
     };
 
     function createPeer() {
+        console.log('unmute::: callId: ', config.callId, 'user: ', config.user.userId, ' createPeer() ');
+
         try {
             config.peerConnection = new RTCPeerConnection(config.rtcPeerConfig);
         } catch (err) {
+            console.log('unmute::: callId: ', config.callId, 'user: ', config.user.userId, ' createPeer().catch ');
             console.error("[SDK][WebrtcPeerConnection][createPeer]", err);
             onCreatePeerCallback && onCreatePeerCallback(err);
         }
@@ -32,7 +40,8 @@ function WebrtcPeerConnection({
         config.peerConnection.addEventListener('signalingstatechange', signalingStateChangeCallback);
         config.peerConnection.addEventListener('track', async (event) => {
             const [remoteStream] = event.streams;
-            onTrackCallback(remoteStream);
+            let newStream = new MediaStream([event.receiver.track])
+            onTrackCallback(newStream);
         });
 
 
@@ -56,12 +65,15 @@ function WebrtcPeerConnection({
         }
 
         if (config.peerConnection.signalingState === 'closed') {
+            console.log('unmute::: callId: ', config.callId, 'user: ', config.user.userId, ' createPeer().signalingState closed');
+
             onCreatePeerCallback && onCreatePeerCallback(
                 '[SDK][WebRtcModule] The peer connection object is in "closed" state. This is most likely due to an invocation of the dispose method before accepting in the dialogue'
             )
         }
 
         if(direction === 'send') {
+            console.log('unmute::: callId: ', config.callId, 'user: ', config.user.userId, ' createPeer() ', {mediaType, direction});
             stream.getTracks().forEach(addTrackToPeer);
 
             // if(config.mediaType === "video")
@@ -77,6 +89,7 @@ function WebrtcPeerConnection({
     createPeer();
 
     function addTrackToPeer(track){
+        console.log('unmute::: callId: ', config.callId, 'user: ', config.user.userId, ' addTrackToPeer ', {mediaType, direction, track, stream});
         config.peerConnection.addTrack(track, stream)
     }
 
@@ -91,7 +104,6 @@ function WebrtcPeerConnection({
     }
 
     function addTheCandidates(){
-        // console.log("[SDK][WebRtcModule][addTheCandidates] adding the candidates")
         while (config.candidatesQueue.length) {
             let entry = config.candidatesQueue.shift();
             config.peerConnection.addIceCandidate(entry.candidate, entry.callback, entry.callback);
@@ -104,10 +116,16 @@ function WebrtcPeerConnection({
             if (config.peerConnection) {
                 if (config.peerConnection.signalingState === 'closed')
                     return;
-
-                config.peerConnection.getLocalStreams()
-                    .forEach(stream => stream.getTracks()
-                        .forEach(track => track.stop && track.stop()))
+                if(direction == 'send') {
+                    config.peerConnection.getLocalStreams()
+                        .forEach(stream => stream.getTracks()
+                            .forEach(track => track.stop && track.stop()))
+                }
+                else {
+                    config.peerConnection.getRemoteStreams()
+                        .forEach(stream => stream.getTracks()
+                            .forEach(track => track.stop && track.stop()))
+                }
                 config.peerConnection.close();
             }
         },
@@ -121,17 +139,6 @@ function WebrtcPeerConnection({
                 config.peerConnection.addTransceiver(config.mediaType, {
                     direction: 'recvonly'
                 });
-                // if (config.mediaType == 'audio') {
-                //     config.peerConnection.addTransceiver('audio', {
-                //         direction: 'recvonly'
-                //     });
-                // }
-                //
-                // if (config.mediaType == 'video') {
-                //     config.peerConnection.addTransceiver('video', {
-                //         direction: 'recvonly'
-                //     });
-                // }
             }
             config.peerConnection.createOffer()
                 .then(offer => {
@@ -141,7 +148,6 @@ function WebrtcPeerConnection({
                 })
                 .then(result => {
                     //TODO: handle set offer result
-                    // console.debug("[SDK][WebRtcModule] Set offer done. result: ", result);
                     callback && callback(null, config.peerConnection.localDescription.sdp);
                 }, error => {
                     //TODO: handle set offer failed
@@ -156,8 +162,6 @@ function WebrtcPeerConnection({
                 type: 'offer',
                 sdp: sdpOffer
             })
-
-            // console.debug('[SDK][WebRtcModule] SDP offer received, setting remote description')
 
             if (config.peerConnection.signalingState === 'closed') {
                 return callback('[SDK][WebRtcModule] PeerConnection is closed')
@@ -178,14 +182,18 @@ function WebrtcPeerConnection({
             }).catch(callback)
         },
         processAnswer(sdpAnswer, callback) {
+            if (config.peerConnection.signalingState === 'closed') {
+                return callback('[SDK][WebRtcModule] PeerConnection is closed');
+            }
+
+            if (config.peerConnection.signalingState === 'stable') {
+                return callback('[SDK][WebRtcModule] PeerConnection is already stable');
+            }
+
             let answer = new RTCSessionDescription({
                 type: 'answer',
                 sdp: sdpAnswer
             });
-
-            if (config.peerConnection.signalingState === 'closed') {
-                return callback('[SDK][WebRtcModule] PeerConnection is closed');
-            }
 
             config.peerConnection.setRemoteDescription(answer)
                 .then(() => {
