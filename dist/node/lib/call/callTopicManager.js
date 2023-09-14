@@ -806,7 +806,12 @@ function CallTopicManager(_ref) {
           break;
 
         case 'video':
-          localStream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getVideoInput();
+          if (config.isScreenShare) {
+            localStream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getScreenShareInput();
+          } else {
+            localStream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getVideoInput();
+          }
+
       }
 
       if (localStream) localStream.enabled = true; // if(config.peer && config.peer.getLocalStream())
@@ -910,7 +915,6 @@ function CallTopicManager(_ref) {
     isDestroyed: function isDestroyed() {
       return config.isDestroyed;
     },
-    removeStreamHTML: removeStreamHTML,
     destroy: function destroy() {
       return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
         return _regenerator["default"].wrap(function _callee2$(_context2) {

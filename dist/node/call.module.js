@@ -2689,6 +2689,10 @@ function ChatCall(params) {
       return _ref9.apply(this, arguments);
     };
   }();
+
+  this.enableStatusEvents = function (callUserId, mediaType) {};
+
+  this.disableStatusEvents = function (callUserId, mediaType) {};
 }
 
 var _default = ChatCall;

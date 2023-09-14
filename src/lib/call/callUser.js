@@ -125,9 +125,7 @@ function CallUser(user) {
                 user: config.user,
                 onHTMLElement(el) {
                     config.htmlElements[config.user.videoTopicName] = el;
-
-                        publicized.appendVideoToCallDive();
-
+                    publicized.appendVideoToCallDive();
                 }
             });
             // await publicized.appendUserToCallDiv(generateVideoElement());
@@ -274,22 +272,21 @@ function CallScreenShare(user) {
                 sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
                 return;
             }
-
             let user = config.user,
-                callParentDiv = document.getElementById(sharedVariables.callDivId);
+                callParentDiv = document.getElementById(sharedVariables.callDivId),
+                userContainer = document.getElementById("callParticipantWrapper-" + config.userId);
 
+            if (!userContainer) {
+                callParentDiv.appendChild(config.htmlElements.container);
+                userContainer = document.getElementById("callParticipantWrapper-" + config.userId)
+            }
             if (user.video && config.videoTopicManager) {
-                if (!document.getElementById("callParticipantWrapper-" + config.userId)) {
-                    if (!document.getElementById("uiRemoteVideo-" + config.user.videoTopicName)) {
-                        config.htmlElements.container.appendChild(config.htmlElements[config.user.videoTopicName])
-                    }
-                } else {
-                    document.getElementById("callParticipantWrapper-" + config.userId).append(config.htmlElements[config.user.videoTopicName])
+                if (!document.getElementById("callUserVideo-" + config.user.videoTopicName)) {
+                    console.log('counter', config.userId, config.htmlElements,config.user.videoTopicName, config.htmlElements[config.user.videoTopicName])
+                    userContainer.appendChild(config.htmlElements[config.user.videoTopicName]);
+                    config.videoTopicManager.startMedia();
                 }
             }
-
-            if (!document.getElementById("callParticipantWrapper-" + config.userId))
-                callParentDiv.appendChild(config.htmlElements.container);
         },
         videoTopicManager() {
             return config.videoTopicManager;

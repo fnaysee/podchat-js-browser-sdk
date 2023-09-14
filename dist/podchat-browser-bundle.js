@@ -48739,6 +48739,10 @@ function ChatCall(params) {
       return _ref9.apply(this, arguments);
     };
   }();
+
+  this.enableStatusEvents = function (callUserId, mediaType) {};
+
+  this.disableStatusEvents = function (callUserId, mediaType) {};
 }
 
 var _default = ChatCall;
@@ -51963,17 +51967,16 @@ function CallManager(_ref) {
     },
     handleParticipantUnMute: function handleParticipantUnMute(messageContent) {
       return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
-        var myId, _loop2, i;
+        var _loop2, i;
 
         return _regenerator["default"].wrap(function _callee2$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                myId = _store.store.user().id;
                 console.log('unmute::: callId: ', config.callId);
 
                 if (!Array.isArray(messageContent)) {
-                  _context3.next = 10;
+                  _context3.next = 9;
                   break;
                 }
 
@@ -52015,20 +52018,20 @@ function CallManager(_ref) {
                 });
                 _context3.t0 = _regenerator["default"].keys(messageContent);
 
-              case 5:
+              case 4:
                 if ((_context3.t1 = _context3.t0()).done) {
-                  _context3.next = 10;
+                  _context3.next = 9;
                   break;
                 }
 
                 i = _context3.t1.value;
-                return _context3.delegateYield(_loop2(i), "t2", 8);
+                return _context3.delegateYield(_loop2(i), "t2", 7);
 
-              case 8:
-                _context3.next = 5;
+              case 7:
+                _context3.next = 4;
                 break;
 
-              case 10:
+              case 9:
                 setTimeout(function () {
                   _events.chatEvents.fireEvent('callEvents', {
                     type: 'CALL_DIVS',
@@ -52041,7 +52044,7 @@ function CallManager(_ref) {
                   result: messageContent
                 });
 
-              case 12:
+              case 11:
               case "end":
                 return _context3.stop();
             }
@@ -53192,7 +53195,12 @@ function CallTopicManager(_ref) {
           break;
 
         case 'video':
-          localStream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getVideoInput();
+          if (config.isScreenShare) {
+            localStream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getScreenShareInput();
+          } else {
+            localStream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getVideoInput();
+          }
+
       }
 
       if (localStream) localStream.enabled = true; // if(config.peer && config.peer.getLocalStream())
@@ -53296,7 +53304,6 @@ function CallTopicManager(_ref) {
     isDestroyed: function isDestroyed() {
       return config.isDestroyed;
     },
-    removeStreamHTML: removeStreamHTML,
     destroy: function destroy() {
       return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
         return _regenerator["default"].wrap(function _callee2$(_context2) {
@@ -53779,19 +53786,21 @@ function CallScreenShare(user) {
       }
 
       var user = config.user,
-          callParentDiv = document.getElementById(_sharedData.sharedVariables.callDivId);
+          callParentDiv = document.getElementById(_sharedData.sharedVariables.callDivId),
+          userContainer = document.getElementById("callParticipantWrapper-" + config.userId);
 
-      if (user.video && config.videoTopicManager) {
-        if (!document.getElementById("callParticipantWrapper-" + config.userId)) {
-          if (!document.getElementById("uiRemoteVideo-" + config.user.videoTopicName)) {
-            config.htmlElements.container.appendChild(config.htmlElements[config.user.videoTopicName]);
-          }
-        } else {
-          document.getElementById("callParticipantWrapper-" + config.userId).append(config.htmlElements[config.user.videoTopicName]);
-        }
+      if (!userContainer) {
+        callParentDiv.appendChild(config.htmlElements.container);
+        userContainer = document.getElementById("callParticipantWrapper-" + config.userId);
       }
 
-      if (!document.getElementById("callParticipantWrapper-" + config.userId)) callParentDiv.appendChild(config.htmlElements.container);
+      if (user.video && config.videoTopicManager) {
+        if (!document.getElementById("callUserVideo-" + config.user.videoTopicName)) {
+          console.log('counter', config.userId, config.htmlElements, config.user.videoTopicName, config.htmlElements[config.user.videoTopicName]);
+          userContainer.appendChild(config.htmlElements[config.user.videoTopicName]);
+          config.videoTopicManager.startMedia();
+        }
+      }
     },
     videoTopicManager: function videoTopicManager() {
       return config.videoTopicManager;

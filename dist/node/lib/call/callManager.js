@@ -919,17 +919,16 @@ function CallManager(_ref) {
     },
     handleParticipantUnMute: function handleParticipantUnMute(messageContent) {
       return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
-        var myId, _loop2, i;
+        var _loop2, i;
 
         return _regenerator["default"].wrap(function _callee2$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                myId = _store.store.user().id;
                 console.log('unmute::: callId: ', config.callId);
 
                 if (!Array.isArray(messageContent)) {
-                  _context3.next = 10;
+                  _context3.next = 9;
                   break;
                 }
 
@@ -971,20 +970,20 @@ function CallManager(_ref) {
                 });
                 _context3.t0 = _regenerator["default"].keys(messageContent);
 
-              case 5:
+              case 4:
                 if ((_context3.t1 = _context3.t0()).done) {
-                  _context3.next = 10;
+                  _context3.next = 9;
                   break;
                 }
 
                 i = _context3.t1.value;
-                return _context3.delegateYield(_loop2(i), "t2", 8);
+                return _context3.delegateYield(_loop2(i), "t2", 7);
 
-              case 8:
-                _context3.next = 5;
+              case 7:
+                _context3.next = 4;
                 break;
 
-              case 10:
+              case 9:
                 setTimeout(function () {
                   _events.chatEvents.fireEvent('callEvents', {
                     type: 'CALL_DIVS',
@@ -997,7 +996,7 @@ function CallManager(_ref) {
                   result: messageContent
                 });
 
-              case 12:
+              case 11:
               case "end":
                 return _context3.stop();
             }

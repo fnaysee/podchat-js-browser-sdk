@@ -726,10 +726,14 @@ function CallTopicManager(
             let localStream;
             switch (config.mediaType) {
                 case 'audio':
-                    localStream = currentCall().deviceManager().mediaStreams.getAudioInput()
+                    localStream = currentCall().deviceManager().mediaStreams.getAudioInput();
                     break;
                 case 'video':
-                    localStream = currentCall().deviceManager().mediaStreams.getVideoInput()
+                    if(config.isScreenShare) {
+                        localStream = currentCall().deviceManager().mediaStreams.getScreenShareInput();
+                    } else {
+                        localStream = currentCall().deviceManager().mediaStreams.getVideoInput();
+                    }
             }
             if(localStream)
                 localStream.enabled = true;
@@ -834,7 +838,6 @@ function CallTopicManager(
         isDestroyed(){
             return config.isDestroyed;
         },
-        removeStreamHTML,
         async destroy() {
             config.isDestroyed = true;
             // publicized.removeStreamHTML();

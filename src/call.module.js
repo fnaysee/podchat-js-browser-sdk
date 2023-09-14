@@ -2513,6 +2513,16 @@ function ChatCall(params) {
         await user.reconnectTopic(streamType);
         callback && callback({hasError: false});
     }
+
+    this.enableStatusEvents = function (callUserId, mediaType){
+
+    }
+
+    this.disableStatusEvents = function (callUserId, mediaType){
+
+    }
+
+
 }
 
 export default ChatCall
