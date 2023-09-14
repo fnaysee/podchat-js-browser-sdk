@@ -49,45 +49,58 @@ function CallUser(user) {
     getHTMLElements: function getHTMLElements() {
       return config.htmlElements;
     },
-    appendUserToCallDiv: function appendUserToCallDiv() {
+    appendAudioToCallDiv: function appendAudioToCallDiv() {
       if (!_sharedData.sharedVariables.callDivId) {
         _sdkParams.sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
         return;
       }
 
       var user = config.user,
-          callParentDiv = document.getElementById(_sharedData.sharedVariables.callDivId);
+          callParentDiv = document.getElementById(_sharedData.sharedVariables.callDivId),
+          userContainer = document.getElementById("callParticipantWrapper-" + config.userId);
 
-      if (user.video && config.videoTopicManager) {
-        if (!document.getElementById("callParticipantWrapper-" + config.userId)) {
-          if (!document.getElementById("uiRemoteVideo-" + config.user.videoTopicName)) {
-            config.htmlElements.container.appendChild(config.htmlElements[config.user.videoTopicName]);
-          }
-        } else {
-          document.getElementById("callParticipantWrapper-" + config.userId).append(config.htmlElements[config.user.videoTopicName]);
-        }
+      if (!userContainer) {
+        callParentDiv.appendChild(config.htmlElements.container);
+        userContainer = document.getElementById("callParticipantWrapper-" + config.userId);
       }
 
       if (typeof user.mute !== "undefined" && !user.mute && config.audioTopicManager) {
-        if (!document.getElementById("callParticipantWrapper-" + config.userId)) {
-          if (!document.getElementById("uiRemoteVideo-" + config.user.audioTopicName)) {
-            config.htmlElements.container.appendChild(config.htmlElements[config.user.audioTopicName]);
-          }
-        } else {
-          document.getElementById("callParticipantWrapper-" + config.userId).append(config.htmlElements[config.user.audioTopicName]);
+        if (!document.getElementById("callUserAudio-" + config.user.audioTopicName)) {
+          console.log('counter', config.userId, config.htmlElements, config.user.audioTopicName, config.htmlElements[config.user.audioTopicName]);
+          userContainer.appendChild(config.htmlElements[config.user.audioTopicName]);
+          config.audioTopicManager.startMedia();
+          config.audioTopicManager.watchAudioLevel();
         }
       }
+    },
+    appendVideoToCallDive: function appendVideoToCallDive() {
+      if (!_sharedData.sharedVariables.callDivId) {
+        _sdkParams.sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
+        return;
+      }
 
-      if (!document.getElementById("callParticipantWrapper-" + config.userId)) callParentDiv.appendChild(config.htmlElements.container);
+      var user = config.user,
+          callParentDiv = document.getElementById(_sharedData.sharedVariables.callDivId),
+          userContainer = document.getElementById("callParticipantWrapper-" + config.userId);
+
+      if (!userContainer) {
+        callParentDiv.appendChild(config.htmlElements.container);
+        userContainer = document.getElementById("callParticipantWrapper-" + config.userId);
+      }
+
+      if (user.video && config.videoTopicManager) {
+        if (!document.getElementById("callUserVideo-" + config.user.videoTopicName)) {
+          console.log('counter', config.userId, config.htmlElements, config.user.videoTopicName, config.htmlElements[config.user.videoTopicName]);
+          userContainer.appendChild(config.htmlElements[config.user.videoTopicName]);
+          config.videoTopicManager.startMedia();
+        }
+      }
     },
     videoTopicManager: function videoTopicManager() {
       return config.videoTopicManager;
     },
     audioTopicManager: function audioTopicManager() {
       return config.audioTopicManager;
-    },
-    audioStopManager: function audioStopManager() {
-      return config.user.audioStopManager;
     },
     startAudio: function startAudio(sendTopic) {
       return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
@@ -103,6 +116,9 @@ function CallUser(user) {
                 return _context.abrupt("return");
 
               case 2:
+                console.log('unmute::: callId: ', config.callId, 'user: ', config.userId, ' startAudio ', {
+                  sendTopic: sendTopic
+                }, config.user);
                 config.user.audioTopicName = 'Vo-' + sendTopic;
                 config.user.mute = false;
                 config.audioTopicManager = new _callTopicManager.CallTopicManager({
@@ -113,16 +129,18 @@ function CallUser(user) {
                   direction: config.user.userId === _store.store.user().id ? 'send' : 'receive',
                   user: config.user,
                   onHTMLElement: function onHTMLElement(el) {
-                    console.log('im called', el, config.user.audioTopicName, config.htmlElements[config.user.audioTopicName]);
                     config.htmlElements[config.user.audioTopicName] = el;
-                    publicized.appendUserToCallDiv();
+                    console.log('unmute::: callId: ', config.callId, 'user: ', config.userId, ' startAudio ', {
+                      sendTopic: sendTopic
+                    }, config.user);
+                    publicized.appendAudioToCallDiv();
                   }
                 });
                 setImmediate(function () {
                   config.audioTopicManager.createTopic();
                 });
 
-              case 6:
+              case 7:
               case "end":
                 return _context.stop();
             }
@@ -155,7 +173,7 @@ function CallUser(user) {
                   user: config.user,
                   onHTMLElement: function onHTMLElement(el) {
                     config.htmlElements[config.user.videoTopicName] = el;
-                    publicized.appendUserToCallDiv();
+                    publicized.appendVideoToCallDive();
                   }
                 }); // await publicized.appendUserToCallDiv(generateVideoElement());
 
@@ -285,14 +303,16 @@ function CallUser(user) {
                 return _context6.abrupt("return");
 
               case 2:
-                _context6.next = 4;
+                console.log('unmute::: callId: ', config.callId, 'user: ', user.userId, ' destroyAudio()...');
+                _context6.next = 5;
                 return config.audioTopicManager.destroy();
 
-              case 4:
+              case 5:
+                console.log('unmute::: callId: ', config.callId, 'user: ', user.userId, ' audioTopicManager destroyed...');
                 delete config.htmlElements[config.user.audioTopicName];
                 config.audioTopicManager = null;
 
-              case 6:
+              case 8:
               case "end":
                 return _context6.stop();
             }
@@ -350,8 +370,6 @@ function CallUser(user) {
   };
 
   function setup(participant) {
-    var _sdkParams$callOption, _sdkParams$callOption2;
-
     config.user = participant;
 
     if (config.isMe) {
@@ -361,32 +379,29 @@ function CallUser(user) {
     }
 
     config.user.videoTopicName = 'Vi-' + config.user.topicSend;
-    config.user.audioTopicName = 'Vo-' + config.user.topicSend;
-    config.user.audioStopManager = new _deviceStartStopManager.DevicePauseStopManager({
-      callId: config.callId,
-      userId: config.user.userId,
-      mediaType: 'audio',
-      timeout: ((_sdkParams$callOption = _sdkParams.sdkParams.callOptions) === null || _sdkParams$callOption === void 0 ? void 0 : _sdkParams$callOption.streamCloseTimeout) || 10000
-    });
+    config.user.audioTopicName = 'Vo-' + config.user.topicSend; // config.user.audioStopManager = new DevicePauseStopManager({
+    //     callId: config.callId,
+    //     userId: config.user.userId,
+    //     mediaType: 'audio',
+    //     timeout: sdkParams.callOptions?.streamCloseTimeout || 10000
+    // });
+    // if (config.user.mute) {
+    //     config.user.audioStopManager.pauseStream();
+    //     config.user.audioStopManager.stopStream();
+    // }
+    // config.user.videoStopManager = new DevicePauseStopManager({
+    //     callId: config.callId,
+    //     userId: config.user.userId,
+    //     mediaType: 'video',
+    //     timeout: sdkParams.callOptions?.streamCloseTimeout || 10000
+    // });
+    // if (!config.user.video) {
+    // config.user.videoStopManager.pauseStream();
+    // config.user.videoStopManager.stopStream();
+    // }
+    // publicized.appendUserToCallDiv(generateContainerElement())
 
-    if (config.user.mute) {
-      config.user.audioStopManager.pauseStream();
-      config.user.audioStopManager.stopStream();
-    }
-
-    config.user.videoStopManager = new _deviceStartStopManager.DevicePauseStopManager({
-      callId: config.callId,
-      userId: config.user.userId,
-      mediaType: 'video',
-      timeout: ((_sdkParams$callOption2 = _sdkParams.sdkParams.callOptions) === null || _sdkParams$callOption2 === void 0 ? void 0 : _sdkParams$callOption2.streamCloseTimeout) || 10000
-    });
-
-    if (!config.user.video) {
-      config.user.videoStopManager.pauseStream();
-      config.user.videoStopManager.stopStream();
-    }
-
-    publicized.appendUserToCallDiv(generateContainerElement());
+    generateContainerElement();
     if (config.user.video) publicized.startVideo(config.user.topicSend);
     if (!config.user.mute) publicized.startAudio(config.user.topicSend);
   }
@@ -586,9 +601,11 @@ function CallScreenShare(user) {
     };
     obj.direction = iAmOwner ? 'send' : 'receive';
     obj.videoTopicName = config.topic;
-    config.user = obj;
-    publicized.appendUserToCallDiv(generateContainerElement());
-    if (config.user.video) publicized.startVideo(obj.topic);
+    config.user = obj; // publicized.appendUserToCallDiv(generateContainerElement())
+
+    generateContainerElement();
+    if (config.user.video) publicized.startVideo(obj.topic); // if(!config.user.mute)
+    //     publicized.startAudio(obj.topic);
   }
 
   function generateContainerElement() {

@@ -1,7 +1,6 @@
-import Utility from "../../utility/utility";
-
-let mynum = 3494609296;
 function WebrtcPeerConnection({
+    callId,
+    userId,
     direction = 'send',
     mediaType = 'video',
     rtcPeerConfig,
@@ -9,8 +8,8 @@ function WebrtcPeerConnection({
     connectionStateChange = null,
     iceConnectionStateChange = null,
     onTrackCallback
+    // onIceCandidate
 }, onCreatePeerCallback) {
-    mynum++;
     const config = {
         rtcPeerConfig,
         direction,
@@ -20,16 +19,15 @@ function WebrtcPeerConnection({
         dataChannel: null,
         stream,
         candidatesQueue: [],
-        mynum
     };
 
     function createPeer() {
-        console.log('unmute::: callId: ', config.callId, 'user: ', config.user.userId, ' createPeer() ');
+        console.log('unmute::: callId: ', callId, 'user: ', userId, ' createPeer() ');
 
         try {
             config.peerConnection = new RTCPeerConnection(config.rtcPeerConfig);
         } catch (err) {
-            console.log('unmute::: callId: ', config.callId, 'user: ', config.user.userId, ' createPeer().catch ');
+            console.log('unmute::: callId: ', callId, 'user: ', userId, ' createPeer().catch ');
             console.error("[SDK][WebrtcPeerConnection][createPeer]", err);
             onCreatePeerCallback && onCreatePeerCallback(err);
         }
@@ -38,34 +36,11 @@ function WebrtcPeerConnection({
         config.peerConnection.onconnectionstatechange = connectionStateChange;
         config.peerConnection.oniceconnectionstatechange = iceConnectionStateChange;
         config.peerConnection.addEventListener('signalingstatechange', signalingStateChangeCallback);
-        config.peerConnection.addEventListener('track', async (event) => {
-            const [remoteStream] = event.streams;
-            let newStream = new MediaStream([event.receiver.track])
-            onTrackCallback(newStream);
-        });
-
-
-        if (!config.peerConnection.getLocalStreams && config.peerConnection.getSenders) {
-            config.peerConnection.getLocalStreams = function () {
-                let stream = new MediaStream();
-                config.peerConnection.getSenders().forEach(function (sender) {
-                    stream.addTrack(sender.track);
-                });
-                return [stream];
-            };
-        }
-        if (!config.peerConnection.getRemoteStreams && config.peerConnection.getReceivers) {
-            config.peerConnection.getRemoteStreams = function () {
-                let stream = new MediaStream();
-                config.peerConnection.getReceivers().forEach(function (sender) {
-                    stream.addTrack(sender.track);
-                });
-                return [stream];
-            };
-        }
+        config.peerConnection.addEventListener('track', onRemoteTrack);
+        // config.peerConnection.onicecandidate = onIceCandidate
 
         if (config.peerConnection.signalingState === 'closed') {
-            console.log('unmute::: callId: ', config.callId, 'user: ', config.user.userId, ' createPeer().signalingState closed');
+            console.log('unmute::: callId: ', callId, 'user: ', userId, ' createPeer().signalingState closed');
 
             onCreatePeerCallback && onCreatePeerCallback(
                 '[SDK][WebRtcModule] The peer connection object is in "closed" state. This is most likely due to an invocation of the dispose method before accepting in the dialogue'
@@ -73,7 +48,7 @@ function WebrtcPeerConnection({
         }
 
         if(direction === 'send') {
-            console.log('unmute::: callId: ', config.callId, 'user: ', config.user.userId, ' createPeer() ', {mediaType, direction});
+            console.log('unmute::: callId: ', callId, 'user: ', userId, ' createPeer() ', {mediaType, direction});
             stream.getTracks().forEach(addTrackToPeer);
 
             // if(config.mediaType === "video")
@@ -88,8 +63,39 @@ function WebrtcPeerConnection({
 
     createPeer();
 
+    async function onRemoteTrack(event) {
+        const [remoteStream] = event.streams;
+        let newStream = new MediaStream([event.track])
+        console.log('unmute::: callId: ', callId, ' user: ', userId, ' onRemoteTrack', {event, direction, mediaType});
+        onTrackCallback(newStream);
+    }
+
+
+    function getLocalStreams() {
+        if(!config.peerConnection)
+            return [];
+
+        let stream = new MediaStream();
+        config.peerConnection.getSenders().forEach(function (sender) {
+            stream.addTrack(sender.track);
+        });
+        return [stream];
+    };
+
+    function getRemoteStreams() {
+        if(!config.peerConnection)
+            return [];
+
+        let stream = new MediaStream();
+        config.peerConnection.getReceivers().forEach(function (sender) {
+            stream.addTrack(sender.track);
+        });
+        return [stream];
+    };
+
+
     function addTrackToPeer(track){
-        console.log('unmute::: callId: ', config.callId, 'user: ', config.user.userId, ' addTrackToPeer ', {mediaType, direction, track, stream});
+        console.log('unmute::: callId: ', callId, 'user: ', userId, ' addTrackToPeer ', {mediaType, direction, track, stream});
         config.peerConnection.addTrack(track, stream)
     }
 
@@ -113,20 +119,26 @@ function WebrtcPeerConnection({
     return {
         peerConnection: config.peerConnection,
         dispose() {
+            console.log('unmute::: callId: ', callId, 'user: ', userId, ' peer disposing ', {mediaType, direction});
             if (config.peerConnection) {
-                if (config.peerConnection.signalingState === 'closed')
-                    return;
-                if(direction == 'send') {
-                    config.peerConnection.getLocalStreams()
-                        .forEach(stream => stream.getTracks()
-                            .forEach(track => track.stop && track.stop()))
+                config.peerConnection.ontrack = null;
+                config.peerConnection.onremovetrack = null;
+                config.peerConnection.onicecandidate = null;
+                config.peerConnection.oniceconnectionstatechange = null;
+                config.peerConnection.onsignalingstatechange = null;
+                if (config.peerConnection.signalingState !== 'closed') {
+                    if (direction != 'send') {
+                        getRemoteStreams()
+                            .forEach(stream => {
+                                console.log('unmute::: callId: ', callId, 'user: ', userId, ' peer disposing, clear remote tracks ', {mediaType, direction, stream});
+                                stream.getTracks()
+                                    .forEach(track => {track.enabled = false;})
+                            })
+                    }
+                    config.peerConnection.close();
+                    console.log('unmute::: callId: ', callId, 'user: ', userId, ' peer disposing, closed ', {mediaType, direction, stream});
                 }
-                else {
-                    config.peerConnection.getRemoteStreams()
-                        .forEach(stream => stream.getTracks()
-                            .forEach(track => track.stop && track.stop()))
-                }
-                config.peerConnection.close();
+                config.peerConnection = null;
             }
         },
         generateOffer(callback) {

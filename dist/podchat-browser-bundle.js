@@ -45978,7 +45978,7 @@ FilterXSS.prototype.process = function (html) {
 module.exports = FilterXSS;
 
 },{"./default":278,"./parser":280,"./util":281,"cssfilter":126}],283:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.25","date":"۱۴۰۲/۶/۲۱","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.7-snapshot.25","date":"۱۴۰۲/۶/۲۳","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],284:[function(require,module,exports){
 "use strict";
 
@@ -51197,17 +51197,17 @@ function CallManager(_ref) {
   }
 
   function _callStop() {
-    _callStop = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5() {
+    _callStop = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee6() {
       var resetCurrentCallId,
           resetCameraPaused,
-          _args5 = arguments;
-      return _regenerator["default"].wrap(function _callee5$(_context5) {
+          _args7 = arguments;
+      return _regenerator["default"].wrap(function _callee6$(_context7) {
         while (1) {
-          switch (_context5.prev = _context5.next) {
+          switch (_context7.prev = _context7.next) {
             case 0:
-              resetCurrentCallId = _args5.length > 0 && _args5[0] !== undefined ? _args5[0] : true;
-              resetCameraPaused = _args5.length > 1 && _args5[1] !== undefined ? _args5[1] : true;
-              _context5.next = 4;
+              resetCurrentCallId = _args7.length > 0 && _args7[0] !== undefined ? _args7[0] : true;
+              resetCameraPaused = _args7.length > 1 && _args7[1] !== undefined ? _args7[1] : true;
+              _context7.next = 4;
               return config.users.destroy();
 
             case 4:
@@ -51225,10 +51225,10 @@ function CallManager(_ref) {
 
             case 9:
             case "end":
-              return _context5.stop();
+              return _context7.stop();
           }
         }
-      }, _callee5);
+      }, _callee6);
     }));
     return _callStop.apply(this, arguments);
   }
@@ -51945,13 +51945,7 @@ function CallManager(_ref) {
 
           if (user) {
             user.stopAudio();
-          } // callUsers[messageContent[i].userId].audioStopManager.disableStream();
-          // callStateController.deactivateParticipantStream(
-          //     messageContent[i].userId,
-          //     'audio',
-          //     'mute'
-          // )
-
+          }
         }
       }
 
@@ -51969,50 +51963,72 @@ function CallManager(_ref) {
     },
     handleParticipantUnMute: function handleParticipantUnMute(messageContent) {
       return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
-        var myId, i, user;
-        return _regenerator["default"].wrap(function _callee2$(_context2) {
+        var myId, _loop2, i;
+
+        return _regenerator["default"].wrap(function _callee2$(_context3) {
           while (1) {
-            switch (_context2.prev = _context2.next) {
+            switch (_context3.prev = _context3.next) {
               case 0:
                 myId = _store.store.user().id;
+                console.log('unmute::: callId: ', config.callId);
 
                 if (!Array.isArray(messageContent)) {
-                  _context2.next = 13;
+                  _context3.next = 10;
                   break;
                 }
 
-                _context2.t0 = _regenerator["default"].keys(messageContent);
+                _loop2 = /*#__PURE__*/_regenerator["default"].mark(function _loop2(i) {
+                  var user;
+                  return _regenerator["default"].wrap(function _loop2$(_context2) {
+                    while (1) {
+                      switch (_context2.prev = _context2.next) {
+                        case 0:
+                          user = config.users.get(messageContent[i].userId);
+                          console.log('unmute::: callId: ', config.callId, 'user: ', user.user().id);
 
-              case 3:
-                if ((_context2.t1 = _context2.t0()).done) {
-                  _context2.next = 13;
+                          if (!user) {
+                            _context2.next = 9;
+                            break;
+                          }
+
+                          if (!user.audioTopicManager()) {
+                            _context2.next = 7;
+                            break;
+                          }
+
+                          console.log('unmute::: callId: ', config.callId, 'user: ', user.user().id, ' handleParticipantUnMute calling user.stopAudio');
+                          _context2.next = 7;
+                          return user.destroyAudio();
+
+                        case 7:
+                          console.log('unmute::: callId: ', config.callId, 'user: ', user.user().id, ' handleParticipantUnMute calling user.startAudio');
+                          setTimeout(function () {
+                            user.startAudio(messageContent[i].sendTopic);
+                          }, 50);
+
+                        case 9:
+                        case "end":
+                          return _context2.stop();
+                      }
+                    }
+                  }, _loop2);
+                });
+                _context3.t0 = _regenerator["default"].keys(messageContent);
+
+              case 5:
+                if ((_context3.t1 = _context3.t0()).done) {
+                  _context3.next = 10;
                   break;
                 }
 
-                i = _context2.t1.value;
-                user = config.users.get(messageContent[i].userId);
+                i = _context3.t1.value;
+                return _context3.delegateYield(_loop2(i), "t2", 8);
 
-                if (!user) {
-                  _context2.next = 11;
-                  break;
-                }
-
-                if (!user.audioTopicManager()) {
-                  _context2.next = 10;
-                  break;
-                }
-
-                _context2.next = 10;
-                return user.stopAudio();
-
-              case 10:
-                user.startAudio(messageContent[i].sendTopic);
-
-              case 11:
-                _context2.next = 3;
+              case 8:
+                _context3.next = 5;
                 break;
 
-              case 13:
+              case 10:
                 setTimeout(function () {
                   _events.chatEvents.fireEvent('callEvents', {
                     type: 'CALL_DIVS',
@@ -52025,9 +52041,9 @@ function CallManager(_ref) {
                   result: messageContent
                 });
 
-              case 15:
+              case 12:
               case "end":
-                return _context2.stop();
+                return _context3.stop();
             }
           }
         }, _callee2);
@@ -52036,44 +52052,44 @@ function CallManager(_ref) {
     handleParticipantVideoOn: function handleParticipantVideoOn(messageContent) {
       return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3() {
         var i, user;
-        return _regenerator["default"].wrap(function _callee3$(_context3) {
+        return _regenerator["default"].wrap(function _callee3$(_context4) {
           while (1) {
-            switch (_context3.prev = _context3.next) {
+            switch (_context4.prev = _context4.next) {
               case 0:
                 if (!Array.isArray(messageContent)) {
-                  _context3.next = 12;
+                  _context4.next = 12;
                   break;
                 }
 
-                _context3.t0 = _regenerator["default"].keys(messageContent);
+                _context4.t0 = _regenerator["default"].keys(messageContent);
 
               case 2:
-                if ((_context3.t1 = _context3.t0()).done) {
-                  _context3.next = 12;
+                if ((_context4.t1 = _context4.t0()).done) {
+                  _context4.next = 12;
                   break;
                 }
 
-                i = _context3.t1.value;
+                i = _context4.t1.value;
                 user = config.users.get(messageContent[i].userId);
 
                 if (!user) {
-                  _context3.next = 10;
+                  _context4.next = 10;
                   break;
                 }
 
                 if (!user.audioTopicManager()) {
-                  _context3.next = 9;
+                  _context4.next = 9;
                   break;
                 }
 
-                _context3.next = 9;
+                _context4.next = 9;
                 return user.stopAudio();
 
               case 9:
                 user.startVideo(messageContent[i].sendTopic);
 
               case 10:
-                _context3.next = 2;
+                _context4.next = 2;
                 break;
 
               case 12:
@@ -52091,7 +52107,7 @@ function CallManager(_ref) {
 
               case 14:
               case "end":
-                return _context3.stop();
+                return _context4.stop();
             }
           }
         }, _callee3);
@@ -52169,17 +52185,17 @@ function CallManager(_ref) {
     },
     handleEndScreenShare: function handleEndScreenShare(messageContent) {
       return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4() {
-        return _regenerator["default"].wrap(function _callee4$(_context4) {
+        return _regenerator["default"].wrap(function _callee4$(_context5) {
           while (1) {
-            switch (_context4.prev = _context4.next) {
+            switch (_context5.prev = _context5.next) {
               case 0:
                 config.screenShareInfo.setIsStarted(false);
                 config.screenShareInfo.setOwner(messageContent.screenOwner.id);
-                _context4.next = 4;
+                _context5.next = 4;
                 return config.users.removeItem('screenShare');
 
               case 4:
-                _context4.next = 6;
+                _context5.next = 6;
                 return config.deviceManager.mediaStreams.stopScreenShareInput();
 
               case 6:
@@ -52195,7 +52211,7 @@ function CallManager(_ref) {
 
               case 8:
               case "end":
-                return _context4.stop();
+                return _context5.stop();
             }
           }
         }, _callee4);
@@ -52246,7 +52262,32 @@ function CallManager(_ref) {
       }
     },
     destroy: function destroy() {
-      return callStop();
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5() {
+        return _regenerator["default"].wrap(function _callee5$(_context6) {
+          while (1) {
+            switch (_context6.prev = _context6.next) {
+              case 0:
+                _context6.next = 2;
+                return config.deviceManager.mediaStreams.stopAudioInput();
+
+              case 2:
+                _context6.next = 4;
+                return config.deviceManager.mediaStreams.stopVideoInput();
+
+              case 4:
+                _context6.next = 6;
+                return config.deviceManager.mediaStreams.stopScreenShareInput();
+
+              case 6:
+                return _context6.abrupt("return", callStop());
+
+              case 7:
+              case "end":
+                return _context6.stop();
+            }
+          }
+        }, _callee5);
+      }))();
     }
   };
   return publicized;
@@ -52343,7 +52384,6 @@ var callServerController = new CallServerManager();
 exports.callServerController = callServerController;
 
 },{"../sdkParams":303}],290:[function(require,module,exports){
-(function (setImmediate){(function (){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -52424,38 +52464,26 @@ function CallTopicManager(_ref) {
 
   function removeStreamHTML() {
     if (!config.htmlElement) return;
-    var stream = config.htmlElement.srcObject;
-
-    if (!!stream) {
-      var tracks = stream.getTracks();
-
-      if (!!tracks) {
-        tracks.forEach(function (track) {
-          track.stop();
-        });
-      }
-
-      config.htmlElement.srcObject = null;
-    }
-
+    config.htmlElement.srcObject = null;
     config.htmlElement.remove();
     delete config.htmlElement;
+    console.log('unmute::: callId: ', config.callId, ' user: ', config.userId, ' removed htmlElement ');
   }
 
   function addStreamTrackToElement(stream) {
     config.dataStream = stream;
     var htmlElement = publicized.getHtmlElement();
     if (mediaType == 'video') htmlElement.mute = true;
-    if (config.mediaType === "video" || config.mediaType === "audio" && config.direction === "receive") htmlElement.srcObject = stream;
 
-    if (config.mediaType === 'audio') {
-      publicized.watchAudioLevel();
+    if (config.mediaType === "video" || config.mediaType === "audio" && config.direction === "receive") {
+      htmlElement.srcObject = stream;
+
+      if (config.mediaType === "video") {
+        htmlElement.load();
+      }
     }
 
     onHTMLElement(htmlElement);
-    setImmediate(function () {
-      publicized.startMedia();
-    });
   }
 
   var publicized = {
@@ -52465,7 +52493,7 @@ function CallTopicManager(_ref) {
       if (config.mediaType === 'video' && config.user.video && !config.htmlElement) {
         config.htmlElement = document.createElement('video');
         var el = config.htmlElement;
-        el.setAttribute('id', 'uiRemoteVideo-' + config.user.videoTopicName);
+        el.setAttribute('id', 'callUserVideo-' + config.user.videoTopicName);
         el.setAttribute('class', _sharedData.sharedVariables.callVideoTagClassName);
         el.setAttribute('playsinline', '');
         el.setAttribute('muted', '');
@@ -52477,7 +52505,7 @@ function CallTopicManager(_ref) {
         config.htmlElement = document.createElement('audio');
         var _el = config.htmlElement;
 
-        _el.setAttribute('id', 'uiRemoteAudio-' + config.user.audioTopicName);
+        _el.setAttribute('id', 'callUserAudio-' + config.user.audioTopicName);
 
         _el.setAttribute('class', _sharedData.sharedVariables.callAudioTagClassName);
 
@@ -52518,6 +52546,27 @@ function CallTopicManager(_ref) {
     },
     isPeerDisconnected: function isPeerDisconnected() {
       return config.state === peerStates.DISCONNECTED;
+    },
+    createTopic: function createTopic() {
+      var manager = this;
+
+      if (config.peer) {
+        return;
+      }
+
+      if (mediaType === 'audio') console.log('unmute::: callId: ', config.callId, 'user: ', config.userId, ' createTopic ');
+      publicized.resumeSendStream();
+      this.generateSdpOfferOptions().then(function (options) {
+        _sdkParams.sdkParams.consoleLogging && console.debug("[SDK][generateSdpOfferOptions] Options for this request have been resolved: ", {
+          options: options
+        }, "userId: ", config.userId, "topic: ", config.topic, "direction: ", config.direction);
+        console.log('unmute::: callId: ', config.callId, 'user: ', config.userId, ' createTopic.generateSdpOfferOptions ', {
+          options: options
+        });
+        manager.establishPeerConnection(options);
+      })["catch"](function (error) {
+        console.error(error);
+      });
     },
     generateSdpOfferOptions: function generateSdpOfferOptions() {
       var topicManager = this;
@@ -52612,33 +52661,15 @@ function CallTopicManager(_ref) {
         _sdkParams.sdkParams.consoleLogging && console.log("[SDK][getSdpOfferOptions] ", "topic: ", config.topic, "mediaType: ", config.mediaType, "direction: ", config.direction, "options: ", options);
       });
     },
-    // watchForIceCandidates: function (candidate) {
-    //     let manager = this;
-    //
-    //     if (metadataInstance.isIceCandidateIntervalSet()) {
-    //         return;
-    //     }
-    //     //callUsers[config.userId].topicMetaData[config.topic].interval
-    //     metadataInstance.setIceCandidateInterval(setInterval(function () {
-    //         if (config.topicMetaData.sdpAnswerReceived === true) {
-    //             sdkParams.consoleLogging && console.log("[SDK][watchForIceCandidates][setInterval] sdpAnswerReceived, topic:", config.topic)
-    //             config.topicMetaData.sdpAnswerReceived = false;
-    //             // manager.removeTopicIceCandidateInterval();
-    //             metadataInstance.clearIceCandidateInterval();
-    //             currentCall().sendCallMessage({
-    //                 id: 'ADD_ICE_CANDIDATE',
-    //                 topic: config.topic,
-    //                 candidateDto: candidate
-    //             }, null, {})
-    //         }
-    //     }, 500, {candidate: candidate}));
-    // },
     establishPeerConnection: function establishPeerConnection(options) {
       var manager = this,
           user = config.user,
           topicElement = config.htmlElement;
       config.state = peerStates.CONNECTING;
+      console.log('unmute::: callId: ', config.callId, 'user: ', config.userId, ' establishPeerConnection: new WebrtcPeerConnection ');
       config.peer = new _webrtcPeer.WebrtcPeerConnection({
+        callId: config.callId,
+        userId: config.userId,
         direction: config.direction,
         mediaType: config.mediaType,
         stream: options.stream,
@@ -52842,6 +52873,10 @@ function CallTopicManager(_ref) {
       });
     },
     watchAudioLevel: function watchAudioLevel() {
+      console.log('unmute::: callId: ', config.callId, 'user: ', config.userId, ' watchAudioLevel ', {
+        mediaType: config.mediaType,
+        direction: config.direction
+      });
       var audioCtx = new AudioContext(),
           stream = config.dataStream;
       var user = config.user,
@@ -52895,7 +52930,7 @@ function CallTopicManager(_ref) {
             isMute: true
           });
         }
-      }, 300);
+      }, 500);
 
       function convertToAudioLevel(soundPower) {
         if (soundPower <= -60) {
@@ -53072,23 +53107,6 @@ function CallTopicManager(_ref) {
         return "Unknown error: " + err;
       }
     },
-    createTopic: function createTopic() {
-      console.log(config.topic, 3, "createTopic");
-      var manager = this;
-
-      if (config.peer) {
-        return;
-      }
-
-      this.generateSdpOfferOptions().then(function (options) {
-        _sdkParams.sdkParams.consoleLogging && console.debug("[SDK][generateSdpOfferOptions] Options for this request have been resolved: ", {
-          options: options
-        }, "userId: ", config.userId, "topic: ", config.topic, "direction: ", config.direction);
-        manager.establishPeerConnection(options);
-      })["catch"](function (error) {
-        console.error(error);
-      });
-    },
     stopTopicOnServer: function stopTopicOnServer() {
       return new Promise(function (resolve) {
         (0, _callsList.callsManager)().get(config.callId).sendCallMessage({
@@ -53112,58 +53130,23 @@ function CallTopicManager(_ref) {
             switch (_context.prev = _context.next) {
               case 0:
                 manager = this;
+                console.log('unmute::: callId: ', config.callId, 'user: ', config.userId, ' removeTopic ');
+                publicized.pauseSendStream();
 
-                if (!config.peer) {
-                  _context.next = 20;
-                  break;
+                if (config.peer) {
+                  console.log('unmute::: callId: ', config.callId, 'user: ', config.userId, ' removeTopic peer exists'); // config.sdpOfferRequestSent = false;
+                  // metadataInstance.clearIceCandidateInterval();
+
+                  manager.removeConnectionQualityInterval();
+                  manager.removeAudioWatcherInterval();
+                  removeStreamHTML();
+                  console.log('unmute::: callId: ', config.callId, 'user: ', config.userId, ' dispose peer');
+                  config.peer.dispose();
+                  config.peer = null;
+                  config.state = peerStates.DISCONNECTED;
                 }
 
-                if (!(config.direction === 'send')) {
-                  _context.next = 14;
-                  break;
-                }
-
-                if (!(config.mediaType === 'audio')) {
-                  _context.next = 6;
-                  break;
-                }
-
-                _context.next = 6;
-                return (0, _sharedData.currentCall)().deviceManager().mediaStreams.stopAudioInput();
-
-              case 6:
-                if (!(config.mediaType === 'video')) {
-                  _context.next = 14;
-                  break;
-                }
-
-                if (config.isScreenShare) {
-                  _context.next = 12;
-                  break;
-                }
-
-                _context.next = 10;
-                return (0, _sharedData.currentCall)().deviceManager().mediaStreams.stopVideoInput();
-
-              case 10:
-                _context.next = 14;
-                break;
-
-              case 12:
-                _context.next = 14;
-                return (0, _sharedData.currentCall)().deviceManager().mediaStreams.stopScreenShareInput();
-
-              case 14:
-                // config.sdpOfferRequestSent = false;
-                // metadataInstance.clearIceCandidateInterval();
-                manager.removeConnectionQualityInterval();
-                manager.removeAudioWatcherInterval();
-                removeStreamHTML();
-                config.peer.dispose();
-                config.peer = null;
-                config.state = peerStates.DISCONNECTED;
-
-              case 20:
+              case 4:
               case "end":
                 return _context.stop();
             }
@@ -53187,13 +53170,37 @@ function CallTopicManager(_ref) {
      * @param callback
      */
     pauseSendStream: function pauseSendStream() {
-      config.peer.getLocalStream().getTracks()[0].enabled = false;
+      var localStream;
+
+      switch (config.mediaType) {
+        case 'audio':
+          localStream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getAudioInput();
+          break;
+
+        case 'video':
+          localStream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getVideoInput();
+      }
+
+      if (localStream) localStream.enabled = true;
     },
     resumeSendStream: function resumeSendStream() {
-      config.peer.getLocalStream().getTracks()[0].enabled = true;
+      var localStream;
+
+      switch (config.mediaType) {
+        case 'audio':
+          localStream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getAudioInput();
+          break;
+
+        case 'video':
+          localStream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getVideoInput();
+      }
+
+      if (localStream) localStream.enabled = true; // if(config.peer && config.peer.getLocalStream())
+      //     config.peer.getLocalStream().getTracks()[0].enabled = true;
     },
     startMedia: function startMedia() {
       _sdkParams.sdkParams.consoleLogging && console.log("[SDK][startMedia] called with: ", config.htmlElement);
+      console.log("unmute::: [SDK][startMedia] called with: ", config.htmlElement);
       if (!config.htmlElement) return;
       config.htmlElement.play()["catch"](function (err) {
         if (err.name === 'NotAllowedError') {
@@ -53313,8 +53320,7 @@ function CallTopicManager(_ref) {
   return publicized;
 }
 
-}).call(this)}).call(this,require("timers").setImmediate)
-},{"../../events.module":287,"../../messaging.module":308,"../../utility/utility":309,"../errorHandler":301,"../sdkParams":303,"./callsList":293,"./sharedData":297,"./topicMetaDataManager":298,"./webrtcPeer":299,"@babel/runtime/helpers/asyncToGenerator":4,"@babel/runtime/helpers/interopRequireDefault":6,"@babel/runtime/helpers/toConsumableArray":14,"@babel/runtime/regenerator":17,"timers":271}],291:[function(require,module,exports){
+},{"../../events.module":287,"../../messaging.module":308,"../../utility/utility":309,"../errorHandler":301,"../sdkParams":303,"./callsList":293,"./sharedData":297,"./topicMetaDataManager":298,"./webrtcPeer":299,"@babel/runtime/helpers/asyncToGenerator":4,"@babel/runtime/helpers/interopRequireDefault":6,"@babel/runtime/helpers/toConsumableArray":14,"@babel/runtime/regenerator":17}],291:[function(require,module,exports){
 (function (setImmediate){(function (){
 "use strict";
 
@@ -53367,45 +53373,58 @@ function CallUser(user) {
     getHTMLElements: function getHTMLElements() {
       return config.htmlElements;
     },
-    appendUserToCallDiv: function appendUserToCallDiv() {
+    appendAudioToCallDiv: function appendAudioToCallDiv() {
       if (!_sharedData.sharedVariables.callDivId) {
         _sdkParams.sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
         return;
       }
 
       var user = config.user,
-          callParentDiv = document.getElementById(_sharedData.sharedVariables.callDivId);
+          callParentDiv = document.getElementById(_sharedData.sharedVariables.callDivId),
+          userContainer = document.getElementById("callParticipantWrapper-" + config.userId);
 
-      if (user.video && config.videoTopicManager) {
-        if (!document.getElementById("callParticipantWrapper-" + config.userId)) {
-          if (!document.getElementById("uiRemoteVideo-" + config.user.videoTopicName)) {
-            config.htmlElements.container.appendChild(config.htmlElements[config.user.videoTopicName]);
-          }
-        } else {
-          document.getElementById("callParticipantWrapper-" + config.userId).append(config.htmlElements[config.user.videoTopicName]);
-        }
+      if (!userContainer) {
+        callParentDiv.appendChild(config.htmlElements.container);
+        userContainer = document.getElementById("callParticipantWrapper-" + config.userId);
       }
 
       if (typeof user.mute !== "undefined" && !user.mute && config.audioTopicManager) {
-        if (!document.getElementById("callParticipantWrapper-" + config.userId)) {
-          if (!document.getElementById("uiRemoteVideo-" + config.user.audioTopicName)) {
-            config.htmlElements.container.appendChild(config.htmlElements[config.user.audioTopicName]);
-          }
-        } else {
-          document.getElementById("callParticipantWrapper-" + config.userId).append(config.htmlElements[config.user.audioTopicName]);
+        if (!document.getElementById("callUserAudio-" + config.user.audioTopicName)) {
+          console.log('counter', config.userId, config.htmlElements, config.user.audioTopicName, config.htmlElements[config.user.audioTopicName]);
+          userContainer.appendChild(config.htmlElements[config.user.audioTopicName]);
+          config.audioTopicManager.startMedia();
+          config.audioTopicManager.watchAudioLevel();
         }
       }
+    },
+    appendVideoToCallDive: function appendVideoToCallDive() {
+      if (!_sharedData.sharedVariables.callDivId) {
+        _sdkParams.sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
+        return;
+      }
 
-      if (!document.getElementById("callParticipantWrapper-" + config.userId)) callParentDiv.appendChild(config.htmlElements.container);
+      var user = config.user,
+          callParentDiv = document.getElementById(_sharedData.sharedVariables.callDivId),
+          userContainer = document.getElementById("callParticipantWrapper-" + config.userId);
+
+      if (!userContainer) {
+        callParentDiv.appendChild(config.htmlElements.container);
+        userContainer = document.getElementById("callParticipantWrapper-" + config.userId);
+      }
+
+      if (user.video && config.videoTopicManager) {
+        if (!document.getElementById("callUserVideo-" + config.user.videoTopicName)) {
+          console.log('counter', config.userId, config.htmlElements, config.user.videoTopicName, config.htmlElements[config.user.videoTopicName]);
+          userContainer.appendChild(config.htmlElements[config.user.videoTopicName]);
+          config.videoTopicManager.startMedia();
+        }
+      }
     },
     videoTopicManager: function videoTopicManager() {
       return config.videoTopicManager;
     },
     audioTopicManager: function audioTopicManager() {
       return config.audioTopicManager;
-    },
-    audioStopManager: function audioStopManager() {
-      return config.user.audioStopManager;
     },
     startAudio: function startAudio(sendTopic) {
       return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
@@ -53421,6 +53440,9 @@ function CallUser(user) {
                 return _context.abrupt("return");
 
               case 2:
+                console.log('unmute::: callId: ', config.callId, 'user: ', config.userId, ' startAudio ', {
+                  sendTopic: sendTopic
+                }, config.user);
                 config.user.audioTopicName = 'Vo-' + sendTopic;
                 config.user.mute = false;
                 config.audioTopicManager = new _callTopicManager.CallTopicManager({
@@ -53431,16 +53453,18 @@ function CallUser(user) {
                   direction: config.user.userId === _store.store.user().id ? 'send' : 'receive',
                   user: config.user,
                   onHTMLElement: function onHTMLElement(el) {
-                    console.log('im called', el, config.user.audioTopicName, config.htmlElements[config.user.audioTopicName]);
                     config.htmlElements[config.user.audioTopicName] = el;
-                    publicized.appendUserToCallDiv();
+                    console.log('unmute::: callId: ', config.callId, 'user: ', config.userId, ' startAudio ', {
+                      sendTopic: sendTopic
+                    }, config.user);
+                    publicized.appendAudioToCallDiv();
                   }
                 });
                 setImmediate(function () {
                   config.audioTopicManager.createTopic();
                 });
 
-              case 6:
+              case 7:
               case "end":
                 return _context.stop();
             }
@@ -53473,7 +53497,7 @@ function CallUser(user) {
                   user: config.user,
                   onHTMLElement: function onHTMLElement(el) {
                     config.htmlElements[config.user.videoTopicName] = el;
-                    publicized.appendUserToCallDiv();
+                    publicized.appendVideoToCallDive();
                   }
                 }); // await publicized.appendUserToCallDiv(generateVideoElement());
 
@@ -53603,14 +53627,16 @@ function CallUser(user) {
                 return _context6.abrupt("return");
 
               case 2:
-                _context6.next = 4;
+                console.log('unmute::: callId: ', config.callId, 'user: ', user.userId, ' destroyAudio()...');
+                _context6.next = 5;
                 return config.audioTopicManager.destroy();
 
-              case 4:
+              case 5:
+                console.log('unmute::: callId: ', config.callId, 'user: ', user.userId, ' audioTopicManager destroyed...');
                 delete config.htmlElements[config.user.audioTopicName];
                 config.audioTopicManager = null;
 
-              case 6:
+              case 8:
               case "end":
                 return _context6.stop();
             }
@@ -53668,8 +53694,6 @@ function CallUser(user) {
   };
 
   function setup(participant) {
-    var _sdkParams$callOption, _sdkParams$callOption2;
-
     config.user = participant;
 
     if (config.isMe) {
@@ -53679,32 +53703,29 @@ function CallUser(user) {
     }
 
     config.user.videoTopicName = 'Vi-' + config.user.topicSend;
-    config.user.audioTopicName = 'Vo-' + config.user.topicSend;
-    config.user.audioStopManager = new _deviceStartStopManager.DevicePauseStopManager({
-      callId: config.callId,
-      userId: config.user.userId,
-      mediaType: 'audio',
-      timeout: ((_sdkParams$callOption = _sdkParams.sdkParams.callOptions) === null || _sdkParams$callOption === void 0 ? void 0 : _sdkParams$callOption.streamCloseTimeout) || 10000
-    });
+    config.user.audioTopicName = 'Vo-' + config.user.topicSend; // config.user.audioStopManager = new DevicePauseStopManager({
+    //     callId: config.callId,
+    //     userId: config.user.userId,
+    //     mediaType: 'audio',
+    //     timeout: sdkParams.callOptions?.streamCloseTimeout || 10000
+    // });
+    // if (config.user.mute) {
+    //     config.user.audioStopManager.pauseStream();
+    //     config.user.audioStopManager.stopStream();
+    // }
+    // config.user.videoStopManager = new DevicePauseStopManager({
+    //     callId: config.callId,
+    //     userId: config.user.userId,
+    //     mediaType: 'video',
+    //     timeout: sdkParams.callOptions?.streamCloseTimeout || 10000
+    // });
+    // if (!config.user.video) {
+    // config.user.videoStopManager.pauseStream();
+    // config.user.videoStopManager.stopStream();
+    // }
+    // publicized.appendUserToCallDiv(generateContainerElement())
 
-    if (config.user.mute) {
-      config.user.audioStopManager.pauseStream();
-      config.user.audioStopManager.stopStream();
-    }
-
-    config.user.videoStopManager = new _deviceStartStopManager.DevicePauseStopManager({
-      callId: config.callId,
-      userId: config.user.userId,
-      mediaType: 'video',
-      timeout: ((_sdkParams$callOption2 = _sdkParams.sdkParams.callOptions) === null || _sdkParams$callOption2 === void 0 ? void 0 : _sdkParams$callOption2.streamCloseTimeout) || 10000
-    });
-
-    if (!config.user.video) {
-      config.user.videoStopManager.pauseStream();
-      config.user.videoStopManager.stopStream();
-    }
-
-    publicized.appendUserToCallDiv(generateContainerElement());
+    generateContainerElement();
     if (config.user.video) publicized.startVideo(config.user.topicSend);
     if (!config.user.mute) publicized.startAudio(config.user.topicSend);
   }
@@ -53904,9 +53925,11 @@ function CallScreenShare(user) {
     };
     obj.direction = iAmOwner ? 'send' : 'receive';
     obj.videoTopicName = config.topic;
-    config.user = obj;
-    publicized.appendUserToCallDiv(generateContainerElement());
-    if (config.user.video) publicized.startVideo(obj.topic);
+    config.user = obj; // publicized.appendUserToCallDiv(generateContainerElement())
+
+    generateContainerElement();
+    if (config.user.video) publicized.startVideo(obj.topic); // if(!config.user.mute)
+    //     publicized.startAudio(obj.topic);
   }
 
   function generateContainerElement() {
@@ -55277,12 +55300,10 @@ var _slicedToArray2 = _interopRequireDefault(require("@babel/runtime/helpers/sli
 
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 
-var _utility = _interopRequireDefault(require("../../utility/utility"));
-
-var mynum = 3494609296;
-
 function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
-  var _ref$direction = _ref.direction,
+  var callId = _ref.callId,
+      userId = _ref.userId,
+      _ref$direction = _ref.direction,
       direction = _ref$direction === void 0 ? 'send' : _ref$direction,
       _ref$mediaType = _ref.mediaType,
       mediaType = _ref$mediaType === void 0 ? 'video' : _ref$mediaType,
@@ -55293,7 +55314,6 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
       _ref$iceConnectionSta = _ref.iceConnectionStateChange,
       iceConnectionStateChange = _ref$iceConnectionSta === void 0 ? null : _ref$iceConnectionSta,
       onTrackCallback = _ref.onTrackCallback;
-  mynum++;
   var config = {
     rtcPeerConfig: rtcPeerConfig,
     direction: direction,
@@ -55302,14 +55322,16 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
     peerConnection: null,
     dataChannel: null,
     stream: stream,
-    candidatesQueue: [],
-    mynum: mynum
+    candidatesQueue: []
   };
 
   function createPeer() {
+    console.log('unmute::: callId: ', callId, 'user: ', userId, ' createPeer() ');
+
     try {
       config.peerConnection = new RTCPeerConnection(config.rtcPeerConfig);
     } catch (err) {
+      console.log('unmute::: callId: ', callId, 'user: ', userId, ' createPeer().catch ');
       console.error("[SDK][WebrtcPeerConnection][createPeer]", err);
       onCreatePeerCallback && onCreatePeerCallback(err);
     } // config.peerConnection.onicecandidate = handleicecandidate(lasticecandidate);
@@ -55318,56 +55340,18 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
     config.peerConnection.onconnectionstatechange = connectionStateChange;
     config.peerConnection.oniceconnectionstatechange = iceConnectionStateChange;
     config.peerConnection.addEventListener('signalingstatechange', signalingStateChangeCallback);
-    config.peerConnection.addEventListener('track', /*#__PURE__*/function () {
-      var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(event) {
-        var _event$streams, remoteStream, newStream;
-
-        return _regenerator["default"].wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                _event$streams = (0, _slicedToArray2["default"])(event.streams, 1), remoteStream = _event$streams[0];
-                newStream = new MediaStream([event.receiver.track]);
-                onTrackCallback(newStream);
-
-              case 3:
-              case "end":
-                return _context.stop();
-            }
-          }
-        }, _callee);
-      }));
-
-      return function (_x) {
-        return _ref2.apply(this, arguments);
-      };
-    }());
-
-    if (!config.peerConnection.getLocalStreams && config.peerConnection.getSenders) {
-      config.peerConnection.getLocalStreams = function () {
-        var stream = new MediaStream();
-        config.peerConnection.getSenders().forEach(function (sender) {
-          stream.addTrack(sender.track);
-        });
-        return [stream];
-      };
-    }
-
-    if (!config.peerConnection.getRemoteStreams && config.peerConnection.getReceivers) {
-      config.peerConnection.getRemoteStreams = function () {
-        var stream = new MediaStream();
-        config.peerConnection.getReceivers().forEach(function (sender) {
-          stream.addTrack(sender.track);
-        });
-        return [stream];
-      };
-    }
+    config.peerConnection.addEventListener('track', onRemoteTrack); // config.peerConnection.onicecandidate = onIceCandidate
 
     if (config.peerConnection.signalingState === 'closed') {
+      console.log('unmute::: callId: ', callId, 'user: ', userId, ' createPeer().signalingState closed');
       onCreatePeerCallback && onCreatePeerCallback('[SDK][WebRtcModule] The peer connection object is in "closed" state. This is most likely due to an invocation of the dispose method before accepting in the dialogue');
     }
 
     if (direction === 'send') {
+      console.log('unmute::: callId: ', callId, 'user: ', userId, ' createPeer() ', {
+        mediaType: mediaType,
+        direction: direction
+      });
       stream.getTracks().forEach(addTrackToPeer); // if(config.mediaType === "video")
       //     onTrackCallback(stream);
 
@@ -55381,7 +55365,66 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
 
   createPeer();
 
+  function onRemoteTrack(_x) {
+    return _onRemoteTrack.apply(this, arguments);
+  }
+
+  function _onRemoteTrack() {
+    _onRemoteTrack = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(event) {
+      var _event$streams, remoteStream, newStream;
+
+      return _regenerator["default"].wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              _event$streams = (0, _slicedToArray2["default"])(event.streams, 1), remoteStream = _event$streams[0];
+              newStream = new MediaStream([event.track]);
+              console.log('unmute::: callId: ', callId, ' user: ', userId, ' onRemoteTrack', {
+                event: event,
+                direction: direction,
+                mediaType: mediaType
+              });
+              onTrackCallback(newStream);
+
+            case 4:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }));
+    return _onRemoteTrack.apply(this, arguments);
+  }
+
+  function getLocalStreams() {
+    if (!config.peerConnection) return [];
+    var stream = new MediaStream();
+    config.peerConnection.getSenders().forEach(function (sender) {
+      stream.addTrack(sender.track);
+    });
+    return [stream];
+  }
+
+  ;
+
+  function getRemoteStreams() {
+    if (!config.peerConnection) return [];
+    var stream = new MediaStream();
+    config.peerConnection.getReceivers().forEach(function (sender) {
+      stream.addTrack(sender.track);
+    });
+    return [stream];
+  }
+
+  ;
+
   function addTrackToPeer(track) {
+    console.log('unmute::: callId: ', callId, 'user: ', userId, ' addTrackToPeer ', {
+      mediaType: mediaType,
+      direction: direction,
+      track: track,
+      stream: stream
+    });
     config.peerConnection.addTrack(track, stream);
   }
 
@@ -55406,24 +55449,41 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
   return {
     peerConnection: config.peerConnection,
     dispose: function dispose() {
-      if (config.peerConnection) {
-        if (config.peerConnection.signalingState === 'closed') return;
+      console.log('unmute::: callId: ', callId, 'user: ', userId, ' peer disposing ', {
+        mediaType: mediaType,
+        direction: direction
+      });
 
-        if (direction == 'send') {
-          config.peerConnection.getLocalStreams().forEach(function (stream) {
-            return stream.getTracks().forEach(function (track) {
-              return track.stop && track.stop();
+      if (config.peerConnection) {
+        config.peerConnection.ontrack = null;
+        config.peerConnection.onremovetrack = null;
+        config.peerConnection.onicecandidate = null;
+        config.peerConnection.oniceconnectionstatechange = null;
+        config.peerConnection.onsignalingstatechange = null;
+
+        if (config.peerConnection.signalingState !== 'closed') {
+          if (direction != 'send') {
+            getRemoteStreams().forEach(function (stream) {
+              console.log('unmute::: callId: ', callId, 'user: ', userId, ' peer disposing, clear remote tracks ', {
+                mediaType: mediaType,
+                direction: direction,
+                stream: stream
+              });
+              stream.getTracks().forEach(function (track) {
+                track.enabled = false;
+              });
             });
-          });
-        } else {
-          config.peerConnection.getRemoteStreams().forEach(function (stream) {
-            return stream.getTracks().forEach(function (track) {
-              return track.stop && track.stop();
-            });
+          }
+
+          config.peerConnection.close();
+          console.log('unmute::: callId: ', callId, 'user: ', userId, ' peer disposing, closed ', {
+            mediaType: mediaType,
+            direction: direction,
+            stream: stream
           });
         }
 
-        config.peerConnection.close();
+        config.peerConnection = null;
       }
     },
     generateOffer: function generateOffer(callback) {
@@ -55531,7 +55591,7 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
   };
 }
 
-},{"../../utility/utility":309,"@babel/runtime/helpers/asyncToGenerator":4,"@babel/runtime/helpers/interopRequireDefault":6,"@babel/runtime/helpers/slicedToArray":13,"@babel/runtime/regenerator":17}],300:[function(require,module,exports){
+},{"@babel/runtime/helpers/asyncToGenerator":4,"@babel/runtime/helpers/interopRequireDefault":6,"@babel/runtime/helpers/slicedToArray":13,"@babel/runtime/regenerator":17}],300:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

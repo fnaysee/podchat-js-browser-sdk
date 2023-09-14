@@ -5,7 +5,7 @@ import {store} from "../store";
 import {
     sharedVariables,
     callStopQueue,
-    joinCallParams, endCall, calculateScreenSize
+    joinCallParams, endCall, calculateScreenSize, currentCall
 } from "./sharedData";
 import Utility from "../../utility/utility";
 import {CallServerManager} from "./callServerManager";
@@ -795,13 +795,6 @@ function CallManager({callId, callConfig}) {
                     if (user) {
                         user.stopAudio();
                     }
-                    // callUsers[messageContent[i].userId].audioStopManager.disableStream();
-
-                    // callStateController.deactivateParticipantStream(
-                    //     messageContent[i].userId,
-                    //     'audio',
-                    //     'mute'
-                    // )
                 }
             }
             setTimeout(function () {
@@ -817,8 +810,6 @@ function CallManager({callId, callConfig}) {
             });
         },
         async handleParticipantUnMute(messageContent) {
-            let myId = store.user().id;
-
             console.log('unmute::: callId: ', config.callId);
             if (Array.isArray(messageContent)) {
                 for (let i in messageContent) {
@@ -827,11 +818,13 @@ function CallManager({callId, callConfig}) {
 
                     if (user) {
                         if(user.audioTopicManager()) {
-                            console.log('unmute::: callId: ', config.callId, 'user: ', user.user().id, ' calling user.stopAudio');
-                            await user.stopAudio();
+                            console.log('unmute::: callId: ', config.callId, 'user: ', user.user().id, ' handleParticipantUnMute calling user.stopAudio');
+                            await user.destroyAudio();
                         }
-                        console.log('unmute::: callId: ', config.callId, 'user: ', user.user().id, ' calling user.startAudio');
-                        user.startAudio(messageContent[i].sendTopic);
+                        console.log('unmute::: callId: ', config.callId, 'user: ', user.user().id, ' handleParticipantUnMute calling user.startAudio');
+                        setTimeout(()=>{
+                            user.startAudio(messageContent[i].sendTopic);
+                        }, 50);
                     }
                 }
             }
@@ -994,7 +987,10 @@ function CallManager({callId, callConfig}) {
 
             }
         },
-        destroy() {
+        async destroy() {
+            await config.deviceManager.mediaStreams.stopAudioInput();
+            await config.deviceManager.mediaStreams.stopVideoInput();
+            await config.deviceManager.mediaStreams.stopScreenShareInput();
             return callStop()
         }
     }
