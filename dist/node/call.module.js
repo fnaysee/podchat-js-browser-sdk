@@ -2690,9 +2690,33 @@ function ChatCall(params) {
     };
   }();
 
-  this.enableStatusEvents = function (callUserId, mediaType) {};
+  this.startPrintStatus = function (callUserId, mediaType) {
+    console.log(callUserId, mediaType);
 
-  this.disableStatusEvents = function (callUserId, mediaType) {};
+    switch (mediaType) {
+      case 'audio':
+        (0, _sharedData.currentCall)().users().get(callUserId).audioTopicManager().startStatusPrint();
+        break;
+
+      case 'video':
+        (0, _sharedData.currentCall)().users().get(callUserId).videoTopicManager().startStatusPrint();
+    } // currentCall().users().get(callUserId)[mediaType + 'TopicManager']().startStatusPrint();
+
+  };
+
+  this.stopPrintStatus = function (callUserId, mediaType) {
+    console.log(callUserId, mediaType);
+
+    switch (mediaType) {
+      case 'audio':
+        (0, _sharedData.currentCall)().users().get(callUserId).audioTopicManager().stopStatusPrint();
+        break;
+
+      case 'video':
+        (0, _sharedData.currentCall)().users().get(callUserId).videoTopicManager().stopStatusPrint();
+    } // currentCall().users().get(callUserId)[mediaType + 'TopicManager']().stopStatusPrint();
+
+  };
 }
 
 var _default = ChatCall;

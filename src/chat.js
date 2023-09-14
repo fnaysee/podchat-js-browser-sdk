@@ -12253,6 +12253,9 @@ function Chat(params) {
         });
     }
 
+    publicized.startPrintStatus = callModule.startPrintStatus;
+    publicized.stopPrintStatus = callModule.stopPrintStatus;
+
     store.events.on(store.threads.eventsList.UNREAD_COUNT_UPDATED, (thread) => {
         chatEvents.fireEvent('threadEvents', {
             type: 'UNREAD_COUNT_UPDATED',

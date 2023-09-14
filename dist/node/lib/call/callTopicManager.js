@@ -63,7 +63,8 @@ function CallTopicManager(_ref) {
       isConnectionPoor: false
     },
     isDestroyed: false,
-    dataStream: null
+    dataStream: null,
+    statusEventsInterval: null
   };
   var metadataInstance = new _topicMetaDataManager.topicMetaDataManager({
     userId: userId,
@@ -911,6 +912,37 @@ function CallTopicManager(_ref) {
           }
         }
       }
+    },
+    startStatusPrint: function startStatusPrint() {
+      config.statusEventsInterval && clearInterval(config.statusEventsInterval);
+      config.statusEventsInterval = setInterval(function () {
+        if (!config.peer) {
+          config.statusEventsInterval && clearInterval(config.statusEventsInterval);
+          return;
+        }
+
+        config.peer.peerConnection.getStats(null).then(function (stats) {
+          // console.log(' watchRTCPeerConnection:: window.setInterval then(stats:', stats)
+          var statsOutput = "";
+          var user = config.user,
+              topicMetadata = config.topicMetaData;
+          stats.forEach(function (report) {
+            // if(report && report.type && report.type === 'remote-inbound-rtp') {
+            statsOutput += "<h2>Report: ".concat(report.type, "</h2>\n<strong>ID:</strong> ").concat(report.id, "<br>\n") + "<strong>Timestamp:</strong> ".concat(report.timestamp, "<br>\n"); // Now the statistics for this report; we intentially drop the ones we
+            // sorted to the top above
+
+            Object.keys(report).forEach(function (statName) {
+              if (statName !== "id" && statName !== "timestamp" && statName !== "type") {
+                statsOutput += "<strong>".concat(statName, ":</strong> ").concat(report[statName], "<br>\n");
+              }
+            }); // }
+          });
+          document.getElementById("peer-status-container").innerHTML = statsOutput; // document.querySelector(".stats-box").innerHTML = statsOutput;
+        });
+      }, 1000);
+    },
+    stopStatusPrint: function stopStatusPrint() {
+      config.statusEventsInterval && clearInterval(config.statusEventsInterval);
     },
     isDestroyed: function isDestroyed() {
       return config.isDestroyed;

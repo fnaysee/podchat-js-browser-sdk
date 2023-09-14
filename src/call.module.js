@@ -2514,15 +2514,30 @@ function ChatCall(params) {
         callback && callback({hasError: false});
     }
 
-    this.enableStatusEvents = function (callUserId, mediaType){
+    this.startPrintStatus = function (callUserId, mediaType){
+        console.log(callUserId, mediaType)
 
+        switch (mediaType) {
+            case 'audio':
+                currentCall().users().get(callUserId).audioTopicManager().startStatusPrint();
+                break;
+            case 'video':
+                currentCall().users().get(callUserId).videoTopicManager().startStatusPrint();
+        }
+        // currentCall().users().get(callUserId)[mediaType + 'TopicManager']().startStatusPrint();
     }
 
-    this.disableStatusEvents = function (callUserId, mediaType){
-
+    this.stopPrintStatus = function (callUserId, mediaType){
+        console.log(callUserId, mediaType)
+        switch (mediaType) {
+            case 'audio':
+                currentCall().users().get(callUserId).audioTopicManager().stopStatusPrint();
+                break;
+            case 'video':
+                currentCall().users().get(callUserId).videoTopicManager().stopStatusPrint();
+        }
+        // currentCall().users().get(callUserId)[mediaType + 'TopicManager']().stopStatusPrint();
     }
-
-
 }
 
 export default ChatCall

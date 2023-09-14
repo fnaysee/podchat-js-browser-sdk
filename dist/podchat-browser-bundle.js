@@ -48740,9 +48740,33 @@ function ChatCall(params) {
     };
   }();
 
-  this.enableStatusEvents = function (callUserId, mediaType) {};
+  this.startPrintStatus = function (callUserId, mediaType) {
+    console.log(callUserId, mediaType);
 
-  this.disableStatusEvents = function (callUserId, mediaType) {};
+    switch (mediaType) {
+      case 'audio':
+        (0, _sharedData.currentCall)().users().get(callUserId).audioTopicManager().startStatusPrint();
+        break;
+
+      case 'video':
+        (0, _sharedData.currentCall)().users().get(callUserId).videoTopicManager().startStatusPrint();
+    } // currentCall().users().get(callUserId)[mediaType + 'TopicManager']().startStatusPrint();
+
+  };
+
+  this.stopPrintStatus = function (callUserId, mediaType) {
+    console.log(callUserId, mediaType);
+
+    switch (mediaType) {
+      case 'audio':
+        (0, _sharedData.currentCall)().users().get(callUserId).audioTopicManager().stopStatusPrint();
+        break;
+
+      case 'video':
+        (0, _sharedData.currentCall)().users().get(callUserId).videoTopicManager().stopStatusPrint();
+    } // currentCall().users().get(callUserId)[mediaType + 'TopicManager']().stopStatusPrint();
+
+  };
 }
 
 var _default = ChatCall;
@@ -50781,7 +50805,7 @@ token:_sdkParams.sdkParams.token,subjectId:params.threadId,content:params.messag
 // initAsync();
 }else{console.warn("SDK is currently using the ".concat(proto," protocol. Nothing to do."));}}else{console.error("Protocol ".concat(proto," is not supported in SDK. Valid protocols: \"webrtc\", \"websocket\""));}};publicized.getPinMessages=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.GET_PIN_MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 token:_sdkParams.sdkParams.token,content:params.content};return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.lastMessageInfo=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.LAST_MESSAGE_INFO,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-token:_sdkParams.sdkParams.token,content:params.content};return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){if(!result.hasError){var formattedData={};if(result.result&&Object.values(result.result).length){Object.entries(result.result).forEach(function(item){formattedData[item[0]]=formatDataToMakeMessage(item[0],item[1]);});result.result=formattedData;}}callback&&callback(result);}});};_store.store.events.on(_store.store.threads.eventsList.UNREAD_COUNT_UPDATED,function(thread){_events.chatEvents.fireEvent('threadEvents',{type:'UNREAD_COUNT_UPDATED',result:{threadId:thread.id,unreadCount:thread.unreadCount||0,lastSeenMessageTime:thread.lastSeenMessageTime||undefined}});});init();return publicized;}if(typeof window!="undefined"){if(!window.POD){window.POD={};}window.POD.Chat=Chat;//For backward compatibility
+token:_sdkParams.sdkParams.token,content:params.content};return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){if(!result.hasError){var formattedData={};if(result.result&&Object.values(result.result).length){Object.entries(result.result).forEach(function(item){formattedData[item[0]]=formatDataToMakeMessage(item[0],item[1]);});result.result=formattedData;}}callback&&callback(result);}});};publicized.startPrintStatus=callModule.startPrintStatus;publicized.stopPrintStatus=callModule.stopPrintStatus;_store.store.events.on(_store.store.threads.eventsList.UNREAD_COUNT_UPDATED,function(thread){_events.chatEvents.fireEvent('threadEvents',{type:'UNREAD_COUNT_UPDATED',result:{threadId:thread.id,unreadCount:thread.unreadCount||0,lastSeenMessageTime:thread.lastSeenMessageTime||undefined}});});init();return publicized;}if(typeof window!="undefined"){if(!window.POD){window.POD={};}window.POD.Chat=Chat;//For backward compatibility
 window.PodChat=Chat;}var _default=Chat;// })();
 exports["default"]=_default;
 
@@ -52452,7 +52476,8 @@ function CallTopicManager(_ref) {
       isConnectionPoor: false
     },
     isDestroyed: false,
-    dataStream: null
+    dataStream: null,
+    statusEventsInterval: null
   };
   var metadataInstance = new _topicMetaDataManager.topicMetaDataManager({
     userId: userId,
@@ -53300,6 +53325,37 @@ function CallTopicManager(_ref) {
           }
         }
       }
+    },
+    startStatusPrint: function startStatusPrint() {
+      config.statusEventsInterval && clearInterval(config.statusEventsInterval);
+      config.statusEventsInterval = setInterval(function () {
+        if (!config.peer) {
+          config.statusEventsInterval && clearInterval(config.statusEventsInterval);
+          return;
+        }
+
+        config.peer.peerConnection.getStats(null).then(function (stats) {
+          // console.log(' watchRTCPeerConnection:: window.setInterval then(stats:', stats)
+          var statsOutput = "";
+          var user = config.user,
+              topicMetadata = config.topicMetaData;
+          stats.forEach(function (report) {
+            // if(report && report.type && report.type === 'remote-inbound-rtp') {
+            statsOutput += "<h2>Report: ".concat(report.type, "</h2>\n<strong>ID:</strong> ").concat(report.id, "<br>\n") + "<strong>Timestamp:</strong> ".concat(report.timestamp, "<br>\n"); // Now the statistics for this report; we intentially drop the ones we
+            // sorted to the top above
+
+            Object.keys(report).forEach(function (statName) {
+              if (statName !== "id" && statName !== "timestamp" && statName !== "type") {
+                statsOutput += "<strong>".concat(statName, ":</strong> ").concat(report[statName], "<br>\n");
+              }
+            }); // }
+          });
+          document.getElementById("peer-status-container").innerHTML = statsOutput; // document.querySelector(".stats-box").innerHTML = statsOutput;
+        });
+      }, 1000);
+    },
+    stopStatusPrint: function stopStatusPrint() {
+      config.statusEventsInterval && clearInterval(config.statusEventsInterval);
     },
     isDestroyed: function isDestroyed() {
       return config.isDestroyed;
