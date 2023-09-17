@@ -209,6 +209,7 @@ function Chat(params) {
         chatUploadQueue = [],
         protocolSwitching = params.protocolSwitching,
         protocolManager =  new ProtocolManager({protocol: sdkParams.protocol}),
+        asyncLogCallback = typeof params.asyncLogCallback == "function" ? params.asyncLogCallback : null,
         msgLogCallback = typeof params.msgLogCallback == "function" ? params.msgLogCallback : null;
     //fullResponseObject = params.fullResponseObject || false,
         //webrtcConfig = (params.webrtcConfig ? params.webrtcConfig : null);
@@ -403,6 +404,7 @@ function Chat(params) {
                 retryStepTimerTime: protocolManager.getRetryStepTimerTime(),
                 onStartWithRetryStepGreaterThanZero: onStateChange,
                 msgLogCallback: msgLogCallback || null,
+                asyncLogCallback: asyncLogCallback || null,
                 onDeviceId
             });
 

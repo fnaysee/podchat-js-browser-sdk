@@ -38024,8 +38024,10 @@ function Async(params) {
     webrtcConfig = params.webrtcConfig ? params.webrtcConfig : null,
     isLoggedOut = false,
     onStartWithRetryStepGreaterThanZero = params.onStartWithRetryStepGreaterThanZero,
+    asyncLogCallback = typeof params.asyncLogCallback == "function" ? params.asyncLogCallback : null,
     msgLogCallback = typeof params.msgLogCallback == "function" ? params.msgLogCallback : null,
-    onDeviceId = typeof params.onDeviceId == "function" ? params.onDeviceId : null;
+    onDeviceId = typeof params.onDeviceId == "function" ? params.onDeviceId : null,
+    isConnecting = false;
   var reconnOnClose = {
     value: false,
     oldValue: null,
@@ -38071,30 +38073,18 @@ function Async(params) {
       socketReconnectRetryInterval = setTimeout(function () {
         if (isLoggedOut) return;
         window.addEventListener('online', function () {
+          asyncLogCallback && asyncLogCallback("async", "window.online", "");
           if (!isSocketOpen) {
             currentModuleInstance.reconnectSocket();
           }
         });
         window.addEventListener('offline', function () {
+          asyncLogCallback && asyncLogCallback("async", "window.offline", "");
           if (isSocketOpen) {
             currentModuleInstance.reconnectSocket();
           }
         });
-        fireEvent('stateChange', {
-          socketState: socketStateType.CONNECTING,
-          timeUntilReconnect: 1000 * retryStep.get(),
-          deviceRegister: false,
-          serverRegister: false,
-          peerId: peerId
-        });
-        switch (protocol) {
-          case 'websocket':
-            initSocket();
-            break;
-          case 'webrtc':
-            initWebrtc();
-            break;
-        }
+        maybeReconnect();
         if (retryStep.get() < 64) {
           // retryStep += 3;
           retryStep.set(retryStep.get() + 3);
@@ -38124,7 +38114,9 @@ function Async(params) {
         connectionCheckTimeoutThreshold: params.connectionCheckTimeoutThreshold,
         logLevel: logLevel,
         msgLogCallback: msgLogCallback,
+        asyncLogCallback: asyncLogCallback,
         onOpen: function onOpen() {
+          isConnecting = false;
           checkIfSocketHasOpennedTimeoutId && clearTimeout(checkIfSocketHasOpennedTimeoutId);
           socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
           socketReconnectRetryInterval = null;
@@ -38152,6 +38144,7 @@ function Async(params) {
           isDeviceRegister = false;
           oldPeerId = peerId;
           socketState = socketStateType.CLOSED;
+          isConnecting = false;
 
           // socketState = socketStateType.CLOSED;
           //
@@ -38189,7 +38182,7 @@ function Async(params) {
             socket.destroy();
             socketReconnectRetryInterval = setTimeout(function () {
               if (isLoggedOut) return;
-              initSocket();
+              maybeReconnect();
             }, 1000 * retryStep.get());
             if (retryStep.get() < 64) {
               // retryStep += 3;
@@ -38239,9 +38232,11 @@ function Async(params) {
         //ping
         logLevel: logLevel,
         msgLogCallback: msgLogCallback,
+        asyncLogCallback: asyncLogCallback,
         connectionOpenWaitTime: params.connectionOpenWaitTime,
         //timeout time to open
         onOpen: function onOpen(newDeviceId) {
+          isConnecting = false;
           checkIfSocketHasOpennedTimeoutId && clearTimeout(checkIfSocketHasOpennedTimeoutId);
           checkIfSocketHasOpennedTimeoutId = null;
           socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
@@ -38275,6 +38270,7 @@ function Async(params) {
           isDeviceRegister = false;
           oldPeerId = peerId;
           socketState = socketStateType.CLOSED;
+          isConnecting = false;
           fireEvent('disconnect', event);
           if (reconnOnClose.get() || reconnOnClose.getOld()) {
             if (asyncLogging) {
@@ -38298,9 +38294,11 @@ function Async(params) {
               nextTime: retryStep.get()
             });
             webRTCClass.destroy();
+            asyncLogCallback && asyncLogCallback("async", "closed.reconnect", "before: " + retryStep.get());
             socketReconnectRetryInterval = setTimeout(function () {
               if (isLoggedOut) return;
-              initWebrtc();
+              asyncLogCallback && asyncLogCallback("async", "closed.reconnect", "after");
+              maybeReconnect();
               // webRTCClass.connect();
             }, 1000 * retryStep.get());
             if (retryStep.get() < 64) {
@@ -38601,6 +38599,26 @@ function Async(params) {
       // }
     };
 
+  function maybeReconnect() {
+    if (isConnecting) return;
+    fireEvent('stateChange', {
+      socketState: socketStateType.CONNECTING,
+      timeUntilReconnect: 0,
+      deviceRegister: false,
+      serverRegister: false,
+      peerId: peerId
+    });
+    isConnecting = true;
+    switch (protocol) {
+      case 'websocket':
+        initSocket();
+        break;
+      case 'webrtc':
+        initWebrtc();
+        break;
+    }
+  }
+
   /*******************************************************
    *             P U B L I C   M E T H O D S             *
    *******************************************************/
@@ -38750,6 +38768,7 @@ function Async(params) {
   };
   var reconnectSocketTimeout;
   this.reconnectSocket = function () {
+    if (isConnecting) return;
     isSocketOpen = false;
     isDeviceRegister = false;
     oldPeerId = peerId;
@@ -38772,7 +38791,7 @@ function Async(params) {
     if (protocol == "websocket") socket && socket.destroy();else if (protocol == "webrtc") webRTCClass && webRTCClass.destroy();
     if (isLoggedOut) return;
     setTimeout(function () {
-      if (protocol == "websocket") initSocket();else if (protocol == "webrtc") initWebrtc();
+      maybeReconnect();
       if (retryStep.get() < 64) {
         // retryStep += 3;
         retryStep.set(3);
@@ -39078,7 +39097,8 @@ function WebRTCClass(_ref) {
     onMessage = _ref.onMessage,
     onError = _ref.onError,
     onCustomError = _ref.onCustomError,
-    onClose = _ref.onClose;
+    onClose = _ref.onClose,
+    asyncLogCallback = _ref.asyncLogCallback;
   var defaultConfig = {
       protocol: "https",
       baseUrl: "109.201.0.97",
@@ -39120,7 +39140,8 @@ function WebRTCClass(_ref) {
       subdomain: null,
       isDestroyed: false,
       dataChannelOpenTimeout: null,
-      isDataChannelOpened: false
+      isDataChannelOpened: false,
+      controller: new AbortController()
     };
   var config = {};
   if (baseUrl) config.baseUrl = baseUrl;
@@ -39206,6 +39227,7 @@ function WebRTCClass(_ref) {
             config.timeoutIds.third = setTimeout(function () {
               console.log("[Async][webrtc] Closing because of ping timeout.");
               defaultConfig.logLevel.debug && console.debug("[Async][Webrtc.js] Force closing connection.");
+              asyncLogCallback && asyncLogCallback("webrtc", "setPingTimeout", "closing");
               publicized.close();
             }, 2000);
           }, 2000);
@@ -39228,7 +39250,7 @@ function WebRTCClass(_ref) {
   function waitForConnectionToOpen() {
     variables.dataChannelOpenTimeout = setTimeout(function () {
       if (!isDataChannelOpened()) {
-        console.log("[Async][webrtc] Closing because of wait timeout.");
+        asyncLogCallback && asyncLogCallback("webrtc", "dataChannelOpenTimeout", "closing");
         publicized.close();
       }
     }, defaultConfig.connectionOpenWaitTime);
@@ -39239,10 +39261,17 @@ function WebRTCClass(_ref) {
         variables.peerConnection = new RTCPeerConnection(defaultConfig.configuration);
         console.log("[Async][webrtc] Created peer connection.");
       } catch (error) {
+        asyncLogCallback && asyncLogCallback("webrtc", "createPeerConnection", "closing");
         publicized.close();
         console.error("[Async][webrtc] Webrtc Peer Create Error: ", error.message);
         return;
       }
+      variables.peerConnection.onconnectionstatechange = function (event) {
+        asyncLogCallback && asyncLogCallback("webrtc", "onconnectionstatechange", variables.peerConnection.connectionState);
+      };
+      variables.peerConnection.oniceconnectionstatechange = function (event) {
+        asyncLogCallback && asyncLogCallback("webrtc", "oniceconnectionstatechange", variables.peerConnection.connectionState);
+      };
       variables.peerConnection.addEventListener('signalingstatechange', webrtcFunctions.signalingStateChangeCallback);
       variables.peerConnection.onicecandidate = function (event) {
         if (event.candidate) {
@@ -39265,7 +39294,8 @@ function WebRTCClass(_ref) {
         webrtcFunctions.processAnswer(result.sdpAnswer);
       }
     },
-    signalingStateChangeCallback: function signalingStateChangeCallback() {
+    signalingStateChangeCallback: function signalingStateChangeCallback(signalingStateEvent) {
+      asyncLogCallback && asyncLogCallback("webrtc", "signalingStateChangeCallback", variables.peerConnection.signalingState);
       if (variables.peerConnection && variables.peerConnection.signalingState === 'stable') {
         // handshakingFunctions.getCandidates().catch()
         webrtcFunctions.addTheCandidates();
@@ -39346,6 +39376,7 @@ function WebRTCClass(_ref) {
           variables.dataChannel.send(stringData);
         }
       } catch (error) {
+        asyncLogCallback && asyncLogCallback("webrtc", "webrtcFunctions.sendData.catch", error);
         onCustomError({
           errorCode: 4004,
           errorMessage: "Error in channel send message!",
@@ -39356,6 +39387,7 @@ function WebRTCClass(_ref) {
   };
   var dataChannelCallbacks = {
     onopen: function onopen(event) {
+      asyncLogCallback && asyncLogCallback("webrtc", "dataChannel.onopen", event);
       console.log("[Async][webrtc] dataChannel open");
       variables.isDataChannelOpened = true;
       variables.pingController.resetPingLoop();
@@ -39375,13 +39407,14 @@ function WebRTCClass(_ref) {
       });
     },
     onerror: function onerror(error) {
+      asyncLogCallback && asyncLogCallback("webrtc", "dataChannel.onerror", error);
       console.log("[Async][webrtc] dataChannel.onerror happened. EventData:", error);
       defaultConfig.logLevel.debug && console.debug("[Async][webrtc] dataChannel.onerror happened. EventData:", error);
       onError();
       publicized.close();
     },
     onclose: function onclose(event) {
-      console.log("[Async][webrtc] dataChannel.onclose happened. EventData:", event);
+      asyncLogCallback && asyncLogCallback("webrtc", "dataChannel.onclose", event);
       publicized.close();
     }
   };
@@ -39395,6 +39428,10 @@ function WebRTCClass(_ref) {
       function promiseHandler(resolve, reject) {
         if (variables.isDestroyed) return;
         var registerEndPoint = getApiUrl() + defaultConfig.registerEndpoint;
+        var controller = new AbortController();
+        var timeoutId = setTimeout(function () {
+          return controller.abort();
+        }, 2500);
         fetch(registerEndPoint, {
           method: "POST",
           body: JSON.stringify({
@@ -39403,8 +39440,11 @@ function WebRTCClass(_ref) {
           headers: {
             "Content-Type": "application/json"
             // 'Content-Type': 'application/x-www-form-urlencoded',
-          }
+          },
+
+          signal: controller.signal
         }).then(function (response) {
+          clearTimeout(timeoutId);
           if (response.ok) {
             waitForConnectionToOpen();
             return response.json();
@@ -39415,10 +39455,12 @@ function WebRTCClass(_ref) {
         }).then(function (result) {
           return resolve(result);
         })["catch"](function (err) {
+          clearTimeout(timeoutId);
           if (retries) {
             retryTheRequest(resolve, reject);
             retries--;
           } else {
+            asyncLogCallback && asyncLogCallback("webrtc", "register.catch", "closing");
             publicized.close();
           }
           console.error(err);
@@ -39493,7 +39535,9 @@ function WebRTCClass(_ref) {
             // 'Content-Type': 'application/x-www-form-urlencoded',
           }
         }).then(function (response) {
-          if (response.ok) return response.json();else if (retries) {
+          if (response.ok) {
+            return response.json();
+          } else if (retries) {
             retryTheRequest(resolve, reject);
             retries--;
           } else reject();
@@ -39554,11 +39598,13 @@ function WebRTCClass(_ref) {
   publicized.emit = webrtcFunctions.sendData;
   publicized.connect = connect;
   publicized.close = function () {
+    asyncLogCallback && asyncLogCallback("webrtc", "publicized.close", "closing");
     removeCallbacks();
     resetVariables();
   };
   publicized.destroy = function () {
     variables.isDestroyed = true;
+    asyncLogCallback && asyncLogCallback("webrtc", "publicized.destroy", "closing");
     publicized.close();
     onOpen = null;
     onClose = null;
@@ -45978,7 +46024,7 @@ FilterXSS.prototype.process = function (html) {
 module.exports = FilterXSS;
 
 },{"./default":278,"./parser":280,"./util":281,"cssfilter":126}],283:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.25","date":"۱۴۰۲/۶/۲۰","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.7-snapshot.25","date":"۱۴۰۲/۶/۲۶","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],284:[function(require,module,exports){
 "use strict";
 
@@ -48811,7 +48857,7 @@ REVERSE:'/reverse',SEARCH:'/search',ROUTING:'/routing',STATIC_IMAGE:'/static'},C
 // consoleLogging = (sdkParams.asyncLogging.consoleLogging && typeof sdkParams.asyncLogging.consoleLogging === 'boolean')
 //     ? params.asyncLogging.consoleLogging
 //     : false,
-minIntegerValue=Number.MAX_SAFE_INTEGER*-1,maxIntegerValue=Number.MAX_SAFE_INTEGER,chatSendQueue=[],chatWaitQueue=[],chatUploadQueue=[],protocolSwitching=params.protocolSwitching,protocolManager=new ProtocolManager({protocol:_sdkParams.sdkParams.protocol}),msgLogCallback=typeof params.msgLogCallback=="function"?params.msgLogCallback:null;//fullResponseObject = params.fullResponseObject || false,
+minIntegerValue=Number.MAX_SAFE_INTEGER*-1,maxIntegerValue=Number.MAX_SAFE_INTEGER,chatSendQueue=[],chatWaitQueue=[],chatUploadQueue=[],protocolSwitching=params.protocolSwitching,protocolManager=new ProtocolManager({protocol:_sdkParams.sdkParams.protocol}),asyncLogCallback=typeof params.asyncLogCallback=="function"?params.asyncLogCallback:null,msgLogCallback=typeof params.msgLogCallback=="function"?params.msgLogCallback:null;//fullResponseObject = params.fullResponseObject || false,
 //webrtcConfig = (params.webrtcConfig ? params.webrtcConfig : null);
 if(!_sdkParams.sdkParams.consoleLogging){/**
          * Disable kurento-utils logs
@@ -48832,7 +48878,7 @@ if(_sdkParams.sdkParams.grantDeviceIdFromSSO){var getDeviceIdWithTokenTime=new D
          *
          * @return {undefined}
          * @return {undefined}
-         */initAsync=function initAsync(){var asyncGetReadyTime=new Date().getTime();asyncClient=new _podasyncWsOnly["default"]({protocol:protocolManager.getCurrentProtocol(),queueHost:queueHost,queuePort:queuePort,queueUsername:queueUsername,queuePassword:queuePassword,queueReceive:queueReceive,queueSend:queueSend,queueConnectionTimeout:queueConnectionTimeout,socketAddress:_sdkParams.sdkParams.socketAddress,serverName:_sdkParams.sdkParams.serverName,deviceId:_sdkParams.sdkParams.deviceId,wsConnectionWaitTime:_sdkParams.sdkParams.wsConnectionWaitTime,connectionRetryInterval:_sdkParams.sdkParams.connectionRetryInterval,connectionCheckTimeout:_sdkParams.sdkParams.connectionCheckTimeout,connectionCheckTimeoutThreshold:_sdkParams.sdkParams.connectionCheckTimeoutThreshold,messageTtl:_sdkParams.sdkParams.messageTtl,reconnectOnClose:_sdkParams.sdkParams.reconnectOnClose,asyncLogging:_sdkParams.sdkParams.asyncLogging,logLevel:_sdkParams.sdkParams.consoleLogging?3:1,webrtcConfig:_sdkParams.sdkParams.webrtcConfig,retryStepTimerTime:protocolManager.getRetryStepTimerTime(),onStartWithRetryStepGreaterThanZero:onStateChange,msgLogCallback:msgLogCallback||null,onDeviceId:onDeviceId});function onDeviceId(deviceId){if(!_sdkParams.sdkParams.deviceId){_sdkParams.sdkParams.deviceId=deviceId;}asyncClient.registerDevice(_sdkParams.sdkParams.deviceId);}callModule.asyncInitialized(asyncClient);(0,_messaging.messenger)().asyncInitialized(asyncClient);asyncClient.on('asyncReady',function(){if(_sdkParams.sdkParams.actualTimingLog){_utility["default"].chatStepLogger('Async Connection ',new Date().getTime()-asyncGetReadyTime);}peerId=asyncClient.getPeerId();if(!_store.store.user()){getUserAndUpdateSDKState();}else if(_store.store.user().id>0){(0,_messaging.messenger)().chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();}_sdkParams.sdkParams.deliveryInterval&&clearInterval(_sdkParams.sdkParams.deliveryInterval);_sdkParams.sdkParams.deliveryInterval=setInterval(function(){if(Object.keys(_sdkParams.sdkParams.messagesDelivery).length){messagesDeliveryQueueHandler();}},_sdkParams.sdkParams.deliveryIntervalPitch);_sdkParams.sdkParams.seenInterval&&clearInterval(_sdkParams.sdkParams.seenInterval);_sdkParams.sdkParams.seenInterval=setInterval(function(){if(Object.keys(_sdkParams.sdkParams.messagesSeen).length){messagesSeenQueueHandler();}},_sdkParams.sdkParams.seenIntervalPitch);//shouldReconnectCall();
+         */initAsync=function initAsync(){var asyncGetReadyTime=new Date().getTime();asyncClient=new _podasyncWsOnly["default"]({protocol:protocolManager.getCurrentProtocol(),queueHost:queueHost,queuePort:queuePort,queueUsername:queueUsername,queuePassword:queuePassword,queueReceive:queueReceive,queueSend:queueSend,queueConnectionTimeout:queueConnectionTimeout,socketAddress:_sdkParams.sdkParams.socketAddress,serverName:_sdkParams.sdkParams.serverName,deviceId:_sdkParams.sdkParams.deviceId,wsConnectionWaitTime:_sdkParams.sdkParams.wsConnectionWaitTime,connectionRetryInterval:_sdkParams.sdkParams.connectionRetryInterval,connectionCheckTimeout:_sdkParams.sdkParams.connectionCheckTimeout,connectionCheckTimeoutThreshold:_sdkParams.sdkParams.connectionCheckTimeoutThreshold,messageTtl:_sdkParams.sdkParams.messageTtl,reconnectOnClose:_sdkParams.sdkParams.reconnectOnClose,asyncLogging:_sdkParams.sdkParams.asyncLogging,logLevel:_sdkParams.sdkParams.consoleLogging?3:1,webrtcConfig:_sdkParams.sdkParams.webrtcConfig,retryStepTimerTime:protocolManager.getRetryStepTimerTime(),onStartWithRetryStepGreaterThanZero:onStateChange,msgLogCallback:msgLogCallback||null,asyncLogCallback:asyncLogCallback||null,onDeviceId:onDeviceId});function onDeviceId(deviceId){if(!_sdkParams.sdkParams.deviceId){_sdkParams.sdkParams.deviceId=deviceId;}asyncClient.registerDevice(_sdkParams.sdkParams.deviceId);}callModule.asyncInitialized(asyncClient);(0,_messaging.messenger)().asyncInitialized(asyncClient);asyncClient.on('asyncReady',function(){if(_sdkParams.sdkParams.actualTimingLog){_utility["default"].chatStepLogger('Async Connection ',new Date().getTime()-asyncGetReadyTime);}peerId=asyncClient.getPeerId();if(!_store.store.user()){getUserAndUpdateSDKState();}else if(_store.store.user().id>0){(0,_messaging.messenger)().chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();}_sdkParams.sdkParams.deliveryInterval&&clearInterval(_sdkParams.sdkParams.deliveryInterval);_sdkParams.sdkParams.deliveryInterval=setInterval(function(){if(Object.keys(_sdkParams.sdkParams.messagesDelivery).length){messagesDeliveryQueueHandler();}},_sdkParams.sdkParams.deliveryIntervalPitch);_sdkParams.sdkParams.seenInterval&&clearInterval(_sdkParams.sdkParams.seenInterval);_sdkParams.sdkParams.seenInterval=setInterval(function(){if(Object.keys(_sdkParams.sdkParams.messagesSeen).length){messagesSeenQueueHandler();}},_sdkParams.sdkParams.seenIntervalPitch);//shouldReconnectCall();
 });asyncClient.on('stateChange',onStateChange);function onStateChange(state){_events.chatEvents.fireEvent('chatState',state);chatFullStateObject=state;switch(state.socketState){case 1:// CONNECTED
 protocolManager.resetRetries();protocolManager.resetTimerTime();if(state.deviceRegister&&state.serverRegister){// messenger().chatState = true;
 // messenger().ping();
