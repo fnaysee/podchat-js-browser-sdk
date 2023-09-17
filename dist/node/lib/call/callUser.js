@@ -33,8 +33,11 @@ function CallUser(user) {
     containerTag: null,
     htmlElements: {},
     videoTopicManager: null,
-    audioTopicManager: null,
-    autoStartStreams: user.autoStartStreams
+    audioTopicManager: null // connQueue: {
+    //     audio: [],
+    //     video: []
+    // }
+
   };
   var publicized = {
     isMe: function isMe() {
@@ -120,7 +123,9 @@ function CallUser(user) {
                   sendTopic: sendTopic
                 }, config.user);
                 config.user.audioTopicName = 'Vo-' + sendTopic;
-                config.user.mute = false;
+                config.user.mute = false; //let index = config.connQueue.audio.push(currentCall().topicCreationQueue().add(function (){
+                //return new Promise(resolve => {
+
                 config.audioTopicManager = new _callTopicManager.CallTopicManager({
                   callId: config.user.callId,
                   userId: config.user.userId,
@@ -132,13 +137,13 @@ function CallUser(user) {
                     config.htmlElements[config.user.audioTopicName] = el;
                     console.log('unmute::: callId: ', config.callId, 'user: ', config.userId, ' startAudio ', {
                       sendTopic: sendTopic
-                    }, config.user);
-                    publicized.appendAudioToCallDiv();
+                    }, config.user); // publicized.appendAudioToCallDiv();
+                    //resolve();
+                    //            delete config.connQueue.audio[index]
                   }
                 });
-                setImmediate(function () {
-                  config.audioTopicManager.createTopic();
-                });
+                config.audioTopicManager.createTopic(); //    })
+                // }))
 
               case 7:
               case "end":
@@ -163,7 +168,9 @@ function CallUser(user) {
 
               case 2:
                 config.user.videoTopicName = 'Vi-' + sendTopic;
-                config.user.video = true;
+                config.user.video = true; // let index = config.connQueue.video.push(currentCall().topicCreationQueue().add(function (){
+                //     return new Promise(resolve => {
+
                 config.videoTopicManager = new _callTopicManager.CallTopicManager({
                   callId: config.user.callId,
                   userId: config.user.userId,
@@ -173,13 +180,12 @@ function CallUser(user) {
                   user: config.user,
                   onHTMLElement: function onHTMLElement(el) {
                     config.htmlElements[config.user.videoTopicName] = el;
-                    publicized.appendVideoToCallDive();
+                    publicized.appendVideoToCallDive(); // resolve();
+                    // delete config.connQueue.audio[index]
                   }
-                }); // await publicized.appendUserToCallDiv(generateVideoElement());
-
-                setImmediate(function () {
-                  config.videoTopicManager.createTopic();
                 });
+                config.videoTopicManager.createTopic(); // })
+                // }))
 
               case 6:
               case "end":
@@ -303,6 +309,12 @@ function CallUser(user) {
                 return _context6.abrupt("return");
 
               case 2:
+                // if(config.connQueue.audio.length) {
+                //     config.connQueue.audio.forEach(item =>{
+                //         if(item)
+                //             currentCall().topicCreationQueue().remove(item)
+                //     })
+                // }
                 console.log('unmute::: callId: ', config.callId, 'user: ', user.userId, ' destroyAudio()...');
                 _context6.next = 5;
                 return config.audioTopicManager.destroy();

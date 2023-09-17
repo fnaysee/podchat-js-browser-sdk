@@ -9,8 +9,6 @@ exports.WebrtcPeerConnection = WebrtcPeerConnection;
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
-var _slicedToArray2 = _interopRequireDefault(require("@babel/runtime/helpers/slicedToArray"));
-
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 
 function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
@@ -63,7 +61,8 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
     if (direction === 'send') {
       console.log('unmute::: callId: ', callId, 'user: ', userId, ' createPeer() ', {
         mediaType: mediaType,
-        direction: direction
+        direction: direction,
+        stream: stream
       });
       stream.getTracks().forEach(addTrackToPeer); // if(config.mediaType === "video")
       //     onTrackCallback(stream);
@@ -83,28 +82,49 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
   }
 
   function _onRemoteTrack() {
-    _onRemoteTrack = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(event) {
-      var _event$streams, remoteStream, newStream;
-
-      return _regenerator["default"].wrap(function _callee$(_context) {
+    _onRemoteTrack = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(event) {
+      var track, streams;
+      return _regenerator["default"].wrap(function _callee3$(_context3) {
         while (1) {
-          switch (_context.prev = _context.next) {
+          switch (_context3.prev = _context3.next) {
             case 0:
-              _event$streams = (0, _slicedToArray2["default"])(event.streams, 1), remoteStream = _event$streams[0];
-              newStream = new MediaStream([event.track]);
+              track = event.track, streams = event.streams; // const [remoteStream] = event.streams;
+              // let newStream = new MediaStream([track])
+
               console.log('unmute::: callId: ', callId, ' user: ', userId, ' onRemoteTrack', {
                 event: event,
                 direction: direction,
                 mediaType: mediaType
               });
-              onTrackCallback(newStream);
+
+              track.onunmute = function () {
+                var newStream = new MediaStream([track]);
+                console.log('unmute::: callId: ', callId, ' user: ', userId, ' onRemoteTrack.unmute', {
+                  event: event,
+                  direction: direction,
+                  mediaType: mediaType,
+                  streams: streams,
+                  newStream: newStream
+                });
+                onTrackCallback(newStream);
+              };
+
+              track.onmute = function () {
+                // let newStream = new MediaStream([track])
+                console.log('unmute::: callId: ', callId, ' user: ', userId, ' onRemoteTrack.track.onmute', {
+                  event: event,
+                  direction: direction,
+                  mediaType: mediaType,
+                  streams: streams
+                }); // onTrackCallback(newStream);
+              };
 
             case 4:
             case "end":
-              return _context.stop();
+              return _context3.stop();
           }
         }
-      }, _callee);
+      }, _callee3);
     }));
     return _onRemoteTrack.apply(this, arguments);
   }
@@ -200,28 +220,42 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
       }
     },
     generateOffer: function generateOffer(callback) {
-      if (config.direction == 'send') {
-        config.peerConnection.getTransceivers().forEach(function (transceiver) {
-          transceiver.direction = "sendonly";
-        });
-      } else {
-        config.peerConnection.addTransceiver(config.mediaType, {
-          direction: 'recvonly'
-        });
-      }
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
+        return _regenerator["default"].wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                if (config.direction == 'send') {
+                  config.peerConnection.getTransceivers().forEach(function (transceiver) {
+                    transceiver.direction = "sendonly";
+                  });
+                } else {
+                  config.peerConnection.addTransceiver(config.mediaType, {
+                    direction: 'recvonly'
+                  });
+                }
 
-      config.peerConnection.createOffer().then(function (offer) {
-        return config.peerConnection.setLocalDescription(offer);
-      }, function (error) {
-        callback && callback(error, null);
-      }).then(function (result) {
-        //TODO: handle set offer result
-        callback && callback(null, config.peerConnection.localDescription.sdp);
-      }, function (error) {
-        //TODO: handle set offer failed
-        // console.debug("[SDK][WebRtcModule] Set offer failed. Error:", error);
-        callback && callback(error, null);
-      });
+                _context.prev = 1;
+                _context.next = 4;
+                return config.peerConnection.setLocalDescription();
+
+              case 4:
+                callback && callback(null, config.peerConnection.localDescription.sdp);
+                _context.next = 10;
+                break;
+
+              case 7:
+                _context.prev = 7;
+                _context.t0 = _context["catch"](1);
+                callback && callback(_context.t0, null);
+
+              case 10:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, null, [[1, 7]]);
+      }))();
     },
     processOffer: function processOffer(sdpOffer, callback) {
       callback = callback.bind(this);
@@ -300,6 +334,38 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
           callback && callback();
         }
       });
+    },
+    updateStream: function updateStream(stream) {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
+        var localTrack, sender;
+        return _regenerator["default"].wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                localTrack = stream.getTracks()[0];
+                sender = config.peerConnection.getSenders()[0];
+
+                if (sender) {
+                  _context2.next = 6;
+                  break;
+                }
+
+                config.peerConnection.addTrack(localTrack); // will create sender, streamless track must be handled on another side here
+
+                _context2.next = 8;
+                break;
+
+              case 6:
+                _context2.next = 8;
+                return sender.replaceTrack(localTrack);
+
+              case 8:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }))();
     }
   };
 }

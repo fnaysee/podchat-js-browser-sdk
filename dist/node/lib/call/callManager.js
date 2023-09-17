@@ -45,6 +45,7 @@ function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (O
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 
+// import {TopicCreationQueue} from "./topicCreationQueue";
 function CallManager(_ref) {
   var callId = _ref.callId,
       callConfig = _ref.callConfig;
@@ -58,7 +59,6 @@ function CallManager(_ref) {
     screenShareInfo: new ScreenShareStateManager(),
     deviceManager: null
   };
-  startCallWebRTCFunctions(config.callConfig);
 
   function startCallWebRTCFunctions(callConfig) {
     config.callServerController.setServers(callConfig.kurentoAddress);
@@ -1245,6 +1245,9 @@ function CallManager(_ref) {
       }))();
     }
   };
+  setTimeout(function () {
+    startCallWebRTCFunctions(config.callConfig);
+  }, 50);
   return publicized;
 }
 

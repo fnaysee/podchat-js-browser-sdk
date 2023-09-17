@@ -3,7 +3,6 @@ import {DevicePauseStopManager} from "./deviceStartStopManager";
 import {CallTopicManager} from "./callTopicManager";
 
 import {
-    endCall,
     sharedVariables
 } from "./sharedData";
 import {callsManager} from "./callsList";
@@ -19,7 +18,6 @@ function CallUser(user) {
         htmlElements: {},
         videoTopicManager: null,
         audioTopicManager: null,
-        autoStartStreams: user.autoStartStreams
     };
 
     const publicized = {
@@ -101,17 +99,12 @@ function CallUser(user) {
                 onHTMLElement(el) {
                     config.htmlElements[config.user.audioTopicName] = el;
                     console.log('unmute::: callId: ', config.callId, 'user: ', config.userId, ' startAudio ', {sendTopic}, config.user);
-
-                        publicized.appendAudioToCallDiv();
-
                 }
             });
-            setImmediate(() => {
-                config.audioTopicManager.createTopic();
-            })
+            config.audioTopicManager.createTopic();
         },
         async startVideo(sendTopic) {
-            if(config.videoTopicManager)
+            if (config.videoTopicManager)
                 return;
 
             config.user.videoTopicName = 'Vi-' + sendTopic;
@@ -128,10 +121,7 @@ function CallUser(user) {
                     publicized.appendVideoToCallDive();
                 }
             });
-            // await publicized.appendUserToCallDiv(generateVideoElement());
-            setImmediate(()=> {
-                config.videoTopicManager.createTopic();
-            });
+            config.videoTopicManager.createTopic();
         },
         async reconnectTopic(media) {
             if(media == 'audio') {

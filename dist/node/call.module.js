@@ -2404,7 +2404,7 @@ function ChatCall(params) {
       return;
     }
 
-    var call = (0, _callsList.callsManager)().get((0, _callsList.callsManager)().currentCallId);
+    var call = (0, _sharedData.currentCall)();
 
     if (!call) {
       _eventsModule.chatEvents.fireEvent('error', {
@@ -2645,7 +2645,7 @@ function ChatCall(params) {
             case 0:
               userId = _ref8.userId, _ref8$streamType = _ref8.streamType, streamType = _ref8$streamType === void 0 ? 'audio' : _ref8$streamType;
 
-              if ((0, _callsList.callsManager)().currentCallId) {
+              if ((0, _sharedData.currentCall)()) {
                 _context4.next = 4;
                 break;
               }
@@ -2656,7 +2656,7 @@ function ChatCall(params) {
               return _context4.abrupt("return");
 
             case 4:
-              user = (0, _callsList.callsManager)().get((0, _callsList.callsManager)().currentCallId).users().get(userId);
+              user = (0, _sharedData.currentCall)().users().get(userId);
 
               if (user) {
                 _context4.next = 8;
@@ -2689,6 +2689,46 @@ function ChatCall(params) {
       return _ref9.apply(this, arguments);
     };
   }();
+
+  this.resetAudioSendStream = function (callback) {
+    if (!(0, _sharedData.currentCall)()) {
+      callback && callback({
+        hasError: true
+      });
+      return;
+    }
+
+    (0, _sharedData.currentCall)().deviceManager().mediaStreams.stopAudioInput();
+    (0, _sharedData.currentCall)().deviceManager().grantUserMediaDevicesPermissions({
+      audio: true
+    }).then(function () {
+      var user = (0, _sharedData.currentCall)().users().get(_store.store.user().id);
+      user.audioTopicManager().updateStream((0, _sharedData.currentCall)().deviceManager().mediaStreams.getAudioInput());
+      callback && callback({
+        hasError: false
+      });
+    });
+  };
+
+  this.resetVideoSendStream = function (callback) {
+    if (!(0, _sharedData.currentCall)()) {
+      callback && callback({
+        hasError: true
+      });
+      return;
+    }
+
+    (0, _sharedData.currentCall)().deviceManager().mediaStreams.setVideoInput();
+    (0, _sharedData.currentCall)().deviceManager().grantUserMediaDevicesPermissions({
+      audio: true
+    }).then(function () {
+      var user = (0, _sharedData.currentCall)().users().get(_store.store.user().id);
+      user.videoTopicManager().updateStream((0, _sharedData.currentCall)().deviceManager().mediaStreams.getVideoInput());
+      callback && callback({
+        hasError: false
+      });
+    });
+  };
 
   this.startPrintStatus = function (callUserId, mediaType) {
     console.log(callUserId, mediaType);

@@ -48,7 +48,7 @@ function WebrtcPeerConnection({
         }
 
         if(direction === 'send') {
-            console.log('unmute::: callId: ', callId, 'user: ', userId, ' createPeer() ', {mediaType, direction});
+            console.log('unmute::: callId: ', callId, 'user: ', userId, ' createPeer() ', {mediaType, direction, stream});
             stream.getTracks().forEach(addTrackToPeer);
 
             // if(config.mediaType === "video")
@@ -64,10 +64,15 @@ function WebrtcPeerConnection({
     createPeer();
 
     async function onRemoteTrack(event) {
-        const [remoteStream] = event.streams;
-        let newStream = new MediaStream([event.track])
+        const { track, streams } = event;
+        // const [remoteStream] = event.streams;
+        // let newStream = new MediaStream([track])
         console.log('unmute::: callId: ', callId, ' user: ', userId, ' onRemoteTrack', {event, direction, mediaType});
-        onTrackCallback(newStream);
+        track.onunmute = () => {
+            let newStream = new MediaStream([track])
+            console.log('unmute::: callId: ', callId, ' user: ', userId, ' onRemoteTrack.unmute', {event, direction, mediaType, streams, newStream});
+            onTrackCallback(newStream);
+        };
     }
 
 
@@ -141,7 +146,7 @@ function WebrtcPeerConnection({
                 config.peerConnection = null;
             }
         },
-        generateOffer(callback) {
+        async generateOffer(callback) {
             if(config.direction == 'send') {
                 config.peerConnection.getTransceivers()
                     .forEach(function (transceiver) {
@@ -152,20 +157,12 @@ function WebrtcPeerConnection({
                     direction: 'recvonly'
                 });
             }
-            config.peerConnection.createOffer()
-                .then(offer => {
-                    return config.peerConnection.setLocalDescription(offer)
-                }, error => {
-                    callback && callback(error, null);
-                })
-                .then(result => {
-                    //TODO: handle set offer result
-                    callback && callback(null, config.peerConnection.localDescription.sdp);
-                }, error => {
-                    //TODO: handle set offer failed
-                    // console.debug("[SDK][WebRtcModule] Set offer failed. Error:", error);
-                    callback && callback(error, null);
-                });
+            try {
+                await config.peerConnection.setLocalDescription();
+                callback && callback(null, config.peerConnection.localDescription.sdp);
+            } catch (error) {
+                callback && callback(error, null);
+            }
         },
         processOffer(sdpOffer, callback) {
             callback = callback.bind(this)
@@ -249,6 +246,15 @@ function WebrtcPeerConnection({
                     callback && callback();
                 }
             });
+        },
+        async updateStream(stream) {
+            let localTrack = stream.getTracks()[0];
+            const sender = config.peerConnection.getSenders()[0];
+            if (!sender) {
+                config.peerConnection.addTrack(localTrack); // will create sender, streamless track must be handled on another side here
+            } else {
+                await sender.replaceTrack(localTrack); // replaceTrack will do it gently, no new negotiation will be triggered
+            }
         }
     }
 }

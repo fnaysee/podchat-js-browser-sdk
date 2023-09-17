@@ -3,6 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.audioCtx = audioCtx;
 exports.calculateScreenSize = calculateScreenSize;
 exports.callTypes = exports.callStopQueue = exports.callClientType = void 0;
 exports.currentCall = currentCall;
@@ -63,9 +64,15 @@ var sharedVariables = {
   startScreenSharetParams: {
     quality: 3
   },
-  deviceManager: null
+  deviceManager: null,
+  audioCtx: null
 };
 exports.sharedVariables = sharedVariables;
+
+function audioCtx() {
+  if (!sharedVariables.audioCtx) sharedVariables.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return sharedVariables.audioCtx;
+}
 
 function endCall(params, callback) {
   _sdkParams.sdkParams.consoleLogging && console.log('[SDK][endCall] called...');

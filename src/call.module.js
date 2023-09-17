@@ -2256,7 +2256,7 @@ function ChatCall(params) {
             return;
         }
 
-        let call = callsManager().get(callsManager().currentCallId);
+        let call = currentCall();
         if(!call) {
             chatEvents.fireEvent('error', {
                 code: 999,
@@ -2498,12 +2498,12 @@ function ChatCall(params) {
     this.deviceManager = (sharedVariables.deviceManager ? sharedVariables.deviceManager : ( currentCall() ? currentCall().deviceManager() : null))
 
     this.resetCallStream = async function({userId, streamType = 'audio'}, callback) {
-        if(!callsManager().currentCallId) {
+        if(!currentCall()) {
             callback && callback({hasError: true});
             return;
         }
 
-        let user = callsManager().get(callsManager().currentCallId).users().get(userId);
+        let user = currentCall().users().get(userId);
 
         if(!user){
             callback && callback({hasError: true});
@@ -2512,6 +2512,34 @@ function ChatCall(params) {
 
         await user.reconnectTopic(streamType);
         callback && callback({hasError: false});
+    }
+
+    this.resetAudioSendStream = function (callback) {
+        if(!currentCall()) {
+            callback && callback({hasError: true});
+            return;
+        }
+
+        currentCall().deviceManager().mediaStreams.stopAudioInput();
+        currentCall().deviceManager().grantUserMediaDevicesPermissions({audio: true}).then(() => {
+            let user = currentCall().users().get(store.user().id);
+            user.audioTopicManager().updateStream(currentCall().deviceManager().mediaStreams.getAudioInput())
+            callback && callback({hasError: false});
+        })
+    }
+
+    this.resetVideoSendStream = function (callback) {
+        if(!currentCall()) {
+            callback && callback({hasError: true});
+            return;
+        }
+
+        currentCall().deviceManager().mediaStreams.setVideoInput();
+        currentCall().deviceManager().grantUserMediaDevicesPermissions({audio: true}).then(() => {
+            let user = currentCall().users().get(store.user().id);
+            user.videoTopicManager().updateStream(currentCall().deviceManager().mediaStreams.getVideoInput())
+            callback && callback({hasError: false});
+        })
     }
 
     this.startPrintStatus = function (callUserId, mediaType){

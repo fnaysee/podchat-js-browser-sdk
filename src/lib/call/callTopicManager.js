@@ -3,6 +3,7 @@ import {sdkParams} from "../sdkParams";
 import {chatEvents} from "../../events.module";
 import {topicMetaDataManager} from "./topicMetaDataManager";
 import {
+    audioCtx,
     currentCall,
     endScreenShare,
     sharedVariables
@@ -39,7 +40,8 @@ function CallTopicManager(
         },
         isDestroyed: false,
         dataStream: null,
-        statusEventsInterval: null
+        statusEventsInterval: null,
+        audioObject: null
     };
 
     const metadataInstance = new topicMetaDataManager({
@@ -51,7 +53,7 @@ function CallTopicManager(
         CONNECTING: 1,
         FAILED: 3,
         CONNECTED: 4
-    }
+    };
 
     function removeStreamHTML() {
         if(!config.htmlElement)
@@ -65,17 +67,26 @@ function CallTopicManager(
 
     function addStreamTrackToElement(stream) {
         config.dataStream = stream;
-        let htmlElement = publicized.getHtmlElement();
-        if (mediaType == 'video')
+        if(config.mediaType == 'audio' && direction == 'receive') {
+            config.audioObject = new Audio();
+            config.audioObject.srcObject = stream;
+            config.audioObject.srcObject = stream;
+            config.audioObject.autoplay = true;
+
+            config.audioObject.play();
+            publicized.watchAudioLevel();
+        } else if (config.mediaType == 'audio' && direction == 'send'){
+            publicized.watchAudioLevel();
+        } else {
+            let htmlElement = publicized.getHtmlElement();
             htmlElement.mute = true;
 
-        if(config.mediaType === "video" || (config.mediaType === "audio" && config.direction === "receive")){
             htmlElement.srcObject = stream;
-            if(config.mediaType === "video"){
+            if (config.mediaType === "video") {
                 htmlElement.load();
             }
+            onHTMLElement(htmlElement);
         }
-        onHTMLElement(htmlElement);
     }
 
     const publicized = {
@@ -88,19 +99,10 @@ function CallTopicManager(
                 el.setAttribute('class', sharedVariables.callVideoTagClassName);
                 el.setAttribute('playsinline', '');
                 el.setAttribute('muted', '');
+                el.setAttribute('autoplay', '');
                 el.setAttribute('data-uniqueId', elementUniqueId);
                 el.setAttribute('width', sharedVariables.callVideoMinWidth + 'px');
                 el.setAttribute('height', sharedVariables.callVideoMinHeight + 'px');
-                el.setAttribute('controls', '');
-            } else if (config.mediaType === 'audio' && typeof config.user.mute !== 'undefined' && !config.user.mute && !config.htmlElement) {
-                config.htmlElement = document.createElement('audio');
-                let el = config.htmlElement;
-                el.setAttribute('id', 'callUserAudio-' + config.user.audioTopicName);
-                el.setAttribute('class', sharedVariables.callAudioTagClassName);
-                el.setAttribute('autoplay', '');
-                el.setAttribute('data-uniqueId', elementUniqueId);
-                if(config.user.direction === 'send')
-                    el.setAttribute('muted', '');
                 el.setAttribute('controls', '');
             }
 
@@ -434,18 +436,16 @@ function CallTopicManager(
             }, {timeoutTime: 4000, timeoutRetriesCount: 5});
         },
         watchAudioLevel: function () {
-            console.log('unmute::: callId: ', config.callId, 'user: ', config.userId, ' watchAudioLevel ', {mediaType: config.mediaType, direction: config.direction});
-            const audioCtx = new AudioContext()
-                , stream = config.dataStream;
+            console.log('unmute::: callId: ', config.callId, 'user: ', config.userId, ' watchAudioLevel ', {mediaType: config.mediaType, direction: config.direction, 'audioContext()': audioCtx()});
+            const stream = config.dataStream;
 
             let user = config.user,
-                topicMetadata = config.topicMetaData
+                topicMetadata = config.topicMetaData;
             // Create and configure the audio pipeline
-            const audioContext = new AudioContext();
-            const analyzer = audioContext.createAnalyser();
+            const analyzer = audioCtx().createAnalyser();
             analyzer.fftSize = 512;
             analyzer.smoothingTimeConstant = 0.1;
-            const sourceNode = audioContext.createMediaStreamSource(stream);
+            const sourceNode = audioCtx().createMediaStreamSource(stream);
             sourceNode.connect(analyzer);
 
             // Analyze the sound
@@ -688,7 +688,9 @@ function CallTopicManager(
             let manager = this;
             console.log('unmute::: callId: ', config.callId, 'user: ', config.userId, ' removeTopic ');
 
-            publicized.pauseSendStream();
+            if(direction == 'send')
+                publicized.pauseSendStream();
+
             if(config.peer) {
                 console.log('unmute::: callId: ', config.callId, 'user: ', config.userId, ' removeTopic peer exists');
 
@@ -721,7 +723,7 @@ function CallTopicManager(
                     localStream = currentCall().deviceManager().mediaStreams.getVideoInput()
             }
             if(localStream)
-                localStream.enabled = true;
+                localStream.getTracks()[0].enabled = false;
         },
         resumeSendStream() {
             let localStream;
@@ -737,7 +739,7 @@ function CallTopicManager(
                     }
             }
             if(localStream)
-                localStream.enabled = true;
+                localStream.getTracks()[0].enabled = true;
 
             // if(config.peer && config.peer.getLocalStream())
             //     config.peer.getLocalStream().getTracks()[0].enabled = true;
@@ -869,6 +871,16 @@ function CallTopicManager(
                     // document.querySelector(".stats-box").innerHTML = statsOutput;
                 });
             }, 1000);
+        },
+        updateStream(stream){
+            if(mediaType == 'audio') {
+                publicized.removeAudioWatcherInterval();
+                config.dataStream = stream;
+                publicized.watchAudioLevel();
+            } else {
+                config.dataStream = stream;
+            }
+            config.peer.updateStream(stream);
         },
         stopStatusPrint() {
             config.statusEventsInterval && clearInterval(config.statusEventsInterval);

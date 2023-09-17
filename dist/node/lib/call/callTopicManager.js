@@ -64,7 +64,8 @@ function CallTopicManager(_ref) {
     },
     isDestroyed: false,
     dataStream: null,
-    statusEventsInterval: null
+    statusEventsInterval: null,
+    audioObject: null
   };
   var metadataInstance = new _topicMetaDataManager.topicMetaDataManager({
     userId: userId,
@@ -87,18 +88,35 @@ function CallTopicManager(_ref) {
 
   function addStreamTrackToElement(stream) {
     config.dataStream = stream;
-    var htmlElement = publicized.getHtmlElement();
-    if (mediaType == 'video') htmlElement.mute = true;
 
-    if (config.mediaType === "video" || config.mediaType === "audio" && config.direction === "receive") {
+    if (config.mediaType == 'audio' && direction == 'receive') {
+      config.audioObject = new Audio();
+      config.audioObject.srcObject = stream;
+      config.audioObject.srcObject = stream;
+      config.audioObject.autoplay = true; // let myAudioCtx = audioCtx();
+      // let mySource = myAudioCtx.createMediaStreamSource(stream);
+      // let gainNode = myAudioCtx.createGain();
+      // gainNode.gain.value = 2;
+      // mySource.connect(gainNode);
+      // gainNode.connect(myAudioCtx.destination);
+
+      config.audioObject.play();
+      publicized.watchAudioLevel();
+    } else if (config.mediaType == 'audio' && direction == 'send') {
+      publicized.watchAudioLevel();
+    } else {
+      var htmlElement = publicized.getHtmlElement();
+      htmlElement.mute = true; // if (config.mediaType === "video" || (config.mediaType === "audio" && config.direction === "receive")) {
+
       htmlElement.srcObject = stream;
 
       if (config.mediaType === "video") {
         htmlElement.load();
-      }
-    }
+      } // }
 
-    onHTMLElement(htmlElement);
+
+      onHTMLElement(htmlElement);
+    }
   }
 
   var publicized = {
@@ -112,26 +130,27 @@ function CallTopicManager(_ref) {
         el.setAttribute('class', _sharedData.sharedVariables.callVideoTagClassName);
         el.setAttribute('playsinline', '');
         el.setAttribute('muted', '');
+        el.setAttribute('autoplay', '');
         el.setAttribute('data-uniqueId', elementUniqueId);
         el.setAttribute('width', _sharedData.sharedVariables.callVideoMinWidth + 'px');
         el.setAttribute('height', _sharedData.sharedVariables.callVideoMinHeight + 'px');
         el.setAttribute('controls', '');
-      } else if (config.mediaType === 'audio' && typeof config.user.mute !== 'undefined' && !config.user.mute && !config.htmlElement) {
-        config.htmlElement = document.createElement('audio');
-        var _el = config.htmlElement;
+      } // else if (config.mediaType === 'audio' && typeof config.user.mute !== 'undefined' && !config.user.mute && !config.htmlElement) {
+      // config.htmlElement = document.createElement('audio');
+      // let el = config.htmlElement;
+      // el.setAttribute('id', 'callUserAudio-' + config.user.audioTopicName);
+      // el.setAttribute('class', sharedVariables.callAudioTagClassName);
+      // el.setAttribute('autoplay', '');
+      // el.setAttribute('data-uniqueId', elementUniqueId);
+      // if(config.user.direction === 'send')
+      //     el.setAttribute('muted', '');
+      // el.setAttribute('controls', '');
+      // config.htmlElement = new Audio();
+      // let el = config.htmlElement;
+      // if(config.user.direction === 'send')
+      //     el.muted = true;
+      //}
 
-        _el.setAttribute('id', 'callUserAudio-' + config.user.audioTopicName);
-
-        _el.setAttribute('class', _sharedData.sharedVariables.callAudioTagClassName);
-
-        _el.setAttribute('autoplay', '');
-
-        _el.setAttribute('data-uniqueId', elementUniqueId);
-
-        if (config.user.direction === 'send') _el.setAttribute('muted', '');
-
-        _el.setAttribute('controls', '');
-      }
 
       return config.htmlElement;
     },
@@ -490,18 +509,17 @@ function CallTopicManager(_ref) {
     watchAudioLevel: function watchAudioLevel() {
       console.log('unmute::: callId: ', config.callId, 'user: ', config.userId, ' watchAudioLevel ', {
         mediaType: config.mediaType,
-        direction: config.direction
+        direction: config.direction,
+        'audioContext()': (0, _sharedData.audioCtx)()
       });
-      var audioCtx = new AudioContext(),
-          stream = config.dataStream;
+      var stream = config.dataStream;
       var user = config.user,
           topicMetadata = config.topicMetaData; // Create and configure the audio pipeline
 
-      var audioContext = new AudioContext();
-      var analyzer = audioContext.createAnalyser();
+      var analyzer = (0, _sharedData.audioCtx)().createAnalyser();
       analyzer.fftSize = 512;
       analyzer.smoothingTimeConstant = 0.1;
-      var sourceNode = audioContext.createMediaStreamSource(stream);
+      var sourceNode = (0, _sharedData.audioCtx)().createMediaStreamSource(stream);
       sourceNode.connect(analyzer); // Analyze the sound
 
       topicMetadata.audioLevelInterval = setInterval(function () {
@@ -746,7 +764,7 @@ function CallTopicManager(_ref) {
               case 0:
                 manager = this;
                 console.log('unmute::: callId: ', config.callId, 'user: ', config.userId, ' removeTopic ');
-                publicized.pauseSendStream();
+                if (direction == 'send') publicized.pauseSendStream();
 
                 if (config.peer) {
                   console.log('unmute::: callId: ', config.callId, 'user: ', config.userId, ' removeTopic peer exists'); // config.sdpOfferRequestSent = false;
@@ -796,7 +814,7 @@ function CallTopicManager(_ref) {
           localStream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getVideoInput();
       }
 
-      if (localStream) localStream.enabled = true;
+      if (localStream) localStream.getTracks()[0].mute = true;
     },
     resumeSendStream: function resumeSendStream() {
       var localStream;
@@ -815,7 +833,7 @@ function CallTopicManager(_ref) {
 
       }
 
-      if (localStream) localStream.enabled = true; // if(config.peer && config.peer.getLocalStream())
+      if (localStream) localStream.getTracks()[0].mute = false; // if(config.peer && config.peer.getLocalStream())
       //     config.peer.getLocalStream().getTracks()[0].enabled = true;
     },
     startMedia: function startMedia() {
@@ -940,6 +958,17 @@ function CallTopicManager(_ref) {
           document.getElementById("peer-status-container").innerHTML = statsOutput; // document.querySelector(".stats-box").innerHTML = statsOutput;
         });
       }, 1000);
+    },
+    updateStream: function updateStream(stream) {
+      if (mediaType == 'audio') {
+        publicized.removeAudioWatcherInterval();
+        config.dataStream = stream;
+        publicized.watchAudioLevel();
+      } else {
+        config.dataStream = stream;
+      }
+
+      config.peer.updateStream(stream);
     },
     stopStatusPrint: function stopStatusPrint() {
       config.statusEventsInterval && clearInterval(config.statusEventsInterval);

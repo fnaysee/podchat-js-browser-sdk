@@ -12,7 +12,6 @@ import {CallServerManager} from "./callServerManager";
 import {callMetaDataTypes} from "../constants";
 import {errorList, getFilledErrorObject, raiseError} from "../errorHandler";
 import {callsManager} from "./callsList";
-import * as requestBlocker from "../requestBlocker";
 
 function CallManager({callId, callConfig}) {
     const config = {
@@ -23,8 +22,6 @@ function CallManager({callId, callConfig}) {
         screenShareInfo: new ScreenShareStateManager(),
         deviceManager: null
     };
-
-    startCallWebRTCFunctions(config.callConfig);
 
     function startCallWebRTCFunctions(callConfig) {
         config.callServerController.setServers(callConfig.kurentoAddress);
@@ -995,6 +992,9 @@ function CallManager({callId, callConfig}) {
         }
     }
 
+    setTimeout(()=>{
+        startCallWebRTCFunctions(config.callConfig);
+    },50)
     return publicized;
 }
 
