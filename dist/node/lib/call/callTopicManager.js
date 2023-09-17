@@ -63,7 +63,9 @@ function CallTopicManager(_ref) {
       isConnectionPoor: false
     },
     isDestroyed: false,
-    dataStream: null
+    dataStream: null,
+    statusEventsInterval: null,
+    audioObject: null
   };
   var metadataInstance = new _topicMetaDataManager.topicMetaDataManager({
     userId: userId,
@@ -494,8 +496,7 @@ function CallTopicManager(_ref) {
       });
     },
     watchAudioLevel: function watchAudioLevel() {
-      var audioCtx = new AudioContext(),
-          stream = config.dataStream;
+      var stream = config.dataStream;
       var user = config.user,
           topicMetadata = config.topicMetaData; // Create and configure the audio pipeline
 
@@ -547,7 +548,7 @@ function CallTopicManager(_ref) {
             isMute: true
           });
         }
-      }, 300);
+      }, 500);
 
       function convertToAudioLevel(soundPower) {
         if (soundPower <= -60) {

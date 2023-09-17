@@ -50,7 +50,6 @@ function CallManager(_ref) {
     screenShareInfo: new ScreenShareStateManager(),
     deviceManager: null
   };
-  startCallWebRTCFunctions(config.callConfig);
 
   function startCallWebRTCFunctions(callConfig) {
     config.callServerController.setServers(callConfig.kurentoAddress);
@@ -149,14 +148,14 @@ function CallManager(_ref) {
     _callStop = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5() {
       var resetCurrentCallId,
           resetCameraPaused,
-          _args5 = arguments;
-      return _regenerator["default"].wrap(function _callee5$(_context5) {
+          _args6 = arguments;
+      return _regenerator["default"].wrap(function _callee5$(_context6) {
         while (1) {
-          switch (_context5.prev = _context5.next) {
+          switch (_context6.prev = _context6.next) {
             case 0:
-              resetCurrentCallId = _args5.length > 0 && _args5[0] !== undefined ? _args5[0] : true;
-              resetCameraPaused = _args5.length > 1 && _args5[1] !== undefined ? _args5[1] : true;
-              _context5.next = 4;
+              resetCurrentCallId = _args6.length > 0 && _args6[0] !== undefined ? _args6[0] : true;
+              resetCameraPaused = _args6.length > 1 && _args6[1] !== undefined ? _args6[1] : true;
+              _context6.next = 4;
               return config.users.destroy();
 
             case 4:
@@ -174,7 +173,7 @@ function CallManager(_ref) {
 
             case 9:
             case "end":
-              return _context5.stop();
+              return _context6.stop();
           }
         }
       }, _callee5);
@@ -326,11 +325,12 @@ function CallManager(_ref) {
 
     if (jsonMessage.topic.indexOf('Vi-') !== -1 || jsonMessage.topic.indexOf('screen-Share') !== -1) {
       topicManager = userObj.videoTopicManager();
-      peer = topicManager.getPeer();
     } else if (jsonMessage.topic.indexOf('Vo-') !== -1) {
       topicManager = userObj.audioTopicManager();
-      peer = topicManager.getPeer();
     }
+
+    if (!topicManager) return;
+    peer = topicManager.getPeer();
 
     if (peer == null) {
       _events.chatEvents.fireEvent('callEvents', {
@@ -383,10 +383,13 @@ function CallManager(_ref) {
     var peer; //= callUsers[userId].peers[jsonMessage.topic];
 
     if (jsonMessage.topic.indexOf('Vi-') > -1 || jsonMessage.topic.indexOf('screen-Share') !== -1) {
-      peer = config.users.get(userId).videoTopicManager().getPeer();
+      peer = config.users.get(userId).videoTopicManager();
     } else if (jsonMessage.topic.indexOf('Vo-') > -1) {
-      peer = config.users.get(userId).audioTopicManager().getPeer();
+      peer = config.users.get(userId).audioTopicManager();
     }
+
+    if (!peer) return;
+    peer = peer.getPeer();
 
     if (peer == null) {
       _events.chatEvents.fireEvent('callEvents', {
@@ -535,6 +538,17 @@ function CallManager(_ref) {
       message: JSON.stringify(message),
       chatId: config.callId
     }, null, {});
+  }
+
+  function handleError(jsonMessage, sendingTopic, receiveTopic) {
+    var errMessage = jsonMessage.message;
+
+    _events.chatEvents.fireEvent('callEvents', {
+      type: 'CALL_ERROR',
+      code: 7000,
+      message: "Kurento error: " + errMessage,
+      environmentDetails: getCallDetails()
+    });
   }
 
   var publicized = {
@@ -723,7 +737,9 @@ function CallManager(_ref) {
           break;
 
         case 'ERROR':
-          handleError(message, params.sendingTopic, params.receiveTopic);
+          publicized.raiseCallError(getFilledErrorObject(_objectSpread(_objectSpread({}, _errorHandler.errorList.CALL_SERVER_ERROR), {}, {
+            replacements: [JSON.stringify(message)]
+          })), null, true);
           break;
 
         case 'SEND_SDP_OFFER':
@@ -900,50 +916,66 @@ function CallManager(_ref) {
     },
     handleParticipantUnMute: function handleParticipantUnMute(messageContent) {
       return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
-        var myId, i, user;
-        return _regenerator["default"].wrap(function _callee2$(_context2) {
-          while (1) {
-            switch (_context2.prev = _context2.next) {
-              case 0:
-                myId = _store.store.user().id;
+        var _loop2, i;
 
+        return _regenerator["default"].wrap(function _callee2$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
                 if (!Array.isArray(messageContent)) {
-                  _context2.next = 13;
+                  _context3.next = 8;
                   break;
                 }
 
-                _context2.t0 = _regenerator["default"].keys(messageContent);
+                _loop2 = /*#__PURE__*/_regenerator["default"].mark(function _loop2(i) {
+                  var user;
+                  return _regenerator["default"].wrap(function _loop2$(_context2) {
+                    while (1) {
+                      switch (_context2.prev = _context2.next) {
+                        case 0:
+                          user = config.users.get(messageContent[i].userId);
+
+                          if (!user) {
+                            _context2.next = 6;
+                            break;
+                          }
+
+                          if (!user.audioTopicManager()) {
+                            _context2.next = 5;
+                            break;
+                          }
+
+                          _context2.next = 5;
+                          return user.destroyAudio();
+
+                        case 5:
+                          setTimeout(function () {
+                            user.startAudio(messageContent[i].sendTopic);
+                          }, 50);
+
+                        case 6:
+                        case "end":
+                          return _context2.stop();
+                      }
+                    }
+                  }, _loop2);
+                });
+                _context3.t0 = _regenerator["default"].keys(messageContent);
 
               case 3:
-                if ((_context2.t1 = _context2.t0()).done) {
-                  _context2.next = 13;
+                if ((_context3.t1 = _context3.t0()).done) {
+                  _context3.next = 8;
                   break;
                 }
 
-                i = _context2.t1.value;
-                user = config.users.get(messageContent[i].userId);
+                i = _context3.t1.value;
+                return _context3.delegateYield(_loop2(i), "t2", 6);
 
-                if (!user) {
-                  _context2.next = 11;
-                  break;
-                }
-
-                if (!user.audioTopicManager()) {
-                  _context2.next = 10;
-                  break;
-                }
-
-                _context2.next = 10;
-                return user.stopAudio();
-
-              case 10:
-                user.startAudio(messageContent[i].sendTopic);
-
-              case 11:
-                _context2.next = 3;
+              case 6:
+                _context3.next = 3;
                 break;
 
-              case 13:
+              case 8:
                 setTimeout(function () {
                   _events.chatEvents.fireEvent('callEvents', {
                     type: 'CALL_DIVS',
@@ -956,9 +988,9 @@ function CallManager(_ref) {
                   result: messageContent
                 });
 
-              case 15:
+              case 10:
               case "end":
-                return _context2.stop();
+                return _context3.stop();
             }
           }
         }, _callee2);
@@ -967,44 +999,44 @@ function CallManager(_ref) {
     handleParticipantVideoOn: function handleParticipantVideoOn(messageContent) {
       return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3() {
         var i, user;
-        return _regenerator["default"].wrap(function _callee3$(_context3) {
+        return _regenerator["default"].wrap(function _callee3$(_context4) {
           while (1) {
-            switch (_context3.prev = _context3.next) {
+            switch (_context4.prev = _context4.next) {
               case 0:
                 if (!Array.isArray(messageContent)) {
-                  _context3.next = 12;
+                  _context4.next = 12;
                   break;
                 }
 
-                _context3.t0 = _regenerator["default"].keys(messageContent);
+                _context4.t0 = _regenerator["default"].keys(messageContent);
 
               case 2:
-                if ((_context3.t1 = _context3.t0()).done) {
-                  _context3.next = 12;
+                if ((_context4.t1 = _context4.t0()).done) {
+                  _context4.next = 12;
                   break;
                 }
 
-                i = _context3.t1.value;
+                i = _context4.t1.value;
                 user = config.users.get(messageContent[i].userId);
 
                 if (!user) {
-                  _context3.next = 10;
+                  _context4.next = 10;
                   break;
                 }
 
                 if (!user.audioTopicManager()) {
-                  _context3.next = 9;
+                  _context4.next = 9;
                   break;
                 }
 
-                _context3.next = 9;
+                _context4.next = 9;
                 return user.stopAudio();
 
               case 9:
                 user.startVideo(messageContent[i].sendTopic);
 
               case 10:
-                _context3.next = 2;
+                _context4.next = 2;
                 break;
 
               case 12:
@@ -1022,7 +1054,7 @@ function CallManager(_ref) {
 
               case 14:
               case "end":
-                return _context3.stop();
+                return _context4.stop();
             }
           }
         }, _callee3);
@@ -1100,17 +1132,17 @@ function CallManager(_ref) {
     },
     handleEndScreenShare: function handleEndScreenShare(messageContent) {
       return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4() {
-        return _regenerator["default"].wrap(function _callee4$(_context4) {
+        return _regenerator["default"].wrap(function _callee4$(_context5) {
           while (1) {
-            switch (_context4.prev = _context4.next) {
+            switch (_context5.prev = _context5.next) {
               case 0:
                 config.screenShareInfo.setIsStarted(false);
                 config.screenShareInfo.setOwner(messageContent.screenOwner.id);
-                _context4.next = 4;
+                _context5.next = 4;
                 return config.users.removeItem('screenShare');
 
               case 4:
-                _context4.next = 6;
+                _context5.next = 6;
                 return config.deviceManager.mediaStreams.stopScreenShareInput();
 
               case 6:
@@ -1126,7 +1158,7 @@ function CallManager(_ref) {
 
               case 8:
               case "end":
-                return _context4.stop();
+                return _context5.stop();
             }
           }
         }, _callee4);
@@ -1180,6 +1212,9 @@ function CallManager(_ref) {
       return callStop();
     }
   };
+  setTimeout(function () {
+    startCallWebRTCFunctions(config.callConfig);
+  }, 50);
   return publicized;
 }
 

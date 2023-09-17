@@ -35,43 +35,52 @@ function CallUser(user) {
         getHTMLElements() {
             return config.htmlElements;
         },
-        appendUserToCallDiv() {
+        appendAudioToCallDiv(){
             if (!sharedVariables.callDivId) {
                 sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
                 return;
             }
             let user = config.user,
-                callParentDiv = document.getElementById(sharedVariables.callDivId);
+                callParentDiv = document.getElementById(sharedVariables.callDivId),
+                userContainer = document.getElementById("callParticipantWrapper-" + config.userId);
 
-            if (user.video && config.videoTopicManager) {
-                if (!document.getElementById("callParticipantWrapper-" + config.userId)) {
-                    if (!document.getElementById("uiRemoteVideo-" + config.user.videoTopicName)) {
-                        config.htmlElements.container.appendChild(config.htmlElements[config.user.videoTopicName])
-                    }
-                } else {
-                    document.getElementById("callParticipantWrapper-" + config.userId).append(config.htmlElements[config.user.videoTopicName])
-                }
+            if (!userContainer) {
+                callParentDiv.appendChild(config.htmlElements.container);
+                userContainer = document.getElementById("callParticipantWrapper-" + config.userId)
             }
             if (typeof user.mute !== "undefined" && !user.mute && config.audioTopicManager) {
-                if (!document.getElementById("callParticipantWrapper-" + config.userId)) {
-                    if (!document.getElementById("uiRemoteVideo-" + config.user.audioTopicName)) {
-                        config.htmlElements.container.appendChild(config.htmlElements[config.user.audioTopicName])
-                    }
-                } else {
-                    document.getElementById("callParticipantWrapper-" + config.userId).append(config.htmlElements[config.user.audioTopicName])
+                if (!document.getElementById("callUserAudio-" + config.user.audioTopicName)) {
+                    userContainer.appendChild(config.htmlElements[config.user.audioTopicName]);
+                    config.audioTopicManager.startMedia();
+                    config.audioTopicManager.watchAudioLevel();
                 }
             }
-            if (!document.getElementById("callParticipantWrapper-" + config.userId))
+        },
+        appendVideoToCallDive(){
+            if (!sharedVariables.callDivId) {
+                sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
+                return;
+            }
+            let user = config.user,
+                callParentDiv = document.getElementById(sharedVariables.callDivId),
+                userContainer = document.getElementById("callParticipantWrapper-" + config.userId);
+
+            if (!userContainer) {
                 callParentDiv.appendChild(config.htmlElements.container);
+                userContainer = document.getElementById("callParticipantWrapper-" + config.userId)
+            }
+            if (user.video && config.videoTopicManager) {
+                if (!document.getElementById("callUserVideo-" + config.user.videoTopicName)) {
+                    userContainer.appendChild(config.htmlElements[config.user.videoTopicName]);
+                    config.videoTopicManager.startMedia();
+                }
+            }
         },
         videoTopicManager() {
             return config.videoTopicManager;
         },
         audioTopicManager() {
             return config.audioTopicManager;
-        },
-        audioStopManager() {
-            return config.user.audioStopManager
         },
         async startAudio(sendTopic) {
             if(config.audioTopicManager)
@@ -87,9 +96,8 @@ function CallUser(user) {
                 direction: (config.user.userId === store.user().id ? 'send' : 'receive'),
                 user: config.user,
                 onHTMLElement(el) {
-                    console.log('im called', el, config.user.audioTopicName, config.htmlElements[config.user.audioTopicName])
                     config.htmlElements[config.user.audioTopicName] = el;
-                    publicized.appendUserToCallDiv();
+                    publicized.appendAudioToCallDiv();
                 }
             });
             setImmediate(()=>{
@@ -111,7 +119,7 @@ function CallUser(user) {
                 user: config.user,
                 onHTMLElement(el) {
                     config.htmlElements[config.user.videoTopicName] = el;
-                    publicized.appendUserToCallDiv();
+                    publicized.appendVideoToCallDive();
                 }
             });
             // await publicized.appendUserToCallDiv(generateVideoElement());
@@ -178,28 +186,30 @@ function CallUser(user) {
         }
         config.user.videoTopicName = 'Vi-' + config.user.topicSend;
         config.user.audioTopicName = 'Vo-' + config.user.topicSend;
-        config.user.audioStopManager = new DevicePauseStopManager({
-            callId: config.callId,
-            userId: config.user.userId,
-            mediaType: 'audio',
-            timeout: sdkParams.callOptions?.streamCloseTimeout || 10000
-        });
-        if (config.user.mute) {
-            config.user.audioStopManager.pauseStream();
-            config.user.audioStopManager.stopStream();
-        }
-        config.user.videoStopManager = new DevicePauseStopManager({
-            callId: config.callId,
-            userId: config.user.userId,
-            mediaType: 'video',
-            timeout: sdkParams.callOptions?.streamCloseTimeout || 10000
-        });
-        if (!config.user.video) {
-            config.user.videoStopManager.pauseStream();
-            config.user.videoStopManager.stopStream();
-        }
+        // config.user.audioStopManager = new DevicePauseStopManager({
+        //     callId: config.callId,
+        //     userId: config.user.userId,
+        //     mediaType: 'audio',
+        //     timeout: sdkParams.callOptions?.streamCloseTimeout || 10000
+        // });
+        // if (config.user.mute) {
+        //     config.user.audioStopManager.pauseStream();
+        //     config.user.audioStopManager.stopStream();
+        // }
+        // config.user.videoStopManager = new DevicePauseStopManager({
+        //     callId: config.callId,
+        //     userId: config.user.userId,
+        //     mediaType: 'video',
+        //     timeout: sdkParams.callOptions?.streamCloseTimeout || 10000
+        // });
+        // if (!config.user.video) {
 
-        publicized.appendUserToCallDiv(generateContainerElement())
+            // config.user.videoStopManager.pauseStream();
+            // config.user.videoStopManager.stopStream();
+        // }
+
+        // publicized.appendUserToCallDiv(generateContainerElement())
+        generateContainerElement();
 
         if(config.user.video)
             publicized.startVideo(config.user.topicSend);
@@ -254,22 +264,20 @@ function CallScreenShare(user) {
                 sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
                 return;
             }
-
             let user = config.user,
-                callParentDiv = document.getElementById(sharedVariables.callDivId);
+                callParentDiv = document.getElementById(sharedVariables.callDivId),
+                userContainer = document.getElementById("callParticipantWrapper-" + config.userId);
 
+            if (!userContainer) {
+                callParentDiv.appendChild(config.htmlElements.container);
+                userContainer = document.getElementById("callParticipantWrapper-" + config.userId)
+            }
             if (user.video && config.videoTopicManager) {
-                if (!document.getElementById("callParticipantWrapper-" + config.userId)) {
-                    if (!document.getElementById("uiRemoteVideo-" + config.user.videoTopicName)) {
-                        config.htmlElements.container.appendChild(config.htmlElements[config.user.videoTopicName])
-                    }
-                } else {
-                    document.getElementById("callParticipantWrapper-" + config.userId).append(config.htmlElements[config.user.videoTopicName])
+                if (!document.getElementById("callUserVideo-" + config.user.videoTopicName)) {
+                    userContainer.appendChild(config.htmlElements[config.user.videoTopicName]);
+                    config.videoTopicManager.startMedia();
                 }
             }
-
-            if (!document.getElementById("callParticipantWrapper-" + config.userId))
-                callParentDiv.appendChild(config.htmlElements.container);
         },
         videoTopicManager() {
             return config.videoTopicManager;
@@ -347,7 +355,8 @@ function CallScreenShare(user) {
         obj.videoTopicName = config.topic;
         config.user = obj;
 
-        publicized.appendUserToCallDiv(generateContainerElement())
+        // publicized.appendUserToCallDiv(generateContainerElement())
+        generateContainerElement();
 
         if(config.user.video)
             publicized.startVideo(obj.topic);

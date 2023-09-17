@@ -12256,6 +12256,9 @@ function Chat(params) {
         });
     }
 
+    publicized.resetAudioSendStream = callModule.resetAudioSendStream;
+    publicized.resetVideoSendStream = callModule.resetVideoSendStream;
+
     store.events.on(store.threads.eventsList.UNREAD_COUNT_UPDATED, (thread) => {
         chatEvents.fireEvent('threadEvents', {
             type: 'UNREAD_COUNT_UPDATED',

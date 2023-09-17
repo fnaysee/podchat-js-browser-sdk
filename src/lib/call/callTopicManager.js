@@ -38,7 +38,9 @@ function CallTopicManager(
             isConnectionPoor: false
         },
         isDestroyed: false,
-        dataStream: null
+        dataStream: null,
+        statusEventsInterval: null,
+        audioObject: null
     };
 
     const metadataInstance = new topicMetaDataManager({
@@ -50,7 +52,7 @@ function CallTopicManager(
         CONNECTING: 1,
         FAILED: 3,
         CONNECTED: 4
-    }
+    };
 
     function removeStreamHTML() {
         const stream = config.htmlElement.srcObject;
@@ -444,8 +446,7 @@ function CallTopicManager(
             }, {timeoutTime: 4000, timeoutRetriesCount: 5});
         },
         watchAudioLevel: function () {
-            const audioCtx = new AudioContext()
-                , stream = config.dataStream;
+            const stream = config.dataStream;
 
             let user = config.user,
                 topicMetadata = config.topicMetaData
@@ -500,7 +501,7 @@ function CallTopicManager(
                         isMute: true
                     });
                 }
-            }, 300);
+            }, 500);
 
             function convertToAudioLevel(soundPower){
                 if(soundPower <= -60 ) {
