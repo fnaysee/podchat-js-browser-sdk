@@ -12165,6 +12165,7 @@ function Chat(params) {
             subjectId: params.threadId,
             typeCode: sdkParams.generalTypeCode, //params.typeCode,
             content: {
+                sticker: params.sticker,
                 messageId : params.messageId,
                 count : count,
                 offset : offset
