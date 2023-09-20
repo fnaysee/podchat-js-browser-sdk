@@ -9,6 +9,10 @@ var localUser = null;
 
 function setSDKUser(serverUSer) {
   localUser = serverUSer;
+
+  localUser.isMe = function (userId) {
+    return localUser.id == userId;
+  };
 }
 
 function user() {

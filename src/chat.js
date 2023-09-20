@@ -26,6 +26,18 @@ import {
 import deviceManager from "./lib/call/deviceManager.js";
 import {store} from "./lib/store";
 import {setSDKUser} from "./lib/store/user";
+import {
+    getReactionsSummaries,
+    getReactionList,
+    removeReaction,
+    replaceReaction,
+    getMyReaction,
+    addReaction,
+    onReactionSummaries,
+    onRemoveReaction,
+    onReplaceReaction,
+    onAddReaction
+} from "./lib/chat/reactionsMethods";
 
 function Chat(params) {
     /*******************************************************
@@ -424,6 +436,7 @@ function Chat(params) {
                 }
 
                 peerId = asyncClient.getPeerId();
+                store.reactionSummaries.removeAllMessages();
 
                 if (!store.user()) {
                     getUserAndUpdateSDKState();
@@ -496,12 +509,12 @@ function Chat(params) {
                 peerId = undefined;
                 chatEvents.fireEvent('disconnect', event);
 
-                chatEvents.fireEvent('callEvents', {
-                    type: 'CALL_ERROR',
-                    code: 7000,
-                    message: 'Call Socket is closed!',
-                    error: event
-                });
+                // chatEvents.fireEvent('callEvents', {
+                //     type: 'CALL_ERROR',
+                //     code: 7000,
+                //     message: 'Call Socket is closed!',
+                //     error: event
+                // });
             });
 
             asyncClient.on('reconnect', function (newPeerId) {
@@ -2934,43 +2947,21 @@ function Chat(params) {
                  * Type 239    ADD_REACTION
                  */
                 case chatMessageVOTypes.ADD_REACTION:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
-                    }
-
-                    chatEvents.fireEvent('messageEvents', {
-                        type: 'ADD_REACTION',
-                        result: messageContent
-                    });
-
+                    onAddReaction(uniqueId, messageContent, contentCount);
                     break;
 
                 /**
                  * Type 240    REPLACE_REACTION
                  */
                 case chatMessageVOTypes.REPLACE_REACTION:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
-                    }
-
-                    chatEvents.fireEvent('messageEvents', {
-                        type: 'REPLACE_REACTION',
-                        result: messageContent
-                    });
+                    onReplaceReaction(uniqueId, messageContent, contentCount);
                     break;
 
                 /**
                  * Type 241    REMOVE_REACTION
                  */
                 case chatMessageVOTypes.REMOVE_REACTION:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
-                    }
-
-                    chatEvents.fireEvent('messageEvents', {
-                        type: 'REMOVE_REACTION',
-                        result: messageContent
-                    });
+                    onRemoveReaction(uniqueId, messageContent, contentCount);
                     break;
 
                 /**
@@ -2994,9 +2985,7 @@ function Chat(params) {
                  Type 244   REACTION_COUNT
                  */
                 case chatMessageVOTypes.REACTION_COUNT:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, messageContent.message, messageContent.code, messageContent, 0));
-                    }
+                    onReactionSummaries(uniqueId, messageContent);
                     break;
                 /**
                  * Type 999   All unknown errors
@@ -12074,126 +12063,13 @@ function Chat(params) {
         });
     };
     publicized.chatStickerTypes = chatStickerTypes;
-    publicized.addReaction = function (params, callback) {
-        let sendData = {
-            chatMessageVOType: chatMessageVOTypes.ADD_REACTION,
-            subjectId: params.threadId,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
-            content: {
-                messageId: params.messageId,
-                reaction: params.reaction
-            },
-            token: sdkParams.token
-        };
 
-        return messenger().sendMessage(sendData, {
-            onResult: function (result) {
-                callback && callback(result);
-            }
-        });
-    };
-    publicized.getMyReaction = function (params, callback) {
-        let sendData = {
-            chatMessageVOType: chatMessageVOTypes.GET_MY_REACTION,
-            subjectId: params.threadId,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
-            content: {
-                messageId: params.messageId
-            },
-            token: sdkParams.token
-        };
-
-        return messenger().sendMessage(sendData, {
-            onResult: function (result) {
-                callback && callback(result);
-            }
-        });
-    };
-
-    publicized.replaceReaction = function (params, callback) {
-        let sendData = {
-            chatMessageVOType: chatMessageVOTypes.REPLACE_REACTION,
-            subjectId: params.threadId,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
-            content: {
-                reactionId: params.reactionId,
-                reaction: params.reaction
-            },
-            token: sdkParams.token
-        };
-
-        return messenger().sendMessage(sendData, {
-            onResult: function (result) {
-                callback && callback(result);
-            }
-        });
-    };
-
-    publicized.removeReaction = function (params, callback) {
-        let sendData = {
-            chatMessageVOType: chatMessageVOTypes.REMOVE_REACTION,
-            subjectId: params.threadId,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
-            content: {
-                reactionId: params.reactionId
-            },
-            token: sdkParams.token
-        };
-
-        return messenger().sendMessage(sendData, {
-            onResult: function (result) {
-                callback && callback(result);
-            }
-        });
-    };
-
-    publicized.getReactionList = function (params, callback) {
-        let count = 20,
-            offset = 0
-
-        if (params) {
-            if (parseInt(params.count) > 0) {
-                count = params.count;
-            }
-
-            if (parseInt(params.offset) > 0) {
-                offset = params.offset;
-            }
-        }
-        let sendData = {
-            chatMessageVOType: chatMessageVOTypes.REACTION_LIST,
-            subjectId: params.threadId,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
-            content: {
-                sticker: params.sticker,
-                messageId : params.messageId,
-                count : count,
-                offset : offset
-            },
-            token: sdkParams.token
-        };
-
-        return messenger().sendMessage(sendData, {
-            onResult: function (result) {
-                callback && callback(result);
-            }
-        });
-    };
-
-    publicized.getReactionsSummaries = function (params, callback) {
-        var sendData = {
-            chatMessageVOType: chatMessageVOTypes.REACTION_COUNT,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
-            token: sdkParams.token,
-            subjectId: params.threadId,
-            content: params.messageIds
-        };
-        return messenger().sendMessage(sendData,  {
-            onResult: function (result) {
-                callback && callback(result);
-            }
-        });
-    };
+    publicized.addReaction = addReaction;
+    publicized.getMyReaction = getMyReaction;
+    publicized.replaceReaction = replaceReaction;
+    publicized.removeReaction = removeReaction;
+    publicized.getReactionList = getReactionList;
+    publicized.getReactionsSummaries = getReactionsSummaries;
 
     publicized.version = function () {
         console.log("%c[SDK] Version: podchat-browser@" + buildConfig.version, "color:green; font-size:13px")
