@@ -46053,7 +46053,7 @@ FilterXSS.prototype.process = function (html) {
 module.exports = FilterXSS;
 
 },{"./default":280,"./parser":282,"./util":283,"cssfilter":128}],285:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.27","date":"۱۴۰۲/۶/۲۹","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.7-snapshot.28","date":"۱۴۰۲/۶/۲۹","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],286:[function(require,module,exports){
 "use strict";
 
