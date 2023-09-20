@@ -109,17 +109,7 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
                 onTrackCallback(newStream);
               };
 
-              track.onmute = function () {
-                // let newStream = new MediaStream([track])
-                console.log('unmute::: callId: ', callId, ' user: ', userId, ' onRemoteTrack.track.onmute', {
-                  event: event,
-                  direction: direction,
-                  mediaType: mediaType,
-                  streams: streams
-                }); // onTrackCallback(newStream);
-              };
-
-            case 4:
+            case 3:
             case "end":
               return _context3.stop();
           }

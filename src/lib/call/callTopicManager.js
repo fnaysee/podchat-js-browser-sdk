@@ -103,7 +103,7 @@ function CallTopicManager(
                 el.setAttribute('data-uniqueId', elementUniqueId);
                 el.setAttribute('width', sharedVariables.callVideoMinWidth + 'px');
                 el.setAttribute('height', sharedVariables.callVideoMinHeight + 'px');
-                el.setAttribute('controls', '');
+                // el.setAttribute('controls', '');
             }
 
             return config.htmlElement;

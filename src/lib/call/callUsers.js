@@ -3,6 +3,7 @@ import {chatEvents} from "../../events.module";
 import {callsManager} from "./callsList";
 import {messenger} from "../../messaging.module";
 import {store} from "../store";
+import {currentCall} from "./sharedData";
 
 function CallUsers({callId}) {
     const config = {
@@ -46,13 +47,15 @@ function CallUsers({callId}) {
 
             for (let i in config.list) {
                 let tags = {};
-                if (config.list[i] && config.list[i].getHTMLElements()) {
-                    tags.container = config.list[i].getHTMLElements().container;
-                    if ((i === 'screenShare' && callsManager().get(config.callId).screenShareInfo.isStarted())
-                        || i != 'screenShare' && config.list[i].user().video && config.list[i].getHTMLElements()[config.list[i].user().videoTopicName])
-                        tags.video = config.list[i].getHTMLElements()[config.list[i].user().videoTopicName];
-                    if (!config.list[i].mute && config.list[i].getHTMLElements()[config.list[i].user().audioTopicName])
-                        tags.audio = config.list[i].getHTMLElements()[config.list[i].user().audioTopicName];
+                let HTMLElements = config.list[i].getHTMLElements();
+                config.list[i] && console.log('HTMLElements:: ', {HTMLElements}, config.list[i], config.list[i].user(), config.list[i].user().videoTopicName);
+                if (config.list[i] && HTMLElements) {
+                    tags.container = HTMLElements.container;
+                    if ((i === 'screenShare' && currentCall().screenShareInfo.isStarted())
+                        || i != 'screenShare' && config.list[i].user().video && HTMLElements[config.list[i].user().videoTopicName])
+                        tags.video = HTMLElements[config.list[i].user().videoTopicName];
+                    // if (!config.list[i].mute && config.list[i].getHTMLElements()[config.list[i].user().audioTopicName])
+                    //     tags.audio = config.list[i].getHTMLElements()[config.list[i].user().audioTopicName];
 
                     callUIElements[i] = tags;
                 }

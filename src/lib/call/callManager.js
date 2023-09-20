@@ -510,6 +510,12 @@ function CallManager({callId, callConfig}) {
         deviceManager(){
             return config.deviceManager;
         },
+        sendCallDivs(){
+            chatEvents.fireEvent('callEvents', {
+                type: 'CALL_DIVS',
+                result: config.users.generateCallUIList()
+            });
+        },
         screenShareInfo: config.screenShareInfo,
         raiseCallError: function (errorObject, callBack, fireEvent) {
             raiseError(errorObject, callBack, fireEvent, {

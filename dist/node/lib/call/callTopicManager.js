@@ -93,27 +93,19 @@ function CallTopicManager(_ref) {
       config.audioObject = new Audio();
       config.audioObject.srcObject = stream;
       config.audioObject.srcObject = stream;
-      config.audioObject.autoplay = true; // let myAudioCtx = audioCtx();
-      // let mySource = myAudioCtx.createMediaStreamSource(stream);
-      // let gainNode = myAudioCtx.createGain();
-      // gainNode.gain.value = 2;
-      // mySource.connect(gainNode);
-      // gainNode.connect(myAudioCtx.destination);
-
+      config.audioObject.autoplay = true;
       config.audioObject.play();
       publicized.watchAudioLevel();
     } else if (config.mediaType == 'audio' && direction == 'send') {
       publicized.watchAudioLevel();
     } else {
       var htmlElement = publicized.getHtmlElement();
-      htmlElement.mute = true; // if (config.mediaType === "video" || (config.mediaType === "audio" && config.direction === "receive")) {
-
+      htmlElement.mute = true;
       htmlElement.srcObject = stream;
 
       if (config.mediaType === "video") {
         htmlElement.load();
-      } // }
-
+      }
 
       onHTMLElement(htmlElement);
     }
@@ -133,24 +125,8 @@ function CallTopicManager(_ref) {
         el.setAttribute('autoplay', '');
         el.setAttribute('data-uniqueId', elementUniqueId);
         el.setAttribute('width', _sharedData.sharedVariables.callVideoMinWidth + 'px');
-        el.setAttribute('height', _sharedData.sharedVariables.callVideoMinHeight + 'px');
-        el.setAttribute('controls', '');
-      } // else if (config.mediaType === 'audio' && typeof config.user.mute !== 'undefined' && !config.user.mute && !config.htmlElement) {
-      // config.htmlElement = document.createElement('audio');
-      // let el = config.htmlElement;
-      // el.setAttribute('id', 'callUserAudio-' + config.user.audioTopicName);
-      // el.setAttribute('class', sharedVariables.callAudioTagClassName);
-      // el.setAttribute('autoplay', '');
-      // el.setAttribute('data-uniqueId', elementUniqueId);
-      // if(config.user.direction === 'send')
-      //     el.setAttribute('muted', '');
-      // el.setAttribute('controls', '');
-      // config.htmlElement = new Audio();
-      // let el = config.htmlElement;
-      // if(config.user.direction === 'send')
-      //     el.muted = true;
-      //}
-
+        el.setAttribute('height', _sharedData.sharedVariables.callVideoMinHeight + 'px'); // el.setAttribute('controls', '');
+      }
 
       return config.htmlElement;
     },
@@ -814,7 +790,7 @@ function CallTopicManager(_ref) {
           localStream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getVideoInput();
       }
 
-      if (localStream) localStream.getTracks()[0].mute = true;
+      if (localStream) localStream.getTracks()[0].enabled = false;
     },
     resumeSendStream: function resumeSendStream() {
       var localStream;
@@ -833,7 +809,7 @@ function CallTopicManager(_ref) {
 
       }
 
-      if (localStream) localStream.getTracks()[0].mute = false; // if(config.peer && config.peer.getLocalStream())
+      if (localStream) localStream.getTracks()[0].enabled = true; // if(config.peer && config.peer.getLocalStream())
       //     config.peer.getLocalStream().getTracks()[0].enabled = true;
     },
     startMedia: function startMedia() {

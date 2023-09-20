@@ -3,6 +3,7 @@ import {DevicePauseStopManager} from "./deviceStartStopManager";
 import {CallTopicManager} from "./callTopicManager";
 
 import {
+    currentCall,
     sharedVariables
 } from "./sharedData";
 import {callsManager} from "./callsList";
@@ -75,6 +76,8 @@ function CallUser(user) {
                     config.videoTopicManager.startMedia();
                 }
             }
+
+            currentCall().sendCallDivs()
         },
         videoTopicManager() {
             return config.videoTopicManager;
@@ -277,6 +280,8 @@ function CallScreenShare(user) {
                     config.videoTopicManager.startMedia();
                 }
             }
+
+            currentCall().sendCallDivs();
         },
         videoTopicManager() {
             return config.videoTopicManager;
@@ -307,9 +312,7 @@ function CallScreenShare(user) {
                 }
             });
             // publicized.appendUserToCallDiv(generateVideoElement());
-            setImmediate(()=> {
-                config.videoTopicManager.createTopic();
-            })
+            config.videoTopicManager.createTopic();
         },
         async reconnectTopic(media) {
             await config.videoTopicManager.stopTopicOnServer();
