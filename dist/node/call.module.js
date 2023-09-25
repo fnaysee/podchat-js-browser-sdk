@@ -2745,8 +2745,6 @@ function ChatCall(params) {
   };
 
   this.stopPrintStatus = function (callUserId, mediaType) {
-    console.log(callUserId, mediaType);
-
     switch (mediaType) {
       case 'audio':
         (0, _sharedData.currentCall)().users().get(callUserId).audioTopicManager().stopStatusPrint();

@@ -21,6 +21,8 @@ var _messaging = require("../../messaging.module");
 
 var _store = require("../store");
 
+var _sharedData = require("./sharedData");
+
 function CallUsers(_ref) {
   var callId = _ref.callId;
   var config = {
@@ -83,11 +85,16 @@ function CallUsers(_ref) {
 
       for (var i in config.list) {
         var tags = {};
+        var HTMLElements = config.list[i].getHTMLElements();
+        config.list[i] && console.log('HTMLElements:: ', {
+          HTMLElements: HTMLElements
+        }, config.list[i], config.list[i].user(), config.list[i].user().videoTopicName);
 
-        if (config.list[i] && config.list[i].getHTMLElements()) {
-          tags.container = config.list[i].getHTMLElements().container;
-          if (i === 'screenShare' && (0, _callsList.callsManager)().get(config.callId).screenShareInfo.isStarted() || i != 'screenShare' && config.list[i].user().video && config.list[i].getHTMLElements()[config.list[i].user().videoTopicName]) tags.video = config.list[i].getHTMLElements()[config.list[i].user().videoTopicName];
-          if (!config.list[i].mute && config.list[i].getHTMLElements()[config.list[i].user().audioTopicName]) tags.audio = config.list[i].getHTMLElements()[config.list[i].user().audioTopicName];
+        if (config.list[i] && HTMLElements) {
+          tags.container = HTMLElements.container;
+          if (i === 'screenShare' && (0, _sharedData.currentCall)().screenShareInfo.isStarted() || i != 'screenShare' && config.list[i].user().video && HTMLElements[config.list[i].user().videoTopicName]) tags.video = HTMLElements[config.list[i].user().videoTopicName]; // if (!config.list[i].mute && config.list[i].getHTMLElements()[config.list[i].user().audioTopicName])
+          //     tags.audio = config.list[i].getHTMLElements()[config.list[i].user().audioTopicName];
+
           callUIElements[i] = tags;
         }
       }

@@ -79,38 +79,35 @@ function CallTopicManager(_ref) {
   };
 
   function removeStreamHTML() {
-    var stream = config.htmlElement.srcObject;
-
-    if (!!stream) {
-      var tracks = stream.getTracks();
-
-      if (!!tracks) {
-        tracks.forEach(function (track) {
-          track.stop();
-        });
-      }
-
-      config.htmlElement.srcObject = null;
-    }
-
+    if (!config.htmlElement) return;
+    config.htmlElement.srcObject = null;
     config.htmlElement.remove();
     delete config.htmlElement;
   }
 
   function addStreamTrackToElement(stream) {
     config.dataStream = stream;
-    var htmlElement = publicized.getHtmlElement();
-    if (mediaType == 'video') htmlElement.mute = true;
-    if (config.mediaType === "video" || config.mediaType === "audio" && config.direction === "receive") htmlElement.srcObject = stream;
 
-    if (config.mediaType === 'audio') {
+    if (config.mediaType == 'audio' && direction == 'receive') {
+      config.audioObject = new Audio();
+      config.audioObject.srcObject = stream;
+      config.audioObject.srcObject = stream;
+      config.audioObject.autoplay = true;
+      config.audioObject.play();
       publicized.watchAudioLevel();
-    } // config.htmlElement.srcObject = stream;
+    } else if (config.mediaType == 'audio' && direction == 'send') {
+      publicized.watchAudioLevel();
+    } else {
+      var htmlElement = publicized.getHtmlElement();
+      htmlElement.mute = true;
+      htmlElement.srcObject = stream;
 
+      if (config.mediaType === "video") {
+        htmlElement.load();
+      }
 
-    onHTMLElement(htmlElement); // htmlElement.load();
-
-    publicized.startMedia();
+      onHTMLElement(htmlElement);
+    }
   }
 
   var publicized = {
@@ -120,28 +117,15 @@ function CallTopicManager(_ref) {
       if (config.mediaType === 'video' && config.user.video && !config.htmlElement) {
         config.htmlElement = document.createElement('video');
         var el = config.htmlElement;
-        el.setAttribute('id', 'uiRemoteVideo-' + config.user.videoTopicName);
+        el.setAttribute('id', 'callUserVideo-' + config.user.videoTopicName);
         el.setAttribute('class', _sharedData.sharedVariables.callVideoTagClassName);
         el.setAttribute('playsinline', '');
         el.setAttribute('muted', '');
+        el.setAttribute('autoplay', '');
         el.setAttribute('data-uniqueId', elementUniqueId);
         el.setAttribute('width', _sharedData.sharedVariables.callVideoMinWidth + 'px');
         el.setAttribute('height', _sharedData.sharedVariables.callVideoMinHeight + 'px');
-      } else if (config.mediaType === 'audio' && typeof config.user.mute !== 'undefined' && !config.user.mute && !config.htmlElement) {
-        config.htmlElement = document.createElement('audio');
-        var _el = config.htmlElement;
-
-        _el.setAttribute('id', 'uiRemoteAudio-' + config.user.audioTopicName);
-
-        _el.setAttribute('class', _sharedData.sharedVariables.callAudioTagClassName);
-
-        _el.setAttribute('autoplay', '');
-
-        _el.setAttribute('data-uniqueId', elementUniqueId);
-
-        if (config.user.direction === 'send') _el.setAttribute('muted', '');
-
-        _el.setAttribute('controls', '');
+        el.setAttribute('controls', '');
       }
 
       return config.htmlElement;
@@ -172,6 +156,23 @@ function CallTopicManager(_ref) {
     },
     isPeerDisconnected: function isPeerDisconnected() {
       return config.state === peerStates.DISCONNECTED;
+    },
+    createTopic: function createTopic() {
+      var manager = this;
+
+      if (config.peer) {
+        return;
+      }
+
+      publicized.resumeSendStream();
+      this.generateSdpOfferOptions().then(function (options) {
+        _sdkParams.sdkParams.consoleLogging && console.debug("[SDK][generateSdpOfferOptions] Options for this request have been resolved: ", {
+          options: options
+        }, "userId: ", config.userId, "topic: ", config.topic, "direction: ", config.direction);
+        manager.establishPeerConnection(options);
+      })["catch"](function (error) {
+        console.error(error);
+      });
     },
     generateSdpOfferOptions: function generateSdpOfferOptions() {
       var topicManager = this;
@@ -266,33 +267,14 @@ function CallTopicManager(_ref) {
         _sdkParams.sdkParams.consoleLogging && console.log("[SDK][getSdpOfferOptions] ", "topic: ", config.topic, "mediaType: ", config.mediaType, "direction: ", config.direction, "options: ", options);
       });
     },
-    // watchForIceCandidates: function (candidate) {
-    //     let manager = this;
-    //
-    //     if (metadataInstance.isIceCandidateIntervalSet()) {
-    //         return;
-    //     }
-    //     //callUsers[config.userId].topicMetaData[config.topic].interval
-    //     metadataInstance.setIceCandidateInterval(setInterval(function () {
-    //         if (config.topicMetaData.sdpAnswerReceived === true) {
-    //             sdkParams.consoleLogging && console.log("[SDK][watchForIceCandidates][setInterval] sdpAnswerReceived, topic:", config.topic)
-    //             config.topicMetaData.sdpAnswerReceived = false;
-    //             // manager.removeTopicIceCandidateInterval();
-    //             metadataInstance.clearIceCandidateInterval();
-    //             currentCall().sendCallMessage({
-    //                 id: 'ADD_ICE_CANDIDATE',
-    //                 topic: config.topic,
-    //                 candidateDto: candidate
-    //             }, null, {})
-    //         }
-    //     }, 500, {candidate: candidate}));
-    // },
     establishPeerConnection: function establishPeerConnection(options) {
       var manager = this,
           user = config.user,
           topicElement = config.htmlElement;
       config.state = peerStates.CONNECTING;
       config.peer = new _webrtcPeer.WebrtcPeerConnection({
+        callId: config.callId,
+        userId: config.userId,
         direction: config.direction,
         mediaType: config.mediaType,
         stream: options.stream,
@@ -500,11 +482,10 @@ function CallTopicManager(_ref) {
       var user = config.user,
           topicMetadata = config.topicMetaData; // Create and configure the audio pipeline
 
-      var audioContext = new AudioContext();
-      var analyzer = audioContext.createAnalyser();
+      var analyzer = (0, _sharedData.audioCtx)().createAnalyser();
       analyzer.fftSize = 512;
       analyzer.smoothingTimeConstant = 0.1;
-      var sourceNode = audioContext.createMediaStreamSource(stream);
+      var sourceNode = (0, _sharedData.audioCtx)().createMediaStreamSource(stream);
       sourceNode.connect(analyzer); // Analyze the sound
 
       topicMetadata.audioLevelInterval = setInterval(function () {
@@ -725,23 +706,6 @@ function CallTopicManager(_ref) {
         return "Unknown error: " + err;
       }
     },
-    createTopic: function createTopic() {
-      console.log(config.topic, 3, "createTopic");
-      var manager = this;
-
-      if (config.peer) {
-        return;
-      }
-
-      this.generateSdpOfferOptions().then(function (options) {
-        _sdkParams.sdkParams.consoleLogging && console.debug("[SDK][generateSdpOfferOptions] Options for this request have been resolved: ", {
-          options: options
-        }, "userId: ", config.userId, "topic: ", config.topic, "direction: ", config.direction);
-        manager.establishPeerConnection(options);
-      })["catch"](function (error) {
-        console.error(error);
-      });
-    },
     stopTopicOnServer: function stopTopicOnServer() {
       return new Promise(function (resolve) {
         (0, _callsList.callsManager)().get(config.callId).sendCallMessage({
@@ -765,58 +729,18 @@ function CallTopicManager(_ref) {
             switch (_context.prev = _context.next) {
               case 0:
                 manager = this;
+                if (direction == 'send') publicized.pauseSendStream();
 
-                if (!config.peer) {
-                  _context.next = 22;
-                  break;
+                if (config.peer) {
+                  manager.removeConnectionQualityInterval();
+                  manager.removeAudioWatcherInterval();
+                  removeStreamHTML();
+                  config.peer.dispose();
+                  config.peer = null;
+                  config.state = peerStates.DISCONNECTED;
                 }
 
-                config.sdpOfferRequestSent = false; // this.removeTopicIceCandidateInterval();
-
-                metadataInstance.clearIceCandidateInterval();
-                manager.removeConnectionQualityInterval();
-                manager.removeAudioWatcherInterval();
-                removeStreamHTML();
-                config.peer.dispose();
-                config.peer = null;
-                config.state = peerStates.DISCONNECTED;
-
-                if (!(config.direction === 'send')) {
-                  _context.next = 22;
-                  break;
-                }
-
-                if (!(config.mediaType === 'audio')) {
-                  _context.next = 14;
-                  break;
-                }
-
-                _context.next = 14;
-                return (0, _sharedData.currentCall)().deviceManager().mediaStreams.stopAudioInput();
-
-              case 14:
-                if (!(config.mediaType === 'video')) {
-                  _context.next = 22;
-                  break;
-                }
-
-                if (config.isScreenShare) {
-                  _context.next = 20;
-                  break;
-                }
-
-                _context.next = 18;
-                return (0, _sharedData.currentCall)().deviceManager().mediaStreams.stopVideoInput();
-
-              case 18:
-                _context.next = 22;
-                break;
-
-              case 20:
-                _context.next = 22;
-                return (0, _sharedData.currentCall)().deviceManager().mediaStreams.stopScreenShareInput();
-
-              case 22:
+              case 3:
               case "end":
                 return _context.stop();
             }
@@ -840,13 +764,42 @@ function CallTopicManager(_ref) {
      * @param callback
      */
     pauseSendStream: function pauseSendStream() {
-      config.peer.getLocalStream().getTracks()[0].enabled = false;
+      var localStream;
+
+      switch (config.mediaType) {
+        case 'audio':
+          localStream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getAudioInput();
+          break;
+
+        case 'video':
+          localStream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getVideoInput();
+      }
+
+      if (localStream) localStream.getTracks()[0].enabled = false;
     },
     resumeSendStream: function resumeSendStream() {
-      config.peer.getLocalStream().getTracks()[0].enabled = true;
+      var localStream;
+
+      switch (config.mediaType) {
+        case 'audio':
+          localStream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getAudioInput();
+          break;
+
+        case 'video':
+          if (config.isScreenShare) {
+            localStream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getScreenShareInput();
+          } else {
+            localStream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getVideoInput();
+          }
+
+      }
+
+      if (localStream) localStream.getTracks()[0].enabled = true; // if(config.peer && config.peer.getLocalStream())
+      //     config.peer.getLocalStream().getTracks()[0].enabled = true;
     },
     startMedia: function startMedia() {
       _sdkParams.sdkParams.consoleLogging && console.log("[SDK][startMedia] called with: ", config.htmlElement);
+      if (!config.htmlElement) return;
       config.htmlElement.play()["catch"](function (err) {
         if (err.name === 'NotAllowedError') {
           _events.chatEvents.fireEvent('callEvents', {
@@ -938,10 +891,51 @@ function CallTopicManager(_ref) {
         }
       }
     },
+    startStatusPrint: function startStatusPrint() {
+      config.statusEventsInterval && clearInterval(config.statusEventsInterval);
+      config.statusEventsInterval = setInterval(function () {
+        if (!config.peer) {
+          config.statusEventsInterval && clearInterval(config.statusEventsInterval);
+          return;
+        }
+
+        config.peer.peerConnection.getStats(null).then(function (stats) {
+          // console.log(' watchRTCPeerConnection:: window.setInterval then(stats:', stats)
+          var statsOutput = "";
+          var user = config.user,
+              topicMetadata = config.topicMetaData;
+          stats.forEach(function (report) {
+            // if(report && report.type && report.type === 'remote-inbound-rtp') {
+            statsOutput += "<h2>Report: ".concat(report.type, "</h2>\n<strong>ID:</strong> ").concat(report.id, "<br>\n") + "<strong>Timestamp:</strong> ".concat(report.timestamp, "<br>\n"); // Now the statistics for this report; we intentially drop the ones we
+            // sorted to the top above
+
+            Object.keys(report).forEach(function (statName) {
+              if (statName !== "id" && statName !== "timestamp" && statName !== "type") {
+                statsOutput += "<strong>".concat(statName, ":</strong> ").concat(report[statName], "<br>\n");
+              }
+            }); // }
+          });
+          document.getElementById("peer-status-container").innerHTML = statsOutput; // document.querySelector(".stats-box").innerHTML = statsOutput;
+        });
+      }, 1000);
+    },
+    updateStream: function updateStream(stream) {
+      if (mediaType == 'audio') {
+        publicized.removeAudioWatcherInterval();
+        config.dataStream = stream;
+        publicized.watchAudioLevel();
+      } else {
+        config.dataStream = stream;
+      }
+
+      config.peer.updateStream(stream);
+    },
+    stopStatusPrint: function stopStatusPrint() {
+      config.statusEventsInterval && clearInterval(config.statusEventsInterval);
+    },
     isDestroyed: function isDestroyed() {
       return config.isDestroyed;
     },
-    removeStreamHTML: removeStreamHTML,
     destroy: function destroy() {
       return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
         return _regenerator["default"].wrap(function _callee2$(_context2) {

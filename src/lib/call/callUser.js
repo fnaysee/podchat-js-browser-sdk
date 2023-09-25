@@ -3,7 +3,7 @@ import {DevicePauseStopManager} from "./deviceStartStopManager";
 import {CallTopicManager} from "./callTopicManager";
 
 import {
-    endCall,
+    currentCall,
     sharedVariables
 } from "./sharedData";
 import {callsManager} from "./callsList";
@@ -19,7 +19,6 @@ function CallUser(user) {
         htmlElements: {},
         videoTopicManager: null,
         audioTopicManager: null,
-        autoStartStreams: user.autoStartStreams
     };
 
     const publicized = {
@@ -75,6 +74,8 @@ function CallUser(user) {
                     config.videoTopicManager.startMedia();
                 }
             }
+
+            currentCall().sendCallDivs()
         },
         videoTopicManager() {
             return config.videoTopicManager;
@@ -100,12 +101,10 @@ function CallUser(user) {
                     publicized.appendAudioToCallDiv();
                 }
             });
-            setImmediate(()=>{
-                config.audioTopicManager.createTopic();
-            })
+            config.audioTopicManager.createTopic();
         },
         async startVideo(sendTopic) {
-            if(config.videoTopicManager)
+            if (config.videoTopicManager)
                 return;
 
             config.user.videoTopicName = 'Vi-' + sendTopic;
@@ -122,10 +121,7 @@ function CallUser(user) {
                     publicized.appendVideoToCallDive();
                 }
             });
-            // await publicized.appendUserToCallDiv(generateVideoElement());
-            setImmediate(()=> {
-                config.videoTopicManager.createTopic();
-            });
+            config.videoTopicManager.createTopic();
         },
         async reconnectTopic(media) {
             if(media == 'audio') {
@@ -278,6 +274,8 @@ function CallScreenShare(user) {
                     config.videoTopicManager.startMedia();
                 }
             }
+
+            currentCall().sendCallDivs();
         },
         videoTopicManager() {
             return config.videoTopicManager;
@@ -308,9 +306,7 @@ function CallScreenShare(user) {
                 }
             });
             // publicized.appendUserToCallDiv(generateVideoElement());
-            setImmediate(()=> {
-                config.videoTopicManager.createTopic();
-            })
+            config.videoTopicManager.createTopic();
         },
         async reconnectTopic(media) {
             await config.videoTopicManager.stopTopicOnServer();

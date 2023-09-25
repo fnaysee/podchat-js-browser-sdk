@@ -200,7 +200,7 @@ function DeviceManager () {
         },
         mediaStreams: config.mediaStreams,
         watchAudioInputStream(callErrorHandler) {
-            config.streamsMetada.audioInWatcherId && clearInterval(config.streamsMetada.audioInWatcherId);
+            config.streamsMetada.audioInWatcherId && clearInterval(config.streamsMetada.audioInWatcherId)
             config.streamsMetada.audioInWatcherId = setInterval(() => {
                 if (!config.mediaStreams.getAudioInput()) {
                     clearInterval(config.streamsMetada.audioInWatcherId);

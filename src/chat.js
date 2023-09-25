@@ -12134,6 +12134,8 @@ function Chat(params) {
 
     publicized.resetAudioSendStream = callModule.resetAudioSendStream;
     publicized.resetVideoSendStream = callModule.resetVideoSendStream;
+    publicized.stopPrintStatus = callModule.stopPrintStatus;
+    publicized.startPrintStatus = callModule.startPrintStatus;
 
     store.events.on(store.threads.eventsList.UNREAD_COUNT_UPDATED, (thread) => {
         chatEvents.fireEvent('threadEvents', {

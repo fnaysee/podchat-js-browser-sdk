@@ -5,12 +5,12 @@ import {store} from "../store";
 import {
     sharedVariables,
     callStopQueue,
-    joinCallParams, endCall, calculateScreenSize
+    joinCallParams, endCall, calculateScreenSize, currentCall
 } from "./sharedData";
 import Utility from "../../utility/utility";
 import {CallServerManager} from "./callServerManager";
 import {callMetaDataTypes} from "../constants";
-import {errorList, raiseError} from "../errorHandler";
+import {errorList, getFilledErrorObject, raiseError} from "../errorHandler";
 import {callsManager} from "./callsList";
 
 function CallManager({callId, callConfig}) {
@@ -510,6 +510,12 @@ function CallManager({callId, callConfig}) {
         deviceManager(){
             return config.deviceManager;
         },
+        sendCallDivs(){
+            chatEvents.fireEvent('callEvents', {
+                type: 'CALL_DIVS',
+                result: config.users.generateCallUIList()
+            });
+        },
         screenShareInfo: config.screenShareInfo,
         raiseCallError: function (errorObject, callBack, fireEvent) {
             raiseError(errorObject, callBack, fireEvent, {
@@ -792,13 +798,6 @@ function CallManager({callId, callConfig}) {
                     if (user) {
                         user.stopAudio();
                     }
-                    // callUsers[messageContent[i].userId].audioStopManager.disableStream();
-
-                    // callStateController.deactivateParticipantStream(
-                    //     messageContent[i].userId,
-                    //     'audio',
-                    //     'mute'
-                    // )
                 }
             }
             setTimeout(function () {
@@ -986,7 +985,10 @@ function CallManager({callId, callConfig}) {
 
             }
         },
-        destroy() {
+        async destroy() {
+            await config.deviceManager.mediaStreams.stopAudioInput();
+            await config.deviceManager.mediaStreams.stopVideoInput();
+            await config.deviceManager.mediaStreams.stopScreenShareInput();
             return callStop()
         }
     }

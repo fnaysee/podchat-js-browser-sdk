@@ -33,8 +33,7 @@ function CallUser(user) {
     containerTag: null,
     htmlElements: {},
     videoTopicManager: null,
-    audioTopicManager: null,
-    autoStartStreams: user.autoStartStreams
+    audioTopicManager: null
   };
   var publicized = {
     isMe: function isMe() {
@@ -93,6 +92,8 @@ function CallUser(user) {
           config.videoTopicManager.startMedia();
         }
       }
+
+      (0, _sharedData.currentCall)().sendCallDivs();
     },
     videoTopicManager: function videoTopicManager() {
       return config.videoTopicManager;
@@ -128,9 +129,7 @@ function CallUser(user) {
                     publicized.appendAudioToCallDiv();
                   }
                 });
-                setImmediate(function () {
-                  config.audioTopicManager.createTopic();
-                });
+                config.audioTopicManager.createTopic();
 
               case 6:
               case "end":
@@ -167,11 +166,8 @@ function CallUser(user) {
                     config.htmlElements[config.user.videoTopicName] = el;
                     publicized.appendVideoToCallDive();
                   }
-                }); // await publicized.appendUserToCallDiv(generateVideoElement());
-
-                setImmediate(function () {
-                  config.videoTopicManager.createTopic();
                 });
+                config.videoTopicManager.createTopic();
 
               case 6:
               case "end":
@@ -459,6 +455,8 @@ function CallScreenShare(user) {
           config.videoTopicManager.startMedia();
         }
       }
+
+      (0, _sharedData.currentCall)().sendCallDivs();
     },
     videoTopicManager: function videoTopicManager() {
       return config.videoTopicManager;
@@ -489,9 +487,7 @@ function CallScreenShare(user) {
         }
       }); // publicized.appendUserToCallDiv(generateVideoElement());
 
-      setImmediate(function () {
-        config.videoTopicManager.createTopic();
-      });
+      config.videoTopicManager.createTopic();
     },
     reconnectTopic: function reconnectTopic(media) {
       return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee9() {

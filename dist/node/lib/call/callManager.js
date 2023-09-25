@@ -145,17 +145,17 @@ function CallManager(_ref) {
   }
 
   function _callStop() {
-    _callStop = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5() {
+    _callStop = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee6() {
       var resetCurrentCallId,
           resetCameraPaused,
-          _args6 = arguments;
-      return _regenerator["default"].wrap(function _callee5$(_context6) {
+          _args7 = arguments;
+      return _regenerator["default"].wrap(function _callee6$(_context7) {
         while (1) {
-          switch (_context6.prev = _context6.next) {
+          switch (_context7.prev = _context7.next) {
             case 0:
-              resetCurrentCallId = _args6.length > 0 && _args6[0] !== undefined ? _args6[0] : true;
-              resetCameraPaused = _args6.length > 1 && _args6[1] !== undefined ? _args6[1] : true;
-              _context6.next = 4;
+              resetCurrentCallId = _args7.length > 0 && _args7[0] !== undefined ? _args7[0] : true;
+              resetCameraPaused = _args7.length > 1 && _args7[1] !== undefined ? _args7[1] : true;
+              _context7.next = 4;
               return config.users.destroy();
 
             case 4:
@@ -173,10 +173,10 @@ function CallManager(_ref) {
 
             case 9:
             case "end":
-              return _context6.stop();
+              return _context7.stop();
           }
         }
-      }, _callee5);
+      }, _callee6);
     }));
     return _callStop.apply(this, arguments);
   }
@@ -566,6 +566,12 @@ function CallManager(_ref) {
     deviceManager: function deviceManager() {
       return config.deviceManager;
     },
+    sendCallDivs: function sendCallDivs() {
+      _events.chatEvents.fireEvent('callEvents', {
+        type: 'CALL_DIVS',
+        result: config.users.generateCallUIList()
+      });
+    },
     screenShareInfo: config.screenShareInfo,
     raiseCallError: function raiseCallError(errorObject, callBack, fireEvent) {
       (0, _errorHandler.raiseError)(errorObject, callBack, fireEvent, {
@@ -737,7 +743,7 @@ function CallManager(_ref) {
           break;
 
         case 'ERROR':
-          publicized.raiseCallError(getFilledErrorObject(_objectSpread(_objectSpread({}, _errorHandler.errorList.CALL_SERVER_ERROR), {}, {
+          publicized.raiseCallError((0, _errorHandler.getFilledErrorObject)(_objectSpread(_objectSpread({}, _errorHandler.errorList.CALL_SERVER_ERROR), {}, {
             replacements: [JSON.stringify(message)]
           })), null, true);
           break;
@@ -892,13 +898,7 @@ function CallManager(_ref) {
 
           if (user) {
             user.stopAudio();
-          } // callUsers[messageContent[i].userId].audioStopManager.disableStream();
-          // callStateController.deactivateParticipantStream(
-          //     messageContent[i].userId,
-          //     'audio',
-          //     'mute'
-          // )
-
+          }
         }
       }
 
@@ -1209,7 +1209,32 @@ function CallManager(_ref) {
       }
     },
     destroy: function destroy() {
-      return callStop();
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5() {
+        return _regenerator["default"].wrap(function _callee5$(_context6) {
+          while (1) {
+            switch (_context6.prev = _context6.next) {
+              case 0:
+                _context6.next = 2;
+                return config.deviceManager.mediaStreams.stopAudioInput();
+
+              case 2:
+                _context6.next = 4;
+                return config.deviceManager.mediaStreams.stopVideoInput();
+
+              case 4:
+                _context6.next = 6;
+                return config.deviceManager.mediaStreams.stopScreenShareInput();
+
+              case 6:
+                return _context6.abrupt("return", callStop());
+
+              case 7:
+              case "end":
+                return _context6.stop();
+            }
+          }
+        }, _callee5);
+      }))();
     }
   };
   setTimeout(function () {

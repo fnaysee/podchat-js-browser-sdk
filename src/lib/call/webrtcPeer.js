@@ -1,4 +1,6 @@
 function WebrtcPeerConnection({
+    callId,
+    userId,
     direction = 'send',
     mediaType = 'video',
     rtcPeerConfig,
@@ -30,30 +32,8 @@ function WebrtcPeerConnection({
         config.peerConnection.onconnectionstatechange = connectionStateChange;
         config.peerConnection.oniceconnectionstatechange = iceConnectionStateChange;
         config.peerConnection.addEventListener('signalingstatechange', signalingStateChangeCallback);
-        config.peerConnection.addEventListener('track', async (event) => {
-            const [remoteStream] = event.streams;
-            onTrackCallback(remoteStream);
-        });
-
-
-        if (!config.peerConnection.getLocalStreams && config.peerConnection.getSenders) {
-            config.peerConnection.getLocalStreams = function () {
-                let stream = new MediaStream();
-                config.peerConnection.getSenders().forEach(function (sender) {
-                    stream.addTrack(sender.track);
-                });
-                return [stream];
-            };
-        }
-        if (!config.peerConnection.getRemoteStreams && config.peerConnection.getReceivers) {
-            config.peerConnection.getRemoteStreams = function () {
-                let stream = new MediaStream();
-                config.peerConnection.getReceivers().forEach(function (sender) {
-                    stream.addTrack(sender.track);
-                });
-                return [stream];
-            };
-        }
+        config.peerConnection.addEventListener('track', onRemoteTrack);
+        // config.peerConnection.onicecandidate = onIceCandidate
 
         if (config.peerConnection.signalingState === 'closed') {
             onCreatePeerCallback && onCreatePeerCallback(
@@ -76,6 +56,40 @@ function WebrtcPeerConnection({
 
     createPeer();
 
+    async function onRemoteTrack(event) {
+        const { track, streams } = event;
+        // const [remoteStream] = event.streams;
+        // let newStream = new MediaStream([track])
+        track.onunmute = () => {
+            let newStream = new MediaStream([track])
+            onTrackCallback(newStream);
+        };
+    }
+
+
+    function getLocalStreams() {
+        if(!config.peerConnection)
+            return [];
+
+        let stream = new MediaStream();
+        config.peerConnection.getSenders().forEach(function (sender) {
+            stream.addTrack(sender.track);
+        });
+        return [stream];
+    };
+
+    function getRemoteStreams() {
+        if(!config.peerConnection)
+            return [];
+
+        let stream = new MediaStream();
+        config.peerConnection.getReceivers().forEach(function (sender) {
+            stream.addTrack(sender.track);
+        });
+        return [stream];
+    };
+
+
     function addTrackToPeer(track){
         config.peerConnection.addTrack(track, stream)
     }
@@ -91,7 +105,6 @@ function WebrtcPeerConnection({
     }
 
     function addTheCandidates(){
-        // console.log("[SDK][WebRtcModule][addTheCandidates] adding the candidates")
         while (config.candidatesQueue.length) {
             let entry = config.candidatesQueue.shift();
             config.peerConnection.addIceCandidate(entry.candidate, entry.callback, entry.callback);
@@ -102,16 +115,25 @@ function WebrtcPeerConnection({
         peerConnection: config.peerConnection,
         dispose() {
             if (config.peerConnection) {
-                if (config.peerConnection.signalingState === 'closed')
-                    return;
-
-                config.peerConnection.getLocalStreams()
-                    .forEach(stream => stream.getTracks()
-                        .forEach(track => track.stop && track.stop()))
-                config.peerConnection.close();
+                config.peerConnection.ontrack = null;
+                config.peerConnection.onremovetrack = null;
+                config.peerConnection.onicecandidate = null;
+                config.peerConnection.oniceconnectionstatechange = null;
+                config.peerConnection.onsignalingstatechange = null;
+                if (config.peerConnection.signalingState !== 'closed') {
+                    if (direction != 'send') {
+                        getRemoteStreams()
+                            .forEach(stream => {
+                                stream.getTracks()
+                                    .forEach(track => {track.enabled = false;})
+                            })
+                    }
+                    config.peerConnection.close();
+                }
+                config.peerConnection = null;
             }
         },
-        generateOffer(callback) {
+        async generateOffer(callback) {
             if(config.direction == 'send') {
                 config.peerConnection.getTransceivers()
                     .forEach(function (transceiver) {
@@ -121,33 +143,13 @@ function WebrtcPeerConnection({
                 config.peerConnection.addTransceiver(config.mediaType, {
                     direction: 'recvonly'
                 });
-                // if (config.mediaType == 'audio') {
-                //     config.peerConnection.addTransceiver('audio', {
-                //         direction: 'recvonly'
-                //     });
-                // }
-                //
-                // if (config.mediaType == 'video') {
-                //     config.peerConnection.addTransceiver('video', {
-                //         direction: 'recvonly'
-                //     });
-                // }
             }
-            config.peerConnection.createOffer()
-                .then(offer => {
-                    return config.peerConnection.setLocalDescription(offer)
-                }, error => {
-                    callback && callback(error, null);
-                })
-                .then(result => {
-                    //TODO: handle set offer result
-                    // console.debug("[SDK][WebRtcModule] Set offer done. result: ", result);
-                    callback && callback(null, config.peerConnection.localDescription.sdp);
-                }, error => {
-                    //TODO: handle set offer failed
-                    // console.debug("[SDK][WebRtcModule] Set offer failed. Error:", error);
-                    callback && callback(error, null);
-                });
+            try {
+                await config.peerConnection.setLocalDescription();
+                callback && callback(null, config.peerConnection.localDescription.sdp);
+            } catch (error) {
+                callback && callback(error, null);
+            }
         },
         processOffer(sdpOffer, callback) {
             callback = callback.bind(this)
@@ -156,8 +158,6 @@ function WebrtcPeerConnection({
                 type: 'offer',
                 sdp: sdpOffer
             })
-
-            // console.debug('[SDK][WebRtcModule] SDP offer received, setting remote description')
 
             if (config.peerConnection.signalingState === 'closed') {
                 return callback('[SDK][WebRtcModule] PeerConnection is closed')
@@ -178,14 +178,18 @@ function WebrtcPeerConnection({
             }).catch(callback)
         },
         processAnswer(sdpAnswer, callback) {
+            if (config.peerConnection.signalingState === 'closed') {
+                return callback('[SDK][WebRtcModule] PeerConnection is closed');
+            }
+
+            if (config.peerConnection.signalingState === 'stable') {
+                return callback('[SDK][WebRtcModule] PeerConnection is already stable');
+            }
+
             let answer = new RTCSessionDescription({
                 type: 'answer',
                 sdp: sdpAnswer
             });
-
-            if (config.peerConnection.signalingState === 'closed') {
-                return callback('[SDK][WebRtcModule] PeerConnection is closed');
-            }
 
             config.peerConnection.setRemoteDescription(answer)
                 .then(() => {
@@ -229,6 +233,15 @@ function WebrtcPeerConnection({
                     callback && callback();
                 }
             });
+        },
+        async updateStream(stream) {
+            let localTrack = stream.getTracks()[0];
+            const sender = config.peerConnection.getSenders()[0];
+            if (!sender) {
+                config.peerConnection.addTrack(localTrack); // will create sender, streamless track must be handled on another side here
+            } else {
+                await sender.replaceTrack(localTrack); // replaceTrack will do it gently, no new negotiation will be triggered
+            }
         }
     }
 }

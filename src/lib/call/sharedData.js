@@ -7,8 +7,8 @@ import {callsManager} from "./callsList";
 import {store} from "../store";
 
 const callStopQueue = {
-    callStarted: false,
-},
+        callStarted: false,
+    },
     callClientType = {
         WEB: 1,
         ANDROID: 2,
@@ -41,9 +41,15 @@ const sharedVariables = {
     startScreenSharetParams: {
         quality: 3
     },
-    deviceManager: null
+    deviceManager: null,
+    audioCtx: null
 }
 
+function audioCtx() {
+    if(!sharedVariables.audioCtx)
+        sharedVariables.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    return  sharedVariables.audioCtx;
+}
 
 function endCall(params, callback) {
     sdkParams.consoleLogging && console.log('[SDK][endCall] called...');
@@ -158,5 +164,6 @@ export {
     endScreenShare,
     currentCall,
     currentCallMyUser,
-    endCall
+    endCall,
+    audioCtx
 }

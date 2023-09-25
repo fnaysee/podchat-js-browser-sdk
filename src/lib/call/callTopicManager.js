@@ -3,6 +3,7 @@ import {sdkParams} from "../sdkParams";
 import {chatEvents} from "../../events.module";
 import {topicMetaDataManager} from "./topicMetaDataManager";
 import {
+    audioCtx,
     currentCall,
     endScreenShare,
     sharedVariables
@@ -55,40 +56,36 @@ function CallTopicManager(
     };
 
     function removeStreamHTML() {
-        const stream = config.htmlElement.srcObject;
-        if (!!stream) {
-            const tracks = stream.getTracks();
+        if(!config.htmlElement)
+            return;
 
-            if (!!tracks) {
-                tracks.forEach(function (track) {
-                    track.stop();
-                });
-            }
-
-            config.htmlElement.srcObject = null;
-        }
-
+        config.htmlElement.srcObject = null;
         config.htmlElement.remove();
         delete config.htmlElement;
     }
 
     function addStreamTrackToElement(stream) {
         config.dataStream = stream;
-        let htmlElement = publicized.getHtmlElement();
-        if (mediaType == 'video')
+        if(config.mediaType == 'audio' && direction == 'receive') {
+            config.audioObject = new Audio();
+            config.audioObject.srcObject = stream;
+            config.audioObject.srcObject = stream;
+            config.audioObject.autoplay = true;
+
+            config.audioObject.play();
+            publicized.watchAudioLevel();
+        } else if (config.mediaType == 'audio' && direction == 'send'){
+            publicized.watchAudioLevel();
+        } else {
+            let htmlElement = publicized.getHtmlElement();
             htmlElement.mute = true;
 
-        if(config.mediaType === "video" || (config.mediaType === "audio" && config.direction === "receive"))
             htmlElement.srcObject = stream;
-
-        if (config.mediaType === 'audio') {
-            publicized.watchAudioLevel();
+            if (config.mediaType === "video") {
+                htmlElement.load();
+            }
+            onHTMLElement(htmlElement);
         }
-
-        // config.htmlElement.srcObject = stream;
-        onHTMLElement(htmlElement);
-        // htmlElement.load();
-        publicized.startMedia();
     }
 
     const publicized = {
@@ -97,22 +94,14 @@ function CallTopicManager(
             if (config.mediaType === 'video' && config.user.video && !config.htmlElement) {
                 config.htmlElement = document.createElement('video');
                 let el = config.htmlElement;
-                el.setAttribute('id', 'uiRemoteVideo-' + config.user.videoTopicName);
+                el.setAttribute('id', 'callUserVideo-' + config.user.videoTopicName);
                 el.setAttribute('class', sharedVariables.callVideoTagClassName);
                 el.setAttribute('playsinline', '');
                 el.setAttribute('muted', '');
+                el.setAttribute('autoplay', '');
                 el.setAttribute('data-uniqueId', elementUniqueId);
                 el.setAttribute('width', sharedVariables.callVideoMinWidth + 'px');
                 el.setAttribute('height', sharedVariables.callVideoMinHeight + 'px');
-            } else if (config.mediaType === 'audio' && typeof config.user.mute !== 'undefined' && !config.user.mute && !config.htmlElement) {
-                config.htmlElement = document.createElement('audio');
-                let el = config.htmlElement;
-                el.setAttribute('id', 'uiRemoteAudio-' + config.user.audioTopicName);
-                el.setAttribute('class', sharedVariables.callAudioTagClassName);
-                el.setAttribute('autoplay', '');
-                el.setAttribute('data-uniqueId', elementUniqueId);
-                if(config.user.direction === 'send')
-                    el.setAttribute('muted', '');
                 el.setAttribute('controls', '');
             }
 
@@ -144,6 +133,20 @@ function CallTopicManager(
         },
         isPeerDisconnected: function () {
             return config.state === peerStates.DISCONNECTED;
+        },
+        createTopic: function () {
+            let manager = this;
+            if(config.peer) {
+                return;
+            }
+
+            publicized.resumeSendStream();
+            this.generateSdpOfferOptions().then(function (options) {
+                sdkParams.consoleLogging && console.debug("[SDK][generateSdpOfferOptions] Options for this request have been resolved: ", {options}, "userId: ", config.userId, "topic: ", config.topic, "direction: ", config.direction);
+                manager.establishPeerConnection(options);
+            }).catch(error => {
+                console.error(error)
+            });
         },
         generateSdpOfferOptions: function () {
             let topicManager = this;
@@ -230,27 +233,6 @@ function CallTopicManager(
                 sdkParams.consoleLogging && console.log("[SDK][getSdpOfferOptions] ", "topic: ", config.topic, "mediaType: ", config.mediaType, "direction: ", config.direction, "options: ", options);
             });
         },
-        // watchForIceCandidates: function (candidate) {
-        //     let manager = this;
-        //
-        //     if (metadataInstance.isIceCandidateIntervalSet()) {
-        //         return;
-        //     }
-        //     //callUsers[config.userId].topicMetaData[config.topic].interval
-        //     metadataInstance.setIceCandidateInterval(setInterval(function () {
-        //         if (config.topicMetaData.sdpAnswerReceived === true) {
-        //             sdkParams.consoleLogging && console.log("[SDK][watchForIceCandidates][setInterval] sdpAnswerReceived, topic:", config.topic)
-        //             config.topicMetaData.sdpAnswerReceived = false;
-        //             // manager.removeTopicIceCandidateInterval();
-        //             metadataInstance.clearIceCandidateInterval();
-        //             currentCall().sendCallMessage({
-        //                 id: 'ADD_ICE_CANDIDATE',
-        //                 topic: config.topic,
-        //                 candidateDto: candidate
-        //             }, null, {})
-        //         }
-        //     }, 500, {candidate: candidate}));
-        // },
         establishPeerConnection: function (options) {
             let manager = this,
                 user = config.user,
@@ -258,6 +240,8 @@ function CallTopicManager(
 
             config.state = peerStates.CONNECTING;
             config.peer = new WebrtcPeerConnection({
+                callId: config.callId,
+                userId: config.userId,
                 direction: config.direction,
                 mediaType: config.mediaType,
                 stream: options.stream,
@@ -449,13 +433,12 @@ function CallTopicManager(
             const stream = config.dataStream;
 
             let user = config.user,
-                topicMetadata = config.topicMetaData
+                topicMetadata = config.topicMetaData;
             // Create and configure the audio pipeline
-            const audioContext = new AudioContext();
-            const analyzer = audioContext.createAnalyser();
+            const analyzer = audioCtx().createAnalyser();
             analyzer.fftSize = 512;
             analyzer.smoothingTimeConstant = 0.1;
-            const sourceNode = audioContext.createMediaStreamSource(stream);
+            const sourceNode = audioCtx().createMediaStreamSource(stream);
             sourceNode.connect(analyzer);
 
             // Analyze the sound
@@ -679,20 +662,6 @@ function CallTopicManager(
                 return "Unknown error: " + err;
             }
         },
-        createTopic: function () {
-            console.log(config.topic, 3, "createTopic");
-            let manager = this;
-            if(config.peer) {
-                return;
-            }
-
-            this.generateSdpOfferOptions().then(function (options) {
-                sdkParams.consoleLogging && console.debug("[SDK][generateSdpOfferOptions] Options for this request have been resolved: ", {options}, "userId: ", config.userId, "topic: ", config.topic, "direction: ", config.direction);
-                manager.establishPeerConnection(options);
-            }).catch(error => {
-                console.error(error)
-            });
-        },
         stopTopicOnServer() {
             return new Promise(resolve => {
                 callsManager().get(config.callId).sendCallMessage({
@@ -710,31 +679,17 @@ function CallTopicManager(
         },
         removeTopic: async function () {
             let manager = this;
+
+            if(direction == 'send')
+                publicized.pauseSendStream();
+
             if(config.peer) {
-                config.sdpOfferRequestSent = false;
-                // this.removeTopicIceCandidateInterval();
-                metadataInstance.clearIceCandidateInterval();
                 manager.removeConnectionQualityInterval();
                 manager.removeAudioWatcherInterval();
-
                 removeStreamHTML();
                 config.peer.dispose();
                 config.peer = null;
                 config.state = peerStates.DISCONNECTED;
-                if(config.direction === 'send') {
-                    if(config.mediaType === 'audio')
-                        await currentCall().deviceManager().mediaStreams.stopAudioInput();
-                    if(config.mediaType === 'video'){
-                        if(!config.isScreenShare) {
-                            // await config.deviceManager.mediaStreams.stopScreenShareInput()
-                            //} else {
-                            await currentCall().deviceManager().mediaStreams.stopVideoInput();
-                            //}
-                        } else {
-                            await currentCall().deviceManager().mediaStreams.stopScreenShareInput()
-                        }
-                    }
-                }
             }
         },
         topicMetaData() {
@@ -746,13 +701,40 @@ function CallTopicManager(
          * @param callback
          */
         pauseSendStream() {
-            config.peer.getLocalStream().getTracks()[0].enabled = false;
+            let localStream;
+            switch (config.mediaType) {
+                case 'audio':
+                    localStream = currentCall().deviceManager().mediaStreams.getAudioInput()
+                    break;
+                case 'video':
+                    localStream = currentCall().deviceManager().mediaStreams.getVideoInput()
+            }
+            if(localStream)
+                localStream.getTracks()[0].enabled = false;
         },
         resumeSendStream() {
-            config.peer.getLocalStream().getTracks()[0].enabled = true;
+            let localStream;
+            switch (config.mediaType) {
+                case 'audio':
+                    localStream = currentCall().deviceManager().mediaStreams.getAudioInput();
+                    break;
+                case 'video':
+                    if(config.isScreenShare) {
+                        localStream = currentCall().deviceManager().mediaStreams.getScreenShareInput();
+                    } else {
+                        localStream = currentCall().deviceManager().mediaStreams.getVideoInput();
+                    }
+            }
+            if(localStream)
+                localStream.getTracks()[0].enabled = true;
+
+            // if(config.peer && config.peer.getLocalStream())
+            //     config.peer.getLocalStream().getTracks()[0].enabled = true;
         },
         startMedia: function () {
             sdkParams.consoleLogging && console.log("[SDK][startMedia] called with: ", config.htmlElement);
+            if(!config.htmlElement)
+                return;
             config.htmlElement.play().catch((err) => {
                 if (err.name === 'NotAllowedError') {
                     chatEvents.fireEvent('callEvents', {
@@ -842,10 +824,56 @@ function CallTopicManager(
                 }
             }
         },
+        startStatusPrint() {
+            config.statusEventsInterval && clearInterval(config.statusEventsInterval);
+            config.statusEventsInterval = setInterval(()=>{
+                if(!config.peer){
+                    config.statusEventsInterval && clearInterval(config.statusEventsInterval);
+                    return;
+                }
+
+                config.peer.peerConnection.getStats(null).then(stats => {
+                    // console.log(' watchRTCPeerConnection:: window.setInterval then(stats:', stats)
+                    let statsOutput = "";
+                    let user = config.user,
+                        topicMetadata = config.topicMetaData
+
+                    stats.forEach(report => {
+                        // if(report && report.type && report.type === 'remote-inbound-rtp') {
+                            statsOutput += `<h2>Report: ${report.type}</h2>\n<strong>ID:</strong> ${report.id}<br>\n` +
+                                `<strong>Timestamp:</strong> ${report.timestamp}<br>\n`;
+
+                            // Now the statistics for this report; we intentially drop the ones we
+                            // sorted to the top above
+
+                            Object.keys(report).forEach(function (statName) {
+                                if (statName !== "id" && statName !== "timestamp" && statName !== "type") {
+                                    statsOutput += `<strong>${statName}:</strong> ${report[statName]}<br>\n`;
+                                }
+                            });
+                        // }
+                    });
+                    document.getElementById("peer-status-container").innerHTML = statsOutput;
+                    // document.querySelector(".stats-box").innerHTML = statsOutput;
+                });
+            }, 1000);
+        },
+        updateStream(stream){
+            if(mediaType == 'audio') {
+                publicized.removeAudioWatcherInterval();
+                config.dataStream = stream;
+                publicized.watchAudioLevel();
+            } else {
+                config.dataStream = stream;
+            }
+            config.peer.updateStream(stream);
+        },
+        stopStatusPrint() {
+            config.statusEventsInterval && clearInterval(config.statusEventsInterval);
+        },
         isDestroyed(){
             return config.isDestroyed;
         },
-        removeStreamHTML,
         async destroy() {
             config.isDestroyed = true;
             // publicized.removeStreamHTML();

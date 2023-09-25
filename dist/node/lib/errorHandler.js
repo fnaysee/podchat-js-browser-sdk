@@ -31,6 +31,11 @@ var errorList = {
     message: "[SDK] Requests to {methodName} has been blocked for next {seconds} seconds.",
     variables: ['{methodName}', '{seconds}']
   },
+  CALL_SERVER_ERROR: {
+    code: 12004,
+    message: "[SDK] ERROR from call server: {errorMessage}",
+    variables: ['{errorMessage}']
+  },
 
   /**
    * 12350-12399
