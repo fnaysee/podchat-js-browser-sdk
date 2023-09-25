@@ -17,11 +17,7 @@ function addReaction(params, callback) {
         token: sdkParams.token
     };
 
-    return messenger().sendMessage(sendData, {
-        onResult: function (result) {
-            callback && callback(result);
-        }
-    });
+    return messenger().sendMessage(sendData);
 };
 
 function getMyReaction(params, callback) {

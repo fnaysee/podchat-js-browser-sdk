@@ -40,11 +40,7 @@ function addReaction(params, callback) {
     },
     token: _sdkParams.sdkParams.token
   };
-  return (0, _messaging.messenger)().sendMessage(sendData, {
-    onResult: function onResult(result) {
-      callback && callback(result);
-    }
-  });
+  return (0, _messaging.messenger)().sendMessage(sendData);
 }
 
 ;

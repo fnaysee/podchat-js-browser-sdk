@@ -52,10 +52,20 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
       messageIds.forEach(function (msgId) {
         var localItem = _this.getItem(msgId);
 
-        if (localItem && localItem.hasAnyReaction()) result.push({
-          reactionCountVO: localItem.reactionCountVO,
-          userReaction: localItem.userReaction
-        });
+        if (localItem && localItem.hasAnyReaction()) {
+          if (!!localItem.userReaction) {
+            result.push({
+              messageId: msgId,
+              reactionCountVO: localItem.reactionCountVO
+            });
+          } else {
+            result.push({
+              messageId: msgId,
+              reactionCountVO: localItem.reactionCountVO,
+              userReaction: localItem.userReaction
+            });
+          }
+        }
       });
       return result;
     }
