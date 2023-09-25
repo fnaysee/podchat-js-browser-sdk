@@ -45887,7 +45887,7 @@ FilterXSS.prototype.process = function (html) {
 module.exports = FilterXSS;
 
 },{"./default":273,"./parser":275,"./util":276,"cssfilter":122}],278:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.25","date":"۱۴۰۲/۶/۲۹","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.7-snapshot.25","date":"۱۴۰۲/۷/۳","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],279:[function(require,module,exports){
 "use strict";
 
