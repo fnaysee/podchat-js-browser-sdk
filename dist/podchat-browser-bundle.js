@@ -52083,7 +52083,7 @@ function CallManager(_ref) {
       });
     },
     handleStartScreenShare: function handleStartScreenShare(messageContent) {
-      _sdkParams.sdkParams.consoleLogging && console.log("[sdk][startScreenShare][onResult]: ", result);
+      _sdkParams.sdkParams.consoleLogging && console.log("[sdk][startScreenShare][onResult]: ", messageContent);
 
       var result = _utility["default"].createReturnData(false, '', 0, messageContent, null);
 
@@ -52462,8 +52462,7 @@ function CallTopicManager(_ref) {
         el.setAttribute('autoplay', '');
         el.setAttribute('data-uniqueId', elementUniqueId);
         el.setAttribute('width', _sharedData.sharedVariables.callVideoMinWidth + 'px');
-        el.setAttribute('height', _sharedData.sharedVariables.callVideoMinHeight + 'px');
-        el.setAttribute('controls', '');
+        el.setAttribute('height', _sharedData.sharedVariables.callVideoMinHeight + 'px'); // el.setAttribute('controls', '');
       }
 
       return config.htmlElement;

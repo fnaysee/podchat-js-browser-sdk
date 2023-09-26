@@ -124,8 +124,7 @@ function CallTopicManager(_ref) {
         el.setAttribute('autoplay', '');
         el.setAttribute('data-uniqueId', elementUniqueId);
         el.setAttribute('width', _sharedData.sharedVariables.callVideoMinWidth + 'px');
-        el.setAttribute('height', _sharedData.sharedVariables.callVideoMinHeight + 'px');
-        el.setAttribute('controls', '');
+        el.setAttribute('height', _sharedData.sharedVariables.callVideoMinHeight + 'px'); // el.setAttribute('controls', '');
       }
 
       return config.htmlElement;

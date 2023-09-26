@@ -886,7 +886,7 @@ function CallManager({callId, callConfig}) {
             });
         },
         handleStartScreenShare(messageContent){
-            sdkParams.consoleLogging && console.log("[sdk][startScreenShare][onResult]: ", result);
+            sdkParams.consoleLogging && console.log("[sdk][startScreenShare][onResult]: ", messageContent);
             let result = Utility.createReturnData(false, '', 0, messageContent, null)
             if(result.hasError) {
                 // endScreenShare({}, null);

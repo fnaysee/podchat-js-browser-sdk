@@ -1081,7 +1081,7 @@ function CallManager(_ref) {
       });
     },
     handleStartScreenShare: function handleStartScreenShare(messageContent) {
-      _sdkParams.sdkParams.consoleLogging && console.log("[sdk][startScreenShare][onResult]: ", result);
+      _sdkParams.sdkParams.consoleLogging && console.log("[sdk][startScreenShare][onResult]: ", messageContent);
 
       var result = _utility["default"].createReturnData(false, '', 0, messageContent, null);
 
