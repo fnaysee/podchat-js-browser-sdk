@@ -53,7 +53,7 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
         var localItem = _this.getItem(msgId);
 
         if (localItem && localItem.hasAnyReaction()) {
-          if (!!localItem.userReaction) {
+          if (!localItem.userReaction) {
             result.push({
               messageId: msgId,
               reactionCountVO: localItem.reactionCountVO

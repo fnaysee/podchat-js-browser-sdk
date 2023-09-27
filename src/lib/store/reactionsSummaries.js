@@ -28,7 +28,7 @@ class ReactionsSummariesCache {
         messageIds.forEach(msgId => {
             let localItem = this.getItem(msgId);
             if(localItem && localItem.hasAnyReaction()){
-                if(!!localItem.userReaction) {
+                if(!localItem.userReaction) {
                     result.push({messageId: msgId, reactionCountVO: localItem.reactionCountVO})
                 } else {
                     result.push({messageId: msgId, reactionCountVO: localItem.reactionCountVO, userReaction: localItem.userReaction})

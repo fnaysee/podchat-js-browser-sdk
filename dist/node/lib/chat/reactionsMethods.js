@@ -176,6 +176,8 @@ function getReactionsSummaries(params) {
     setTimeout(function () {
       var messageContent = _store.store.reactionSummaries.getMany(cachedIds);
 
+      messageContent = JSON.parse(JSON.stringify(messageContent));
+
       _events.chatEvents.fireEvent('messageEvents', {
         type: 'REACTION_SUMMARIES',
         uniqueId: sendData.uniqueId,
@@ -190,6 +192,8 @@ function getReactionsSummaries(params) {
 }
 
 function onReactionSummaries(uniqueId, messageContent) {
+  var msgContent = JSON.parse(JSON.stringify(messageContent));
+
   _store.store.reactionSummaries.addMany(messageContent); // reactionSummariesRequest.difference.forEach(item => {
   //     if(!store.reactionsSummaries.messageExists(item)) {
   //         store.reactionsSummaries.addItem(item, {})
@@ -200,7 +204,7 @@ function onReactionSummaries(uniqueId, messageContent) {
   _events.chatEvents.fireEvent('messageEvents', {
     type: 'REACTION_SUMMARIES',
     uniqueId: uniqueId,
-    result: messageContent
+    result: msgContent
   });
 }
 
@@ -241,12 +245,19 @@ function onAddReaction(uniqueId, messageContent, contentCount) {
     _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
   }
 
-  _store.store.reactionSummaries.increaseCount(messageContent.messageId, messageContent.reactionVO.reaction);
+  var msgContent = JSON.parse(JSON.stringify(messageContent));
 
-  if (_store.store.user().isMe(messageContent.reactionVO.participantVO.id)) _store.store.reactionSummaries.addMyReaction(messageContent.messageId);
+  _store.store.reactionSummaries.increaseCount(messageContent.messageId, messageContent.reactionVO.reaction); // if(store.user().isMe(messageContent.reactionVO.participantVO.id))
+  //     store.reactionSummaries.addMyReaction(messageContent.messageId);
+  // chatEvents.fireEvent('messageEvents', {
+  //     type: 'REACTION_SUMMARIES',
+  //     uniqueId: uniqueId,
+  //     result: [store.reactionSummaries.getItem(messageContent.messageId)]
+  // })
+
 
   _events.chatEvents.fireEvent('messageEvents', {
     type: 'ADD_REACTION',
-    result: messageContent
+    result: msgContent
   });
 }

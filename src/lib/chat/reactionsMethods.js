@@ -141,6 +141,7 @@ function getReactionsSummaries(params) {
     if(cachedIds && cachedIds.length) {
         setTimeout(()=>{
             let messageContent = store.reactionSummaries.getMany(cachedIds);
+            messageContent = JSON.parse(JSON.stringify(messageContent));
             chatEvents.fireEvent('messageEvents', {
                 type: 'REACTION_SUMMARIES',
                 uniqueId: sendData.uniqueId,
@@ -153,6 +154,7 @@ function getReactionsSummaries(params) {
 }
 
 function onReactionSummaries(uniqueId, messageContent) {
+    let msgContent = JSON.parse(JSON.stringify(messageContent));
     store.reactionSummaries.addMany(messageContent);
 
     // reactionSummariesRequest.difference.forEach(item => {
@@ -164,7 +166,7 @@ function onReactionSummaries(uniqueId, messageContent) {
     chatEvents.fireEvent('messageEvents', {
         type: 'REACTION_SUMMARIES',
         uniqueId: uniqueId,
-        result: messageContent
+        result: msgContent
     })
 }
 
@@ -209,13 +211,19 @@ function onAddReaction(uniqueId, messageContent, contentCount) {
     if (store.messagesCallbacks[uniqueId]) {
         store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
     }
+    let msgContent = JSON.parse(JSON.stringify(messageContent));
     store.reactionSummaries.increaseCount(messageContent.messageId, messageContent.reactionVO.reaction);
-    if(store.user().isMe(messageContent.reactionVO.participantVO.id))
-        store.reactionSummaries.addMyReaction(messageContent.messageId);
+    // if(store.user().isMe(messageContent.reactionVO.participantVO.id))
+    //     store.reactionSummaries.addMyReaction(messageContent.messageId);
 
+    // chatEvents.fireEvent('messageEvents', {
+    //     type: 'REACTION_SUMMARIES',
+    //     uniqueId: uniqueId,
+    //     result: [store.reactionSummaries.getItem(messageContent.messageId)]
+    // })
     chatEvents.fireEvent('messageEvents', {
         type: 'ADD_REACTION',
-        result: messageContent
+        result: msgContent
     });
 }
 
