@@ -55,7 +55,7 @@ function CallUser(user) {
                 }
             }
         },
-        appendVideoToCallDive(){
+        appendVideoToCallDiv(){
             if (!sharedVariables.callDivId) {
                 sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
                 return;
@@ -118,7 +118,7 @@ function CallUser(user) {
                 user: config.user,
                 onHTMLElement(el) {
                     config.htmlElements[config.user.videoTopicName] = el;
-                    publicized.appendVideoToCallDive();
+                    publicized.appendVideoToCallDiv();
                 }
             });
             config.videoTopicManager.createTopic();
@@ -255,7 +255,7 @@ function CallScreenShare(user) {
         getHTMLElements() {
             return config.htmlElements;
         },
-        appendUserToCallDiv() {
+        appendVideoToCallDiv(){
             if (!sharedVariables.callDivId) {
                 sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
                 return;
@@ -275,7 +275,7 @@ function CallScreenShare(user) {
                 }
             }
 
-            currentCall().sendCallDivs();
+            currentCall().sendCallDivs()
         },
         videoTopicManager() {
             return config.videoTopicManager;
@@ -302,7 +302,7 @@ function CallScreenShare(user) {
                 isScreenShare: true,
                 onHTMLElement(el) {
                     config.htmlElements[config.user.videoTopicName] = el;
-                    publicized.appendUserToCallDiv();
+                    publicized.appendVideoToCallDiv();
                 }
             });
             // publicized.appendUserToCallDiv(generateVideoElement());
