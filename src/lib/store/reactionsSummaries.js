@@ -108,13 +108,16 @@ class ReactionsSummariesCache {
         if(this.messageExists(messageId)) {
             item = this.getItem(messageId);
             let found = false;
-            item.reactionCountVO.forEach(item => {
+            item.reactionCountVO?.forEach(item => {
                 if(item.reaction == reaction){
                     item.count++;
                     found = true;
                 }
             });
             if(!found) {
+                if(!item.reactionCountVO) {
+                    item.reactionCountVO = []
+                }
                 item.reactionCountVO.push({
                     sticker: reaction,
                     count: 1

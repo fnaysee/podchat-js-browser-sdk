@@ -56651,9 +56651,11 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
       var item;
 
       if (this.messageExists(messageId)) {
+        var _item$reactionCountVO;
+
         item = this.getItem(messageId);
         var found = false;
-        item.reactionCountVO.forEach(function (item) {
+        (_item$reactionCountVO = item.reactionCountVO) === null || _item$reactionCountVO === void 0 ? void 0 : _item$reactionCountVO.forEach(function (item) {
           if (item.reaction == reaction) {
             item.count++;
             found = true;
@@ -56661,6 +56663,10 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
         });
 
         if (!found) {
+          if (!item.reactionCountVO) {
+            item.reactionCountVO = [];
+          }
+
           item.reactionCountVO.push({
             sticker: reaction,
             count: 1
