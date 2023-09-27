@@ -844,7 +844,7 @@ function CallManager({callId, callConfig}) {
                     let user = config.users.get(messageContent[i].userId);
                     if(user){
                         if(user.audioTopicManager()) {
-                            await user.stopAudio();
+                            await user.stopVideo();
                         }
                         user.startVideo(messageContent[i].sendTopic);
                     }

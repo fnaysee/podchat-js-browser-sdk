@@ -47651,7 +47651,7 @@ function ChatCall(params) {
 
     return (0, _messaging.messenger)().sendMessage(recordCallData, {
       onResult: function onResult(result) {
-        (0, _sharedData.currentCall)().users().get(_store.store.user().id).videoTopicManager().restartMediaOnKeyFrame(_store.store.user().id, [100]);
+        if ((0, _sharedData.currentCall)().users().get(_store.store.user().id) && (0, _sharedData.currentCall)().users().get(_store.store.user().id).videoTopicManager()) (0, _sharedData.currentCall)().users().get(_store.store.user().id).videoTopicManager().restartMediaOnKeyFrame(_store.store.user().id, [100]);
         callback && callback(result);
       }
     });
@@ -52032,7 +52032,7 @@ function CallManager(_ref) {
                 }
 
                 _context4.next = 9;
-                return user.stopAudio();
+                return user.stopVideo();
 
               case 9:
                 user.startVideo(messageContent[i].sendTopic);

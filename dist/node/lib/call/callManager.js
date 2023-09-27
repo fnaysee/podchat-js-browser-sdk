@@ -1030,7 +1030,7 @@ function CallManager(_ref) {
                 }
 
                 _context4.next = 9;
-                return user.stopAudio();
+                return user.stopVideo();
 
               case 9:
                 user.startVideo(messageContent[i].sendTopic);

@@ -1554,7 +1554,8 @@ function ChatCall(params) {
 
         return messenger().sendMessage(recordCallData, {
             onResult: function (result) {
-                currentCall().users().get(store.user().id).videoTopicManager().restartMediaOnKeyFrame(store.user().id, [100])
+                if(currentCall().users().get(store.user().id) && currentCall().users().get(store.user().id).videoTopicManager())
+                    currentCall().users().get(store.user().id).videoTopicManager().restartMediaOnKeyFrame(store.user().id, [100])
                 callback && callback(result);
             }
         });
