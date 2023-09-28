@@ -108,9 +108,9 @@ class ReactionsSummariesCache {
         if(this.messageExists(messageId)) {
             item = this.getItem(messageId);
             let found = false;
-            item.reactionCountVO?.forEach(item => {
-                if(item.reaction == reaction){
-                    item.count++;
+            item.reactionCountVO?.forEach(it => {
+                if(it.sticker == reaction){
+                    it.count++;
                     found = true;
                 }
             });
@@ -130,12 +130,12 @@ class ReactionsSummariesCache {
             let message = this.getItem(messageId),
                 removed = false;
             message.reactionCountVO.forEach((it, index) => {
-                if(it.reaction == reaction){
+                if(it.sticker == reaction){
                     if(it.count > 1)
                         it.count--;
                     else {
                         removed = true;
-                        delete it.reactionCountVO[index]
+                        it.reactionCountVO && delete it.reactionCountVO[index]
                     }
                 }
             });
@@ -143,8 +143,8 @@ class ReactionsSummariesCache {
                 message.reactionCountVO = message.reactionCountVO.filter(item=>item !== undefined);
             }
 
-            if(!message.reactionCountVO.length)
-                delete this._list[messageId]
+            // if(!message.reactionCountVO.length)
+            //     delete this._list[messageId]
         }
     }
     maybeUpdateMyReaction(messageId, reactionId, reaction, userId, time) {

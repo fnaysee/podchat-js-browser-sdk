@@ -161,9 +161,9 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
 
         item = this.getItem(messageId);
         var found = false;
-        (_item$reactionCountVO = item.reactionCountVO) === null || _item$reactionCountVO === void 0 ? void 0 : _item$reactionCountVO.forEach(function (item) {
-          if (item.reaction == reaction) {
-            item.count++;
+        (_item$reactionCountVO = item.reactionCountVO) === null || _item$reactionCountVO === void 0 ? void 0 : _item$reactionCountVO.forEach(function (it) {
+          if (it.sticker == reaction) {
+            it.count++;
             found = true;
           }
         });
@@ -187,10 +187,10 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
         var message = this.getItem(messageId),
             removed = false;
         message.reactionCountVO.forEach(function (it, index) {
-          if (it.reaction == reaction) {
+          if (it.sticker == reaction) {
             if (it.count > 1) it.count--;else {
               removed = true;
-              delete it.reactionCountVO[index];
+              it.reactionCountVO && delete it.reactionCountVO[index];
             }
           }
         });
@@ -199,9 +199,9 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
           message.reactionCountVO = message.reactionCountVO.filter(function (item) {
             return item !== undefined;
           });
-        }
+        } // if(!message.reactionCountVO.length)
+        //     delete this._list[messageId]
 
-        if (!message.reactionCountVO.length) delete this._list[messageId];
       }
     }
   }, {
