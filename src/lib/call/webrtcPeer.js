@@ -46,7 +46,7 @@ function WebrtcPeerConnection({
 
             // if(config.mediaType === "video")
             //     onTrackCallback(stream);
-            onTrackCallback(stream);
+            onTrackCallback && onTrackCallback(stream);
         }
 
         setTimeout(()=>{
@@ -62,7 +62,7 @@ function WebrtcPeerConnection({
         // let newStream = new MediaStream([track])
         track.onunmute = () => {
             let newStream = new MediaStream([track])
-            onTrackCallback(newStream);
+            onTrackCallback && onTrackCallback(newStream);
         };
     }
 

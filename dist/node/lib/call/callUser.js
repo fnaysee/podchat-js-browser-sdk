@@ -435,6 +435,8 @@ function CallScreenShare(user) {
       return config.htmlElements;
     },
     appendVideoToCallDiv: function appendVideoToCallDiv() {
+      var _config$videoTopicMan;
+
       if (!_sharedData.sharedVariables.callDivId) {
         _sdkParams.sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
         return;
@@ -454,8 +456,10 @@ function CallScreenShare(user) {
           userContainer.appendChild(config.htmlElements[config.user.videoTopicName]);
           config.videoTopicManager.startMedia();
         }
-      }
+      } // if(currentCall().screenShareInfo.iAmOwner())
 
+
+      (_config$videoTopicMan = config.videoTopicManager) === null || _config$videoTopicMan === void 0 ? void 0 : _config$videoTopicMan.restartMediaOnKeyFrame("screenShare", [4000, 8000, 12000, 25000]);
       (0, _sharedData.currentCall)().sendCallDivs();
     },
     videoTopicManager: function videoTopicManager() {
@@ -529,20 +533,11 @@ function CallScreenShare(user) {
                 return config.videoTopicManager.destroy();
 
               case 3:
-                if (!(config.audioTopicManager && config.audioTopicManager.getPeer())) {
-                  _context10.next = 6;
-                  break;
-                }
-
-                _context10.next = 6;
-                return config.audioTopicManager.destroy();
-
-              case 6:
                 // user.topicMetaData = {};
                 config.htmlElements = {};
                 user = null;
 
-              case 8:
+              case 5:
               case "end":
                 return _context10.stop();
             }

@@ -61,6 +61,9 @@ function CallTopicManager(
 
         config.htmlElement.srcObject = null;
         config.htmlElement.remove();
+        if(document.getElementById('callUserVideo-' + config.user.videoTopicName)){
+            document.getElementById('callUserVideo-'+ config.user.videoTopicName).remove();
+        }
         delete config.htmlElement;
     }
 
@@ -79,12 +82,11 @@ function CallTopicManager(
         } else {
             let htmlElement = publicized.getHtmlElement();
             htmlElement.mute = true;
-
-            htmlElement.srcObject = stream;
+            config.htmlElement.srcObject = stream;
             if (config.mediaType === "video") {
-                htmlElement.load();
+                config.htmlElement.load();
             }
-            onHTMLElement(htmlElement);
+            onHTMLElement(config.htmlElement);
         }
     }
 
@@ -707,7 +709,11 @@ function CallTopicManager(
                     localStream = currentCall().deviceManager().mediaStreams.getAudioInput()
                     break;
                 case 'video':
-                    localStream = currentCall().deviceManager().mediaStreams.getVideoInput()
+                    if(config.isScreenShare) {
+                        localStream = currentCall().deviceManager().mediaStreams.getScreenShareInput();
+                    } else {
+                        localStream = currentCall().deviceManager().mediaStreams.getVideoInput();
+                    }
             }
             if(localStream)
                 localStream.getTracks()[0].enabled = false;
@@ -760,7 +766,10 @@ function CallTopicManager(
         restartMedia() {
             if (!publicized.isDestroyed() && !currentCall().users().get(config.userId).user().cameraPaused && config.mediaType == 'video') {
                 sdkParams.consoleLogging && console.log('[SDK] Sending Key Frame ...');
-                let videoElement = config.htmlElement;
+                let el = document.getElementById('callUserVideo-' + config.user.videoTopicName)
+                if(!el.srcObject)
+                    el.srcObject = config.dataStream;
+                let videoElement = el;
 
                 if (videoElement) {
                     let videoTrack = videoElement.srcObject.getTracks()[0];

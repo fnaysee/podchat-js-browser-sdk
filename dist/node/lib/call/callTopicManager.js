@@ -82,6 +82,11 @@ function CallTopicManager(_ref) {
     if (!config.htmlElement) return;
     config.htmlElement.srcObject = null;
     config.htmlElement.remove();
+
+    if (document.getElementById('callUserVideo-' + config.user.videoTopicName)) {
+      document.getElementById('callUserVideo-' + config.user.videoTopicName).remove();
+    }
+
     delete config.htmlElement;
   }
 
@@ -100,13 +105,13 @@ function CallTopicManager(_ref) {
     } else {
       var htmlElement = publicized.getHtmlElement();
       htmlElement.mute = true;
-      htmlElement.srcObject = stream;
+      config.htmlElement.srcObject = stream;
 
       if (config.mediaType === "video") {
-        htmlElement.load();
+        config.htmlElement.load();
       }
 
-      onHTMLElement(htmlElement);
+      onHTMLElement(config.htmlElement);
     }
   }
 
@@ -771,7 +776,12 @@ function CallTopicManager(_ref) {
           break;
 
         case 'video':
-          localStream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getVideoInput();
+          if (config.isScreenShare) {
+            localStream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getScreenShareInput();
+          } else {
+            localStream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getVideoInput();
+          }
+
       }
 
       if (localStream) localStream.getTracks()[0].enabled = false;
@@ -822,7 +832,9 @@ function CallTopicManager(_ref) {
     restartMedia: function restartMedia() {
       if (!publicized.isDestroyed() && !(0, _sharedData.currentCall)().users().get(config.userId).user().cameraPaused && config.mediaType == 'video') {
         _sdkParams.sdkParams.consoleLogging && console.log('[SDK] Sending Key Frame ...');
-        var videoElement = config.htmlElement;
+        var el = document.getElementById('callUserVideo-' + config.user.videoTopicName);
+        if (!el.srcObject) el.srcObject = config.dataStream;
+        var videoElement = el;
 
         if (videoElement) {
           var videoTrack = videoElement.srcObject.getTracks()[0];

@@ -275,6 +275,8 @@ function CallScreenShare(user) {
                 }
             }
 
+            // if(currentCall().screenShareInfo.iAmOwner())
+            config.videoTopicManager?.restartMediaOnKeyFrame("screenShare", [4000,8000,12000,25000]);
             currentCall().sendCallDivs()
         },
         videoTopicManager() {
@@ -317,10 +319,6 @@ function CallScreenShare(user) {
             if (config.videoTopicManager && config.videoTopicManager.getPeer()) {
                 await config.videoTopicManager.destroy();
             }
-            if (config.audioTopicManager && config.audioTopicManager.getPeer()) {
-                await config.audioTopicManager.destroy();
-            }
-
             // user.topicMetaData = {};
             config.htmlElements = {};
             user = null;

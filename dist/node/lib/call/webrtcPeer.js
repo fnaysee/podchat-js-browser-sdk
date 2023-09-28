@@ -58,7 +58,7 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
       stream.getTracks().forEach(addTrackToPeer); // if(config.mediaType === "video")
       //     onTrackCallback(stream);
 
-      onTrackCallback(stream);
+      onTrackCallback && onTrackCallback(stream);
     }
 
     setTimeout(function () {
@@ -84,7 +84,7 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
 
               track.onunmute = function () {
                 var newStream = new MediaStream([track]);
-                onTrackCallback(newStream);
+                onTrackCallback && onTrackCallback(newStream);
               };
 
             case 2:

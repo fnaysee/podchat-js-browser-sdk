@@ -514,7 +514,11 @@ function CallManager(_ref) {
           config.screenShareInfo.setWidth(jMessage.content.dimension.width);
           config.screenShareInfo.setHeight(jMessage.content.dimension.height); // applyScreenShareSizeToElement();
 
-          config.users.get('screenShare').videoTopicManager().restartMediaOnKeyFrame('screenShare', [10, 1000, 2000]);
+          if (config.screenShareInfo.iAmOwner()) {
+            setTimeout(function () {
+              if (config.users.get('screenShare') && config.users.get('screenShare').videoTopicManager()) config.users.get('screenShare').videoTopicManager().restartMediaOnKeyFrame('screenShare', [10, 1000, 2000]);
+            }, 2500);
+          }
 
           _events.chatEvents.fireEvent("callEvents", {
             type: 'SCREENSHARE_METADATA',
@@ -1081,8 +1085,6 @@ function CallManager(_ref) {
       });
     },
     handleStartScreenShare: function handleStartScreenShare(messageContent) {
-      var _config$users$get$vid;
-
       _sdkParams.sdkParams.consoleLogging && console.log("[sdk][startScreenShare][onResult]: ", messageContent);
 
       var result = _utility["default"].createReturnData(false, '', 0, messageContent, null);
@@ -1122,16 +1124,19 @@ function CallManager(_ref) {
       } // callStateController.addScreenShareToCall(direction, shareScreen);
 
 
-      callConfig.screenShareObject.callId = config.callId;
-      callConfig.screenShareObject.cameraPaused = false;
-      callConfig.screenShareObject.userId = "screenShare";
-      config.users.addItem(callConfig.screenShareObject, "screenShare");
-      (_config$users$get$vid = config.users.get('screenShare').videoTopicManager()) === null || _config$users$get$vid === void 0 ? void 0 : _config$users$get$vid.restartMediaOnKeyFrame("screenShare", [4000, 8000, 12000, 25000]);
+      doThings();
 
-      _events.chatEvents.fireEvent('callEvents', {
-        type: 'START_SCREEN_SHARE',
-        result: messageContent
-      });
+      function doThings() {
+        callConfig.screenShareObject.callId = config.callId;
+        callConfig.screenShareObject.cameraPaused = false;
+        callConfig.screenShareObject.userId = "screenShare";
+        config.users.addItem(callConfig.screenShareObject, "screenShare");
+
+        _events.chatEvents.fireEvent('callEvents', {
+          type: 'START_SCREEN_SHARE',
+          result: messageContent
+        });
+      }
     },
     handleEndScreenShare: function handleEndScreenShare(messageContent) {
       return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4() {

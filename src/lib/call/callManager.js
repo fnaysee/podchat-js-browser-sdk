@@ -459,7 +459,13 @@ function CallManager({callId, callConfig}) {
                     config.screenShareInfo.setWidth(jMessage.content.dimension.width);
                     config.screenShareInfo.setHeight(jMessage.content.dimension.height);
                     // applyScreenShareSizeToElement();
-                    config.users.get('screenShare').videoTopicManager().restartMediaOnKeyFrame('screenShare', [10, 1000, 2000]);
+                    if(config.screenShareInfo.iAmOwner()){
+                        setTimeout(()=>{
+                            if(config.users.get('screenShare') && config.users.get('screenShare').videoTopicManager())
+                                config.users.get('screenShare').videoTopicManager().restartMediaOnKeyFrame('screenShare', [10, 1000, 2000]);
+                        }, 2500)
+                    }
+
                     chatEvents.fireEvent("callEvents", {
                         type: 'SCREENSHARE_METADATA',
                         userId: jMessage.userid,
@@ -921,15 +927,18 @@ function CallManager({callId, callConfig}) {
 
             // callStateController.addScreenShareToCall(direction, shareScreen);
 
-            callConfig.screenShareObject.callId = config.callId;
-            callConfig.screenShareObject.cameraPaused = false;
-            callConfig.screenShareObject.userId = "screenShare";
-            config.users.addItem(callConfig.screenShareObject, "screenShare");
-            config.users.get('screenShare').videoTopicManager()?.restartMediaOnKeyFrame("screenShare", [4000,8000,12000,25000]);
-            chatEvents.fireEvent('callEvents', {
-                type: 'START_SCREEN_SHARE',
-                result: messageContent
-            });
+            doThings();
+            function doThings(){
+                callConfig.screenShareObject.callId = config.callId;
+                callConfig.screenShareObject.cameraPaused = false;
+                callConfig.screenShareObject.userId = "screenShare";
+                config.users.addItem(callConfig.screenShareObject, "screenShare");
+                chatEvents.fireEvent('callEvents', {
+                    type: 'START_SCREEN_SHARE',
+                    result: messageContent
+                });
+            }
+
         },
         async handleEndScreenShare(messageContent) {
             config.screenShareInfo.setIsStarted(false);
