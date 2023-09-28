@@ -56686,7 +56686,7 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
           if (it.sticker == reaction) {
             if (it.count > 1) it.count--;else {
               removed = true;
-              it.reactionCountVO && delete it.reactionCountVO[index];
+              message.reactionCountVO && delete message.reactionCountVO[index];
             }
           }
         });

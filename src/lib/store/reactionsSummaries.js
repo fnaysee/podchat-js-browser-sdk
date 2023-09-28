@@ -135,7 +135,7 @@ class ReactionsSummariesCache {
                         it.count--;
                     else {
                         removed = true;
-                        it.reactionCountVO && delete it.reactionCountVO[index]
+                        message.reactionCountVO && delete message.reactionCountVO[index]
                     }
                 }
             });
