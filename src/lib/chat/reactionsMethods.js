@@ -176,7 +176,6 @@ function onRemoveReaction(uniqueId, messageContent, contentCount) {
     }
 
     store.reactionSummaries.decreaseCount(messageContent.messageId, messageContent.reactionVO.reaction);
-
     if(store.user().isMe(messageContent.reactionVO.participantVO.id))
         store.reactionSummaries.removeMyReaction(messageContent.messageId);
 
@@ -213,6 +212,13 @@ function onAddReaction(uniqueId, messageContent, contentCount) {
     }
     let msgContent = JSON.parse(JSON.stringify(messageContent));
     store.reactionSummaries.increaseCount(messageContent.messageId, messageContent.reactionVO.reaction);
+    store.reactionSummaries.maybeUpdateMyReaction(
+        messageContent.messageId,
+        messageContent.reactionVO.id,
+        messageContent.reactionVO.reaction,
+        messageContent.reactionVO.participantVO.id,
+        messageContent.reactionVO.time
+    );
     // if(store.user().isMe(messageContent.reactionVO.participantVO.id))
     //     store.reactionSummaries.addMyReaction(messageContent.messageId);
 

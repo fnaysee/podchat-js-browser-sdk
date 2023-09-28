@@ -247,7 +247,9 @@ function onAddReaction(uniqueId, messageContent, contentCount) {
 
   var msgContent = JSON.parse(JSON.stringify(messageContent));
 
-  _store.store.reactionSummaries.increaseCount(messageContent.messageId, messageContent.reactionVO.reaction); // if(store.user().isMe(messageContent.reactionVO.participantVO.id))
+  _store.store.reactionSummaries.increaseCount(messageContent.messageId, messageContent.reactionVO.reaction);
+
+  _store.store.reactionSummaries.maybeUpdateMyReaction(messageContent.messageId, messageContent.reactionVO.id, messageContent.reactionVO.reaction, messageContent.reactionVO.participantVO.id, messageContent.reactionVO.time); // if(store.user().isMe(messageContent.reactionVO.participantVO.id))
   //     store.reactionSummaries.addMyReaction(messageContent.messageId);
   // chatEvents.fireEvent('messageEvents', {
   //     type: 'REACTION_SUMMARIES',

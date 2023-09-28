@@ -27,7 +27,7 @@ class ReactionsSummariesCache {
         let result = [];
         messageIds.forEach(msgId => {
             let localItem = this.getItem(msgId);
-            if(localItem && localItem.hasAnyReaction()){
+            if(localItem && localItem.hasAnyReaction && localItem.hasAnyReaction()){
                 if(!localItem.userReaction) {
                     result.push({messageId: msgId, reactionCountVO: localItem.reactionCountVO})
                 } else {
@@ -83,9 +83,7 @@ class ReactionsSummariesCache {
 
     updateItem(messageId, item){
         let localItem = this.getItem(messageId);
-        if(!localItem.hasAnyReaction()) {
-            this._list[messageId].reactionCountVO = item.reactionCountVO;
-        } else {
+        if(localItem && localItem.hasAnyReaction && localItem.hasAnyReaction())  {
             item.reactionCountVO && item.reactionCountVO.forEach(itt => {
                 if(!localItem.hasReaction(itt.sticker)) {
                     this._list[messageId].reactionCountVO.push(itt);
@@ -97,6 +95,8 @@ class ReactionsSummariesCache {
                     });
                 }
             });
+        } else {
+            this._list[messageId].reactionCountVO = item.reactionCountVO;
         }
         this._list[messageId].setHasReactionStatus(msgsReactionsStatus.HAS_REACTION);
         if(item.userReaction)
@@ -151,16 +151,11 @@ class ReactionsSummariesCache {
         let message = this.getItem(messageId)
         if(!message)
             return;
-        if(userId == store.user().isMe(userId)) {
-            if (!message.userReaction) {
-                this._list[messageId].userReaction = {
-                    id: reactionId,
-                    reaction: reaction,
-                    time: time
-                }
-            } else if (message.userReaction.id == reactionId) {
-                this._list[messageId].userReaction.reaction = reaction;
-                this._list[messageId].userReaction.time = time;
+        if(store.user().isMe(userId)) {
+            this._list[messageId].userReaction = {
+                id: reactionId,
+                reaction: reaction,
+                time: time
             }
         }
     }

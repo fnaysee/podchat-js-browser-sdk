@@ -55829,7 +55829,9 @@ function onAddReaction(uniqueId, messageContent, contentCount) {
 
   var msgContent = JSON.parse(JSON.stringify(messageContent));
 
-  _store.store.reactionSummaries.increaseCount(messageContent.messageId, messageContent.reactionVO.reaction); // if(store.user().isMe(messageContent.reactionVO.participantVO.id))
+  _store.store.reactionSummaries.increaseCount(messageContent.messageId, messageContent.reactionVO.reaction);
+
+  _store.store.reactionSummaries.maybeUpdateMyReaction(messageContent.messageId, messageContent.reactionVO.id, messageContent.reactionVO.reaction, messageContent.reactionVO.participantVO.id, messageContent.reactionVO.time); // if(store.user().isMe(messageContent.reactionVO.participantVO.id))
   //     store.reactionSummaries.addMyReaction(messageContent.messageId);
   // chatEvents.fireEvent('messageEvents', {
   //     type: 'REACTION_SUMMARIES',
@@ -56546,7 +56548,7 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
       messageIds.forEach(function (msgId) {
         var localItem = _this.getItem(msgId);
 
-        if (localItem && localItem.hasAnyReaction()) {
+        if (localItem && localItem.hasAnyReaction && localItem.hasAnyReaction()) {
           if (!localItem.userReaction) {
             result.push({
               messageId: msgId,
@@ -56625,9 +56627,7 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
 
       var localItem = this.getItem(messageId);
 
-      if (!localItem.hasAnyReaction()) {
-        this._list[messageId].reactionCountVO = item.reactionCountVO;
-      } else {
+      if (localItem && localItem.hasAnyReaction && localItem.hasAnyReaction()) {
         item.reactionCountVO && item.reactionCountVO.forEach(function (itt) {
           if (!localItem.hasReaction(itt.sticker)) {
             _this4._list[messageId].reactionCountVO.push(itt);
@@ -56639,6 +56639,8 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
             });
           }
         });
+      } else {
+        this._list[messageId].reactionCountVO = item.reactionCountVO;
       }
 
       this._list[messageId].setHasReactionStatus(msgsReactionsStatus.HAS_REACTION);
@@ -56704,17 +56706,12 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
       var message = this.getItem(messageId);
       if (!message) return;
 
-      if (userId == _index.store.user().isMe(userId)) {
-        if (!message.userReaction) {
-          this._list[messageId].userReaction = {
-            id: reactionId,
-            reaction: reaction,
-            time: time
-          };
-        } else if (message.userReaction.id == reactionId) {
-          this._list[messageId].userReaction.reaction = reaction;
-          this._list[messageId].userReaction.time = time;
-        }
+      if (_index.store.user().isMe(userId)) {
+        this._list[messageId].userReaction = {
+          id: reactionId,
+          reaction: reaction,
+          time: time
+        };
       }
     }
   }, {
