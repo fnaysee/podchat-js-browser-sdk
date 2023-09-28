@@ -5,7 +5,7 @@ import {store} from "../store";
 import {
     sharedVariables,
     callStopQueue,
-    joinCallParams, endCall, calculateScreenSize, currentCall
+    joinCallParams, endCall, calculateScreenSize, currentCall, currentCallMyUser
 } from "./sharedData";
 import Utility from "../../utility/utility";
 import {CallServerManager} from "./callServerManager";
@@ -925,7 +925,7 @@ function CallManager({callId, callConfig}) {
             callConfig.screenShareObject.cameraPaused = false;
             callConfig.screenShareObject.userId = "screenShare";
             config.users.addItem(callConfig.screenShareObject, "screenShare");
-
+            config.users.get('screenShare').videoTopicManager()?.restartMediaOnKeyFrame("screenShare", [4000,8000,12000,25000]);
             chatEvents.fireEvent('callEvents', {
                 type: 'START_SCREEN_SHARE',
                 result: messageContent

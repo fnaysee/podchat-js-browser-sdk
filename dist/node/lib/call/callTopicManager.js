@@ -824,12 +824,10 @@ function CallTopicManager(_ref) {
         _sdkParams.sdkParams.consoleLogging && console.log('[SDK] Sending Key Frame ...');
         var videoElement = config.htmlElement;
 
-        var _isScreenShare = userId === 'screenShare';
-
         if (videoElement) {
           var videoTrack = videoElement.srcObject.getTracks()[0];
-          var width = _isScreenShare ? (0, _sharedData.currentCall)().screenShareInfo.getWidth() : _sharedData.sharedVariables.callVideoMinWidth,
-              height = _isScreenShare ? (0, _sharedData.currentCall)().screenShareInfo.getHeight() : _sharedData.sharedVariables.callVideoMinHeight,
+          var width = config.isScreenShare ? (0, _sharedData.currentCall)().screenShareInfo.getWidth() : _sharedData.sharedVariables.callVideoMinWidth,
+              height = config.isScreenShare ? (0, _sharedData.currentCall)().screenShareInfo.getHeight() : _sharedData.sharedVariables.callVideoMinHeight,
               rand = Math.random(),
               newWidth = width - 5,
               newHeight = height - 5;

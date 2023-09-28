@@ -52083,6 +52083,8 @@ function CallManager(_ref) {
       });
     },
     handleStartScreenShare: function handleStartScreenShare(messageContent) {
+      var _config$users$get$vid;
+
       _sdkParams.sdkParams.consoleLogging && console.log("[sdk][startScreenShare][onResult]: ", messageContent);
 
       var result = _utility["default"].createReturnData(false, '', 0, messageContent, null);
@@ -52126,6 +52128,7 @@ function CallManager(_ref) {
       callConfig.screenShareObject.cameraPaused = false;
       callConfig.screenShareObject.userId = "screenShare";
       config.users.addItem(callConfig.screenShareObject, "screenShare");
+      (_config$users$get$vid = config.users.get('screenShare').videoTopicManager()) === null || _config$users$get$vid === void 0 ? void 0 : _config$users$get$vid.restartMediaOnKeyFrame("screenShare", [4000, 8000, 12000, 25000]);
 
       _events.chatEvents.fireEvent('callEvents', {
         type: 'START_SCREEN_SHARE',
@@ -53162,12 +53165,10 @@ function CallTopicManager(_ref) {
         _sdkParams.sdkParams.consoleLogging && console.log('[SDK] Sending Key Frame ...');
         var videoElement = config.htmlElement;
 
-        var _isScreenShare = userId === 'screenShare';
-
         if (videoElement) {
           var videoTrack = videoElement.srcObject.getTracks()[0];
-          var width = _isScreenShare ? (0, _sharedData.currentCall)().screenShareInfo.getWidth() : _sharedData.sharedVariables.callVideoMinWidth,
-              height = _isScreenShare ? (0, _sharedData.currentCall)().screenShareInfo.getHeight() : _sharedData.sharedVariables.callVideoMinHeight,
+          var width = config.isScreenShare ? (0, _sharedData.currentCall)().screenShareInfo.getWidth() : _sharedData.sharedVariables.callVideoMinWidth,
+              height = config.isScreenShare ? (0, _sharedData.currentCall)().screenShareInfo.getHeight() : _sharedData.sharedVariables.callVideoMinHeight,
               rand = Math.random(),
               newWidth = width - 5,
               newHeight = height - 5;

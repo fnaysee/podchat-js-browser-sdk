@@ -761,13 +761,12 @@ function CallTopicManager(
             if (!publicized.isDestroyed() && !currentCall().users().get(config.userId).user().cameraPaused && config.mediaType == 'video') {
                 sdkParams.consoleLogging && console.log('[SDK] Sending Key Frame ...');
                 let videoElement = config.htmlElement;
-                let isScreenShare = userId === 'screenShare';
 
                 if (videoElement) {
                     let videoTrack = videoElement.srcObject.getTracks()[0];
 
-                    let width = isScreenShare ? currentCall().screenShareInfo.getWidth() : sharedVariables.callVideoMinWidth,
-                        height = isScreenShare ? currentCall().screenShareInfo.getHeight() : sharedVariables.callVideoMinHeight
+                    let width = config.isScreenShare ? currentCall().screenShareInfo.getWidth() : sharedVariables.callVideoMinWidth,
+                        height = config.isScreenShare ? currentCall().screenShareInfo.getHeight() : sharedVariables.callVideoMinHeight
                         , rand = Math.random()
                         , newWidth = width - 5
                         , newHeight = height - 5;
