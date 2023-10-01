@@ -256,9 +256,9 @@ function CallManager({callId, callConfig}) {
 
             topicManager.topicMetaData().sdpAnswerReceived = true;
             // topicManager.startMedia()
-            if (userObj.isScreenShare() || userObj.isMe()) {
-                topicManager.restartMediaOnKeyFrame(userId, [2000, 4000, 8000, 12000]);
-            }
+            // if (userObj.isScreenShare() || userObj.isMe()) {
+            //     topicManager.restartMediaOnKeyFrame(userId, [2000, 4000, 8000, 12000]);
+            // }
         });
     }
 
@@ -315,9 +315,9 @@ function CallManager({callId, callConfig}) {
             if (topicManager.metadata().isIceCandidateIntervalSet()) {
                 topicManager.topicMetaData().sdpAnswerReceived = true;
                 // topicManager.startMedia()
-                if (userId == 'screenShare' || userId == store.user().id) {
-                    topicManager.restartMediaOnKeyFrame(userId, [2000, 4000, 8000, 12000, 20000]);
-                }
+                // if (userId == 'screenShare' || userId == store.user().id) {
+                //     topicManager.restartMediaOnKeyFrame(userId, [2000, 4000, 8000, 12000, 20000]);
+                // }
             }
         });
     }
@@ -462,7 +462,7 @@ function CallManager({callId, callConfig}) {
                     if(config.screenShareInfo.iAmOwner()){
                         setTimeout(()=>{
                             if(config.users.get('screenShare') && config.users.get('screenShare').videoTopicManager())
-                                config.users.get('screenShare').videoTopicManager().restartMediaOnKeyFrame('screenShare', [10, 1000, 2000]);
+                                config.users.get('screenShare').videoTopicManager().restartMediaOnKeyFrame('screenShare', [2000]);
                         }, 2500)
                     }
 
@@ -763,7 +763,7 @@ function CallManager({callId, callConfig}) {
                         }
                     }
                 });
-                config.users.get('screenShare').videoTopicManager().restartMediaOnKeyFrame('screenShare', [2000, 4000, 8000, 12000, 16000, 24000]);
+                // config.users.get('screenShare').videoTopicManager().restartMediaOnKeyFrame('screenShare', [2000, 4000, 8000, 12000, 16000, 24000]);
             }
         },
         async handleParticipantLeft(messageContent, threadId) {
@@ -927,7 +927,13 @@ function CallManager({callId, callConfig}) {
 
             // callStateController.addScreenShareToCall(direction, shareScreen);
 
-            doThings();
+            if(config.screenShareInfo.iAmOwner()){
+                setTimeout(()=>{
+                    doThings();
+                }, 1000)
+            } else {
+                doThings();
+            }
             function doThings(){
                 callConfig.screenShareObject.callId = config.callId;
                 callConfig.screenShareObject.cameraPaused = false;

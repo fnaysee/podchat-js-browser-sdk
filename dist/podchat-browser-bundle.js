@@ -45916,7 +45916,7 @@ FilterXSS.prototype.process = function (html) {
 module.exports = FilterXSS;
 
 },{"./default":275,"./parser":277,"./util":278,"cssfilter":124}],280:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.38","date":"۱۴۰۲/۷/۶","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.7-snapshot.38","date":"۱۴۰۲/۷/۹","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],281:[function(require,module,exports){
 "use strict";
 
@@ -46549,6 +46549,8 @@ function ChatCall(params) {
           _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
+        messageContent.callId = threadId;
+
         _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'REJECT_CALL',
           result: messageContent
@@ -46698,11 +46700,13 @@ function ChatCall(params) {
 
         if (callUsers && callUsers[_store.store.user().id] && callUsers[_store.store.user().id].video) {
           (0, _sharedData.currentCall)().users().get(_store.store.user().id).videoTopicManager().restartMediaOnKeyFrame(_store.store.user().id, [2000, 4000, 8000, 12000]);
-        }
+        } // if(callUsers && callUsers['screenShare']
+        //     && screenShareInfo.isStarted()
+        //     && screenShareInfo.iAmOwner()
+        // ) {
+        //     currentCall().users().get(store.user().id).videoTopicManager().restartMediaOnKeyFrame('screenShare', [2000,4000,8000,12000]);
+        // }
 
-        if (callUsers && callUsers['screenShare'] && screenShareInfo.isStarted() && screenShareInfo.iAmOwner()) {
-          (0, _sharedData.currentCall)().users().get(_store.store.user().id).videoTopicManager().restartMediaOnKeyFrame('screenShare', [2000, 4000, 8000, 12000]);
-        }
 
         break;
 
@@ -51303,10 +51307,9 @@ function CallManager(_ref) {
         timeoutRetriesCount: 5
       });
       topicManager.topicMetaData().sdpAnswerReceived = true; // topicManager.startMedia()
-
-      if (userObj.isScreenShare() || userObj.isMe()) {
-        topicManager.restartMediaOnKeyFrame(userId, [2000, 4000, 8000, 12000]);
-      }
+      // if (userObj.isScreenShare() || userObj.isMe()) {
+      //     topicManager.restartMediaOnKeyFrame(userId, [2000, 4000, 8000, 12000]);
+      // }
     });
   }
 
@@ -51363,10 +51366,9 @@ function CallManager(_ref) {
 
       if (topicManager.metadata().isIceCandidateIntervalSet()) {
         topicManager.topicMetaData().sdpAnswerReceived = true; // topicManager.startMedia()
-
-        if (userId == 'screenShare' || userId == _store.store.user().id) {
-          topicManager.restartMediaOnKeyFrame(userId, [2000, 4000, 8000, 12000, 20000]);
-        }
+        // if (userId == 'screenShare' || userId == store.user().id) {
+        //     topicManager.restartMediaOnKeyFrame(userId, [2000, 4000, 8000, 12000, 20000]);
+        // }
       }
     });
   }
@@ -51517,7 +51519,7 @@ function CallManager(_ref) {
 
           if (config.screenShareInfo.iAmOwner()) {
             setTimeout(function () {
-              if (config.users.get('screenShare') && config.users.get('screenShare').videoTopicManager()) config.users.get('screenShare').videoTopicManager().restartMediaOnKeyFrame('screenShare', [10, 1000, 2000]);
+              if (config.users.get('screenShare') && config.users.get('screenShare').videoTopicManager()) config.users.get('screenShare').videoTopicManager().restartMediaOnKeyFrame('screenShare', [2000]);
             }, 2500);
           }
 
@@ -51832,8 +51834,7 @@ function CallManager(_ref) {
               height: config.screenShareInfo.getHeight()
             }
           }
-        });
-        config.users.get('screenShare').videoTopicManager().restartMediaOnKeyFrame('screenShare', [2000, 4000, 8000, 12000, 16000, 24000]);
+        }); // config.users.get('screenShare').videoTopicManager().restartMediaOnKeyFrame('screenShare', [2000, 4000, 8000, 12000, 16000, 24000]);
       }
     },
     handleParticipantLeft: function handleParticipantLeft(messageContent, threadId) {
@@ -52126,7 +52127,13 @@ function CallManager(_ref) {
       } // callStateController.addScreenShareToCall(direction, shareScreen);
 
 
-      doThings();
+      if (config.screenShareInfo.iAmOwner()) {
+        setTimeout(function () {
+          doThings();
+        }, 1000);
+      } else {
+        doThings();
+      }
 
       function doThings() {
         callConfig.screenShareObject.callId = config.callId;
@@ -52411,7 +52418,8 @@ function CallTopicManager(_ref) {
     isDestroyed: false,
     dataStream: null,
     statusEventsInterval: null,
-    audioObject: null
+    audioObject: null,
+    alreadyAddedStreamTrackToElement: false
   };
   var metadataInstance = new _topicMetaDataManager.topicMetaDataManager({
     userId: userId,
@@ -52437,6 +52445,8 @@ function CallTopicManager(_ref) {
   }
 
   function addStreamTrackToElement(stream) {
+    if (config.alreadyAddedStreamTrackToElement) return;
+    config.alreadyAddedStreamTrackToElement = true;
     config.dataStream = stream;
 
     if (config.mediaType == 'audio' && direction == 'receive') {
@@ -53181,9 +53191,16 @@ function CallTopicManager(_ref) {
         var el = document.getElementById('callUserVideo-' + config.user.videoTopicName);
         if (!el.srcObject) el.srcObject = config.dataStream;
         var videoElement = el;
+        var videoTrack = videoElement.srcObject.getTracks()[0];
+        videoTrack.enabled = true;
+        setTimeout(function () {
+          videoTrack.enabled = false;
+          setTimeout(function () {
+            videoTrack.enabled = true;
+          }, 1500);
+        }, 1500);
 
         if (videoElement) {
-          var videoTrack = videoElement.srcObject.getTracks()[0];
           var width = config.isScreenShare ? (0, _sharedData.currentCall)().screenShareInfo.getWidth() : _sharedData.sharedVariables.callVideoMinWidth,
               height = config.isScreenShare ? (0, _sharedData.currentCall)().screenShareInfo.getHeight() : _sharedData.sharedVariables.callVideoMinHeight,
               rand = Math.random(),
@@ -53192,8 +53209,8 @@ function CallTopicManager(_ref) {
 
           if (navigator && !!navigator.userAgent.match(/firefox/gi)) {
             // videoTrack.enable = false;
-            newWidth = width - 80;
-            newHeight = height - 80;
+            newWidth = width - 150;
+            newHeight = height - 150;
             videoTrack.applyConstraints({
               // width: {
               //     min: newWidth,
@@ -53218,7 +53235,7 @@ function CallTopicManager(_ref) {
                     aspectRatio: 1.77
                   }]
                 });
-              }, 500);
+              }, 1500);
             })["catch"](function (e) {
               return _sdkParams.sdkParams.consoleLogging && console.log(e);
             });
@@ -53238,7 +53255,7 @@ function CallTopicManager(_ref) {
                     aspectRatio: 1.77
                   }]
                 });
-              }, 500);
+              }, 1500);
             })["catch"](function (e) {
               return _sdkParams.sdkParams.consoleLogging && console.log(e);
             });
@@ -53773,10 +53790,12 @@ function CallScreenShare(user) {
           userContainer.appendChild(config.htmlElements[config.user.videoTopicName]);
           config.videoTopicManager.startMedia();
         }
-      } // if(currentCall().screenShareInfo.iAmOwner())
+      }
 
+      if ((0, _sharedData.currentCall)().screenShareInfo.iAmOwner()) (_config$videoTopicMan = config.videoTopicManager) === null || _config$videoTopicMan === void 0 ? void 0 : _config$videoTopicMan.restartMediaOnKeyFrame("screenShare", [1000, 4000]); // else {
+      //     config.videoTopicManager?.restartMediaOnKeyFrame("screenShare", [1000, 3000, 6000]);
+      // }
 
-      (_config$videoTopicMan = config.videoTopicManager) === null || _config$videoTopicMan === void 0 ? void 0 : _config$videoTopicMan.restartMediaOnKeyFrame("screenShare", [4000, 8000, 12000, 25000]);
       (0, _sharedData.currentCall)().sendCallDivs();
     },
     videoTopicManager: function videoTopicManager() {

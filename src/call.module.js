@@ -584,6 +584,7 @@ function ChatCall(params) {
                     store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                 }
 
+                messageContent.callId = threadId;
                 chatEvents.fireEvent('callEvents', {
                     type: 'REJECT_CALL',
                     result: messageContent
@@ -726,12 +727,12 @@ function ChatCall(params) {
                 if(callUsers && callUsers[store.user().id] && callUsers[store.user().id].video) {
                     currentCall().users().get(store.user().id).videoTopicManager().restartMediaOnKeyFrame(store.user().id, [2000,4000,8000,12000]);
                 }
-                if(callUsers && callUsers['screenShare']
-                    && screenShareInfo.isStarted()
-                    && screenShareInfo.iAmOwner()
-                ) {
-                    currentCall().users().get(store.user().id).videoTopicManager().restartMediaOnKeyFrame('screenShare', [2000,4000,8000,12000]);
-                }
+                // if(callUsers && callUsers['screenShare']
+                //     && screenShareInfo.isStarted()
+                //     && screenShareInfo.iAmOwner()
+                // ) {
+                //     currentCall().users().get(store.user().id).videoTopicManager().restartMediaOnKeyFrame('screenShare', [2000,4000,8000,12000]);
+                // }
                 break;
 
             /**

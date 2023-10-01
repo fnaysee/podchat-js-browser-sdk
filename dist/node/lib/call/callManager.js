@@ -302,10 +302,9 @@ function CallManager(_ref) {
         timeoutRetriesCount: 5
       });
       topicManager.topicMetaData().sdpAnswerReceived = true; // topicManager.startMedia()
-
-      if (userObj.isScreenShare() || userObj.isMe()) {
-        topicManager.restartMediaOnKeyFrame(userId, [2000, 4000, 8000, 12000]);
-      }
+      // if (userObj.isScreenShare() || userObj.isMe()) {
+      //     topicManager.restartMediaOnKeyFrame(userId, [2000, 4000, 8000, 12000]);
+      // }
     });
   }
 
@@ -362,10 +361,9 @@ function CallManager(_ref) {
 
       if (topicManager.metadata().isIceCandidateIntervalSet()) {
         topicManager.topicMetaData().sdpAnswerReceived = true; // topicManager.startMedia()
-
-        if (userId == 'screenShare' || userId == _store.store.user().id) {
-          topicManager.restartMediaOnKeyFrame(userId, [2000, 4000, 8000, 12000, 20000]);
-        }
+        // if (userId == 'screenShare' || userId == store.user().id) {
+        //     topicManager.restartMediaOnKeyFrame(userId, [2000, 4000, 8000, 12000, 20000]);
+        // }
       }
     });
   }
@@ -516,7 +514,7 @@ function CallManager(_ref) {
 
           if (config.screenShareInfo.iAmOwner()) {
             setTimeout(function () {
-              if (config.users.get('screenShare') && config.users.get('screenShare').videoTopicManager()) config.users.get('screenShare').videoTopicManager().restartMediaOnKeyFrame('screenShare', [10, 1000, 2000]);
+              if (config.users.get('screenShare') && config.users.get('screenShare').videoTopicManager()) config.users.get('screenShare').videoTopicManager().restartMediaOnKeyFrame('screenShare', [2000]);
             }, 2500);
           }
 
@@ -831,8 +829,7 @@ function CallManager(_ref) {
               height: config.screenShareInfo.getHeight()
             }
           }
-        });
-        config.users.get('screenShare').videoTopicManager().restartMediaOnKeyFrame('screenShare', [2000, 4000, 8000, 12000, 16000, 24000]);
+        }); // config.users.get('screenShare').videoTopicManager().restartMediaOnKeyFrame('screenShare', [2000, 4000, 8000, 12000, 16000, 24000]);
       }
     },
     handleParticipantLeft: function handleParticipantLeft(messageContent, threadId) {
@@ -1124,7 +1121,13 @@ function CallManager(_ref) {
       } // callStateController.addScreenShareToCall(direction, shareScreen);
 
 
-      doThings();
+      if (config.screenShareInfo.iAmOwner()) {
+        setTimeout(function () {
+          doThings();
+        }, 1000);
+      } else {
+        doThings();
+      }
 
       function doThings() {
         callConfig.screenShareObject.callId = config.callId;

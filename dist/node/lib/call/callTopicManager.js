@@ -65,7 +65,8 @@ function CallTopicManager(_ref) {
     isDestroyed: false,
     dataStream: null,
     statusEventsInterval: null,
-    audioObject: null
+    audioObject: null,
+    alreadyAddedStreamTrackToElement: false
   };
   var metadataInstance = new _topicMetaDataManager.topicMetaDataManager({
     userId: userId,
@@ -91,6 +92,8 @@ function CallTopicManager(_ref) {
   }
 
   function addStreamTrackToElement(stream) {
+    if (config.alreadyAddedStreamTrackToElement) return;
+    config.alreadyAddedStreamTrackToElement = true;
     config.dataStream = stream;
 
     if (config.mediaType == 'audio' && direction == 'receive') {
@@ -835,9 +838,16 @@ function CallTopicManager(_ref) {
         var el = document.getElementById('callUserVideo-' + config.user.videoTopicName);
         if (!el.srcObject) el.srcObject = config.dataStream;
         var videoElement = el;
+        var videoTrack = videoElement.srcObject.getTracks()[0];
+        videoTrack.enabled = true;
+        setTimeout(function () {
+          videoTrack.enabled = false;
+          setTimeout(function () {
+            videoTrack.enabled = true;
+          }, 1500);
+        }, 1500);
 
         if (videoElement) {
-          var videoTrack = videoElement.srcObject.getTracks()[0];
           var width = config.isScreenShare ? (0, _sharedData.currentCall)().screenShareInfo.getWidth() : _sharedData.sharedVariables.callVideoMinWidth,
               height = config.isScreenShare ? (0, _sharedData.currentCall)().screenShareInfo.getHeight() : _sharedData.sharedVariables.callVideoMinHeight,
               rand = Math.random(),
@@ -846,8 +856,8 @@ function CallTopicManager(_ref) {
 
           if (navigator && !!navigator.userAgent.match(/firefox/gi)) {
             // videoTrack.enable = false;
-            newWidth = width - 80;
-            newHeight = height - 80;
+            newWidth = width - 150;
+            newHeight = height - 150;
             videoTrack.applyConstraints({
               // width: {
               //     min: newWidth,
@@ -872,7 +882,7 @@ function CallTopicManager(_ref) {
                     aspectRatio: 1.77
                   }]
                 });
-              }, 500);
+              }, 1500);
             })["catch"](function (e) {
               return _sdkParams.sdkParams.consoleLogging && console.log(e);
             });
@@ -892,7 +902,7 @@ function CallTopicManager(_ref) {
                     aspectRatio: 1.77
                   }]
                 });
-              }, 500);
+              }, 1500);
             })["catch"](function (e) {
               return _sdkParams.sdkParams.consoleLogging && console.log(e);
             });

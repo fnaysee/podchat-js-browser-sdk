@@ -41,7 +41,8 @@ function CallTopicManager(
         isDestroyed: false,
         dataStream: null,
         statusEventsInterval: null,
-        audioObject: null
+        audioObject: null,
+        alreadyAddedStreamTrackToElement: false
     };
 
     const metadataInstance = new topicMetaDataManager({
@@ -68,6 +69,10 @@ function CallTopicManager(
     }
 
     function addStreamTrackToElement(stream) {
+        if(config.alreadyAddedStreamTrackToElement)
+            return;
+
+        config.alreadyAddedStreamTrackToElement = true;
         config.dataStream = stream;
         if(config.mediaType == 'audio' && direction == 'receive') {
             config.audioObject = new Audio();
@@ -770,10 +775,16 @@ function CallTopicManager(
                 if(!el.srcObject)
                     el.srcObject = config.dataStream;
                 let videoElement = el;
+                let videoTrack = videoElement.srcObject.getTracks()[0];
+                videoTrack.enabled = true;
+                setTimeout(()=>{
+                    videoTrack.enabled = false;
+                    setTimeout(()=>{
+                        videoTrack.enabled = true;
+                    }, 1500);
+                }, 1500);
 
                 if (videoElement) {
-                    let videoTrack = videoElement.srcObject.getTracks()[0];
-
                     let width = config.isScreenShare ? currentCall().screenShareInfo.getWidth() : sharedVariables.callVideoMinWidth,
                         height = config.isScreenShare ? currentCall().screenShareInfo.getHeight() : sharedVariables.callVideoMinHeight
                         , rand = Math.random()
@@ -782,8 +793,8 @@ function CallTopicManager(
 
                     if (navigator && !!navigator.userAgent.match(/firefox/gi)) {
                         // videoTrack.enable = false;
-                        newWidth = width - 80;
-                        newHeight = height - 80;
+                        newWidth = width - 150;
+                        newHeight = height - 150;
                         videoTrack.applyConstraints({
                             // width: {
                             //     min: newWidth,
@@ -808,7 +819,7 @@ function CallTopicManager(
                                         {aspectRatio: 1.77}
                                     ]
                                 });
-                            }, 500);
+                            }, 1500);
                         }).catch(e => sdkParams.consoleLogging && console.log(e));
                     } else {
                         videoTrack.applyConstraints({
@@ -826,7 +837,7 @@ function CallTopicManager(
                                         {aspectRatio: 1.77}
                                     ]
                                 });
-                            }, 500);
+                            }, 1500);
                         }).catch(e => sdkParams.consoleLogging && console.log(e));
                     }
                 }

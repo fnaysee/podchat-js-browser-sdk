@@ -275,8 +275,12 @@ function CallScreenShare(user) {
                 }
             }
 
-            // if(currentCall().screenShareInfo.iAmOwner())
-            config.videoTopicManager?.restartMediaOnKeyFrame("screenShare", [4000,8000,12000,25000]);
+            if(currentCall().screenShareInfo.iAmOwner())
+                config.videoTopicManager?.restartMediaOnKeyFrame("screenShare", [1000, 4000]);
+            // else {
+            //     config.videoTopicManager?.restartMediaOnKeyFrame("screenShare", [1000, 3000, 6000]);
+            // }
+
             currentCall().sendCallDivs()
         },
         videoTopicManager() {

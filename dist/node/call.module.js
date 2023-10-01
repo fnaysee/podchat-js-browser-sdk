@@ -561,6 +561,8 @@ function ChatCall(params) {
           _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
+        messageContent.callId = threadId;
+
         _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'REJECT_CALL',
           result: messageContent
@@ -710,11 +712,13 @@ function ChatCall(params) {
 
         if (callUsers && callUsers[_store.store.user().id] && callUsers[_store.store.user().id].video) {
           (0, _sharedData.currentCall)().users().get(_store.store.user().id).videoTopicManager().restartMediaOnKeyFrame(_store.store.user().id, [2000, 4000, 8000, 12000]);
-        }
+        } // if(callUsers && callUsers['screenShare']
+        //     && screenShareInfo.isStarted()
+        //     && screenShareInfo.iAmOwner()
+        // ) {
+        //     currentCall().users().get(store.user().id).videoTopicManager().restartMediaOnKeyFrame('screenShare', [2000,4000,8000,12000]);
+        // }
 
-        if (callUsers && callUsers['screenShare'] && screenShareInfo.isStarted() && screenShareInfo.iAmOwner()) {
-          (0, _sharedData.currentCall)().users().get(_store.store.user().id).videoTopicManager().restartMediaOnKeyFrame('screenShare', [2000, 4000, 8000, 12000]);
-        }
 
         break;
 
