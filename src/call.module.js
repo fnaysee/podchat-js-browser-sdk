@@ -874,7 +874,7 @@ function ChatCall(params) {
                 if (store.messagesCallbacks[uniqueId]) {
                     store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                 }
-
+                messageContent.callId = threadId;
                 chatEvents.fireEvent('callEvents', {
                     type: 'REJECT_GROUP_CALL',
                     result: messageContent
