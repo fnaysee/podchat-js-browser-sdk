@@ -18,7 +18,7 @@ function addReaction(params, callback) {
     };
 
     return messenger().sendMessage(sendData);
-};
+}
 
 function getMyReaction(params, callback) {
     let sendData = {
@@ -36,7 +36,7 @@ function getMyReaction(params, callback) {
             callback && callback(result);
         }
     });
-};
+}
 
 function replaceReaction(params, callback) {
     let sendData = {
@@ -55,7 +55,7 @@ function replaceReaction(params, callback) {
             callback && callback(result);
         }
     });
-};
+}
 
 function removeReaction(params, callback) {
     let sendData = {
@@ -73,40 +73,50 @@ function removeReaction(params, callback) {
             callback && callback(result);
         }
     });
-};
+}
 
-function getReactionList(params, callback) {
-    let count = 20,
-        offset = 0
+const reactionsListRequestsParams = {};
+function getReactionList(
+    {
+        threadId,
+        messageId,
+        count = 20,
+        offset = 0,
+        sticker = null,
+        uniqueId = null
+    }) {
 
-    if (params) {
-        if (parseInt(params.count) > 0) {
-            count = params.count;
-        }
-
-        if (parseInt(params.offset) > 0) {
-            offset = params.offset;
-        }
-    }
     let sendData = {
         chatMessageVOType: chatMessageVOTypes.REACTION_LIST,
-        subjectId: params.threadId,
+        subjectId: threadId,
         typeCode: sdkParams.generalTypeCode, //params.typeCode,
         content: {
-            sticker: params.sticker,
-            messageId: params.messageId,
+            sticker: sticker,
+            messageId: messageId,
             count: count,
             offset: offset
         },
-        token: sdkParams.token
+        token: sdkParams.token,
+        uniqueId
     };
 
-    return messenger().sendMessage(sendData, {
-        onResult: function (result) {
-            callback && callback(result);
-        }
-    });
-};
+    reactionsListRequestsParams[uniqueId] = sendData.content;
+
+    let cachedResult = store.reactionsList.getItem(messageId, sticker, count, offset);
+    if(cachedResult) {
+        cachedResult = JSON.parse(JSON.stringify(cachedResult));
+        chatEvents.fireEvent('messageEvents', {
+            type: 'REACTIONS_LIST',
+            uniqueId: uniqueId,
+            messageId: messageId,
+            result: cachedResult
+        });
+    }
+
+    if(!cachedResult || !cachedResult.isValid) {
+        return messenger().sendMessage(sendData);
+    }
+}
 
 function getReactionsSummaries(params) {
     let sendData = {
@@ -170,6 +180,27 @@ function onReactionSummaries(uniqueId, messageContent) {
     })
 }
 
+function onReactionList(uniqueId, messageContent) {
+    if(!reactionsListRequestsParams[uniqueId]) {
+        return
+    }
+
+    const rq = reactionsListRequestsParams[uniqueId];
+    store.reactionsList.save(reactionsListRequestsParams[uniqueId], messageContent);
+
+    let cachedResult = store.reactionsList.getItem(rq.messageId, rq.sticker, rq.count, rq.offset);
+    if(cachedResult) {
+        cachedResult = JSON.parse(JSON.stringify(cachedResult));
+    }
+    chatEvents.fireEvent('messageEvents', {
+        type: 'REACTIONS_LIST',
+        uniqueId: uniqueId,
+        messageId: rq.messageId,
+        result: cachedResult
+    });
+    delete reactionsListRequestsParams[uniqueId];
+}
+
 function onRemoveReaction(uniqueId, messageContent, contentCount) {
     if (store.messagesCallbacks[uniqueId]) {
         store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
@@ -178,6 +209,9 @@ function onRemoveReaction(uniqueId, messageContent, contentCount) {
     store.reactionSummaries.decreaseCount(messageContent.messageId, messageContent.reactionVO.reaction);
     if(store.user().isMe(messageContent.reactionVO.participantVO.id))
         store.reactionSummaries.removeMyReaction(messageContent.messageId);
+
+    store.reactionsList.invalidateCache(messageContent.messageId, messageContent.reactionVO.reaction);
+
 
     chatEvents.fireEvent('messageEvents', {
         type: 'REMOVE_REACTION',
@@ -200,6 +234,9 @@ function onReplaceReaction(uniqueId, messageContent, contentCount) {
         messageContent.reactionVO.time
     );
 
+    store.reactionsList.invalidateCache(messageContent.messageId, messageContent.oldSticker);
+    store.reactionsList.invalidateCache(messageContent.messageId, messageContent.reactionVO.reaction);
+
     chatEvents.fireEvent('messageEvents', {
         type: 'REPLACE_REACTION',
         result: messageContent
@@ -219,14 +256,9 @@ function onAddReaction(uniqueId, messageContent, contentCount) {
         messageContent.reactionVO.participantVO.id,
         messageContent.reactionVO.time
     );
-    // if(store.user().isMe(messageContent.reactionVO.participantVO.id))
-    //     store.reactionSummaries.addMyReaction(messageContent.messageId);
 
-    // chatEvents.fireEvent('messageEvents', {
-    //     type: 'REACTION_SUMMARIES',
-    //     uniqueId: uniqueId,
-    //     result: [store.reactionSummaries.getItem(messageContent.messageId)]
-    // })
+    store.reactionsList.invalidateCache(messageContent.messageId, messageContent.reactionVO.reaction);
+
     chatEvents.fireEvent('messageEvents', {
         type: 'ADD_REACTION',
         result: msgContent
@@ -241,6 +273,7 @@ export {
     getMyReaction,
     addReaction,
     onReactionSummaries,
+    onReactionList,
     onRemoveReaction,
     onReplaceReaction,
     onAddReaction

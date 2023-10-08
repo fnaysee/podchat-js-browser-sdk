@@ -13,6 +13,8 @@ var _reactionsSummaries = require("./reactionsSummaries");
 
 var _user = require("./user");
 
+var _reactionsList = require("./reactionsList");
+
 var store = {
   threads: _threads.threadsList,
   events: _eventEmitter.storeEvents,
@@ -21,6 +23,7 @@ var store = {
   threadCallbacks: {},
   sendMessageCallbacks: {},
   messagesCallbacks: {},
-  asyncRequestTimeouts: {}
+  asyncRequestTimeouts: {},
+  reactionsList: _reactionsList.reactionsListCache
 };
 exports.store = store;

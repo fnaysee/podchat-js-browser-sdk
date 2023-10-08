@@ -2,6 +2,7 @@ import {threadsList} from "./threads";
 import {storeEvents} from "./eventEmitter";
 import {reactionsSummariesCache} from "./reactionsSummaries";
 import {user} from "./user";
+import {reactionsListCache} from "./reactionsList";
 
 let store = {
     threads: threadsList,
@@ -11,7 +12,8 @@ let store = {
     threadCallbacks: {},
     sendMessageCallbacks: {},
     messagesCallbacks: {},
-    asyncRequestTimeouts: {}
+    asyncRequestTimeouts: {},
+    reactionsList: reactionsListCache
 };
 
 export {store}

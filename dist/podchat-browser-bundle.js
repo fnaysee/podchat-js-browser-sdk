@@ -45916,7 +45916,7 @@ FilterXSS.prototype.process = function (html) {
 module.exports = FilterXSS;
 
 },{"./default":275,"./parser":277,"./util":278,"cssfilter":124}],280:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.39","date":"۱۴۰۲/۷/۹","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.7-snapshot.39","date":"۱۴۰۲/۷/۱۵","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],281:[function(require,module,exports){
 "use strict";
 
@@ -48754,7 +48754,7 @@ function ChatCall(params) {
 var _default = ChatCall;
 exports["default"] = _default;
 
-},{"./events.module.js":284,"./lib/call/callServerManager":286,"./lib/call/callsList":290,"./lib/call/deviceManager2":292,"./lib/call/sharedData":294,"./lib/constants":298,"./lib/errorHandler":299,"./lib/requestBlocker":300,"./lib/sdkParams":301,"./lib/store":303,"./messaging.module":307,"./utility/utility":308,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/objectDestructuringEmpty":10,"@babel/runtime/helpers/typeof":13,"@babel/runtime/regenerator":15,"kurento-utils":199}],282:[function(require,module,exports){
+},{"./events.module.js":284,"./lib/call/callServerManager":286,"./lib/call/callsList":290,"./lib/call/deviceManager2":292,"./lib/call/sharedData":294,"./lib/constants":298,"./lib/errorHandler":299,"./lib/requestBlocker":300,"./lib/sdkParams":301,"./lib/store":303,"./messaging.module":308,"./utility/utility":309,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/objectDestructuringEmpty":10,"@babel/runtime/helpers/typeof":13,"@babel/runtime/regenerator":15,"kurento-utils":199}],282:[function(require,module,exports){
 'use strict';var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");var _typeof3=require("@babel/runtime/helpers/typeof");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _podasyncWsOnly=_interopRequireDefault(require("podasync-ws-only"));var _utility=_interopRequireDefault(require("./utility/utility"));var _call=_interopRequireDefault(require("./call.module"));var _sdkParams=require("./lib/sdkParams");var _events=_interopRequireWildcard(require("./events.module"));var _messaging=require("./messaging.module");var _buildConfig=_interopRequireDefault(require("./buildConfig.json"));var _deprecateMethods=require("./deprecateMethods");var _xss=_interopRequireDefault(require("xss"));var _constants=require("./lib/constants");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));var _store=require("./lib/store");var _user=require("./lib/store/user");var _reactionsMethods=require("./lib/chat/reactionsMethods");function _getRequireWildcardCache(nodeInterop){if(typeof WeakMap!=="function")return null;var cacheBabelInterop=new WeakMap();var cacheNodeInterop=new WeakMap();return(_getRequireWildcardCache=function _getRequireWildcardCache(nodeInterop){return nodeInterop?cacheNodeInterop:cacheBabelInterop;})(nodeInterop);}function _interopRequireWildcard(obj,nodeInterop){if(!nodeInterop&&obj&&obj.__esModule){return obj;}if(obj===null||_typeof3(obj)!=="object"&&typeof obj!=="function"){return{"default":obj};}var cache=_getRequireWildcardCache(nodeInterop);if(cache&&cache.has(obj)){return cache.get(obj);}var newObj={};var hasPropertyDescriptor=Object.defineProperty&&Object.getOwnPropertyDescriptor;for(var key in obj){if(key!=="default"&&Object.prototype.hasOwnProperty.call(obj,key)){var desc=hasPropertyDescriptor?Object.getOwnPropertyDescriptor(obj,key):null;if(desc&&(desc.get||desc.set)){Object.defineProperty(newObj,key,desc);}else{newObj[key]=obj[key];}}}newObj["default"]=obj;if(cache){cache.set(obj,newObj);}return newObj;}function Chat(params){/*******************************************************
      *          P R I V A T E   V A R I A B L E S          *
      *******************************************************/_sdkParams.sdkParams.token=params.token||"111";_sdkParams.sdkParams.generalTypeCode=params.typeCode||'default';_sdkParams.sdkParams.typeCodeOwnerId=params.typeCodeOwnerId||null;_sdkParams.sdkParams.mapApiKey=params.mapApiKey||'8b77db18704aa646ee5aaea13e7370f4f88b9e8c';_sdkParams.sdkParams.productEnv=typeof navigator!='undefined'?navigator.product:'undefined';_sdkParams.sdkParams.forceWaitQueueInMemory=params.forceWaitQueueInMemory&&typeof params.forceWaitQueueInMemory==='boolean'?params.forceWaitQueueInMemory:false;_sdkParams.sdkParams.grantDeviceIdFromSSO=params.grantDeviceIdFromSSO&&typeof params.grantDeviceIdFromSSO==='boolean'?params.grantDeviceIdFromSSO:false;_sdkParams.sdkParams.deliveryIntervalPitch=params.deliveryIntervalPitch||2000;_sdkParams.sdkParams.seenIntervalPitch=params.seenIntervalPitch||2000;_sdkParams.sdkParams.systemMessageIntervalPitch=params.systemMessageIntervalPitch||1000;_sdkParams.sdkParams.socketAddress=params.socketAddress;_sdkParams.sdkParams.serverName=params.serverName;_sdkParams.sdkParams.wsConnectionWaitTime=params.wsConnectionWaitTime;_sdkParams.sdkParams.connectionRetryInterval=params.connectionRetryInterval;_sdkParams.sdkParams.msgPriority=params.msgPriority;_sdkParams.sdkParams.messageTtl=params.messageTtl||10000;_sdkParams.sdkParams.reconnectOnClose=params.reconnectOnClose;_sdkParams.sdkParams.asyncLogging=params.asyncLogging;_sdkParams.sdkParams.connectionCheckTimeout=params.connectionCheckTimeout;_sdkParams.sdkParams.httpRequestTimeout=params.httpRequestTimeout>=0?params.httpRequestTimeout:0;_sdkParams.sdkParams.asyncRequestTimeout=typeof params.asyncRequestTimeout==='number'&&params.asyncRequestTimeout>=0?params.asyncRequestTimeout:0;_sdkParams.sdkParams.connectionCheckTimeoutThreshold=params.connectionCheckTimeoutThreshold;_sdkParams.sdkParams.httpUploadRequestTimeout=params.httpUploadRequestTimeout>=0?params.httpUploadRequestTimeout:0;_sdkParams.sdkParams.actualTimingLog=params.asyncLogging.actualTiming&&typeof params.asyncLogging.actualTiming==='boolean'?params.asyncLogging.actualTiming:false;_sdkParams.sdkParams.consoleLogging=params.asyncLogging.consoleLogging&&typeof params.asyncLogging.consoleLogging==='boolean'?params.asyncLogging.consoleLogging:false;_sdkParams.sdkParams.fullResponseObject=params.fullResponseObject||false;_sdkParams.sdkParams.webrtcConfig=params.webrtcConfig?params.webrtcConfig:null;_sdkParams.sdkParams.chatPingMessageInterval=params.chatPingMessageInterval;_sdkParams.sdkParams.protocol=params.protocol;_sdkParams.sdkParams.callRequestTimeout=typeof params.callRequestTimeout==='number'&&params.callRequestTimeout>=0?params.callRequestTimeout:10000;_sdkParams.sdkParams.callOptions=params.callOptions;var asyncClient,peerId,oldPeerId,//deviceId,
@@ -48842,7 +48842,7 @@ if(_sdkParams.sdkParams.grantDeviceIdFromSSO){var getDeviceIdWithTokenTime=new D
          *
          * @return {undefined}
          * @return {undefined}
-         */initAsync=function initAsync(){var asyncGetReadyTime=new Date().getTime();asyncClient=new _podasyncWsOnly["default"]({protocol:protocolManager.getCurrentProtocol(),queueHost:queueHost,queuePort:queuePort,queueUsername:queueUsername,queuePassword:queuePassword,queueReceive:queueReceive,queueSend:queueSend,queueConnectionTimeout:queueConnectionTimeout,socketAddress:_sdkParams.sdkParams.socketAddress,serverName:_sdkParams.sdkParams.serverName,deviceId:_sdkParams.sdkParams.deviceId,wsConnectionWaitTime:_sdkParams.sdkParams.wsConnectionWaitTime,connectionRetryInterval:_sdkParams.sdkParams.connectionRetryInterval,connectionCheckTimeout:_sdkParams.sdkParams.connectionCheckTimeout,connectionCheckTimeoutThreshold:_sdkParams.sdkParams.connectionCheckTimeoutThreshold,messageTtl:_sdkParams.sdkParams.messageTtl,reconnectOnClose:_sdkParams.sdkParams.reconnectOnClose,asyncLogging:_sdkParams.sdkParams.asyncLogging,logLevel:_sdkParams.sdkParams.consoleLogging?3:1,webrtcConfig:_sdkParams.sdkParams.webrtcConfig,retryStepTimerTime:protocolManager.getRetryStepTimerTime(),onStartWithRetryStepGreaterThanZero:onStateChange,msgLogCallback:msgLogCallback||null,asyncLogCallback:asyncLogCallback||null,onDeviceId:onDeviceId});function onDeviceId(deviceId){if(!_sdkParams.sdkParams.deviceId){_sdkParams.sdkParams.deviceId=deviceId;}asyncClient.registerDevice(_sdkParams.sdkParams.deviceId);}callModule.asyncInitialized(asyncClient);(0,_messaging.messenger)().asyncInitialized(asyncClient);asyncClient.on('asyncReady',function(){if(_sdkParams.sdkParams.actualTimingLog){_utility["default"].chatStepLogger('Async Connection ',new Date().getTime()-asyncGetReadyTime);}peerId=asyncClient.getPeerId();_store.store.reactionSummaries.removeAllMessages();if(!_store.store.user()){getUserAndUpdateSDKState();}else if(_store.store.user().id>0){(0,_messaging.messenger)().chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();}_sdkParams.sdkParams.deliveryInterval&&clearInterval(_sdkParams.sdkParams.deliveryInterval);_sdkParams.sdkParams.deliveryInterval=setInterval(function(){if(Object.keys(_sdkParams.sdkParams.messagesDelivery).length){messagesDeliveryQueueHandler();}},_sdkParams.sdkParams.deliveryIntervalPitch);_sdkParams.sdkParams.seenInterval&&clearInterval(_sdkParams.sdkParams.seenInterval);_sdkParams.sdkParams.seenInterval=setInterval(function(){if(Object.keys(_sdkParams.sdkParams.messagesSeen).length){messagesSeenQueueHandler();}},_sdkParams.sdkParams.seenIntervalPitch);//shouldReconnectCall();
+         */initAsync=function initAsync(){var asyncGetReadyTime=new Date().getTime();asyncClient=new _podasyncWsOnly["default"]({protocol:protocolManager.getCurrentProtocol(),queueHost:queueHost,queuePort:queuePort,queueUsername:queueUsername,queuePassword:queuePassword,queueReceive:queueReceive,queueSend:queueSend,queueConnectionTimeout:queueConnectionTimeout,socketAddress:_sdkParams.sdkParams.socketAddress,serverName:_sdkParams.sdkParams.serverName,deviceId:_sdkParams.sdkParams.deviceId,wsConnectionWaitTime:_sdkParams.sdkParams.wsConnectionWaitTime,connectionRetryInterval:_sdkParams.sdkParams.connectionRetryInterval,connectionCheckTimeout:_sdkParams.sdkParams.connectionCheckTimeout,connectionCheckTimeoutThreshold:_sdkParams.sdkParams.connectionCheckTimeoutThreshold,messageTtl:_sdkParams.sdkParams.messageTtl,reconnectOnClose:_sdkParams.sdkParams.reconnectOnClose,asyncLogging:_sdkParams.sdkParams.asyncLogging,logLevel:_sdkParams.sdkParams.consoleLogging?3:1,webrtcConfig:_sdkParams.sdkParams.webrtcConfig,retryStepTimerTime:protocolManager.getRetryStepTimerTime(),onStartWithRetryStepGreaterThanZero:onStateChange,msgLogCallback:msgLogCallback||null,asyncLogCallback:asyncLogCallback||null,onDeviceId:onDeviceId});function onDeviceId(deviceId){if(!_sdkParams.sdkParams.deviceId){_sdkParams.sdkParams.deviceId=deviceId;}asyncClient.registerDevice(_sdkParams.sdkParams.deviceId);}callModule.asyncInitialized(asyncClient);(0,_messaging.messenger)().asyncInitialized(asyncClient);asyncClient.on('asyncReady',function(){if(_sdkParams.sdkParams.actualTimingLog){_utility["default"].chatStepLogger('Async Connection ',new Date().getTime()-asyncGetReadyTime);}peerId=asyncClient.getPeerId();_store.store.reactionSummaries.invalidateAllItems();_store.store.reactionsList.invalidateCache();if(!_store.store.user()){getUserAndUpdateSDKState();}else if(_store.store.user().id>0){(0,_messaging.messenger)().chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();}_sdkParams.sdkParams.deliveryInterval&&clearInterval(_sdkParams.sdkParams.deliveryInterval);_sdkParams.sdkParams.deliveryInterval=setInterval(function(){if(Object.keys(_sdkParams.sdkParams.messagesDelivery).length){messagesDeliveryQueueHandler();}},_sdkParams.sdkParams.deliveryIntervalPitch);_sdkParams.sdkParams.seenInterval&&clearInterval(_sdkParams.sdkParams.seenInterval);_sdkParams.sdkParams.seenInterval=setInterval(function(){if(Object.keys(_sdkParams.sdkParams.messagesSeen).length){messagesSeenQueueHandler();}},_sdkParams.sdkParams.seenIntervalPitch);//shouldReconnectCall();
 });asyncClient.on('stateChange',onStateChange);function onStateChange(state){_events.chatEvents.fireEvent('chatState',state);chatFullStateObject=state;switch(state.socketState){case 1:// CONNECTED
 protocolManager.resetRetries();protocolManager.resetTimerTime();if(state.deviceRegister&&state.serverRegister){// messenger().chatState = true;
 // messenger().ping();
@@ -49266,7 +49266,7 @@ break;/**
                  * Type 241    REMOVE_REACTION
                  */case _constants.chatMessageVOTypes.REMOVE_REACTION:(0,_reactionsMethods.onRemoveReaction)(uniqueId,messageContent,contentCount);break;/**
                  * Type 242    REACTION_LIST
-                 */case _constants.chatMessageVOTypes.REACTION_LIST:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+                 */case _constants.chatMessageVOTypes.REACTION_LIST:(0,_reactionsMethods.onReactionList)(uniqueId,messageContent);break;/**
                  * Type 243   Get My Reaction
                  */case _constants.chatMessageVOTypes.GET_MY_REACTION:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
                  Type 244   REACTION_COUNT
@@ -50791,7 +50791,7 @@ token:_sdkParams.sdkParams.token,content:params.content};return(0,_messaging.mes
 window.PodChat=Chat;}var _default=Chat;// })();
 exports["default"]=_default;
 
-},{"./buildConfig.json":280,"./call.module":281,"./deprecateMethods":283,"./events.module":284,"./lib/call/deviceManager.js":291,"./lib/chat/reactionsMethods":297,"./lib/constants":298,"./lib/sdkParams":301,"./lib/store":303,"./lib/store/user":306,"./messaging.module":307,"./utility/utility":308,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/toConsumableArray":12,"@babel/runtime/helpers/typeof":13,"podasync-ws-only":218,"xss":276}],283:[function(require,module,exports){
+},{"./buildConfig.json":280,"./call.module":281,"./deprecateMethods":283,"./events.module":284,"./lib/call/deviceManager.js":291,"./lib/chat/reactionsMethods":297,"./lib/constants":298,"./lib/sdkParams":301,"./lib/store":303,"./lib/store/user":307,"./messaging.module":308,"./utility/utility":309,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/toConsumableArray":12,"@babel/runtime/helpers/typeof":13,"podasync-ws-only":218,"xss":276}],283:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -50982,7 +50982,7 @@ function initEventHandler() {
 var _default = ChatEvents;
 exports["default"] = _default;
 
-},{"./lib/sdkParams":301,"./utility/utility":308,"@babel/runtime/helpers/interopRequireDefault":7}],285:[function(require,module,exports){
+},{"./lib/sdkParams":301,"./utility/utility":309,"@babel/runtime/helpers/interopRequireDefault":7}],285:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -52310,7 +52310,7 @@ function ScreenShareStateManager() {
   };
 }
 
-},{"../../events.module":284,"../../utility/utility":308,"../constants":298,"../errorHandler":299,"../sdkParams":301,"../store":303,"./callServerManager":286,"./callUsers":289,"./callsList":290,"./sharedData":294,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15}],286:[function(require,module,exports){
+},{"../../events.module":284,"../../utility/utility":309,"../constants":298,"../errorHandler":299,"../sdkParams":301,"../store":303,"./callServerManager":286,"./callUsers":289,"./callsList":290,"./sharedData":294,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15}],286:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -53333,7 +53333,7 @@ function CallTopicManager(_ref) {
   return publicized;
 }
 
-},{"../../events.module":284,"../../messaging.module":307,"../../utility/utility":308,"../errorHandler":299,"../sdkParams":301,"./callsList":290,"./sharedData":294,"./topicMetaDataManager":295,"./webrtcPeer":296,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/toConsumableArray":12,"@babel/runtime/regenerator":15}],288:[function(require,module,exports){
+},{"../../events.module":284,"../../messaging.module":308,"../../utility/utility":309,"../errorHandler":299,"../sdkParams":301,"./callsList":290,"./sharedData":294,"./topicMetaDataManager":295,"./webrtcPeer":296,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/toConsumableArray":12,"@babel/runtime/regenerator":15}],288:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -54091,7 +54091,7 @@ function CallUsers(_ref) {
   return publicized;
 }
 
-},{"../../events.module":284,"../../messaging.module":307,"../store":303,"./callUser":288,"./callsList":290,"./sharedData":294,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15}],290:[function(require,module,exports){
+},{"../../events.module":284,"../../messaging.module":308,"../store":303,"./callUser":288,"./callsList":290,"./sharedData":294,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15}],290:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -55249,7 +55249,7 @@ function currentCallMyUser() {
   return currentCall().users().get(_store.store.user().id);
 }
 
-},{"../../events.module":284,"../../messaging.module":307,"../constants":298,"../errorHandler":299,"../sdkParams":301,"../store":303,"./callsList":290}],295:[function(require,module,exports){
+},{"../../events.module":284,"../../messaging.module":308,"../constants":298,"../errorHandler":299,"../sdkParams":301,"../store":303,"./callsList":290}],295:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -55626,11 +55626,14 @@ exports.getMyReaction = getMyReaction;
 exports.getReactionList = getReactionList;
 exports.getReactionsSummaries = getReactionsSummaries;
 exports.onAddReaction = onAddReaction;
+exports.onReactionList = onReactionList;
 exports.onReactionSummaries = onReactionSummaries;
 exports.onRemoveReaction = onRemoveReaction;
 exports.onReplaceReaction = onReplaceReaction;
 exports.removeReaction = removeReaction;
 exports.replaceReaction = replaceReaction;
+
+var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));
 
 var _constants = require("../constants");
 
@@ -55659,8 +55662,6 @@ function addReaction(params, callback) {
   return (0, _messaging.messenger)().sendMessage(sendData);
 }
 
-;
-
 function getMyReaction(params, callback) {
   var sendData = {
     chatMessageVOType: _constants.chatMessageVOTypes.GET_MY_REACTION,
@@ -55678,8 +55679,6 @@ function getMyReaction(params, callback) {
     }
   });
 }
-
-;
 
 function replaceReaction(params, callback) {
   var sendData = {
@@ -55700,8 +55699,6 @@ function replaceReaction(params, callback) {
   });
 }
 
-;
-
 function removeReaction(params, callback) {
   var sendData = {
     chatMessageVOType: _constants.chatMessageVOTypes.REMOVE_REACTION,
@@ -55720,43 +55717,52 @@ function removeReaction(params, callback) {
   });
 }
 
-;
+var reactionsListRequestsParams = {};
 
-function getReactionList(params, callback) {
-  var count = 20,
-      offset = 0;
-
-  if (params) {
-    if (parseInt(params.count) > 0) {
-      count = params.count;
-    }
-
-    if (parseInt(params.offset) > 0) {
-      offset = params.offset;
-    }
-  }
-
+function getReactionList(_ref) {
+  var threadId = _ref.threadId,
+      messageId = _ref.messageId,
+      _ref$count = _ref.count,
+      count = _ref$count === void 0 ? 20 : _ref$count,
+      _ref$offset = _ref.offset,
+      offset = _ref$offset === void 0 ? 0 : _ref$offset,
+      _ref$sticker = _ref.sticker,
+      sticker = _ref$sticker === void 0 ? null : _ref$sticker,
+      _ref$uniqueId = _ref.uniqueId,
+      uniqueId = _ref$uniqueId === void 0 ? null : _ref$uniqueId;
   var sendData = {
     chatMessageVOType: _constants.chatMessageVOTypes.REACTION_LIST,
-    subjectId: params.threadId,
+    subjectId: threadId,
     typeCode: _sdkParams.sdkParams.generalTypeCode,
     //params.typeCode,
     content: {
-      sticker: params.sticker,
-      messageId: params.messageId,
+      sticker: sticker,
+      messageId: messageId,
       count: count,
       offset: offset
     },
-    token: _sdkParams.sdkParams.token
+    token: _sdkParams.sdkParams.token,
+    uniqueId: uniqueId
   };
-  return (0, _messaging.messenger)().sendMessage(sendData, {
-    onResult: function onResult(result) {
-      callback && callback(result);
-    }
-  });
-}
+  reactionsListRequestsParams[uniqueId] = sendData.content;
 
-;
+  var cachedResult = _store.store.reactionsList.getItem(messageId, sticker, count, offset);
+
+  if (cachedResult) {
+    cachedResult = JSON.parse(JSON.stringify(cachedResult));
+
+    _events.chatEvents.fireEvent('messageEvents', {
+      type: 'REACTIONS_LIST',
+      uniqueId: uniqueId,
+      messageId: messageId,
+      result: cachedResult
+    });
+  }
+
+  if (!cachedResult || !cachedResult.isValid) {
+    return (0, _messaging.messenger)().sendMessage(sendData);
+  }
+}
 
 function getReactionsSummaries(params) {
   var sendData = {
@@ -55767,37 +55773,30 @@ function getReactionsSummaries(params) {
     subjectId: params.threadId,
     uniqueId: _utility["default"].generateUUID()
   },
-      cachedIds = _store.store.reactionSummaries.filterExists(params.messageIds);
+      cachedIdsValid = _store.store.reactionSummaries.getValids(params.messageIds),
+      cachedIdsInValid = _store.store.reactionSummaries.getInValids(params.messageIds),
+      nonExistingIds = _store.store.reactionSummaries.getNotExists(params.messageIds);
 
-  params.messageIds.forEach(function (item) {
+  nonExistingIds.forEach(function (item) {
     _store.store.reactionSummaries.initItem(item, {});
   });
-  var difference = params.messageIds.reduce(function (result, element) {
-    if (cachedIds.indexOf(element) === -1) {
-      result.push(element);
-    }
 
-    return result;
-  }, []);
-
-  if (difference.length) {
-    sendData.content = difference;
-    var res = (0, _messaging.messenger)().sendMessage(sendData); // reactionSummariesRequest = {
-    //     uniqueId: sendData.uniqueId,
-    //     difference
-    // };
+  if (nonExistingIds.length || cachedIdsInValid.length) {
+    sendData.content = [].concat((0, _toConsumableArray2["default"])(nonExistingIds), (0, _toConsumableArray2["default"])(cachedIdsInValid));
+    var res = (0, _messaging.messenger)().sendMessage(sendData);
   }
 
-  if (cachedIds && cachedIds.length) {
+  if (cachedIdsInValid.length || cachedIdsValid.length) {
+    var mergedResult = [].concat((0, _toConsumableArray2["default"])(cachedIdsValid), (0, _toConsumableArray2["default"])(cachedIdsInValid));
     setTimeout(function () {
-      var messageContent = _store.store.reactionSummaries.getMany(cachedIds);
+      var res = _store.store.reactionSummaries.getMany(mergedResult);
 
-      messageContent = JSON.parse(JSON.stringify(messageContent));
+      res = JSON.parse(JSON.stringify(res));
 
       _events.chatEvents.fireEvent('messageEvents', {
         type: 'REACTION_SUMMARIES',
         uniqueId: sendData.uniqueId,
-        result: messageContent
+        result: res
       });
     }, 100);
   }
@@ -55810,18 +55809,38 @@ function getReactionsSummaries(params) {
 function onReactionSummaries(uniqueId, messageContent) {
   var msgContent = JSON.parse(JSON.stringify(messageContent));
 
-  _store.store.reactionSummaries.addMany(messageContent); // reactionSummariesRequest.difference.forEach(item => {
-  //     if(!store.reactionsSummaries.messageExists(item)) {
-  //         store.reactionsSummaries.addItem(item, {})
-  //     }
-  // })
-
+  _store.store.reactionSummaries.addMany(messageContent);
 
   _events.chatEvents.fireEvent('messageEvents', {
     type: 'REACTION_SUMMARIES',
     uniqueId: uniqueId,
     result: msgContent
   });
+}
+
+function onReactionList(uniqueId, messageContent) {
+  if (!reactionsListRequestsParams[uniqueId]) {
+    return;
+  }
+
+  var rq = reactionsListRequestsParams[uniqueId];
+
+  _store.store.reactionsList.save(reactionsListRequestsParams[uniqueId], messageContent);
+
+  var cachedResult = _store.store.reactionsList.getItem(rq.messageId, rq.sticker, rq.count, rq.offset);
+
+  if (cachedResult) {
+    cachedResult = JSON.parse(JSON.stringify(cachedResult));
+  }
+
+  _events.chatEvents.fireEvent('messageEvents', {
+    type: 'REACTIONS_LIST',
+    uniqueId: uniqueId,
+    messageId: rq.messageId,
+    result: cachedResult
+  });
+
+  delete reactionsListRequestsParams[uniqueId];
 }
 
 function onRemoveReaction(uniqueId, messageContent, contentCount) {
@@ -55832,6 +55851,8 @@ function onRemoveReaction(uniqueId, messageContent, contentCount) {
   _store.store.reactionSummaries.decreaseCount(messageContent.messageId, messageContent.reactionVO.reaction);
 
   if (_store.store.user().isMe(messageContent.reactionVO.participantVO.id)) _store.store.reactionSummaries.removeMyReaction(messageContent.messageId);
+
+  _store.store.reactionsList.invalidateCache(messageContent.messageId, messageContent.reactionVO.reaction);
 
   _events.chatEvents.fireEvent('messageEvents', {
     type: 'REMOVE_REACTION',
@@ -55850,6 +55871,10 @@ function onReplaceReaction(uniqueId, messageContent, contentCount) {
 
   _store.store.reactionSummaries.maybeUpdateMyReaction(messageContent.messageId, messageContent.reactionVO.id, messageContent.reactionVO.reaction, messageContent.reactionVO.participantVO.id, messageContent.reactionVO.time);
 
+  _store.store.reactionsList.invalidateCache(messageContent.messageId, messageContent.oldSticker);
+
+  _store.store.reactionsList.invalidateCache(messageContent.messageId, messageContent.reactionVO.reaction);
+
   _events.chatEvents.fireEvent('messageEvents', {
     type: 'REPLACE_REACTION',
     result: messageContent
@@ -55865,14 +55890,9 @@ function onAddReaction(uniqueId, messageContent, contentCount) {
 
   _store.store.reactionSummaries.increaseCount(messageContent.messageId, messageContent.reactionVO.reaction);
 
-  _store.store.reactionSummaries.maybeUpdateMyReaction(messageContent.messageId, messageContent.reactionVO.id, messageContent.reactionVO.reaction, messageContent.reactionVO.participantVO.id, messageContent.reactionVO.time); // if(store.user().isMe(messageContent.reactionVO.participantVO.id))
-  //     store.reactionSummaries.addMyReaction(messageContent.messageId);
-  // chatEvents.fireEvent('messageEvents', {
-  //     type: 'REACTION_SUMMARIES',
-  //     uniqueId: uniqueId,
-  //     result: [store.reactionSummaries.getItem(messageContent.messageId)]
-  // })
+  _store.store.reactionSummaries.maybeUpdateMyReaction(messageContent.messageId, messageContent.reactionVO.id, messageContent.reactionVO.reaction, messageContent.reactionVO.participantVO.id, messageContent.reactionVO.time);
 
+  _store.store.reactionsList.invalidateCache(messageContent.messageId, messageContent.reactionVO.reaction);
 
   _events.chatEvents.fireEvent('messageEvents', {
     type: 'ADD_REACTION',
@@ -55880,7 +55900,7 @@ function onAddReaction(uniqueId, messageContent, contentCount) {
   });
 }
 
-},{"../../events.module":284,"../../messaging.module":307,"../../utility/utility":308,"../constants":298,"../sdkParams":301,"../store":303,"@babel/runtime/helpers/interopRequireDefault":7}],298:[function(require,module,exports){
+},{"../../events.module":284,"../../messaging.module":308,"../../utility/utility":309,"../constants":298,"../sdkParams":301,"../store":303,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/toConsumableArray":12}],298:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -56493,6 +56513,8 @@ var _reactionsSummaries = require("./reactionsSummaries");
 
 var _user = require("./user");
 
+var _reactionsList = require("./reactionsList");
+
 var store = {
   threads: _threads.threadsList,
   events: _eventEmitter.storeEvents,
@@ -56501,11 +56523,150 @@ var store = {
   threadCallbacks: {},
   sendMessageCallbacks: {},
   messagesCallbacks: {},
-  asyncRequestTimeouts: {}
+  asyncRequestTimeouts: {},
+  reactionsList: _reactionsList.reactionsListCache
 };
 exports.store = store;
 
-},{"./eventEmitter":302,"./reactionsSummaries":304,"./threads":305,"./user":306}],304:[function(require,module,exports){
+},{"./eventEmitter":302,"./reactionsList":304,"./reactionsSummaries":305,"./threads":306,"./user":307}],304:[function(require,module,exports){
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.reactionsListCache = void 0;
+
+var _typeof2 = _interopRequireDefault(require("@babel/runtime/helpers/typeof"));
+
+var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
+
+var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
+
+var _index = require("./index");
+
+var list = [];
+var eventsList = {
+  SINGLE_THREAD_UPDATE: "singleThreadUpdate",
+  UNREAD_COUNT_UPDATED: 'unreadCountUpdated',
+  LAST_SEEN_MESSAGE_TIME_UPDATED: 'lastSeenMessageTimeUpdated'
+};
+var msgsReactionsStatus = {
+  REQUESTED: 1,
+  IS_EMPTY: 2,
+  HAS_REACTION: 3
+};
+
+var ReactionsListCache = /*#__PURE__*/function () {
+  function ReactionsListCache(props) {
+    (0, _classCallCheck2["default"])(this, ReactionsListCache); // super(props);
+
+    this._list = {};
+  }
+
+  (0, _createClass2["default"])(ReactionsListCache, [{
+    key: "list",
+    get: function get() {
+      return this._list;
+    }
+  }, {
+    key: "getItem",
+    value: function getItem(messageId) {
+      var sticker = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+      var count = arguments.length > 2 ? arguments[2] : undefined;
+      var offset = arguments.length > 3 ? arguments[3] : undefined;
+      if (!this.messageExists(messageId) || !this.stickerExists(messageId, sticker) || !this._list[messageId][sticker][this.genKey(count, offset)]) return null;
+      return {
+        messageId: messageId,
+        sticker: sticker,
+        count: count,
+        offset: offset,
+        reactionVOList: this._list[messageId][sticker][this.genKey(count, offset)],
+        isValid: this._list[messageId][sticker].isValid
+      };
+    }
+  }, {
+    key: "invalidateCache",
+    value: function invalidateCache(messageId, sticker) {
+      if (!messageId) return this.invalidateAllMessages();
+
+      if (!sticker) {
+        return this.invalidateMessage(messageId);
+      }
+
+      this._list[messageId][sticker].isValid = false;
+      this._list[messageId]['all'].isValid = false;
+    }
+  }, {
+    key: "invalidateAllMessages",
+    value: function invalidateAllMessages() {
+      var _this = this;
+
+      Object.keys(this._list).forEach(function (item) {
+        _this.invalidateMessage(item);
+      });
+    }
+  }, {
+    key: "invalidateMessage",
+    value: function invalidateMessage(messageId) {
+      var item = this._list[messageId];
+
+      if (item && (0, _typeof2["default"])(item) === 'object') {
+        Object.keys(item).forEach(function (objKey) {
+          if (objKey && item[objKey] && (0, _typeof2["default"])(item[objKey]) === objKey) {
+            item[objKey].isValid = false;
+          }
+        });
+      }
+    }
+  }, {
+    key: "messageExists",
+    value: function messageExists(messageId) {
+      return !!this._list[messageId];
+    }
+  }, {
+    key: "stickerExists",
+    value: function stickerExists(messageId) {
+      var sticker = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+      if (!sticker) return this._list[messageId] && this._list[messageId]['all'];else return this._list[messageId] && this._list[messageId][sticker];
+    }
+  }, {
+    key: "save",
+    value: function save(request, result) {
+      var cClass = this,
+          sticker = request.sticker ? request.sticker : 'all';
+
+      if (!this.messageExists(request.messageId)) {
+        this._list[request.messageId] = {};
+      }
+
+      if (!this.stickerExists(request.messageId, sticker)) {
+        this._list[request.messageId][sticker] = {
+          isValid: true
+        };
+      }
+
+      this._list[request.messageId][sticker][this.genKey(request.count, request.offset)] = result;
+    }
+  }, {
+    key: "genKey",
+    value: function genKey(count, offset) {
+      return "count:".concat(count, ",offset:").concat(offset);
+    }
+  }, {
+    key: "removeAllMessages",
+    value: function removeAllMessages() {
+      this._list = {};
+    }
+  }]);
+  return ReactionsListCache;
+}();
+
+var reactionsListCache = new ReactionsListCache();
+exports.reactionsListCache = reactionsListCache;
+
+},{"./index":303,"@babel/runtime/helpers/classCallCheck":4,"@babel/runtime/helpers/createClass":5,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/typeof":13}],305:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -56619,15 +56780,42 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
       });
     }
   }, {
-    key: "addMany",
-    value: function addMany(data) {
+    key: "getValids",
+    value: function getValids(messageIds) {
       var _this3 = this;
 
+      return messageIds.filter(function (item) {
+        return _this3.messageExists(item) && _this3.getItem(item).isValid;
+      });
+    }
+  }, {
+    key: "getInValids",
+    value: function getInValids(messageIds) {
+      var _this4 = this;
+
+      return messageIds.filter(function (item) {
+        return _this4.messageExists(item) && !_this4.getItem(item).isValid;
+      });
+    }
+  }, {
+    key: "getNotExists",
+    value: function getNotExists(messageIds) {
+      var _this5 = this;
+
+      return messageIds.filter(function (item) {
+        return !_this5.messageExists(item);
+      });
+    }
+  }, {
+    key: "addMany",
+    value: function addMany(data) {
+      var _this6 = this;
+
       data.forEach(function (item) {
-        if (!_this3.messageExists(item.messageId)) {
-          _this3.initItem(item.messageId, item);
+        if (!_this6.messageExists(item.messageId)) {
+          _this6.initItem(item.messageId, item);
         } else {
-          _this3.updateItem(item.messageId, item);
+          _this6.updateItem(item.messageId, item);
         }
       });
     }
@@ -56640,6 +56828,7 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
       if (!item) {
         this._list[messageId] = _objectSpread(_objectSpread({}, data), {}, {
           hasReactionStatus: msgsReactionsStatus.REQUESTED,
+          isValid: true,
           setHasReactionStatus: function setHasReactionStatus(status) {
             cClass._list[messageId].hasReactionStatus = status;
           },
@@ -56657,16 +56846,16 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
   }, {
     key: "updateItem",
     value: function updateItem(messageId, item) {
-      var _this4 = this;
+      var _this7 = this;
 
       var localItem = this.getItem(messageId);
 
       if (localItem && localItem.hasAnyReaction && localItem.hasAnyReaction()) {
         item.reactionCountVO && item.reactionCountVO.forEach(function (itt) {
           if (!localItem.hasReaction(itt.sticker)) {
-            _this4._list[messageId].reactionCountVO.push(itt);
+            _this7._list[messageId].reactionCountVO.push(itt);
           } else {
-            _this4._list[messageId].reactionCountVO.forEach(function (it2) {
+            _this7._list[messageId].reactionCountVO.forEach(function (it2) {
               if (it2.sticker === itt.sticker) {
                 it2.count = itt.count;
               }
@@ -56680,6 +56869,7 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
       this._list[messageId].setHasReactionStatus(msgsReactionsStatus.HAS_REACTION);
 
       if (item.userReaction) this._list[messageId].userReaction = item.userReaction;
+      this._list[messageId].isValid = true;
     }
   }, {
     key: "increaseCount",
@@ -56767,6 +56957,15 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
     value: function removeAllMessages() {
       this._list = {};
     }
+  }, {
+    key: "invalidateAllItems",
+    value: function invalidateAllItems() {
+      var _this8 = this;
+
+      Object.keys(this._list).forEach(function (key) {
+        _this8._list[key].isValid = false;
+      });
+    }
   }]);
   return ReactionsSummariesCache;
 }();
@@ -56774,7 +56973,7 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
 var reactionsSummariesCache = new ReactionsSummariesCache();
 exports.reactionsSummariesCache = reactionsSummariesCache;
 
-},{"./index":303,"@babel/runtime/helpers/classCallCheck":4,"@babel/runtime/helpers/createClass":5,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7}],305:[function(require,module,exports){
+},{"./index":303,"@babel/runtime/helpers/classCallCheck":4,"@babel/runtime/helpers/createClass":5,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7}],306:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -56952,7 +57151,7 @@ function ThreadObject(thread) {
   };
 }
 
-},{"./eventEmitter":302,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7}],306:[function(require,module,exports){
+},{"./eventEmitter":302,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7}],307:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -56974,7 +57173,7 @@ function user() {
   return localUser;
 }
 
-},{}],307:[function(require,module,exports){
+},{}],308:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -57327,7 +57526,7 @@ function messenger() {
 var _default = ChatMessaging;
 exports["default"] = _default;
 
-},{"./lib/constants":298,"./lib/errorHandler":299,"./lib/sdkParams":301,"./lib/store":303,"./utility/utility":308,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/typeof":13,"dompurify":138}],308:[function(require,module,exports){
+},{"./lib/constants":298,"./lib/errorHandler":299,"./lib/sdkParams":301,"./lib/store":303,"./utility/utility":309,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/typeof":13,"dompurify":138}],309:[function(require,module,exports){
 (function (global){(function (){
 "use strict";
 

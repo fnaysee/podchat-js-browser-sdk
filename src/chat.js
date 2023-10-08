@@ -34,6 +34,7 @@ import {
     getMyReaction,
     addReaction,
     onReactionSummaries,
+    onReactionList,
     onRemoveReaction,
     onReplaceReaction,
     onAddReaction
@@ -437,6 +438,7 @@ function Chat(params) {
 
                 peerId = asyncClient.getPeerId();
                 store.reactionSummaries.removeAllMessages();
+                store.reactionsList.invalidateCache();
 
                 if (!store.user()) {
                     getUserAndUpdateSDKState();
@@ -2968,9 +2970,7 @@ function Chat(params) {
                  * Type 242    REACTION_LIST
                  */
                 case chatMessageVOTypes.REACTION_LIST:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
-                    }
+                    onReactionList(uniqueId, messageContent);
                     break;
                 /**
                  * Type 243   Get My Reaction
