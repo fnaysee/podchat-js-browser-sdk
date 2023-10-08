@@ -45916,7 +45916,7 @@ FilterXSS.prototype.process = function (html) {
 module.exports = FilterXSS;
 
 },{"./default":275,"./parser":277,"./util":278,"cssfilter":124}],280:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.39","date":"۱۴۰۲/۷/۱۵","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.7-snapshot.39","date":"۱۴۰۲/۷/۱۶","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],281:[function(require,module,exports){
 "use strict";
 
@@ -55811,6 +55811,10 @@ function onReactionSummaries(uniqueId, messageContent) {
 
   _store.store.reactionSummaries.addMany(messageContent);
 
+  msgContent.forEach(function (item) {
+    item.isValid = true;
+  });
+
   _events.chatEvents.fireEvent('messageEvents', {
     type: 'REACTION_SUMMARIES',
     uniqueId: uniqueId,
@@ -56747,12 +56751,14 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
           if (!localItem.userReaction) {
             result.push({
               messageId: msgId,
-              reactionCountVO: localItem.reactionCountVO
+              reactionCountVO: localItem.reactionCountVO,
+              isDataValid: localItem.isValid
             });
           } else {
             result.push({
               messageId: msgId,
               reactionCountVO: localItem.reactionCountVO,
+              isDataValid: localItem.isValid,
               userReaction: localItem.userReaction
             });
           }

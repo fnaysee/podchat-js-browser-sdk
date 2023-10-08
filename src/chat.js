@@ -437,7 +437,7 @@ function Chat(params) {
                 }
 
                 peerId = asyncClient.getPeerId();
-                store.reactionSummaries.removeAllMessages();
+                store.reactionSummaries.invalidateAllItems();
                 store.reactionsList.invalidateCache();
 
                 if (!store.user()) {

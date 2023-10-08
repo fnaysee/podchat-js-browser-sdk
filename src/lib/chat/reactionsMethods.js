@@ -126,36 +126,28 @@ function getReactionsSummaries(params) {
             subjectId: params.threadId,
             uniqueId: Utility.generateUUID()
         },
-        cachedIds = store.reactionSummaries.filterExists(params.messageIds);
+        cachedIdsValid = store.reactionSummaries.getValids(params.messageIds),
+        cachedIdsInValid = store.reactionSummaries.getInValids(params.messageIds),
+        nonExistingIds = store.reactionSummaries.getNotExists(params.messageIds);
 
-    params.messageIds.forEach(item=>{
+    nonExistingIds.forEach(item=>{
         store.reactionSummaries.initItem(item, {});
     });
 
-    const difference = params.messageIds.reduce((result, element) => {
-        if (cachedIds.indexOf(element) === -1) {
-            result.push(element);
-        }
-        return result;
-    }, []);
-
-    if(difference.length) {
-        sendData.content = difference;
+    if(nonExistingIds.length || cachedIdsInValid.length) {
+        sendData.content = [...nonExistingIds, ...cachedIdsInValid];
         let res = messenger().sendMessage(sendData);
-        // reactionSummariesRequest = {
-        //     uniqueId: sendData.uniqueId,
-        //     difference
-        // };
     }
 
-    if(cachedIds && cachedIds.length) {
+    if(cachedIdsInValid.length || cachedIdsValid.length) {
+        let mergedResult = [...cachedIdsValid, ...cachedIdsInValid];
         setTimeout(()=>{
-            let messageContent = store.reactionSummaries.getMany(cachedIds);
-            messageContent = JSON.parse(JSON.stringify(messageContent));
+            let res = store.reactionSummaries.getMany(mergedResult);
+            res = JSON.parse(JSON.stringify(res));
             chatEvents.fireEvent('messageEvents', {
                 type: 'REACTION_SUMMARIES',
                 uniqueId: sendData.uniqueId,
-                result: messageContent
+                result: res
             });
         }, 100);
     }
@@ -166,13 +158,9 @@ function getReactionsSummaries(params) {
 function onReactionSummaries(uniqueId, messageContent) {
     let msgContent = JSON.parse(JSON.stringify(messageContent));
     store.reactionSummaries.addMany(messageContent);
-
-    // reactionSummariesRequest.difference.forEach(item => {
-    //     if(!store.reactionsSummaries.messageExists(item)) {
-    //         store.reactionsSummaries.addItem(item, {})
-    //     }
-    // })
-
+    msgContent.forEach(item => {
+        item.isValid = true
+    });
     chatEvents.fireEvent('messageEvents', {
         type: 'REACTION_SUMMARIES',
         uniqueId: uniqueId,

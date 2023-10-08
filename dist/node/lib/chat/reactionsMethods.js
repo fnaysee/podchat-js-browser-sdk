@@ -195,6 +195,10 @@ function onReactionSummaries(uniqueId, messageContent) {
 
   _store.store.reactionSummaries.addMany(messageContent);
 
+  msgContent.forEach(function (item) {
+    item.isValid = true;
+  });
+
   _events.chatEvents.fireEvent('messageEvents', {
     type: 'REACTION_SUMMARIES',
     uniqueId: uniqueId,

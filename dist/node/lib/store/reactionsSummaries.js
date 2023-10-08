@@ -56,12 +56,14 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
           if (!localItem.userReaction) {
             result.push({
               messageId: msgId,
-              reactionCountVO: localItem.reactionCountVO
+              reactionCountVO: localItem.reactionCountVO,
+              isDataValid: localItem.isValid
             });
           } else {
             result.push({
               messageId: msgId,
               reactionCountVO: localItem.reactionCountVO,
+              isDataValid: localItem.isValid,
               userReaction: localItem.userReaction
             });
           }
@@ -89,15 +91,42 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
       });
     }
   }, {
-    key: "addMany",
-    value: function addMany(data) {
+    key: "getValids",
+    value: function getValids(messageIds) {
       var _this3 = this;
 
+      return messageIds.filter(function (item) {
+        return _this3.messageExists(item) && _this3.getItem(item).isValid;
+      });
+    }
+  }, {
+    key: "getInValids",
+    value: function getInValids(messageIds) {
+      var _this4 = this;
+
+      return messageIds.filter(function (item) {
+        return _this4.messageExists(item) && !_this4.getItem(item).isValid;
+      });
+    }
+  }, {
+    key: "getNotExists",
+    value: function getNotExists(messageIds) {
+      var _this5 = this;
+
+      return messageIds.filter(function (item) {
+        return !_this5.messageExists(item);
+      });
+    }
+  }, {
+    key: "addMany",
+    value: function addMany(data) {
+      var _this6 = this;
+
       data.forEach(function (item) {
-        if (!_this3.messageExists(item.messageId)) {
-          _this3.initItem(item.messageId, item);
+        if (!_this6.messageExists(item.messageId)) {
+          _this6.initItem(item.messageId, item);
         } else {
-          _this3.updateItem(item.messageId, item);
+          _this6.updateItem(item.messageId, item);
         }
       });
     }
@@ -110,6 +139,7 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
       if (!item) {
         this._list[messageId] = _objectSpread(_objectSpread({}, data), {}, {
           hasReactionStatus: msgsReactionsStatus.REQUESTED,
+          isValid: true,
           setHasReactionStatus: function setHasReactionStatus(status) {
             cClass._list[messageId].hasReactionStatus = status;
           },
@@ -127,16 +157,16 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
   }, {
     key: "updateItem",
     value: function updateItem(messageId, item) {
-      var _this4 = this;
+      var _this7 = this;
 
       var localItem = this.getItem(messageId);
 
       if (localItem && localItem.hasAnyReaction && localItem.hasAnyReaction()) {
         item.reactionCountVO && item.reactionCountVO.forEach(function (itt) {
           if (!localItem.hasReaction(itt.sticker)) {
-            _this4._list[messageId].reactionCountVO.push(itt);
+            _this7._list[messageId].reactionCountVO.push(itt);
           } else {
-            _this4._list[messageId].reactionCountVO.forEach(function (it2) {
+            _this7._list[messageId].reactionCountVO.forEach(function (it2) {
               if (it2.sticker === itt.sticker) {
                 it2.count = itt.count;
               }
@@ -150,6 +180,7 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
       this._list[messageId].setHasReactionStatus(msgsReactionsStatus.HAS_REACTION);
 
       if (item.userReaction) this._list[messageId].userReaction = item.userReaction;
+      this._list[messageId].isValid = true;
     }
   }, {
     key: "increaseCount",
@@ -236,6 +267,15 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
     key: "removeAllMessages",
     value: function removeAllMessages() {
       this._list = {};
+    }
+  }, {
+    key: "invalidateAllItems",
+    value: function invalidateAllItems() {
+      var _this8 = this;
+
+      Object.keys(this._list).forEach(function (key) {
+        _this8._list[key].isValid = false;
+      });
     }
   }]);
   return ReactionsSummariesCache;
