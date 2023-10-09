@@ -26,7 +26,7 @@ class ReactionsListCache {
     getItem(messageId, sticker = null, count, offset) {
         if(
             !this.messageExists(messageId)
-            || !this.stickerExists(messageId, sticker)
+            || !this._list[messageId][sticker]
             || !this._list[messageId][sticker][this.genKey(count, offset)]
         )
             return null;
@@ -49,8 +49,10 @@ class ReactionsListCache {
             return this.invalidateMessage(messageId);
         }
 
-        this._list[messageId][sticker].isValid = false;
-        this._list[messageId]['all'].isValid = false;
+        if(this._list[messageId] && this._list[messageId][sticker])
+            this._list[messageId][sticker].isValid = false;
+        if(this._list[messageId] && this._list[messageId]['all'])
+            this._list[messageId]['all'].isValid = false;
     }
 
     invalidateAllMessages() {
@@ -75,9 +77,9 @@ class ReactionsListCache {
 
     stickerExists(messageId, sticker = null) {
         if(!sticker)
-            return this._list[messageId] && this._list[messageId]['all'];
+            return !!this._list[messageId] && !!this._list[messageId]['all'];
         else
-            return this._list[messageId] && this._list[messageId][sticker];
+            return !!this._list[messageId] && !!this._list[messageId][sticker];
     }
 
     save(request, result) {

@@ -45,7 +45,7 @@ var ReactionsListCache = /*#__PURE__*/function () {
       var sticker = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
       var count = arguments.length > 2 ? arguments[2] : undefined;
       var offset = arguments.length > 3 ? arguments[3] : undefined;
-      if (!this.messageExists(messageId) || !this.stickerExists(messageId, sticker) || !this._list[messageId][sticker][this.genKey(count, offset)]) return null;
+      if (!this.messageExists(messageId) || !this._list[messageId][sticker] || !this._list[messageId][sticker][this.genKey(count, offset)]) return null;
       return {
         messageId: messageId,
         sticker: sticker,
@@ -64,8 +64,8 @@ var ReactionsListCache = /*#__PURE__*/function () {
         return this.invalidateMessage(messageId);
       }
 
-      this._list[messageId][sticker].isValid = false;
-      this._list[messageId]['all'].isValid = false;
+      if (this._list[messageId] && this._list[messageId][sticker]) this._list[messageId][sticker].isValid = false;
+      if (this._list[messageId] && this._list[messageId]['all']) this._list[messageId]['all'].isValid = false;
     }
   }, {
     key: "invalidateAllMessages",
@@ -98,7 +98,7 @@ var ReactionsListCache = /*#__PURE__*/function () {
     key: "stickerExists",
     value: function stickerExists(messageId) {
       var sticker = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-      if (!sticker) return this._list[messageId] && this._list[messageId]['all'];else return this._list[messageId] && this._list[messageId][sticker];
+      if (!sticker) return !!this._list[messageId] && !!this._list[messageId]['all'];else return !!this._list[messageId] && !!this._list[messageId][sticker];
     }
   }, {
     key: "save",
