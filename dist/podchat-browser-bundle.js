@@ -45912,7 +45912,7 @@ FilterXSS.prototype.process = function (html) {
 module.exports = FilterXSS;
 
 },{"./default":275,"./parser":277,"./util":278,"cssfilter":124}],280:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.40","date":"۱۴۰۲/۷/۱۷","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.7-snapshot.40","date":"۱۴۰۲/۷/۱۸","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],281:[function(require,module,exports){
 "use strict";
 
@@ -48838,14 +48838,14 @@ if(_sdkParams.sdkParams.grantDeviceIdFromSSO){var getDeviceIdWithTokenTime=new D
          *
          * @return {undefined}
          * @return {undefined}
-         */initAsync=function initAsync(){var asyncGetReadyTime=new Date().getTime();asyncClient=new _podasyncWsOnly["default"]({protocol:protocolManager.getCurrentProtocol(),queueHost:queueHost,queuePort:queuePort,queueUsername:queueUsername,queuePassword:queuePassword,queueReceive:queueReceive,queueSend:queueSend,queueConnectionTimeout:queueConnectionTimeout,socketAddress:_sdkParams.sdkParams.socketAddress,serverName:_sdkParams.sdkParams.serverName,deviceId:_sdkParams.sdkParams.deviceId,wsConnectionWaitTime:_sdkParams.sdkParams.wsConnectionWaitTime,connectionRetryInterval:_sdkParams.sdkParams.connectionRetryInterval,connectionCheckTimeout:_sdkParams.sdkParams.connectionCheckTimeout,connectionCheckTimeoutThreshold:_sdkParams.sdkParams.connectionCheckTimeoutThreshold,messageTtl:_sdkParams.sdkParams.messageTtl,reconnectOnClose:_sdkParams.sdkParams.reconnectOnClose,asyncLogging:_sdkParams.sdkParams.asyncLogging,logLevel:_sdkParams.sdkParams.consoleLogging?3:1,webrtcConfig:_sdkParams.sdkParams.webrtcConfig,retryStepTimerTime:protocolManager.getRetryStepTimerTime(),onStartWithRetryStepGreaterThanZero:onStateChange,msgLogCallback:msgLogCallback||null,asyncLogCallback:asyncLogCallback||null,onDeviceId:onDeviceId});function onDeviceId(deviceId){if(!_sdkParams.sdkParams.deviceId){_sdkParams.sdkParams.deviceId=deviceId;}asyncClient.registerDevice(_sdkParams.sdkParams.deviceId);}callModule.asyncInitialized(asyncClient);(0,_messaging.messenger)().asyncInitialized(asyncClient);asyncClient.on('asyncReady',function(){if(_sdkParams.sdkParams.actualTimingLog){_utility["default"].chatStepLogger('Async Connection ',new Date().getTime()-asyncGetReadyTime);}peerId=asyncClient.getPeerId();_store.store.reactionSummaries.invalidateAllItems();_store.store.reactionsList.invalidateCache();if(!_store.store.user()){getUserAndUpdateSDKState();}else if(_store.store.user().id>0){(0,_messaging.messenger)().chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();}_sdkParams.sdkParams.deliveryInterval&&clearInterval(_sdkParams.sdkParams.deliveryInterval);_sdkParams.sdkParams.deliveryInterval=setInterval(function(){if(Object.keys(_sdkParams.sdkParams.messagesDelivery).length){messagesDeliveryQueueHandler();}},_sdkParams.sdkParams.deliveryIntervalPitch);_sdkParams.sdkParams.seenInterval&&clearInterval(_sdkParams.sdkParams.seenInterval);_sdkParams.sdkParams.seenInterval=setInterval(function(){if(Object.keys(_sdkParams.sdkParams.messagesSeen).length){messagesSeenQueueHandler();}},_sdkParams.sdkParams.seenIntervalPitch);//shouldReconnectCall();
+         */initAsync=function initAsync(){var asyncGetReadyTime=new Date().getTime();asyncClient=new _podasyncWsOnly["default"]({protocol:protocolManager.getCurrentProtocol(),queueHost:queueHost,queuePort:queuePort,queueUsername:queueUsername,queuePassword:queuePassword,queueReceive:queueReceive,queueSend:queueSend,queueConnectionTimeout:queueConnectionTimeout,socketAddress:_sdkParams.sdkParams.socketAddress,serverName:_sdkParams.sdkParams.serverName,deviceId:_sdkParams.sdkParams.deviceId,wsConnectionWaitTime:_sdkParams.sdkParams.wsConnectionWaitTime,connectionRetryInterval:_sdkParams.sdkParams.connectionRetryInterval,connectionCheckTimeout:_sdkParams.sdkParams.connectionCheckTimeout,connectionCheckTimeoutThreshold:_sdkParams.sdkParams.connectionCheckTimeoutThreshold,messageTtl:_sdkParams.sdkParams.messageTtl,reconnectOnClose:_sdkParams.sdkParams.reconnectOnClose,asyncLogging:_sdkParams.sdkParams.asyncLogging,logLevel:_sdkParams.sdkParams.consoleLogging?3:1,webrtcConfig:_sdkParams.sdkParams.webrtcConfig,retryStepTimerTime:protocolManager.getRetryStepTimerTime(),onStartWithRetryStepGreaterThanZero:onStateChange,msgLogCallback:msgLogCallback||null,asyncLogCallback:asyncLogCallback||null,onDeviceId:onDeviceId});function onDeviceId(deviceId){if(!_sdkParams.sdkParams.deviceId){_sdkParams.sdkParams.deviceId=deviceId;}asyncClient.registerDevice(_sdkParams.sdkParams.deviceId);}callModule.asyncInitialized(asyncClient);(0,_messaging.messenger)().asyncInitialized(asyncClient);asyncClient.on('asyncReady',function(){if(_sdkParams.sdkParams.actualTimingLog){_utility["default"].chatStepLogger('Async Connection ',new Date().getTime()-asyncGetReadyTime);}peerId=asyncClient.getPeerId();if(!_store.store.user()){getUserAndUpdateSDKState();}else if(_store.store.user().id>0){(0,_messaging.messenger)().chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();}_sdkParams.sdkParams.deliveryInterval&&clearInterval(_sdkParams.sdkParams.deliveryInterval);_sdkParams.sdkParams.deliveryInterval=setInterval(function(){if(Object.keys(_sdkParams.sdkParams.messagesDelivery).length){messagesDeliveryQueueHandler();}},_sdkParams.sdkParams.deliveryIntervalPitch);_sdkParams.sdkParams.seenInterval&&clearInterval(_sdkParams.sdkParams.seenInterval);_sdkParams.sdkParams.seenInterval=setInterval(function(){if(Object.keys(_sdkParams.sdkParams.messagesSeen).length){messagesSeenQueueHandler();}},_sdkParams.sdkParams.seenIntervalPitch);//shouldReconnectCall();
 });asyncClient.on('stateChange',onStateChange);function onStateChange(state){_events.chatEvents.fireEvent('chatState',state);chatFullStateObject=state;switch(state.socketState){case 1:// CONNECTED
 protocolManager.resetRetries();protocolManager.resetTimerTime();if(state.deviceRegister&&state.serverRegister){// messenger().chatState = true;
 // messenger().ping();
 (0,_messaging.messenger)().startChatPing();}break;case 0:// CONNECTING
 (0,_messaging.messenger)().chatState=false;(0,_messaging.messenger)().stopChatPing();break;case 2:// CLOSING
 (0,_messaging.messenger)().chatState=false;(0,_messaging.messenger)().stopChatPing();break;case 3:// CLOSED
-(0,_messaging.messenger)().chatState=false;(0,_messaging.messenger)().stopChatPing();// TODO: Check if this is OK or not?!
+_store.store.reactionsList.invalidateCache();_store.store.reactionSummaries.invalidateAllItems();(0,_messaging.messenger)().chatState=false;(0,_messaging.messenger)().stopChatPing();// TODO: Check if this is OK or not?!
 //messenger().sendPingTimeout && clearTimeout(messenger().sendPingTimeout);
 break;}}asyncClient.on('connect',function(newPeerId){asyncGetReadyTime=new Date().getTime();peerId=newPeerId;_events.chatEvents.fireEvent('connect');(0,_messaging.messenger)().ping();});asyncClient.on('disconnect',function(event){oldPeerId=peerId;peerId=undefined;_events.chatEvents.fireEvent('disconnect',event);// chatEvents.fireEvent('callEvents', {
 //     type: 'CALL_ERROR',
@@ -55740,7 +55740,8 @@ function getReactionList(_ref) {
     token: _sdkParams.sdkParams.token,
     uniqueId: uniqueId
   };
-  reactionsListRequestsParams[uniqueId] = sendData.content;
+  if (!sendData.uniqueId) sendData.uniqueId = _utility["default"].generateUUID();
+  reactionsListRequestsParams[sendData.uniqueId] = sendData.content;
 
   var cachedResult = _store.store.reactionsList.getItem(messageId, sticker, count, offset);
 
@@ -55749,7 +55750,7 @@ function getReactionList(_ref) {
 
     _events.chatEvents.fireEvent('messageEvents', {
       type: 'REACTIONS_LIST',
-      uniqueId: uniqueId,
+      uniqueId: sendData.uniqueId,
       messageId: messageId,
       result: cachedResult
     });
@@ -56576,6 +56577,7 @@ var ReactionsListCache = /*#__PURE__*/function () {
       var sticker = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
       var count = arguments.length > 2 ? arguments[2] : undefined;
       var offset = arguments.length > 3 ? arguments[3] : undefined;
+      if (!sticker) sticker = 'all';
       if (!this.messageExists(messageId) || !this._list[messageId][sticker] || !this._list[messageId][sticker][this.genKey(count, offset)]) return null;
       return {
         messageId: messageId,
@@ -56614,7 +56616,7 @@ var ReactionsListCache = /*#__PURE__*/function () {
 
       if (item && (0, _typeof2["default"])(item) === 'object') {
         Object.keys(item).forEach(function (objKey) {
-          if (objKey && item[objKey] && (0, _typeof2["default"])(item[objKey]) === objKey) {
+          if (objKey && item[objKey] && (0, _typeof2["default"])(item[objKey]) === "object") {
             item[objKey].isValid = false;
           }
         });

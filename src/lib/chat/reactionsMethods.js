@@ -91,7 +91,6 @@ function getReactionList(
         subjectId: threadId,
         typeCode: sdkParams.generalTypeCode, //params.typeCode,
         content: {
-            sticker: sticker,
             messageId: messageId,
             count: count,
             offset: offset
@@ -100,14 +99,21 @@ function getReactionList(
         uniqueId
     };
 
-    reactionsListRequestsParams[uniqueId] = sendData.content;
+    if(sticker && sticker != 'null') {
+        sendData.content.sticker = sticker;
+    }
+
+    if(!sendData.uniqueId)
+        sendData.uniqueId = Utility.generateUUID();
+
+    reactionsListRequestsParams[sendData.uniqueId] = sendData.content;
 
     let cachedResult = store.reactionsList.getItem(messageId, sticker, count, offset);
     if(cachedResult) {
         cachedResult = JSON.parse(JSON.stringify(cachedResult));
         chatEvents.fireEvent('messageEvents', {
             type: 'REACTIONS_LIST',
-            uniqueId: uniqueId,
+            uniqueId: sendData.uniqueId,
             messageId: messageId,
             result: cachedResult
         });
@@ -175,6 +181,7 @@ function onReactionList(uniqueId, messageContent) {
 
     const rq = reactionsListRequestsParams[uniqueId];
     store.reactionsList.save(reactionsListRequestsParams[uniqueId], messageContent);
+
 
     let cachedResult = store.reactionsList.getItem(rq.messageId, rq.sticker, rq.count, rq.offset);
     if(cachedResult) {

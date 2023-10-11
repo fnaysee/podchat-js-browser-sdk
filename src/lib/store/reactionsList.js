@@ -24,6 +24,9 @@ class ReactionsListCache {
     }
 
     getItem(messageId, sticker = null, count, offset) {
+        if(!sticker)
+            sticker = 'all';
+
         if(
             !this.messageExists(messageId)
             || !this._list[messageId][sticker]
@@ -65,7 +68,7 @@ class ReactionsListCache {
         let item = this._list[messageId];
         if(item && typeof item === 'object') {
             Object.keys(item).forEach(objKey=> {
-                if(objKey && item[objKey] && typeof item[objKey] === objKey) {
+                if(objKey && item[objKey] && typeof item[objKey] === "object") {
                     item[objKey].isValid = false;
                 }
             })

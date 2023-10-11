@@ -128,7 +128,8 @@ function getReactionList(_ref) {
     token: _sdkParams.sdkParams.token,
     uniqueId: uniqueId
   };
-  reactionsListRequestsParams[uniqueId] = sendData.content;
+  if (!sendData.uniqueId) sendData.uniqueId = _utility["default"].generateUUID();
+  reactionsListRequestsParams[sendData.uniqueId] = sendData.content;
 
   var cachedResult = _store.store.reactionsList.getItem(messageId, sticker, count, offset);
 
@@ -137,7 +138,7 @@ function getReactionList(_ref) {
 
     _events.chatEvents.fireEvent('messageEvents', {
       type: 'REACTIONS_LIST',
-      uniqueId: uniqueId,
+      uniqueId: sendData.uniqueId,
       messageId: messageId,
       result: cachedResult
     });

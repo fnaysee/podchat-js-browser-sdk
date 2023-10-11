@@ -45,6 +45,7 @@ var ReactionsListCache = /*#__PURE__*/function () {
       var sticker = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
       var count = arguments.length > 2 ? arguments[2] : undefined;
       var offset = arguments.length > 3 ? arguments[3] : undefined;
+      if (!sticker) sticker = 'all';
       if (!this.messageExists(messageId) || !this._list[messageId][sticker] || !this._list[messageId][sticker][this.genKey(count, offset)]) return null;
       return {
         messageId: messageId,
@@ -83,7 +84,7 @@ var ReactionsListCache = /*#__PURE__*/function () {
 
       if (item && (0, _typeof2["default"])(item) === 'object') {
         Object.keys(item).forEach(function (objKey) {
-          if (objKey && item[objKey] && (0, _typeof2["default"])(item[objKey]) === objKey) {
+          if (objKey && item[objKey] && (0, _typeof2["default"])(item[objKey]) === "object") {
             item[objKey].isValid = false;
           }
         });
