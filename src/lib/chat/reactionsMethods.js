@@ -5,6 +5,8 @@ import {store} from "../store";
 import Utility from "../../utility/utility";
 import {chatEvents} from "../../events.module";
 
+const reactionSummariesRequests = {};
+
 function addReaction(params, callback) {
     let sendData = {
         chatMessageVOType: chatMessageVOTypes.ADD_REACTION,
@@ -93,13 +95,16 @@ function getReactionList(params, callback) {
         subjectId: params.threadId,
         typeCode: sdkParams.generalTypeCode, //params.typeCode,
         content: {
-            sticker: params.sticker,
             messageId: params.messageId,
             count: count,
             offset: offset
         },
         token: sdkParams.token
     };
+
+    if(params.sticker && params.sticker != 'null') {
+        sendData.content.sticker = params.sticker;
+    }
 
     return messenger().sendMessage(sendData, {
         onResult: function (result) {
@@ -114,13 +119,11 @@ function getReactionsSummaries(params) {
             typeCode: sdkParams.generalTypeCode, //params.typeCode,
             token: sdkParams.token,
             subjectId: params.threadId,
-            uniqueId: Utility.generateUUID()
+            uniqueId: (params.uniqueId ? params.uniqueId : Utility.generateUUID())
         },
         cachedIds = store.reactionSummaries.filterExists(params.messageIds);
 
-    params.messageIds.forEach(item=>{
-        store.reactionSummaries.initItem(item, {});
-    });
+    reactionSummariesRequests[sendData.uniqueId] = params.messageIds;
 
     const difference = params.messageIds.reduce((result, element) => {
         if (cachedIds.indexOf(element) === -1) {
@@ -157,11 +160,14 @@ function onReactionSummaries(uniqueId, messageContent) {
     let msgContent = JSON.parse(JSON.stringify(messageContent));
     store.reactionSummaries.addMany(messageContent);
 
-    // reactionSummariesRequest.difference.forEach(item => {
-    //     if(!store.reactionsSummaries.messageExists(item)) {
-    //         store.reactionsSummaries.addItem(item, {})
-    //     }
-    // })
+    if(reactionSummariesRequests[uniqueId] && reactionSummariesRequests[uniqueId].length) {
+        reactionSummariesRequests[uniqueId].forEach(item => {
+            store.reactionSummaries.initItem(item, {});
+        });
+    }
+    // params.messageIds.forEach(item=>{
+    //     store.reactionSummaries.initItem(item, {});
+    // });
 
     chatEvents.fireEvent('messageEvents', {
         type: 'REACTION_SUMMARIES',

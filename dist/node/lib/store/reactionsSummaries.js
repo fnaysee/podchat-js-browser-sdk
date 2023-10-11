@@ -52,7 +52,7 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
       messageIds.forEach(function (msgId) {
         var localItem = _this.getItem(msgId);
 
-        if (localItem && localItem.hasAnyReaction && localItem.hasAnyReaction()) {
+        if (_this.hasAnyReaction(localItem)) {
           if (!localItem.userReaction) {
             result.push({
               messageId: msgId,
@@ -109,13 +109,6 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
 
       if (!item) {
         this._list[messageId] = _objectSpread(_objectSpread({}, data), {}, {
-          hasReactionStatus: msgsReactionsStatus.REQUESTED,
-          setHasReactionStatus: function setHasReactionStatus(status) {
-            cClass._list[messageId].hasReactionStatus = status;
-          },
-          hasAnyReaction: function hasAnyReaction() {
-            return cClass._list[messageId].hasReactionStatus === msgsReactionsStatus.HAS_REACTION;
-          },
           hasReaction: function hasReaction(sticker) {
             return !!cClass._list[messageId].reactionCountVO.find(function (item) {
               return item.sticker === sticker;
@@ -131,7 +124,7 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
 
       var localItem = this.getItem(messageId);
 
-      if (localItem && localItem.hasAnyReaction && localItem.hasAnyReaction()) {
+      if (this.hasAnyReaction(localItem)) {
         item.reactionCountVO && item.reactionCountVO.forEach(function (itt) {
           if (!localItem.hasReaction(itt.sticker)) {
             _this4._list[messageId].reactionCountVO.push(itt);
@@ -177,7 +170,10 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
             sticker: reaction,
             count: 1
           });
-        }
+        } // if(item.reactionCountVO && item.reactionCountVO.length) {
+        //     item.hasReactionStatus = msgsReactionsStatus.HAS_REACTION
+        // }
+
       }
     }
   }, {
@@ -199,10 +195,20 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
           message.reactionCountVO = message.reactionCountVO.filter(function (item) {
             return item !== undefined;
           });
-        } // if(!message.reactionCountVO.length)
-        //     delete this._list[messageId]
+        } // if(!message.reactionCountVO || !message.reactionCountVO.length) {
+        //     message.hasReactionStatus = msgsReactionsStatus.IS_EMPTY
+        // }
 
       }
+    }
+  }, {
+    key: "hasAnyReaction",
+    value: function hasAnyReaction(message) {
+      if (!message || !message.reactionCountVO || !message.reactionCountVO.length) {
+        return false;
+      }
+
+      return true;
     }
   }, {
     key: "maybeUpdateMyReaction",

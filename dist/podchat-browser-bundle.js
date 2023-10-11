@@ -31172,6 +31172,7 @@ module.exports = EVP_BytesToKey
 // https://tools.ietf.org/html/rfc1951
 // You may also wish to take a look at the guide I made about this program:
 // https://gist.github.com/101arrowz/253f31eb5abc3d9275ab943003ffecad
+Object.defineProperty(exports, "__esModule", { value: true });
 // Some of the following code is similar to that of UZIP.js:
 // https://github.com/photopea/UZIP.js
 // However, the vast majority of the codebase has diverged from UZIP.js to increase performance and reduce bundle size.
@@ -31313,9 +31314,7 @@ var slc = function (v, s, e) {
     if (e == null || e > v.length)
         e = v.length;
     // can't use .constructor in case user-supplied
-    var n = new u8(e - s);
-    n.set(v.subarray(s, e));
-    return n;
+    return new u8(v.subarray(s, e));
 };
 /**
  * Codes for errors generated within this library
@@ -31371,12 +31370,13 @@ var inflt = function (dat, st, buf, dict) {
     var sl = dat.length, dl = dict ? dict.length : 0;
     if (!sl || st.f && !st.l)
         return buf || new u8(0);
+    var noBuf = !buf;
     // have to estimate size
-    var noBuf = !buf || st.i != 2;
+    var resize = noBuf || st.i != 2;
     // no state
     var noSt = st.i;
     // Assumes roughly 33% compression ratio average
-    if (!buf)
+    if (noBuf)
         buf = new u8(sl * 3);
     // ensure buffer can fit at least l elements
     var cbuf = function (l) {
@@ -31409,7 +31409,7 @@ var inflt = function (dat, st, buf, dict) {
                     break;
                 }
                 // ensure size
-                if (noBuf)
+                if (resize)
                     cbuf(bt + l);
                 // Copy over uncompressed data
                 buf.set(dat.subarray(s, t), bt);
@@ -31479,7 +31479,7 @@ var inflt = function (dat, st, buf, dict) {
         }
         // Make sure the buffer can hold this + the largest possible addition
         // Maximum chunk size (practically, theoretically infinite) is 2^17
-        if (noBuf)
+        if (resize)
             cbuf(bt + 131072);
         var lms = (1 << lbt) - 1, dms = (1 << dbt) - 1;
         var lpos = pos;
@@ -31524,7 +31524,7 @@ var inflt = function (dat, st, buf, dict) {
                         err(0);
                     break;
                 }
-                if (noBuf)
+                if (resize)
                     cbuf(bt + 131072);
                 var end = bt + add;
                 if (bt < dt) {
@@ -31534,20 +31534,16 @@ var inflt = function (dat, st, buf, dict) {
                     for (; bt < dend; ++bt)
                         buf[bt] = dict[shift + bt];
                 }
-                for (; bt < end; bt += 4) {
+                for (; bt < end; ++bt)
                     buf[bt] = buf[bt - dt];
-                    buf[bt + 1] = buf[bt + 1 - dt];
-                    buf[bt + 2] = buf[bt + 2 - dt];
-                    buf[bt + 3] = buf[bt + 3 - dt];
-                }
-                bt = end;
             }
         }
         st.l = lm, st.p = lpos, st.b = bt, st.f = final;
         if (lm)
             final = 1, st.m = lbt, st.d = dm, st.n = dbt;
     } while (!final);
-    return bt == buf.length ? buf : slc(buf, 0, bt);
+    // don't reallocate for streams or user buffers
+    return bt != buf.length && noBuf ? slc(buf, 0, bt) : buf.subarray(0, bt);
 };
 // starting at p, write the minimum number of bits that can hold v to d
 var wbits = function (d, p, v) {
@@ -32032,7 +32028,7 @@ var wrkr = function (fns, init, id, cb) {
         ch[id] = { c: wcln(fns[m], fnStr, td_1), e: td_1 };
     }
     var td = mrg({}, ch[id].e);
-    return node_worker_1["default"](ch[id].c + ';onmessage=function(e){for(var k in e.data)self[k]=e.data[k];onmessage=' + init.toString() + '}', id, td, cbfs(td), cb);
+    return (0, node_worker_1.default)(ch[id].c + ';onmessage=function(e){for(var k in e.data)self[k]=e.data[k];onmessage=' + init.toString() + '}', id, td, cbfs(td), cb);
 };
 // base async inflate fn
 var bInflt = function () { return [u8, u16, i32, fleb, fdeb, clim, fl, fd, flrm, fdrm, rev, ec, hMap, max, bits, bits16, shft, slc, err, inflt, inflateSync, pbf, gopt]; };
@@ -33783,8 +33779,9 @@ exports.unzipSync = unzipSync;
 
 },{"./node-worker.cjs":159}],159:[function(require,module,exports){
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var ch2 = {};
-exports["default"] = (function (c, id, msg, transfer, cb) {
+exports.default = (function (c, id, msg, transfer, cb) {
     var w = new Worker(ch2[id] || (ch2[id] = URL.createObjectURL(new Blob([
         c + ';addEventListener("error",function(e){e=e.error;postMessage({$e$:[e.message,e.code,e.stack]})})'
     ], { type: 'text/javascript' }))));
@@ -39196,7 +39193,6 @@ function WebRTCClass(_ref) {
           config.timeoutIds.second = setTimeout(function () {
             ping();
             config.timeoutIds.third = setTimeout(function () {
-              console.log("[Async][webrtc] Closing because of ping timeout.");
               defaultConfig.logLevel.debug && console.debug("[Async][Webrtc.js] Force closing connection.");
               asyncLogCallback && asyncLogCallback("webrtc", "setPingTimeout", "closing");
               publicized.close();
@@ -39359,7 +39355,6 @@ function WebRTCClass(_ref) {
   var dataChannelCallbacks = {
     onopen: function onopen(event) {
       asyncLogCallback && asyncLogCallback("webrtc", "dataChannel.onopen", event);
-      console.log("[Async][webrtc] dataChannel open");
       variables.isDataChannelOpened = true;
       variables.pingController.resetPingLoop();
       onOpen(variables.deviceId);
@@ -39379,7 +39374,6 @@ function WebRTCClass(_ref) {
     },
     onerror: function onerror(error) {
       asyncLogCallback && asyncLogCallback("webrtc", "dataChannel.onerror", error);
-      console.log("[Async][webrtc] dataChannel.onerror happened. EventData:", error);
       defaultConfig.logLevel.debug && console.debug("[Async][webrtc] dataChannel.onerror happened. EventData:", error);
       onError();
       publicized.close();
@@ -39398,8 +39392,8 @@ function WebRTCClass(_ref) {
       return new Promise(promiseHandler);
       function promiseHandler(resolve, reject) {
         if (variables.isDestroyed) return;
-        var registerEndPoint = getApiUrl() + defaultConfig.registerEndpoint;
-        var controller = new AbortController();
+        var registerEndPoint = getApiUrl() + defaultConfig.registerEndpoint,
+          controller = new AbortController();
         var timeoutId = setTimeout(function () {
           return controller.abort();
         }, 2500);
@@ -39749,7 +39743,9 @@ function Utility() {
       pushSendDataQueue = params.pushSendDataQueue,
       workerId = params.workerId,
       protocol = params.protocol || "websocket",
-      BgColor;
+      BgColor,
+      FgColor,
+      ColorCSS;
     switch (type) {
       case "Send":
         BgColor = 44;
@@ -45916,7 +45912,7 @@ FilterXSS.prototype.process = function (html) {
 module.exports = FilterXSS;
 
 },{"./default":275,"./parser":277,"./util":278,"cssfilter":124}],280:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.38","date":"۱۴۰۲/۷/۹","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.7-snapshot.40","date":"۱۴۰۲/۷/۱۹","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],281:[function(require,module,exports){
 "use strict";
 
@@ -55644,6 +55640,8 @@ var _utility = _interopRequireDefault(require("../../utility/utility"));
 
 var _events = require("../../events.module");
 
+var reactionSummariesRequests = {};
+
 function addReaction(params, callback) {
   var sendData = {
     chatMessageVOType: _constants.chatMessageVOTypes.ADD_REACTION,
@@ -55742,13 +55740,17 @@ function getReactionList(params, callback) {
     typeCode: _sdkParams.sdkParams.generalTypeCode,
     //params.typeCode,
     content: {
-      sticker: params.sticker,
       messageId: params.messageId,
       count: count,
       offset: offset
     },
     token: _sdkParams.sdkParams.token
   };
+
+  if (params.sticker && params.sticker != 'null') {
+    sendData.content.sticker = params.sticker;
+  }
+
   return (0, _messaging.messenger)().sendMessage(sendData, {
     onResult: function onResult(result) {
       callback && callback(result);
@@ -55765,13 +55767,11 @@ function getReactionsSummaries(params) {
     //params.typeCode,
     token: _sdkParams.sdkParams.token,
     subjectId: params.threadId,
-    uniqueId: _utility["default"].generateUUID()
+    uniqueId: params.uniqueId ? params.uniqueId : _utility["default"].generateUUID()
   },
       cachedIds = _store.store.reactionSummaries.filterExists(params.messageIds);
 
-  params.messageIds.forEach(function (item) {
-    _store.store.reactionSummaries.initItem(item, {});
-  });
+  reactionSummariesRequests[sendData.uniqueId] = params.messageIds;
   var difference = params.messageIds.reduce(function (result, element) {
     if (cachedIds.indexOf(element) === -1) {
       result.push(element);
@@ -55810,11 +55810,15 @@ function getReactionsSummaries(params) {
 function onReactionSummaries(uniqueId, messageContent) {
   var msgContent = JSON.parse(JSON.stringify(messageContent));
 
-  _store.store.reactionSummaries.addMany(messageContent); // reactionSummariesRequest.difference.forEach(item => {
-  //     if(!store.reactionsSummaries.messageExists(item)) {
-  //         store.reactionsSummaries.addItem(item, {})
-  //     }
-  // })
+  _store.store.reactionSummaries.addMany(messageContent);
+
+  if (reactionSummariesRequests[uniqueId] && reactionSummariesRequests[uniqueId].length) {
+    reactionSummariesRequests[uniqueId].forEach(function (item) {
+      _store.store.reactionSummaries.initItem(item, {});
+    });
+  } // params.messageIds.forEach(item=>{
+  //     store.reactionSummaries.initItem(item, {});
+  // });
 
 
   _events.chatEvents.fireEvent('messageEvents', {
@@ -56582,7 +56586,7 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
       messageIds.forEach(function (msgId) {
         var localItem = _this.getItem(msgId);
 
-        if (localItem && localItem.hasAnyReaction && localItem.hasAnyReaction()) {
+        if (_this.hasAnyReaction(localItem)) {
           if (!localItem.userReaction) {
             result.push({
               messageId: msgId,
@@ -56639,13 +56643,6 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
 
       if (!item) {
         this._list[messageId] = _objectSpread(_objectSpread({}, data), {}, {
-          hasReactionStatus: msgsReactionsStatus.REQUESTED,
-          setHasReactionStatus: function setHasReactionStatus(status) {
-            cClass._list[messageId].hasReactionStatus = status;
-          },
-          hasAnyReaction: function hasAnyReaction() {
-            return cClass._list[messageId].hasReactionStatus === msgsReactionsStatus.HAS_REACTION;
-          },
           hasReaction: function hasReaction(sticker) {
             return !!cClass._list[messageId].reactionCountVO.find(function (item) {
               return item.sticker === sticker;
@@ -56661,7 +56658,7 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
 
       var localItem = this.getItem(messageId);
 
-      if (localItem && localItem.hasAnyReaction && localItem.hasAnyReaction()) {
+      if (this.hasAnyReaction(localItem)) {
         item.reactionCountVO && item.reactionCountVO.forEach(function (itt) {
           if (!localItem.hasReaction(itt.sticker)) {
             _this4._list[messageId].reactionCountVO.push(itt);
@@ -56707,7 +56704,10 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
             sticker: reaction,
             count: 1
           });
-        }
+        } // if(item.reactionCountVO && item.reactionCountVO.length) {
+        //     item.hasReactionStatus = msgsReactionsStatus.HAS_REACTION
+        // }
+
       }
     }
   }, {
@@ -56729,10 +56729,20 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
           message.reactionCountVO = message.reactionCountVO.filter(function (item) {
             return item !== undefined;
           });
-        } // if(!message.reactionCountVO.length)
-        //     delete this._list[messageId]
+        } // if(!message.reactionCountVO || !message.reactionCountVO.length) {
+        //     message.hasReactionStatus = msgsReactionsStatus.IS_EMPTY
+        // }
 
       }
+    }
+  }, {
+    key: "hasAnyReaction",
+    value: function hasAnyReaction(message) {
+      if (!message || !message.reactionCountVO || !message.reactionCountVO.length) {
+        return false;
+      }
+
+      return true;
     }
   }, {
     key: "maybeUpdateMyReaction",
