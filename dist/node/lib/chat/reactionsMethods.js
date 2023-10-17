@@ -120,7 +120,6 @@ function getReactionList(_ref) {
     typeCode: _sdkParams.sdkParams.generalTypeCode,
     //params.typeCode,
     content: {
-      sticker: sticker,
       messageId: messageId,
       count: count,
       offset: offset
@@ -128,6 +127,11 @@ function getReactionList(_ref) {
     token: _sdkParams.sdkParams.token,
     uniqueId: uniqueId
   };
+
+  if (sticker && sticker != 'null') {
+    sendData.content.sticker = sticker;
+  }
+
   if (!sendData.uniqueId) sendData.uniqueId = _utility["default"].generateUUID();
   reactionsListRequestsParams[sendData.uniqueId] = sendData.content;
 
