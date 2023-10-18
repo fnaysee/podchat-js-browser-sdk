@@ -102,12 +102,11 @@ var ReactionsListCache = /*#__PURE__*/function () {
 
       if (!this.messageExists(request.messageId)) {
         this._list[request.messageId] = {};
-      } // if(!this.stickerExists(request.messageId, sticker)) {
-      //     this._list[request.messageId][sticker] = {
-      //         isValid: true
-      //     };
-      // }
+      }
 
+      if (!this.stickerExists(request.messageId, sticker)) {
+        this._list[request.messageId][sticker] = {};
+      }
 
       this._list[request.messageId][sticker][this.genKey(request.count, request.offset)] = result;
     }

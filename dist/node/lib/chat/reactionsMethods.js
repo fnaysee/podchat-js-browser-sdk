@@ -29,6 +29,9 @@ var _utility = _interopRequireDefault(require("../../utility/utility"));
 
 var _events = require("../../events.module");
 
+var reactionsListRequestsParams = {};
+var reactionSummariesRequests = {};
+
 function addReaction(params, callback) {
   var sendData = {
     chatMessageVOType: _constants.chatMessageVOTypes.ADD_REACTION,
@@ -98,8 +101,6 @@ function removeReaction(params, callback) {
     }
   });
 }
-
-var reactionsListRequestsParams = {};
 
 function getReactionList(_ref) {
   var threadId = _ref.threadId,
