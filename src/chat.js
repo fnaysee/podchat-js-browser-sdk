@@ -437,6 +437,7 @@ function Chat(params) {
                 }
 
                 peerId = asyncClient.getPeerId();
+                // store.reactionSummaries.removeAllMessages();
 
                 if (!store.user()) {
                     getUserAndUpdateSDKState();
@@ -489,8 +490,9 @@ function Chat(params) {
                         messenger().stopChatPing();
                         break;
                     case 3: // CLOSED
-                        store.reactionsList.invalidateCache();
-                        store.reactionSummaries.invalidateAllItems();
+                        store.reactionSummaries.removeAllMessages();
+                        store.reactionsList.removeAllMessages();
+                        // store.reactionsList.invalidateCache();
                         messenger().chatState = false;
                         messenger().stopChatPing();
                         // TODO: Check if this is OK or not?!

@@ -27,20 +27,13 @@ class ReactionsSummariesCache {
         let result = [];
         messageIds.forEach(msgId => {
             let localItem = this.getItem(msgId);
-            if(localItem && localItem.hasAnyReaction && localItem.hasAnyReaction()) {
+
+            if(this.hasAnyReaction(localItem)){
                 if(!localItem.userReaction) {
-                    result.push({
-                            messageId: msgId,
-                            reactionCountVO: localItem.reactionCountVO,
-                            isDataValid: localItem.isValid
-                        })
+                    result.push({messageId: msgId, reactionCountVO: localItem.reactionCountVO})
                 } else {
-                    result.push({
-                        messageId: msgId,
-                        reactionCountVO: localItem.reactionCountVO,
-                        isDataValid: localItem.isValid,
-                        userReaction: localItem.userReaction
-                    })
+                    result.push({messageId: msgId, reactionCountVO: localItem.reactionCountVO, userReaction: localItem.userReaction})
+
                 }
             }
         });
@@ -59,16 +52,6 @@ class ReactionsSummariesCache {
       return messageIds.filter(item => this.messageExists(item));
     }
 
-    getValids(messageIds){
-        return messageIds.filter(item => this.messageExists(item) && this.getItem(item).isValid);
-    }
-    getInValids(messageIds){
-        return messageIds.filter(item => this.messageExists(item) && !this.getItem(item).isValid);
-    }
-    getNotExists(messageIds){
-        return messageIds.filter(item => !this.messageExists(item));
-    }
-
     addMany(data) {
         data.forEach(item => {
             if(!this.messageExists(item.messageId)) {
@@ -85,14 +68,6 @@ class ReactionsSummariesCache {
         if(!item) {
             this._list[messageId] = {
                 ...data,
-                hasReactionStatus: msgsReactionsStatus.REQUESTED,
-                isValid: true,
-                setHasReactionStatus(status) {
-                    cClass._list[messageId].hasReactionStatus = status
-                },
-                hasAnyReaction() {
-                    return cClass._list[messageId].hasReactionStatus === msgsReactionsStatus.HAS_REACTION
-                },
                 hasReaction(sticker) {
                     return !!cClass._list[messageId].reactionCountVO.find(item => item.sticker === sticker);
                 }
@@ -102,7 +77,7 @@ class ReactionsSummariesCache {
 
     updateItem(messageId, item){
         let localItem = this.getItem(messageId);
-        if(localItem && localItem.hasAnyReaction && localItem.hasAnyReaction())  {
+        if(this.hasAnyReaction(localItem))  {
             item.reactionCountVO && item.reactionCountVO.forEach(itt => {
                 if(!localItem.hasReaction(itt.sticker)) {
                     this._list[messageId].reactionCountVO.push(itt);
@@ -120,7 +95,6 @@ class ReactionsSummariesCache {
         this._list[messageId].setHasReactionStatus(msgsReactionsStatus.HAS_REACTION);
         if(item.userReaction)
             this._list[messageId].userReaction = item.userReaction;
-        this._list[messageId].isValid = true;
     }
 
     increaseCount(messageId, reaction, userId) {
@@ -167,8 +141,16 @@ class ReactionsSummariesCache {
             //     delete this._list[messageId]
         }
     }
+
+    hasAnyReaction(message){
+        if(!message || !message.reactionCountVO || !message.reactionCountVO.length){
+            return false;
+        }
+
+        return true;
+    }
     maybeUpdateMyReaction(messageId, reactionId, reaction, userId, time) {
-        let message = this.getItem(messageId)
+        let message = this.getItem(messageId);
         if(!message)
             return;
         if(store.user().isMe(userId)) {
@@ -196,12 +178,6 @@ class ReactionsSummariesCache {
     }
     removeAllMessages() {
         this._list = {};
-    }
-
-    invalidateAllItems(){
-        Object.keys(this._list).forEach(key=>{
-            this._list[key].isValid = false;
-        })
     }
 }
 const reactionsSummariesCache = new ReactionsSummariesCache();

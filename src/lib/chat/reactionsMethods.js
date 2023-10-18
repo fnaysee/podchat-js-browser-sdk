@@ -119,7 +119,7 @@ function getReactionList(
         });
     }
 
-    if(!cachedResult || !cachedResult.isValid) {
+    if(!cachedResult) {
         return messenger().sendMessage(sendData);
     }
 }
@@ -130,30 +130,32 @@ function getReactionsSummaries(params) {
             typeCode: sdkParams.generalTypeCode, //params.typeCode,
             token: sdkParams.token,
             subjectId: params.threadId,
-            uniqueId: Utility.generateUUID()
+            uniqueId: (params.uniqueId ? params.uniqueId : Utility.generateUUID())
         },
-        cachedIdsValid = store.reactionSummaries.getValids(params.messageIds),
-        cachedIdsInValid = store.reactionSummaries.getInValids(params.messageIds),
-        nonExistingIds = store.reactionSummaries.getNotExists(params.messageIds);
+        cachedIds = store.reactionSummaries.filterExists(params.messageIds);
 
-    nonExistingIds.forEach(item=>{
-        store.reactionSummaries.initItem(item, {});
-    });
+    reactionSummariesRequests[sendData.uniqueId] = params.messageIds;
 
-    if(nonExistingIds.length || cachedIdsInValid.length) {
-        sendData.content = [...nonExistingIds, ...cachedIdsInValid];
+    const difference = params.messageIds.reduce((result, element) => {
+        if (cachedIds.indexOf(element) === -1) {
+            result.push(element);
+        }
+        return result;
+    }, []);
+
+    if(difference.length) {
+        sendData.content = difference;
         let res = messenger().sendMessage(sendData);
     }
 
-    if(cachedIdsInValid.length || cachedIdsValid.length) {
-        let mergedResult = [...cachedIdsValid, ...cachedIdsInValid];
+    if(cachedIds && cachedIds.length) {
         setTimeout(()=>{
-            let res = store.reactionSummaries.getMany(mergedResult);
-            res = JSON.parse(JSON.stringify(res));
+            let messageContent = store.reactionSummaries.getMany(cachedIds);
+            messageContent = JSON.parse(JSON.stringify(messageContent));
             chatEvents.fireEvent('messageEvents', {
                 type: 'REACTION_SUMMARIES',
                 uniqueId: sendData.uniqueId,
-                result: res
+                result: messageContent
             });
         }, 100);
     }
@@ -164,9 +166,16 @@ function getReactionsSummaries(params) {
 function onReactionSummaries(uniqueId, messageContent) {
     let msgContent = JSON.parse(JSON.stringify(messageContent));
     store.reactionSummaries.addMany(messageContent);
-    msgContent.forEach(item => {
-        item.isValid = true
-    });
+
+    if(reactionSummariesRequests[uniqueId] && reactionSummariesRequests[uniqueId].length) {
+        reactionSummariesRequests[uniqueId].forEach(item => {
+            store.reactionSummaries.initItem(item, {});
+        });
+    }
+    // params.messageIds.forEach(item=>{
+    //     store.reactionSummaries.initItem(item, {});
+    // });
+
     chatEvents.fireEvent('messageEvents', {
         type: 'REACTION_SUMMARIES',
         uniqueId: uniqueId,
@@ -205,7 +214,8 @@ function onRemoveReaction(uniqueId, messageContent, contentCount) {
     if(store.user().isMe(messageContent.reactionVO.participantVO.id))
         store.reactionSummaries.removeMyReaction(messageContent.messageId);
 
-    store.reactionsList.invalidateCache(messageContent.messageId, messageContent.reactionVO.reaction);
+    store.reactionsList.removeCachedData(messageContent.messageId, messageContent.reactionVO.reaction);
+    // store.reactionsList.removeReactionCache(messageContent.messageId, messageContent.reactionVO.reaction);
 
 
     chatEvents.fireEvent('messageEvents', {
@@ -229,8 +239,8 @@ function onReplaceReaction(uniqueId, messageContent, contentCount) {
         messageContent.reactionVO.time
     );
 
-    store.reactionsList.invalidateCache(messageContent.messageId, messageContent.oldSticker);
-    store.reactionsList.invalidateCache(messageContent.messageId, messageContent.reactionVO.reaction);
+    store.reactionsList.removeCachedData(messageContent.messageId, messageContent.oldSticker);
+    store.reactionsList.removeCachedData(messageContent.messageId, messageContent.reactionVO.reaction);
 
     chatEvents.fireEvent('messageEvents', {
         type: 'REPLACE_REACTION',
@@ -252,7 +262,7 @@ function onAddReaction(uniqueId, messageContent, contentCount) {
         messageContent.reactionVO.time
     );
 
-    store.reactionsList.invalidateCache(messageContent.messageId, messageContent.reactionVO.reaction);
+    store.reactionsList.removeCachedData(messageContent.messageId, messageContent.reactionVO.reaction);
 
     chatEvents.fireEvent('messageEvents', {
         type: 'ADD_REACTION',

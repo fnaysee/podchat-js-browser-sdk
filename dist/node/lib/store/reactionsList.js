@@ -7,8 +7,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.reactionsListCache = void 0;
 
-var _typeof2 = _interopRequireDefault(require("@babel/runtime/helpers/typeof"));
-
 var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
 
 var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
@@ -52,44 +50,39 @@ var ReactionsListCache = /*#__PURE__*/function () {
         sticker: sticker,
         count: count,
         offset: offset,
-        reactionVOList: this._list[messageId][sticker][this.genKey(count, offset)],
-        isValid: this._list[messageId][sticker].isValid
+        reactionVOList: this._list[messageId][sticker][this.genKey(count, offset)] // isValid: this._list[messageId][sticker].isValid
+
       };
     }
   }, {
-    key: "invalidateCache",
-    value: function invalidateCache(messageId, sticker) {
-      if (!messageId) return this.invalidateAllMessages();
+    key: "removeCachedData",
+    value: function removeCachedData(messageId, sticker) {
+      if (!messageId) return this.removeAllMessages(); // return this.invalidateAllMessages();
 
       if (!sticker) {
-        return this.invalidateMessage(messageId);
+        return delete this._list[messageId]; // return this.invalidateMessage(messageId);
       }
 
-      if (this._list[messageId] && this._list[messageId][sticker]) this._list[messageId][sticker].isValid = false;
-      if (this._list[messageId] && this._list[messageId]['all']) this._list[messageId]['all'].isValid = false;
-    }
-  }, {
-    key: "invalidateAllMessages",
-    value: function invalidateAllMessages() {
-      var _this = this;
+      if (this._list[messageId] && this._list[messageId][sticker]) delete this._list[messageId][sticker]; // this._list[messageId][sticker].isValid = false;
 
-      Object.keys(this._list).forEach(function (item) {
-        _this.invalidateMessage(item);
-      });
-    }
-  }, {
-    key: "invalidateMessage",
-    value: function invalidateMessage(messageId) {
-      var item = this._list[messageId];
+      if (this._list[messageId] && this._list[messageId]['all']) delete this._list[messageId]['all']; // this._list[messageId]['all'].isValid = false;
+    } // invalidateAllMessages() {
+    //     Object.keys(this._list).forEach(item=>{
+    //         this.invalidateMessage(item)
+    //     })
+    //
+    // }
+    // invalidateMessage(messageId) {
+    //     let item = this._list[messageId];
+    //     if(item && typeof item === 'object') {
+    //         Object.keys(item).forEach(objKey=> {
+    //             if(objKey && item[objKey] && typeof item[objKey] === "object") {
+    //                 item[objKey].isValid = false;
+    //             }
+    //         })
+    //     }
+    // }
 
-      if (item && (0, _typeof2["default"])(item) === 'object') {
-        Object.keys(item).forEach(function (objKey) {
-          if (objKey && item[objKey] && (0, _typeof2["default"])(item[objKey]) === "object") {
-            item[objKey].isValid = false;
-          }
-        });
-      }
-    }
   }, {
     key: "messageExists",
     value: function messageExists(messageId) {
@@ -109,13 +102,12 @@ var ReactionsListCache = /*#__PURE__*/function () {
 
       if (!this.messageExists(request.messageId)) {
         this._list[request.messageId] = {};
-      }
+      } // if(!this.stickerExists(request.messageId, sticker)) {
+      //     this._list[request.messageId][sticker] = {
+      //         isValid: true
+      //     };
+      // }
 
-      if (!this.stickerExists(request.messageId, sticker)) {
-        this._list[request.messageId][sticker] = {
-          isValid: true
-        };
-      }
 
       this._list[request.messageId][sticker][this.genKey(request.count, request.offset)] = result;
     }

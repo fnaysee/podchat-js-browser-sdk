@@ -39,41 +39,46 @@ class ReactionsListCache {
             sticker,
             count,
             offset,
-            reactionVOList: this._list[messageId][sticker][this.genKey(count, offset)],
-            isValid: this._list[messageId][sticker].isValid
+            reactionVOList: this._list[messageId][sticker][this.genKey(count, offset)]
+            // isValid: this._list[messageId][sticker].isValid
         }
     }
 
-    invalidateCache(messageId, sticker) {
+    removeCachedData(messageId, sticker) {
         if(!messageId)
-            return this.invalidateAllMessages();
+            return this.removeAllMessages();
+            // return this.invalidateAllMessages();
 
         if(!sticker) {
-            return this.invalidateMessage(messageId);
+            return delete this._list[messageId]
+            // return this.invalidateMessage(messageId);
         }
 
         if(this._list[messageId] && this._list[messageId][sticker])
-            this._list[messageId][sticker].isValid = false;
+            delete this._list[messageId][sticker];
+            // this._list[messageId][sticker].isValid = false;
         if(this._list[messageId] && this._list[messageId]['all'])
-            this._list[messageId]['all'].isValid = false;
+            delete this._list[messageId]['all'];
+            // this._list[messageId]['all'].isValid = false;
     }
 
-    invalidateAllMessages() {
-        Object.keys(this._list).forEach(item=>{
-            this.invalidateMessage(item)
-        })
+    // invalidateAllMessages() {
+    //     Object.keys(this._list).forEach(item=>{
+    //         this.invalidateMessage(item)
+    //     })
+    //
+    // }
 
-    }
-    invalidateMessage(messageId) {
-        let item = this._list[messageId];
-        if(item && typeof item === 'object') {
-            Object.keys(item).forEach(objKey=> {
-                if(objKey && item[objKey] && typeof item[objKey] === "object") {
-                    item[objKey].isValid = false;
-                }
-            })
-        }
-    }
+    // invalidateMessage(messageId) {
+    //     let item = this._list[messageId];
+    //     if(item && typeof item === 'object') {
+    //         Object.keys(item).forEach(objKey=> {
+    //             if(objKey && item[objKey] && typeof item[objKey] === "object") {
+    //                 item[objKey].isValid = false;
+    //             }
+    //         })
+    //     }
+    // }
     messageExists(messageId) {
         return !!this._list[messageId];
     }
@@ -91,11 +96,11 @@ class ReactionsListCache {
         if(!this.messageExists(request.messageId)) {
             this._list[request.messageId] = {};
         }
-        if(!this.stickerExists(request.messageId, sticker)) {
-            this._list[request.messageId][sticker] = {
-                isValid: true
-            };
-        }
+        // if(!this.stickerExists(request.messageId, sticker)) {
+        //     this._list[request.messageId][sticker] = {
+        //         isValid: true
+        //     };
+        // }
 
         this._list[request.messageId][sticker][this.genKey(request.count, request.offset)] = result;
     }

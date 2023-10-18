@@ -17,8 +17,6 @@ exports.onReplaceReaction = onReplaceReaction;
 exports.removeReaction = removeReaction;
 exports.replaceReaction = replaceReaction;
 
-var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));
-
 var _constants = require("../constants");
 
 var _sdkParams = require("../sdkParams");
@@ -148,7 +146,7 @@ function getReactionList(_ref) {
     });
   }
 
-  if (!cachedResult || !cachedResult.isValid) {
+  if (!cachedResult) {
     return (0, _messaging.messenger)().sendMessage(sendData);
   }
 }
@@ -160,32 +158,34 @@ function getReactionsSummaries(params) {
     //params.typeCode,
     token: _sdkParams.sdkParams.token,
     subjectId: params.threadId,
-    uniqueId: _utility["default"].generateUUID()
+    uniqueId: params.uniqueId ? params.uniqueId : _utility["default"].generateUUID()
   },
-      cachedIdsValid = _store.store.reactionSummaries.getValids(params.messageIds),
-      cachedIdsInValid = _store.store.reactionSummaries.getInValids(params.messageIds),
-      nonExistingIds = _store.store.reactionSummaries.getNotExists(params.messageIds);
+      cachedIds = _store.store.reactionSummaries.filterExists(params.messageIds);
 
-  nonExistingIds.forEach(function (item) {
-    _store.store.reactionSummaries.initItem(item, {});
-  });
+  reactionSummariesRequests[sendData.uniqueId] = params.messageIds;
+  var difference = params.messageIds.reduce(function (result, element) {
+    if (cachedIds.indexOf(element) === -1) {
+      result.push(element);
+    }
 
-  if (nonExistingIds.length || cachedIdsInValid.length) {
-    sendData.content = [].concat((0, _toConsumableArray2["default"])(nonExistingIds), (0, _toConsumableArray2["default"])(cachedIdsInValid));
+    return result;
+  }, []);
+
+  if (difference.length) {
+    sendData.content = difference;
     var res = (0, _messaging.messenger)().sendMessage(sendData);
   }
 
-  if (cachedIdsInValid.length || cachedIdsValid.length) {
-    var mergedResult = [].concat((0, _toConsumableArray2["default"])(cachedIdsValid), (0, _toConsumableArray2["default"])(cachedIdsInValid));
+  if (cachedIds && cachedIds.length) {
     setTimeout(function () {
-      var res = _store.store.reactionSummaries.getMany(mergedResult);
+      var messageContent = _store.store.reactionSummaries.getMany(cachedIds);
 
-      res = JSON.parse(JSON.stringify(res));
+      messageContent = JSON.parse(JSON.stringify(messageContent));
 
       _events.chatEvents.fireEvent('messageEvents', {
         type: 'REACTION_SUMMARIES',
         uniqueId: sendData.uniqueId,
-        result: res
+        result: messageContent
       });
     }, 100);
   }
@@ -200,9 +200,14 @@ function onReactionSummaries(uniqueId, messageContent) {
 
   _store.store.reactionSummaries.addMany(messageContent);
 
-  msgContent.forEach(function (item) {
-    item.isValid = true;
-  });
+  if (reactionSummariesRequests[uniqueId] && reactionSummariesRequests[uniqueId].length) {
+    reactionSummariesRequests[uniqueId].forEach(function (item) {
+      _store.store.reactionSummaries.initItem(item, {});
+    });
+  } // params.messageIds.forEach(item=>{
+  //     store.reactionSummaries.initItem(item, {});
+  // });
+
 
   _events.chatEvents.fireEvent('messageEvents', {
     type: 'REACTION_SUMMARIES',
@@ -245,7 +250,8 @@ function onRemoveReaction(uniqueId, messageContent, contentCount) {
 
   if (_store.store.user().isMe(messageContent.reactionVO.participantVO.id)) _store.store.reactionSummaries.removeMyReaction(messageContent.messageId);
 
-  _store.store.reactionsList.invalidateCache(messageContent.messageId, messageContent.reactionVO.reaction);
+  _store.store.reactionsList.removeCachedData(messageContent.messageId, messageContent.reactionVO.reaction); // store.reactionsList.removeReactionCache(messageContent.messageId, messageContent.reactionVO.reaction);
+
 
   _events.chatEvents.fireEvent('messageEvents', {
     type: 'REMOVE_REACTION',
@@ -264,9 +270,9 @@ function onReplaceReaction(uniqueId, messageContent, contentCount) {
 
   _store.store.reactionSummaries.maybeUpdateMyReaction(messageContent.messageId, messageContent.reactionVO.id, messageContent.reactionVO.reaction, messageContent.reactionVO.participantVO.id, messageContent.reactionVO.time);
 
-  _store.store.reactionsList.invalidateCache(messageContent.messageId, messageContent.oldSticker);
+  _store.store.reactionsList.removeCachedData(messageContent.messageId, messageContent.oldSticker);
 
-  _store.store.reactionsList.invalidateCache(messageContent.messageId, messageContent.reactionVO.reaction);
+  _store.store.reactionsList.removeCachedData(messageContent.messageId, messageContent.reactionVO.reaction);
 
   _events.chatEvents.fireEvent('messageEvents', {
     type: 'REPLACE_REACTION',
@@ -285,7 +291,7 @@ function onAddReaction(uniqueId, messageContent, contentCount) {
 
   _store.store.reactionSummaries.maybeUpdateMyReaction(messageContent.messageId, messageContent.reactionVO.id, messageContent.reactionVO.reaction, messageContent.reactionVO.participantVO.id, messageContent.reactionVO.time);
 
-  _store.store.reactionsList.invalidateCache(messageContent.messageId, messageContent.reactionVO.reaction);
+  _store.store.reactionsList.removeCachedData(messageContent.messageId, messageContent.reactionVO.reaction);
 
   _events.chatEvents.fireEvent('messageEvents', {
     type: 'ADD_REACTION',
