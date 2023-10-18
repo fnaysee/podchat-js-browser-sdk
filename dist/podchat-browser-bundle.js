@@ -38736,13 +38736,16 @@ function Async(params) {
   };
   var reconnectSocketTimeout;
   this.reconnectSocket = function () {
+    retryStep.set(0);
     if (isConnecting) return;
     isSocketOpen = false;
     isDeviceRegister = false;
     oldPeerId = peerId;
     socketState = socketStateType.CLOSED;
     fireEvent('disconnect', {});
-    retryStep.set(0);
+
+    // retryStep.set(0);
+
     logLevel.debug && console.debug("[Async][async.js] on socket close, retryStep:", retryStep.get());
     fireEvent('stateChange', {
       socketState: socketState,
@@ -39027,18 +39030,18 @@ function Socket(params) {
       var socketCloseErrorHandler = function socketCloseErrorHandler(err) {
         console.error('Socket Close Error: ', err);
       };
-      socket.on && socket.on('error', socketCloseErrorHandler);
-      setTimeout(function () {
-        if (socket) {
-          if (reason) {
-            socket.close(reason.code, reason.reason);
-          } else {
-            socket.close();
-          }
-          socket.off && socket.off("error", socketCloseErrorHandler);
+      socket.onerror = socketCloseErrorHandler;
+      if (socket) {
+        if (reason) {
+          socket.close(reason.code, reason.reason);
+        } else {
+          socket.close();
         }
-      }, 20);
+        socket.onerror = null;
+        // socket.off && socket.off("error", socketCloseErrorHandler)
+      }
     }
+
     setTimeout(function () {
       socket = null;
       if (!isDestroyed && onClose) {
@@ -45919,7 +45922,7 @@ FilterXSS.prototype.process = function (html) {
 module.exports = FilterXSS;
 
 },{"./default":275,"./parser":277,"./util":278,"cssfilter":124}],280:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.43","date":"۱۴۰۲/۷/۲۳","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.7-snapshot.44","date":"۱۴۰۲/۷/۲۶","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],281:[function(require,module,exports){
 "use strict";
 
