@@ -30,9 +30,9 @@ class ReactionsSummariesCache {
 
             if(this.hasAnyReaction(localItem)){
                 if(!localItem.userReaction) {
-                    result.push({messageId: msgId, reactionCountVO: localItem.reactionCountVO})
+                    result.push({messageId: msgId, reactionCountVO: localItem.reactionCountVO});
                 } else {
-                    result.push({messageId: msgId, reactionCountVO: localItem.reactionCountVO, userReaction: localItem.userReaction})
+                    result.push({messageId: msgId, reactionCountVO: localItem.reactionCountVO, userReaction: localItem.userReaction});
 
                 }
             }

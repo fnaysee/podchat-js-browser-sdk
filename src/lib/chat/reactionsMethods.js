@@ -5,6 +5,9 @@ import {store} from "../store";
 import Utility from "../../utility/utility";
 import {chatEvents} from "../../events.module";
 
+const reactionsListRequestsParams = {};
+const reactionSummariesRequests = {};
+
 function addReaction(params, callback) {
     let sendData = {
         chatMessageVOType: chatMessageVOTypes.ADD_REACTION,
@@ -75,7 +78,6 @@ function removeReaction(params, callback) {
     });
 }
 
-const reactionsListRequestsParams = {};
 function getReactionList(
     {
         threadId,

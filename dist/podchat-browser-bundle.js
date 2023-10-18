@@ -1,5050 +1,4 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-"use strict";
-
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports["default"] = void 0;
-var _socket = _interopRequireDefault(require("./socket"));
-var _webrtc = _interopRequireDefault(require("./webrtc"));
-var _utility = _interopRequireDefault(require("../utility/utility.js"));
-var _logger = _interopRequireDefault(require("../utility/logger.js"));
-/*
- * Async module to handle async messaging
- * @module Async
- *
- * @param {Object} params
- */
-
-function Async(params) {
-  /*******************************************************
-   *          P R I V A T E   V A R I A B L E S          *
-   *******************************************************/
-
-  // var PodSocketClass,
-  //     WebRTCClass,
-  //     PodUtility,
-  //     LogLevel
-  // if (typeof(require) !== 'undefined' && typeof(exports) !== 'undefined') {
-  //     PodSocketClass = require('./socket.js');
-  //     WebRTCClass = require('./webrtc.js');
-  //     PodUtility = require('../utility/utility.js');
-  //     LogLevel = require('../utility/logger.js');
-  // }
-  // else {
-  //     PodSocketClass = POD.Socket;
-  //     PodUtility = POD.AsyncUtility;
-  //     LogLevel = POD.LogLevel;
-  // }
-
-  var Utility = new _utility["default"]();
-  var currentModuleInstance = this,
-    protocol = params.protocol || 'websocket',
-    appId = params.appId || 'PodChat',
-    deviceId = params.deviceId,
-    retryStepTimerTime = typeof params.retryStepTimerTime != "undefined" ? params.retryStepTimerTime : 0,
-    eventCallbacks = {
-      connect: {},
-      disconnect: {},
-      reconnect: {},
-      message: {},
-      asyncReady: {},
-      stateChange: {},
-      error: {},
-      reconnecting: {},
-      asyncDestroyed: {}
-    },
-    ackCallback = {},
-    socket,
-    webRTCClass,
-    asyncMessageType = {
-      PING: 0,
-      SERVER_REGISTER: 1,
-      DEVICE_REGISTER: 2,
-      MESSAGE: 3,
-      MESSAGE_ACK_NEEDED: 4,
-      MESSAGE_SENDER_ACK_NEEDED: 5,
-      ACK: 6,
-      GET_REGISTERED_PEERS: 7,
-      PEER_REMOVED: -3,
-      REGISTER_QUEUE: -2,
-      NOT_REGISTERED: -1,
-      ERROR_MESSAGE: -99
-    },
-    socketStateType = {
-      CONNECTING: 0,
-      // The connection is not yet open.
-      OPEN: 1,
-      // The connection is open and ready to communicate.
-      CLOSING: 2,
-      // The connection is in the process of closing.
-      CLOSED: 3 // The connection is closed or couldn't be opened.
-    },
-    logLevel = (0, _logger["default"])(params.logLevel),
-    // isNode = Utility.isNode(),
-    isSocketOpen = false,
-    isDeviceRegister = false,
-    isServerRegister = false,
-    socketState = socketStateType.CONNECTING,
-    // asyncState = '',
-    registerServerTimeoutId,
-    registerDeviceTimeoutId,
-    checkIfSocketHasOpennedTimeoutId,
-    // asyncReadyTimeoutId,
-    pushSendDataQueue = [],
-    oldPeerId,
-    peerId = params.peerId,
-    lastMessageId = 0,
-    messageTtl = params.messageTtl || 86400,
-    serverName = params.serverName || 'oauth-wire',
-    serverRegisteration = typeof params.serverRegisteration === 'boolean' ? params.serverRegisteration : true,
-    connectionRetryInterval = params.connectionRetryInterval || 5000,
-    socketReconnectRetryInterval,
-    socketReconnectCheck,
-    // retryStep = 4,
-    reconnectOnClose = typeof params.reconnectOnClose === 'boolean' ? params.reconnectOnClose : true,
-    asyncLogging = params.asyncLogging && typeof params.asyncLogging.onFunction === 'boolean' ? params.asyncLogging.onFunction : false,
-    onReceiveLogging = params.asyncLogging && typeof params.asyncLogging.onMessageReceive === 'boolean' ? params.asyncLogging.onMessageReceive : false,
-    onSendLogging = params.asyncLogging && typeof params.asyncLogging.onMessageSend === 'boolean' ? params.asyncLogging.onMessageSend : false,
-    workerId = params.asyncLogging && typeof parseInt(params.asyncLogging.workerId) === 'number' ? params.asyncLogging.workerId : 0,
-    webrtcConfig = params.webrtcConfig ? params.webrtcConfig : null,
-    isLoggedOut = false,
-    onStartWithRetryStepGreaterThanZero = params.onStartWithRetryStepGreaterThanZero,
-    asyncLogCallback = typeof params.asyncLogCallback == "function" ? params.asyncLogCallback : null,
-    msgLogCallback = typeof params.msgLogCallback == "function" ? params.msgLogCallback : null,
-    onDeviceId = typeof params.onDeviceId == "function" ? params.onDeviceId : null,
-    isConnecting = false;
-  var reconnOnClose = {
-    value: false,
-    oldValue: null,
-    get: function get() {
-      return reconnOnClose.value;
-    },
-    set: function set(val) {
-      reconnOnClose.value = val;
-    },
-    getOld: function getOld() {
-      return reconnOnClose.oldValue;
-    },
-    setOld: function setOld(val) {
-      reconnOnClose.oldValue = val;
-    }
-  };
-  reconnOnClose.set(reconnectOnClose);
-  var retryStep = {
-    value: retryStepTimerTime,
-    get: function get() {
-      return retryStep.value;
-    },
-    set: function set(val) {
-      logLevel.debug && console.debug("[Async][async.js] retryStep new value:", val);
-      retryStep.value = val;
-    }
-  };
-
-  /*******************************************************
-   *            P R I V A T E   M E T H O D S            *
-   *******************************************************/
-
-  var init = function init() {
-      if (retryStep.get() > 0) {
-        onStartWithRetryStepGreaterThanZero && onStartWithRetryStepGreaterThanZero({
-          socketState: socketStateType.CLOSED,
-          timeUntilReconnect: 1000 * retryStep.get(),
-          deviceRegister: false,
-          serverRegister: false,
-          peerId: peerId
-        });
-      }
-      socketReconnectRetryInterval = setTimeout(function () {
-        if (isLoggedOut) return;
-        window.addEventListener('online', function () {
-          asyncLogCallback && asyncLogCallback("async", "window.online", "");
-          if (!isSocketOpen) {
-            currentModuleInstance.reconnectSocket();
-          }
-        });
-        window.addEventListener('offline', function () {
-          asyncLogCallback && asyncLogCallback("async", "window.offline", "");
-          if (isSocketOpen) {
-            currentModuleInstance.reconnectSocket();
-          }
-        });
-        maybeReconnect();
-        if (retryStep.get() < 64) {
-          // retryStep += 3;
-          retryStep.set(retryStep.get() + 3);
-        }
-      }, 1000 * retryStep.get());
-    },
-    asyncLogger = function asyncLogger(type, msg) {
-      Utility.asyncLogger({
-        protocol: protocol,
-        workerId: workerId,
-        type: type,
-        msg: msg,
-        peerId: peerId,
-        deviceId: deviceId,
-        isSocketOpen: isSocketOpen,
-        isDeviceRegister: isDeviceRegister,
-        isServerRegister: isServerRegister,
-        socketState: socketState,
-        pushSendDataQueue: pushSendDataQueue
-      });
-    },
-    initSocket = function initSocket() {
-      socket = new _socket["default"]({
-        socketAddress: params.socketAddress,
-        wsConnectionWaitTime: params.wsConnectionWaitTime,
-        connectionCheckTimeout: params.connectionCheckTimeout,
-        connectionCheckTimeoutThreshold: params.connectionCheckTimeoutThreshold,
-        logLevel: logLevel,
-        msgLogCallback: msgLogCallback,
-        asyncLogCallback: asyncLogCallback,
-        onOpen: function onOpen() {
-          isConnecting = false;
-          checkIfSocketHasOpennedTimeoutId && clearTimeout(checkIfSocketHasOpennedTimeoutId);
-          socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-          socketReconnectRetryInterval = null;
-          socketReconnectCheck && clearTimeout(socketReconnectCheck);
-          isSocketOpen = true;
-          retryStep.set(0);
-          socketState = socketStateType.OPEN;
-          fireEvent('stateChange', {
-            socketState: socketState,
-            timeUntilReconnect: 0,
-            deviceRegister: isDeviceRegister,
-            serverRegister: isServerRegister,
-            peerId: peerId,
-            deviceId: deviceId
-          });
-        },
-        onMessage: function onMessage(msg) {
-          handleSocketMessage(msg);
-          if (onReceiveLogging) {
-            asyncLogger('Receive', msg);
-          }
-        },
-        onClose: function onClose(event) {
-          isSocketOpen = false;
-          isDeviceRegister = false;
-          oldPeerId = peerId;
-          socketState = socketStateType.CLOSED;
-          isConnecting = false;
-
-          // socketState = socketStateType.CLOSED;
-          //
-          // fireEvent('stateChange', {
-          //     socketState: socketState,
-          //     timeUntilReconnect: 0,
-          //     deviceRegister: isDeviceRegister,
-          //     serverRegister: isServerRegister,
-          //     peerId: peerId
-          // });
-
-          fireEvent('disconnect', event);
-          if (reconnOnClose.get() || reconnOnClose.getOld()) {
-            // reconnOnClose.set(reconnOnClose.getOld());
-            if (asyncLogging) {
-              if (workerId > 0) {
-                Utility.asyncStepLogger(workerId + '\t Reconnecting after ' + retryStep.get() + 's');
-              } else {
-                Utility.asyncStepLogger('Reconnecting after ' + retryStep.get() + 's');
-              }
-            }
-            logLevel.debug && console.debug("[Async][async.js] on socket close, retryStep:", retryStep.get());
-            fireEvent('stateChange', {
-              socketState: socketState,
-              timeUntilReconnect: 1000 * retryStep.get(),
-              deviceRegister: isDeviceRegister,
-              serverRegister: isServerRegister,
-              peerId: peerId
-            });
-            socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-            socketReconnectRetryInterval = null;
-            fireEvent("reconnecting", {
-              nextTime: retryStep.get()
-            });
-            socket.destroy();
-            socketReconnectRetryInterval = setTimeout(function () {
-              if (isLoggedOut) return;
-              maybeReconnect();
-            }, 1000 * retryStep.get());
-            if (retryStep.get() < 64) {
-              // retryStep += 3;
-              retryStep.set(retryStep.get() + 3);
-            }
-          } else {
-            socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-            socketReconnectRetryInterval = null;
-            socketReconnectCheck && clearTimeout(socketReconnectCheck);
-            fireEvent('error', {
-              errorCode: 4005,
-              errorMessage: 'Socket Closed!'
-            });
-            socketState = socketStateType.CLOSED;
-            fireEvent('stateChange', {
-              socketState: socketState,
-              timeUntilReconnect: 0,
-              deviceRegister: isDeviceRegister,
-              serverRegister: isServerRegister,
-              peerId: peerId
-            });
-          }
-        },
-        onError: function onError(error) {
-          fireEvent('error', {
-            errorCode: '',
-            errorMessage: '',
-            errorEvent: error
-          });
-        },
-        onCustomError: function onCustomError(error) {
-          fireEvent('error', {
-            errorCode: error.errorCode,
-            errorMessage: error.errorMessage,
-            errorEvent: error.errorEvent
-          });
-        }
-      });
-      socket.connect();
-    },
-    initWebrtc = function initWebrtc() {
-      webRTCClass = new _webrtc["default"]({
-        baseUrl: webrtcConfig ? webrtcConfig.baseUrl : null,
-        basePath: webrtcConfig ? webrtcConfig.basePath : null,
-        configuration: webrtcConfig ? webrtcConfig.configuration : null,
-        connectionCheckTimeout: params.connectionCheckTimeout,
-        //ping
-        logLevel: logLevel,
-        msgLogCallback: msgLogCallback,
-        asyncLogCallback: asyncLogCallback,
-        connectionOpenWaitTime: params.connectionOpenWaitTime,
-        //timeout time to open
-        onOpen: function onOpen(newDeviceId) {
-          isConnecting = false;
-          checkIfSocketHasOpennedTimeoutId && clearTimeout(checkIfSocketHasOpennedTimeoutId);
-          checkIfSocketHasOpennedTimeoutId = null;
-          socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-          socketReconnectRetryInterval = null;
-          socketReconnectCheck && clearTimeout(socketReconnectCheck);
-          isSocketOpen = true;
-          retryStep.set(0);
-          socketState = socketStateType.OPEN;
-          fireEvent('stateChange', {
-            socketState: socketState,
-            timeUntilReconnect: 0,
-            deviceRegister: isDeviceRegister,
-            serverRegister: isServerRegister,
-            peerId: peerId
-          });
-          if (newDeviceId) {
-            if (deviceId === undefined) {
-              deviceId = newDeviceId;
-            }
-          }
-          onDeviceId && onDeviceId(deviceId);
-        },
-        onMessage: function onMessage(msg) {
-          handleSocketMessage(msg);
-          if (onReceiveLogging) {
-            asyncLogger('Receive', msg);
-          }
-        },
-        onClose: function onClose(event) {
-          isSocketOpen = false;
-          isDeviceRegister = false;
-          oldPeerId = peerId;
-          socketState = socketStateType.CLOSED;
-          isConnecting = false;
-          fireEvent('disconnect', event);
-          if (reconnOnClose.get() || reconnOnClose.getOld()) {
-            if (asyncLogging) {
-              if (workerId > 0) {
-                Utility.asyncStepLogger(workerId + '\t Reconnecting after ' + retryStep.get() + 's');
-              } else {
-                Utility.asyncStepLogger('Reconnecting after ' + retryStep.get() + 's');
-              }
-            }
-            logLevel.debug && console.debug("[Async][async.js] on connection close, retryStep:", retryStep.get());
-            fireEvent('stateChange', {
-              socketState: socketState,
-              timeUntilReconnect: 1000 * retryStep.get(),
-              deviceRegister: isDeviceRegister,
-              serverRegister: isServerRegister,
-              peerId: peerId
-            });
-            socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-            socketReconnectRetryInterval = null;
-            fireEvent("reconnecting", {
-              nextTime: retryStep.get()
-            });
-            webRTCClass.destroy();
-            asyncLogCallback && asyncLogCallback("async", "closed.reconnect", "before: " + retryStep.get());
-            socketReconnectRetryInterval = setTimeout(function () {
-              if (isLoggedOut) return;
-              asyncLogCallback && asyncLogCallback("async", "closed.reconnect", "after");
-              maybeReconnect();
-              // webRTCClass.connect();
-            }, 1000 * retryStep.get());
-            if (retryStep.get() < 64) {
-              // retryStep += 3;
-              retryStep.set(retryStep.get() + 3);
-            }
-          } else {
-            socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-            socketReconnectRetryInterval = null;
-            socketReconnectCheck && clearTimeout(socketReconnectCheck);
-            fireEvent('error', {
-              errorCode: 4005,
-              errorMessage: 'Connection Closed!'
-            });
-            socketState = socketStateType.CLOSED;
-            fireEvent('stateChange', {
-              socketState: socketState,
-              timeUntilReconnect: 0,
-              deviceRegister: isDeviceRegister,
-              serverRegister: isServerRegister,
-              peerId: peerId
-            });
-          }
-        },
-        onCustomError: function onCustomError(error) {
-          fireEvent('error', {
-            errorCode: error.errorCode,
-            errorMessage: error.errorMessage,
-            errorEvent: error.errorEvent
-          });
-        },
-        onError: function onError(error) {
-          fireEvent('error', {
-            errorCode: '',
-            errorMessage: '',
-            errorEvent: error
-          });
-        }
-      });
-      checkIfSocketHasOpennedTimeoutId = setTimeout(function () {
-        if (!isSocketOpen) {
-          fireEvent('error', {
-            errorCode: 4001,
-            errorMessage: 'Can not open Socket!'
-          });
-        }
-      }, 65000);
-      webRTCClass.connect();
-    },
-    handleSocketMessage = function handleSocketMessage(msg) {
-      var ack;
-      if (msg.type === asyncMessageType.MESSAGE_ACK_NEEDED || msg.type === asyncMessageType.MESSAGE_SENDER_ACK_NEEDED) {
-        ack = function ack() {
-          pushSendData({
-            type: asyncMessageType.ACK,
-            content: {
-              messageId: msg.id
-            }
-          });
-        };
-      }
-      switch (msg.type) {
-        case asyncMessageType.PING:
-          handlePingMessage(msg);
-          break;
-        case asyncMessageType.SERVER_REGISTER:
-          handleServerRegisterMessage(msg);
-          break;
-        case asyncMessageType.DEVICE_REGISTER:
-          handleDeviceRegisterMessage(msg.content);
-          break;
-        case asyncMessageType.MESSAGE:
-          fireEvent('message', msg);
-          break;
-        case asyncMessageType.MESSAGE_ACK_NEEDED:
-        case asyncMessageType.MESSAGE_SENDER_ACK_NEEDED:
-          ack();
-          fireEvent('message', msg);
-          break;
-        case asyncMessageType.ACK:
-          fireEvent('message', msg);
-          if (ackCallback[msg.senderMessageId] == 'function') {
-            ackCallback[msg.senderMessageId]();
-            delete ackCallback[msg.senderMessageId];
-          }
-          break;
-        case asyncMessageType.ERROR_MESSAGE:
-          fireEvent('error', {
-            errorCode: 4002,
-            errorMessage: 'Async Error!',
-            errorEvent: msg
-          });
-          break;
-      }
-    },
-    handlePingMessage = function handlePingMessage(msg) {
-      if (msg.content) {
-        if (deviceId === undefined) {
-          deviceId = msg.content;
-        }
-        onDeviceId && onDeviceId(deviceId);
-      } else {
-        if (onReceiveLogging) {
-          if (workerId > 0) {
-            Utility.asyncStepLogger(workerId + '\t Ping Response at (' + new Date() + ')');
-          } else {
-            Utility.asyncStepLogger('Ping Response at (' + new Date() + ')');
-          }
-        }
-      }
-    },
-    registerDevice = function registerDevice(deviceId) {
-      // if (asyncLogging) {
-      //     if (workerId > 0) {
-      //         Utility.asyncStepLogger(workerId + '\t Registering Device');
-      //     } else {
-      //         Utility.asyncStepLogger('Registering Device');
-      //     }
-      // }
-
-      var content = {
-        appId: appId,
-        deviceId: deviceId
-      };
-      if (peerId !== undefined) {
-        content.refresh = true;
-        content.renew = false;
-      } else {
-        content.renew = true;
-        content.refresh = false;
-      }
-      pushSendData({
-        type: asyncMessageType.DEVICE_REGISTER,
-        content: content
-      });
-    },
-    handleDeviceRegisterMessage = function handleDeviceRegisterMessage(recievedPeerId) {
-      if (!isDeviceRegister) {
-        if (registerDeviceTimeoutId) {
-          clearTimeout(registerDeviceTimeoutId);
-        }
-        isDeviceRegister = true;
-        peerId = recievedPeerId;
-      }
-
-      /**
-       * If serverRegisteration == true we have to register
-       * on server then make async status ready
-       */
-      if (serverRegisteration) {
-        if (isServerRegister && peerId === oldPeerId) {
-          fireEvent('asyncReady');
-          isServerRegister = true;
-          pushSendDataQueueHandler();
-          socketState = socketStateType.OPEN;
-          fireEvent('stateChange', {
-            socketState: socketState,
-            timeUntilReconnect: 0,
-            deviceRegister: isDeviceRegister,
-            serverRegister: isServerRegister,
-            peerId: peerId
-          });
-        } else {
-          socketState = socketStateType.OPEN;
-          fireEvent('stateChange', {
-            socketState: socketState,
-            timeUntilReconnect: 0,
-            deviceRegister: isDeviceRegister,
-            serverRegister: isServerRegister,
-            peerId: peerId
-          });
-          registerServer();
-        }
-      } else {
-        fireEvent('asyncReady');
-        isServerRegister = 'Not Needed';
-        pushSendDataQueueHandler();
-        if (asyncLogging) {
-          if (workerId > 0) {
-            Utility.asyncStepLogger(workerId + '\t Async is Ready');
-          } else {
-            Utility.asyncStepLogger('Async is Ready');
-          }
-        }
-        socketState = socketStateType.OPEN;
-        fireEvent('stateChange', {
-          socketState: socketState,
-          timeUntilReconnect: 0,
-          deviceRegister: isDeviceRegister,
-          serverRegister: isServerRegister,
-          peerId: peerId
-        });
-      }
-    },
-    registerServer = function registerServer() {
-      if (asyncLogging) {
-        if (workerId > 0) {
-          Utility.asyncStepLogger(workerId + '\t Registering Server');
-        } else {
-          Utility.asyncStepLogger('Registering Server');
-        }
-      }
-      var content = {
-        name: serverName
-      };
-      pushSendData({
-        type: asyncMessageType.SERVER_REGISTER,
-        content: content
-      });
-      registerServerTimeoutId = setTimeout(function () {
-        if (!isServerRegister) {
-          registerServer();
-        }
-      }, connectionRetryInterval);
-    },
-    handleServerRegisterMessage = function handleServerRegisterMessage(msg) {
-      if (msg.senderName && msg.senderName === serverName) {
-        isServerRegister = true;
-        if (registerServerTimeoutId) {
-          clearTimeout(registerServerTimeoutId);
-        }
-        socketState = socketStateType.OPEN;
-        fireEvent('stateChange', {
-          socketState: socketState,
-          timeUntilReconnect: 0,
-          deviceRegister: isDeviceRegister,
-          serverRegister: isServerRegister,
-          peerId: peerId
-        });
-        fireEvent('asyncReady');
-        pushSendDataQueueHandler();
-        if (asyncLogging) {
-          if (workerId > 0) {
-            Utility.asyncStepLogger(workerId + '\t Async is Ready');
-          } else {
-            Utility.asyncStepLogger('Async is Ready');
-          }
-        }
-      } else {
-        isServerRegister = false;
-      }
-    },
-    pushSendData = function pushSendData(msg) {
-      if (onSendLogging) {
-        asyncLogger('Send', msg);
-      }
-      switch (protocol) {
-        case 'websocket':
-          if (socketState === socketStateType.OPEN) {
-            socket.emit(msg);
-          } else {
-            pushSendDataQueue.push(msg);
-          }
-          break;
-        case 'webrtc':
-          if (socketState === socketStateType.OPEN) {
-            webRTCClass.emit(msg);
-          } else {
-            pushSendDataQueue.push(msg);
-          }
-          break;
-      }
-    },
-    clearTimeouts = function clearTimeouts() {
-      registerDeviceTimeoutId && clearTimeout(registerDeviceTimeoutId);
-      registerDeviceTimeoutId = null;
-      registerServerTimeoutId && clearTimeout(registerServerTimeoutId);
-      registerServerTimeoutId = null;
-      checkIfSocketHasOpennedTimeoutId && clearTimeout(checkIfSocketHasOpennedTimeoutId);
-      checkIfSocketHasOpennedTimeoutId = null;
-      socketReconnectCheck && clearTimeout(socketReconnectCheck);
-      socketReconnectCheck = null;
-    },
-    pushSendDataQueueHandler = function pushSendDataQueueHandler() {
-      while (pushSendDataQueue.length > 0 && socketState === socketStateType.OPEN) {
-        var msg = pushSendDataQueue.splice(0, 1)[0];
-        pushSendData(msg);
-      }
-    },
-    fireEvent = function fireEvent(eventName, param, ack) {
-      // try {
-      if (ack) {
-        for (var id in eventCallbacks[eventName]) {
-          eventCallbacks[eventName][id](param, ack);
-        }
-      } else {
-        for (var id in eventCallbacks[eventName]) {
-          eventCallbacks[eventName][id](param);
-        }
-      }
-      // }
-      // catch (e) {
-      //     fireEvent('error', {
-      //         errorCode: 999,
-      //         errorMessage: 'Unknown ERROR!',
-      //         errorEvent: e
-      //     });
-      // }
-    };
-
-  function maybeReconnect() {
-    if (isConnecting) return;
-    fireEvent('stateChange', {
-      socketState: socketStateType.CONNECTING,
-      timeUntilReconnect: 0,
-      deviceRegister: false,
-      serverRegister: false,
-      peerId: peerId
-    });
-    isConnecting = true;
-    switch (protocol) {
-      case 'websocket':
-        initSocket();
-        break;
-      case 'webrtc':
-        initWebrtc();
-        break;
-    }
-  }
-
-  /*******************************************************
-   *             P U B L I C   M E T H O D S             *
-   *******************************************************/
-
-  this.on = function (eventName, callback) {
-    if (eventCallbacks[eventName]) {
-      var id = Utility.generateUUID();
-      eventCallbacks[eventName][id] = callback;
-      return id;
-    }
-    if (eventName === 'connect' && socketState === socketStateType.OPEN) {
-      callback(peerId);
-    }
-  };
-  this.send = function (params, callback) {
-    var messageType = typeof params.type === 'number' ? params.type : callback ? asyncMessageType.MESSAGE_SENDER_ACK_NEEDED : asyncMessageType.MESSAGE;
-    var socketData = {
-      type: messageType,
-      uniqueId: params.uniqueId ? params.uniqueId : undefined,
-      content: params.content
-    };
-    if (params.trackerId) {
-      socketData.trackerId = params.trackerId;
-    }
-    lastMessageId += 1;
-    var messageId = lastMessageId;
-    if (messageType === asyncMessageType.MESSAGE_SENDER_ACK_NEEDED || messageType === asyncMessageType.MESSAGE_ACK_NEEDED) {
-      ackCallback[messageId] = function () {
-        callback && callback();
-      };
-    }
-    socketData.content.messageId = messageId;
-    socketData.content.ttl = messageTtl;
-    pushSendData(socketData);
-  };
-  this.getAsyncState = function () {
-    return socketState;
-  };
-  this.getSendQueue = function () {
-    return pushSendDataQueue;
-  };
-  this.getPeerId = function () {
-    return peerId;
-  };
-  this.getServerName = function () {
-    return serverName;
-  };
-  this.setServerName = function (newServerName) {
-    serverName = newServerName;
-  };
-  this.setDeviceId = function (newDeviceId) {
-    deviceId = newDeviceId;
-  };
-  this.close = function () {
-    oldPeerId = peerId;
-    isDeviceRegister = false;
-    isSocketOpen = false;
-    clearTimeouts();
-    switch (protocol) {
-      case 'websocket':
-        socketState = socketStateType.CLOSED;
-        fireEvent('stateChange', {
-          socketState: socketState,
-          timeUntilReconnect: 0,
-          deviceRegister: isDeviceRegister,
-          serverRegister: isServerRegister,
-          peerId: peerId
-        });
-        socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-        socketReconnectRetryInterval = null;
-        socket && socket.destroy();
-        break;
-      case 'webrtc':
-        socketState = socketStateType.CLOSED;
-        fireEvent('stateChange', {
-          socketState: socketState,
-          timeUntilReconnect: 0,
-          deviceRegister: isDeviceRegister,
-          serverRegister: isServerRegister,
-          peerId: peerId
-        });
-        socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-        socketReconnectRetryInterval = null;
-        webRTCClass && webRTCClass.destroy();
-        break;
-    }
-  };
-  this.logout = function () {
-    return new Promise(function (resolve) {
-      isLoggedOut = true;
-      socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-      socketReconnectRetryInterval = null;
-      reconnectSocketTimeout && clearTimeout(socketReconnectRetryInterval);
-      reconnectSocketTimeout = null;
-      oldPeerId = peerId;
-      peerId = undefined;
-      isServerRegister = false;
-      isDeviceRegister = false;
-      isSocketOpen = false;
-      deviceId = undefined;
-      pushSendDataQueue = [];
-      ackCallback = {};
-      clearTimeouts();
-      switch (protocol) {
-        case 'websocket':
-          socketState = socketStateType.CLOSED;
-          fireEvent('stateChange', {
-            socketState: socketState,
-            timeUntilReconnect: 0,
-            deviceRegister: isDeviceRegister,
-            serverRegister: isServerRegister,
-            peerId: peerId
-          });
-          reconnOnClose.set(false);
-          // reconnectOnClose = false;
-
-          if (socket) {
-            socket.destroy();
-            // socket.destroy();
-          }
-
-          break;
-        case 'webrtc':
-          socketState = socketStateType.CLOSED;
-          fireEvent('stateChange', {
-            socketState: socketState,
-            timeUntilReconnect: 0,
-            deviceRegister: isDeviceRegister,
-            serverRegister: isServerRegister,
-            peerId: peerId
-          });
-          reconnOnClose.set(false);
-          // reconnectOnClose = false;
-          if (webRTCClass) {
-            webRTCClass.destroy();
-          }
-          break;
-      }
-      for (var i in eventCallbacks) {
-        delete eventCallbacks[i];
-      }
-      setTimeout(function () {
-        resolve();
-        // fireEvent("asyncDestroyed");
-      }, 20);
-    });
-  };
-  var reconnectSocketTimeout;
-  this.reconnectSocket = function () {
-    retryStep.set(0);
-    if (isConnecting) return;
-    isSocketOpen = false;
-    isDeviceRegister = false;
-    oldPeerId = peerId;
-    socketState = socketStateType.CLOSED;
-    fireEvent('disconnect', {});
-
-    // retryStep.set(0);
-
-    logLevel.debug && console.debug("[Async][async.js] on socket close, retryStep:", retryStep.get());
-    fireEvent('stateChange', {
-      socketState: socketState,
-      timeUntilReconnect: 1000 * retryStep.get(),
-      deviceRegister: isDeviceRegister,
-      serverRegister: isServerRegister,
-      peerId: peerId
-    });
-    socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
-    socketReconnectRetryInterval = null;
-    fireEvent("reconnecting", {
-      nextTime: retryStep.get()
-    });
-    if (protocol == "websocket") socket && socket.destroy();else if (protocol == "webrtc") webRTCClass && webRTCClass.destroy();
-    if (isLoggedOut) return;
-    setTimeout(function () {
-      maybeReconnect();
-      if (retryStep.get() < 64) {
-        // retryStep += 3;
-        retryStep.set(3);
-      }
-    }, 100);
-  };
-  this.setRetryTimerTime = function (seconds) {
-    retryStep.set(seconds);
-  };
-  this.generateUUID = Utility.generateUUID;
-  this.registerDevice = registerDevice;
-  init();
-}
-module.exports = Async;
-var _default = Async;
-exports["default"] = _default;
-},{"../utility/logger.js":4,"../utility/utility.js":5,"./socket":2,"./webrtc":3,"@babel/runtime/helpers/interopRequireDefault":7}],2:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Socket = Socket;
-function Socket(params) {
-  if (typeof WebSocket === "undefined" && typeof require !== "undefined" && typeof exports !== "undefined") {
-    WebSocket = require('isomorphic-ws');
-  }
-
-  /*******************************************************
-   *          P R I V A T E   V A R I A B L E S          *
-   *******************************************************/
-
-  var address = params.socketAddress,
-    wsConnectionWaitTime = params.wsConnectionWaitTime || 500,
-    connectionCheckTimeout = params.connectionCheckTimeout || 10000,
-    socket,
-    waitForSocketToConnectTimeoutId,
-    socketRealTimeStatusInterval,
-    logLevel = params.logLevel,
-    pingController = new PingManager({
-      waitTime: connectionCheckTimeout
-    }),
-    socketWatchTimeout,
-    isDestroyed = false,
-    closeCodes = {
-      PING_FAILED: {
-        code: 4900,
-        reason: "Ping with server failed"
-      },
-      REQUEST_FROM_ASYNC_CLASS: {
-        code: 4901,
-        reason: "Close by sdk"
-      },
-      CONNECTION_OPEN_TIMEOUT: {
-        code: 4902,
-        reason: "Connection didn't open after a long time"
-      }
-    },
-    msgLogCallback = params.msgLogCallback,
-    onOpen = params.onOpen,
-    onClose = params.onClose,
-    onMessage = params.onMessage,
-    onCustomError = params.onCustomError,
-    onError = params.onError;
-  function PingManager(params) {
-    var config = {
-      normalWaitTime: params.waitTime,
-      lastRequestTimeoutId: null,
-      lastReceivedMessageTime: 0,
-      totalNoMessageCount: 0,
-      timeoutIds: {
-        first: null,
-        second: null,
-        third: null
-        //fourth: null
-      }
-    };
-
-    return {
-      resetPingLoop: function resetPingLoop() {
-        this.stopPingLoop();
-        this.setPingTimeout();
-      },
-      setPingTimeout: function setPingTimeout() {
-        config.timeoutIds.first = setTimeout(function () {
-          ping();
-          config.timeoutIds.second = setTimeout(function () {
-            ping();
-            config.timeoutIds.third = setTimeout(function () {
-              logLevel.debug && console.debug("[Async][Socket.js] Force closing socket.");
-              // onCloseHandler(null);
-              // socket && socket.close();
-              closeTheSocket(closeCodes.PING_FAILED);
-            }, 2000);
-          }, 2000);
-        }, 8000);
-      },
-      stopPingLoop: function stopPingLoop() {
-        clearTimeout(config.timeoutIds.first);
-        clearTimeout(config.timeoutIds.second);
-        clearTimeout(config.timeoutIds.third);
-        // clearTimeout(config.timeoutIds.fourth);
-      }
-    };
-  }
-
-  /*******************************************************
-   *            P R I V A T E   M E T H O D S            *
-   *******************************************************/
-
-  var connect = function connect() {
-      try {
-        if (socket && socket.readyState == 1) {
-          return;
-        }
-        socket = new WebSocket(address, []);
-
-        /**
-         * Watches the socket to make sure it's state changes to 1 in 5 seconds
-         */
-        socketWatchTimeout && clearTimeout(socketWatchTimeout);
-        socketWatchTimeout = setTimeout(function () {
-          // if(socket.readyState !== 1) {
-          logLevel.debug && console.debug("[Async][Socket.js] socketWatchTimeout triggered.");
-          // onCloseHandler(null);
-          // socket && socket.close();
-          closeTheSocket(closeCodes.CONNECTION_OPEN_TIMEOUT);
-          // }
-        }, 5000);
-        socket.onopen = function (event) {
-          if (onOpen) {
-            waitForSocketToConnect(function () {
-              pingController.resetPingLoop();
-              onOpen();
-              socketWatchTimeout && clearTimeout(socketWatchTimeout);
-            });
-          } else {
-            // onCloseHandler();
-            closeTheSocket();
-          }
-        };
-        socket.onmessage = function (event) {
-          msgLogCallback && msgLogCallback({
-            msg: event.data,
-            direction: "receive",
-            time: new Date().getTime()
-          });
-          if (onMessage) {
-            pingController.resetPingLoop();
-            var messageData = JSON.parse(event.data);
-            onMessage(messageData);
-          } else {
-            // onCloseHandler();
-            closeTheSocket();
-          }
-        };
-        socket.onclose = function (event) {
-          pingController.stopPingLoop();
-          logLevel.debug && console.debug("[Async][Socket.js] socket.onclose happened. EventData:", event);
-          // onCloseHandler(event);
-          closeTheSocket();
-          socketWatchTimeout && clearTimeout(socketWatchTimeout);
-        };
-        socket.onerror = function (event) {
-          logLevel.debug && console.debug("[Async][Socket.js] socket.onerror happened. EventData:", event);
-          if (onError) {
-            onError(event);
-            // onCloseHandler();
-            closeTheSocket();
-            socketWatchTimeout && clearTimeout(socketWatchTimeout);
-          }
-        };
-      } catch (error) {
-        onCustomError({
-          errorCode: 4000,
-          errorMessage: "ERROR in WEBSOCKET!",
-          errorEvent: error
-        });
-      }
-    },
-    onCloseHandler = function onCloseHandler(event) {
-      pingController.stopPingLoop();
-      if (socket) {
-        socket.onclose = null;
-        socket.onmessage = null;
-        socket.onerror = null;
-        socket.onopen = null;
-      }
-    },
-    ping = function ping() {
-      sendData({
-        type: 0
-      });
-    },
-    waitForSocketToConnect = function waitForSocketToConnect(callback) {
-      waitForSocketToConnectTimeoutId && clearTimeout(waitForSocketToConnectTimeoutId);
-      if (socket.readyState === 1) {
-        callback();
-      } else {
-        waitForSocketToConnectTimeoutId = setTimeout(function () {
-          if (socket.readyState === 1) {
-            callback();
-          } else {
-            waitForSocketToConnect(callback);
-          }
-        }, wsConnectionWaitTime);
-      }
-    },
-    sendData = function sendData(params) {
-      var data = {
-        type: params.type,
-        uniqueId: params.uniqueId
-      };
-      if (params.trackerId) {
-        data.trackerId = params.trackerId;
-      }
-      try {
-        if (params.content) {
-          data.content = JSON.stringify(params.content);
-        }
-        if (socket.readyState === 1) {
-          var stringData = JSON.stringify(data);
-          msgLogCallback && msgLogCallback({
-            msg: stringData,
-            direction: "send",
-            time: new Date().getTime()
-          });
-          socket.send(stringData);
-        }
-      } catch (error) {
-        onCustomError({
-          errorCode: 4004,
-          errorMessage: "Error in Socket sendData!",
-          errorEvent: error
-        });
-      }
-    };
-
-  /*******************************************************
-   *             P U B L I C   M E T H O D S             *
-   *******************************************************/
-  var publicized = {};
-  publicized.emit = sendData;
-  publicized.connect = function () {
-    connect();
-  };
-  publicized.close = function () {
-    logLevel.debug && console.debug("[Async][Socket.js] Closing socket by call to this.close");
-    // socket && socket.close();
-    // onCloseHandler(null);
-    closeTheSocket(closeCodes.REQUEST_FROM_ASYNC_CLASS);
-    socketWatchTimeout && clearTimeout(socketWatchTimeout);
-  };
-  publicized.destroy = function () {
-    isDestroyed = true;
-    publicized.close();
-    onClose = null;
-    onOpen = null;
-    onMessage = null;
-    onCustomError = null;
-  };
-  function closeTheSocket(reason) {
-    onCloseHandler();
-    if (socket) {
-      var socketCloseErrorHandler = function socketCloseErrorHandler(err) {
-        console.error('Socket Close Error: ', err);
-      };
-      socket.on && socket.on('error', socketCloseErrorHandler);
-      setTimeout(function () {
-        if (socket) {
-          if (reason) {
-            socket.close(reason.code, reason.reason);
-          } else {
-            socket.close();
-          }
-          socket.off && socket.off("error", socketCloseErrorHandler);
-        }
-      }, 20);
-    }
-    setTimeout(function () {
-      socket = null;
-      if (!isDestroyed && onClose) {
-        onClose();
-      }
-    }, 35);
-  }
-  return publicized;
-}
-module.exports = Socket;
-},{"isomorphic-ws":13}],3:[function(require,module,exports){
-"use strict";
-
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-var _typeof = require("@babel/runtime/helpers/typeof");
-var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
-var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
-var fflate = _interopRequireWildcard(require("fflate"));
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-function WebRTCClass(_ref) {
-  var baseUrl = _ref.baseUrl,
-    basePath = _ref.basePath,
-    configuration = _ref.configuration,
-    _ref$connectionCheckT = _ref.connectionCheckTimeout,
-    connectionCheckTimeout = _ref$connectionCheckT === void 0 ? 10000 : _ref$connectionCheckT,
-    logLevel = _ref.logLevel,
-    msgLogCallback = _ref.msgLogCallback,
-    connectionOpenWaitTime = _ref.connectionOpenWaitTime,
-    onOpen = _ref.onOpen,
-    onMessage = _ref.onMessage,
-    onError = _ref.onError,
-    onCustomError = _ref.onCustomError,
-    onClose = _ref.onClose,
-    asyncLogCallback = _ref.asyncLogCallback;
-  var defaultConfig = {
-      protocol: "https",
-      baseUrl: "109.201.0.97",
-      basePath: "/webrtc/",
-      registerEndpoint: "register/",
-      addICEEndpoint: "add-ice/",
-      getICEEndpoint: "get-ice/?",
-      configuration: {
-        bundlePolicy: "balanced",
-        iceTransportPolicy: "relay",
-        iceServers: [{
-          "urls": "turn:turnsandbox.podstream.ir:3478",
-          "username": "mkhorrami",
-          "credential": "mkh_123456"
-        }]
-      },
-      connectionCheckTimeout: 10000,
-      logLevel: null,
-      msgLogCallback: null,
-      connectionOpenWaitTime: 7000
-    },
-    variables = {
-      peerConnection: null,
-      dataChannel: null,
-      pingController: new PingManager({
-        waitTime: defaultConfig.connectionCheckTimeout
-      }),
-      candidatesQueue: [],
-      // candidatesSendQueue: [],
-      candidateManager: new CandidatesSendQueueManager(),
-      clientId: null,
-      deviceId: null,
-      apiCallRetries: {
-        register: 2,
-        getIce: 3,
-        addIce: 5
-      },
-      eventCallback: {},
-      subdomain: null,
-      isDestroyed: false,
-      dataChannelOpenTimeout: null,
-      isDataChannelOpened: false,
-      controller: new AbortController()
-    };
-  var config = {};
-  if (baseUrl) config.baseUrl = baseUrl;
-  if (basePath) config.basePath = basePath;
-  if (configuration) config.configuration = configuration;
-  if (connectionCheckTimeout) config.connectionCheckTimeout = connectionCheckTimeout;
-  if (logLevel) config.logLevel = logLevel;
-  if (connectionOpenWaitTime) config.connectionOpenWaitTime = connectionOpenWaitTime;
-  defaultConfig = Object.assign(defaultConfig, config);
-  defaultConfig.msgLogCallback = msgLogCallback;
-  function isDataChannelOpened() {
-    return variables.isDataChannelOpened;
-  }
-  function CandidatesSendQueueManager() {
-    var config = {
-      candidatesToSend: [],
-      alreadyReceivedServerCandidates: false,
-      reCheckTimeout: null
-    };
-    function trySendingCandidates() {
-      timoutCallback();
-      function timoutCallback() {
-        if (variables.peerConnection && variables.peerConnection.signalingState === 'stable') {
-          config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
-          if (config.candidatesToSend.length) {
-            var entry = config.candidatesToSend.shift();
-            handshakingFunctions.sendCandidate(entry).then(function (result) {
-              if (result.length) {
-                addServerCandidates(result);
-                config.alreadyReceivedServerCandidates = true;
-              }
-              trySendingCandidates();
-            });
-          } else if (!config.alreadyReceivedServerCandidates) {
-            handshakingFunctions.getCandidates(variables.clientId).then(function (result) {
-              addServerCandidates(result);
-            })["catch"]();
-          }
-        } else {
-          config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
-          config.reCheckTimeout = setTimeout(timoutCallback, 1000);
-        }
-      }
-    }
-    function addServerCandidates(candidates) {
-      for (var i in candidates) {
-        webrtcFunctions.putCandidateToQueue(candidates[i]);
-      }
-    }
-    return {
-      add: function add(candidate) {
-        config.candidatesToSend.push(candidate);
-        trySendingCandidates();
-      },
-      destroy: function destroy() {
-        config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
-      }
-    };
-  }
-  function PingManager(params) {
-    var config = {
-      normalWaitTime: params.waitTime,
-      lastRequestTimeoutId: null,
-      lastReceivedMessageTime: 0,
-      totalNoMessageCount: 0,
-      timeoutIds: {
-        first: null,
-        second: null,
-        third: null,
-        fourth: null
-      }
-    };
-    return {
-      resetPingLoop: function resetPingLoop() {
-        this.stopPingLoop();
-        this.setPingTimeout();
-      },
-      setPingTimeout: function setPingTimeout() {
-        config.timeoutIds.first = setTimeout(function () {
-          ping();
-          config.timeoutIds.second = setTimeout(function () {
-            ping();
-            config.timeoutIds.third = setTimeout(function () {
-              defaultConfig.logLevel.debug && console.debug("[Async][Webrtc.js] Force closing connection.");
-              asyncLogCallback && asyncLogCallback("webrtc", "setPingTimeout", "closing");
-              publicized.close();
-            }, 2000);
-          }, 2000);
-        }, 8000);
-      },
-      stopPingLoop: function stopPingLoop() {
-        clearTimeout(config.timeoutIds.first);
-        clearTimeout(config.timeoutIds.second);
-        clearTimeout(config.timeoutIds.third);
-        // clearTimeout(config.timeoutIds.fourth);
-      }
-    };
-  }
-
-  function connect() {
-    variables.isDestroyed = false;
-    webrtcFunctions.createPeerConnection();
-    console.log("[Async][webrtc] defaultConfig.connectionOpenWaitTime", defaultConfig.connectionOpenWaitTime);
-  }
-  function waitForConnectionToOpen() {
-    variables.dataChannelOpenTimeout = setTimeout(function () {
-      if (!isDataChannelOpened()) {
-        asyncLogCallback && asyncLogCallback("webrtc", "dataChannelOpenTimeout", "closing");
-        publicized.close();
-      }
-    }, defaultConfig.connectionOpenWaitTime);
-  }
-  var webrtcFunctions = {
-    createPeerConnection: function createPeerConnection() {
-      try {
-        variables.peerConnection = new RTCPeerConnection(defaultConfig.configuration);
-        console.log("[Async][webrtc] Created peer connection.");
-      } catch (error) {
-        asyncLogCallback && asyncLogCallback("webrtc", "createPeerConnection", "closing");
-        publicized.close();
-        console.error("[Async][webrtc] Webrtc Peer Create Error: ", error.message);
-        return;
-      }
-      variables.peerConnection.onconnectionstatechange = function (event) {
-        asyncLogCallback && asyncLogCallback("webrtc", "onconnectionstatechange", variables.peerConnection.connectionState);
-      };
-      variables.peerConnection.oniceconnectionstatechange = function (event) {
-        asyncLogCallback && asyncLogCallback("webrtc", "oniceconnectionstatechange", variables.peerConnection.connectionState);
-      };
-      variables.peerConnection.addEventListener('signalingstatechange', webrtcFunctions.signalingStateChangeCallback);
-      variables.peerConnection.onicecandidate = function (event) {
-        if (event.candidate) {
-          variables.candidateManager.add(event.candidate);
-          webrtcFunctions.putCandidateToQueue(event.candidate);
-        }
-      };
-      webrtcFunctions.createDataChannel();
-      webrtcFunctions.generateSdpOffer().then(sendOfferToServer);
-      function sendOfferToServer(offer) {
-        handshakingFunctions.register(offer.sdp).then(processRegisterResult)["catch"]();
-        variables.peerConnection.setLocalDescription(offer)["catch"](function (error) {
-          return console.error(error);
-        });
-      }
-      function processRegisterResult(result) {
-        variables.clientId = result.clientId;
-        variables.deviceId = result.deviceId;
-        variables.subdomain = result.subDomain;
-        webrtcFunctions.processAnswer(result.sdpAnswer);
-      }
-    },
-    signalingStateChangeCallback: function signalingStateChangeCallback(signalingStateEvent) {
-      asyncLogCallback && asyncLogCallback("webrtc", "signalingStateChangeCallback", variables.peerConnection.signalingState);
-      if (variables.peerConnection && variables.peerConnection.signalingState === 'stable') {
-        // handshakingFunctions.getCandidates().catch()
-        webrtcFunctions.addTheCandidates();
-      }
-    },
-    createDataChannel: function createDataChannel() {
-      variables.dataChannel = variables.peerConnection.createDataChannel("dataChannel", {
-        ordered: false
-      });
-      variables.dataChannel.onopen = dataChannelCallbacks.onopen;
-      variables.dataChannel.onmessage = dataChannelCallbacks.onmessage;
-      variables.dataChannel.onerror = dataChannelCallbacks.onerror;
-      variables.dataChannel.onclose = dataChannelCallbacks.onclose;
-    },
-    generateSdpOffer: function generateSdpOffer() {
-      return new Promise(function (resolve, reject) {
-        variables.peerConnection.createOffer(function (offer) {
-          resolve(offer);
-        }, function (error) {
-          reject(error);
-          console.error(error);
-        }).then(function (r) {
-          console.log(r);
-          if (r) {
-            resolve(r);
-          }
-        });
-      });
-    },
-    processAnswer: function processAnswer(answer) {
-      var remoteDesc = {
-        type: "answer",
-        sdp: answer
-      };
-      variables.peerConnection.setRemoteDescription(new RTCSessionDescription(remoteDesc))["catch"](function (error) {
-        console.error(error);
-      });
-    },
-    addTheCandidates: function addTheCandidates() {
-      while (variables.candidatesQueue.length) {
-        var entry = variables.candidatesQueue.shift();
-        variables.peerConnection.addIceCandidate(entry.candidate);
-      }
-    },
-    putCandidateToQueue: function putCandidateToQueue(candidate) {
-      variables.candidatesQueue.push({
-        candidate: new RTCIceCandidate(candidate)
-      });
-      if (variables.peerConnection && variables.peerConnection.signalingState === 'stable') {
-        webrtcFunctions.addTheCandidates();
-      }
-    },
-    sendData: function sendData(params) {
-      if (!variables.dataChannel) {
-        console.error("Connection is closed, do not send messages.");
-        return;
-      }
-      var data = {
-        type: params.type,
-        uniqueId: params.uniqueId
-      };
-      if (params.trackerId) {
-        data.trackerId = params.trackerId;
-      }
-      try {
-        if (params.content) {
-          data.content = JSON.stringify(params.content);
-        }
-        if (variables.peerConnection && variables.peerConnection.signalingState === 'stable') {
-          //defaultConfig.logLevel.debug &&
-          // console.log("[Async][WebRTC] Send ", data);
-          var stringData = JSON.stringify(data);
-          defaultConfig.msgLogCallback && defaultConfig.msgLogCallback({
-            msg: stringData,
-            direction: "send",
-            time: new Date().getTime()
-          });
-          variables.dataChannel.send(stringData);
-        }
-      } catch (error) {
-        asyncLogCallback && asyncLogCallback("webrtc", "webrtcFunctions.sendData.catch", error);
-        onCustomError({
-          errorCode: 4004,
-          errorMessage: "Error in channel send message!",
-          errorEvent: error
-        });
-      }
-    }
-  };
-  var dataChannelCallbacks = {
-    onopen: function onopen(event) {
-      asyncLogCallback && asyncLogCallback("webrtc", "dataChannel.onopen", event);
-      variables.isDataChannelOpened = true;
-      variables.pingController.resetPingLoop();
-      onOpen(variables.deviceId);
-    },
-    onmessage: function onmessage(event) {
-      variables.pingController.resetPingLoop();
-      decompressResponse(event.data).then(function (result) {
-        defaultConfig.msgLogCallback && defaultConfig.msgLogCallback({
-          msg: result,
-          direction: "receive",
-          time: new Date().getTime()
-        });
-        var messageData = JSON.parse(result);
-        // console.log("[Async][WebRTC] Receive ", result);
-        onMessage(messageData);
-      });
-    },
-    onerror: function onerror(error) {
-      asyncLogCallback && asyncLogCallback("webrtc", "dataChannel.onerror", error);
-      defaultConfig.logLevel.debug && console.debug("[Async][webrtc] dataChannel.onerror happened. EventData:", error);
-      onError();
-      publicized.close();
-    },
-    onclose: function onclose(event) {
-      asyncLogCallback && asyncLogCallback("webrtc", "dataChannel.onclose", event);
-      publicized.close();
-    }
-  };
-  function getApiUrl() {
-    return (variables.subdomain ? variables.subdomain : defaultConfig.protocol + "://" + defaultConfig.baseUrl) + defaultConfig.basePath;
-  }
-  var handshakingFunctions = {
-    register: function register(offer) {
-      var retries = variables.apiCallRetries.register;
-      return new Promise(promiseHandler);
-      function promiseHandler(resolve, reject) {
-        if (variables.isDestroyed) return;
-        var registerEndPoint = getApiUrl() + defaultConfig.registerEndpoint,
-          controller = new AbortController();
-        var timeoutId = setTimeout(function () {
-          return controller.abort();
-        }, 2500);
-        fetch(registerEndPoint, {
-          method: "POST",
-          body: JSON.stringify({
-            offer: offer
-          }),
-          headers: {
-            "Content-Type": "application/json"
-            // 'Content-Type': 'application/x-www-form-urlencoded',
-          },
-
-          signal: controller.signal
-        }).then(function (response) {
-          clearTimeout(timeoutId);
-          if (response.ok) {
-            waitForConnectionToOpen();
-            return response.json();
-          } else if (retries) {
-            retryTheRequest(resolve, reject);
-            retries--;
-          } else reject();
-        }).then(function (result) {
-          return resolve(result);
-        })["catch"](function (err) {
-          clearTimeout(timeoutId);
-          if (retries) {
-            retryTheRequest(resolve, reject);
-            retries--;
-          } else {
-            asyncLogCallback && asyncLogCallback("webrtc", "register.catch", "closing");
-            publicized.close();
-          }
-          console.error(err);
-        });
-      }
-      function retryTheRequest(resolve, reject) {
-        setTimeout(function () {
-          promiseHandler(resolve, reject);
-        }, 1000);
-      }
-    },
-    getCandidates: function getCandidates(clientId) {
-      var getIceCandidateEndPoint = getApiUrl() + defaultConfig.getICEEndpoint;
-      getIceCandidateEndPoint += "clientId=" + clientId;
-      var retries = variables.apiCallRetries.getIce;
-      return new Promise(promiseHandler);
-      function promiseHandler(resolve, reject) {
-        if (variables.isDestroyed) return;
-        fetch(getIceCandidateEndPoint, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json"
-            // 'Content-Type': 'application/x-www-form-urlencoded',
-          }
-        }).then(function (response) {
-          if (response.ok) return response.json();else if (retries) {
-            retryTheRequest(resolve, reject);
-            retries--;
-          } else reject();
-        }).then(function (result) {
-          resolve(result.iceCandidates);
-          // if(result.iceCandidates && result.iceCandidates.length) {
-          //     // result.iceCandidates.forEach((item) => {
-          //     //     webrtcFunctions.putCandidateToQueue(item);
-          //     // });
-          //     resolve(result.iceCandidates)
-          // }
-          // else {
-          //     if(retries){
-          //         retryTheRequest(resolve, reject);
-          //         retries--;
-          //     } else reject();
-          // }
-        })["catch"](function (err) {
-          if (retries) {
-            retryTheRequest(resolve, reject);
-            retries--;
-          } else reject(err);
-          console.error(err);
-        });
-      }
-      function retryTheRequest(resolve, reject) {
-        setTimeout(function () {
-          promiseHandler(resolve, reject);
-        }, 1000);
-      }
-    },
-    sendCandidate: function sendCandidate(candidate) {
-      var addIceCandidateEndPoint = getApiUrl() + defaultConfig.addICEEndpoint,
-        retries = variables.apiCallRetries.addIce;
-      return new Promise(promiseHandler);
-      function promiseHandler(resolve, reject) {
-        if (variables.isDestroyed) return;
-        fetch(addIceCandidateEndPoint, {
-          method: "POST",
-          body: JSON.stringify({
-            "clientId": variables.clientId,
-            "candidate": candidate
-          }),
-          headers: {
-            "Content-Type": "application/json"
-            // 'Content-Type': 'application/x-www-form-urlencoded',
-          }
-        }).then(function (response) {
-          if (response.ok) {
-            return response.json();
-          } else if (retries) {
-            retryTheRequest(resolve, reject);
-            retries--;
-          } else reject();
-        }).then(function (result) {
-          resolve(result.iceCandidates);
-        })["catch"](function (err) {
-          if (retries) {
-            retryTheRequest(resolve, reject);
-            retries--;
-          } else reject(err);
-          console.error(err);
-        });
-      }
-      function retryTheRequest(resolve, reject) {
-        setTimeout(function () {
-          promiseHandler(resolve, reject);
-        }, 2000);
-      }
-    }
-  };
-  function resetVariables() {
-    variables.subdomain = null;
-    variables.pingController.stopPingLoop();
-    variables.dataChannel && variables.dataChannel.close();
-    variables.dataChannel = null;
-    variables.peerConnection && variables.peerConnection.close();
-    variables.peerConnection = null;
-    variables.candidatesQueue = [];
-    variables.clientId = null;
-    variables.deviceId = null;
-    variables.candidateManager.destroy();
-    variables.candidateManager = new CandidatesSendQueueManager();
-    variables.isDataChannelOpened = false;
-    clearTimeout(variables.dataChannelOpenTimeout);
-    // variables.isDestroyed = false;
-    if (!variables.isDestroyed && onClose) {
-      onClose();
-    }
-  }
-  function ping() {
-    webrtcFunctions.sendData({
-      type: 0
-    });
-  }
-  function removeCallbacks() {
-    if (variables.peerConnection) variables.peerConnection.onicecandidate = null;
-    if (variables.dataChannel) {
-      variables.dataChannel.onclose = null;
-      variables.dataChannel.onmessage = null;
-      variables.dataChannel.onerror = null;
-      variables.dataChannel.onopen = null;
-    }
-  }
-  var publicized = {};
-  // publicized.on: function (messageName, callback) {
-  //         variables.eventCallback[messageName] = callback;
-  //     },
-  publicized.emit = webrtcFunctions.sendData;
-  publicized.connect = connect;
-  publicized.close = function () {
-    asyncLogCallback && asyncLogCallback("webrtc", "publicized.close", "closing");
-    removeCallbacks();
-    resetVariables();
-  };
-  publicized.destroy = function () {
-    variables.isDestroyed = true;
-    asyncLogCallback && asyncLogCallback("webrtc", "publicized.destroy", "closing");
-    publicized.close();
-    onOpen = null;
-    onClose = null;
-    onMessage = null;
-    onError = null;
-    onCustomError = null;
-    // for (let i in variables.eventCallback) {
-    //     delete variables.eventCallback[i];
-    // }
-  };
-
-  /**
-   * Decompress results
-   */
-  function decompress(_x, _x2) {
-    return _decompress.apply(this, arguments);
-  }
-  function _decompress() {
-    _decompress = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(byteArray, encoding) {
-      var result, res;
-      return _regenerator["default"].wrap(function _callee$(_context) {
-        while (1) switch (_context.prev = _context.next) {
-          case 0:
-            result = fflate.decompressSync(new Uint8Array(byteArray));
-            res = new TextDecoder().decode(result);
-            return _context.abrupt("return", res);
-          case 3:
-          case "end":
-            return _context.stop();
-        }
-      }, _callee);
-    }));
-    return _decompress.apply(this, arguments);
-  }
-  function decompressResponse(_x3) {
-    return _decompressResponse.apply(this, arguments);
-  } //utility
-  /**
-   * Base64Url string to array buffer
-   * - b64u->b64->biStr->byte[]->arrBuff
-   * @param base64Url
-   * @returns {ArrayBufferLike}
-   * @private
-   */
-  function _decompressResponse() {
-    _decompressResponse = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(compressedData) {
-      return _regenerator["default"].wrap(function _callee2$(_context2) {
-        while (1) switch (_context2.prev = _context2.next) {
-          case 0:
-            _context2.next = 2;
-            return decompress(_base64UrlToArrayBuffer(compressedData), 'gzip');
-          case 2:
-            return _context2.abrupt("return", _context2.sent);
-          case 3:
-          case "end":
-            return _context2.stop();
-        }
-      }, _callee2);
-    }));
-    return _decompressResponse.apply(this, arguments);
-  }
-  function _base64UrlToArrayBuffer(base64) {
-    // console.log('array buffer from base64Url:', base64);
-    var binaryString = window.atob(base64);
-    var length = binaryString.length;
-    var bytes = new Uint8Array(length);
-    for (var i = 0; i < length; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
-    }
-    // console.log('array buffer:', bytes.buffer);
-    return bytes.buffer;
-  }
-  return publicized;
-}
-module.exports = WebRTCClass;
-},{"@babel/runtime/helpers/asyncToGenerator":6,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/typeof":9,"@babel/runtime/regenerator":10,"fflate":11}],4:[function(require,module,exports){
-"use strict";
-
-function LogLevel(logLevel) {
-  var ll = logLevel || 2;
-  switch (ll) {
-    case 1:
-      return {
-        error: true,
-        debug: false,
-        info: false
-      };
-    case 2:
-      return {
-        error: true,
-        debug: true,
-        info: false
-      };
-    case 3:
-      return {
-        error: true,
-        debug: true,
-        info: true
-      };
-  }
-}
-if (typeof module !== 'undefined' && typeof module.exports != 'undefined') {
-  module.exports = LogLevel;
-} else {
-  if (!window.POD) {
-    window.POD = {};
-  }
-  window.POD.LogLevel = LogLevel;
-}
-},{}],5:[function(require,module,exports){
-(function (global){(function (){
-"use strict";
-
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-var _typeof2 = _interopRequireDefault(require("@babel/runtime/helpers/typeof"));
-/**
- * General Utilities
- */
-function Utility() {
-  /**
-   * Checks if Client is using NodeJS or not
-   * @return {boolean}
-   */
-  this.isNode = function () {
-    // return (typeof module !== 'undefined' && typeof module.exports != "undefined");
-    return typeof global !== "undefined" && {}.toString.call(global) === '[object global]';
-  };
-
-  /**
-   * Generates Random String
-   * @param   {int}     sectionCount
-   * @return  {string}
-   */
-  this.generateUUID = function (sectionCount) {
-    var d = new Date().getTime();
-    var textData = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
-    if (sectionCount == 1) {
-      textData = 'xxxxxxxx';
-    }
-    if (sectionCount == 2) {
-      textData = 'xxxxxxxx-xxxx';
-    }
-    if (sectionCount == 3) {
-      textData = 'xxxxxxxx-xxxx-4xxx';
-    }
-    if (sectionCount == 4) {
-      textData = 'xxxxxxxx-xxxx-4xxx-yxxx';
-    }
-    var uuid = textData.replace(/[xy]/g, function (c) {
-      var r = (d + Math.random() * 16) % 16 | 0;
-      d = Math.floor(d / 16);
-      return (c == 'x' ? r : r & 0x7 | 0x8).toString(16);
-    });
-    return uuid;
-  };
-
-  /**
-   * Prints Socket Status on Both Browser and Linux Terminal
-   * @param {object} params Socket status + current msg + send queue
-   * @return
-   */
-  this.asyncLogger = function (params) {
-    var type = params.type,
-      msg = params.msg,
-      peerId = params.peerId,
-      deviceId = params.deviceId,
-      isSocketOpen = params.isSocketOpen,
-      isDeviceRegister = params.isDeviceRegister,
-      isServerRegister = params.isServerRegister,
-      socketState = params.socketState,
-      pushSendDataQueue = params.pushSendDataQueue,
-      workerId = params.workerId,
-      protocol = params.protocol || "websocket",
-      BgColor,
-      FgColor,
-      ColorCSS;
-    switch (type) {
-      case "Send":
-        BgColor = 44;
-        FgColor = 34;
-        ColorCSS = "#4c8aff";
-        break;
-      case "Receive":
-        BgColor = 45;
-        FgColor = 35;
-        ColorCSS = "#aa386d";
-        break;
-      case "Error":
-        BgColor = 41;
-        FgColor = 31;
-        ColorCSS = "#ff0043";
-        break;
-      default:
-        BgColor = 45;
-        ColorCSS = "#212121";
-        break;
-    }
-    switch (protocol) {
-      case "websocket":
-        if (typeof global !== "undefined" && {}.toString.call(global) === '[object global]') {
-          console.log("\n");
-          console.log("\x1b[" + BgColor + "m\x1b[8m%s\x1b[0m", "################################################################");
-          console.log("\x1b[" + BgColor + "m\x1b[8m##################\x1b[0m\x1b[37m\x1b[" + BgColor + "m S O C K E T    S T A T U S \x1b[0m\x1b[" + BgColor + "m\x1b[8m##################\x1b[0m");
-          console.log("\x1b[" + BgColor + "m\x1b[8m%s\x1b[0m", "################################################################");
-          console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t\t\t\t\t\t\t      \x1b[" + BgColor + "m\x1b[8m##\x1b[0m");
-          console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m", " PEER ID\t\t", peerId);
-          if (workerId > 0) {
-            console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m", " WORKER ID\t\t", workerId);
-          }
-          console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m", " DEVICE ID\t\t", deviceId);
-          console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m", " IS SOCKET OPEN\t", isSocketOpen);
-          console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m", " DEVICE REGISTER\t", isDeviceRegister);
-          console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m", " SERVER REGISTER\t", isServerRegister);
-          console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m", " SOCKET STATE\t", socketState);
-          console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[" + FgColor + "m%s\x1b[0m ", " CURRENT MESSAGE\t", type);
-          console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m");
-          Object.keys(msg).forEach(function (key) {
-            if ((0, _typeof2["default"])(msg[key]) === 'object') {
-              console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t \x1b[1m-\x1b[0m \x1b[35m%s\x1b[0m", key);
-              Object.keys(msg[key]).forEach(function (k) {
-                console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t   \x1b[1m•\x1b[0m \x1b[35m%s\x1b[0m : \x1b[33m%s\x1b[0m", k, msg[key][k]);
-              });
-            } else {
-              console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t \x1b[1m•\x1b[0m \x1b[35m%s\x1b[0m : \x1b[33m%s\x1b[0m", key, msg[key]);
-            }
-          });
-          console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m");
-          if (pushSendDataQueue.length > 0) {
-            console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m", " SEND QUEUE");
-            console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m");
-            Object.keys(pushSendDataQueue).forEach(function (key) {
-              if ((0, _typeof2["default"])(pushSendDataQueue[key]) === 'object') {
-                console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t \x1b[1m-\x1b[0m \x1b[35m%s\x1b[0m", key);
-                Object.keys(pushSendDataQueue[key]).forEach(function (k) {
-                  console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t   \x1b[1m•\x1b[0m \x1b[35m%s\x1b[0m : \x1b[36m%s\x1b[0m", k, JSON.stringify(pushSendDataQueue[key][k]));
-                });
-              } else {
-                console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t \x1b[1m•\x1b[0m \x1b[35m%s\x1b[0m : \x1b[33m%s\x1b[0m", key, pushSendDataQueue[key]);
-              }
-            });
-          } else {
-            console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m ", " SEND QUEUE\t\t", "Empty");
-          }
-          console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t\t\t\t\t\t\t      \x1b[" + BgColor + "m\x1b[8m##\x1b[0m");
-          console.log("\x1b[" + BgColor + "m\x1b[8m%s\x1b[0m", "################################################################");
-          console.log("\n");
-        } else {
-          console.log("\n");
-          console.log("%cS O C K E T    S T A T U S", 'background: ' + ColorCSS + '; padding: 10px 142px; font-weight: bold; font-size: 18px; color: #fff;');
-          console.log("\n");
-          console.log("%c   PEER ID\t\t %c" + peerId, 'color: #444', 'color: #ffac28; font-weight: bold');
-          console.log("%c   DEVICE ID\t\t %c" + deviceId, 'color: #444', 'color: #ffac28; font-weight: bold');
-          console.log("%c   IS SOCKET OPEN\t %c" + isSocketOpen, 'color: #444', 'color: #ffac28; font-weight: bold');
-          console.log("%c   DEVICE REGISTER\t %c" + isDeviceRegister, 'color: #444', 'color: #ffac28; font-weight: bold');
-          console.log("%c   SERVER REGISTER\t %c" + isServerRegister, 'color: #444', 'color: #ffac28; font-weight: bold');
-          console.log("%c   SOCKET STATE\t\t %c" + socketState, 'color: #444', 'color: #ffac28; font-weight: bold');
-          console.log("%c   CURRENT MESSAGE\t %c" + type, 'color: #444', 'color: #aa386d; font-weight: bold');
-          console.log("\n");
-          Object.keys(msg).forEach(function (key) {
-            if ((0, _typeof2["default"])(msg[key]) === 'object') {
-              console.log("%c \t-" + key, 'color: #777');
-              Object.keys(msg[key]).forEach(function (k) {
-                console.log("%c \t  •" + k + " : %c" + msg[key][k], 'color: #777', 'color: #f23; font-weight: bold');
-              });
-            } else {
-              console.log("%c \t•" + key + " : %c" + msg[key], 'color: #777', 'color: #f23; font-weight: bold');
-            }
-          });
-          console.log("\n");
-          if (pushSendDataQueue.length > 0) {
-            console.log("%c   SEND QUEUE", 'color: #444');
-            console.log("\n");
-            Object.keys(pushSendDataQueue).forEach(function (key) {
-              if ((0, _typeof2["default"])(pushSendDataQueue[key]) === 'object') {
-                console.log("%c \t-" + key, 'color: #777');
-                Object.keys(pushSendDataQueue[key]).forEach(function (k) {
-                  console.log("%c \t  •" + k + " : %c" + JSON.stringify(pushSendDataQueue[key][k]), 'color: #777', 'color: #999; font-weight: bold');
-                });
-              } else {
-                console.log("%c \t•" + key + " : %c" + pushSendDataQueue[key], 'color: #777', 'color: #999; font-weight: bold');
-              }
-            });
-          } else {
-            console.log("%c   SEND QUEUE\t\t %cEmpty", 'color: #444', 'color: #000; font-weight: bold');
-          }
-          console.log("\n");
-          console.log("%c ", 'font-weight: bold; font-size: 3px; border-left: solid 540px ' + ColorCSS + ';');
-          console.log("\n");
-        }
-        break;
-    }
-  };
-
-  /**
-   * Prints Custom Message in console
-   * @param {string} message Message to be logged in terminal
-   * @return
-   */
-  this.asyncStepLogger = function (message) {
-    if (typeof navigator == "undefined") {
-      console.log("\x1b[90m    ☰ \x1b[0m\x1b[90m%s\x1b[0m", message);
-    } else {
-      console.log("%c   " + message, 'border-left: solid #666 10px; color: #666;');
-    }
-  };
-}
-if (typeof module !== 'undefined' && typeof module.exports != "undefined") {
-  module.exports = Utility;
-} else {
-  if (!window.POD) {
-    window.POD = {};
-  }
-  window.POD.AsyncUtility = Utility;
-}
-}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/typeof":9}],6:[function(require,module,exports){
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
-  try {
-    var info = gen[key](arg);
-    var value = info.value;
-  } catch (error) {
-    reject(error);
-    return;
-  }
-  if (info.done) {
-    resolve(value);
-  } else {
-    Promise.resolve(value).then(_next, _throw);
-  }
-}
-function _asyncToGenerator(fn) {
-  return function () {
-    var self = this,
-      args = arguments;
-    return new Promise(function (resolve, reject) {
-      var gen = fn.apply(self, args);
-      function _next(value) {
-        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
-      }
-      function _throw(err) {
-        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
-      }
-      _next(undefined);
-    });
-  };
-}
-module.exports = _asyncToGenerator, module.exports.__esModule = true, module.exports["default"] = module.exports;
-},{}],7:[function(require,module,exports){
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    "default": obj
-  };
-}
-module.exports = _interopRequireDefault, module.exports.__esModule = true, module.exports["default"] = module.exports;
-},{}],8:[function(require,module,exports){
-var _typeof = require("./typeof.js")["default"];
-function _regeneratorRuntime() {
-  "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
-  module.exports = _regeneratorRuntime = function _regeneratorRuntime() {
-    return exports;
-  }, module.exports.__esModule = true, module.exports["default"] = module.exports;
-  var exports = {},
-    Op = Object.prototype,
-    hasOwn = Op.hasOwnProperty,
-    defineProperty = Object.defineProperty || function (obj, key, desc) {
-      obj[key] = desc.value;
-    },
-    $Symbol = "function" == typeof Symbol ? Symbol : {},
-    iteratorSymbol = $Symbol.iterator || "@@iterator",
-    asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator",
-    toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
-  function define(obj, key, value) {
-    return Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: !0,
-      configurable: !0,
-      writable: !0
-    }), obj[key];
-  }
-  try {
-    define({}, "");
-  } catch (err) {
-    define = function define(obj, key, value) {
-      return obj[key] = value;
-    };
-  }
-  function wrap(innerFn, outerFn, self, tryLocsList) {
-    var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator,
-      generator = Object.create(protoGenerator.prototype),
-      context = new Context(tryLocsList || []);
-    return defineProperty(generator, "_invoke", {
-      value: makeInvokeMethod(innerFn, self, context)
-    }), generator;
-  }
-  function tryCatch(fn, obj, arg) {
-    try {
-      return {
-        type: "normal",
-        arg: fn.call(obj, arg)
-      };
-    } catch (err) {
-      return {
-        type: "throw",
-        arg: err
-      };
-    }
-  }
-  exports.wrap = wrap;
-  var ContinueSentinel = {};
-  function Generator() {}
-  function GeneratorFunction() {}
-  function GeneratorFunctionPrototype() {}
-  var IteratorPrototype = {};
-  define(IteratorPrototype, iteratorSymbol, function () {
-    return this;
-  });
-  var getProto = Object.getPrototypeOf,
-    NativeIteratorPrototype = getProto && getProto(getProto(values([])));
-  NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype);
-  var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype);
-  function defineIteratorMethods(prototype) {
-    ["next", "throw", "return"].forEach(function (method) {
-      define(prototype, method, function (arg) {
-        return this._invoke(method, arg);
-      });
-    });
-  }
-  function AsyncIterator(generator, PromiseImpl) {
-    function invoke(method, arg, resolve, reject) {
-      var record = tryCatch(generator[method], generator, arg);
-      if ("throw" !== record.type) {
-        var result = record.arg,
-          value = result.value;
-        return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) {
-          invoke("next", value, resolve, reject);
-        }, function (err) {
-          invoke("throw", err, resolve, reject);
-        }) : PromiseImpl.resolve(value).then(function (unwrapped) {
-          result.value = unwrapped, resolve(result);
-        }, function (error) {
-          return invoke("throw", error, resolve, reject);
-        });
-      }
-      reject(record.arg);
-    }
-    var previousPromise;
-    defineProperty(this, "_invoke", {
-      value: function value(method, arg) {
-        function callInvokeWithMethodAndArg() {
-          return new PromiseImpl(function (resolve, reject) {
-            invoke(method, arg, resolve, reject);
-          });
-        }
-        return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg();
-      }
-    });
-  }
-  function makeInvokeMethod(innerFn, self, context) {
-    var state = "suspendedStart";
-    return function (method, arg) {
-      if ("executing" === state) throw new Error("Generator is already running");
-      if ("completed" === state) {
-        if ("throw" === method) throw arg;
-        return doneResult();
-      }
-      for (context.method = method, context.arg = arg;;) {
-        var delegate = context.delegate;
-        if (delegate) {
-          var delegateResult = maybeInvokeDelegate(delegate, context);
-          if (delegateResult) {
-            if (delegateResult === ContinueSentinel) continue;
-            return delegateResult;
-          }
-        }
-        if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) {
-          if ("suspendedStart" === state) throw state = "completed", context.arg;
-          context.dispatchException(context.arg);
-        } else "return" === context.method && context.abrupt("return", context.arg);
-        state = "executing";
-        var record = tryCatch(innerFn, self, context);
-        if ("normal" === record.type) {
-          if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue;
-          return {
-            value: record.arg,
-            done: context.done
-          };
-        }
-        "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg);
-      }
-    };
-  }
-  function maybeInvokeDelegate(delegate, context) {
-    var methodName = context.method,
-      method = delegate.iterator[methodName];
-    if (undefined === method) return context.delegate = null, "throw" === methodName && delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method) || "return" !== methodName && (context.method = "throw", context.arg = new TypeError("The iterator does not provide a '" + methodName + "' method")), ContinueSentinel;
-    var record = tryCatch(method, delegate.iterator, context.arg);
-    if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel;
-    var info = record.arg;
-    return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel);
-  }
-  function pushTryEntry(locs) {
-    var entry = {
-      tryLoc: locs[0]
-    };
-    1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry);
-  }
-  function resetTryEntry(entry) {
-    var record = entry.completion || {};
-    record.type = "normal", delete record.arg, entry.completion = record;
-  }
-  function Context(tryLocsList) {
-    this.tryEntries = [{
-      tryLoc: "root"
-    }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0);
-  }
-  function values(iterable) {
-    if (iterable) {
-      var iteratorMethod = iterable[iteratorSymbol];
-      if (iteratorMethod) return iteratorMethod.call(iterable);
-      if ("function" == typeof iterable.next) return iterable;
-      if (!isNaN(iterable.length)) {
-        var i = -1,
-          next = function next() {
-            for (; ++i < iterable.length;) if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next;
-            return next.value = undefined, next.done = !0, next;
-          };
-        return next.next = next;
-      }
-    }
-    return {
-      next: doneResult
-    };
-  }
-  function doneResult() {
-    return {
-      value: undefined,
-      done: !0
-    };
-  }
-  return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", {
-    value: GeneratorFunctionPrototype,
-    configurable: !0
-  }), defineProperty(GeneratorFunctionPrototype, "constructor", {
-    value: GeneratorFunction,
-    configurable: !0
-  }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) {
-    var ctor = "function" == typeof genFun && genFun.constructor;
-    return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name));
-  }, exports.mark = function (genFun) {
-    return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun;
-  }, exports.awrap = function (arg) {
-    return {
-      __await: arg
-    };
-  }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () {
-    return this;
-  }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) {
-    void 0 === PromiseImpl && (PromiseImpl = Promise);
-    var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl);
-    return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) {
-      return result.done ? result.value : iter.next();
-    });
-  }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () {
-    return this;
-  }), define(Gp, "toString", function () {
-    return "[object Generator]";
-  }), exports.keys = function (val) {
-    var object = Object(val),
-      keys = [];
-    for (var key in object) keys.push(key);
-    return keys.reverse(), function next() {
-      for (; keys.length;) {
-        var key = keys.pop();
-        if (key in object) return next.value = key, next.done = !1, next;
-      }
-      return next.done = !0, next;
-    };
-  }, exports.values = values, Context.prototype = {
-    constructor: Context,
-    reset: function reset(skipTempReset) {
-      if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined);
-    },
-    stop: function stop() {
-      this.done = !0;
-      var rootRecord = this.tryEntries[0].completion;
-      if ("throw" === rootRecord.type) throw rootRecord.arg;
-      return this.rval;
-    },
-    dispatchException: function dispatchException(exception) {
-      if (this.done) throw exception;
-      var context = this;
-      function handle(loc, caught) {
-        return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught;
-      }
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i],
-          record = entry.completion;
-        if ("root" === entry.tryLoc) return handle("end");
-        if (entry.tryLoc <= this.prev) {
-          var hasCatch = hasOwn.call(entry, "catchLoc"),
-            hasFinally = hasOwn.call(entry, "finallyLoc");
-          if (hasCatch && hasFinally) {
-            if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0);
-            if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc);
-          } else if (hasCatch) {
-            if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0);
-          } else {
-            if (!hasFinally) throw new Error("try statement without catch or finally");
-            if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc);
-          }
-        }
-      }
-    },
-    abrupt: function abrupt(type, arg) {
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-        if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) {
-          var finallyEntry = entry;
-          break;
-        }
-      }
-      finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null);
-      var record = finallyEntry ? finallyEntry.completion : {};
-      return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record);
-    },
-    complete: function complete(record, afterLoc) {
-      if ("throw" === record.type) throw record.arg;
-      return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel;
-    },
-    finish: function finish(finallyLoc) {
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-        if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel;
-      }
-    },
-    "catch": function _catch(tryLoc) {
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-        if (entry.tryLoc === tryLoc) {
-          var record = entry.completion;
-          if ("throw" === record.type) {
-            var thrown = record.arg;
-            resetTryEntry(entry);
-          }
-          return thrown;
-        }
-      }
-      throw new Error("illegal catch attempt");
-    },
-    delegateYield: function delegateYield(iterable, resultName, nextLoc) {
-      return this.delegate = {
-        iterator: values(iterable),
-        resultName: resultName,
-        nextLoc: nextLoc
-      }, "next" === this.method && (this.arg = undefined), ContinueSentinel;
-    }
-  }, exports;
-}
-module.exports = _regeneratorRuntime, module.exports.__esModule = true, module.exports["default"] = module.exports;
-},{"./typeof.js":9}],9:[function(require,module,exports){
-function _typeof(obj) {
-  "@babel/helpers - typeof";
-
-  return (module.exports = _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) {
-    return typeof obj;
-  } : function (obj) {
-    return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-  }, module.exports.__esModule = true, module.exports["default"] = module.exports), _typeof(obj);
-}
-module.exports = _typeof, module.exports.__esModule = true, module.exports["default"] = module.exports;
-},{}],10:[function(require,module,exports){
-// TODO(Babel 8): Remove this file.
-
-var runtime = require("../helpers/regeneratorRuntime")();
-module.exports = runtime;
-
-// Copied from https://github.com/facebook/regenerator/blob/main/packages/runtime/runtime.js#L736=
-try {
-  regeneratorRuntime = runtime;
-} catch (accidentalStrictMode) {
-  if (typeof globalThis === "object") {
-    globalThis.regeneratorRuntime = runtime;
-  } else {
-    Function("r", "regeneratorRuntime = r")(runtime);
-  }
-}
-
-},{"../helpers/regeneratorRuntime":8}],11:[function(require,module,exports){
-"use strict";
-// DEFLATE is a complex format; to read this code, you should probably check the RFC first:
-// https://tools.ietf.org/html/rfc1951
-// You may also wish to take a look at the guide I made about this program:
-// https://gist.github.com/101arrowz/253f31eb5abc3d9275ab943003ffecad
-// Some of the following code is similar to that of UZIP.js:
-// https://github.com/photopea/UZIP.js
-// However, the vast majority of the codebase has diverged from UZIP.js to increase performance and reduce bundle size.
-// Sometimes 0 will appear where -1 would be more appropriate. This is because using a uint
-// is better for memory in most engines (I *think*).
-var node_worker_1 = require("./node-worker.cjs");
-// aliases for shorter compressed code (most minifers don't do this)
-var u8 = Uint8Array, u16 = Uint16Array, i32 = Int32Array;
-// fixed length extra bits
-var fleb = new u8([0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0, /* unused */ 0, 0, /* impossible */ 0]);
-// fixed distance extra bits
-var fdeb = new u8([0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, /* unused */ 0, 0]);
-// code length index map
-var clim = new u8([16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15]);
-// get base, reverse index map from extra bits
-var freb = function (eb, start) {
-    var b = new u16(31);
-    for (var i = 0; i < 31; ++i) {
-        b[i] = start += 1 << eb[i - 1];
-    }
-    // numbers here are at max 18 bits
-    var r = new i32(b[30]);
-    for (var i = 1; i < 30; ++i) {
-        for (var j = b[i]; j < b[i + 1]; ++j) {
-            r[j] = ((j - b[i]) << 5) | i;
-        }
-    }
-    return { b: b, r: r };
-};
-var _a = freb(fleb, 2), fl = _a.b, revfl = _a.r;
-// we can ignore the fact that the other numbers are wrong; they never happen anyway
-fl[28] = 258, revfl[258] = 28;
-var _b = freb(fdeb, 0), fd = _b.b, revfd = _b.r;
-// map of value to reverse (assuming 16 bits)
-var rev = new u16(32768);
-for (var i = 0; i < 32768; ++i) {
-    // reverse table algorithm from SO
-    var x = ((i & 0xAAAA) >> 1) | ((i & 0x5555) << 1);
-    x = ((x & 0xCCCC) >> 2) | ((x & 0x3333) << 2);
-    x = ((x & 0xF0F0) >> 4) | ((x & 0x0F0F) << 4);
-    rev[i] = (((x & 0xFF00) >> 8) | ((x & 0x00FF) << 8)) >> 1;
-}
-// create huffman tree from u8 "map": index -> code length for code index
-// mb (max bits) must be at most 15
-// TODO: optimize/split up?
-var hMap = (function (cd, mb, r) {
-    var s = cd.length;
-    // index
-    var i = 0;
-    // u16 "map": index -> # of codes with bit length = index
-    var l = new u16(mb);
-    // length of cd must be 288 (total # of codes)
-    for (; i < s; ++i) {
-        if (cd[i])
-            ++l[cd[i] - 1];
-    }
-    // u16 "map": index -> minimum code for bit length = index
-    var le = new u16(mb);
-    for (i = 1; i < mb; ++i) {
-        le[i] = (le[i - 1] + l[i - 1]) << 1;
-    }
-    var co;
-    if (r) {
-        // u16 "map": index -> number of actual bits, symbol for code
-        co = new u16(1 << mb);
-        // bits to remove for reverser
-        var rvb = 15 - mb;
-        for (i = 0; i < s; ++i) {
-            // ignore 0 lengths
-            if (cd[i]) {
-                // num encoding both symbol and bits read
-                var sv = (i << 4) | cd[i];
-                // free bits
-                var r_1 = mb - cd[i];
-                // start value
-                var v = le[cd[i] - 1]++ << r_1;
-                // m is end value
-                for (var m = v | ((1 << r_1) - 1); v <= m; ++v) {
-                    // every 16 bit value starting with the code yields the same result
-                    co[rev[v] >> rvb] = sv;
-                }
-            }
-        }
-    }
-    else {
-        co = new u16(s);
-        for (i = 0; i < s; ++i) {
-            if (cd[i]) {
-                co[i] = rev[le[cd[i] - 1]++] >> (15 - cd[i]);
-            }
-        }
-    }
-    return co;
-});
-// fixed length tree
-var flt = new u8(288);
-for (var i = 0; i < 144; ++i)
-    flt[i] = 8;
-for (var i = 144; i < 256; ++i)
-    flt[i] = 9;
-for (var i = 256; i < 280; ++i)
-    flt[i] = 7;
-for (var i = 280; i < 288; ++i)
-    flt[i] = 8;
-// fixed distance tree
-var fdt = new u8(32);
-for (var i = 0; i < 32; ++i)
-    fdt[i] = 5;
-// fixed length map
-var flm = /*#__PURE__*/ hMap(flt, 9, 0), flrm = /*#__PURE__*/ hMap(flt, 9, 1);
-// fixed distance map
-var fdm = /*#__PURE__*/ hMap(fdt, 5, 0), fdrm = /*#__PURE__*/ hMap(fdt, 5, 1);
-// find max of array
-var max = function (a) {
-    var m = a[0];
-    for (var i = 1; i < a.length; ++i) {
-        if (a[i] > m)
-            m = a[i];
-    }
-    return m;
-};
-// read d, starting at bit p and mask with m
-var bits = function (d, p, m) {
-    var o = (p / 8) | 0;
-    return ((d[o] | (d[o + 1] << 8)) >> (p & 7)) & m;
-};
-// read d, starting at bit p continuing for at least 16 bits
-var bits16 = function (d, p) {
-    var o = (p / 8) | 0;
-    return ((d[o] | (d[o + 1] << 8) | (d[o + 2] << 16)) >> (p & 7));
-};
-// get end of byte
-var shft = function (p) { return ((p + 7) / 8) | 0; };
-// typed array slice - allows garbage collector to free original reference,
-// while being more compatible than .slice
-var slc = function (v, s, e) {
-    if (s == null || s < 0)
-        s = 0;
-    if (e == null || e > v.length)
-        e = v.length;
-    // can't use .constructor in case user-supplied
-    var n = new u8(e - s);
-    n.set(v.subarray(s, e));
-    return n;
-};
-/**
- * Codes for errors generated within this library
- */
-exports.FlateErrorCode = {
-    UnexpectedEOF: 0,
-    InvalidBlockType: 1,
-    InvalidLengthLiteral: 2,
-    InvalidDistance: 3,
-    StreamFinished: 4,
-    NoStreamHandler: 5,
-    InvalidHeader: 6,
-    NoCallback: 7,
-    InvalidUTF8: 8,
-    ExtraFieldTooLong: 9,
-    InvalidDate: 10,
-    FilenameTooLong: 11,
-    StreamFinishing: 12,
-    InvalidZipData: 13,
-    UnknownCompressionMethod: 14
-};
-// error codes
-var ec = [
-    'unexpected EOF',
-    'invalid block type',
-    'invalid length/literal',
-    'invalid distance',
-    'stream finished',
-    'no stream handler',
-    ,
-    'no callback',
-    'invalid UTF-8 data',
-    'extra field too long',
-    'date not in range 1980-2099',
-    'filename too long',
-    'stream finishing',
-    'invalid zip data'
-    // determined by unknown compression method
-];
-;
-var err = function (ind, msg, nt) {
-    var e = new Error(msg || ec[ind]);
-    e.code = ind;
-    if (Error.captureStackTrace)
-        Error.captureStackTrace(e, err);
-    if (!nt)
-        throw e;
-    return e;
-};
-// expands raw DEFLATE data
-var inflt = function (dat, st, buf, dict) {
-    // source length       dict length
-    var sl = dat.length, dl = dict ? dict.length : 0;
-    if (!sl || st.f && !st.l)
-        return buf || new u8(0);
-    // have to estimate size
-    var noBuf = !buf || st.i != 2;
-    // no state
-    var noSt = st.i;
-    // Assumes roughly 33% compression ratio average
-    if (!buf)
-        buf = new u8(sl * 3);
-    // ensure buffer can fit at least l elements
-    var cbuf = function (l) {
-        var bl = buf.length;
-        // need to increase size to fit
-        if (l > bl) {
-            // Double or set to necessary, whichever is greater
-            var nbuf = new u8(Math.max(bl * 2, l));
-            nbuf.set(buf);
-            buf = nbuf;
-        }
-    };
-    //  last chunk         bitpos           bytes
-    var final = st.f || 0, pos = st.p || 0, bt = st.b || 0, lm = st.l, dm = st.d, lbt = st.m, dbt = st.n;
-    // total bits
-    var tbts = sl * 8;
-    do {
-        if (!lm) {
-            // BFINAL - this is only 1 when last chunk is next
-            final = bits(dat, pos, 1);
-            // type: 0 = no compression, 1 = fixed huffman, 2 = dynamic huffman
-            var type = bits(dat, pos + 1, 3);
-            pos += 3;
-            if (!type) {
-                // go to end of byte boundary
-                var s = shft(pos) + 4, l = dat[s - 4] | (dat[s - 3] << 8), t = s + l;
-                if (t > sl) {
-                    if (noSt)
-                        err(0);
-                    break;
-                }
-                // ensure size
-                if (noBuf)
-                    cbuf(bt + l);
-                // Copy over uncompressed data
-                buf.set(dat.subarray(s, t), bt);
-                // Get new bitpos, update byte count
-                st.b = bt += l, st.p = pos = t * 8, st.f = final;
-                continue;
-            }
-            else if (type == 1)
-                lm = flrm, dm = fdrm, lbt = 9, dbt = 5;
-            else if (type == 2) {
-                //  literal                            lengths
-                var hLit = bits(dat, pos, 31) + 257, hcLen = bits(dat, pos + 10, 15) + 4;
-                var tl = hLit + bits(dat, pos + 5, 31) + 1;
-                pos += 14;
-                // length+distance tree
-                var ldt = new u8(tl);
-                // code length tree
-                var clt = new u8(19);
-                for (var i = 0; i < hcLen; ++i) {
-                    // use index map to get real code
-                    clt[clim[i]] = bits(dat, pos + i * 3, 7);
-                }
-                pos += hcLen * 3;
-                // code lengths bits
-                var clb = max(clt), clbmsk = (1 << clb) - 1;
-                // code lengths map
-                var clm = hMap(clt, clb, 1);
-                for (var i = 0; i < tl;) {
-                    var r = clm[bits(dat, pos, clbmsk)];
-                    // bits read
-                    pos += r & 15;
-                    // symbol
-                    var s = r >> 4;
-                    // code length to copy
-                    if (s < 16) {
-                        ldt[i++] = s;
-                    }
-                    else {
-                        //  copy   count
-                        var c = 0, n = 0;
-                        if (s == 16)
-                            n = 3 + bits(dat, pos, 3), pos += 2, c = ldt[i - 1];
-                        else if (s == 17)
-                            n = 3 + bits(dat, pos, 7), pos += 3;
-                        else if (s == 18)
-                            n = 11 + bits(dat, pos, 127), pos += 7;
-                        while (n--)
-                            ldt[i++] = c;
-                    }
-                }
-                //    length tree                 distance tree
-                var lt = ldt.subarray(0, hLit), dt = ldt.subarray(hLit);
-                // max length bits
-                lbt = max(lt);
-                // max dist bits
-                dbt = max(dt);
-                lm = hMap(lt, lbt, 1);
-                dm = hMap(dt, dbt, 1);
-            }
-            else
-                err(1);
-            if (pos > tbts) {
-                if (noSt)
-                    err(0);
-                break;
-            }
-        }
-        // Make sure the buffer can hold this + the largest possible addition
-        // Maximum chunk size (practically, theoretically infinite) is 2^17
-        if (noBuf)
-            cbuf(bt + 131072);
-        var lms = (1 << lbt) - 1, dms = (1 << dbt) - 1;
-        var lpos = pos;
-        for (;; lpos = pos) {
-            // bits read, code
-            var c = lm[bits16(dat, pos) & lms], sym = c >> 4;
-            pos += c & 15;
-            if (pos > tbts) {
-                if (noSt)
-                    err(0);
-                break;
-            }
-            if (!c)
-                err(2);
-            if (sym < 256)
-                buf[bt++] = sym;
-            else if (sym == 256) {
-                lpos = pos, lm = null;
-                break;
-            }
-            else {
-                var add = sym - 254;
-                // no extra bits needed if less
-                if (sym > 264) {
-                    // index
-                    var i = sym - 257, b = fleb[i];
-                    add = bits(dat, pos, (1 << b) - 1) + fl[i];
-                    pos += b;
-                }
-                // dist
-                var d = dm[bits16(dat, pos) & dms], dsym = d >> 4;
-                if (!d)
-                    err(3);
-                pos += d & 15;
-                var dt = fd[dsym];
-                if (dsym > 3) {
-                    var b = fdeb[dsym];
-                    dt += bits16(dat, pos) & (1 << b) - 1, pos += b;
-                }
-                if (pos > tbts) {
-                    if (noSt)
-                        err(0);
-                    break;
-                }
-                if (noBuf)
-                    cbuf(bt + 131072);
-                var end = bt + add;
-                if (bt < dt) {
-                    var shift = dl - dt, dend = Math.min(dt, end);
-                    if (shift + bt < 0)
-                        err(3);
-                    for (; bt < dend; ++bt)
-                        buf[bt] = dict[shift + bt];
-                }
-                for (; bt < end; bt += 4) {
-                    buf[bt] = buf[bt - dt];
-                    buf[bt + 1] = buf[bt + 1 - dt];
-                    buf[bt + 2] = buf[bt + 2 - dt];
-                    buf[bt + 3] = buf[bt + 3 - dt];
-                }
-                bt = end;
-            }
-        }
-        st.l = lm, st.p = lpos, st.b = bt, st.f = final;
-        if (lm)
-            final = 1, st.m = lbt, st.d = dm, st.n = dbt;
-    } while (!final);
-    return bt == buf.length ? buf : slc(buf, 0, bt);
-};
-// starting at p, write the minimum number of bits that can hold v to d
-var wbits = function (d, p, v) {
-    v <<= p & 7;
-    var o = (p / 8) | 0;
-    d[o] |= v;
-    d[o + 1] |= v >> 8;
-};
-// starting at p, write the minimum number of bits (>8) that can hold v to d
-var wbits16 = function (d, p, v) {
-    v <<= p & 7;
-    var o = (p / 8) | 0;
-    d[o] |= v;
-    d[o + 1] |= v >> 8;
-    d[o + 2] |= v >> 16;
-};
-// creates code lengths from a frequency table
-var hTree = function (d, mb) {
-    // Need extra info to make a tree
-    var t = [];
-    for (var i = 0; i < d.length; ++i) {
-        if (d[i])
-            t.push({ s: i, f: d[i] });
-    }
-    var s = t.length;
-    var t2 = t.slice();
-    if (!s)
-        return { t: et, l: 0 };
-    if (s == 1) {
-        var v = new u8(t[0].s + 1);
-        v[t[0].s] = 1;
-        return { t: v, l: 1 };
-    }
-    t.sort(function (a, b) { return a.f - b.f; });
-    // after i2 reaches last ind, will be stopped
-    // freq must be greater than largest possible number of symbols
-    t.push({ s: -1, f: 25001 });
-    var l = t[0], r = t[1], i0 = 0, i1 = 1, i2 = 2;
-    t[0] = { s: -1, f: l.f + r.f, l: l, r: r };
-    // efficient algorithm from UZIP.js
-    // i0 is lookbehind, i2 is lookahead - after processing two low-freq
-    // symbols that combined have high freq, will start processing i2 (high-freq,
-    // non-composite) symbols instead
-    // see https://reddit.com/r/photopea/comments/ikekht/uzipjs_questions/
-    while (i1 != s - 1) {
-        l = t[t[i0].f < t[i2].f ? i0++ : i2++];
-        r = t[i0 != i1 && t[i0].f < t[i2].f ? i0++ : i2++];
-        t[i1++] = { s: -1, f: l.f + r.f, l: l, r: r };
-    }
-    var maxSym = t2[0].s;
-    for (var i = 1; i < s; ++i) {
-        if (t2[i].s > maxSym)
-            maxSym = t2[i].s;
-    }
-    // code lengths
-    var tr = new u16(maxSym + 1);
-    // max bits in tree
-    var mbt = ln(t[i1 - 1], tr, 0);
-    if (mbt > mb) {
-        // more algorithms from UZIP.js
-        // TODO: find out how this code works (debt)
-        //  ind    debt
-        var i = 0, dt = 0;
-        //    left            cost
-        var lft = mbt - mb, cst = 1 << lft;
-        t2.sort(function (a, b) { return tr[b.s] - tr[a.s] || a.f - b.f; });
-        for (; i < s; ++i) {
-            var i2_1 = t2[i].s;
-            if (tr[i2_1] > mb) {
-                dt += cst - (1 << (mbt - tr[i2_1]));
-                tr[i2_1] = mb;
-            }
-            else
-                break;
-        }
-        dt >>= lft;
-        while (dt > 0) {
-            var i2_2 = t2[i].s;
-            if (tr[i2_2] < mb)
-                dt -= 1 << (mb - tr[i2_2]++ - 1);
-            else
-                ++i;
-        }
-        for (; i >= 0 && dt; --i) {
-            var i2_3 = t2[i].s;
-            if (tr[i2_3] == mb) {
-                --tr[i2_3];
-                ++dt;
-            }
-        }
-        mbt = mb;
-    }
-    return { t: new u8(tr), l: mbt };
-};
-// get the max length and assign length codes
-var ln = function (n, l, d) {
-    return n.s == -1
-        ? Math.max(ln(n.l, l, d + 1), ln(n.r, l, d + 1))
-        : (l[n.s] = d);
-};
-// length codes generation
-var lc = function (c) {
-    var s = c.length;
-    // Note that the semicolon was intentional
-    while (s && !c[--s])
-        ;
-    var cl = new u16(++s);
-    //  ind      num         streak
-    var cli = 0, cln = c[0], cls = 1;
-    var w = function (v) { cl[cli++] = v; };
-    for (var i = 1; i <= s; ++i) {
-        if (c[i] == cln && i != s)
-            ++cls;
-        else {
-            if (!cln && cls > 2) {
-                for (; cls > 138; cls -= 138)
-                    w(32754);
-                if (cls > 2) {
-                    w(cls > 10 ? ((cls - 11) << 5) | 28690 : ((cls - 3) << 5) | 12305);
-                    cls = 0;
-                }
-            }
-            else if (cls > 3) {
-                w(cln), --cls;
-                for (; cls > 6; cls -= 6)
-                    w(8304);
-                if (cls > 2)
-                    w(((cls - 3) << 5) | 8208), cls = 0;
-            }
-            while (cls--)
-                w(cln);
-            cls = 1;
-            cln = c[i];
-        }
-    }
-    return { c: cl.subarray(0, cli), n: s };
-};
-// calculate the length of output from tree, code lengths
-var clen = function (cf, cl) {
-    var l = 0;
-    for (var i = 0; i < cl.length; ++i)
-        l += cf[i] * cl[i];
-    return l;
-};
-// writes a fixed block
-// returns the new bit pos
-var wfblk = function (out, pos, dat) {
-    // no need to write 00 as type: TypedArray defaults to 0
-    var s = dat.length;
-    var o = shft(pos + 2);
-    out[o] = s & 255;
-    out[o + 1] = s >> 8;
-    out[o + 2] = out[o] ^ 255;
-    out[o + 3] = out[o + 1] ^ 255;
-    for (var i = 0; i < s; ++i)
-        out[o + i + 4] = dat[i];
-    return (o + 4 + s) * 8;
-};
-// writes a block
-var wblk = function (dat, out, final, syms, lf, df, eb, li, bs, bl, p) {
-    wbits(out, p++, final);
-    ++lf[256];
-    var _a = hTree(lf, 15), dlt = _a.t, mlb = _a.l;
-    var _b = hTree(df, 15), ddt = _b.t, mdb = _b.l;
-    var _c = lc(dlt), lclt = _c.c, nlc = _c.n;
-    var _d = lc(ddt), lcdt = _d.c, ndc = _d.n;
-    var lcfreq = new u16(19);
-    for (var i = 0; i < lclt.length; ++i)
-        ++lcfreq[lclt[i] & 31];
-    for (var i = 0; i < lcdt.length; ++i)
-        ++lcfreq[lcdt[i] & 31];
-    var _e = hTree(lcfreq, 7), lct = _e.t, mlcb = _e.l;
-    var nlcc = 19;
-    for (; nlcc > 4 && !lct[clim[nlcc - 1]]; --nlcc)
-        ;
-    var flen = (bl + 5) << 3;
-    var ftlen = clen(lf, flt) + clen(df, fdt) + eb;
-    var dtlen = clen(lf, dlt) + clen(df, ddt) + eb + 14 + 3 * nlcc + clen(lcfreq, lct) + 2 * lcfreq[16] + 3 * lcfreq[17] + 7 * lcfreq[18];
-    if (bs >= 0 && flen <= ftlen && flen <= dtlen)
-        return wfblk(out, p, dat.subarray(bs, bs + bl));
-    var lm, ll, dm, dl;
-    wbits(out, p, 1 + (dtlen < ftlen)), p += 2;
-    if (dtlen < ftlen) {
-        lm = hMap(dlt, mlb, 0), ll = dlt, dm = hMap(ddt, mdb, 0), dl = ddt;
-        var llm = hMap(lct, mlcb, 0);
-        wbits(out, p, nlc - 257);
-        wbits(out, p + 5, ndc - 1);
-        wbits(out, p + 10, nlcc - 4);
-        p += 14;
-        for (var i = 0; i < nlcc; ++i)
-            wbits(out, p + 3 * i, lct[clim[i]]);
-        p += 3 * nlcc;
-        var lcts = [lclt, lcdt];
-        for (var it = 0; it < 2; ++it) {
-            var clct = lcts[it];
-            for (var i = 0; i < clct.length; ++i) {
-                var len = clct[i] & 31;
-                wbits(out, p, llm[len]), p += lct[len];
-                if (len > 15)
-                    wbits(out, p, (clct[i] >> 5) & 127), p += clct[i] >> 12;
-            }
-        }
-    }
-    else {
-        lm = flm, ll = flt, dm = fdm, dl = fdt;
-    }
-    for (var i = 0; i < li; ++i) {
-        var sym = syms[i];
-        if (sym > 255) {
-            var len = (sym >> 18) & 31;
-            wbits16(out, p, lm[len + 257]), p += ll[len + 257];
-            if (len > 7)
-                wbits(out, p, (sym >> 23) & 31), p += fleb[len];
-            var dst = sym & 31;
-            wbits16(out, p, dm[dst]), p += dl[dst];
-            if (dst > 3)
-                wbits16(out, p, (sym >> 5) & 8191), p += fdeb[dst];
-        }
-        else {
-            wbits16(out, p, lm[sym]), p += ll[sym];
-        }
-    }
-    wbits16(out, p, lm[256]);
-    return p + ll[256];
-};
-// deflate options (nice << 13) | chain
-var deo = /*#__PURE__*/ new i32([65540, 131080, 131088, 131104, 262176, 1048704, 1048832, 2114560, 2117632]);
-// empty
-var et = /*#__PURE__*/ new u8(0);
-// compresses data into a raw DEFLATE buffer
-var dflt = function (dat, lvl, plvl, pre, post, st) {
-    var s = st.z || dat.length;
-    var o = new u8(pre + s + 5 * (1 + Math.ceil(s / 7000)) + post);
-    // writing to this writes to the output buffer
-    var w = o.subarray(pre, o.length - post);
-    var lst = st.l;
-    var pos = (st.r || 0) & 7;
-    if (lvl) {
-        if (pos)
-            w[0] = st.r >> 3;
-        var opt = deo[lvl - 1];
-        var n = opt >> 13, c = opt & 8191;
-        var msk_1 = (1 << plvl) - 1;
-        //    prev 2-byte val map    curr 2-byte val map
-        var prev = st.p || new u16(32768), head = st.h || new u16(msk_1 + 1);
-        var bs1_1 = Math.ceil(plvl / 3), bs2_1 = 2 * bs1_1;
-        var hsh = function (i) { return (dat[i] ^ (dat[i + 1] << bs1_1) ^ (dat[i + 2] << bs2_1)) & msk_1; };
-        // 24576 is an arbitrary number of maximum symbols per block
-        // 424 buffer for last block
-        var syms = new i32(25000);
-        // length/literal freq   distance freq
-        var lf = new u16(288), df = new u16(32);
-        //  l/lcnt  exbits  index          l/lind  waitdx          blkpos
-        var lc_1 = 0, eb = 0, i = st.i || 0, li = 0, wi = st.w || 0, bs = 0;
-        for (; i + 2 < s; ++i) {
-            // hash value
-            var hv = hsh(i);
-            // index mod 32768    previous index mod
-            var imod = i & 32767, pimod = head[hv];
-            prev[imod] = pimod;
-            head[hv] = imod;
-            // We always should modify head and prev, but only add symbols if
-            // this data is not yet processed ("wait" for wait index)
-            if (wi <= i) {
-                // bytes remaining
-                var rem = s - i;
-                if ((lc_1 > 7000 || li > 24576) && (rem > 423 || !lst)) {
-                    pos = wblk(dat, w, 0, syms, lf, df, eb, li, bs, i - bs, pos);
-                    li = lc_1 = eb = 0, bs = i;
-                    for (var j = 0; j < 286; ++j)
-                        lf[j] = 0;
-                    for (var j = 0; j < 30; ++j)
-                        df[j] = 0;
-                }
-                //  len    dist   chain
-                var l = 2, d = 0, ch_1 = c, dif = imod - pimod & 32767;
-                if (rem > 2 && hv == hsh(i - dif)) {
-                    var maxn = Math.min(n, rem) - 1;
-                    var maxd = Math.min(32767, i);
-                    // max possible length
-                    // not capped at dif because decompressors implement "rolling" index population
-                    var ml = Math.min(258, rem);
-                    while (dif <= maxd && --ch_1 && imod != pimod) {
-                        if (dat[i + l] == dat[i + l - dif]) {
-                            var nl = 0;
-                            for (; nl < ml && dat[i + nl] == dat[i + nl - dif]; ++nl)
-                                ;
-                            if (nl > l) {
-                                l = nl, d = dif;
-                                // break out early when we reach "nice" (we are satisfied enough)
-                                if (nl > maxn)
-                                    break;
-                                // now, find the rarest 2-byte sequence within this
-                                // length of literals and search for that instead.
-                                // Much faster than just using the start
-                                var mmd = Math.min(dif, nl - 2);
-                                var md = 0;
-                                for (var j = 0; j < mmd; ++j) {
-                                    var ti = i - dif + j & 32767;
-                                    var pti = prev[ti];
-                                    var cd = ti - pti & 32767;
-                                    if (cd > md)
-                                        md = cd, pimod = ti;
-                                }
-                            }
-                        }
-                        // check the previous match
-                        imod = pimod, pimod = prev[imod];
-                        dif += imod - pimod & 32767;
-                    }
-                }
-                // d will be nonzero only when a match was found
-                if (d) {
-                    // store both dist and len data in one int32
-                    // Make sure this is recognized as a len/dist with 28th bit (2^28)
-                    syms[li++] = 268435456 | (revfl[l] << 18) | revfd[d];
-                    var lin = revfl[l] & 31, din = revfd[d] & 31;
-                    eb += fleb[lin] + fdeb[din];
-                    ++lf[257 + lin];
-                    ++df[din];
-                    wi = i + l;
-                    ++lc_1;
-                }
-                else {
-                    syms[li++] = dat[i];
-                    ++lf[dat[i]];
-                }
-            }
-        }
-        for (i = Math.max(i, wi); i < s; ++i) {
-            syms[li++] = dat[i];
-            ++lf[dat[i]];
-        }
-        pos = wblk(dat, w, lst, syms, lf, df, eb, li, bs, i - bs, pos);
-        if (!lst) {
-            st.r = (pos & 7) | w[(pos / 8) | 0] << 3;
-            // shft(pos) now 1 less if pos & 7 != 0
-            pos -= 7;
-            st.h = head, st.p = prev, st.i = i, st.w = wi;
-        }
-    }
-    else {
-        for (var i = st.w || 0; i < s + lst; i += 65535) {
-            // end
-            var e = i + 65535;
-            if (e >= s) {
-                // write final block
-                w[(pos / 8) | 0] = lst;
-                e = s;
-            }
-            pos = wfblk(w, pos + 1, dat.subarray(i, e));
-        }
-        st.i = s;
-    }
-    return slc(o, 0, pre + shft(pos) + post);
-};
-// CRC32 table
-var crct = /*#__PURE__*/ (function () {
-    var t = new Int32Array(256);
-    for (var i = 0; i < 256; ++i) {
-        var c = i, k = 9;
-        while (--k)
-            c = ((c & 1) && -306674912) ^ (c >>> 1);
-        t[i] = c;
-    }
-    return t;
-})();
-// CRC32
-var crc = function () {
-    var c = -1;
-    return {
-        p: function (d) {
-            // closures have awful performance
-            var cr = c;
-            for (var i = 0; i < d.length; ++i)
-                cr = crct[(cr & 255) ^ d[i]] ^ (cr >>> 8);
-            c = cr;
-        },
-        d: function () { return ~c; }
-    };
-};
-// Adler32
-var adler = function () {
-    var a = 1, b = 0;
-    return {
-        p: function (d) {
-            // closures have awful performance
-            var n = a, m = b;
-            var l = d.length | 0;
-            for (var i = 0; i != l;) {
-                var e = Math.min(i + 2655, l);
-                for (; i < e; ++i)
-                    m += n += d[i];
-                n = (n & 65535) + 15 * (n >> 16), m = (m & 65535) + 15 * (m >> 16);
-            }
-            a = n, b = m;
-        },
-        d: function () {
-            a %= 65521, b %= 65521;
-            return (a & 255) << 24 | (a & 0xFF00) << 8 | (b & 255) << 8 | (b >> 8);
-        }
-    };
-};
-;
-// deflate with opts
-var dopt = function (dat, opt, pre, post, st) {
-    if (!st) {
-        st = { l: 1 };
-        if (opt.dictionary) {
-            var dict = opt.dictionary.subarray(-32768);
-            var newDat = new u8(dict.length + dat.length);
-            newDat.set(dict);
-            newDat.set(dat, dict.length);
-            dat = newDat;
-            st.w = dict.length;
-        }
-    }
-    return dflt(dat, opt.level == null ? 6 : opt.level, opt.mem == null ? Math.ceil(Math.max(8, Math.min(13, Math.log(dat.length))) * 1.5) : (12 + opt.mem), pre, post, st);
-};
-// Walmart object spread
-var mrg = function (a, b) {
-    var o = {};
-    for (var k in a)
-        o[k] = a[k];
-    for (var k in b)
-        o[k] = b[k];
-    return o;
-};
-// worker clone
-// This is possibly the craziest part of the entire codebase, despite how simple it may seem.
-// The only parameter to this function is a closure that returns an array of variables outside of the function scope.
-// We're going to try to figure out the variable names used in the closure as strings because that is crucial for workerization.
-// We will return an object mapping of true variable name to value (basically, the current scope as a JS object).
-// The reason we can't just use the original variable names is minifiers mangling the toplevel scope.
-// This took me three weeks to figure out how to do.
-var wcln = function (fn, fnStr, td) {
-    var dt = fn();
-    var st = fn.toString();
-    var ks = st.slice(st.indexOf('[') + 1, st.lastIndexOf(']')).replace(/\s+/g, '').split(',');
-    for (var i = 0; i < dt.length; ++i) {
-        var v = dt[i], k = ks[i];
-        if (typeof v == 'function') {
-            fnStr += ';' + k + '=';
-            var st_1 = v.toString();
-            if (v.prototype) {
-                // for global objects
-                if (st_1.indexOf('[native code]') != -1) {
-                    var spInd = st_1.indexOf(' ', 8) + 1;
-                    fnStr += st_1.slice(spInd, st_1.indexOf('(', spInd));
-                }
-                else {
-                    fnStr += st_1;
-                    for (var t in v.prototype)
-                        fnStr += ';' + k + '.prototype.' + t + '=' + v.prototype[t].toString();
-                }
-            }
-            else
-                fnStr += st_1;
-        }
-        else
-            td[k] = v;
-    }
-    return fnStr;
-};
-var ch = [];
-// clone bufs
-var cbfs = function (v) {
-    var tl = [];
-    for (var k in v) {
-        if (v[k].buffer) {
-            tl.push((v[k] = new v[k].constructor(v[k])).buffer);
-        }
-    }
-    return tl;
-};
-// use a worker to execute code
-var wrkr = function (fns, init, id, cb) {
-    if (!ch[id]) {
-        var fnStr = '', td_1 = {}, m = fns.length - 1;
-        for (var i = 0; i < m; ++i)
-            fnStr = wcln(fns[i], fnStr, td_1);
-        ch[id] = { c: wcln(fns[m], fnStr, td_1), e: td_1 };
-    }
-    var td = mrg({}, ch[id].e);
-    return node_worker_1["default"](ch[id].c + ';onmessage=function(e){for(var k in e.data)self[k]=e.data[k];onmessage=' + init.toString() + '}', id, td, cbfs(td), cb);
-};
-// base async inflate fn
-var bInflt = function () { return [u8, u16, i32, fleb, fdeb, clim, fl, fd, flrm, fdrm, rev, ec, hMap, max, bits, bits16, shft, slc, err, inflt, inflateSync, pbf, gopt]; };
-var bDflt = function () { return [u8, u16, i32, fleb, fdeb, clim, revfl, revfd, flm, flt, fdm, fdt, rev, deo, et, hMap, wbits, wbits16, hTree, ln, lc, clen, wfblk, wblk, shft, slc, dflt, dopt, deflateSync, pbf]; };
-// gzip extra
-var gze = function () { return [gzh, gzhl, wbytes, crc, crct]; };
-// gunzip extra
-var guze = function () { return [gzs, gzl]; };
-// zlib extra
-var zle = function () { return [zlh, wbytes, adler]; };
-// unzlib extra
-var zule = function () { return [zls]; };
-// post buf
-var pbf = function (msg) { return postMessage(msg, [msg.buffer]); };
-// get opts
-var gopt = function (o) { return o && {
-    out: o.size && new u8(o.size),
-    dictionary: o.dictionary
-}; };
-// async helper
-var cbify = function (dat, opts, fns, init, id, cb) {
-    var w = wrkr(fns, init, id, function (err, dat) {
-        w.terminate();
-        cb(err, dat);
-    });
-    w.postMessage([dat, opts], opts.consume ? [dat.buffer] : []);
-    return function () { w.terminate(); };
-};
-// auto stream
-var astrm = function (strm) {
-    strm.ondata = function (dat, final) { return postMessage([dat, final], [dat.buffer]); };
-    return function (ev) { return strm.push(ev.data[0], ev.data[1]); };
-};
-// async stream attach
-var astrmify = function (fns, strm, opts, init, id, ext) {
-    var t;
-    var w = wrkr(fns, init, id, function (err, dat) {
-        if (err)
-            w.terminate(), strm.ondata.call(strm, err);
-        else if (!Array.isArray(dat))
-            ext(dat);
-        else {
-            if (dat[1])
-                w.terminate();
-            strm.ondata.call(strm, err, dat[0], dat[1]);
-        }
-    });
-    w.postMessage(opts);
-    strm.push = function (d, f) {
-        if (!strm.ondata)
-            err(5);
-        if (t)
-            strm.ondata(err(4, 0, 1), null, !!f);
-        w.postMessage([d, t = f], [d.buffer]);
-    };
-    strm.terminate = function () { w.terminate(); };
-};
-// read 2 bytes
-var b2 = function (d, b) { return d[b] | (d[b + 1] << 8); };
-// read 4 bytes
-var b4 = function (d, b) { return (d[b] | (d[b + 1] << 8) | (d[b + 2] << 16) | (d[b + 3] << 24)) >>> 0; };
-var b8 = function (d, b) { return b4(d, b) + (b4(d, b + 4) * 4294967296); };
-// write bytes
-var wbytes = function (d, b, v) {
-    for (; v; ++b)
-        d[b] = v, v >>>= 8;
-};
-// gzip header
-var gzh = function (c, o) {
-    var fn = o.filename;
-    c[0] = 31, c[1] = 139, c[2] = 8, c[8] = o.level < 2 ? 4 : o.level == 9 ? 2 : 0, c[9] = 3; // assume Unix
-    if (o.mtime != 0)
-        wbytes(c, 4, Math.floor(new Date(o.mtime || Date.now()) / 1000));
-    if (fn) {
-        c[3] = 8;
-        for (var i = 0; i <= fn.length; ++i)
-            c[i + 10] = fn.charCodeAt(i);
-    }
-};
-// gzip footer: -8 to -4 = CRC, -4 to -0 is length
-// gzip start
-var gzs = function (d) {
-    if (d[0] != 31 || d[1] != 139 || d[2] != 8)
-        err(6, 'invalid gzip data');
-    var flg = d[3];
-    var st = 10;
-    if (flg & 4)
-        st += (d[10] | d[11] << 8) + 2;
-    for (var zs = (flg >> 3 & 1) + (flg >> 4 & 1); zs > 0; zs -= !d[st++])
-        ;
-    return st + (flg & 2);
-};
-// gzip length
-var gzl = function (d) {
-    var l = d.length;
-    return (d[l - 4] | d[l - 3] << 8 | d[l - 2] << 16 | d[l - 1] << 24) >>> 0;
-};
-// gzip header length
-var gzhl = function (o) { return 10 + (o.filename ? o.filename.length + 1 : 0); };
-// zlib header
-var zlh = function (c, o) {
-    var lv = o.level, fl = lv == 0 ? 0 : lv < 6 ? 1 : lv == 9 ? 3 : 2;
-    c[0] = 120, c[1] = (fl << 6) | (o.dictionary && 32);
-    c[1] |= 31 - ((c[0] << 8) | c[1]) % 31;
-    if (o.dictionary) {
-        var h = adler();
-        h.p(o.dictionary);
-        wbytes(c, 2, h.d());
-    }
-};
-// zlib start
-var zls = function (d, dict) {
-    if ((d[0] & 15) != 8 || (d[0] >> 4) > 7 || ((d[0] << 8 | d[1]) % 31))
-        err(6, 'invalid zlib data');
-    if ((d[1] >> 5 & 1) == +!dict)
-        err(6, 'invalid zlib data: ' + (d[1] & 32 ? 'need' : 'unexpected') + ' dictionary');
-    return (d[1] >> 3 & 4) + 2;
-};
-function StrmOpt(opts, cb) {
-    if (typeof opts == 'function')
-        cb = opts, opts = {};
-    this.ondata = cb;
-    return opts;
-}
-/**
- * Streaming DEFLATE compression
- */
-var Deflate = /*#__PURE__*/ (function () {
-    function Deflate(opts, cb) {
-        if (typeof opts == 'function')
-            cb = opts, opts = {};
-        this.ondata = cb;
-        this.o = opts || {};
-        this.s = { l: 0, i: 32768, w: 32768, z: 32768 };
-        // Buffer length must always be 0 mod 32768 for index calculations to be correct when modifying head and prev
-        // 98304 = 32768 (lookback) + 65536 (common chunk size)
-        this.b = new u8(98304);
-        if (this.o.dictionary) {
-            var dict = this.o.dictionary.subarray(-32768);
-            this.b.set(dict, 32768 - dict.length);
-            this.s.i = 32768 - dict.length;
-        }
-    }
-    Deflate.prototype.p = function (c, f) {
-        this.ondata(dopt(c, this.o, 0, 0, this.s), f);
-    };
-    /**
-     * Pushes a chunk to be deflated
-     * @param chunk The chunk to push
-     * @param final Whether this is the last chunk
-     */
-    Deflate.prototype.push = function (chunk, final) {
-        if (!this.ondata)
-            err(5);
-        if (this.s.l)
-            err(4);
-        var endLen = chunk.length + this.s.z;
-        if (endLen > this.b.length) {
-            if (endLen > 2 * this.b.length - 32768) {
-                var newBuf = new u8(endLen & -32768);
-                newBuf.set(this.b.subarray(0, this.s.z));
-                this.b = newBuf;
-            }
-            var split = this.b.length - this.s.z;
-            if (split) {
-                this.b.set(chunk.subarray(0, split), this.s.z);
-                this.s.z = this.b.length;
-                this.p(this.b, false);
-            }
-            this.b.set(this.b.subarray(-32768));
-            this.b.set(chunk.subarray(split), 32768);
-            this.s.z = chunk.length - split + 32768;
-            this.s.i = 32766, this.s.w = 32768;
-        }
-        else {
-            this.b.set(chunk, this.s.z);
-            this.s.z += chunk.length;
-        }
-        this.s.l = final & 1;
-        if (this.s.z > this.s.w + 8191 || final) {
-            this.p(this.b, final || false);
-            this.s.w = this.s.i, this.s.i -= 2;
-        }
-    };
-    return Deflate;
-}());
-exports.Deflate = Deflate;
-/**
- * Asynchronous streaming DEFLATE compression
- */
-var AsyncDeflate = /*#__PURE__*/ (function () {
-    function AsyncDeflate(opts, cb) {
-        astrmify([
-            bDflt,
-            function () { return [astrm, Deflate]; }
-        ], this, StrmOpt.call(this, opts, cb), function (ev) {
-            var strm = new Deflate(ev.data);
-            onmessage = astrm(strm);
-        }, 6);
-    }
-    return AsyncDeflate;
-}());
-exports.AsyncDeflate = AsyncDeflate;
-function deflate(data, opts, cb) {
-    if (!cb)
-        cb = opts, opts = {};
-    if (typeof cb != 'function')
-        err(7);
-    return cbify(data, opts, [
-        bDflt,
-    ], function (ev) { return pbf(deflateSync(ev.data[0], ev.data[1])); }, 0, cb);
-}
-exports.deflate = deflate;
-/**
- * Compresses data with DEFLATE without any wrapper
- * @param data The data to compress
- * @param opts The compression options
- * @returns The deflated version of the data
- */
-function deflateSync(data, opts) {
-    return dopt(data, opts || {}, 0, 0);
-}
-exports.deflateSync = deflateSync;
-/**
- * Streaming DEFLATE decompression
- */
-var Inflate = /*#__PURE__*/ (function () {
-    function Inflate(opts, cb) {
-        // no StrmOpt here to avoid adding to workerizer
-        if (typeof opts == 'function')
-            cb = opts, opts = {};
-        this.ondata = cb;
-        var dict = opts && opts.dictionary && opts.dictionary.subarray(-32768);
-        this.s = { i: 0, b: dict ? dict.length : 0 };
-        this.o = new u8(32768);
-        this.p = new u8(0);
-        if (dict)
-            this.o.set(dict);
-    }
-    Inflate.prototype.e = function (c) {
-        if (!this.ondata)
-            err(5);
-        if (this.d)
-            err(4);
-        if (!this.p.length)
-            this.p = c;
-        else if (c.length) {
-            var n = new u8(this.p.length + c.length);
-            n.set(this.p), n.set(c, this.p.length), this.p = n;
-        }
-    };
-    Inflate.prototype.c = function (final) {
-        this.s.i = +(this.d = final || false);
-        var bts = this.s.b;
-        var dt = inflt(this.p, this.s, this.o);
-        this.ondata(slc(dt, bts, this.s.b), this.d);
-        this.o = slc(dt, this.s.b - 32768), this.s.b = this.o.length;
-        this.p = slc(this.p, (this.s.p / 8) | 0), this.s.p &= 7;
-    };
-    /**
-     * Pushes a chunk to be inflated
-     * @param chunk The chunk to push
-     * @param final Whether this is the final chunk
-     */
-    Inflate.prototype.push = function (chunk, final) {
-        this.e(chunk), this.c(final);
-    };
-    return Inflate;
-}());
-exports.Inflate = Inflate;
-/**
- * Asynchronous streaming DEFLATE decompression
- */
-var AsyncInflate = /*#__PURE__*/ (function () {
-    function AsyncInflate(opts, cb) {
-        astrmify([
-            bInflt,
-            function () { return [astrm, Inflate]; }
-        ], this, StrmOpt.call(this, opts, cb), function (ev) {
-            var strm = new Inflate(ev.data);
-            onmessage = astrm(strm);
-        }, 7);
-    }
-    return AsyncInflate;
-}());
-exports.AsyncInflate = AsyncInflate;
-function inflate(data, opts, cb) {
-    if (!cb)
-        cb = opts, opts = {};
-    if (typeof cb != 'function')
-        err(7);
-    return cbify(data, opts, [
-        bInflt
-    ], function (ev) { return pbf(inflateSync(ev.data[0], gopt(ev.data[1]))); }, 1, cb);
-}
-exports.inflate = inflate;
-/**
- * Expands DEFLATE data with no wrapper
- * @param data The data to decompress
- * @param opts The decompression options
- * @returns The decompressed version of the data
- */
-function inflateSync(data, opts) {
-    return inflt(data, { i: 2 }, opts && opts.out, opts && opts.dictionary);
-}
-exports.inflateSync = inflateSync;
-// before you yell at me for not just using extends, my reason is that TS inheritance is hard to workerize.
-/**
- * Streaming GZIP compression
- */
-var Gzip = /*#__PURE__*/ (function () {
-    function Gzip(opts, cb) {
-        this.c = crc();
-        this.l = 0;
-        this.v = 1;
-        Deflate.call(this, opts, cb);
-    }
-    /**
-     * Pushes a chunk to be GZIPped
-     * @param chunk The chunk to push
-     * @param final Whether this is the last chunk
-     */
-    Gzip.prototype.push = function (chunk, final) {
-        this.c.p(chunk);
-        this.l += chunk.length;
-        Deflate.prototype.push.call(this, chunk, final);
-    };
-    Gzip.prototype.p = function (c, f) {
-        var raw = dopt(c, this.o, this.v && gzhl(this.o), f && 8, this.s);
-        if (this.v)
-            gzh(raw, this.o), this.v = 0;
-        if (f)
-            wbytes(raw, raw.length - 8, this.c.d()), wbytes(raw, raw.length - 4, this.l);
-        this.ondata(raw, f);
-    };
-    return Gzip;
-}());
-exports.Gzip = Gzip;
-exports.Compress = Gzip;
-/**
- * Asynchronous streaming GZIP compression
- */
-var AsyncGzip = /*#__PURE__*/ (function () {
-    function AsyncGzip(opts, cb) {
-        astrmify([
-            bDflt,
-            gze,
-            function () { return [astrm, Deflate, Gzip]; }
-        ], this, StrmOpt.call(this, opts, cb), function (ev) {
-            var strm = new Gzip(ev.data);
-            onmessage = astrm(strm);
-        }, 8);
-    }
-    return AsyncGzip;
-}());
-exports.AsyncGzip = AsyncGzip;
-exports.AsyncCompress = AsyncGzip;
-function gzip(data, opts, cb) {
-    if (!cb)
-        cb = opts, opts = {};
-    if (typeof cb != 'function')
-        err(7);
-    return cbify(data, opts, [
-        bDflt,
-        gze,
-        function () { return [gzipSync]; }
-    ], function (ev) { return pbf(gzipSync(ev.data[0], ev.data[1])); }, 2, cb);
-}
-exports.gzip = gzip;
-exports.compress = gzip;
-/**
- * Compresses data with GZIP
- * @param data The data to compress
- * @param opts The compression options
- * @returns The gzipped version of the data
- */
-function gzipSync(data, opts) {
-    if (!opts)
-        opts = {};
-    var c = crc(), l = data.length;
-    c.p(data);
-    var d = dopt(data, opts, gzhl(opts), 8), s = d.length;
-    return gzh(d, opts), wbytes(d, s - 8, c.d()), wbytes(d, s - 4, l), d;
-}
-exports.gzipSync = gzipSync;
-exports.compressSync = gzipSync;
-/**
- * Streaming single or multi-member GZIP decompression
- */
-var Gunzip = /*#__PURE__*/ (function () {
-    function Gunzip(opts, cb) {
-        this.v = 1;
-        this.r = 0;
-        Inflate.call(this, opts, cb);
-    }
-    /**
-     * Pushes a chunk to be GUNZIPped
-     * @param chunk The chunk to push
-     * @param final Whether this is the last chunk
-     */
-    Gunzip.prototype.push = function (chunk, final) {
-        Inflate.prototype.e.call(this, chunk);
-        this.r += chunk.length;
-        if (this.v) {
-            var p = this.p.subarray(this.v - 1);
-            var s = p.length > 3 ? gzs(p) : 4;
-            if (s > p.length) {
-                if (!final)
-                    return;
-            }
-            else if (this.v > 1 && this.onmember) {
-                this.onmember(this.r - p.length);
-            }
-            this.p = p.subarray(s), this.v = 0;
-        }
-        // necessary to prevent TS from using the closure value
-        // This allows for workerization to function correctly
-        Inflate.prototype.c.call(this, final);
-        // process concatenated GZIP
-        if (this.s.f && !this.s.l) {
-            this.v = shft(this.s.p) + 9;
-            this.s = { i: 0 };
-            this.o = new u8(0);
-            if (this.p.length)
-                this.push(new u8(0), final);
-        }
-    };
-    return Gunzip;
-}());
-exports.Gunzip = Gunzip;
-/**
- * Asynchronous streaming single or multi-member GZIP decompression
- */
-var AsyncGunzip = /*#__PURE__*/ (function () {
-    function AsyncGunzip(opts, cb) {
-        var _this_1 = this;
-        astrmify([
-            bInflt,
-            guze,
-            function () { return [astrm, Inflate, Gunzip]; }
-        ], this, StrmOpt.call(this, opts, cb), function (ev) {
-            var strm = new Gunzip(ev.data);
-            strm.onmember = function (offset) { return postMessage(offset); };
-            onmessage = astrm(strm);
-        }, 9, function (offset) { return _this_1.onmember && _this_1.onmember(offset); });
-    }
-    return AsyncGunzip;
-}());
-exports.AsyncGunzip = AsyncGunzip;
-function gunzip(data, opts, cb) {
-    if (!cb)
-        cb = opts, opts = {};
-    if (typeof cb != 'function')
-        err(7);
-    return cbify(data, opts, [
-        bInflt,
-        guze,
-        function () { return [gunzipSync]; }
-    ], function (ev) { return pbf(gunzipSync(ev.data[0], ev.data[1])); }, 3, cb);
-}
-exports.gunzip = gunzip;
-/**
- * Expands GZIP data
- * @param data The data to decompress
- * @param opts The decompression options
- * @returns The decompressed version of the data
- */
-function gunzipSync(data, opts) {
-    var st = gzs(data);
-    if (st + 8 > data.length)
-        err(6, 'invalid gzip data');
-    return inflt(data.subarray(st, -8), { i: 2 }, opts && opts.out || new u8(gzl(data)), opts && opts.dictionary);
-}
-exports.gunzipSync = gunzipSync;
-/**
- * Streaming Zlib compression
- */
-var Zlib = /*#__PURE__*/ (function () {
-    function Zlib(opts, cb) {
-        this.c = adler();
-        this.v = 1;
-        Deflate.call(this, opts, cb);
-    }
-    /**
-     * Pushes a chunk to be zlibbed
-     * @param chunk The chunk to push
-     * @param final Whether this is the last chunk
-     */
-    Zlib.prototype.push = function (chunk, final) {
-        this.c.p(chunk);
-        Deflate.prototype.push.call(this, chunk, final);
-    };
-    Zlib.prototype.p = function (c, f) {
-        var raw = dopt(c, this.o, this.v && (this.o.dictionary ? 6 : 2), f && 4, this.s);
-        if (this.v)
-            zlh(raw, this.o), this.v = 0;
-        if (f)
-            wbytes(raw, raw.length - 4, this.c.d());
-        this.ondata(raw, f);
-    };
-    return Zlib;
-}());
-exports.Zlib = Zlib;
-/**
- * Asynchronous streaming Zlib compression
- */
-var AsyncZlib = /*#__PURE__*/ (function () {
-    function AsyncZlib(opts, cb) {
-        astrmify([
-            bDflt,
-            zle,
-            function () { return [astrm, Deflate, Zlib]; }
-        ], this, StrmOpt.call(this, opts, cb), function (ev) {
-            var strm = new Zlib(ev.data);
-            onmessage = astrm(strm);
-        }, 10);
-    }
-    return AsyncZlib;
-}());
-exports.AsyncZlib = AsyncZlib;
-function zlib(data, opts, cb) {
-    if (!cb)
-        cb = opts, opts = {};
-    if (typeof cb != 'function')
-        err(7);
-    return cbify(data, opts, [
-        bDflt,
-        zle,
-        function () { return [zlibSync]; }
-    ], function (ev) { return pbf(zlibSync(ev.data[0], ev.data[1])); }, 4, cb);
-}
-exports.zlib = zlib;
-/**
- * Compress data with Zlib
- * @param data The data to compress
- * @param opts The compression options
- * @returns The zlib-compressed version of the data
- */
-function zlibSync(data, opts) {
-    if (!opts)
-        opts = {};
-    var a = adler();
-    a.p(data);
-    var d = dopt(data, opts, opts.dictionary ? 6 : 2, 4);
-    return zlh(d, opts), wbytes(d, d.length - 4, a.d()), d;
-}
-exports.zlibSync = zlibSync;
-/**
- * Streaming Zlib decompression
- */
-var Unzlib = /*#__PURE__*/ (function () {
-    function Unzlib(opts, cb) {
-        Inflate.call(this, opts, cb);
-        this.v = opts && opts.dictionary ? 2 : 1;
-    }
-    /**
-     * Pushes a chunk to be unzlibbed
-     * @param chunk The chunk to push
-     * @param final Whether this is the last chunk
-     */
-    Unzlib.prototype.push = function (chunk, final) {
-        Inflate.prototype.e.call(this, chunk);
-        if (this.v) {
-            if (this.p.length < 6 && !final)
-                return;
-            this.p = this.p.subarray(zls(this.p, this.v - 1)), this.v = 0;
-        }
-        if (final) {
-            if (this.p.length < 4)
-                err(6, 'invalid zlib data');
-            this.p = this.p.subarray(0, -4);
-        }
-        // necessary to prevent TS from using the closure value
-        // This allows for workerization to function correctly
-        Inflate.prototype.c.call(this, final);
-    };
-    return Unzlib;
-}());
-exports.Unzlib = Unzlib;
-/**
- * Asynchronous streaming Zlib decompression
- */
-var AsyncUnzlib = /*#__PURE__*/ (function () {
-    function AsyncUnzlib(opts, cb) {
-        astrmify([
-            bInflt,
-            zule,
-            function () { return [astrm, Inflate, Unzlib]; }
-        ], this, StrmOpt.call(this, opts, cb), function (ev) {
-            var strm = new Unzlib(ev.data);
-            onmessage = astrm(strm);
-        }, 11);
-    }
-    return AsyncUnzlib;
-}());
-exports.AsyncUnzlib = AsyncUnzlib;
-function unzlib(data, opts, cb) {
-    if (!cb)
-        cb = opts, opts = {};
-    if (typeof cb != 'function')
-        err(7);
-    return cbify(data, opts, [
-        bInflt,
-        zule,
-        function () { return [unzlibSync]; }
-    ], function (ev) { return pbf(unzlibSync(ev.data[0], gopt(ev.data[1]))); }, 5, cb);
-}
-exports.unzlib = unzlib;
-/**
- * Expands Zlib data
- * @param data The data to decompress
- * @param opts The decompression options
- * @returns The decompressed version of the data
- */
-function unzlibSync(data, opts) {
-    return inflt(data.subarray(zls(data, opts && opts.dictionary), -4), { i: 2 }, opts && opts.out, opts && opts.dictionary);
-}
-exports.unzlibSync = unzlibSync;
-/**
- * Streaming GZIP, Zlib, or raw DEFLATE decompression
- */
-var Decompress = /*#__PURE__*/ (function () {
-    function Decompress(opts, cb) {
-        this.G = Gunzip;
-        this.I = Inflate;
-        this.Z = Unzlib;
-        this.o = StrmOpt.call(this, opts, cb) || {};
-    }
-    /**
-     * Pushes a chunk to be decompressed
-     * @param chunk The chunk to push
-     * @param final Whether this is the last chunk
-     */
-    Decompress.prototype.push = function (chunk, final) {
-        if (!this.ondata)
-            err(5);
-        if (!this.s) {
-            if (this.p && this.p.length) {
-                var n = new u8(this.p.length + chunk.length);
-                n.set(this.p), n.set(chunk, this.p.length);
-            }
-            else
-                this.p = chunk;
-            if (this.p.length > 2) {
-                var _this_2 = this;
-                // enables reuse of this method by AsyncDecompress
-                var cb = function () { _this_2.ondata.apply(_this_2, arguments); };
-                this.s = (this.p[0] == 31 && this.p[1] == 139 && this.p[2] == 8)
-                    ? new this.G(this.o, cb)
-                    : ((this.p[0] & 15) != 8 || (this.p[0] >> 4) > 7 || ((this.p[0] << 8 | this.p[1]) % 31))
-                        ? new this.I(this.o, cb)
-                        : new this.Z(this.o, cb);
-                this.s.push(this.p, final);
-                this.p = null;
-            }
-        }
-        else
-            this.s.push(chunk, final);
-    };
-    return Decompress;
-}());
-exports.Decompress = Decompress;
-/**
- * Asynchronous streaming GZIP, Zlib, or raw DEFLATE decompression
- */
-var AsyncDecompress = /*#__PURE__*/ (function () {
-    function AsyncDecompress(opts, cb) {
-        this.G = AsyncGunzip;
-        this.I = AsyncInflate;
-        this.Z = AsyncUnzlib;
-        Decompress.call(this, opts, cb);
-    }
-    /**
-     * Pushes a chunk to be decompressed
-     * @param chunk The chunk to push
-     * @param final Whether this is the last chunk
-     */
-    AsyncDecompress.prototype.push = function (chunk, final) {
-        Decompress.prototype.push.call(this, chunk, final);
-    };
-    return AsyncDecompress;
-}());
-exports.AsyncDecompress = AsyncDecompress;
-function decompress(data, opts, cb) {
-    if (!cb)
-        cb = opts, opts = {};
-    if (typeof cb != 'function')
-        err(7);
-    return (data[0] == 31 && data[1] == 139 && data[2] == 8)
-        ? gunzip(data, opts, cb)
-        : ((data[0] & 15) != 8 || (data[0] >> 4) > 7 || ((data[0] << 8 | data[1]) % 31))
-            ? inflate(data, opts, cb)
-            : unzlib(data, opts, cb);
-}
-exports.decompress = decompress;
-/**
- * Expands compressed GZIP, Zlib, or raw DEFLATE data, automatically detecting the format
- * @param data The data to decompress
- * @param opts The decompression options
- * @returns The decompressed version of the data
- */
-function decompressSync(data, opts) {
-    return (data[0] == 31 && data[1] == 139 && data[2] == 8)
-        ? gunzipSync(data, opts)
-        : ((data[0] & 15) != 8 || (data[0] >> 4) > 7 || ((data[0] << 8 | data[1]) % 31))
-            ? inflateSync(data, opts)
-            : unzlibSync(data, opts);
-}
-exports.decompressSync = decompressSync;
-// flatten a directory structure
-var fltn = function (d, p, t, o) {
-    for (var k in d) {
-        var val = d[k], n = p + k, op = o;
-        if (Array.isArray(val))
-            op = mrg(o, val[1]), val = val[0];
-        if (val instanceof u8)
-            t[n] = [val, op];
-        else {
-            t[n += '/'] = [new u8(0), op];
-            fltn(val, n, t, o);
-        }
-    }
-};
-// text encoder
-var te = typeof TextEncoder != 'undefined' && /*#__PURE__*/ new TextEncoder();
-// text decoder
-var td = typeof TextDecoder != 'undefined' && /*#__PURE__*/ new TextDecoder();
-// text decoder stream
-var tds = 0;
-try {
-    td.decode(et, { stream: true });
-    tds = 1;
-}
-catch (e) { }
-// decode UTF8
-var dutf8 = function (d) {
-    for (var r = '', i = 0;;) {
-        var c = d[i++];
-        var eb = (c > 127) + (c > 223) + (c > 239);
-        if (i + eb > d.length)
-            return { s: r, r: slc(d, i - 1) };
-        if (!eb)
-            r += String.fromCharCode(c);
-        else if (eb == 3) {
-            c = ((c & 15) << 18 | (d[i++] & 63) << 12 | (d[i++] & 63) << 6 | (d[i++] & 63)) - 65536,
-                r += String.fromCharCode(55296 | (c >> 10), 56320 | (c & 1023));
-        }
-        else if (eb & 1)
-            r += String.fromCharCode((c & 31) << 6 | (d[i++] & 63));
-        else
-            r += String.fromCharCode((c & 15) << 12 | (d[i++] & 63) << 6 | (d[i++] & 63));
-    }
-};
-/**
- * Streaming UTF-8 decoding
- */
-var DecodeUTF8 = /*#__PURE__*/ (function () {
-    /**
-     * Creates a UTF-8 decoding stream
-     * @param cb The callback to call whenever data is decoded
-     */
-    function DecodeUTF8(cb) {
-        this.ondata = cb;
-        if (tds)
-            this.t = new TextDecoder();
-        else
-            this.p = et;
-    }
-    /**
-     * Pushes a chunk to be decoded from UTF-8 binary
-     * @param chunk The chunk to push
-     * @param final Whether this is the last chunk
-     */
-    DecodeUTF8.prototype.push = function (chunk, final) {
-        if (!this.ondata)
-            err(5);
-        final = !!final;
-        if (this.t) {
-            this.ondata(this.t.decode(chunk, { stream: true }), final);
-            if (final) {
-                if (this.t.decode().length)
-                    err(8);
-                this.t = null;
-            }
-            return;
-        }
-        if (!this.p)
-            err(4);
-        var dat = new u8(this.p.length + chunk.length);
-        dat.set(this.p);
-        dat.set(chunk, this.p.length);
-        var _a = dutf8(dat), s = _a.s, r = _a.r;
-        if (final) {
-            if (r.length)
-                err(8);
-            this.p = null;
-        }
-        else
-            this.p = r;
-        this.ondata(s, final);
-    };
-    return DecodeUTF8;
-}());
-exports.DecodeUTF8 = DecodeUTF8;
-/**
- * Streaming UTF-8 encoding
- */
-var EncodeUTF8 = /*#__PURE__*/ (function () {
-    /**
-     * Creates a UTF-8 decoding stream
-     * @param cb The callback to call whenever data is encoded
-     */
-    function EncodeUTF8(cb) {
-        this.ondata = cb;
-    }
-    /**
-     * Pushes a chunk to be encoded to UTF-8
-     * @param chunk The string data to push
-     * @param final Whether this is the last chunk
-     */
-    EncodeUTF8.prototype.push = function (chunk, final) {
-        if (!this.ondata)
-            err(5);
-        if (this.d)
-            err(4);
-        this.ondata(strToU8(chunk), this.d = final || false);
-    };
-    return EncodeUTF8;
-}());
-exports.EncodeUTF8 = EncodeUTF8;
-/**
- * Converts a string into a Uint8Array for use with compression/decompression methods
- * @param str The string to encode
- * @param latin1 Whether or not to interpret the data as Latin-1. This should
- *               not need to be true unless decoding a binary string.
- * @returns The string encoded in UTF-8/Latin-1 binary
- */
-function strToU8(str, latin1) {
-    if (latin1) {
-        var ar_1 = new u8(str.length);
-        for (var i = 0; i < str.length; ++i)
-            ar_1[i] = str.charCodeAt(i);
-        return ar_1;
-    }
-    if (te)
-        return te.encode(str);
-    var l = str.length;
-    var ar = new u8(str.length + (str.length >> 1));
-    var ai = 0;
-    var w = function (v) { ar[ai++] = v; };
-    for (var i = 0; i < l; ++i) {
-        if (ai + 5 > ar.length) {
-            var n = new u8(ai + 8 + ((l - i) << 1));
-            n.set(ar);
-            ar = n;
-        }
-        var c = str.charCodeAt(i);
-        if (c < 128 || latin1)
-            w(c);
-        else if (c < 2048)
-            w(192 | (c >> 6)), w(128 | (c & 63));
-        else if (c > 55295 && c < 57344)
-            c = 65536 + (c & 1023 << 10) | (str.charCodeAt(++i) & 1023),
-                w(240 | (c >> 18)), w(128 | ((c >> 12) & 63)), w(128 | ((c >> 6) & 63)), w(128 | (c & 63));
-        else
-            w(224 | (c >> 12)), w(128 | ((c >> 6) & 63)), w(128 | (c & 63));
-    }
-    return slc(ar, 0, ai);
-}
-exports.strToU8 = strToU8;
-/**
- * Converts a Uint8Array to a string
- * @param dat The data to decode to string
- * @param latin1 Whether or not to interpret the data as Latin-1. This should
- *               not need to be true unless encoding to binary string.
- * @returns The original UTF-8/Latin-1 string
- */
-function strFromU8(dat, latin1) {
-    if (latin1) {
-        var r = '';
-        for (var i = 0; i < dat.length; i += 16384)
-            r += String.fromCharCode.apply(null, dat.subarray(i, i + 16384));
-        return r;
-    }
-    else if (td) {
-        return td.decode(dat);
-    }
-    else {
-        var _a = dutf8(dat), s = _a.s, r = _a.r;
-        if (r.length)
-            err(8);
-        return s;
-    }
-}
-exports.strFromU8 = strFromU8;
-;
-// deflate bit flag
-var dbf = function (l) { return l == 1 ? 3 : l < 6 ? 2 : l == 9 ? 1 : 0; };
-// skip local zip header
-var slzh = function (d, b) { return b + 30 + b2(d, b + 26) + b2(d, b + 28); };
-// read zip header
-var zh = function (d, b, z) {
-    var fnl = b2(d, b + 28), fn = strFromU8(d.subarray(b + 46, b + 46 + fnl), !(b2(d, b + 8) & 2048)), es = b + 46 + fnl, bs = b4(d, b + 20);
-    var _a = z && bs == 4294967295 ? z64e(d, es) : [bs, b4(d, b + 24), b4(d, b + 42)], sc = _a[0], su = _a[1], off = _a[2];
-    return [b2(d, b + 10), sc, su, fn, es + b2(d, b + 30) + b2(d, b + 32), off];
-};
-// read zip64 extra field
-var z64e = function (d, b) {
-    for (; b2(d, b) != 1; b += 4 + b2(d, b + 2))
-        ;
-    return [b8(d, b + 12), b8(d, b + 4), b8(d, b + 20)];
-};
-// extra field length
-var exfl = function (ex) {
-    var le = 0;
-    if (ex) {
-        for (var k in ex) {
-            var l = ex[k].length;
-            if (l > 65535)
-                err(9);
-            le += l + 4;
-        }
-    }
-    return le;
-};
-// write zip header
-var wzh = function (d, b, f, fn, u, c, ce, co) {
-    var fl = fn.length, ex = f.extra, col = co && co.length;
-    var exl = exfl(ex);
-    wbytes(d, b, ce != null ? 0x2014B50 : 0x4034B50), b += 4;
-    if (ce != null)
-        d[b++] = 20, d[b++] = f.os;
-    d[b] = 20, b += 2; // spec compliance? what's that?
-    d[b++] = (f.flag << 1) | (c < 0 && 8), d[b++] = u && 8;
-    d[b++] = f.compression & 255, d[b++] = f.compression >> 8;
-    var dt = new Date(f.mtime == null ? Date.now() : f.mtime), y = dt.getFullYear() - 1980;
-    if (y < 0 || y > 119)
-        err(10);
-    wbytes(d, b, (y << 25) | ((dt.getMonth() + 1) << 21) | (dt.getDate() << 16) | (dt.getHours() << 11) | (dt.getMinutes() << 5) | (dt.getSeconds() >> 1)), b += 4;
-    if (c != -1) {
-        wbytes(d, b, f.crc);
-        wbytes(d, b + 4, c < 0 ? -c - 2 : c);
-        wbytes(d, b + 8, f.size);
-    }
-    wbytes(d, b + 12, fl);
-    wbytes(d, b + 14, exl), b += 16;
-    if (ce != null) {
-        wbytes(d, b, col);
-        wbytes(d, b + 6, f.attrs);
-        wbytes(d, b + 10, ce), b += 14;
-    }
-    d.set(fn, b);
-    b += fl;
-    if (exl) {
-        for (var k in ex) {
-            var exf = ex[k], l = exf.length;
-            wbytes(d, b, +k);
-            wbytes(d, b + 2, l);
-            d.set(exf, b + 4), b += 4 + l;
-        }
-    }
-    if (col)
-        d.set(co, b), b += col;
-    return b;
-};
-// write zip footer (end of central directory)
-var wzf = function (o, b, c, d, e) {
-    wbytes(o, b, 0x6054B50); // skip disk
-    wbytes(o, b + 8, c);
-    wbytes(o, b + 10, c);
-    wbytes(o, b + 12, d);
-    wbytes(o, b + 16, e);
-};
-/**
- * A pass-through stream to keep data uncompressed in a ZIP archive.
- */
-var ZipPassThrough = /*#__PURE__*/ (function () {
-    /**
-     * Creates a pass-through stream that can be added to ZIP archives
-     * @param filename The filename to associate with this data stream
-     */
-    function ZipPassThrough(filename) {
-        this.filename = filename;
-        this.c = crc();
-        this.size = 0;
-        this.compression = 0;
-    }
-    /**
-     * Processes a chunk and pushes to the output stream. You can override this
-     * method in a subclass for custom behavior, but by default this passes
-     * the data through. You must call this.ondata(err, chunk, final) at some
-     * point in this method.
-     * @param chunk The chunk to process
-     * @param final Whether this is the last chunk
-     */
-    ZipPassThrough.prototype.process = function (chunk, final) {
-        this.ondata(null, chunk, final);
-    };
-    /**
-     * Pushes a chunk to be added. If you are subclassing this with a custom
-     * compression algorithm, note that you must push data from the source
-     * file only, pre-compression.
-     * @param chunk The chunk to push
-     * @param final Whether this is the last chunk
-     */
-    ZipPassThrough.prototype.push = function (chunk, final) {
-        if (!this.ondata)
-            err(5);
-        this.c.p(chunk);
-        this.size += chunk.length;
-        if (final)
-            this.crc = this.c.d();
-        this.process(chunk, final || false);
-    };
-    return ZipPassThrough;
-}());
-exports.ZipPassThrough = ZipPassThrough;
-// I don't extend because TypeScript extension adds 1kB of runtime bloat
-/**
- * Streaming DEFLATE compression for ZIP archives. Prefer using AsyncZipDeflate
- * for better performance
- */
-var ZipDeflate = /*#__PURE__*/ (function () {
-    /**
-     * Creates a DEFLATE stream that can be added to ZIP archives
-     * @param filename The filename to associate with this data stream
-     * @param opts The compression options
-     */
-    function ZipDeflate(filename, opts) {
-        var _this_1 = this;
-        if (!opts)
-            opts = {};
-        ZipPassThrough.call(this, filename);
-        this.d = new Deflate(opts, function (dat, final) {
-            _this_1.ondata(null, dat, final);
-        });
-        this.compression = 8;
-        this.flag = dbf(opts.level);
-    }
-    ZipDeflate.prototype.process = function (chunk, final) {
-        try {
-            this.d.push(chunk, final);
-        }
-        catch (e) {
-            this.ondata(e, null, final);
-        }
-    };
-    /**
-     * Pushes a chunk to be deflated
-     * @param chunk The chunk to push
-     * @param final Whether this is the last chunk
-     */
-    ZipDeflate.prototype.push = function (chunk, final) {
-        ZipPassThrough.prototype.push.call(this, chunk, final);
-    };
-    return ZipDeflate;
-}());
-exports.ZipDeflate = ZipDeflate;
-/**
- * Asynchronous streaming DEFLATE compression for ZIP archives
- */
-var AsyncZipDeflate = /*#__PURE__*/ (function () {
-    /**
-     * Creates an asynchronous DEFLATE stream that can be added to ZIP archives
-     * @param filename The filename to associate with this data stream
-     * @param opts The compression options
-     */
-    function AsyncZipDeflate(filename, opts) {
-        var _this_1 = this;
-        if (!opts)
-            opts = {};
-        ZipPassThrough.call(this, filename);
-        this.d = new AsyncDeflate(opts, function (err, dat, final) {
-            _this_1.ondata(err, dat, final);
-        });
-        this.compression = 8;
-        this.flag = dbf(opts.level);
-        this.terminate = this.d.terminate;
-    }
-    AsyncZipDeflate.prototype.process = function (chunk, final) {
-        this.d.push(chunk, final);
-    };
-    /**
-     * Pushes a chunk to be deflated
-     * @param chunk The chunk to push
-     * @param final Whether this is the last chunk
-     */
-    AsyncZipDeflate.prototype.push = function (chunk, final) {
-        ZipPassThrough.prototype.push.call(this, chunk, final);
-    };
-    return AsyncZipDeflate;
-}());
-exports.AsyncZipDeflate = AsyncZipDeflate;
-// TODO: Better tree shaking
-/**
- * A zippable archive to which files can incrementally be added
- */
-var Zip = /*#__PURE__*/ (function () {
-    /**
-     * Creates an empty ZIP archive to which files can be added
-     * @param cb The callback to call whenever data for the generated ZIP archive
-     *           is available
-     */
-    function Zip(cb) {
-        this.ondata = cb;
-        this.u = [];
-        this.d = 1;
-    }
-    /**
-     * Adds a file to the ZIP archive
-     * @param file The file stream to add
-     */
-    Zip.prototype.add = function (file) {
-        var _this_1 = this;
-        if (!this.ondata)
-            err(5);
-        // finishing or finished
-        if (this.d & 2)
-            this.ondata(err(4 + (this.d & 1) * 8, 0, 1), null, false);
-        else {
-            var f = strToU8(file.filename), fl_1 = f.length;
-            var com = file.comment, o = com && strToU8(com);
-            var u = fl_1 != file.filename.length || (o && (com.length != o.length));
-            var hl_1 = fl_1 + exfl(file.extra) + 30;
-            if (fl_1 > 65535)
-                this.ondata(err(11, 0, 1), null, false);
-            var header = new u8(hl_1);
-            wzh(header, 0, file, f, u, -1);
-            var chks_1 = [header];
-            var pAll_1 = function () {
-                for (var _i = 0, chks_2 = chks_1; _i < chks_2.length; _i++) {
-                    var chk = chks_2[_i];
-                    _this_1.ondata(null, chk, false);
-                }
-                chks_1 = [];
-            };
-            var tr_1 = this.d;
-            this.d = 0;
-            var ind_1 = this.u.length;
-            var uf_1 = mrg(file, {
-                f: f,
-                u: u,
-                o: o,
-                t: function () {
-                    if (file.terminate)
-                        file.terminate();
-                },
-                r: function () {
-                    pAll_1();
-                    if (tr_1) {
-                        var nxt = _this_1.u[ind_1 + 1];
-                        if (nxt)
-                            nxt.r();
-                        else
-                            _this_1.d = 1;
-                    }
-                    tr_1 = 1;
-                }
-            });
-            var cl_1 = 0;
-            file.ondata = function (err, dat, final) {
-                if (err) {
-                    _this_1.ondata(err, dat, final);
-                    _this_1.terminate();
-                }
-                else {
-                    cl_1 += dat.length;
-                    chks_1.push(dat);
-                    if (final) {
-                        var dd = new u8(16);
-                        wbytes(dd, 0, 0x8074B50);
-                        wbytes(dd, 4, file.crc);
-                        wbytes(dd, 8, cl_1);
-                        wbytes(dd, 12, file.size);
-                        chks_1.push(dd);
-                        uf_1.c = cl_1, uf_1.b = hl_1 + cl_1 + 16, uf_1.crc = file.crc, uf_1.size = file.size;
-                        if (tr_1)
-                            uf_1.r();
-                        tr_1 = 1;
-                    }
-                    else if (tr_1)
-                        pAll_1();
-                }
-            };
-            this.u.push(uf_1);
-        }
-    };
-    /**
-     * Ends the process of adding files and prepares to emit the final chunks.
-     * This *must* be called after adding all desired files for the resulting
-     * ZIP file to work properly.
-     */
-    Zip.prototype.end = function () {
-        var _this_1 = this;
-        if (this.d & 2) {
-            this.ondata(err(4 + (this.d & 1) * 8, 0, 1), null, true);
-            return;
-        }
-        if (this.d)
-            this.e();
-        else
-            this.u.push({
-                r: function () {
-                    if (!(_this_1.d & 1))
-                        return;
-                    _this_1.u.splice(-1, 1);
-                    _this_1.e();
-                },
-                t: function () { }
-            });
-        this.d = 3;
-    };
-    Zip.prototype.e = function () {
-        var bt = 0, l = 0, tl = 0;
-        for (var _i = 0, _a = this.u; _i < _a.length; _i++) {
-            var f = _a[_i];
-            tl += 46 + f.f.length + exfl(f.extra) + (f.o ? f.o.length : 0);
-        }
-        var out = new u8(tl + 22);
-        for (var _b = 0, _c = this.u; _b < _c.length; _b++) {
-            var f = _c[_b];
-            wzh(out, bt, f, f.f, f.u, -f.c - 2, l, f.o);
-            bt += 46 + f.f.length + exfl(f.extra) + (f.o ? f.o.length : 0), l += f.b;
-        }
-        wzf(out, bt, this.u.length, tl, l);
-        this.ondata(null, out, true);
-        this.d = 2;
-    };
-    /**
-     * A method to terminate any internal workers used by the stream. Subsequent
-     * calls to add() will fail.
-     */
-    Zip.prototype.terminate = function () {
-        for (var _i = 0, _a = this.u; _i < _a.length; _i++) {
-            var f = _a[_i];
-            f.t();
-        }
-        this.d = 2;
-    };
-    return Zip;
-}());
-exports.Zip = Zip;
-function zip(data, opts, cb) {
-    if (!cb)
-        cb = opts, opts = {};
-    if (typeof cb != 'function')
-        err(7);
-    var r = {};
-    fltn(data, '', r, opts);
-    var k = Object.keys(r);
-    var lft = k.length, o = 0, tot = 0;
-    var slft = lft, files = new Array(lft);
-    var term = [];
-    var tAll = function () {
-        for (var i = 0; i < term.length; ++i)
-            term[i]();
-    };
-    var cbd = function (a, b) {
-        mt(function () { cb(a, b); });
-    };
-    mt(function () { cbd = cb; });
-    var cbf = function () {
-        var out = new u8(tot + 22), oe = o, cdl = tot - o;
-        tot = 0;
-        for (var i = 0; i < slft; ++i) {
-            var f = files[i];
-            try {
-                var l = f.c.length;
-                wzh(out, tot, f, f.f, f.u, l);
-                var badd = 30 + f.f.length + exfl(f.extra);
-                var loc = tot + badd;
-                out.set(f.c, loc);
-                wzh(out, o, f, f.f, f.u, l, tot, f.m), o += 16 + badd + (f.m ? f.m.length : 0), tot = loc + l;
-            }
-            catch (e) {
-                return cbd(e, null);
-            }
-        }
-        wzf(out, o, files.length, cdl, oe);
-        cbd(null, out);
-    };
-    if (!lft)
-        cbf();
-    var _loop_1 = function (i) {
-        var fn = k[i];
-        var _a = r[fn], file = _a[0], p = _a[1];
-        var c = crc(), size = file.length;
-        c.p(file);
-        var f = strToU8(fn), s = f.length;
-        var com = p.comment, m = com && strToU8(com), ms = m && m.length;
-        var exl = exfl(p.extra);
-        var compression = p.level == 0 ? 0 : 8;
-        var cbl = function (e, d) {
-            if (e) {
-                tAll();
-                cbd(e, null);
-            }
-            else {
-                var l = d.length;
-                files[i] = mrg(p, {
-                    size: size,
-                    crc: c.d(),
-                    c: d,
-                    f: f,
-                    m: m,
-                    u: s != fn.length || (m && (com.length != ms)),
-                    compression: compression
-                });
-                o += 30 + s + exl + l;
-                tot += 76 + 2 * (s + exl) + (ms || 0) + l;
-                if (!--lft)
-                    cbf();
-            }
-        };
-        if (s > 65535)
-            cbl(err(11, 0, 1), null);
-        if (!compression)
-            cbl(null, file);
-        else if (size < 160000) {
-            try {
-                cbl(null, deflateSync(file, p));
-            }
-            catch (e) {
-                cbl(e, null);
-            }
-        }
-        else
-            term.push(deflate(file, p, cbl));
-    };
-    // Cannot use lft because it can decrease
-    for (var i = 0; i < slft; ++i) {
-        _loop_1(i);
-    }
-    return tAll;
-}
-exports.zip = zip;
-/**
- * Synchronously creates a ZIP file. Prefer using `zip` for better performance
- * with more than one file.
- * @param data The directory structure for the ZIP archive
- * @param opts The main options, merged with per-file options
- * @returns The generated ZIP archive
- */
-function zipSync(data, opts) {
-    if (!opts)
-        opts = {};
-    var r = {};
-    var files = [];
-    fltn(data, '', r, opts);
-    var o = 0;
-    var tot = 0;
-    for (var fn in r) {
-        var _a = r[fn], file = _a[0], p = _a[1];
-        var compression = p.level == 0 ? 0 : 8;
-        var f = strToU8(fn), s = f.length;
-        var com = p.comment, m = com && strToU8(com), ms = m && m.length;
-        var exl = exfl(p.extra);
-        if (s > 65535)
-            err(11);
-        var d = compression ? deflateSync(file, p) : file, l = d.length;
-        var c = crc();
-        c.p(file);
-        files.push(mrg(p, {
-            size: file.length,
-            crc: c.d(),
-            c: d,
-            f: f,
-            m: m,
-            u: s != fn.length || (m && (com.length != ms)),
-            o: o,
-            compression: compression
-        }));
-        o += 30 + s + exl + l;
-        tot += 76 + 2 * (s + exl) + (ms || 0) + l;
-    }
-    var out = new u8(tot + 22), oe = o, cdl = tot - o;
-    for (var i = 0; i < files.length; ++i) {
-        var f = files[i];
-        wzh(out, f.o, f, f.f, f.u, f.c.length);
-        var badd = 30 + f.f.length + exfl(f.extra);
-        out.set(f.c, f.o + badd);
-        wzh(out, o, f, f.f, f.u, f.c.length, f.o, f.m), o += 16 + badd + (f.m ? f.m.length : 0);
-    }
-    wzf(out, o, files.length, cdl, oe);
-    return out;
-}
-exports.zipSync = zipSync;
-/**
- * Streaming pass-through decompression for ZIP archives
- */
-var UnzipPassThrough = /*#__PURE__*/ (function () {
-    function UnzipPassThrough() {
-    }
-    UnzipPassThrough.prototype.push = function (data, final) {
-        this.ondata(null, data, final);
-    };
-    UnzipPassThrough.compression = 0;
-    return UnzipPassThrough;
-}());
-exports.UnzipPassThrough = UnzipPassThrough;
-/**
- * Streaming DEFLATE decompression for ZIP archives. Prefer AsyncZipInflate for
- * better performance.
- */
-var UnzipInflate = /*#__PURE__*/ (function () {
-    /**
-     * Creates a DEFLATE decompression that can be used in ZIP archives
-     */
-    function UnzipInflate() {
-        var _this_1 = this;
-        this.i = new Inflate(function (dat, final) {
-            _this_1.ondata(null, dat, final);
-        });
-    }
-    UnzipInflate.prototype.push = function (data, final) {
-        try {
-            this.i.push(data, final);
-        }
-        catch (e) {
-            this.ondata(e, null, final);
-        }
-    };
-    UnzipInflate.compression = 8;
-    return UnzipInflate;
-}());
-exports.UnzipInflate = UnzipInflate;
-/**
- * Asynchronous streaming DEFLATE decompression for ZIP archives
- */
-var AsyncUnzipInflate = /*#__PURE__*/ (function () {
-    /**
-     * Creates a DEFLATE decompression that can be used in ZIP archives
-     */
-    function AsyncUnzipInflate(_, sz) {
-        var _this_1 = this;
-        if (sz < 320000) {
-            this.i = new Inflate(function (dat, final) {
-                _this_1.ondata(null, dat, final);
-            });
-        }
-        else {
-            this.i = new AsyncInflate(function (err, dat, final) {
-                _this_1.ondata(err, dat, final);
-            });
-            this.terminate = this.i.terminate;
-        }
-    }
-    AsyncUnzipInflate.prototype.push = function (data, final) {
-        if (this.i.terminate)
-            data = slc(data, 0);
-        this.i.push(data, final);
-    };
-    AsyncUnzipInflate.compression = 8;
-    return AsyncUnzipInflate;
-}());
-exports.AsyncUnzipInflate = AsyncUnzipInflate;
-/**
- * A ZIP archive decompression stream that emits files as they are discovered
- */
-var Unzip = /*#__PURE__*/ (function () {
-    /**
-     * Creates a ZIP decompression stream
-     * @param cb The callback to call whenever a file in the ZIP archive is found
-     */
-    function Unzip(cb) {
-        this.onfile = cb;
-        this.k = [];
-        this.o = {
-            0: UnzipPassThrough
-        };
-        this.p = et;
-    }
-    /**
-     * Pushes a chunk to be unzipped
-     * @param chunk The chunk to push
-     * @param final Whether this is the last chunk
-     */
-    Unzip.prototype.push = function (chunk, final) {
-        var _this_1 = this;
-        if (!this.onfile)
-            err(5);
-        if (!this.p)
-            err(4);
-        if (this.c > 0) {
-            var len = Math.min(this.c, chunk.length);
-            var toAdd = chunk.subarray(0, len);
-            this.c -= len;
-            if (this.d)
-                this.d.push(toAdd, !this.c);
-            else
-                this.k[0].push(toAdd);
-            chunk = chunk.subarray(len);
-            if (chunk.length)
-                return this.push(chunk, final);
-        }
-        else {
-            var f = 0, i = 0, is = void 0, buf = void 0;
-            if (!this.p.length)
-                buf = chunk;
-            else if (!chunk.length)
-                buf = this.p;
-            else {
-                buf = new u8(this.p.length + chunk.length);
-                buf.set(this.p), buf.set(chunk, this.p.length);
-            }
-            var l = buf.length, oc = this.c, add = oc && this.d;
-            var _loop_2 = function () {
-                var _a;
-                var sig = b4(buf, i);
-                if (sig == 0x4034B50) {
-                    f = 1, is = i;
-                    this_1.d = null;
-                    this_1.c = 0;
-                    var bf = b2(buf, i + 6), cmp_1 = b2(buf, i + 8), u = bf & 2048, dd = bf & 8, fnl = b2(buf, i + 26), es = b2(buf, i + 28);
-                    if (l > i + 30 + fnl + es) {
-                        var chks_3 = [];
-                        this_1.k.unshift(chks_3);
-                        f = 2;
-                        var sc_1 = b4(buf, i + 18), su_1 = b4(buf, i + 22);
-                        var fn_1 = strFromU8(buf.subarray(i + 30, i += 30 + fnl), !u);
-                        if (sc_1 == 4294967295) {
-                            _a = dd ? [-2] : z64e(buf, i), sc_1 = _a[0], su_1 = _a[1];
-                        }
-                        else if (dd)
-                            sc_1 = -1;
-                        i += es;
-                        this_1.c = sc_1;
-                        var d_1;
-                        var file_1 = {
-                            name: fn_1,
-                            compression: cmp_1,
-                            start: function () {
-                                if (!file_1.ondata)
-                                    err(5);
-                                if (!sc_1)
-                                    file_1.ondata(null, et, true);
-                                else {
-                                    var ctr = _this_1.o[cmp_1];
-                                    if (!ctr)
-                                        file_1.ondata(err(14, 'unknown compression type ' + cmp_1, 1), null, false);
-                                    d_1 = sc_1 < 0 ? new ctr(fn_1) : new ctr(fn_1, sc_1, su_1);
-                                    d_1.ondata = function (err, dat, final) { file_1.ondata(err, dat, final); };
-                                    for (var _i = 0, chks_4 = chks_3; _i < chks_4.length; _i++) {
-                                        var dat = chks_4[_i];
-                                        d_1.push(dat, false);
-                                    }
-                                    if (_this_1.k[0] == chks_3 && _this_1.c)
-                                        _this_1.d = d_1;
-                                    else
-                                        d_1.push(et, true);
-                                }
-                            },
-                            terminate: function () {
-                                if (d_1 && d_1.terminate)
-                                    d_1.terminate();
-                            }
-                        };
-                        if (sc_1 >= 0)
-                            file_1.size = sc_1, file_1.originalSize = su_1;
-                        this_1.onfile(file_1);
-                    }
-                    return "break";
-                }
-                else if (oc) {
-                    if (sig == 0x8074B50) {
-                        is = i += 12 + (oc == -2 && 8), f = 3, this_1.c = 0;
-                        return "break";
-                    }
-                    else if (sig == 0x2014B50) {
-                        is = i -= 4, f = 3, this_1.c = 0;
-                        return "break";
-                    }
-                }
-            };
-            var this_1 = this;
-            for (; i < l - 4; ++i) {
-                var state_1 = _loop_2();
-                if (state_1 === "break")
-                    break;
-            }
-            this.p = et;
-            if (oc < 0) {
-                var dat = f ? buf.subarray(0, is - 12 - (oc == -2 && 8) - (b4(buf, is - 16) == 0x8074B50 && 4)) : buf.subarray(0, i);
-                if (add)
-                    add.push(dat, !!f);
-                else
-                    this.k[+(f == 2)].push(dat);
-            }
-            if (f & 2)
-                return this.push(buf.subarray(i), final);
-            this.p = buf.subarray(i);
-        }
-        if (final) {
-            if (this.c)
-                err(13);
-            this.p = null;
-        }
-    };
-    /**
-     * Registers a decoder with the stream, allowing for files compressed with
-     * the compression type provided to be expanded correctly
-     * @param decoder The decoder constructor
-     */
-    Unzip.prototype.register = function (decoder) {
-        this.o[decoder.compression] = decoder;
-    };
-    return Unzip;
-}());
-exports.Unzip = Unzip;
-var mt = typeof queueMicrotask == 'function' ? queueMicrotask : typeof setTimeout == 'function' ? setTimeout : function (fn) { fn(); };
-function unzip(data, opts, cb) {
-    if (!cb)
-        cb = opts, opts = {};
-    if (typeof cb != 'function')
-        err(7);
-    var term = [];
-    var tAll = function () {
-        for (var i = 0; i < term.length; ++i)
-            term[i]();
-    };
-    var files = {};
-    var cbd = function (a, b) {
-        mt(function () { cb(a, b); });
-    };
-    mt(function () { cbd = cb; });
-    var e = data.length - 22;
-    for (; b4(data, e) != 0x6054B50; --e) {
-        if (!e || data.length - e > 65558) {
-            cbd(err(13, 0, 1), null);
-            return tAll;
-        }
-    }
-    ;
-    var lft = b2(data, e + 8);
-    if (lft) {
-        var c = lft;
-        var o = b4(data, e + 16);
-        var z = o == 4294967295 || c == 65535;
-        if (z) {
-            var ze = b4(data, e - 12);
-            z = b4(data, ze) == 0x6064B50;
-            if (z) {
-                c = lft = b4(data, ze + 32);
-                o = b4(data, ze + 48);
-            }
-        }
-        var fltr = opts && opts.filter;
-        var _loop_3 = function (i) {
-            var _a = zh(data, o, z), c_1 = _a[0], sc = _a[1], su = _a[2], fn = _a[3], no = _a[4], off = _a[5], b = slzh(data, off);
-            o = no;
-            var cbl = function (e, d) {
-                if (e) {
-                    tAll();
-                    cbd(e, null);
-                }
-                else {
-                    if (d)
-                        files[fn] = d;
-                    if (!--lft)
-                        cbd(null, files);
-                }
-            };
-            if (!fltr || fltr({
-                name: fn,
-                size: sc,
-                originalSize: su,
-                compression: c_1
-            })) {
-                if (!c_1)
-                    cbl(null, slc(data, b, b + sc));
-                else if (c_1 == 8) {
-                    var infl = data.subarray(b, b + sc);
-                    if (sc < 320000) {
-                        try {
-                            cbl(null, inflateSync(infl, { out: new u8(su) }));
-                        }
-                        catch (e) {
-                            cbl(e, null);
-                        }
-                    }
-                    else
-                        term.push(inflate(infl, { size: su }, cbl));
-                }
-                else
-                    cbl(err(14, 'unknown compression type ' + c_1, 1), null);
-            }
-            else
-                cbl(null, null);
-        };
-        for (var i = 0; i < c; ++i) {
-            _loop_3(i);
-        }
-    }
-    else
-        cbd(null, {});
-    return tAll;
-}
-exports.unzip = unzip;
-/**
- * Synchronously decompresses a ZIP archive. Prefer using `unzip` for better
- * performance with more than one file.
- * @param data The raw compressed ZIP file
- * @param opts The ZIP extraction options
- * @returns The decompressed files
- */
-function unzipSync(data, opts) {
-    var files = {};
-    var e = data.length - 22;
-    for (; b4(data, e) != 0x6054B50; --e) {
-        if (!e || data.length - e > 65558)
-            err(13);
-    }
-    ;
-    var c = b2(data, e + 8);
-    if (!c)
-        return {};
-    var o = b4(data, e + 16);
-    var z = o == 4294967295 || c == 65535;
-    if (z) {
-        var ze = b4(data, e - 12);
-        z = b4(data, ze) == 0x6064B50;
-        if (z) {
-            c = b4(data, ze + 32);
-            o = b4(data, ze + 48);
-        }
-    }
-    var fltr = opts && opts.filter;
-    for (var i = 0; i < c; ++i) {
-        var _a = zh(data, o, z), c_2 = _a[0], sc = _a[1], su = _a[2], fn = _a[3], no = _a[4], off = _a[5], b = slzh(data, off);
-        o = no;
-        if (!fltr || fltr({
-            name: fn,
-            size: sc,
-            originalSize: su,
-            compression: c_2
-        })) {
-            if (!c_2)
-                files[fn] = slc(data, b, b + sc);
-            else if (c_2 == 8)
-                files[fn] = inflateSync(data.subarray(b, b + sc), { out: new u8(su) });
-            else
-                err(14, 'unknown compression type ' + c_2);
-        }
-    }
-    return files;
-}
-exports.unzipSync = unzipSync;
-
-},{"./node-worker.cjs":12}],12:[function(require,module,exports){
-"use strict";
-var ch2 = {};
-exports["default"] = (function (c, id, msg, transfer, cb) {
-    var w = new Worker(ch2[id] || (ch2[id] = URL.createObjectURL(new Blob([
-        c + ';addEventListener("error",function(e){e=e.error;postMessage({$e$:[e.message,e.code,e.stack]})})'
-    ], { type: 'text/javascript' }))));
-    w.onmessage = function (e) {
-        var d = e.data, ed = d.$e$;
-        if (ed) {
-            var err = new Error(ed[0]);
-            err['code'] = ed[1];
-            err.stack = ed[2];
-            cb(err, null);
-        }
-        else
-            cb(null, d);
-    };
-    w.postMessage(msg, transfer);
-    return w;
-});
-
-},{}],13:[function(require,module,exports){
-(function (global){(function (){
-// https://github.com/maxogden/websocket-stream/blob/48dc3ddf943e5ada668c31ccd94e9186f02fafbd/ws-fallback.js
-
-var ws = null
-
-if (typeof WebSocket !== 'undefined') {
-  ws = WebSocket
-} else if (typeof MozWebSocket !== 'undefined') {
-  ws = MozWebSocket
-} else if (typeof global !== 'undefined') {
-  ws = global.WebSocket || global.MozWebSocket
-} else if (typeof window !== 'undefined') {
-  ws = window.WebSocket || window.MozWebSocket
-} else if (typeof self !== 'undefined') {
-  ws = self.WebSocket || self.MozWebSocket
-}
-
-module.exports = ws
-
-}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],14:[function(require,module,exports){
 function _arrayLikeToArray(arr, len) {
   if (len == null || len > arr.length) len = arr.length;
 
@@ -5056,7 +10,7 @@ function _arrayLikeToArray(arr, len) {
 }
 
 module.exports = _arrayLikeToArray, module.exports.__esModule = true, module.exports["default"] = module.exports;
-},{}],15:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 var arrayLikeToArray = require("./arrayLikeToArray.js");
 
 function _arrayWithoutHoles(arr) {
@@ -5064,7 +18,7 @@ function _arrayWithoutHoles(arr) {
 }
 
 module.exports = _arrayWithoutHoles, module.exports.__esModule = true, module.exports["default"] = module.exports;
-},{"./arrayLikeToArray.js":14}],16:[function(require,module,exports){
+},{"./arrayLikeToArray.js":1}],3:[function(require,module,exports){
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
   try {
     var info = gen[key](arg);
@@ -5102,7 +56,7 @@ function _asyncToGenerator(fn) {
 }
 
 module.exports = _asyncToGenerator, module.exports.__esModule = true, module.exports["default"] = module.exports;
-},{}],17:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
@@ -5110,7 +64,7 @@ function _classCallCheck(instance, Constructor) {
 }
 
 module.exports = _classCallCheck, module.exports.__esModule = true, module.exports["default"] = module.exports;
-},{}],18:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 function _defineProperties(target, props) {
   for (var i = 0; i < props.length; i++) {
     var descriptor = props[i];
@@ -5131,7 +85,7 @@ function _createClass(Constructor, protoProps, staticProps) {
 }
 
 module.exports = _createClass, module.exports.__esModule = true, module.exports["default"] = module.exports;
-},{}],19:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 function _defineProperty(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
@@ -5148,7 +102,7 @@ function _defineProperty(obj, key, value) {
 }
 
 module.exports = _defineProperty, module.exports.__esModule = true, module.exports["default"] = module.exports;
-},{}],20:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 function _interopRequireDefault(obj) {
   return obj && obj.__esModule ? obj : {
     "default": obj
@@ -5156,25 +110,25 @@ function _interopRequireDefault(obj) {
 }
 
 module.exports = _interopRequireDefault, module.exports.__esModule = true, module.exports["default"] = module.exports;
-},{}],21:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 function _iterableToArray(iter) {
   if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter);
 }
 
 module.exports = _iterableToArray, module.exports.__esModule = true, module.exports["default"] = module.exports;
-},{}],22:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 function _nonIterableSpread() {
   throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 
 module.exports = _nonIterableSpread, module.exports.__esModule = true, module.exports["default"] = module.exports;
-},{}],23:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 function _objectDestructuringEmpty(obj) {
   if (obj == null) throw new TypeError("Cannot destructure undefined");
 }
 
 module.exports = _objectDestructuringEmpty, module.exports.__esModule = true, module.exports["default"] = module.exports;
-},{}],24:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 var _typeof = require("./typeof.js")["default"];
 
 function _regeneratorRuntime() {
@@ -5529,7 +483,7 @@ function _regeneratorRuntime() {
 }
 
 module.exports = _regeneratorRuntime, module.exports.__esModule = true, module.exports["default"] = module.exports;
-},{"./typeof.js":26}],25:[function(require,module,exports){
+},{"./typeof.js":13}],12:[function(require,module,exports){
 var arrayWithoutHoles = require("./arrayWithoutHoles.js");
 
 var iterableToArray = require("./iterableToArray.js");
@@ -5543,7 +497,7 @@ function _toConsumableArray(arr) {
 }
 
 module.exports = _toConsumableArray, module.exports.__esModule = true, module.exports["default"] = module.exports;
-},{"./arrayWithoutHoles.js":15,"./iterableToArray.js":21,"./nonIterableSpread.js":22,"./unsupportedIterableToArray.js":27}],26:[function(require,module,exports){
+},{"./arrayWithoutHoles.js":2,"./iterableToArray.js":8,"./nonIterableSpread.js":9,"./unsupportedIterableToArray.js":14}],13:[function(require,module,exports){
 function _typeof(obj) {
   "@babel/helpers - typeof";
 
@@ -5555,7 +509,7 @@ function _typeof(obj) {
 }
 
 module.exports = _typeof, module.exports.__esModule = true, module.exports["default"] = module.exports;
-},{}],27:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 var arrayLikeToArray = require("./arrayLikeToArray.js");
 
 function _unsupportedIterableToArray(o, minLen) {
@@ -5568,9 +522,24 @@ function _unsupportedIterableToArray(o, minLen) {
 }
 
 module.exports = _unsupportedIterableToArray, module.exports.__esModule = true, module.exports["default"] = module.exports;
-},{"./arrayLikeToArray.js":14}],28:[function(require,module,exports){
-arguments[4][10][0].apply(exports,arguments)
-},{"../helpers/regeneratorRuntime":24,"dup":10}],29:[function(require,module,exports){
+},{"./arrayLikeToArray.js":1}],15:[function(require,module,exports){
+// TODO(Babel 8): Remove this file.
+
+var runtime = require("../helpers/regeneratorRuntime")();
+module.exports = runtime;
+
+// Copied from https://github.com/facebook/regenerator/blob/main/packages/runtime/runtime.js#L736=
+try {
+  regeneratorRuntime = runtime;
+} catch (accidentalStrictMode) {
+  if (typeof globalThis === "object") {
+    globalThis.regeneratorRuntime = runtime;
+  } else {
+    Function("r", "regeneratorRuntime = r")(runtime);
+  }
+}
+
+},{"../helpers/regeneratorRuntime":11}],16:[function(require,module,exports){
 'use strict';
 
 const asn1 = exports;
@@ -5583,7 +552,7 @@ asn1.constants = require('./asn1/constants');
 asn1.decoders = require('./asn1/decoders');
 asn1.encoders = require('./asn1/encoders');
 
-},{"./asn1/api":30,"./asn1/base":32,"./asn1/constants":36,"./asn1/decoders":38,"./asn1/encoders":41,"bn.js":43}],30:[function(require,module,exports){
+},{"./asn1/api":17,"./asn1/base":19,"./asn1/constants":23,"./asn1/decoders":25,"./asn1/encoders":28,"bn.js":30}],17:[function(require,module,exports){
 'use strict';
 
 const encoders = require('./encoders');
@@ -5642,7 +611,7 @@ Entity.prototype.encode = function encode(data, enc, /* internal */ reporter) {
   return this._getEncoder(enc).encode(data, reporter);
 };
 
-},{"./decoders":38,"./encoders":41,"inherits":206}],31:[function(require,module,exports){
+},{"./decoders":25,"./encoders":28,"inherits":195}],18:[function(require,module,exports){
 'use strict';
 
 const inherits = require('inherits');
@@ -5797,7 +766,7 @@ EncoderBuffer.prototype.join = function join(out, offset) {
   return out;
 };
 
-},{"../base/reporter":34,"inherits":206,"safer-buffer":240}],32:[function(require,module,exports){
+},{"../base/reporter":21,"inherits":195,"safer-buffer":235}],19:[function(require,module,exports){
 'use strict';
 
 const base = exports;
@@ -5807,7 +776,7 @@ base.DecoderBuffer = require('./buffer').DecoderBuffer;
 base.EncoderBuffer = require('./buffer').EncoderBuffer;
 base.Node = require('./node');
 
-},{"./buffer":31,"./node":33,"./reporter":34}],33:[function(require,module,exports){
+},{"./buffer":18,"./node":20,"./reporter":21}],20:[function(require,module,exports){
 'use strict';
 
 const Reporter = require('../base/reporter').Reporter;
@@ -6447,7 +1416,7 @@ Node.prototype._isPrintstr = function isPrintstr(str) {
   return /^[A-Za-z0-9 '()+,-./:=?]*$/.test(str);
 };
 
-},{"../base/buffer":31,"../base/reporter":34,"minimalistic-assert":214}],34:[function(require,module,exports){
+},{"../base/buffer":18,"../base/reporter":21,"minimalistic-assert":204}],21:[function(require,module,exports){
 'use strict';
 
 const inherits = require('inherits');
@@ -6572,7 +1541,7 @@ ReporterError.prototype.rethrow = function rethrow(msg) {
   return this;
 };
 
-},{"inherits":206}],35:[function(require,module,exports){
+},{"inherits":195}],22:[function(require,module,exports){
 'use strict';
 
 // Helper
@@ -6632,7 +1601,7 @@ exports.tag = {
 };
 exports.tagByName = reverse(exports.tag);
 
-},{}],36:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 'use strict';
 
 const constants = exports;
@@ -6655,7 +1624,7 @@ constants._reverse = function reverse(map) {
 
 constants.der = require('./der');
 
-},{"./der":35}],37:[function(require,module,exports){
+},{"./der":22}],24:[function(require,module,exports){
 'use strict';
 
 const inherits = require('inherits');
@@ -6992,7 +1961,7 @@ function derDecodeLen(buf, primitive, fail) {
   return len;
 }
 
-},{"../base/buffer":31,"../base/node":33,"../constants/der":35,"bn.js":43,"inherits":206}],38:[function(require,module,exports){
+},{"../base/buffer":18,"../base/node":20,"../constants/der":22,"bn.js":30,"inherits":195}],25:[function(require,module,exports){
 'use strict';
 
 const decoders = exports;
@@ -7000,7 +1969,7 @@ const decoders = exports;
 decoders.der = require('./der');
 decoders.pem = require('./pem');
 
-},{"./der":37,"./pem":39}],39:[function(require,module,exports){
+},{"./der":24,"./pem":26}],26:[function(require,module,exports){
 'use strict';
 
 const inherits = require('inherits');
@@ -7053,7 +2022,7 @@ PEMDecoder.prototype.decode = function decode(data, options) {
   return DERDecoder.prototype.decode.call(this, input, options);
 };
 
-},{"./der":37,"inherits":206,"safer-buffer":240}],40:[function(require,module,exports){
+},{"./der":24,"inherits":195,"safer-buffer":235}],27:[function(require,module,exports){
 'use strict';
 
 const inherits = require('inherits');
@@ -7350,7 +2319,7 @@ function encodeTag(tag, primitive, cls, reporter) {
   return res;
 }
 
-},{"../base/node":33,"../constants/der":35,"inherits":206,"safer-buffer":240}],41:[function(require,module,exports){
+},{"../base/node":20,"../constants/der":22,"inherits":195,"safer-buffer":235}],28:[function(require,module,exports){
 'use strict';
 
 const encoders = exports;
@@ -7358,7 +2327,7 @@ const encoders = exports;
 encoders.der = require('./der');
 encoders.pem = require('./pem');
 
-},{"./der":40,"./pem":42}],42:[function(require,module,exports){
+},{"./der":27,"./pem":29}],29:[function(require,module,exports){
 'use strict';
 
 const inherits = require('inherits');
@@ -7383,7 +2352,7 @@ PEMEncoder.prototype.encode = function encode(data, options) {
   return out.join('\n');
 };
 
-},{"./der":40,"inherits":206}],43:[function(require,module,exports){
+},{"./der":27,"inherits":195}],30:[function(require,module,exports){
 (function (module, exports) {
   'use strict';
 
@@ -10831,7 +5800,7 @@ PEMEncoder.prototype.encode = function encode(data, options) {
   };
 })(typeof module === 'undefined' || module, this);
 
-},{"buffer":47}],44:[function(require,module,exports){
+},{"buffer":34}],31:[function(require,module,exports){
 'use strict'
 
 exports.byteLength = byteLength
@@ -10983,7 +5952,7 @@ function fromByteArray (uint8) {
   return parts.join('')
 }
 
-},{}],45:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 (function (module, exports) {
   'use strict';
 
@@ -14532,7 +9501,7 @@ function fromByteArray (uint8) {
   };
 })(typeof module === 'undefined' || module, this);
 
-},{"buffer":47}],46:[function(require,module,exports){
+},{"buffer":34}],33:[function(require,module,exports){
 var r;
 
 module.exports = function rand(len) {
@@ -14599,9 +9568,9 @@ if (typeof self === 'object') {
   }
 }
 
-},{"crypto":47}],47:[function(require,module,exports){
+},{"crypto":34}],34:[function(require,module,exports){
 
-},{}],48:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 // based on the aes implimentation in triple sec
 // https://github.com/keybase/triplesec
 // which is in turn based on the one from crypto-js
@@ -14831,7 +9800,7 @@ AES.prototype.scrub = function () {
 
 module.exports.AES = AES
 
-},{"safe-buffer":239}],49:[function(require,module,exports){
+},{"safe-buffer":234}],36:[function(require,module,exports){
 var aes = require('./aes')
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('cipher-base')
@@ -14950,7 +9919,7 @@ StreamCipher.prototype.setAAD = function setAAD (buf) {
 
 module.exports = StreamCipher
 
-},{"./aes":48,"./ghash":53,"./incr32":54,"buffer-xor":91,"cipher-base":93,"inherits":206,"safe-buffer":239}],50:[function(require,module,exports){
+},{"./aes":35,"./ghash":40,"./incr32":41,"buffer-xor":78,"cipher-base":80,"inherits":195,"safe-buffer":234}],37:[function(require,module,exports){
 var ciphers = require('./encrypter')
 var deciphers = require('./decrypter')
 var modes = require('./modes/list.json')
@@ -14965,7 +9934,7 @@ exports.createDecipher = exports.Decipher = deciphers.createDecipher
 exports.createDecipheriv = exports.Decipheriv = deciphers.createDecipheriv
 exports.listCiphers = exports.getCiphers = getCiphers
 
-},{"./decrypter":51,"./encrypter":52,"./modes/list.json":62}],51:[function(require,module,exports){
+},{"./decrypter":38,"./encrypter":39,"./modes/list.json":49}],38:[function(require,module,exports){
 var AuthCipher = require('./authCipher')
 var Buffer = require('safe-buffer').Buffer
 var MODES = require('./modes')
@@ -15091,7 +10060,7 @@ function createDecipher (suite, password) {
 exports.createDecipher = createDecipher
 exports.createDecipheriv = createDecipheriv
 
-},{"./aes":48,"./authCipher":49,"./modes":61,"./streamCipher":64,"cipher-base":93,"evp_bytestokey":170,"inherits":206,"safe-buffer":239}],52:[function(require,module,exports){
+},{"./aes":35,"./authCipher":36,"./modes":48,"./streamCipher":51,"cipher-base":80,"evp_bytestokey":157,"inherits":195,"safe-buffer":234}],39:[function(require,module,exports){
 var MODES = require('./modes')
 var AuthCipher = require('./authCipher')
 var Buffer = require('safe-buffer').Buffer
@@ -15207,7 +10176,7 @@ function createCipher (suite, password) {
 exports.createCipheriv = createCipheriv
 exports.createCipher = createCipher
 
-},{"./aes":48,"./authCipher":49,"./modes":61,"./streamCipher":64,"cipher-base":93,"evp_bytestokey":170,"inherits":206,"safe-buffer":239}],53:[function(require,module,exports){
+},{"./aes":35,"./authCipher":36,"./modes":48,"./streamCipher":51,"cipher-base":80,"evp_bytestokey":157,"inherits":195,"safe-buffer":234}],40:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var ZEROES = Buffer.alloc(16, 0)
 
@@ -15298,7 +10267,7 @@ GHASH.prototype.final = function (abl, bl) {
 
 module.exports = GHASH
 
-},{"safe-buffer":239}],54:[function(require,module,exports){
+},{"safe-buffer":234}],41:[function(require,module,exports){
 function incr32 (iv) {
   var len = iv.length
   var item
@@ -15315,7 +10284,7 @@ function incr32 (iv) {
 }
 module.exports = incr32
 
-},{}],55:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 var xor = require('buffer-xor')
 
 exports.encrypt = function (self, block) {
@@ -15334,7 +10303,7 @@ exports.decrypt = function (self, block) {
   return xor(out, pad)
 }
 
-},{"buffer-xor":91}],56:[function(require,module,exports){
+},{"buffer-xor":78}],43:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var xor = require('buffer-xor')
 
@@ -15369,7 +10338,7 @@ exports.encrypt = function (self, data, decrypt) {
   return out
 }
 
-},{"buffer-xor":91,"safe-buffer":239}],57:[function(require,module,exports){
+},{"buffer-xor":78,"safe-buffer":234}],44:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 function encryptByte (self, byteParam, decrypt) {
@@ -15413,7 +10382,7 @@ exports.encrypt = function (self, chunk, decrypt) {
   return out
 }
 
-},{"safe-buffer":239}],58:[function(require,module,exports){
+},{"safe-buffer":234}],45:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 function encryptByte (self, byteParam, decrypt) {
@@ -15440,7 +10409,7 @@ exports.encrypt = function (self, chunk, decrypt) {
   return out
 }
 
-},{"safe-buffer":239}],59:[function(require,module,exports){
+},{"safe-buffer":234}],46:[function(require,module,exports){
 var xor = require('buffer-xor')
 var Buffer = require('safe-buffer').Buffer
 var incr32 = require('../incr32')
@@ -15472,7 +10441,7 @@ exports.encrypt = function (self, chunk) {
   return xor(chunk, pad)
 }
 
-},{"../incr32":54,"buffer-xor":91,"safe-buffer":239}],60:[function(require,module,exports){
+},{"../incr32":41,"buffer-xor":78,"safe-buffer":234}],47:[function(require,module,exports){
 exports.encrypt = function (self, block) {
   return self._cipher.encryptBlock(block)
 }
@@ -15481,7 +10450,7 @@ exports.decrypt = function (self, block) {
   return self._cipher.decryptBlock(block)
 }
 
-},{}],61:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 var modeModules = {
   ECB: require('./ecb'),
   CBC: require('./cbc'),
@@ -15501,7 +10470,7 @@ for (var key in modes) {
 
 module.exports = modes
 
-},{"./cbc":55,"./cfb":56,"./cfb1":57,"./cfb8":58,"./ctr":59,"./ecb":60,"./list.json":62,"./ofb":63}],62:[function(require,module,exports){
+},{"./cbc":42,"./cfb":43,"./cfb1":44,"./cfb8":45,"./ctr":46,"./ecb":47,"./list.json":49,"./ofb":50}],49:[function(require,module,exports){
 module.exports={
   "aes-128-ecb": {
     "cipher": "AES",
@@ -15694,7 +10663,7 @@ module.exports={
   }
 }
 
-},{}],63:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 (function (Buffer){(function (){
 var xor = require('buffer-xor')
 
@@ -15714,7 +10683,7 @@ exports.encrypt = function (self, chunk) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"buffer":92,"buffer-xor":91}],64:[function(require,module,exports){
+},{"buffer":79,"buffer-xor":78}],51:[function(require,module,exports){
 var aes = require('./aes')
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('cipher-base')
@@ -15743,7 +10712,7 @@ StreamCipher.prototype._final = function () {
 
 module.exports = StreamCipher
 
-},{"./aes":48,"cipher-base":93,"inherits":206,"safe-buffer":239}],65:[function(require,module,exports){
+},{"./aes":35,"cipher-base":80,"inherits":195,"safe-buffer":234}],52:[function(require,module,exports){
 var DES = require('browserify-des')
 var aes = require('browserify-aes/browser')
 var aesModes = require('browserify-aes/modes')
@@ -15812,7 +10781,7 @@ exports.createDecipher = exports.Decipher = createDecipher
 exports.createDecipheriv = exports.Decipheriv = createDecipheriv
 exports.listCiphers = exports.getCiphers = getCiphers
 
-},{"browserify-aes/browser":50,"browserify-aes/modes":61,"browserify-des":66,"browserify-des/modes":67,"evp_bytestokey":170}],66:[function(require,module,exports){
+},{"browserify-aes/browser":37,"browserify-aes/modes":48,"browserify-des":53,"browserify-des/modes":54,"evp_bytestokey":157}],53:[function(require,module,exports){
 var CipherBase = require('cipher-base')
 var des = require('des.js')
 var inherits = require('inherits')
@@ -15864,7 +10833,7 @@ DES.prototype._final = function () {
   return Buffer.from(this._des.final())
 }
 
-},{"cipher-base":93,"des.js":140,"inherits":206,"safe-buffer":239}],67:[function(require,module,exports){
+},{"cipher-base":80,"des.js":127,"inherits":195,"safe-buffer":234}],54:[function(require,module,exports){
 exports['des-ecb'] = {
   key: 8,
   iv: 0
@@ -15890,7 +10859,7 @@ exports['des-ede'] = {
   iv: 0
 }
 
-},{}],68:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 (function (Buffer){(function (){
 var BN = require('bn.js')
 var randomBytes = require('randombytes')
@@ -15929,10 +10898,10 @@ crt.getr = getr
 module.exports = crt
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"bn.js":45,"buffer":92,"randombytes":236}],69:[function(require,module,exports){
+},{"bn.js":32,"buffer":79,"randombytes":231}],56:[function(require,module,exports){
 module.exports = require('./browser/algorithms.json')
 
-},{"./browser/algorithms.json":70}],70:[function(require,module,exports){
+},{"./browser/algorithms.json":57}],57:[function(require,module,exports){
 module.exports={
   "sha224WithRSAEncryption": {
     "sign": "rsa",
@@ -16086,7 +11055,7 @@ module.exports={
   }
 }
 
-},{}],71:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 module.exports={
   "1.3.132.0.10": "secp256k1",
   "1.3.132.0.33": "p224",
@@ -16096,7 +11065,7 @@ module.exports={
   "1.3.132.0.35": "p521"
 }
 
-},{}],72:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var createHash = require('create-hash')
 var stream = require('readable-stream')
@@ -16190,7 +11159,7 @@ module.exports = {
   createVerify: createVerify
 }
 
-},{"./algorithms.json":70,"./sign":73,"./verify":74,"create-hash":96,"inherits":206,"readable-stream":89,"safe-buffer":90}],73:[function(require,module,exports){
+},{"./algorithms.json":57,"./sign":60,"./verify":61,"create-hash":83,"inherits":195,"readable-stream":76,"safe-buffer":77}],60:[function(require,module,exports){
 // much of this based on https://github.com/indutny/self-signed/blob/gh-pages/lib/rsa.js
 var Buffer = require('safe-buffer').Buffer
 var createHmac = require('create-hmac')
@@ -16335,7 +11304,7 @@ module.exports = sign
 module.exports.getKey = getKey
 module.exports.makeKey = makeKey
 
-},{"./curves.json":71,"bn.js":45,"browserify-rsa":68,"create-hmac":98,"elliptic":152,"parse-asn1":221,"safe-buffer":90}],74:[function(require,module,exports){
+},{"./curves.json":58,"bn.js":32,"browserify-rsa":55,"create-hmac":85,"elliptic":139,"parse-asn1":211,"safe-buffer":77}],61:[function(require,module,exports){
 // much of this based on https://github.com/indutny/self-signed/blob/gh-pages/lib/rsa.js
 var Buffer = require('safe-buffer').Buffer
 var BN = require('bn.js')
@@ -16421,7 +11390,7 @@ function checkValue (b, q) {
 
 module.exports = verify
 
-},{"./curves.json":71,"bn.js":45,"elliptic":152,"parse-asn1":221,"safe-buffer":90}],75:[function(require,module,exports){
+},{"./curves.json":58,"bn.js":32,"elliptic":139,"parse-asn1":211,"safe-buffer":77}],62:[function(require,module,exports){
 'use strict';
 
 function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
@@ -16550,7 +11519,7 @@ createErrorType('ERR_UNKNOWN_ENCODING', function (arg) {
 createErrorType('ERR_STREAM_UNSHIFT_AFTER_END_EVENT', 'stream.unshift() after end event');
 module.exports.codes = codes;
 
-},{}],76:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 (function (process){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -16692,7 +11661,7 @@ Object.defineProperty(Duplex.prototype, 'destroyed', {
   }
 });
 }).call(this)}).call(this,require('_process'))
-},{"./_stream_readable":78,"./_stream_writable":80,"_process":228,"inherits":206}],77:[function(require,module,exports){
+},{"./_stream_readable":65,"./_stream_writable":67,"_process":223,"inherits":195}],64:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -16732,7 +11701,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":79,"inherits":206}],78:[function(require,module,exports){
+},{"./_stream_transform":66,"inherits":195}],65:[function(require,module,exports){
 (function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -17859,7 +12828,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":75,"./_stream_duplex":76,"./internal/streams/async_iterator":81,"./internal/streams/buffer_list":82,"./internal/streams/destroy":83,"./internal/streams/from":85,"./internal/streams/state":87,"./internal/streams/stream":88,"_process":228,"buffer":92,"events":169,"inherits":206,"string_decoder/":272,"util":47}],79:[function(require,module,exports){
+},{"../errors":62,"./_stream_duplex":63,"./internal/streams/async_iterator":68,"./internal/streams/buffer_list":69,"./internal/streams/destroy":70,"./internal/streams/from":72,"./internal/streams/state":74,"./internal/streams/stream":75,"_process":223,"buffer":79,"events":156,"inherits":195,"string_decoder/":267,"util":34}],66:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -18061,7 +13030,7 @@ function done(stream, er, data) {
   if (stream._transformState.transforming) throw new ERR_TRANSFORM_ALREADY_TRANSFORMING();
   return stream.push(null);
 }
-},{"../errors":75,"./_stream_duplex":76,"inherits":206}],80:[function(require,module,exports){
+},{"../errors":62,"./_stream_duplex":63,"inherits":195}],67:[function(require,module,exports){
 (function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -18761,7 +13730,7 @@ Writable.prototype._destroy = function (err, cb) {
   cb(err);
 };
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":75,"./_stream_duplex":76,"./internal/streams/destroy":83,"./internal/streams/state":87,"./internal/streams/stream":88,"_process":228,"buffer":92,"inherits":206,"util-deprecate":275}],81:[function(require,module,exports){
+},{"../errors":62,"./_stream_duplex":63,"./internal/streams/destroy":70,"./internal/streams/state":74,"./internal/streams/stream":75,"_process":223,"buffer":79,"inherits":195,"util-deprecate":270}],68:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -18971,7 +13940,7 @@ var createReadableStreamAsyncIterator = function createReadableStreamAsyncIterat
 
 module.exports = createReadableStreamAsyncIterator;
 }).call(this)}).call(this,require('_process'))
-},{"./end-of-stream":84,"_process":228}],82:[function(require,module,exports){
+},{"./end-of-stream":71,"_process":223}],69:[function(require,module,exports){
 'use strict';
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -19182,7 +14151,7 @@ function () {
 
   return BufferList;
 }();
-},{"buffer":92,"util":47}],83:[function(require,module,exports){
+},{"buffer":79,"util":34}],70:[function(require,module,exports){
 (function (process){(function (){
 'use strict'; // undocumented cb() API, needed for core, not for public API
 
@@ -19290,7 +14259,7 @@ module.exports = {
   errorOrDestroy: errorOrDestroy
 };
 }).call(this)}).call(this,require('_process'))
-},{"_process":228}],84:[function(require,module,exports){
+},{"_process":223}],71:[function(require,module,exports){
 // Ported from https://github.com/mafintosh/end-of-stream with
 // permission from the author, Mathias Buus (@mafintosh).
 'use strict';
@@ -19395,12 +14364,12 @@ function eos(stream, opts, callback) {
 }
 
 module.exports = eos;
-},{"../../../errors":75}],85:[function(require,module,exports){
+},{"../../../errors":62}],72:[function(require,module,exports){
 module.exports = function () {
   throw new Error('Readable.from is not available in the browser')
 };
 
-},{}],86:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 // Ported from https://github.com/mafintosh/pump with
 // permission from the author, Mathias Buus (@mafintosh).
 'use strict';
@@ -19498,7 +14467,7 @@ function pipeline() {
 }
 
 module.exports = pipeline;
-},{"../../../errors":75,"./end-of-stream":84}],87:[function(require,module,exports){
+},{"../../../errors":62,"./end-of-stream":71}],74:[function(require,module,exports){
 'use strict';
 
 var ERR_INVALID_OPT_VALUE = require('../../../errors').codes.ERR_INVALID_OPT_VALUE;
@@ -19526,10 +14495,10 @@ function getHighWaterMark(state, options, duplexKey, isDuplex) {
 module.exports = {
   getHighWaterMark: getHighWaterMark
 };
-},{"../../../errors":75}],88:[function(require,module,exports){
+},{"../../../errors":62}],75:[function(require,module,exports){
 module.exports = require('events').EventEmitter;
 
-},{"events":169}],89:[function(require,module,exports){
+},{"events":156}],76:[function(require,module,exports){
 exports = module.exports = require('./lib/_stream_readable.js');
 exports.Stream = exports;
 exports.Readable = exports;
@@ -19540,7 +14509,7 @@ exports.PassThrough = require('./lib/_stream_passthrough.js');
 exports.finished = require('./lib/internal/streams/end-of-stream.js');
 exports.pipeline = require('./lib/internal/streams/pipeline.js');
 
-},{"./lib/_stream_duplex.js":76,"./lib/_stream_passthrough.js":77,"./lib/_stream_readable.js":78,"./lib/_stream_transform.js":79,"./lib/_stream_writable.js":80,"./lib/internal/streams/end-of-stream.js":84,"./lib/internal/streams/pipeline.js":86}],90:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":63,"./lib/_stream_passthrough.js":64,"./lib/_stream_readable.js":65,"./lib/_stream_transform.js":66,"./lib/_stream_writable.js":67,"./lib/internal/streams/end-of-stream.js":71,"./lib/internal/streams/pipeline.js":73}],77:[function(require,module,exports){
 /*! safe-buffer. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
@@ -19607,7 +14576,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-},{"buffer":92}],91:[function(require,module,exports){
+},{"buffer":79}],78:[function(require,module,exports){
 (function (Buffer){(function (){
 module.exports = function xor (a, b) {
   var length = Math.min(a.length, b.length)
@@ -19621,7 +14590,7 @@ module.exports = function xor (a, b) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"buffer":92}],92:[function(require,module,exports){
+},{"buffer":79}],79:[function(require,module,exports){
 (function (Buffer){(function (){
 /*!
  * The buffer module from node.js, for the browser.
@@ -21402,7 +16371,7 @@ function numberIsNaN (obj) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"base64-js":44,"buffer":92,"ieee754":205}],93:[function(require,module,exports){
+},{"base64-js":31,"buffer":79,"ieee754":194}],80:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('stream').Transform
 var StringDecoder = require('string_decoder').StringDecoder
@@ -21503,7 +16472,7 @@ CipherBase.prototype._toString = function (value, enc, fin) {
 
 module.exports = CipherBase
 
-},{"inherits":206,"safe-buffer":239,"stream":257,"string_decoder":272}],94:[function(require,module,exports){
+},{"inherits":195,"safe-buffer":234,"stream":252,"string_decoder":267}],81:[function(require,module,exports){
 (function (Buffer){(function (){
 var elliptic = require('elliptic')
 var BN = require('bn.js')
@@ -21631,9 +16600,9 @@ function formatReturnValue (bn, enc, len) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"bn.js":95,"buffer":92,"elliptic":152}],95:[function(require,module,exports){
-arguments[4][43][0].apply(exports,arguments)
-},{"buffer":47,"dup":43}],96:[function(require,module,exports){
+},{"bn.js":82,"buffer":79,"elliptic":139}],82:[function(require,module,exports){
+arguments[4][30][0].apply(exports,arguments)
+},{"buffer":34,"dup":30}],83:[function(require,module,exports){
 'use strict'
 var inherits = require('inherits')
 var MD5 = require('md5.js')
@@ -21665,14 +16634,14 @@ module.exports = function createHash (alg) {
   return new Hash(sha(alg))
 }
 
-},{"cipher-base":93,"inherits":206,"md5.js":210,"ripemd160":238,"sha.js":250}],97:[function(require,module,exports){
+},{"cipher-base":80,"inherits":195,"md5.js":200,"ripemd160":233,"sha.js":245}],84:[function(require,module,exports){
 var MD5 = require('md5.js')
 
 module.exports = function (buffer) {
   return new MD5().update(buffer).digest()
 }
 
-},{"md5.js":210}],98:[function(require,module,exports){
+},{"md5.js":200}],85:[function(require,module,exports){
 'use strict'
 var inherits = require('inherits')
 var Legacy = require('./legacy')
@@ -21736,7 +16705,7 @@ module.exports = function createHmac (alg, key) {
   return new Hmac(alg, key)
 }
 
-},{"./legacy":99,"cipher-base":93,"create-hash/md5":97,"inherits":206,"ripemd160":238,"safe-buffer":239,"sha.js":250}],99:[function(require,module,exports){
+},{"./legacy":86,"cipher-base":80,"create-hash/md5":84,"inherits":195,"ripemd160":233,"safe-buffer":234,"sha.js":245}],86:[function(require,module,exports){
 'use strict'
 var inherits = require('inherits')
 var Buffer = require('safe-buffer').Buffer
@@ -21784,7 +16753,7 @@ Hmac.prototype._final = function () {
 }
 module.exports = Hmac
 
-},{"cipher-base":93,"inherits":206,"safe-buffer":239}],100:[function(require,module,exports){
+},{"cipher-base":80,"inherits":195,"safe-buffer":234}],87:[function(require,module,exports){
 'use strict'
 
 exports.randomBytes = exports.rng = exports.pseudoRandomBytes = exports.prng = require('randombytes')
@@ -21883,7 +16852,7 @@ exports.constants = {
   'POINT_CONVERSION_HYBRID': 6
 }
 
-},{"browserify-cipher":65,"browserify-sign":72,"browserify-sign/algos":69,"create-ecdh":94,"create-hash":96,"create-hmac":98,"diffie-hellman":146,"pbkdf2":222,"public-encrypt":229,"randombytes":236,"randomfill":237}],101:[function(require,module,exports){
+},{"browserify-cipher":52,"browserify-sign":59,"browserify-sign/algos":56,"create-ecdh":81,"create-hash":83,"create-hmac":85,"diffie-hellman":133,"pbkdf2":212,"public-encrypt":224,"randombytes":231,"randomfill":232}],88:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -22118,7 +17087,7 @@ exports.constants = {
 	return CryptoJS.AES;
 
 }));
-},{"./cipher-core":102,"./core":103,"./enc-base64":104,"./evpkdf":106,"./md5":111}],102:[function(require,module,exports){
+},{"./cipher-core":89,"./core":90,"./enc-base64":91,"./evpkdf":93,"./md5":98}],89:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -23009,7 +17978,7 @@ exports.constants = {
 
 
 }));
-},{"./core":103,"./evpkdf":106}],103:[function(require,module,exports){
+},{"./core":90,"./evpkdf":93}],90:[function(require,module,exports){
 (function (global){(function (){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
@@ -23809,7 +18778,7 @@ exports.constants = {
 
 }));
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"crypto":100}],104:[function(require,module,exports){
+},{"crypto":87}],91:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -23946,7 +18915,7 @@ exports.constants = {
 	return CryptoJS.enc.Base64;
 
 }));
-},{"./core":103}],105:[function(require,module,exports){
+},{"./core":90}],92:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -24096,7 +19065,7 @@ exports.constants = {
 	return CryptoJS.enc.Utf16;
 
 }));
-},{"./core":103}],106:[function(require,module,exports){
+},{"./core":90}],93:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -24231,7 +19200,7 @@ exports.constants = {
 	return CryptoJS.EvpKDF;
 
 }));
-},{"./core":103,"./hmac":108,"./sha1":127}],107:[function(require,module,exports){
+},{"./core":90,"./hmac":95,"./sha1":114}],94:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -24298,7 +19267,7 @@ exports.constants = {
 	return CryptoJS.format.Hex;
 
 }));
-},{"./cipher-core":102,"./core":103}],108:[function(require,module,exports){
+},{"./cipher-core":89,"./core":90}],95:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -24442,7 +19411,7 @@ exports.constants = {
 
 
 }));
-},{"./core":103}],109:[function(require,module,exports){
+},{"./core":90}],96:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -24461,7 +19430,7 @@ exports.constants = {
 	return CryptoJS;
 
 }));
-},{"./aes":101,"./cipher-core":102,"./core":103,"./enc-base64":104,"./enc-utf16":105,"./evpkdf":106,"./format-hex":107,"./hmac":108,"./lib-typedarrays":110,"./md5":111,"./mode-cfb":112,"./mode-ctr":114,"./mode-ctr-gladman":113,"./mode-ecb":115,"./mode-ofb":116,"./pad-ansix923":117,"./pad-iso10126":118,"./pad-iso97971":119,"./pad-nopadding":120,"./pad-zeropadding":121,"./pbkdf2":122,"./rabbit":124,"./rabbit-legacy":123,"./rc4":125,"./ripemd160":126,"./sha1":127,"./sha224":128,"./sha256":129,"./sha3":130,"./sha384":131,"./sha512":132,"./tripledes":133,"./x64-core":134}],110:[function(require,module,exports){
+},{"./aes":88,"./cipher-core":89,"./core":90,"./enc-base64":91,"./enc-utf16":92,"./evpkdf":93,"./format-hex":94,"./hmac":95,"./lib-typedarrays":97,"./md5":98,"./mode-cfb":99,"./mode-ctr":101,"./mode-ctr-gladman":100,"./mode-ecb":102,"./mode-ofb":103,"./pad-ansix923":104,"./pad-iso10126":105,"./pad-iso97971":106,"./pad-nopadding":107,"./pad-zeropadding":108,"./pbkdf2":109,"./rabbit":111,"./rabbit-legacy":110,"./rc4":112,"./ripemd160":113,"./sha1":114,"./sha224":115,"./sha256":116,"./sha3":117,"./sha384":118,"./sha512":119,"./tripledes":120,"./x64-core":121}],97:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -24538,7 +19507,7 @@ exports.constants = {
 	return CryptoJS.lib.WordArray;
 
 }));
-},{"./core":103}],111:[function(require,module,exports){
+},{"./core":90}],98:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -24807,7 +19776,7 @@ exports.constants = {
 	return CryptoJS.MD5;
 
 }));
-},{"./core":103}],112:[function(require,module,exports){
+},{"./core":90}],99:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -24888,7 +19857,7 @@ exports.constants = {
 	return CryptoJS.mode.CFB;
 
 }));
-},{"./cipher-core":102,"./core":103}],113:[function(require,module,exports){
+},{"./cipher-core":89,"./core":90}],100:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -25005,7 +19974,7 @@ exports.constants = {
 	return CryptoJS.mode.CTRGladman;
 
 }));
-},{"./cipher-core":102,"./core":103}],114:[function(require,module,exports){
+},{"./cipher-core":89,"./core":90}],101:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -25064,7 +20033,7 @@ exports.constants = {
 	return CryptoJS.mode.CTR;
 
 }));
-},{"./cipher-core":102,"./core":103}],115:[function(require,module,exports){
+},{"./cipher-core":89,"./core":90}],102:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -25105,7 +20074,7 @@ exports.constants = {
 	return CryptoJS.mode.ECB;
 
 }));
-},{"./cipher-core":102,"./core":103}],116:[function(require,module,exports){
+},{"./cipher-core":89,"./core":90}],103:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -25160,7 +20129,7 @@ exports.constants = {
 	return CryptoJS.mode.OFB;
 
 }));
-},{"./cipher-core":102,"./core":103}],117:[function(require,module,exports){
+},{"./cipher-core":89,"./core":90}],104:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -25210,7 +20179,7 @@ exports.constants = {
 	return CryptoJS.pad.Ansix923;
 
 }));
-},{"./cipher-core":102,"./core":103}],118:[function(require,module,exports){
+},{"./cipher-core":89,"./core":90}],105:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -25255,7 +20224,7 @@ exports.constants = {
 	return CryptoJS.pad.Iso10126;
 
 }));
-},{"./cipher-core":102,"./core":103}],119:[function(require,module,exports){
+},{"./cipher-core":89,"./core":90}],106:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -25296,7 +20265,7 @@ exports.constants = {
 	return CryptoJS.pad.Iso97971;
 
 }));
-},{"./cipher-core":102,"./core":103}],120:[function(require,module,exports){
+},{"./cipher-core":89,"./core":90}],107:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -25327,7 +20296,7 @@ exports.constants = {
 	return CryptoJS.pad.NoPadding;
 
 }));
-},{"./cipher-core":102,"./core":103}],121:[function(require,module,exports){
+},{"./cipher-core":89,"./core":90}],108:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -25375,7 +20344,7 @@ exports.constants = {
 	return CryptoJS.pad.ZeroPadding;
 
 }));
-},{"./cipher-core":102,"./core":103}],122:[function(require,module,exports){
+},{"./cipher-core":89,"./core":90}],109:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -25521,7 +20490,7 @@ exports.constants = {
 	return CryptoJS.PBKDF2;
 
 }));
-},{"./core":103,"./hmac":108,"./sha1":127}],123:[function(require,module,exports){
+},{"./core":90,"./hmac":95,"./sha1":114}],110:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -25712,7 +20681,7 @@ exports.constants = {
 	return CryptoJS.RabbitLegacy;
 
 }));
-},{"./cipher-core":102,"./core":103,"./enc-base64":104,"./evpkdf":106,"./md5":111}],124:[function(require,module,exports){
+},{"./cipher-core":89,"./core":90,"./enc-base64":91,"./evpkdf":93,"./md5":98}],111:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -25905,7 +20874,7 @@ exports.constants = {
 	return CryptoJS.Rabbit;
 
 }));
-},{"./cipher-core":102,"./core":103,"./enc-base64":104,"./evpkdf":106,"./md5":111}],125:[function(require,module,exports){
+},{"./cipher-core":89,"./core":90,"./enc-base64":91,"./evpkdf":93,"./md5":98}],112:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -26045,7 +21014,7 @@ exports.constants = {
 	return CryptoJS.RC4;
 
 }));
-},{"./cipher-core":102,"./core":103,"./enc-base64":104,"./evpkdf":106,"./md5":111}],126:[function(require,module,exports){
+},{"./cipher-core":89,"./core":90,"./enc-base64":91,"./evpkdf":93,"./md5":98}],113:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -26313,7 +21282,7 @@ exports.constants = {
 	return CryptoJS.RIPEMD160;
 
 }));
-},{"./core":103}],127:[function(require,module,exports){
+},{"./core":90}],114:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -26464,7 +21433,7 @@ exports.constants = {
 	return CryptoJS.SHA1;
 
 }));
-},{"./core":103}],128:[function(require,module,exports){
+},{"./core":90}],115:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -26545,7 +21514,7 @@ exports.constants = {
 	return CryptoJS.SHA224;
 
 }));
-},{"./core":103,"./sha256":129}],129:[function(require,module,exports){
+},{"./core":90,"./sha256":116}],116:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -26745,7 +21714,7 @@ exports.constants = {
 	return CryptoJS.SHA256;
 
 }));
-},{"./core":103}],130:[function(require,module,exports){
+},{"./core":90}],117:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -27072,7 +22041,7 @@ exports.constants = {
 	return CryptoJS.SHA3;
 
 }));
-},{"./core":103,"./x64-core":134}],131:[function(require,module,exports){
+},{"./core":90,"./x64-core":121}],118:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -27156,7 +22125,7 @@ exports.constants = {
 	return CryptoJS.SHA384;
 
 }));
-},{"./core":103,"./sha512":132,"./x64-core":134}],132:[function(require,module,exports){
+},{"./core":90,"./sha512":119,"./x64-core":121}],119:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -27483,7 +22452,7 @@ exports.constants = {
 	return CryptoJS.SHA512;
 
 }));
-},{"./core":103,"./x64-core":134}],133:[function(require,module,exports){
+},{"./core":90,"./x64-core":121}],120:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -28263,7 +23232,7 @@ exports.constants = {
 	return CryptoJS.TripleDES;
 
 }));
-},{"./cipher-core":102,"./core":103,"./enc-base64":104,"./evpkdf":106,"./md5":111}],134:[function(require,module,exports){
+},{"./cipher-core":89,"./core":90,"./enc-base64":91,"./evpkdf":93,"./md5":98}],121:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -28568,7 +23537,7 @@ exports.constants = {
 	return CryptoJS;
 
 }));
-},{"./core":103}],135:[function(require,module,exports){
+},{"./core":90}],122:[function(require,module,exports){
 /**
  * cssfilter
  *
@@ -28680,7 +23649,7 @@ FilterCSS.prototype.process = function (css) {
 
 module.exports = FilterCSS;
 
-},{"./default":136,"./parser":138,"./util":139}],136:[function(require,module,exports){
+},{"./default":123,"./parser":125,"./util":126}],123:[function(require,module,exports){
 /**
  * cssfilter
  *
@@ -29080,7 +24049,7 @@ exports.onAttr = onAttr;
 exports.onIgnoreAttr = onIgnoreAttr;
 exports.safeAttrValue = safeAttrValue;
 
-},{}],137:[function(require,module,exports){
+},{}],124:[function(require,module,exports){
 /**
  * cssfilter
  *
@@ -29114,7 +24083,7 @@ if (typeof window !== 'undefined') {
   window.filterCSS = module.exports;
 }
 
-},{"./css":135,"./default":136}],138:[function(require,module,exports){
+},{"./css":122,"./default":123}],125:[function(require,module,exports){
 /**
  * cssfilter
  *
@@ -29190,7 +24159,7 @@ function parseStyle (css, onAttr) {
 
 module.exports = parseStyle;
 
-},{"./util":139}],139:[function(require,module,exports){
+},{"./util":126}],126:[function(require,module,exports){
 module.exports = {
   indexOf: function (arr, item) {
     var i, j;
@@ -29227,7 +24196,7 @@ module.exports = {
   }
 };
 
-},{}],140:[function(require,module,exports){
+},{}],127:[function(require,module,exports){
 'use strict';
 
 exports.utils = require('./des/utils');
@@ -29236,7 +24205,7 @@ exports.DES = require('./des/des');
 exports.CBC = require('./des/cbc');
 exports.EDE = require('./des/ede');
 
-},{"./des/cbc":141,"./des/cipher":142,"./des/des":143,"./des/ede":144,"./des/utils":145}],141:[function(require,module,exports){
+},{"./des/cbc":128,"./des/cipher":129,"./des/des":130,"./des/ede":131,"./des/utils":132}],128:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -29303,7 +24272,7 @@ proto._update = function _update(inp, inOff, out, outOff) {
   }
 };
 
-},{"inherits":206,"minimalistic-assert":214}],142:[function(require,module,exports){
+},{"inherits":195,"minimalistic-assert":204}],129:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -29446,7 +24415,7 @@ Cipher.prototype._finalDecrypt = function _finalDecrypt() {
   return this._unpad(out);
 };
 
-},{"minimalistic-assert":214}],143:[function(require,module,exports){
+},{"minimalistic-assert":204}],130:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -29590,7 +24559,7 @@ DES.prototype._decrypt = function _decrypt(state, lStart, rStart, out, off) {
   utils.rip(l, r, out, off);
 };
 
-},{"./cipher":142,"./utils":145,"inherits":206,"minimalistic-assert":214}],144:[function(require,module,exports){
+},{"./cipher":129,"./utils":132,"inherits":195,"minimalistic-assert":204}],131:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -29646,7 +24615,7 @@ EDE.prototype._update = function _update(inp, inOff, out, outOff) {
 EDE.prototype._pad = DES.prototype._pad;
 EDE.prototype._unpad = DES.prototype._unpad;
 
-},{"./cipher":142,"./des":143,"inherits":206,"minimalistic-assert":214}],145:[function(require,module,exports){
+},{"./cipher":129,"./des":130,"inherits":195,"minimalistic-assert":204}],132:[function(require,module,exports){
 'use strict';
 
 exports.readUInt32BE = function readUInt32BE(bytes, off) {
@@ -29904,7 +24873,7 @@ exports.padSplit = function padSplit(num, size, group) {
   return out.join(' ');
 };
 
-},{}],146:[function(require,module,exports){
+},{}],133:[function(require,module,exports){
 (function (Buffer){(function (){
 var generatePrime = require('./lib/generatePrime')
 var primes = require('./lib/primes.json')
@@ -29950,7 +24919,7 @@ exports.DiffieHellmanGroup = exports.createDiffieHellmanGroup = exports.getDiffi
 exports.createDiffieHellman = exports.DiffieHellman = createDiffieHellman
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"./lib/dh":147,"./lib/generatePrime":148,"./lib/primes.json":149,"buffer":92}],147:[function(require,module,exports){
+},{"./lib/dh":134,"./lib/generatePrime":135,"./lib/primes.json":136,"buffer":79}],134:[function(require,module,exports){
 (function (Buffer){(function (){
 var BN = require('bn.js');
 var MillerRabin = require('miller-rabin');
@@ -30118,7 +25087,7 @@ function formatReturnValue(bn, enc) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"./generatePrime":148,"bn.js":150,"buffer":92,"miller-rabin":212,"randombytes":236}],148:[function(require,module,exports){
+},{"./generatePrime":135,"bn.js":137,"buffer":79,"miller-rabin":202,"randombytes":231}],135:[function(require,module,exports){
 var randomBytes = require('randombytes');
 module.exports = findPrime;
 findPrime.simpleSieve = simpleSieve;
@@ -30225,7 +25194,7 @@ function findPrime(bits, gen) {
 
 }
 
-},{"bn.js":150,"miller-rabin":212,"randombytes":236}],149:[function(require,module,exports){
+},{"bn.js":137,"miller-rabin":202,"randombytes":231}],136:[function(require,module,exports){
 module.exports={
     "modp1": {
         "gen": "02",
@@ -30260,9 +25229,9 @@ module.exports={
         "prime": "ffffffffffffffffc90fdaa22168c234c4c6628b80dc1cd129024e088a67cc74020bbea63b139b22514a08798e3404ddef9519b3cd3a431b302b0a6df25f14374fe1356d6d51c245e485b576625e7ec6f44c42e9a637ed6b0bff5cb6f406b7edee386bfb5a899fa5ae9f24117c4b1fe649286651ece45b3dc2007cb8a163bf0598da48361c55d39a69163fa8fd24cf5f83655d23dca3ad961c62f356208552bb9ed529077096966d670c354e4abc9804f1746c08ca18217c32905e462e36ce3be39e772c180e86039b2783a2ec07a28fb5c55df06f4c52c9de2bcbf6955817183995497cea956ae515d2261898fa051015728e5a8aaac42dad33170d04507a33a85521abdf1cba64ecfb850458dbef0a8aea71575d060c7db3970f85a6e1e4c7abf5ae8cdb0933d71e8c94e04a25619dcee3d2261ad2ee6bf12ffa06d98a0864d87602733ec86a64521f2b18177b200cbbe117577a615d6c770988c0bad946e208e24fa074e5ab3143db5bfce0fd108e4b82d120a92108011a723c12a787e6d788719a10bdba5b2699c327186af4e23c1a946834b6150bda2583e9ca2ad44ce8dbbbc2db04de8ef92e8efc141fbecaa6287c59474e6bc05d99b2964fa090c3a2233ba186515be7ed1f612970cee2d7afb81bdd762170481cd0069127d5b05aa993b4ea988d8fddc186ffb7dc90a6c08f4df435c93402849236c3fab4d27c7026c1d4dcb2602646dec9751e763dba37bdf8ff9406ad9e530ee5db382f413001aeb06a53ed9027d831179727b0865a8918da3edbebcf9b14ed44ce6cbaced4bb1bdb7f1447e6cc254b332051512bd7af426fb8f401378cd2bf5983ca01c64b92ecf032ea15d1721d03f482d7ce6e74fef6d55e702f46980c82b5a84031900b1c9e59e7c97fbec7e8f323a97a7e36cc88be0f1d45b7ff585ac54bd407b22b4154aacc8f6d7ebf48e1d814cc5ed20f8037e0a79715eef29be32806a1d58bb7c5da76f550aa3d8a1fbff0eb19ccb1a313d55cda56c9ec2ef29632387fe8d76e3c0468043e8f663f4860ee12bf2d5b0b7474d6e694f91e6dbe115974a3926f12fee5e438777cb6a932df8cd8bec4d073b931ba3bc832b68d9dd300741fa7bf8afc47ed2576f6936ba424663aab639c5ae4f5683423b4742bf1c978238f16cbe39d652de3fdb8befc848ad922222e04a4037c0713eb57a81a23f0c73473fc646cea306b4bcbc8862f8385ddfa9d4b7fa2c087e879683303ed5bdd3a062b3cf5b3a278a66d2a13f83f44f82ddf310ee074ab6a364597e899a0255dc164f31cc50846851df9ab48195ded7ea1b1d510bd7ee74d73faf36bc31ecfa268359046f4eb879f924009438b481c6cd7889a002ed5ee382bc9190da6fc026e479558e4475677e9aa9e3050e2765694dfc81f56e880b96e7160c980dd98edd3dfffffffffffffffff"
     }
 }
-},{}],150:[function(require,module,exports){
-arguments[4][43][0].apply(exports,arguments)
-},{"buffer":47,"dup":43}],151:[function(require,module,exports){
+},{}],137:[function(require,module,exports){
+arguments[4][30][0].apply(exports,arguments)
+},{"buffer":34,"dup":30}],138:[function(require,module,exports){
 /*! @license DOMPurify 2.3.3 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/2.3.3/LICENSE */
 
 (function (global, factory) {
@@ -31662,7 +26631,7 @@ arguments[4][43][0].apply(exports,arguments)
 }));
 
 
-},{}],152:[function(require,module,exports){
+},{}],139:[function(require,module,exports){
 'use strict';
 
 var elliptic = exports;
@@ -31677,7 +26646,7 @@ elliptic.curves = require('./elliptic/curves');
 elliptic.ec = require('./elliptic/ec');
 elliptic.eddsa = require('./elliptic/eddsa');
 
-},{"../package.json":168,"./elliptic/curve":155,"./elliptic/curves":158,"./elliptic/ec":159,"./elliptic/eddsa":162,"./elliptic/utils":166,"brorand":46}],153:[function(require,module,exports){
+},{"../package.json":155,"./elliptic/curve":142,"./elliptic/curves":145,"./elliptic/ec":146,"./elliptic/eddsa":149,"./elliptic/utils":153,"brorand":33}],140:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -32060,7 +27029,7 @@ BasePoint.prototype.dblp = function dblp(k) {
   return r;
 };
 
-},{"../utils":166,"bn.js":167}],154:[function(require,module,exports){
+},{"../utils":153,"bn.js":154}],141:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -32497,7 +27466,7 @@ Point.prototype.eqXToP = function eqXToP(x) {
 Point.prototype.toP = Point.prototype.normalize;
 Point.prototype.mixedAdd = Point.prototype.add;
 
-},{"../utils":166,"./base":153,"bn.js":167,"inherits":206}],155:[function(require,module,exports){
+},{"../utils":153,"./base":140,"bn.js":154,"inherits":195}],142:[function(require,module,exports){
 'use strict';
 
 var curve = exports;
@@ -32507,7 +27476,7 @@ curve.short = require('./short');
 curve.mont = require('./mont');
 curve.edwards = require('./edwards');
 
-},{"./base":153,"./edwards":154,"./mont":156,"./short":157}],156:[function(require,module,exports){
+},{"./base":140,"./edwards":141,"./mont":143,"./short":144}],143:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -32687,7 +27656,7 @@ Point.prototype.getX = function getX() {
   return this.x.fromRed();
 };
 
-},{"../utils":166,"./base":153,"bn.js":167,"inherits":206}],157:[function(require,module,exports){
+},{"../utils":153,"./base":140,"bn.js":154,"inherits":195}],144:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -33627,7 +28596,7 @@ JPoint.prototype.isInfinity = function isInfinity() {
   return this.z.cmpn(0) === 0;
 };
 
-},{"../utils":166,"./base":153,"bn.js":167,"inherits":206}],158:[function(require,module,exports){
+},{"../utils":153,"./base":140,"bn.js":154,"inherits":195}],145:[function(require,module,exports){
 'use strict';
 
 var curves = exports;
@@ -33835,7 +28804,7 @@ defineCurve('secp256k1', {
   ],
 });
 
-},{"./curve":155,"./precomputed/secp256k1":165,"./utils":166,"hash.js":192}],159:[function(require,module,exports){
+},{"./curve":142,"./precomputed/secp256k1":152,"./utils":153,"hash.js":181}],146:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -34080,7 +29049,7 @@ EC.prototype.getKeyRecoveryParam = function(e, signature, Q, enc) {
   throw new Error('Unable to find valid recovery factor');
 };
 
-},{"../curves":158,"../utils":166,"./key":160,"./signature":161,"bn.js":167,"brorand":46,"hmac-drbg":204}],160:[function(require,module,exports){
+},{"../curves":145,"../utils":153,"./key":147,"./signature":148,"bn.js":154,"brorand":33,"hmac-drbg":193}],147:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -34203,7 +29172,7 @@ KeyPair.prototype.inspect = function inspect() {
          ' pub: ' + (this.pub && this.pub.inspect()) + ' >';
 };
 
-},{"../utils":166,"bn.js":167}],161:[function(require,module,exports){
+},{"../utils":153,"bn.js":154}],148:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -34371,7 +29340,7 @@ Signature.prototype.toDER = function toDER(enc) {
   return utils.encode(res, enc);
 };
 
-},{"../utils":166,"bn.js":167}],162:[function(require,module,exports){
+},{"../utils":153,"bn.js":154}],149:[function(require,module,exports){
 'use strict';
 
 var hash = require('hash.js');
@@ -34491,7 +29460,7 @@ EDDSA.prototype.isPoint = function isPoint(val) {
   return val instanceof this.pointClass;
 };
 
-},{"../curves":158,"../utils":166,"./key":163,"./signature":164,"hash.js":192}],163:[function(require,module,exports){
+},{"../curves":145,"../utils":153,"./key":150,"./signature":151,"hash.js":181}],150:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -34588,7 +29557,7 @@ KeyPair.prototype.getPublic = function getPublic(enc) {
 
 module.exports = KeyPair;
 
-},{"../utils":166}],164:[function(require,module,exports){
+},{"../utils":153}],151:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -34655,7 +29624,7 @@ Signature.prototype.toHex = function toHex() {
 
 module.exports = Signature;
 
-},{"../utils":166,"bn.js":167}],165:[function(require,module,exports){
+},{"../utils":153,"bn.js":154}],152:[function(require,module,exports){
 module.exports = {
   doubles: {
     step: 4,
@@ -35437,7 +30406,7 @@ module.exports = {
   },
 };
 
-},{}],166:[function(require,module,exports){
+},{}],153:[function(require,module,exports){
 'use strict';
 
 var utils = exports;
@@ -35558,9 +30527,9 @@ function intFromLE(bytes) {
 utils.intFromLE = intFromLE;
 
 
-},{"bn.js":167,"minimalistic-assert":214,"minimalistic-crypto-utils":215}],167:[function(require,module,exports){
-arguments[4][43][0].apply(exports,arguments)
-},{"buffer":47,"dup":43}],168:[function(require,module,exports){
+},{"bn.js":154,"minimalistic-assert":204,"minimalistic-crypto-utils":205}],154:[function(require,module,exports){
+arguments[4][30][0].apply(exports,arguments)
+},{"buffer":34,"dup":30}],155:[function(require,module,exports){
 module.exports={
   "_args": [
     [
@@ -35651,7 +30620,7 @@ module.exports={
   "version": "6.5.4"
 }
 
-},{}],169:[function(require,module,exports){
+},{}],156:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -36150,7 +31119,7 @@ function eventTargetAgnosticAddListener(emitter, name, listener, flags) {
   }
 }
 
-},{}],170:[function(require,module,exports){
+},{}],157:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var MD5 = require('md5.js')
 
@@ -36197,7 +31166,2641 @@ function EVP_BytesToKey (password, salt, keyBits, ivLen) {
 
 module.exports = EVP_BytesToKey
 
-},{"md5.js":210,"safe-buffer":239}],171:[function(require,module,exports){
+},{"md5.js":200,"safe-buffer":234}],158:[function(require,module,exports){
+"use strict";
+// DEFLATE is a complex format; to read this code, you should probably check the RFC first:
+// https://tools.ietf.org/html/rfc1951
+// You may also wish to take a look at the guide I made about this program:
+// https://gist.github.com/101arrowz/253f31eb5abc3d9275ab943003ffecad
+Object.defineProperty(exports, "__esModule", { value: true });
+// Some of the following code is similar to that of UZIP.js:
+// https://github.com/photopea/UZIP.js
+// However, the vast majority of the codebase has diverged from UZIP.js to increase performance and reduce bundle size.
+// Sometimes 0 will appear where -1 would be more appropriate. This is because using a uint
+// is better for memory in most engines (I *think*).
+var node_worker_1 = require("./node-worker.cjs");
+// aliases for shorter compressed code (most minifers don't do this)
+var u8 = Uint8Array, u16 = Uint16Array, i32 = Int32Array;
+// fixed length extra bits
+var fleb = new u8([0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0, /* unused */ 0, 0, /* impossible */ 0]);
+// fixed distance extra bits
+var fdeb = new u8([0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, /* unused */ 0, 0]);
+// code length index map
+var clim = new u8([16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15]);
+// get base, reverse index map from extra bits
+var freb = function (eb, start) {
+    var b = new u16(31);
+    for (var i = 0; i < 31; ++i) {
+        b[i] = start += 1 << eb[i - 1];
+    }
+    // numbers here are at max 18 bits
+    var r = new i32(b[30]);
+    for (var i = 1; i < 30; ++i) {
+        for (var j = b[i]; j < b[i + 1]; ++j) {
+            r[j] = ((j - b[i]) << 5) | i;
+        }
+    }
+    return { b: b, r: r };
+};
+var _a = freb(fleb, 2), fl = _a.b, revfl = _a.r;
+// we can ignore the fact that the other numbers are wrong; they never happen anyway
+fl[28] = 258, revfl[258] = 28;
+var _b = freb(fdeb, 0), fd = _b.b, revfd = _b.r;
+// map of value to reverse (assuming 16 bits)
+var rev = new u16(32768);
+for (var i = 0; i < 32768; ++i) {
+    // reverse table algorithm from SO
+    var x = ((i & 0xAAAA) >> 1) | ((i & 0x5555) << 1);
+    x = ((x & 0xCCCC) >> 2) | ((x & 0x3333) << 2);
+    x = ((x & 0xF0F0) >> 4) | ((x & 0x0F0F) << 4);
+    rev[i] = (((x & 0xFF00) >> 8) | ((x & 0x00FF) << 8)) >> 1;
+}
+// create huffman tree from u8 "map": index -> code length for code index
+// mb (max bits) must be at most 15
+// TODO: optimize/split up?
+var hMap = (function (cd, mb, r) {
+    var s = cd.length;
+    // index
+    var i = 0;
+    // u16 "map": index -> # of codes with bit length = index
+    var l = new u16(mb);
+    // length of cd must be 288 (total # of codes)
+    for (; i < s; ++i) {
+        if (cd[i])
+            ++l[cd[i] - 1];
+    }
+    // u16 "map": index -> minimum code for bit length = index
+    var le = new u16(mb);
+    for (i = 1; i < mb; ++i) {
+        le[i] = (le[i - 1] + l[i - 1]) << 1;
+    }
+    var co;
+    if (r) {
+        // u16 "map": index -> number of actual bits, symbol for code
+        co = new u16(1 << mb);
+        // bits to remove for reverser
+        var rvb = 15 - mb;
+        for (i = 0; i < s; ++i) {
+            // ignore 0 lengths
+            if (cd[i]) {
+                // num encoding both symbol and bits read
+                var sv = (i << 4) | cd[i];
+                // free bits
+                var r_1 = mb - cd[i];
+                // start value
+                var v = le[cd[i] - 1]++ << r_1;
+                // m is end value
+                for (var m = v | ((1 << r_1) - 1); v <= m; ++v) {
+                    // every 16 bit value starting with the code yields the same result
+                    co[rev[v] >> rvb] = sv;
+                }
+            }
+        }
+    }
+    else {
+        co = new u16(s);
+        for (i = 0; i < s; ++i) {
+            if (cd[i]) {
+                co[i] = rev[le[cd[i] - 1]++] >> (15 - cd[i]);
+            }
+        }
+    }
+    return co;
+});
+// fixed length tree
+var flt = new u8(288);
+for (var i = 0; i < 144; ++i)
+    flt[i] = 8;
+for (var i = 144; i < 256; ++i)
+    flt[i] = 9;
+for (var i = 256; i < 280; ++i)
+    flt[i] = 7;
+for (var i = 280; i < 288; ++i)
+    flt[i] = 8;
+// fixed distance tree
+var fdt = new u8(32);
+for (var i = 0; i < 32; ++i)
+    fdt[i] = 5;
+// fixed length map
+var flm = /*#__PURE__*/ hMap(flt, 9, 0), flrm = /*#__PURE__*/ hMap(flt, 9, 1);
+// fixed distance map
+var fdm = /*#__PURE__*/ hMap(fdt, 5, 0), fdrm = /*#__PURE__*/ hMap(fdt, 5, 1);
+// find max of array
+var max = function (a) {
+    var m = a[0];
+    for (var i = 1; i < a.length; ++i) {
+        if (a[i] > m)
+            m = a[i];
+    }
+    return m;
+};
+// read d, starting at bit p and mask with m
+var bits = function (d, p, m) {
+    var o = (p / 8) | 0;
+    return ((d[o] | (d[o + 1] << 8)) >> (p & 7)) & m;
+};
+// read d, starting at bit p continuing for at least 16 bits
+var bits16 = function (d, p) {
+    var o = (p / 8) | 0;
+    return ((d[o] | (d[o + 1] << 8) | (d[o + 2] << 16)) >> (p & 7));
+};
+// get end of byte
+var shft = function (p) { return ((p + 7) / 8) | 0; };
+// typed array slice - allows garbage collector to free original reference,
+// while being more compatible than .slice
+var slc = function (v, s, e) {
+    if (s == null || s < 0)
+        s = 0;
+    if (e == null || e > v.length)
+        e = v.length;
+    // can't use .constructor in case user-supplied
+    return new u8(v.subarray(s, e));
+};
+/**
+ * Codes for errors generated within this library
+ */
+exports.FlateErrorCode = {
+    UnexpectedEOF: 0,
+    InvalidBlockType: 1,
+    InvalidLengthLiteral: 2,
+    InvalidDistance: 3,
+    StreamFinished: 4,
+    NoStreamHandler: 5,
+    InvalidHeader: 6,
+    NoCallback: 7,
+    InvalidUTF8: 8,
+    ExtraFieldTooLong: 9,
+    InvalidDate: 10,
+    FilenameTooLong: 11,
+    StreamFinishing: 12,
+    InvalidZipData: 13,
+    UnknownCompressionMethod: 14
+};
+// error codes
+var ec = [
+    'unexpected EOF',
+    'invalid block type',
+    'invalid length/literal',
+    'invalid distance',
+    'stream finished',
+    'no stream handler',
+    ,
+    'no callback',
+    'invalid UTF-8 data',
+    'extra field too long',
+    'date not in range 1980-2099',
+    'filename too long',
+    'stream finishing',
+    'invalid zip data'
+    // determined by unknown compression method
+];
+;
+var err = function (ind, msg, nt) {
+    var e = new Error(msg || ec[ind]);
+    e.code = ind;
+    if (Error.captureStackTrace)
+        Error.captureStackTrace(e, err);
+    if (!nt)
+        throw e;
+    return e;
+};
+// expands raw DEFLATE data
+var inflt = function (dat, st, buf, dict) {
+    // source length       dict length
+    var sl = dat.length, dl = dict ? dict.length : 0;
+    if (!sl || st.f && !st.l)
+        return buf || new u8(0);
+    var noBuf = !buf;
+    // have to estimate size
+    var resize = noBuf || st.i != 2;
+    // no state
+    var noSt = st.i;
+    // Assumes roughly 33% compression ratio average
+    if (noBuf)
+        buf = new u8(sl * 3);
+    // ensure buffer can fit at least l elements
+    var cbuf = function (l) {
+        var bl = buf.length;
+        // need to increase size to fit
+        if (l > bl) {
+            // Double or set to necessary, whichever is greater
+            var nbuf = new u8(Math.max(bl * 2, l));
+            nbuf.set(buf);
+            buf = nbuf;
+        }
+    };
+    //  last chunk         bitpos           bytes
+    var final = st.f || 0, pos = st.p || 0, bt = st.b || 0, lm = st.l, dm = st.d, lbt = st.m, dbt = st.n;
+    // total bits
+    var tbts = sl * 8;
+    do {
+        if (!lm) {
+            // BFINAL - this is only 1 when last chunk is next
+            final = bits(dat, pos, 1);
+            // type: 0 = no compression, 1 = fixed huffman, 2 = dynamic huffman
+            var type = bits(dat, pos + 1, 3);
+            pos += 3;
+            if (!type) {
+                // go to end of byte boundary
+                var s = shft(pos) + 4, l = dat[s - 4] | (dat[s - 3] << 8), t = s + l;
+                if (t > sl) {
+                    if (noSt)
+                        err(0);
+                    break;
+                }
+                // ensure size
+                if (resize)
+                    cbuf(bt + l);
+                // Copy over uncompressed data
+                buf.set(dat.subarray(s, t), bt);
+                // Get new bitpos, update byte count
+                st.b = bt += l, st.p = pos = t * 8, st.f = final;
+                continue;
+            }
+            else if (type == 1)
+                lm = flrm, dm = fdrm, lbt = 9, dbt = 5;
+            else if (type == 2) {
+                //  literal                            lengths
+                var hLit = bits(dat, pos, 31) + 257, hcLen = bits(dat, pos + 10, 15) + 4;
+                var tl = hLit + bits(dat, pos + 5, 31) + 1;
+                pos += 14;
+                // length+distance tree
+                var ldt = new u8(tl);
+                // code length tree
+                var clt = new u8(19);
+                for (var i = 0; i < hcLen; ++i) {
+                    // use index map to get real code
+                    clt[clim[i]] = bits(dat, pos + i * 3, 7);
+                }
+                pos += hcLen * 3;
+                // code lengths bits
+                var clb = max(clt), clbmsk = (1 << clb) - 1;
+                // code lengths map
+                var clm = hMap(clt, clb, 1);
+                for (var i = 0; i < tl;) {
+                    var r = clm[bits(dat, pos, clbmsk)];
+                    // bits read
+                    pos += r & 15;
+                    // symbol
+                    var s = r >> 4;
+                    // code length to copy
+                    if (s < 16) {
+                        ldt[i++] = s;
+                    }
+                    else {
+                        //  copy   count
+                        var c = 0, n = 0;
+                        if (s == 16)
+                            n = 3 + bits(dat, pos, 3), pos += 2, c = ldt[i - 1];
+                        else if (s == 17)
+                            n = 3 + bits(dat, pos, 7), pos += 3;
+                        else if (s == 18)
+                            n = 11 + bits(dat, pos, 127), pos += 7;
+                        while (n--)
+                            ldt[i++] = c;
+                    }
+                }
+                //    length tree                 distance tree
+                var lt = ldt.subarray(0, hLit), dt = ldt.subarray(hLit);
+                // max length bits
+                lbt = max(lt);
+                // max dist bits
+                dbt = max(dt);
+                lm = hMap(lt, lbt, 1);
+                dm = hMap(dt, dbt, 1);
+            }
+            else
+                err(1);
+            if (pos > tbts) {
+                if (noSt)
+                    err(0);
+                break;
+            }
+        }
+        // Make sure the buffer can hold this + the largest possible addition
+        // Maximum chunk size (practically, theoretically infinite) is 2^17
+        if (resize)
+            cbuf(bt + 131072);
+        var lms = (1 << lbt) - 1, dms = (1 << dbt) - 1;
+        var lpos = pos;
+        for (;; lpos = pos) {
+            // bits read, code
+            var c = lm[bits16(dat, pos) & lms], sym = c >> 4;
+            pos += c & 15;
+            if (pos > tbts) {
+                if (noSt)
+                    err(0);
+                break;
+            }
+            if (!c)
+                err(2);
+            if (sym < 256)
+                buf[bt++] = sym;
+            else if (sym == 256) {
+                lpos = pos, lm = null;
+                break;
+            }
+            else {
+                var add = sym - 254;
+                // no extra bits needed if less
+                if (sym > 264) {
+                    // index
+                    var i = sym - 257, b = fleb[i];
+                    add = bits(dat, pos, (1 << b) - 1) + fl[i];
+                    pos += b;
+                }
+                // dist
+                var d = dm[bits16(dat, pos) & dms], dsym = d >> 4;
+                if (!d)
+                    err(3);
+                pos += d & 15;
+                var dt = fd[dsym];
+                if (dsym > 3) {
+                    var b = fdeb[dsym];
+                    dt += bits16(dat, pos) & (1 << b) - 1, pos += b;
+                }
+                if (pos > tbts) {
+                    if (noSt)
+                        err(0);
+                    break;
+                }
+                if (resize)
+                    cbuf(bt + 131072);
+                var end = bt + add;
+                if (bt < dt) {
+                    var shift = dl - dt, dend = Math.min(dt, end);
+                    if (shift + bt < 0)
+                        err(3);
+                    for (; bt < dend; ++bt)
+                        buf[bt] = dict[shift + bt];
+                }
+                for (; bt < end; ++bt)
+                    buf[bt] = buf[bt - dt];
+            }
+        }
+        st.l = lm, st.p = lpos, st.b = bt, st.f = final;
+        if (lm)
+            final = 1, st.m = lbt, st.d = dm, st.n = dbt;
+    } while (!final);
+    // don't reallocate for streams or user buffers
+    return bt != buf.length && noBuf ? slc(buf, 0, bt) : buf.subarray(0, bt);
+};
+// starting at p, write the minimum number of bits that can hold v to d
+var wbits = function (d, p, v) {
+    v <<= p & 7;
+    var o = (p / 8) | 0;
+    d[o] |= v;
+    d[o + 1] |= v >> 8;
+};
+// starting at p, write the minimum number of bits (>8) that can hold v to d
+var wbits16 = function (d, p, v) {
+    v <<= p & 7;
+    var o = (p / 8) | 0;
+    d[o] |= v;
+    d[o + 1] |= v >> 8;
+    d[o + 2] |= v >> 16;
+};
+// creates code lengths from a frequency table
+var hTree = function (d, mb) {
+    // Need extra info to make a tree
+    var t = [];
+    for (var i = 0; i < d.length; ++i) {
+        if (d[i])
+            t.push({ s: i, f: d[i] });
+    }
+    var s = t.length;
+    var t2 = t.slice();
+    if (!s)
+        return { t: et, l: 0 };
+    if (s == 1) {
+        var v = new u8(t[0].s + 1);
+        v[t[0].s] = 1;
+        return { t: v, l: 1 };
+    }
+    t.sort(function (a, b) { return a.f - b.f; });
+    // after i2 reaches last ind, will be stopped
+    // freq must be greater than largest possible number of symbols
+    t.push({ s: -1, f: 25001 });
+    var l = t[0], r = t[1], i0 = 0, i1 = 1, i2 = 2;
+    t[0] = { s: -1, f: l.f + r.f, l: l, r: r };
+    // efficient algorithm from UZIP.js
+    // i0 is lookbehind, i2 is lookahead - after processing two low-freq
+    // symbols that combined have high freq, will start processing i2 (high-freq,
+    // non-composite) symbols instead
+    // see https://reddit.com/r/photopea/comments/ikekht/uzipjs_questions/
+    while (i1 != s - 1) {
+        l = t[t[i0].f < t[i2].f ? i0++ : i2++];
+        r = t[i0 != i1 && t[i0].f < t[i2].f ? i0++ : i2++];
+        t[i1++] = { s: -1, f: l.f + r.f, l: l, r: r };
+    }
+    var maxSym = t2[0].s;
+    for (var i = 1; i < s; ++i) {
+        if (t2[i].s > maxSym)
+            maxSym = t2[i].s;
+    }
+    // code lengths
+    var tr = new u16(maxSym + 1);
+    // max bits in tree
+    var mbt = ln(t[i1 - 1], tr, 0);
+    if (mbt > mb) {
+        // more algorithms from UZIP.js
+        // TODO: find out how this code works (debt)
+        //  ind    debt
+        var i = 0, dt = 0;
+        //    left            cost
+        var lft = mbt - mb, cst = 1 << lft;
+        t2.sort(function (a, b) { return tr[b.s] - tr[a.s] || a.f - b.f; });
+        for (; i < s; ++i) {
+            var i2_1 = t2[i].s;
+            if (tr[i2_1] > mb) {
+                dt += cst - (1 << (mbt - tr[i2_1]));
+                tr[i2_1] = mb;
+            }
+            else
+                break;
+        }
+        dt >>= lft;
+        while (dt > 0) {
+            var i2_2 = t2[i].s;
+            if (tr[i2_2] < mb)
+                dt -= 1 << (mb - tr[i2_2]++ - 1);
+            else
+                ++i;
+        }
+        for (; i >= 0 && dt; --i) {
+            var i2_3 = t2[i].s;
+            if (tr[i2_3] == mb) {
+                --tr[i2_3];
+                ++dt;
+            }
+        }
+        mbt = mb;
+    }
+    return { t: new u8(tr), l: mbt };
+};
+// get the max length and assign length codes
+var ln = function (n, l, d) {
+    return n.s == -1
+        ? Math.max(ln(n.l, l, d + 1), ln(n.r, l, d + 1))
+        : (l[n.s] = d);
+};
+// length codes generation
+var lc = function (c) {
+    var s = c.length;
+    // Note that the semicolon was intentional
+    while (s && !c[--s])
+        ;
+    var cl = new u16(++s);
+    //  ind      num         streak
+    var cli = 0, cln = c[0], cls = 1;
+    var w = function (v) { cl[cli++] = v; };
+    for (var i = 1; i <= s; ++i) {
+        if (c[i] == cln && i != s)
+            ++cls;
+        else {
+            if (!cln && cls > 2) {
+                for (; cls > 138; cls -= 138)
+                    w(32754);
+                if (cls > 2) {
+                    w(cls > 10 ? ((cls - 11) << 5) | 28690 : ((cls - 3) << 5) | 12305);
+                    cls = 0;
+                }
+            }
+            else if (cls > 3) {
+                w(cln), --cls;
+                for (; cls > 6; cls -= 6)
+                    w(8304);
+                if (cls > 2)
+                    w(((cls - 3) << 5) | 8208), cls = 0;
+            }
+            while (cls--)
+                w(cln);
+            cls = 1;
+            cln = c[i];
+        }
+    }
+    return { c: cl.subarray(0, cli), n: s };
+};
+// calculate the length of output from tree, code lengths
+var clen = function (cf, cl) {
+    var l = 0;
+    for (var i = 0; i < cl.length; ++i)
+        l += cf[i] * cl[i];
+    return l;
+};
+// writes a fixed block
+// returns the new bit pos
+var wfblk = function (out, pos, dat) {
+    // no need to write 00 as type: TypedArray defaults to 0
+    var s = dat.length;
+    var o = shft(pos + 2);
+    out[o] = s & 255;
+    out[o + 1] = s >> 8;
+    out[o + 2] = out[o] ^ 255;
+    out[o + 3] = out[o + 1] ^ 255;
+    for (var i = 0; i < s; ++i)
+        out[o + i + 4] = dat[i];
+    return (o + 4 + s) * 8;
+};
+// writes a block
+var wblk = function (dat, out, final, syms, lf, df, eb, li, bs, bl, p) {
+    wbits(out, p++, final);
+    ++lf[256];
+    var _a = hTree(lf, 15), dlt = _a.t, mlb = _a.l;
+    var _b = hTree(df, 15), ddt = _b.t, mdb = _b.l;
+    var _c = lc(dlt), lclt = _c.c, nlc = _c.n;
+    var _d = lc(ddt), lcdt = _d.c, ndc = _d.n;
+    var lcfreq = new u16(19);
+    for (var i = 0; i < lclt.length; ++i)
+        ++lcfreq[lclt[i] & 31];
+    for (var i = 0; i < lcdt.length; ++i)
+        ++lcfreq[lcdt[i] & 31];
+    var _e = hTree(lcfreq, 7), lct = _e.t, mlcb = _e.l;
+    var nlcc = 19;
+    for (; nlcc > 4 && !lct[clim[nlcc - 1]]; --nlcc)
+        ;
+    var flen = (bl + 5) << 3;
+    var ftlen = clen(lf, flt) + clen(df, fdt) + eb;
+    var dtlen = clen(lf, dlt) + clen(df, ddt) + eb + 14 + 3 * nlcc + clen(lcfreq, lct) + 2 * lcfreq[16] + 3 * lcfreq[17] + 7 * lcfreq[18];
+    if (bs >= 0 && flen <= ftlen && flen <= dtlen)
+        return wfblk(out, p, dat.subarray(bs, bs + bl));
+    var lm, ll, dm, dl;
+    wbits(out, p, 1 + (dtlen < ftlen)), p += 2;
+    if (dtlen < ftlen) {
+        lm = hMap(dlt, mlb, 0), ll = dlt, dm = hMap(ddt, mdb, 0), dl = ddt;
+        var llm = hMap(lct, mlcb, 0);
+        wbits(out, p, nlc - 257);
+        wbits(out, p + 5, ndc - 1);
+        wbits(out, p + 10, nlcc - 4);
+        p += 14;
+        for (var i = 0; i < nlcc; ++i)
+            wbits(out, p + 3 * i, lct[clim[i]]);
+        p += 3 * nlcc;
+        var lcts = [lclt, lcdt];
+        for (var it = 0; it < 2; ++it) {
+            var clct = lcts[it];
+            for (var i = 0; i < clct.length; ++i) {
+                var len = clct[i] & 31;
+                wbits(out, p, llm[len]), p += lct[len];
+                if (len > 15)
+                    wbits(out, p, (clct[i] >> 5) & 127), p += clct[i] >> 12;
+            }
+        }
+    }
+    else {
+        lm = flm, ll = flt, dm = fdm, dl = fdt;
+    }
+    for (var i = 0; i < li; ++i) {
+        var sym = syms[i];
+        if (sym > 255) {
+            var len = (sym >> 18) & 31;
+            wbits16(out, p, lm[len + 257]), p += ll[len + 257];
+            if (len > 7)
+                wbits(out, p, (sym >> 23) & 31), p += fleb[len];
+            var dst = sym & 31;
+            wbits16(out, p, dm[dst]), p += dl[dst];
+            if (dst > 3)
+                wbits16(out, p, (sym >> 5) & 8191), p += fdeb[dst];
+        }
+        else {
+            wbits16(out, p, lm[sym]), p += ll[sym];
+        }
+    }
+    wbits16(out, p, lm[256]);
+    return p + ll[256];
+};
+// deflate options (nice << 13) | chain
+var deo = /*#__PURE__*/ new i32([65540, 131080, 131088, 131104, 262176, 1048704, 1048832, 2114560, 2117632]);
+// empty
+var et = /*#__PURE__*/ new u8(0);
+// compresses data into a raw DEFLATE buffer
+var dflt = function (dat, lvl, plvl, pre, post, st) {
+    var s = st.z || dat.length;
+    var o = new u8(pre + s + 5 * (1 + Math.ceil(s / 7000)) + post);
+    // writing to this writes to the output buffer
+    var w = o.subarray(pre, o.length - post);
+    var lst = st.l;
+    var pos = (st.r || 0) & 7;
+    if (lvl) {
+        if (pos)
+            w[0] = st.r >> 3;
+        var opt = deo[lvl - 1];
+        var n = opt >> 13, c = opt & 8191;
+        var msk_1 = (1 << plvl) - 1;
+        //    prev 2-byte val map    curr 2-byte val map
+        var prev = st.p || new u16(32768), head = st.h || new u16(msk_1 + 1);
+        var bs1_1 = Math.ceil(plvl / 3), bs2_1 = 2 * bs1_1;
+        var hsh = function (i) { return (dat[i] ^ (dat[i + 1] << bs1_1) ^ (dat[i + 2] << bs2_1)) & msk_1; };
+        // 24576 is an arbitrary number of maximum symbols per block
+        // 424 buffer for last block
+        var syms = new i32(25000);
+        // length/literal freq   distance freq
+        var lf = new u16(288), df = new u16(32);
+        //  l/lcnt  exbits  index          l/lind  waitdx          blkpos
+        var lc_1 = 0, eb = 0, i = st.i || 0, li = 0, wi = st.w || 0, bs = 0;
+        for (; i + 2 < s; ++i) {
+            // hash value
+            var hv = hsh(i);
+            // index mod 32768    previous index mod
+            var imod = i & 32767, pimod = head[hv];
+            prev[imod] = pimod;
+            head[hv] = imod;
+            // We always should modify head and prev, but only add symbols if
+            // this data is not yet processed ("wait" for wait index)
+            if (wi <= i) {
+                // bytes remaining
+                var rem = s - i;
+                if ((lc_1 > 7000 || li > 24576) && (rem > 423 || !lst)) {
+                    pos = wblk(dat, w, 0, syms, lf, df, eb, li, bs, i - bs, pos);
+                    li = lc_1 = eb = 0, bs = i;
+                    for (var j = 0; j < 286; ++j)
+                        lf[j] = 0;
+                    for (var j = 0; j < 30; ++j)
+                        df[j] = 0;
+                }
+                //  len    dist   chain
+                var l = 2, d = 0, ch_1 = c, dif = imod - pimod & 32767;
+                if (rem > 2 && hv == hsh(i - dif)) {
+                    var maxn = Math.min(n, rem) - 1;
+                    var maxd = Math.min(32767, i);
+                    // max possible length
+                    // not capped at dif because decompressors implement "rolling" index population
+                    var ml = Math.min(258, rem);
+                    while (dif <= maxd && --ch_1 && imod != pimod) {
+                        if (dat[i + l] == dat[i + l - dif]) {
+                            var nl = 0;
+                            for (; nl < ml && dat[i + nl] == dat[i + nl - dif]; ++nl)
+                                ;
+                            if (nl > l) {
+                                l = nl, d = dif;
+                                // break out early when we reach "nice" (we are satisfied enough)
+                                if (nl > maxn)
+                                    break;
+                                // now, find the rarest 2-byte sequence within this
+                                // length of literals and search for that instead.
+                                // Much faster than just using the start
+                                var mmd = Math.min(dif, nl - 2);
+                                var md = 0;
+                                for (var j = 0; j < mmd; ++j) {
+                                    var ti = i - dif + j & 32767;
+                                    var pti = prev[ti];
+                                    var cd = ti - pti & 32767;
+                                    if (cd > md)
+                                        md = cd, pimod = ti;
+                                }
+                            }
+                        }
+                        // check the previous match
+                        imod = pimod, pimod = prev[imod];
+                        dif += imod - pimod & 32767;
+                    }
+                }
+                // d will be nonzero only when a match was found
+                if (d) {
+                    // store both dist and len data in one int32
+                    // Make sure this is recognized as a len/dist with 28th bit (2^28)
+                    syms[li++] = 268435456 | (revfl[l] << 18) | revfd[d];
+                    var lin = revfl[l] & 31, din = revfd[d] & 31;
+                    eb += fleb[lin] + fdeb[din];
+                    ++lf[257 + lin];
+                    ++df[din];
+                    wi = i + l;
+                    ++lc_1;
+                }
+                else {
+                    syms[li++] = dat[i];
+                    ++lf[dat[i]];
+                }
+            }
+        }
+        for (i = Math.max(i, wi); i < s; ++i) {
+            syms[li++] = dat[i];
+            ++lf[dat[i]];
+        }
+        pos = wblk(dat, w, lst, syms, lf, df, eb, li, bs, i - bs, pos);
+        if (!lst) {
+            st.r = (pos & 7) | w[(pos / 8) | 0] << 3;
+            // shft(pos) now 1 less if pos & 7 != 0
+            pos -= 7;
+            st.h = head, st.p = prev, st.i = i, st.w = wi;
+        }
+    }
+    else {
+        for (var i = st.w || 0; i < s + lst; i += 65535) {
+            // end
+            var e = i + 65535;
+            if (e >= s) {
+                // write final block
+                w[(pos / 8) | 0] = lst;
+                e = s;
+            }
+            pos = wfblk(w, pos + 1, dat.subarray(i, e));
+        }
+        st.i = s;
+    }
+    return slc(o, 0, pre + shft(pos) + post);
+};
+// CRC32 table
+var crct = /*#__PURE__*/ (function () {
+    var t = new Int32Array(256);
+    for (var i = 0; i < 256; ++i) {
+        var c = i, k = 9;
+        while (--k)
+            c = ((c & 1) && -306674912) ^ (c >>> 1);
+        t[i] = c;
+    }
+    return t;
+})();
+// CRC32
+var crc = function () {
+    var c = -1;
+    return {
+        p: function (d) {
+            // closures have awful performance
+            var cr = c;
+            for (var i = 0; i < d.length; ++i)
+                cr = crct[(cr & 255) ^ d[i]] ^ (cr >>> 8);
+            c = cr;
+        },
+        d: function () { return ~c; }
+    };
+};
+// Adler32
+var adler = function () {
+    var a = 1, b = 0;
+    return {
+        p: function (d) {
+            // closures have awful performance
+            var n = a, m = b;
+            var l = d.length | 0;
+            for (var i = 0; i != l;) {
+                var e = Math.min(i + 2655, l);
+                for (; i < e; ++i)
+                    m += n += d[i];
+                n = (n & 65535) + 15 * (n >> 16), m = (m & 65535) + 15 * (m >> 16);
+            }
+            a = n, b = m;
+        },
+        d: function () {
+            a %= 65521, b %= 65521;
+            return (a & 255) << 24 | (a & 0xFF00) << 8 | (b & 255) << 8 | (b >> 8);
+        }
+    };
+};
+;
+// deflate with opts
+var dopt = function (dat, opt, pre, post, st) {
+    if (!st) {
+        st = { l: 1 };
+        if (opt.dictionary) {
+            var dict = opt.dictionary.subarray(-32768);
+            var newDat = new u8(dict.length + dat.length);
+            newDat.set(dict);
+            newDat.set(dat, dict.length);
+            dat = newDat;
+            st.w = dict.length;
+        }
+    }
+    return dflt(dat, opt.level == null ? 6 : opt.level, opt.mem == null ? Math.ceil(Math.max(8, Math.min(13, Math.log(dat.length))) * 1.5) : (12 + opt.mem), pre, post, st);
+};
+// Walmart object spread
+var mrg = function (a, b) {
+    var o = {};
+    for (var k in a)
+        o[k] = a[k];
+    for (var k in b)
+        o[k] = b[k];
+    return o;
+};
+// worker clone
+// This is possibly the craziest part of the entire codebase, despite how simple it may seem.
+// The only parameter to this function is a closure that returns an array of variables outside of the function scope.
+// We're going to try to figure out the variable names used in the closure as strings because that is crucial for workerization.
+// We will return an object mapping of true variable name to value (basically, the current scope as a JS object).
+// The reason we can't just use the original variable names is minifiers mangling the toplevel scope.
+// This took me three weeks to figure out how to do.
+var wcln = function (fn, fnStr, td) {
+    var dt = fn();
+    var st = fn.toString();
+    var ks = st.slice(st.indexOf('[') + 1, st.lastIndexOf(']')).replace(/\s+/g, '').split(',');
+    for (var i = 0; i < dt.length; ++i) {
+        var v = dt[i], k = ks[i];
+        if (typeof v == 'function') {
+            fnStr += ';' + k + '=';
+            var st_1 = v.toString();
+            if (v.prototype) {
+                // for global objects
+                if (st_1.indexOf('[native code]') != -1) {
+                    var spInd = st_1.indexOf(' ', 8) + 1;
+                    fnStr += st_1.slice(spInd, st_1.indexOf('(', spInd));
+                }
+                else {
+                    fnStr += st_1;
+                    for (var t in v.prototype)
+                        fnStr += ';' + k + '.prototype.' + t + '=' + v.prototype[t].toString();
+                }
+            }
+            else
+                fnStr += st_1;
+        }
+        else
+            td[k] = v;
+    }
+    return fnStr;
+};
+var ch = [];
+// clone bufs
+var cbfs = function (v) {
+    var tl = [];
+    for (var k in v) {
+        if (v[k].buffer) {
+            tl.push((v[k] = new v[k].constructor(v[k])).buffer);
+        }
+    }
+    return tl;
+};
+// use a worker to execute code
+var wrkr = function (fns, init, id, cb) {
+    if (!ch[id]) {
+        var fnStr = '', td_1 = {}, m = fns.length - 1;
+        for (var i = 0; i < m; ++i)
+            fnStr = wcln(fns[i], fnStr, td_1);
+        ch[id] = { c: wcln(fns[m], fnStr, td_1), e: td_1 };
+    }
+    var td = mrg({}, ch[id].e);
+    return (0, node_worker_1.default)(ch[id].c + ';onmessage=function(e){for(var k in e.data)self[k]=e.data[k];onmessage=' + init.toString() + '}', id, td, cbfs(td), cb);
+};
+// base async inflate fn
+var bInflt = function () { return [u8, u16, i32, fleb, fdeb, clim, fl, fd, flrm, fdrm, rev, ec, hMap, max, bits, bits16, shft, slc, err, inflt, inflateSync, pbf, gopt]; };
+var bDflt = function () { return [u8, u16, i32, fleb, fdeb, clim, revfl, revfd, flm, flt, fdm, fdt, rev, deo, et, hMap, wbits, wbits16, hTree, ln, lc, clen, wfblk, wblk, shft, slc, dflt, dopt, deflateSync, pbf]; };
+// gzip extra
+var gze = function () { return [gzh, gzhl, wbytes, crc, crct]; };
+// gunzip extra
+var guze = function () { return [gzs, gzl]; };
+// zlib extra
+var zle = function () { return [zlh, wbytes, adler]; };
+// unzlib extra
+var zule = function () { return [zls]; };
+// post buf
+var pbf = function (msg) { return postMessage(msg, [msg.buffer]); };
+// get opts
+var gopt = function (o) { return o && {
+    out: o.size && new u8(o.size),
+    dictionary: o.dictionary
+}; };
+// async helper
+var cbify = function (dat, opts, fns, init, id, cb) {
+    var w = wrkr(fns, init, id, function (err, dat) {
+        w.terminate();
+        cb(err, dat);
+    });
+    w.postMessage([dat, opts], opts.consume ? [dat.buffer] : []);
+    return function () { w.terminate(); };
+};
+// auto stream
+var astrm = function (strm) {
+    strm.ondata = function (dat, final) { return postMessage([dat, final], [dat.buffer]); };
+    return function (ev) { return strm.push(ev.data[0], ev.data[1]); };
+};
+// async stream attach
+var astrmify = function (fns, strm, opts, init, id, ext) {
+    var t;
+    var w = wrkr(fns, init, id, function (err, dat) {
+        if (err)
+            w.terminate(), strm.ondata.call(strm, err);
+        else if (!Array.isArray(dat))
+            ext(dat);
+        else {
+            if (dat[1])
+                w.terminate();
+            strm.ondata.call(strm, err, dat[0], dat[1]);
+        }
+    });
+    w.postMessage(opts);
+    strm.push = function (d, f) {
+        if (!strm.ondata)
+            err(5);
+        if (t)
+            strm.ondata(err(4, 0, 1), null, !!f);
+        w.postMessage([d, t = f], [d.buffer]);
+    };
+    strm.terminate = function () { w.terminate(); };
+};
+// read 2 bytes
+var b2 = function (d, b) { return d[b] | (d[b + 1] << 8); };
+// read 4 bytes
+var b4 = function (d, b) { return (d[b] | (d[b + 1] << 8) | (d[b + 2] << 16) | (d[b + 3] << 24)) >>> 0; };
+var b8 = function (d, b) { return b4(d, b) + (b4(d, b + 4) * 4294967296); };
+// write bytes
+var wbytes = function (d, b, v) {
+    for (; v; ++b)
+        d[b] = v, v >>>= 8;
+};
+// gzip header
+var gzh = function (c, o) {
+    var fn = o.filename;
+    c[0] = 31, c[1] = 139, c[2] = 8, c[8] = o.level < 2 ? 4 : o.level == 9 ? 2 : 0, c[9] = 3; // assume Unix
+    if (o.mtime != 0)
+        wbytes(c, 4, Math.floor(new Date(o.mtime || Date.now()) / 1000));
+    if (fn) {
+        c[3] = 8;
+        for (var i = 0; i <= fn.length; ++i)
+            c[i + 10] = fn.charCodeAt(i);
+    }
+};
+// gzip footer: -8 to -4 = CRC, -4 to -0 is length
+// gzip start
+var gzs = function (d) {
+    if (d[0] != 31 || d[1] != 139 || d[2] != 8)
+        err(6, 'invalid gzip data');
+    var flg = d[3];
+    var st = 10;
+    if (flg & 4)
+        st += (d[10] | d[11] << 8) + 2;
+    for (var zs = (flg >> 3 & 1) + (flg >> 4 & 1); zs > 0; zs -= !d[st++])
+        ;
+    return st + (flg & 2);
+};
+// gzip length
+var gzl = function (d) {
+    var l = d.length;
+    return (d[l - 4] | d[l - 3] << 8 | d[l - 2] << 16 | d[l - 1] << 24) >>> 0;
+};
+// gzip header length
+var gzhl = function (o) { return 10 + (o.filename ? o.filename.length + 1 : 0); };
+// zlib header
+var zlh = function (c, o) {
+    var lv = o.level, fl = lv == 0 ? 0 : lv < 6 ? 1 : lv == 9 ? 3 : 2;
+    c[0] = 120, c[1] = (fl << 6) | (o.dictionary && 32);
+    c[1] |= 31 - ((c[0] << 8) | c[1]) % 31;
+    if (o.dictionary) {
+        var h = adler();
+        h.p(o.dictionary);
+        wbytes(c, 2, h.d());
+    }
+};
+// zlib start
+var zls = function (d, dict) {
+    if ((d[0] & 15) != 8 || (d[0] >> 4) > 7 || ((d[0] << 8 | d[1]) % 31))
+        err(6, 'invalid zlib data');
+    if ((d[1] >> 5 & 1) == +!dict)
+        err(6, 'invalid zlib data: ' + (d[1] & 32 ? 'need' : 'unexpected') + ' dictionary');
+    return (d[1] >> 3 & 4) + 2;
+};
+function StrmOpt(opts, cb) {
+    if (typeof opts == 'function')
+        cb = opts, opts = {};
+    this.ondata = cb;
+    return opts;
+}
+/**
+ * Streaming DEFLATE compression
+ */
+var Deflate = /*#__PURE__*/ (function () {
+    function Deflate(opts, cb) {
+        if (typeof opts == 'function')
+            cb = opts, opts = {};
+        this.ondata = cb;
+        this.o = opts || {};
+        this.s = { l: 0, i: 32768, w: 32768, z: 32768 };
+        // Buffer length must always be 0 mod 32768 for index calculations to be correct when modifying head and prev
+        // 98304 = 32768 (lookback) + 65536 (common chunk size)
+        this.b = new u8(98304);
+        if (this.o.dictionary) {
+            var dict = this.o.dictionary.subarray(-32768);
+            this.b.set(dict, 32768 - dict.length);
+            this.s.i = 32768 - dict.length;
+        }
+    }
+    Deflate.prototype.p = function (c, f) {
+        this.ondata(dopt(c, this.o, 0, 0, this.s), f);
+    };
+    /**
+     * Pushes a chunk to be deflated
+     * @param chunk The chunk to push
+     * @param final Whether this is the last chunk
+     */
+    Deflate.prototype.push = function (chunk, final) {
+        if (!this.ondata)
+            err(5);
+        if (this.s.l)
+            err(4);
+        var endLen = chunk.length + this.s.z;
+        if (endLen > this.b.length) {
+            if (endLen > 2 * this.b.length - 32768) {
+                var newBuf = new u8(endLen & -32768);
+                newBuf.set(this.b.subarray(0, this.s.z));
+                this.b = newBuf;
+            }
+            var split = this.b.length - this.s.z;
+            if (split) {
+                this.b.set(chunk.subarray(0, split), this.s.z);
+                this.s.z = this.b.length;
+                this.p(this.b, false);
+            }
+            this.b.set(this.b.subarray(-32768));
+            this.b.set(chunk.subarray(split), 32768);
+            this.s.z = chunk.length - split + 32768;
+            this.s.i = 32766, this.s.w = 32768;
+        }
+        else {
+            this.b.set(chunk, this.s.z);
+            this.s.z += chunk.length;
+        }
+        this.s.l = final & 1;
+        if (this.s.z > this.s.w + 8191 || final) {
+            this.p(this.b, final || false);
+            this.s.w = this.s.i, this.s.i -= 2;
+        }
+    };
+    return Deflate;
+}());
+exports.Deflate = Deflate;
+/**
+ * Asynchronous streaming DEFLATE compression
+ */
+var AsyncDeflate = /*#__PURE__*/ (function () {
+    function AsyncDeflate(opts, cb) {
+        astrmify([
+            bDflt,
+            function () { return [astrm, Deflate]; }
+        ], this, StrmOpt.call(this, opts, cb), function (ev) {
+            var strm = new Deflate(ev.data);
+            onmessage = astrm(strm);
+        }, 6);
+    }
+    return AsyncDeflate;
+}());
+exports.AsyncDeflate = AsyncDeflate;
+function deflate(data, opts, cb) {
+    if (!cb)
+        cb = opts, opts = {};
+    if (typeof cb != 'function')
+        err(7);
+    return cbify(data, opts, [
+        bDflt,
+    ], function (ev) { return pbf(deflateSync(ev.data[0], ev.data[1])); }, 0, cb);
+}
+exports.deflate = deflate;
+/**
+ * Compresses data with DEFLATE without any wrapper
+ * @param data The data to compress
+ * @param opts The compression options
+ * @returns The deflated version of the data
+ */
+function deflateSync(data, opts) {
+    return dopt(data, opts || {}, 0, 0);
+}
+exports.deflateSync = deflateSync;
+/**
+ * Streaming DEFLATE decompression
+ */
+var Inflate = /*#__PURE__*/ (function () {
+    function Inflate(opts, cb) {
+        // no StrmOpt here to avoid adding to workerizer
+        if (typeof opts == 'function')
+            cb = opts, opts = {};
+        this.ondata = cb;
+        var dict = opts && opts.dictionary && opts.dictionary.subarray(-32768);
+        this.s = { i: 0, b: dict ? dict.length : 0 };
+        this.o = new u8(32768);
+        this.p = new u8(0);
+        if (dict)
+            this.o.set(dict);
+    }
+    Inflate.prototype.e = function (c) {
+        if (!this.ondata)
+            err(5);
+        if (this.d)
+            err(4);
+        if (!this.p.length)
+            this.p = c;
+        else if (c.length) {
+            var n = new u8(this.p.length + c.length);
+            n.set(this.p), n.set(c, this.p.length), this.p = n;
+        }
+    };
+    Inflate.prototype.c = function (final) {
+        this.s.i = +(this.d = final || false);
+        var bts = this.s.b;
+        var dt = inflt(this.p, this.s, this.o);
+        this.ondata(slc(dt, bts, this.s.b), this.d);
+        this.o = slc(dt, this.s.b - 32768), this.s.b = this.o.length;
+        this.p = slc(this.p, (this.s.p / 8) | 0), this.s.p &= 7;
+    };
+    /**
+     * Pushes a chunk to be inflated
+     * @param chunk The chunk to push
+     * @param final Whether this is the final chunk
+     */
+    Inflate.prototype.push = function (chunk, final) {
+        this.e(chunk), this.c(final);
+    };
+    return Inflate;
+}());
+exports.Inflate = Inflate;
+/**
+ * Asynchronous streaming DEFLATE decompression
+ */
+var AsyncInflate = /*#__PURE__*/ (function () {
+    function AsyncInflate(opts, cb) {
+        astrmify([
+            bInflt,
+            function () { return [astrm, Inflate]; }
+        ], this, StrmOpt.call(this, opts, cb), function (ev) {
+            var strm = new Inflate(ev.data);
+            onmessage = astrm(strm);
+        }, 7);
+    }
+    return AsyncInflate;
+}());
+exports.AsyncInflate = AsyncInflate;
+function inflate(data, opts, cb) {
+    if (!cb)
+        cb = opts, opts = {};
+    if (typeof cb != 'function')
+        err(7);
+    return cbify(data, opts, [
+        bInflt
+    ], function (ev) { return pbf(inflateSync(ev.data[0], gopt(ev.data[1]))); }, 1, cb);
+}
+exports.inflate = inflate;
+/**
+ * Expands DEFLATE data with no wrapper
+ * @param data The data to decompress
+ * @param opts The decompression options
+ * @returns The decompressed version of the data
+ */
+function inflateSync(data, opts) {
+    return inflt(data, { i: 2 }, opts && opts.out, opts && opts.dictionary);
+}
+exports.inflateSync = inflateSync;
+// before you yell at me for not just using extends, my reason is that TS inheritance is hard to workerize.
+/**
+ * Streaming GZIP compression
+ */
+var Gzip = /*#__PURE__*/ (function () {
+    function Gzip(opts, cb) {
+        this.c = crc();
+        this.l = 0;
+        this.v = 1;
+        Deflate.call(this, opts, cb);
+    }
+    /**
+     * Pushes a chunk to be GZIPped
+     * @param chunk The chunk to push
+     * @param final Whether this is the last chunk
+     */
+    Gzip.prototype.push = function (chunk, final) {
+        this.c.p(chunk);
+        this.l += chunk.length;
+        Deflate.prototype.push.call(this, chunk, final);
+    };
+    Gzip.prototype.p = function (c, f) {
+        var raw = dopt(c, this.o, this.v && gzhl(this.o), f && 8, this.s);
+        if (this.v)
+            gzh(raw, this.o), this.v = 0;
+        if (f)
+            wbytes(raw, raw.length - 8, this.c.d()), wbytes(raw, raw.length - 4, this.l);
+        this.ondata(raw, f);
+    };
+    return Gzip;
+}());
+exports.Gzip = Gzip;
+exports.Compress = Gzip;
+/**
+ * Asynchronous streaming GZIP compression
+ */
+var AsyncGzip = /*#__PURE__*/ (function () {
+    function AsyncGzip(opts, cb) {
+        astrmify([
+            bDflt,
+            gze,
+            function () { return [astrm, Deflate, Gzip]; }
+        ], this, StrmOpt.call(this, opts, cb), function (ev) {
+            var strm = new Gzip(ev.data);
+            onmessage = astrm(strm);
+        }, 8);
+    }
+    return AsyncGzip;
+}());
+exports.AsyncGzip = AsyncGzip;
+exports.AsyncCompress = AsyncGzip;
+function gzip(data, opts, cb) {
+    if (!cb)
+        cb = opts, opts = {};
+    if (typeof cb != 'function')
+        err(7);
+    return cbify(data, opts, [
+        bDflt,
+        gze,
+        function () { return [gzipSync]; }
+    ], function (ev) { return pbf(gzipSync(ev.data[0], ev.data[1])); }, 2, cb);
+}
+exports.gzip = gzip;
+exports.compress = gzip;
+/**
+ * Compresses data with GZIP
+ * @param data The data to compress
+ * @param opts The compression options
+ * @returns The gzipped version of the data
+ */
+function gzipSync(data, opts) {
+    if (!opts)
+        opts = {};
+    var c = crc(), l = data.length;
+    c.p(data);
+    var d = dopt(data, opts, gzhl(opts), 8), s = d.length;
+    return gzh(d, opts), wbytes(d, s - 8, c.d()), wbytes(d, s - 4, l), d;
+}
+exports.gzipSync = gzipSync;
+exports.compressSync = gzipSync;
+/**
+ * Streaming single or multi-member GZIP decompression
+ */
+var Gunzip = /*#__PURE__*/ (function () {
+    function Gunzip(opts, cb) {
+        this.v = 1;
+        this.r = 0;
+        Inflate.call(this, opts, cb);
+    }
+    /**
+     * Pushes a chunk to be GUNZIPped
+     * @param chunk The chunk to push
+     * @param final Whether this is the last chunk
+     */
+    Gunzip.prototype.push = function (chunk, final) {
+        Inflate.prototype.e.call(this, chunk);
+        this.r += chunk.length;
+        if (this.v) {
+            var p = this.p.subarray(this.v - 1);
+            var s = p.length > 3 ? gzs(p) : 4;
+            if (s > p.length) {
+                if (!final)
+                    return;
+            }
+            else if (this.v > 1 && this.onmember) {
+                this.onmember(this.r - p.length);
+            }
+            this.p = p.subarray(s), this.v = 0;
+        }
+        // necessary to prevent TS from using the closure value
+        // This allows for workerization to function correctly
+        Inflate.prototype.c.call(this, final);
+        // process concatenated GZIP
+        if (this.s.f && !this.s.l) {
+            this.v = shft(this.s.p) + 9;
+            this.s = { i: 0 };
+            this.o = new u8(0);
+            if (this.p.length)
+                this.push(new u8(0), final);
+        }
+    };
+    return Gunzip;
+}());
+exports.Gunzip = Gunzip;
+/**
+ * Asynchronous streaming single or multi-member GZIP decompression
+ */
+var AsyncGunzip = /*#__PURE__*/ (function () {
+    function AsyncGunzip(opts, cb) {
+        var _this_1 = this;
+        astrmify([
+            bInflt,
+            guze,
+            function () { return [astrm, Inflate, Gunzip]; }
+        ], this, StrmOpt.call(this, opts, cb), function (ev) {
+            var strm = new Gunzip(ev.data);
+            strm.onmember = function (offset) { return postMessage(offset); };
+            onmessage = astrm(strm);
+        }, 9, function (offset) { return _this_1.onmember && _this_1.onmember(offset); });
+    }
+    return AsyncGunzip;
+}());
+exports.AsyncGunzip = AsyncGunzip;
+function gunzip(data, opts, cb) {
+    if (!cb)
+        cb = opts, opts = {};
+    if (typeof cb != 'function')
+        err(7);
+    return cbify(data, opts, [
+        bInflt,
+        guze,
+        function () { return [gunzipSync]; }
+    ], function (ev) { return pbf(gunzipSync(ev.data[0], ev.data[1])); }, 3, cb);
+}
+exports.gunzip = gunzip;
+/**
+ * Expands GZIP data
+ * @param data The data to decompress
+ * @param opts The decompression options
+ * @returns The decompressed version of the data
+ */
+function gunzipSync(data, opts) {
+    var st = gzs(data);
+    if (st + 8 > data.length)
+        err(6, 'invalid gzip data');
+    return inflt(data.subarray(st, -8), { i: 2 }, opts && opts.out || new u8(gzl(data)), opts && opts.dictionary);
+}
+exports.gunzipSync = gunzipSync;
+/**
+ * Streaming Zlib compression
+ */
+var Zlib = /*#__PURE__*/ (function () {
+    function Zlib(opts, cb) {
+        this.c = adler();
+        this.v = 1;
+        Deflate.call(this, opts, cb);
+    }
+    /**
+     * Pushes a chunk to be zlibbed
+     * @param chunk The chunk to push
+     * @param final Whether this is the last chunk
+     */
+    Zlib.prototype.push = function (chunk, final) {
+        this.c.p(chunk);
+        Deflate.prototype.push.call(this, chunk, final);
+    };
+    Zlib.prototype.p = function (c, f) {
+        var raw = dopt(c, this.o, this.v && (this.o.dictionary ? 6 : 2), f && 4, this.s);
+        if (this.v)
+            zlh(raw, this.o), this.v = 0;
+        if (f)
+            wbytes(raw, raw.length - 4, this.c.d());
+        this.ondata(raw, f);
+    };
+    return Zlib;
+}());
+exports.Zlib = Zlib;
+/**
+ * Asynchronous streaming Zlib compression
+ */
+var AsyncZlib = /*#__PURE__*/ (function () {
+    function AsyncZlib(opts, cb) {
+        astrmify([
+            bDflt,
+            zle,
+            function () { return [astrm, Deflate, Zlib]; }
+        ], this, StrmOpt.call(this, opts, cb), function (ev) {
+            var strm = new Zlib(ev.data);
+            onmessage = astrm(strm);
+        }, 10);
+    }
+    return AsyncZlib;
+}());
+exports.AsyncZlib = AsyncZlib;
+function zlib(data, opts, cb) {
+    if (!cb)
+        cb = opts, opts = {};
+    if (typeof cb != 'function')
+        err(7);
+    return cbify(data, opts, [
+        bDflt,
+        zle,
+        function () { return [zlibSync]; }
+    ], function (ev) { return pbf(zlibSync(ev.data[0], ev.data[1])); }, 4, cb);
+}
+exports.zlib = zlib;
+/**
+ * Compress data with Zlib
+ * @param data The data to compress
+ * @param opts The compression options
+ * @returns The zlib-compressed version of the data
+ */
+function zlibSync(data, opts) {
+    if (!opts)
+        opts = {};
+    var a = adler();
+    a.p(data);
+    var d = dopt(data, opts, opts.dictionary ? 6 : 2, 4);
+    return zlh(d, opts), wbytes(d, d.length - 4, a.d()), d;
+}
+exports.zlibSync = zlibSync;
+/**
+ * Streaming Zlib decompression
+ */
+var Unzlib = /*#__PURE__*/ (function () {
+    function Unzlib(opts, cb) {
+        Inflate.call(this, opts, cb);
+        this.v = opts && opts.dictionary ? 2 : 1;
+    }
+    /**
+     * Pushes a chunk to be unzlibbed
+     * @param chunk The chunk to push
+     * @param final Whether this is the last chunk
+     */
+    Unzlib.prototype.push = function (chunk, final) {
+        Inflate.prototype.e.call(this, chunk);
+        if (this.v) {
+            if (this.p.length < 6 && !final)
+                return;
+            this.p = this.p.subarray(zls(this.p, this.v - 1)), this.v = 0;
+        }
+        if (final) {
+            if (this.p.length < 4)
+                err(6, 'invalid zlib data');
+            this.p = this.p.subarray(0, -4);
+        }
+        // necessary to prevent TS from using the closure value
+        // This allows for workerization to function correctly
+        Inflate.prototype.c.call(this, final);
+    };
+    return Unzlib;
+}());
+exports.Unzlib = Unzlib;
+/**
+ * Asynchronous streaming Zlib decompression
+ */
+var AsyncUnzlib = /*#__PURE__*/ (function () {
+    function AsyncUnzlib(opts, cb) {
+        astrmify([
+            bInflt,
+            zule,
+            function () { return [astrm, Inflate, Unzlib]; }
+        ], this, StrmOpt.call(this, opts, cb), function (ev) {
+            var strm = new Unzlib(ev.data);
+            onmessage = astrm(strm);
+        }, 11);
+    }
+    return AsyncUnzlib;
+}());
+exports.AsyncUnzlib = AsyncUnzlib;
+function unzlib(data, opts, cb) {
+    if (!cb)
+        cb = opts, opts = {};
+    if (typeof cb != 'function')
+        err(7);
+    return cbify(data, opts, [
+        bInflt,
+        zule,
+        function () { return [unzlibSync]; }
+    ], function (ev) { return pbf(unzlibSync(ev.data[0], gopt(ev.data[1]))); }, 5, cb);
+}
+exports.unzlib = unzlib;
+/**
+ * Expands Zlib data
+ * @param data The data to decompress
+ * @param opts The decompression options
+ * @returns The decompressed version of the data
+ */
+function unzlibSync(data, opts) {
+    return inflt(data.subarray(zls(data, opts && opts.dictionary), -4), { i: 2 }, opts && opts.out, opts && opts.dictionary);
+}
+exports.unzlibSync = unzlibSync;
+/**
+ * Streaming GZIP, Zlib, or raw DEFLATE decompression
+ */
+var Decompress = /*#__PURE__*/ (function () {
+    function Decompress(opts, cb) {
+        this.G = Gunzip;
+        this.I = Inflate;
+        this.Z = Unzlib;
+        this.o = StrmOpt.call(this, opts, cb) || {};
+    }
+    /**
+     * Pushes a chunk to be decompressed
+     * @param chunk The chunk to push
+     * @param final Whether this is the last chunk
+     */
+    Decompress.prototype.push = function (chunk, final) {
+        if (!this.ondata)
+            err(5);
+        if (!this.s) {
+            if (this.p && this.p.length) {
+                var n = new u8(this.p.length + chunk.length);
+                n.set(this.p), n.set(chunk, this.p.length);
+            }
+            else
+                this.p = chunk;
+            if (this.p.length > 2) {
+                var _this_2 = this;
+                // enables reuse of this method by AsyncDecompress
+                var cb = function () { _this_2.ondata.apply(_this_2, arguments); };
+                this.s = (this.p[0] == 31 && this.p[1] == 139 && this.p[2] == 8)
+                    ? new this.G(this.o, cb)
+                    : ((this.p[0] & 15) != 8 || (this.p[0] >> 4) > 7 || ((this.p[0] << 8 | this.p[1]) % 31))
+                        ? new this.I(this.o, cb)
+                        : new this.Z(this.o, cb);
+                this.s.push(this.p, final);
+                this.p = null;
+            }
+        }
+        else
+            this.s.push(chunk, final);
+    };
+    return Decompress;
+}());
+exports.Decompress = Decompress;
+/**
+ * Asynchronous streaming GZIP, Zlib, or raw DEFLATE decompression
+ */
+var AsyncDecompress = /*#__PURE__*/ (function () {
+    function AsyncDecompress(opts, cb) {
+        this.G = AsyncGunzip;
+        this.I = AsyncInflate;
+        this.Z = AsyncUnzlib;
+        Decompress.call(this, opts, cb);
+    }
+    /**
+     * Pushes a chunk to be decompressed
+     * @param chunk The chunk to push
+     * @param final Whether this is the last chunk
+     */
+    AsyncDecompress.prototype.push = function (chunk, final) {
+        Decompress.prototype.push.call(this, chunk, final);
+    };
+    return AsyncDecompress;
+}());
+exports.AsyncDecompress = AsyncDecompress;
+function decompress(data, opts, cb) {
+    if (!cb)
+        cb = opts, opts = {};
+    if (typeof cb != 'function')
+        err(7);
+    return (data[0] == 31 && data[1] == 139 && data[2] == 8)
+        ? gunzip(data, opts, cb)
+        : ((data[0] & 15) != 8 || (data[0] >> 4) > 7 || ((data[0] << 8 | data[1]) % 31))
+            ? inflate(data, opts, cb)
+            : unzlib(data, opts, cb);
+}
+exports.decompress = decompress;
+/**
+ * Expands compressed GZIP, Zlib, or raw DEFLATE data, automatically detecting the format
+ * @param data The data to decompress
+ * @param opts The decompression options
+ * @returns The decompressed version of the data
+ */
+function decompressSync(data, opts) {
+    return (data[0] == 31 && data[1] == 139 && data[2] == 8)
+        ? gunzipSync(data, opts)
+        : ((data[0] & 15) != 8 || (data[0] >> 4) > 7 || ((data[0] << 8 | data[1]) % 31))
+            ? inflateSync(data, opts)
+            : unzlibSync(data, opts);
+}
+exports.decompressSync = decompressSync;
+// flatten a directory structure
+var fltn = function (d, p, t, o) {
+    for (var k in d) {
+        var val = d[k], n = p + k, op = o;
+        if (Array.isArray(val))
+            op = mrg(o, val[1]), val = val[0];
+        if (val instanceof u8)
+            t[n] = [val, op];
+        else {
+            t[n += '/'] = [new u8(0), op];
+            fltn(val, n, t, o);
+        }
+    }
+};
+// text encoder
+var te = typeof TextEncoder != 'undefined' && /*#__PURE__*/ new TextEncoder();
+// text decoder
+var td = typeof TextDecoder != 'undefined' && /*#__PURE__*/ new TextDecoder();
+// text decoder stream
+var tds = 0;
+try {
+    td.decode(et, { stream: true });
+    tds = 1;
+}
+catch (e) { }
+// decode UTF8
+var dutf8 = function (d) {
+    for (var r = '', i = 0;;) {
+        var c = d[i++];
+        var eb = (c > 127) + (c > 223) + (c > 239);
+        if (i + eb > d.length)
+            return { s: r, r: slc(d, i - 1) };
+        if (!eb)
+            r += String.fromCharCode(c);
+        else if (eb == 3) {
+            c = ((c & 15) << 18 | (d[i++] & 63) << 12 | (d[i++] & 63) << 6 | (d[i++] & 63)) - 65536,
+                r += String.fromCharCode(55296 | (c >> 10), 56320 | (c & 1023));
+        }
+        else if (eb & 1)
+            r += String.fromCharCode((c & 31) << 6 | (d[i++] & 63));
+        else
+            r += String.fromCharCode((c & 15) << 12 | (d[i++] & 63) << 6 | (d[i++] & 63));
+    }
+};
+/**
+ * Streaming UTF-8 decoding
+ */
+var DecodeUTF8 = /*#__PURE__*/ (function () {
+    /**
+     * Creates a UTF-8 decoding stream
+     * @param cb The callback to call whenever data is decoded
+     */
+    function DecodeUTF8(cb) {
+        this.ondata = cb;
+        if (tds)
+            this.t = new TextDecoder();
+        else
+            this.p = et;
+    }
+    /**
+     * Pushes a chunk to be decoded from UTF-8 binary
+     * @param chunk The chunk to push
+     * @param final Whether this is the last chunk
+     */
+    DecodeUTF8.prototype.push = function (chunk, final) {
+        if (!this.ondata)
+            err(5);
+        final = !!final;
+        if (this.t) {
+            this.ondata(this.t.decode(chunk, { stream: true }), final);
+            if (final) {
+                if (this.t.decode().length)
+                    err(8);
+                this.t = null;
+            }
+            return;
+        }
+        if (!this.p)
+            err(4);
+        var dat = new u8(this.p.length + chunk.length);
+        dat.set(this.p);
+        dat.set(chunk, this.p.length);
+        var _a = dutf8(dat), s = _a.s, r = _a.r;
+        if (final) {
+            if (r.length)
+                err(8);
+            this.p = null;
+        }
+        else
+            this.p = r;
+        this.ondata(s, final);
+    };
+    return DecodeUTF8;
+}());
+exports.DecodeUTF8 = DecodeUTF8;
+/**
+ * Streaming UTF-8 encoding
+ */
+var EncodeUTF8 = /*#__PURE__*/ (function () {
+    /**
+     * Creates a UTF-8 decoding stream
+     * @param cb The callback to call whenever data is encoded
+     */
+    function EncodeUTF8(cb) {
+        this.ondata = cb;
+    }
+    /**
+     * Pushes a chunk to be encoded to UTF-8
+     * @param chunk The string data to push
+     * @param final Whether this is the last chunk
+     */
+    EncodeUTF8.prototype.push = function (chunk, final) {
+        if (!this.ondata)
+            err(5);
+        if (this.d)
+            err(4);
+        this.ondata(strToU8(chunk), this.d = final || false);
+    };
+    return EncodeUTF8;
+}());
+exports.EncodeUTF8 = EncodeUTF8;
+/**
+ * Converts a string into a Uint8Array for use with compression/decompression methods
+ * @param str The string to encode
+ * @param latin1 Whether or not to interpret the data as Latin-1. This should
+ *               not need to be true unless decoding a binary string.
+ * @returns The string encoded in UTF-8/Latin-1 binary
+ */
+function strToU8(str, latin1) {
+    if (latin1) {
+        var ar_1 = new u8(str.length);
+        for (var i = 0; i < str.length; ++i)
+            ar_1[i] = str.charCodeAt(i);
+        return ar_1;
+    }
+    if (te)
+        return te.encode(str);
+    var l = str.length;
+    var ar = new u8(str.length + (str.length >> 1));
+    var ai = 0;
+    var w = function (v) { ar[ai++] = v; };
+    for (var i = 0; i < l; ++i) {
+        if (ai + 5 > ar.length) {
+            var n = new u8(ai + 8 + ((l - i) << 1));
+            n.set(ar);
+            ar = n;
+        }
+        var c = str.charCodeAt(i);
+        if (c < 128 || latin1)
+            w(c);
+        else if (c < 2048)
+            w(192 | (c >> 6)), w(128 | (c & 63));
+        else if (c > 55295 && c < 57344)
+            c = 65536 + (c & 1023 << 10) | (str.charCodeAt(++i) & 1023),
+                w(240 | (c >> 18)), w(128 | ((c >> 12) & 63)), w(128 | ((c >> 6) & 63)), w(128 | (c & 63));
+        else
+            w(224 | (c >> 12)), w(128 | ((c >> 6) & 63)), w(128 | (c & 63));
+    }
+    return slc(ar, 0, ai);
+}
+exports.strToU8 = strToU8;
+/**
+ * Converts a Uint8Array to a string
+ * @param dat The data to decode to string
+ * @param latin1 Whether or not to interpret the data as Latin-1. This should
+ *               not need to be true unless encoding to binary string.
+ * @returns The original UTF-8/Latin-1 string
+ */
+function strFromU8(dat, latin1) {
+    if (latin1) {
+        var r = '';
+        for (var i = 0; i < dat.length; i += 16384)
+            r += String.fromCharCode.apply(null, dat.subarray(i, i + 16384));
+        return r;
+    }
+    else if (td) {
+        return td.decode(dat);
+    }
+    else {
+        var _a = dutf8(dat), s = _a.s, r = _a.r;
+        if (r.length)
+            err(8);
+        return s;
+    }
+}
+exports.strFromU8 = strFromU8;
+;
+// deflate bit flag
+var dbf = function (l) { return l == 1 ? 3 : l < 6 ? 2 : l == 9 ? 1 : 0; };
+// skip local zip header
+var slzh = function (d, b) { return b + 30 + b2(d, b + 26) + b2(d, b + 28); };
+// read zip header
+var zh = function (d, b, z) {
+    var fnl = b2(d, b + 28), fn = strFromU8(d.subarray(b + 46, b + 46 + fnl), !(b2(d, b + 8) & 2048)), es = b + 46 + fnl, bs = b4(d, b + 20);
+    var _a = z && bs == 4294967295 ? z64e(d, es) : [bs, b4(d, b + 24), b4(d, b + 42)], sc = _a[0], su = _a[1], off = _a[2];
+    return [b2(d, b + 10), sc, su, fn, es + b2(d, b + 30) + b2(d, b + 32), off];
+};
+// read zip64 extra field
+var z64e = function (d, b) {
+    for (; b2(d, b) != 1; b += 4 + b2(d, b + 2))
+        ;
+    return [b8(d, b + 12), b8(d, b + 4), b8(d, b + 20)];
+};
+// extra field length
+var exfl = function (ex) {
+    var le = 0;
+    if (ex) {
+        for (var k in ex) {
+            var l = ex[k].length;
+            if (l > 65535)
+                err(9);
+            le += l + 4;
+        }
+    }
+    return le;
+};
+// write zip header
+var wzh = function (d, b, f, fn, u, c, ce, co) {
+    var fl = fn.length, ex = f.extra, col = co && co.length;
+    var exl = exfl(ex);
+    wbytes(d, b, ce != null ? 0x2014B50 : 0x4034B50), b += 4;
+    if (ce != null)
+        d[b++] = 20, d[b++] = f.os;
+    d[b] = 20, b += 2; // spec compliance? what's that?
+    d[b++] = (f.flag << 1) | (c < 0 && 8), d[b++] = u && 8;
+    d[b++] = f.compression & 255, d[b++] = f.compression >> 8;
+    var dt = new Date(f.mtime == null ? Date.now() : f.mtime), y = dt.getFullYear() - 1980;
+    if (y < 0 || y > 119)
+        err(10);
+    wbytes(d, b, (y << 25) | ((dt.getMonth() + 1) << 21) | (dt.getDate() << 16) | (dt.getHours() << 11) | (dt.getMinutes() << 5) | (dt.getSeconds() >> 1)), b += 4;
+    if (c != -1) {
+        wbytes(d, b, f.crc);
+        wbytes(d, b + 4, c < 0 ? -c - 2 : c);
+        wbytes(d, b + 8, f.size);
+    }
+    wbytes(d, b + 12, fl);
+    wbytes(d, b + 14, exl), b += 16;
+    if (ce != null) {
+        wbytes(d, b, col);
+        wbytes(d, b + 6, f.attrs);
+        wbytes(d, b + 10, ce), b += 14;
+    }
+    d.set(fn, b);
+    b += fl;
+    if (exl) {
+        for (var k in ex) {
+            var exf = ex[k], l = exf.length;
+            wbytes(d, b, +k);
+            wbytes(d, b + 2, l);
+            d.set(exf, b + 4), b += 4 + l;
+        }
+    }
+    if (col)
+        d.set(co, b), b += col;
+    return b;
+};
+// write zip footer (end of central directory)
+var wzf = function (o, b, c, d, e) {
+    wbytes(o, b, 0x6054B50); // skip disk
+    wbytes(o, b + 8, c);
+    wbytes(o, b + 10, c);
+    wbytes(o, b + 12, d);
+    wbytes(o, b + 16, e);
+};
+/**
+ * A pass-through stream to keep data uncompressed in a ZIP archive.
+ */
+var ZipPassThrough = /*#__PURE__*/ (function () {
+    /**
+     * Creates a pass-through stream that can be added to ZIP archives
+     * @param filename The filename to associate with this data stream
+     */
+    function ZipPassThrough(filename) {
+        this.filename = filename;
+        this.c = crc();
+        this.size = 0;
+        this.compression = 0;
+    }
+    /**
+     * Processes a chunk and pushes to the output stream. You can override this
+     * method in a subclass for custom behavior, but by default this passes
+     * the data through. You must call this.ondata(err, chunk, final) at some
+     * point in this method.
+     * @param chunk The chunk to process
+     * @param final Whether this is the last chunk
+     */
+    ZipPassThrough.prototype.process = function (chunk, final) {
+        this.ondata(null, chunk, final);
+    };
+    /**
+     * Pushes a chunk to be added. If you are subclassing this with a custom
+     * compression algorithm, note that you must push data from the source
+     * file only, pre-compression.
+     * @param chunk The chunk to push
+     * @param final Whether this is the last chunk
+     */
+    ZipPassThrough.prototype.push = function (chunk, final) {
+        if (!this.ondata)
+            err(5);
+        this.c.p(chunk);
+        this.size += chunk.length;
+        if (final)
+            this.crc = this.c.d();
+        this.process(chunk, final || false);
+    };
+    return ZipPassThrough;
+}());
+exports.ZipPassThrough = ZipPassThrough;
+// I don't extend because TypeScript extension adds 1kB of runtime bloat
+/**
+ * Streaming DEFLATE compression for ZIP archives. Prefer using AsyncZipDeflate
+ * for better performance
+ */
+var ZipDeflate = /*#__PURE__*/ (function () {
+    /**
+     * Creates a DEFLATE stream that can be added to ZIP archives
+     * @param filename The filename to associate with this data stream
+     * @param opts The compression options
+     */
+    function ZipDeflate(filename, opts) {
+        var _this_1 = this;
+        if (!opts)
+            opts = {};
+        ZipPassThrough.call(this, filename);
+        this.d = new Deflate(opts, function (dat, final) {
+            _this_1.ondata(null, dat, final);
+        });
+        this.compression = 8;
+        this.flag = dbf(opts.level);
+    }
+    ZipDeflate.prototype.process = function (chunk, final) {
+        try {
+            this.d.push(chunk, final);
+        }
+        catch (e) {
+            this.ondata(e, null, final);
+        }
+    };
+    /**
+     * Pushes a chunk to be deflated
+     * @param chunk The chunk to push
+     * @param final Whether this is the last chunk
+     */
+    ZipDeflate.prototype.push = function (chunk, final) {
+        ZipPassThrough.prototype.push.call(this, chunk, final);
+    };
+    return ZipDeflate;
+}());
+exports.ZipDeflate = ZipDeflate;
+/**
+ * Asynchronous streaming DEFLATE compression for ZIP archives
+ */
+var AsyncZipDeflate = /*#__PURE__*/ (function () {
+    /**
+     * Creates an asynchronous DEFLATE stream that can be added to ZIP archives
+     * @param filename The filename to associate with this data stream
+     * @param opts The compression options
+     */
+    function AsyncZipDeflate(filename, opts) {
+        var _this_1 = this;
+        if (!opts)
+            opts = {};
+        ZipPassThrough.call(this, filename);
+        this.d = new AsyncDeflate(opts, function (err, dat, final) {
+            _this_1.ondata(err, dat, final);
+        });
+        this.compression = 8;
+        this.flag = dbf(opts.level);
+        this.terminate = this.d.terminate;
+    }
+    AsyncZipDeflate.prototype.process = function (chunk, final) {
+        this.d.push(chunk, final);
+    };
+    /**
+     * Pushes a chunk to be deflated
+     * @param chunk The chunk to push
+     * @param final Whether this is the last chunk
+     */
+    AsyncZipDeflate.prototype.push = function (chunk, final) {
+        ZipPassThrough.prototype.push.call(this, chunk, final);
+    };
+    return AsyncZipDeflate;
+}());
+exports.AsyncZipDeflate = AsyncZipDeflate;
+// TODO: Better tree shaking
+/**
+ * A zippable archive to which files can incrementally be added
+ */
+var Zip = /*#__PURE__*/ (function () {
+    /**
+     * Creates an empty ZIP archive to which files can be added
+     * @param cb The callback to call whenever data for the generated ZIP archive
+     *           is available
+     */
+    function Zip(cb) {
+        this.ondata = cb;
+        this.u = [];
+        this.d = 1;
+    }
+    /**
+     * Adds a file to the ZIP archive
+     * @param file The file stream to add
+     */
+    Zip.prototype.add = function (file) {
+        var _this_1 = this;
+        if (!this.ondata)
+            err(5);
+        // finishing or finished
+        if (this.d & 2)
+            this.ondata(err(4 + (this.d & 1) * 8, 0, 1), null, false);
+        else {
+            var f = strToU8(file.filename), fl_1 = f.length;
+            var com = file.comment, o = com && strToU8(com);
+            var u = fl_1 != file.filename.length || (o && (com.length != o.length));
+            var hl_1 = fl_1 + exfl(file.extra) + 30;
+            if (fl_1 > 65535)
+                this.ondata(err(11, 0, 1), null, false);
+            var header = new u8(hl_1);
+            wzh(header, 0, file, f, u, -1);
+            var chks_1 = [header];
+            var pAll_1 = function () {
+                for (var _i = 0, chks_2 = chks_1; _i < chks_2.length; _i++) {
+                    var chk = chks_2[_i];
+                    _this_1.ondata(null, chk, false);
+                }
+                chks_1 = [];
+            };
+            var tr_1 = this.d;
+            this.d = 0;
+            var ind_1 = this.u.length;
+            var uf_1 = mrg(file, {
+                f: f,
+                u: u,
+                o: o,
+                t: function () {
+                    if (file.terminate)
+                        file.terminate();
+                },
+                r: function () {
+                    pAll_1();
+                    if (tr_1) {
+                        var nxt = _this_1.u[ind_1 + 1];
+                        if (nxt)
+                            nxt.r();
+                        else
+                            _this_1.d = 1;
+                    }
+                    tr_1 = 1;
+                }
+            });
+            var cl_1 = 0;
+            file.ondata = function (err, dat, final) {
+                if (err) {
+                    _this_1.ondata(err, dat, final);
+                    _this_1.terminate();
+                }
+                else {
+                    cl_1 += dat.length;
+                    chks_1.push(dat);
+                    if (final) {
+                        var dd = new u8(16);
+                        wbytes(dd, 0, 0x8074B50);
+                        wbytes(dd, 4, file.crc);
+                        wbytes(dd, 8, cl_1);
+                        wbytes(dd, 12, file.size);
+                        chks_1.push(dd);
+                        uf_1.c = cl_1, uf_1.b = hl_1 + cl_1 + 16, uf_1.crc = file.crc, uf_1.size = file.size;
+                        if (tr_1)
+                            uf_1.r();
+                        tr_1 = 1;
+                    }
+                    else if (tr_1)
+                        pAll_1();
+                }
+            };
+            this.u.push(uf_1);
+        }
+    };
+    /**
+     * Ends the process of adding files and prepares to emit the final chunks.
+     * This *must* be called after adding all desired files for the resulting
+     * ZIP file to work properly.
+     */
+    Zip.prototype.end = function () {
+        var _this_1 = this;
+        if (this.d & 2) {
+            this.ondata(err(4 + (this.d & 1) * 8, 0, 1), null, true);
+            return;
+        }
+        if (this.d)
+            this.e();
+        else
+            this.u.push({
+                r: function () {
+                    if (!(_this_1.d & 1))
+                        return;
+                    _this_1.u.splice(-1, 1);
+                    _this_1.e();
+                },
+                t: function () { }
+            });
+        this.d = 3;
+    };
+    Zip.prototype.e = function () {
+        var bt = 0, l = 0, tl = 0;
+        for (var _i = 0, _a = this.u; _i < _a.length; _i++) {
+            var f = _a[_i];
+            tl += 46 + f.f.length + exfl(f.extra) + (f.o ? f.o.length : 0);
+        }
+        var out = new u8(tl + 22);
+        for (var _b = 0, _c = this.u; _b < _c.length; _b++) {
+            var f = _c[_b];
+            wzh(out, bt, f, f.f, f.u, -f.c - 2, l, f.o);
+            bt += 46 + f.f.length + exfl(f.extra) + (f.o ? f.o.length : 0), l += f.b;
+        }
+        wzf(out, bt, this.u.length, tl, l);
+        this.ondata(null, out, true);
+        this.d = 2;
+    };
+    /**
+     * A method to terminate any internal workers used by the stream. Subsequent
+     * calls to add() will fail.
+     */
+    Zip.prototype.terminate = function () {
+        for (var _i = 0, _a = this.u; _i < _a.length; _i++) {
+            var f = _a[_i];
+            f.t();
+        }
+        this.d = 2;
+    };
+    return Zip;
+}());
+exports.Zip = Zip;
+function zip(data, opts, cb) {
+    if (!cb)
+        cb = opts, opts = {};
+    if (typeof cb != 'function')
+        err(7);
+    var r = {};
+    fltn(data, '', r, opts);
+    var k = Object.keys(r);
+    var lft = k.length, o = 0, tot = 0;
+    var slft = lft, files = new Array(lft);
+    var term = [];
+    var tAll = function () {
+        for (var i = 0; i < term.length; ++i)
+            term[i]();
+    };
+    var cbd = function (a, b) {
+        mt(function () { cb(a, b); });
+    };
+    mt(function () { cbd = cb; });
+    var cbf = function () {
+        var out = new u8(tot + 22), oe = o, cdl = tot - o;
+        tot = 0;
+        for (var i = 0; i < slft; ++i) {
+            var f = files[i];
+            try {
+                var l = f.c.length;
+                wzh(out, tot, f, f.f, f.u, l);
+                var badd = 30 + f.f.length + exfl(f.extra);
+                var loc = tot + badd;
+                out.set(f.c, loc);
+                wzh(out, o, f, f.f, f.u, l, tot, f.m), o += 16 + badd + (f.m ? f.m.length : 0), tot = loc + l;
+            }
+            catch (e) {
+                return cbd(e, null);
+            }
+        }
+        wzf(out, o, files.length, cdl, oe);
+        cbd(null, out);
+    };
+    if (!lft)
+        cbf();
+    var _loop_1 = function (i) {
+        var fn = k[i];
+        var _a = r[fn], file = _a[0], p = _a[1];
+        var c = crc(), size = file.length;
+        c.p(file);
+        var f = strToU8(fn), s = f.length;
+        var com = p.comment, m = com && strToU8(com), ms = m && m.length;
+        var exl = exfl(p.extra);
+        var compression = p.level == 0 ? 0 : 8;
+        var cbl = function (e, d) {
+            if (e) {
+                tAll();
+                cbd(e, null);
+            }
+            else {
+                var l = d.length;
+                files[i] = mrg(p, {
+                    size: size,
+                    crc: c.d(),
+                    c: d,
+                    f: f,
+                    m: m,
+                    u: s != fn.length || (m && (com.length != ms)),
+                    compression: compression
+                });
+                o += 30 + s + exl + l;
+                tot += 76 + 2 * (s + exl) + (ms || 0) + l;
+                if (!--lft)
+                    cbf();
+            }
+        };
+        if (s > 65535)
+            cbl(err(11, 0, 1), null);
+        if (!compression)
+            cbl(null, file);
+        else if (size < 160000) {
+            try {
+                cbl(null, deflateSync(file, p));
+            }
+            catch (e) {
+                cbl(e, null);
+            }
+        }
+        else
+            term.push(deflate(file, p, cbl));
+    };
+    // Cannot use lft because it can decrease
+    for (var i = 0; i < slft; ++i) {
+        _loop_1(i);
+    }
+    return tAll;
+}
+exports.zip = zip;
+/**
+ * Synchronously creates a ZIP file. Prefer using `zip` for better performance
+ * with more than one file.
+ * @param data The directory structure for the ZIP archive
+ * @param opts The main options, merged with per-file options
+ * @returns The generated ZIP archive
+ */
+function zipSync(data, opts) {
+    if (!opts)
+        opts = {};
+    var r = {};
+    var files = [];
+    fltn(data, '', r, opts);
+    var o = 0;
+    var tot = 0;
+    for (var fn in r) {
+        var _a = r[fn], file = _a[0], p = _a[1];
+        var compression = p.level == 0 ? 0 : 8;
+        var f = strToU8(fn), s = f.length;
+        var com = p.comment, m = com && strToU8(com), ms = m && m.length;
+        var exl = exfl(p.extra);
+        if (s > 65535)
+            err(11);
+        var d = compression ? deflateSync(file, p) : file, l = d.length;
+        var c = crc();
+        c.p(file);
+        files.push(mrg(p, {
+            size: file.length,
+            crc: c.d(),
+            c: d,
+            f: f,
+            m: m,
+            u: s != fn.length || (m && (com.length != ms)),
+            o: o,
+            compression: compression
+        }));
+        o += 30 + s + exl + l;
+        tot += 76 + 2 * (s + exl) + (ms || 0) + l;
+    }
+    var out = new u8(tot + 22), oe = o, cdl = tot - o;
+    for (var i = 0; i < files.length; ++i) {
+        var f = files[i];
+        wzh(out, f.o, f, f.f, f.u, f.c.length);
+        var badd = 30 + f.f.length + exfl(f.extra);
+        out.set(f.c, f.o + badd);
+        wzh(out, o, f, f.f, f.u, f.c.length, f.o, f.m), o += 16 + badd + (f.m ? f.m.length : 0);
+    }
+    wzf(out, o, files.length, cdl, oe);
+    return out;
+}
+exports.zipSync = zipSync;
+/**
+ * Streaming pass-through decompression for ZIP archives
+ */
+var UnzipPassThrough = /*#__PURE__*/ (function () {
+    function UnzipPassThrough() {
+    }
+    UnzipPassThrough.prototype.push = function (data, final) {
+        this.ondata(null, data, final);
+    };
+    UnzipPassThrough.compression = 0;
+    return UnzipPassThrough;
+}());
+exports.UnzipPassThrough = UnzipPassThrough;
+/**
+ * Streaming DEFLATE decompression for ZIP archives. Prefer AsyncZipInflate for
+ * better performance.
+ */
+var UnzipInflate = /*#__PURE__*/ (function () {
+    /**
+     * Creates a DEFLATE decompression that can be used in ZIP archives
+     */
+    function UnzipInflate() {
+        var _this_1 = this;
+        this.i = new Inflate(function (dat, final) {
+            _this_1.ondata(null, dat, final);
+        });
+    }
+    UnzipInflate.prototype.push = function (data, final) {
+        try {
+            this.i.push(data, final);
+        }
+        catch (e) {
+            this.ondata(e, null, final);
+        }
+    };
+    UnzipInflate.compression = 8;
+    return UnzipInflate;
+}());
+exports.UnzipInflate = UnzipInflate;
+/**
+ * Asynchronous streaming DEFLATE decompression for ZIP archives
+ */
+var AsyncUnzipInflate = /*#__PURE__*/ (function () {
+    /**
+     * Creates a DEFLATE decompression that can be used in ZIP archives
+     */
+    function AsyncUnzipInflate(_, sz) {
+        var _this_1 = this;
+        if (sz < 320000) {
+            this.i = new Inflate(function (dat, final) {
+                _this_1.ondata(null, dat, final);
+            });
+        }
+        else {
+            this.i = new AsyncInflate(function (err, dat, final) {
+                _this_1.ondata(err, dat, final);
+            });
+            this.terminate = this.i.terminate;
+        }
+    }
+    AsyncUnzipInflate.prototype.push = function (data, final) {
+        if (this.i.terminate)
+            data = slc(data, 0);
+        this.i.push(data, final);
+    };
+    AsyncUnzipInflate.compression = 8;
+    return AsyncUnzipInflate;
+}());
+exports.AsyncUnzipInflate = AsyncUnzipInflate;
+/**
+ * A ZIP archive decompression stream that emits files as they are discovered
+ */
+var Unzip = /*#__PURE__*/ (function () {
+    /**
+     * Creates a ZIP decompression stream
+     * @param cb The callback to call whenever a file in the ZIP archive is found
+     */
+    function Unzip(cb) {
+        this.onfile = cb;
+        this.k = [];
+        this.o = {
+            0: UnzipPassThrough
+        };
+        this.p = et;
+    }
+    /**
+     * Pushes a chunk to be unzipped
+     * @param chunk The chunk to push
+     * @param final Whether this is the last chunk
+     */
+    Unzip.prototype.push = function (chunk, final) {
+        var _this_1 = this;
+        if (!this.onfile)
+            err(5);
+        if (!this.p)
+            err(4);
+        if (this.c > 0) {
+            var len = Math.min(this.c, chunk.length);
+            var toAdd = chunk.subarray(0, len);
+            this.c -= len;
+            if (this.d)
+                this.d.push(toAdd, !this.c);
+            else
+                this.k[0].push(toAdd);
+            chunk = chunk.subarray(len);
+            if (chunk.length)
+                return this.push(chunk, final);
+        }
+        else {
+            var f = 0, i = 0, is = void 0, buf = void 0;
+            if (!this.p.length)
+                buf = chunk;
+            else if (!chunk.length)
+                buf = this.p;
+            else {
+                buf = new u8(this.p.length + chunk.length);
+                buf.set(this.p), buf.set(chunk, this.p.length);
+            }
+            var l = buf.length, oc = this.c, add = oc && this.d;
+            var _loop_2 = function () {
+                var _a;
+                var sig = b4(buf, i);
+                if (sig == 0x4034B50) {
+                    f = 1, is = i;
+                    this_1.d = null;
+                    this_1.c = 0;
+                    var bf = b2(buf, i + 6), cmp_1 = b2(buf, i + 8), u = bf & 2048, dd = bf & 8, fnl = b2(buf, i + 26), es = b2(buf, i + 28);
+                    if (l > i + 30 + fnl + es) {
+                        var chks_3 = [];
+                        this_1.k.unshift(chks_3);
+                        f = 2;
+                        var sc_1 = b4(buf, i + 18), su_1 = b4(buf, i + 22);
+                        var fn_1 = strFromU8(buf.subarray(i + 30, i += 30 + fnl), !u);
+                        if (sc_1 == 4294967295) {
+                            _a = dd ? [-2] : z64e(buf, i), sc_1 = _a[0], su_1 = _a[1];
+                        }
+                        else if (dd)
+                            sc_1 = -1;
+                        i += es;
+                        this_1.c = sc_1;
+                        var d_1;
+                        var file_1 = {
+                            name: fn_1,
+                            compression: cmp_1,
+                            start: function () {
+                                if (!file_1.ondata)
+                                    err(5);
+                                if (!sc_1)
+                                    file_1.ondata(null, et, true);
+                                else {
+                                    var ctr = _this_1.o[cmp_1];
+                                    if (!ctr)
+                                        file_1.ondata(err(14, 'unknown compression type ' + cmp_1, 1), null, false);
+                                    d_1 = sc_1 < 0 ? new ctr(fn_1) : new ctr(fn_1, sc_1, su_1);
+                                    d_1.ondata = function (err, dat, final) { file_1.ondata(err, dat, final); };
+                                    for (var _i = 0, chks_4 = chks_3; _i < chks_4.length; _i++) {
+                                        var dat = chks_4[_i];
+                                        d_1.push(dat, false);
+                                    }
+                                    if (_this_1.k[0] == chks_3 && _this_1.c)
+                                        _this_1.d = d_1;
+                                    else
+                                        d_1.push(et, true);
+                                }
+                            },
+                            terminate: function () {
+                                if (d_1 && d_1.terminate)
+                                    d_1.terminate();
+                            }
+                        };
+                        if (sc_1 >= 0)
+                            file_1.size = sc_1, file_1.originalSize = su_1;
+                        this_1.onfile(file_1);
+                    }
+                    return "break";
+                }
+                else if (oc) {
+                    if (sig == 0x8074B50) {
+                        is = i += 12 + (oc == -2 && 8), f = 3, this_1.c = 0;
+                        return "break";
+                    }
+                    else if (sig == 0x2014B50) {
+                        is = i -= 4, f = 3, this_1.c = 0;
+                        return "break";
+                    }
+                }
+            };
+            var this_1 = this;
+            for (; i < l - 4; ++i) {
+                var state_1 = _loop_2();
+                if (state_1 === "break")
+                    break;
+            }
+            this.p = et;
+            if (oc < 0) {
+                var dat = f ? buf.subarray(0, is - 12 - (oc == -2 && 8) - (b4(buf, is - 16) == 0x8074B50 && 4)) : buf.subarray(0, i);
+                if (add)
+                    add.push(dat, !!f);
+                else
+                    this.k[+(f == 2)].push(dat);
+            }
+            if (f & 2)
+                return this.push(buf.subarray(i), final);
+            this.p = buf.subarray(i);
+        }
+        if (final) {
+            if (this.c)
+                err(13);
+            this.p = null;
+        }
+    };
+    /**
+     * Registers a decoder with the stream, allowing for files compressed with
+     * the compression type provided to be expanded correctly
+     * @param decoder The decoder constructor
+     */
+    Unzip.prototype.register = function (decoder) {
+        this.o[decoder.compression] = decoder;
+    };
+    return Unzip;
+}());
+exports.Unzip = Unzip;
+var mt = typeof queueMicrotask == 'function' ? queueMicrotask : typeof setTimeout == 'function' ? setTimeout : function (fn) { fn(); };
+function unzip(data, opts, cb) {
+    if (!cb)
+        cb = opts, opts = {};
+    if (typeof cb != 'function')
+        err(7);
+    var term = [];
+    var tAll = function () {
+        for (var i = 0; i < term.length; ++i)
+            term[i]();
+    };
+    var files = {};
+    var cbd = function (a, b) {
+        mt(function () { cb(a, b); });
+    };
+    mt(function () { cbd = cb; });
+    var e = data.length - 22;
+    for (; b4(data, e) != 0x6054B50; --e) {
+        if (!e || data.length - e > 65558) {
+            cbd(err(13, 0, 1), null);
+            return tAll;
+        }
+    }
+    ;
+    var lft = b2(data, e + 8);
+    if (lft) {
+        var c = lft;
+        var o = b4(data, e + 16);
+        var z = o == 4294967295 || c == 65535;
+        if (z) {
+            var ze = b4(data, e - 12);
+            z = b4(data, ze) == 0x6064B50;
+            if (z) {
+                c = lft = b4(data, ze + 32);
+                o = b4(data, ze + 48);
+            }
+        }
+        var fltr = opts && opts.filter;
+        var _loop_3 = function (i) {
+            var _a = zh(data, o, z), c_1 = _a[0], sc = _a[1], su = _a[2], fn = _a[3], no = _a[4], off = _a[5], b = slzh(data, off);
+            o = no;
+            var cbl = function (e, d) {
+                if (e) {
+                    tAll();
+                    cbd(e, null);
+                }
+                else {
+                    if (d)
+                        files[fn] = d;
+                    if (!--lft)
+                        cbd(null, files);
+                }
+            };
+            if (!fltr || fltr({
+                name: fn,
+                size: sc,
+                originalSize: su,
+                compression: c_1
+            })) {
+                if (!c_1)
+                    cbl(null, slc(data, b, b + sc));
+                else if (c_1 == 8) {
+                    var infl = data.subarray(b, b + sc);
+                    if (sc < 320000) {
+                        try {
+                            cbl(null, inflateSync(infl, { out: new u8(su) }));
+                        }
+                        catch (e) {
+                            cbl(e, null);
+                        }
+                    }
+                    else
+                        term.push(inflate(infl, { size: su }, cbl));
+                }
+                else
+                    cbl(err(14, 'unknown compression type ' + c_1, 1), null);
+            }
+            else
+                cbl(null, null);
+        };
+        for (var i = 0; i < c; ++i) {
+            _loop_3(i);
+        }
+    }
+    else
+        cbd(null, {});
+    return tAll;
+}
+exports.unzip = unzip;
+/**
+ * Synchronously decompresses a ZIP archive. Prefer using `unzip` for better
+ * performance with more than one file.
+ * @param data The raw compressed ZIP file
+ * @param opts The ZIP extraction options
+ * @returns The decompressed files
+ */
+function unzipSync(data, opts) {
+    var files = {};
+    var e = data.length - 22;
+    for (; b4(data, e) != 0x6054B50; --e) {
+        if (!e || data.length - e > 65558)
+            err(13);
+    }
+    ;
+    var c = b2(data, e + 8);
+    if (!c)
+        return {};
+    var o = b4(data, e + 16);
+    var z = o == 4294967295 || c == 65535;
+    if (z) {
+        var ze = b4(data, e - 12);
+        z = b4(data, ze) == 0x6064B50;
+        if (z) {
+            c = b4(data, ze + 32);
+            o = b4(data, ze + 48);
+        }
+    }
+    var fltr = opts && opts.filter;
+    for (var i = 0; i < c; ++i) {
+        var _a = zh(data, o, z), c_2 = _a[0], sc = _a[1], su = _a[2], fn = _a[3], no = _a[4], off = _a[5], b = slzh(data, off);
+        o = no;
+        if (!fltr || fltr({
+            name: fn,
+            size: sc,
+            originalSize: su,
+            compression: c_2
+        })) {
+            if (!c_2)
+                files[fn] = slc(data, b, b + sc);
+            else if (c_2 == 8)
+                files[fn] = inflateSync(data.subarray(b, b + sc), { out: new u8(su) });
+            else
+                err(14, 'unknown compression type ' + c_2);
+        }
+    }
+    return files;
+}
+exports.unzipSync = unzipSync;
+
+},{"./node-worker.cjs":159}],159:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var ch2 = {};
+exports.default = (function (c, id, msg, transfer, cb) {
+    var w = new Worker(ch2[id] || (ch2[id] = URL.createObjectURL(new Blob([
+        c + ';addEventListener("error",function(e){e=e.error;postMessage({$e$:[e.message,e.code,e.stack]})})'
+    ], { type: 'text/javascript' }))));
+    w.onmessage = function (e) {
+        var d = e.data, ed = d.$e$;
+        if (ed) {
+            var err = new Error(ed[0]);
+            err['code'] = ed[1];
+            err.stack = ed[2];
+            cb(err, null);
+        }
+        else
+            cb(null, d);
+    };
+    w.postMessage(msg, transfer);
+    return w;
+});
+
+},{}],160:[function(require,module,exports){
 /* jshint node: true */
 'use strict';
 
@@ -36305,7 +33908,7 @@ var freeice = function(opts) {
 };
 
 module.exports = freeice;
-},{"./stun.json":172,"./turn.json":173,"normalice":216}],172:[function(require,module,exports){
+},{"./stun.json":161,"./turn.json":162,"normalice":206}],161:[function(require,module,exports){
 module.exports=[
   "stun.l.google.com:19302",
   "stun1.l.google.com:19302",
@@ -36322,10 +33925,10 @@ module.exports=[
   "stun.voxgratia.org"
 ]
 
-},{}],173:[function(require,module,exports){
+},{}],162:[function(require,module,exports){
 module.exports=[]
 
-},{}],174:[function(require,module,exports){
+},{}],163:[function(require,module,exports){
 var WildEmitter = require('wildemitter');
 
 function getMaxVolume (analyser, fftBins) {
@@ -36470,7 +34073,7 @@ module.exports = function(stream, options) {
   return harker;
 }
 
-},{"wildemitter":279}],175:[function(require,module,exports){
+},{"wildemitter":274}],164:[function(require,module,exports){
 'use strict'
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('readable-stream').Transform
@@ -36567,39 +34170,39 @@ HashBase.prototype._digest = function () {
 
 module.exports = HashBase
 
-},{"inherits":206,"readable-stream":190,"safe-buffer":191}],176:[function(require,module,exports){
+},{"inherits":195,"readable-stream":179,"safe-buffer":180}],165:[function(require,module,exports){
+arguments[4][62][0].apply(exports,arguments)
+},{"dup":62}],166:[function(require,module,exports){
+arguments[4][63][0].apply(exports,arguments)
+},{"./_stream_readable":168,"./_stream_writable":170,"_process":223,"dup":63,"inherits":195}],167:[function(require,module,exports){
+arguments[4][64][0].apply(exports,arguments)
+},{"./_stream_transform":169,"dup":64,"inherits":195}],168:[function(require,module,exports){
+arguments[4][65][0].apply(exports,arguments)
+},{"../errors":165,"./_stream_duplex":166,"./internal/streams/async_iterator":171,"./internal/streams/buffer_list":172,"./internal/streams/destroy":173,"./internal/streams/from":175,"./internal/streams/state":177,"./internal/streams/stream":178,"_process":223,"buffer":79,"dup":65,"events":156,"inherits":195,"string_decoder/":267,"util":34}],169:[function(require,module,exports){
+arguments[4][66][0].apply(exports,arguments)
+},{"../errors":165,"./_stream_duplex":166,"dup":66,"inherits":195}],170:[function(require,module,exports){
+arguments[4][67][0].apply(exports,arguments)
+},{"../errors":165,"./_stream_duplex":166,"./internal/streams/destroy":173,"./internal/streams/state":177,"./internal/streams/stream":178,"_process":223,"buffer":79,"dup":67,"inherits":195,"util-deprecate":270}],171:[function(require,module,exports){
+arguments[4][68][0].apply(exports,arguments)
+},{"./end-of-stream":174,"_process":223,"dup":68}],172:[function(require,module,exports){
+arguments[4][69][0].apply(exports,arguments)
+},{"buffer":79,"dup":69,"util":34}],173:[function(require,module,exports){
+arguments[4][70][0].apply(exports,arguments)
+},{"_process":223,"dup":70}],174:[function(require,module,exports){
+arguments[4][71][0].apply(exports,arguments)
+},{"../../../errors":165,"dup":71}],175:[function(require,module,exports){
+arguments[4][72][0].apply(exports,arguments)
+},{"dup":72}],176:[function(require,module,exports){
+arguments[4][73][0].apply(exports,arguments)
+},{"../../../errors":165,"./end-of-stream":174,"dup":73}],177:[function(require,module,exports){
+arguments[4][74][0].apply(exports,arguments)
+},{"../../../errors":165,"dup":74}],178:[function(require,module,exports){
 arguments[4][75][0].apply(exports,arguments)
-},{"dup":75}],177:[function(require,module,exports){
+},{"dup":75,"events":156}],179:[function(require,module,exports){
 arguments[4][76][0].apply(exports,arguments)
-},{"./_stream_readable":179,"./_stream_writable":181,"_process":228,"dup":76,"inherits":206}],178:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":166,"./lib/_stream_passthrough.js":167,"./lib/_stream_readable.js":168,"./lib/_stream_transform.js":169,"./lib/_stream_writable.js":170,"./lib/internal/streams/end-of-stream.js":174,"./lib/internal/streams/pipeline.js":176,"dup":76}],180:[function(require,module,exports){
 arguments[4][77][0].apply(exports,arguments)
-},{"./_stream_transform":180,"dup":77,"inherits":206}],179:[function(require,module,exports){
-arguments[4][78][0].apply(exports,arguments)
-},{"../errors":176,"./_stream_duplex":177,"./internal/streams/async_iterator":182,"./internal/streams/buffer_list":183,"./internal/streams/destroy":184,"./internal/streams/from":186,"./internal/streams/state":188,"./internal/streams/stream":189,"_process":228,"buffer":92,"dup":78,"events":169,"inherits":206,"string_decoder/":272,"util":47}],180:[function(require,module,exports){
-arguments[4][79][0].apply(exports,arguments)
-},{"../errors":176,"./_stream_duplex":177,"dup":79,"inherits":206}],181:[function(require,module,exports){
-arguments[4][80][0].apply(exports,arguments)
-},{"../errors":176,"./_stream_duplex":177,"./internal/streams/destroy":184,"./internal/streams/state":188,"./internal/streams/stream":189,"_process":228,"buffer":92,"dup":80,"inherits":206,"util-deprecate":275}],182:[function(require,module,exports){
-arguments[4][81][0].apply(exports,arguments)
-},{"./end-of-stream":185,"_process":228,"dup":81}],183:[function(require,module,exports){
-arguments[4][82][0].apply(exports,arguments)
-},{"buffer":92,"dup":82,"util":47}],184:[function(require,module,exports){
-arguments[4][83][0].apply(exports,arguments)
-},{"_process":228,"dup":83}],185:[function(require,module,exports){
-arguments[4][84][0].apply(exports,arguments)
-},{"../../../errors":176,"dup":84}],186:[function(require,module,exports){
-arguments[4][85][0].apply(exports,arguments)
-},{"dup":85}],187:[function(require,module,exports){
-arguments[4][86][0].apply(exports,arguments)
-},{"../../../errors":176,"./end-of-stream":185,"dup":86}],188:[function(require,module,exports){
-arguments[4][87][0].apply(exports,arguments)
-},{"../../../errors":176,"dup":87}],189:[function(require,module,exports){
-arguments[4][88][0].apply(exports,arguments)
-},{"dup":88,"events":169}],190:[function(require,module,exports){
-arguments[4][89][0].apply(exports,arguments)
-},{"./lib/_stream_duplex.js":177,"./lib/_stream_passthrough.js":178,"./lib/_stream_readable.js":179,"./lib/_stream_transform.js":180,"./lib/_stream_writable.js":181,"./lib/internal/streams/end-of-stream.js":185,"./lib/internal/streams/pipeline.js":187,"dup":89}],191:[function(require,module,exports){
-arguments[4][90][0].apply(exports,arguments)
-},{"buffer":92,"dup":90}],192:[function(require,module,exports){
+},{"buffer":79,"dup":77}],181:[function(require,module,exports){
 var hash = exports;
 
 hash.utils = require('./hash/utils');
@@ -36616,7 +34219,7 @@ hash.sha384 = hash.sha.sha384;
 hash.sha512 = hash.sha.sha512;
 hash.ripemd160 = hash.ripemd.ripemd160;
 
-},{"./hash/common":193,"./hash/hmac":194,"./hash/ripemd":195,"./hash/sha":196,"./hash/utils":203}],193:[function(require,module,exports){
+},{"./hash/common":182,"./hash/hmac":183,"./hash/ripemd":184,"./hash/sha":185,"./hash/utils":192}],182:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -36710,7 +34313,7 @@ BlockHash.prototype._pad = function pad() {
   return res;
 };
 
-},{"./utils":203,"minimalistic-assert":214}],194:[function(require,module,exports){
+},{"./utils":192,"minimalistic-assert":204}],183:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -36759,7 +34362,7 @@ Hmac.prototype.digest = function digest(enc) {
   return this.outer.digest(enc);
 };
 
-},{"./utils":203,"minimalistic-assert":214}],195:[function(require,module,exports){
+},{"./utils":192,"minimalistic-assert":204}],184:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -36907,7 +34510,7 @@ var sh = [
   8, 5, 12, 9, 12, 5, 14, 6, 8, 13, 6, 5, 15, 13, 11, 11
 ];
 
-},{"./common":193,"./utils":203}],196:[function(require,module,exports){
+},{"./common":182,"./utils":192}],185:[function(require,module,exports){
 'use strict';
 
 exports.sha1 = require('./sha/1');
@@ -36916,7 +34519,7 @@ exports.sha256 = require('./sha/256');
 exports.sha384 = require('./sha/384');
 exports.sha512 = require('./sha/512');
 
-},{"./sha/1":197,"./sha/224":198,"./sha/256":199,"./sha/384":200,"./sha/512":201}],197:[function(require,module,exports){
+},{"./sha/1":186,"./sha/224":187,"./sha/256":188,"./sha/384":189,"./sha/512":190}],186:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -36992,7 +34595,7 @@ SHA1.prototype._digest = function digest(enc) {
     return utils.split32(this.h, 'big');
 };
 
-},{"../common":193,"../utils":203,"./common":202}],198:[function(require,module,exports){
+},{"../common":182,"../utils":192,"./common":191}],187:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -37024,7 +34627,7 @@ SHA224.prototype._digest = function digest(enc) {
 };
 
 
-},{"../utils":203,"./256":199}],199:[function(require,module,exports){
+},{"../utils":192,"./256":188}],188:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -37131,7 +34734,7 @@ SHA256.prototype._digest = function digest(enc) {
     return utils.split32(this.h, 'big');
 };
 
-},{"../common":193,"../utils":203,"./common":202,"minimalistic-assert":214}],200:[function(require,module,exports){
+},{"../common":182,"../utils":192,"./common":191,"minimalistic-assert":204}],189:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -37168,7 +34771,7 @@ SHA384.prototype._digest = function digest(enc) {
     return utils.split32(this.h.slice(0, 12), 'big');
 };
 
-},{"../utils":203,"./512":201}],201:[function(require,module,exports){
+},{"../utils":192,"./512":190}],190:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -37500,7 +35103,7 @@ function g1_512_lo(xh, xl) {
   return r;
 }
 
-},{"../common":193,"../utils":203,"minimalistic-assert":214}],202:[function(require,module,exports){
+},{"../common":182,"../utils":192,"minimalistic-assert":204}],191:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -37551,7 +35154,7 @@ function g1_256(x) {
 }
 exports.g1_256 = g1_256;
 
-},{"../utils":203}],203:[function(require,module,exports){
+},{"../utils":192}],192:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -37831,7 +35434,7 @@ function shr64_lo(ah, al, num) {
 }
 exports.shr64_lo = shr64_lo;
 
-},{"inherits":206,"minimalistic-assert":214}],204:[function(require,module,exports){
+},{"inherits":195,"minimalistic-assert":204}],193:[function(require,module,exports){
 'use strict';
 
 var hash = require('hash.js');
@@ -37946,7 +35549,7 @@ HmacDRBG.prototype.generate = function generate(len, enc, add, addEnc) {
   return utils.encode(res, enc);
 };
 
-},{"hash.js":192,"minimalistic-assert":214,"minimalistic-crypto-utils":215}],205:[function(require,module,exports){
+},{"hash.js":181,"minimalistic-assert":204,"minimalistic-crypto-utils":205}],194:[function(require,module,exports){
 /*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
@@ -38033,7 +35636,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],206:[function(require,module,exports){
+},{}],195:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -38062,10 +35665,31 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],207:[function(require,module,exports){
+},{}],196:[function(require,module,exports){
+(function (global){(function (){
+// https://github.com/maxogden/websocket-stream/blob/48dc3ddf943e5ada668c31ccd94e9186f02fafbd/ws-fallback.js
+
+var ws = null
+
+if (typeof WebSocket !== 'undefined') {
+  ws = WebSocket
+} else if (typeof MozWebSocket !== 'undefined') {
+  ws = MozWebSocket
+} else if (typeof global !== 'undefined') {
+  ws = global.WebSocket || global.MozWebSocket
+} else if (typeof window !== 'undefined') {
+  ws = window.WebSocket || window.MozWebSocket
+} else if (typeof self !== 'undefined') {
+  ws = self.WebSocket || self.MozWebSocket
+}
+
+module.exports = ws
+
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],197:[function(require,module,exports){
 // Does nothing at all.
 
-},{}],208:[function(require,module,exports){
+},{}],198:[function(require,module,exports){
 /*
  * (C) Copyright 2014-2015 Kurento (http://kurento.org/)
  *
@@ -38987,7 +36611,7 @@ exports.WebRtcPeerSendonly = WebRtcPeerSendonly
 exports.WebRtcPeerSendrecv = WebRtcPeerSendrecv
 exports.hark = harkUtils
 
-},{"events":169,"freeice":171,"hark":174,"inherits":206,"kurento-browser-extensions":207,"merge":211,"sdp-translator":246,"ua-parser-js":274,"uuid/v4":278}],209:[function(require,module,exports){
+},{"events":156,"freeice":160,"hark":163,"inherits":195,"kurento-browser-extensions":197,"merge":201,"sdp-translator":241,"ua-parser-js":269,"uuid/v4":273}],199:[function(require,module,exports){
 /*
  * (C) Copyright 2014 Kurento (http://kurento.org/)
  *
@@ -39019,7 +36643,7 @@ var WebRtcPeer = require('./WebRtcPeer');
 
 exports.WebRtcPeer = WebRtcPeer;
 
-},{"./WebRtcPeer":208}],210:[function(require,module,exports){
+},{"./WebRtcPeer":198}],200:[function(require,module,exports){
 'use strict'
 var inherits = require('inherits')
 var HashBase = require('hash-base')
@@ -39167,7 +36791,7 @@ function fnI (a, b, c, d, m, k, s) {
 
 module.exports = MD5
 
-},{"hash-base":175,"inherits":206,"safe-buffer":239}],211:[function(require,module,exports){
+},{"hash-base":164,"inherits":195,"safe-buffer":234}],201:[function(require,module,exports){
 /*!
  * @name JavaScript/NodeJS Merge v1.2.1
  * @author yeikos
@@ -39345,7 +36969,7 @@ module.exports = MD5
 	}
 
 })(typeof module === 'object' && module && typeof module.exports === 'object' && module.exports);
-},{}],212:[function(require,module,exports){
+},{}],202:[function(require,module,exports){
 var bn = require('bn.js');
 var brorand = require('brorand');
 
@@ -39462,9 +37086,9 @@ MillerRabin.prototype.getDivisor = function getDivisor(n, k) {
   return false;
 };
 
-},{"bn.js":213,"brorand":46}],213:[function(require,module,exports){
-arguments[4][43][0].apply(exports,arguments)
-},{"buffer":47,"dup":43}],214:[function(require,module,exports){
+},{"bn.js":203,"brorand":33}],203:[function(require,module,exports){
+arguments[4][30][0].apply(exports,arguments)
+},{"buffer":34,"dup":30}],204:[function(require,module,exports){
 module.exports = assert;
 
 function assert(val, msg) {
@@ -39477,7 +37101,7 @@ assert.equal = function assertEqual(l, r, msg) {
     throw new Error(msg || ('Assertion failed: ' + l + ' != ' + r));
 };
 
-},{}],215:[function(require,module,exports){
+},{}],205:[function(require,module,exports){
 'use strict';
 
 var utils = exports;
@@ -39537,7 +37161,7 @@ utils.encode = function encode(arr, enc) {
     return arr;
 };
 
-},{}],216:[function(require,module,exports){
+},{}],206:[function(require,module,exports){
 /**
   # normalice
 
@@ -39599,7 +37223,7 @@ module.exports = function(input) {
   return output;
 };
 
-},{}],217:[function(require,module,exports){
+},{}],207:[function(require,module,exports){
 module.exports={"2.16.840.1.101.3.4.1.1": "aes-128-ecb",
 "2.16.840.1.101.3.4.1.2": "aes-128-cbc",
 "2.16.840.1.101.3.4.1.3": "aes-128-ofb",
@@ -39613,7 +37237,7 @@ module.exports={"2.16.840.1.101.3.4.1.1": "aes-128-ecb",
 "2.16.840.1.101.3.4.1.43": "aes-256-ofb",
 "2.16.840.1.101.3.4.1.44": "aes-256-cfb"
 }
-},{}],218:[function(require,module,exports){
+},{}],208:[function(require,module,exports){
 // from https://github.com/indutny/self-signed/blob/gh-pages/lib/asn1.js
 // Fedor, you are amazing.
 'use strict'
@@ -39737,7 +37361,7 @@ exports.signature = asn1.define('signature', function () {
   )
 })
 
-},{"./certificate":219,"asn1.js":29}],219:[function(require,module,exports){
+},{"./certificate":209,"asn1.js":16}],209:[function(require,module,exports){
 // from https://github.com/Rantanen/node-dtls/blob/25a7dc861bda38cfeac93a723500eea4f0ac2e86/Certificate.js
 // thanks to @Rantanen
 
@@ -39828,7 +37452,7 @@ var X509Certificate = asn.define('X509Certificate', function () {
 
 module.exports = X509Certificate
 
-},{"asn1.js":29}],220:[function(require,module,exports){
+},{"asn1.js":16}],210:[function(require,module,exports){
 // adapted from https://github.com/apatil/pemstrip
 var findProc = /Proc-Type: 4,ENCRYPTED[\n\r]+DEK-Info: AES-((?:128)|(?:192)|(?:256))-CBC,([0-9A-H]+)[\n\r]+([0-9A-z\n\r+/=]+)[\n\r]+/m
 var startRegex = /^-----BEGIN ((?:.*? KEY)|CERTIFICATE)-----/m
@@ -39861,7 +37485,7 @@ module.exports = function (okey, password) {
   }
 }
 
-},{"browserify-aes":50,"evp_bytestokey":170,"safe-buffer":239}],221:[function(require,module,exports){
+},{"browserify-aes":37,"evp_bytestokey":157,"safe-buffer":234}],211:[function(require,module,exports){
 var asn1 = require('./asn1')
 var aesid = require('./aesid.json')
 var fixProc = require('./fixProc')
@@ -39970,11 +37594,11 @@ function decrypt (data, password) {
   return Buffer.concat(out)
 }
 
-},{"./aesid.json":217,"./asn1":218,"./fixProc":220,"browserify-aes":50,"pbkdf2":222,"safe-buffer":239}],222:[function(require,module,exports){
+},{"./aesid.json":207,"./asn1":208,"./fixProc":210,"browserify-aes":37,"pbkdf2":212,"safe-buffer":234}],212:[function(require,module,exports){
 exports.pbkdf2 = require('./lib/async')
 exports.pbkdf2Sync = require('./lib/sync')
 
-},{"./lib/async":223,"./lib/sync":226}],223:[function(require,module,exports){
+},{"./lib/async":213,"./lib/sync":216}],213:[function(require,module,exports){
 (function (global){(function (){
 var Buffer = require('safe-buffer').Buffer
 
@@ -40096,7 +37720,7 @@ module.exports = function (password, salt, iterations, keylen, digest, callback)
 }
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./default-encoding":224,"./precondition":225,"./sync":226,"./to-buffer":227,"safe-buffer":239}],224:[function(require,module,exports){
+},{"./default-encoding":214,"./precondition":215,"./sync":216,"./to-buffer":217,"safe-buffer":234}],214:[function(require,module,exports){
 (function (process,global){(function (){
 var defaultEncoding
 /* istanbul ignore next */
@@ -40112,7 +37736,7 @@ if (global.process && global.process.browser) {
 module.exports = defaultEncoding
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":228}],225:[function(require,module,exports){
+},{"_process":223}],215:[function(require,module,exports){
 var MAX_ALLOC = Math.pow(2, 30) - 1 // default in iojs
 
 module.exports = function (iterations, keylen) {
@@ -40133,7 +37757,7 @@ module.exports = function (iterations, keylen) {
   }
 }
 
-},{}],226:[function(require,module,exports){
+},{}],216:[function(require,module,exports){
 var md5 = require('create-hash/md5')
 var RIPEMD160 = require('ripemd160')
 var sha = require('sha.js')
@@ -40240,7 +37864,7 @@ function pbkdf2 (password, salt, iterations, keylen, digest) {
 
 module.exports = pbkdf2
 
-},{"./default-encoding":224,"./precondition":225,"./to-buffer":227,"create-hash/md5":97,"ripemd160":238,"safe-buffer":239,"sha.js":250}],227:[function(require,module,exports){
+},{"./default-encoding":214,"./precondition":215,"./to-buffer":217,"create-hash/md5":84,"ripemd160":233,"safe-buffer":234,"sha.js":245}],217:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 module.exports = function (thing, encoding, name) {
@@ -40255,7 +37879,2023 @@ module.exports = function (thing, encoding, name) {
   }
 }
 
-},{"safe-buffer":239}],228:[function(require,module,exports){
+},{"safe-buffer":234}],218:[function(require,module,exports){
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+var _socket = _interopRequireDefault(require("./socket"));
+var _webrtc = _interopRequireDefault(require("./webrtc"));
+var _utility = _interopRequireDefault(require("../utility/utility.js"));
+var _logger = _interopRequireDefault(require("../utility/logger.js"));
+/*
+ * Async module to handle async messaging
+ * @module Async
+ *
+ * @param {Object} params
+ */
+
+function Async(params) {
+  /*******************************************************
+   *          P R I V A T E   V A R I A B L E S          *
+   *******************************************************/
+
+  // var PodSocketClass,
+  //     WebRTCClass,
+  //     PodUtility,
+  //     LogLevel
+  // if (typeof(require) !== 'undefined' && typeof(exports) !== 'undefined') {
+  //     PodSocketClass = require('./socket.js');
+  //     WebRTCClass = require('./webrtc.js');
+  //     PodUtility = require('../utility/utility.js');
+  //     LogLevel = require('../utility/logger.js');
+  // }
+  // else {
+  //     PodSocketClass = POD.Socket;
+  //     PodUtility = POD.AsyncUtility;
+  //     LogLevel = POD.LogLevel;
+  // }
+
+  var Utility = new _utility["default"]();
+  var currentModuleInstance = this,
+    protocol = params.protocol || 'websocket',
+    appId = params.appId || 'PodChat',
+    deviceId = params.deviceId,
+    retryStepTimerTime = typeof params.retryStepTimerTime != "undefined" ? params.retryStepTimerTime : 0,
+    eventCallbacks = {
+      connect: {},
+      disconnect: {},
+      reconnect: {},
+      message: {},
+      asyncReady: {},
+      stateChange: {},
+      error: {},
+      reconnecting: {},
+      asyncDestroyed: {}
+    },
+    ackCallback = {},
+    socket,
+    webRTCClass,
+    asyncMessageType = {
+      PING: 0,
+      SERVER_REGISTER: 1,
+      DEVICE_REGISTER: 2,
+      MESSAGE: 3,
+      MESSAGE_ACK_NEEDED: 4,
+      MESSAGE_SENDER_ACK_NEEDED: 5,
+      ACK: 6,
+      GET_REGISTERED_PEERS: 7,
+      PEER_REMOVED: -3,
+      REGISTER_QUEUE: -2,
+      NOT_REGISTERED: -1,
+      ERROR_MESSAGE: -99
+    },
+    socketStateType = {
+      CONNECTING: 0,
+      // The connection is not yet open.
+      OPEN: 1,
+      // The connection is open and ready to communicate.
+      CLOSING: 2,
+      // The connection is in the process of closing.
+      CLOSED: 3 // The connection is closed or couldn't be opened.
+    },
+    logLevel = (0, _logger["default"])(params.logLevel),
+    // isNode = Utility.isNode(),
+    isSocketOpen = false,
+    isDeviceRegister = false,
+    isServerRegister = false,
+    socketState = socketStateType.CONNECTING,
+    // asyncState = '',
+    registerServerTimeoutId,
+    registerDeviceTimeoutId,
+    checkIfSocketHasOpennedTimeoutId,
+    // asyncReadyTimeoutId,
+    pushSendDataQueue = [],
+    oldPeerId,
+    peerId = params.peerId,
+    lastMessageId = 0,
+    messageTtl = params.messageTtl || 86400,
+    serverName = params.serverName || 'oauth-wire',
+    serverRegisteration = typeof params.serverRegisteration === 'boolean' ? params.serverRegisteration : true,
+    connectionRetryInterval = params.connectionRetryInterval || 5000,
+    socketReconnectRetryInterval,
+    socketReconnectCheck,
+    // retryStep = 4,
+    reconnectOnClose = typeof params.reconnectOnClose === 'boolean' ? params.reconnectOnClose : true,
+    asyncLogging = params.asyncLogging && typeof params.asyncLogging.onFunction === 'boolean' ? params.asyncLogging.onFunction : false,
+    onReceiveLogging = params.asyncLogging && typeof params.asyncLogging.onMessageReceive === 'boolean' ? params.asyncLogging.onMessageReceive : false,
+    onSendLogging = params.asyncLogging && typeof params.asyncLogging.onMessageSend === 'boolean' ? params.asyncLogging.onMessageSend : false,
+    workerId = params.asyncLogging && typeof parseInt(params.asyncLogging.workerId) === 'number' ? params.asyncLogging.workerId : 0,
+    webrtcConfig = params.webrtcConfig ? params.webrtcConfig : null,
+    isLoggedOut = false,
+    onStartWithRetryStepGreaterThanZero = params.onStartWithRetryStepGreaterThanZero,
+    asyncLogCallback = typeof params.asyncLogCallback == "function" ? params.asyncLogCallback : null,
+    msgLogCallback = typeof params.msgLogCallback == "function" ? params.msgLogCallback : null,
+    onDeviceId = typeof params.onDeviceId == "function" ? params.onDeviceId : null,
+    isConnecting = false;
+  var reconnOnClose = {
+    value: false,
+    oldValue: null,
+    get: function get() {
+      return reconnOnClose.value;
+    },
+    set: function set(val) {
+      reconnOnClose.value = val;
+    },
+    getOld: function getOld() {
+      return reconnOnClose.oldValue;
+    },
+    setOld: function setOld(val) {
+      reconnOnClose.oldValue = val;
+    }
+  };
+  reconnOnClose.set(reconnectOnClose);
+  var retryStep = {
+    value: retryStepTimerTime,
+    get: function get() {
+      return retryStep.value;
+    },
+    set: function set(val) {
+      logLevel.debug && console.debug("[Async][async.js] retryStep new value:", val);
+      retryStep.value = val;
+    }
+  };
+
+  /*******************************************************
+   *            P R I V A T E   M E T H O D S            *
+   *******************************************************/
+
+  var init = function init() {
+      if (retryStep.get() > 0) {
+        onStartWithRetryStepGreaterThanZero && onStartWithRetryStepGreaterThanZero({
+          socketState: socketStateType.CLOSED,
+          timeUntilReconnect: 1000 * retryStep.get(),
+          deviceRegister: false,
+          serverRegister: false,
+          peerId: peerId
+        });
+      }
+      socketReconnectRetryInterval = setTimeout(function () {
+        if (isLoggedOut) return;
+        window.addEventListener('online', function () {
+          asyncLogCallback && asyncLogCallback("async", "window.online", "");
+          if (!isSocketOpen) {
+            currentModuleInstance.reconnectSocket();
+          }
+        });
+        window.addEventListener('offline', function () {
+          asyncLogCallback && asyncLogCallback("async", "window.offline", "");
+          if (isSocketOpen) {
+            currentModuleInstance.reconnectSocket();
+          }
+        });
+        maybeReconnect();
+        if (retryStep.get() < 64) {
+          // retryStep += 3;
+          retryStep.set(retryStep.get() + 3);
+        }
+      }, 1000 * retryStep.get());
+    },
+    asyncLogger = function asyncLogger(type, msg) {
+      Utility.asyncLogger({
+        protocol: protocol,
+        workerId: workerId,
+        type: type,
+        msg: msg,
+        peerId: peerId,
+        deviceId: deviceId,
+        isSocketOpen: isSocketOpen,
+        isDeviceRegister: isDeviceRegister,
+        isServerRegister: isServerRegister,
+        socketState: socketState,
+        pushSendDataQueue: pushSendDataQueue
+      });
+    },
+    initSocket = function initSocket() {
+      socket = new _socket["default"]({
+        socketAddress: params.socketAddress,
+        wsConnectionWaitTime: params.wsConnectionWaitTime,
+        connectionCheckTimeout: params.connectionCheckTimeout,
+        connectionCheckTimeoutThreshold: params.connectionCheckTimeoutThreshold,
+        logLevel: logLevel,
+        msgLogCallback: msgLogCallback,
+        asyncLogCallback: asyncLogCallback,
+        onOpen: function onOpen() {
+          isConnecting = false;
+          checkIfSocketHasOpennedTimeoutId && clearTimeout(checkIfSocketHasOpennedTimeoutId);
+          socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+          socketReconnectRetryInterval = null;
+          socketReconnectCheck && clearTimeout(socketReconnectCheck);
+          isSocketOpen = true;
+          retryStep.set(0);
+          socketState = socketStateType.OPEN;
+          fireEvent('stateChange', {
+            socketState: socketState,
+            timeUntilReconnect: 0,
+            deviceRegister: isDeviceRegister,
+            serverRegister: isServerRegister,
+            peerId: peerId,
+            deviceId: deviceId
+          });
+        },
+        onMessage: function onMessage(msg) {
+          handleSocketMessage(msg);
+          if (onReceiveLogging) {
+            asyncLogger('Receive', msg);
+          }
+        },
+        onClose: function onClose(event) {
+          isSocketOpen = false;
+          isDeviceRegister = false;
+          oldPeerId = peerId;
+          socketState = socketStateType.CLOSED;
+          isConnecting = false;
+
+          // socketState = socketStateType.CLOSED;
+          //
+          // fireEvent('stateChange', {
+          //     socketState: socketState,
+          //     timeUntilReconnect: 0,
+          //     deviceRegister: isDeviceRegister,
+          //     serverRegister: isServerRegister,
+          //     peerId: peerId
+          // });
+
+          fireEvent('disconnect', event);
+          if (reconnOnClose.get() || reconnOnClose.getOld()) {
+            // reconnOnClose.set(reconnOnClose.getOld());
+            if (asyncLogging) {
+              if (workerId > 0) {
+                Utility.asyncStepLogger(workerId + '\t Reconnecting after ' + retryStep.get() + 's');
+              } else {
+                Utility.asyncStepLogger('Reconnecting after ' + retryStep.get() + 's');
+              }
+            }
+            logLevel.debug && console.debug("[Async][async.js] on socket close, retryStep:", retryStep.get());
+            fireEvent('stateChange', {
+              socketState: socketState,
+              timeUntilReconnect: 1000 * retryStep.get(),
+              deviceRegister: isDeviceRegister,
+              serverRegister: isServerRegister,
+              peerId: peerId
+            });
+            socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+            socketReconnectRetryInterval = null;
+            fireEvent("reconnecting", {
+              nextTime: retryStep.get()
+            });
+            socket.destroy();
+            socketReconnectRetryInterval = setTimeout(function () {
+              if (isLoggedOut) return;
+              maybeReconnect();
+            }, 1000 * retryStep.get());
+            if (retryStep.get() < 64) {
+              // retryStep += 3;
+              retryStep.set(retryStep.get() + 3);
+            }
+          } else {
+            socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+            socketReconnectRetryInterval = null;
+            socketReconnectCheck && clearTimeout(socketReconnectCheck);
+            fireEvent('error', {
+              errorCode: 4005,
+              errorMessage: 'Socket Closed!'
+            });
+            socketState = socketStateType.CLOSED;
+            fireEvent('stateChange', {
+              socketState: socketState,
+              timeUntilReconnect: 0,
+              deviceRegister: isDeviceRegister,
+              serverRegister: isServerRegister,
+              peerId: peerId
+            });
+          }
+        },
+        onError: function onError(error) {
+          fireEvent('error', {
+            errorCode: '',
+            errorMessage: '',
+            errorEvent: error
+          });
+        },
+        onCustomError: function onCustomError(error) {
+          fireEvent('error', {
+            errorCode: error.errorCode,
+            errorMessage: error.errorMessage,
+            errorEvent: error.errorEvent
+          });
+        }
+      });
+      socket.connect();
+    },
+    initWebrtc = function initWebrtc() {
+      webRTCClass = new _webrtc["default"]({
+        baseUrl: webrtcConfig ? webrtcConfig.baseUrl : null,
+        basePath: webrtcConfig ? webrtcConfig.basePath : null,
+        configuration: webrtcConfig ? webrtcConfig.configuration : null,
+        connectionCheckTimeout: params.connectionCheckTimeout,
+        //ping
+        logLevel: logLevel,
+        msgLogCallback: msgLogCallback,
+        asyncLogCallback: asyncLogCallback,
+        connectionOpenWaitTime: params.connectionOpenWaitTime,
+        //timeout time to open
+        onOpen: function onOpen(newDeviceId) {
+          isConnecting = false;
+          checkIfSocketHasOpennedTimeoutId && clearTimeout(checkIfSocketHasOpennedTimeoutId);
+          checkIfSocketHasOpennedTimeoutId = null;
+          socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+          socketReconnectRetryInterval = null;
+          socketReconnectCheck && clearTimeout(socketReconnectCheck);
+          isSocketOpen = true;
+          retryStep.set(0);
+          socketState = socketStateType.OPEN;
+          fireEvent('stateChange', {
+            socketState: socketState,
+            timeUntilReconnect: 0,
+            deviceRegister: isDeviceRegister,
+            serverRegister: isServerRegister,
+            peerId: peerId
+          });
+          if (newDeviceId) {
+            if (deviceId === undefined) {
+              deviceId = newDeviceId;
+            }
+          }
+          onDeviceId && onDeviceId(deviceId);
+        },
+        onMessage: function onMessage(msg) {
+          handleSocketMessage(msg);
+          if (onReceiveLogging) {
+            asyncLogger('Receive', msg);
+          }
+        },
+        onClose: function onClose(event) {
+          isSocketOpen = false;
+          isDeviceRegister = false;
+          oldPeerId = peerId;
+          socketState = socketStateType.CLOSED;
+          isConnecting = false;
+          fireEvent('disconnect', event);
+          if (reconnOnClose.get() || reconnOnClose.getOld()) {
+            if (asyncLogging) {
+              if (workerId > 0) {
+                Utility.asyncStepLogger(workerId + '\t Reconnecting after ' + retryStep.get() + 's');
+              } else {
+                Utility.asyncStepLogger('Reconnecting after ' + retryStep.get() + 's');
+              }
+            }
+            logLevel.debug && console.debug("[Async][async.js] on connection close, retryStep:", retryStep.get());
+            fireEvent('stateChange', {
+              socketState: socketState,
+              timeUntilReconnect: 1000 * retryStep.get(),
+              deviceRegister: isDeviceRegister,
+              serverRegister: isServerRegister,
+              peerId: peerId
+            });
+            socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+            socketReconnectRetryInterval = null;
+            fireEvent("reconnecting", {
+              nextTime: retryStep.get()
+            });
+            webRTCClass.destroy();
+            asyncLogCallback && asyncLogCallback("async", "closed.reconnect", "before: " + retryStep.get());
+            socketReconnectRetryInterval = setTimeout(function () {
+              if (isLoggedOut) return;
+              asyncLogCallback && asyncLogCallback("async", "closed.reconnect", "after");
+              maybeReconnect();
+              // webRTCClass.connect();
+            }, 1000 * retryStep.get());
+            if (retryStep.get() < 64) {
+              // retryStep += 3;
+              retryStep.set(retryStep.get() + 3);
+            }
+          } else {
+            socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+            socketReconnectRetryInterval = null;
+            socketReconnectCheck && clearTimeout(socketReconnectCheck);
+            fireEvent('error', {
+              errorCode: 4005,
+              errorMessage: 'Connection Closed!'
+            });
+            socketState = socketStateType.CLOSED;
+            fireEvent('stateChange', {
+              socketState: socketState,
+              timeUntilReconnect: 0,
+              deviceRegister: isDeviceRegister,
+              serverRegister: isServerRegister,
+              peerId: peerId
+            });
+          }
+        },
+        onCustomError: function onCustomError(error) {
+          fireEvent('error', {
+            errorCode: error.errorCode,
+            errorMessage: error.errorMessage,
+            errorEvent: error.errorEvent
+          });
+        },
+        onError: function onError(error) {
+          fireEvent('error', {
+            errorCode: '',
+            errorMessage: '',
+            errorEvent: error
+          });
+        }
+      });
+      checkIfSocketHasOpennedTimeoutId = setTimeout(function () {
+        if (!isSocketOpen) {
+          fireEvent('error', {
+            errorCode: 4001,
+            errorMessage: 'Can not open Socket!'
+          });
+        }
+      }, 65000);
+      webRTCClass.connect();
+    },
+    handleSocketMessage = function handleSocketMessage(msg) {
+      var ack;
+      if (msg.type === asyncMessageType.MESSAGE_ACK_NEEDED || msg.type === asyncMessageType.MESSAGE_SENDER_ACK_NEEDED) {
+        ack = function ack() {
+          pushSendData({
+            type: asyncMessageType.ACK,
+            content: {
+              messageId: msg.id
+            }
+          });
+        };
+      }
+      switch (msg.type) {
+        case asyncMessageType.PING:
+          handlePingMessage(msg);
+          break;
+        case asyncMessageType.SERVER_REGISTER:
+          handleServerRegisterMessage(msg);
+          break;
+        case asyncMessageType.DEVICE_REGISTER:
+          handleDeviceRegisterMessage(msg.content);
+          break;
+        case asyncMessageType.MESSAGE:
+          fireEvent('message', msg);
+          break;
+        case asyncMessageType.MESSAGE_ACK_NEEDED:
+        case asyncMessageType.MESSAGE_SENDER_ACK_NEEDED:
+          ack();
+          fireEvent('message', msg);
+          break;
+        case asyncMessageType.ACK:
+          fireEvent('message', msg);
+          if (ackCallback[msg.senderMessageId] == 'function') {
+            ackCallback[msg.senderMessageId]();
+            delete ackCallback[msg.senderMessageId];
+          }
+          break;
+        case asyncMessageType.ERROR_MESSAGE:
+          fireEvent('error', {
+            errorCode: 4002,
+            errorMessage: 'Async Error!',
+            errorEvent: msg
+          });
+          break;
+      }
+    },
+    handlePingMessage = function handlePingMessage(msg) {
+      if (msg.content) {
+        if (deviceId === undefined) {
+          deviceId = msg.content;
+        }
+        onDeviceId && onDeviceId(deviceId);
+      } else {
+        if (onReceiveLogging) {
+          if (workerId > 0) {
+            Utility.asyncStepLogger(workerId + '\t Ping Response at (' + new Date() + ')');
+          } else {
+            Utility.asyncStepLogger('Ping Response at (' + new Date() + ')');
+          }
+        }
+      }
+    },
+    registerDevice = function registerDevice(deviceId) {
+      // if (asyncLogging) {
+      //     if (workerId > 0) {
+      //         Utility.asyncStepLogger(workerId + '\t Registering Device');
+      //     } else {
+      //         Utility.asyncStepLogger('Registering Device');
+      //     }
+      // }
+
+      var content = {
+        appId: appId,
+        deviceId: deviceId
+      };
+      if (peerId !== undefined) {
+        content.refresh = true;
+        content.renew = false;
+      } else {
+        content.renew = true;
+        content.refresh = false;
+      }
+      pushSendData({
+        type: asyncMessageType.DEVICE_REGISTER,
+        content: content
+      });
+    },
+    handleDeviceRegisterMessage = function handleDeviceRegisterMessage(recievedPeerId) {
+      if (!isDeviceRegister) {
+        if (registerDeviceTimeoutId) {
+          clearTimeout(registerDeviceTimeoutId);
+        }
+        isDeviceRegister = true;
+        peerId = recievedPeerId;
+      }
+
+      /**
+       * If serverRegisteration == true we have to register
+       * on server then make async status ready
+       */
+      if (serverRegisteration) {
+        if (isServerRegister && peerId === oldPeerId) {
+          fireEvent('asyncReady');
+          isServerRegister = true;
+          pushSendDataQueueHandler();
+          socketState = socketStateType.OPEN;
+          fireEvent('stateChange', {
+            socketState: socketState,
+            timeUntilReconnect: 0,
+            deviceRegister: isDeviceRegister,
+            serverRegister: isServerRegister,
+            peerId: peerId
+          });
+        } else {
+          socketState = socketStateType.OPEN;
+          fireEvent('stateChange', {
+            socketState: socketState,
+            timeUntilReconnect: 0,
+            deviceRegister: isDeviceRegister,
+            serverRegister: isServerRegister,
+            peerId: peerId
+          });
+          registerServer();
+        }
+      } else {
+        fireEvent('asyncReady');
+        isServerRegister = 'Not Needed';
+        pushSendDataQueueHandler();
+        if (asyncLogging) {
+          if (workerId > 0) {
+            Utility.asyncStepLogger(workerId + '\t Async is Ready');
+          } else {
+            Utility.asyncStepLogger('Async is Ready');
+          }
+        }
+        socketState = socketStateType.OPEN;
+        fireEvent('stateChange', {
+          socketState: socketState,
+          timeUntilReconnect: 0,
+          deviceRegister: isDeviceRegister,
+          serverRegister: isServerRegister,
+          peerId: peerId
+        });
+      }
+    },
+    registerServer = function registerServer() {
+      if (asyncLogging) {
+        if (workerId > 0) {
+          Utility.asyncStepLogger(workerId + '\t Registering Server');
+        } else {
+          Utility.asyncStepLogger('Registering Server');
+        }
+      }
+      var content = {
+        name: serverName
+      };
+      pushSendData({
+        type: asyncMessageType.SERVER_REGISTER,
+        content: content
+      });
+      registerServerTimeoutId = setTimeout(function () {
+        if (!isServerRegister) {
+          registerServer();
+        }
+      }, connectionRetryInterval);
+    },
+    handleServerRegisterMessage = function handleServerRegisterMessage(msg) {
+      if (msg.senderName && msg.senderName === serverName) {
+        isServerRegister = true;
+        if (registerServerTimeoutId) {
+          clearTimeout(registerServerTimeoutId);
+        }
+        socketState = socketStateType.OPEN;
+        fireEvent('stateChange', {
+          socketState: socketState,
+          timeUntilReconnect: 0,
+          deviceRegister: isDeviceRegister,
+          serverRegister: isServerRegister,
+          peerId: peerId
+        });
+        fireEvent('asyncReady');
+        pushSendDataQueueHandler();
+        if (asyncLogging) {
+          if (workerId > 0) {
+            Utility.asyncStepLogger(workerId + '\t Async is Ready');
+          } else {
+            Utility.asyncStepLogger('Async is Ready');
+          }
+        }
+      } else {
+        isServerRegister = false;
+      }
+    },
+    pushSendData = function pushSendData(msg) {
+      if (onSendLogging) {
+        asyncLogger('Send', msg);
+      }
+      switch (protocol) {
+        case 'websocket':
+          if (socketState === socketStateType.OPEN) {
+            socket.emit(msg);
+          } else {
+            pushSendDataQueue.push(msg);
+          }
+          break;
+        case 'webrtc':
+          if (socketState === socketStateType.OPEN) {
+            webRTCClass.emit(msg);
+          } else {
+            pushSendDataQueue.push(msg);
+          }
+          break;
+      }
+    },
+    clearTimeouts = function clearTimeouts() {
+      registerDeviceTimeoutId && clearTimeout(registerDeviceTimeoutId);
+      registerDeviceTimeoutId = null;
+      registerServerTimeoutId && clearTimeout(registerServerTimeoutId);
+      registerServerTimeoutId = null;
+      checkIfSocketHasOpennedTimeoutId && clearTimeout(checkIfSocketHasOpennedTimeoutId);
+      checkIfSocketHasOpennedTimeoutId = null;
+      socketReconnectCheck && clearTimeout(socketReconnectCheck);
+      socketReconnectCheck = null;
+    },
+    pushSendDataQueueHandler = function pushSendDataQueueHandler() {
+      while (pushSendDataQueue.length > 0 && socketState === socketStateType.OPEN) {
+        var msg = pushSendDataQueue.splice(0, 1)[0];
+        pushSendData(msg);
+      }
+    },
+    fireEvent = function fireEvent(eventName, param, ack) {
+      // try {
+      if (ack) {
+        for (var id in eventCallbacks[eventName]) {
+          eventCallbacks[eventName][id](param, ack);
+        }
+      } else {
+        for (var id in eventCallbacks[eventName]) {
+          eventCallbacks[eventName][id](param);
+        }
+      }
+      // }
+      // catch (e) {
+      //     fireEvent('error', {
+      //         errorCode: 999,
+      //         errorMessage: 'Unknown ERROR!',
+      //         errorEvent: e
+      //     });
+      // }
+    };
+
+  function maybeReconnect() {
+    if (isConnecting) return;
+    fireEvent('stateChange', {
+      socketState: socketStateType.CONNECTING,
+      timeUntilReconnect: 0,
+      deviceRegister: false,
+      serverRegister: false,
+      peerId: peerId
+    });
+    isConnecting = true;
+    switch (protocol) {
+      case 'websocket':
+        initSocket();
+        break;
+      case 'webrtc':
+        initWebrtc();
+        break;
+    }
+  }
+
+  /*******************************************************
+   *             P U B L I C   M E T H O D S             *
+   *******************************************************/
+
+  this.on = function (eventName, callback) {
+    if (eventCallbacks[eventName]) {
+      var id = Utility.generateUUID();
+      eventCallbacks[eventName][id] = callback;
+      return id;
+    }
+    if (eventName === 'connect' && socketState === socketStateType.OPEN) {
+      callback(peerId);
+    }
+  };
+  this.send = function (params, callback) {
+    var messageType = typeof params.type === 'number' ? params.type : callback ? asyncMessageType.MESSAGE_SENDER_ACK_NEEDED : asyncMessageType.MESSAGE;
+    var socketData = {
+      type: messageType,
+      uniqueId: params.uniqueId ? params.uniqueId : undefined,
+      content: params.content
+    };
+    if (params.trackerId) {
+      socketData.trackerId = params.trackerId;
+    }
+    lastMessageId += 1;
+    var messageId = lastMessageId;
+    if (messageType === asyncMessageType.MESSAGE_SENDER_ACK_NEEDED || messageType === asyncMessageType.MESSAGE_ACK_NEEDED) {
+      ackCallback[messageId] = function () {
+        callback && callback();
+      };
+    }
+    socketData.content.messageId = messageId;
+    socketData.content.ttl = messageTtl;
+    pushSendData(socketData);
+  };
+  this.getAsyncState = function () {
+    return socketState;
+  };
+  this.getSendQueue = function () {
+    return pushSendDataQueue;
+  };
+  this.getPeerId = function () {
+    return peerId;
+  };
+  this.getServerName = function () {
+    return serverName;
+  };
+  this.setServerName = function (newServerName) {
+    serverName = newServerName;
+  };
+  this.setDeviceId = function (newDeviceId) {
+    deviceId = newDeviceId;
+  };
+  this.close = function () {
+    oldPeerId = peerId;
+    isDeviceRegister = false;
+    isSocketOpen = false;
+    clearTimeouts();
+    switch (protocol) {
+      case 'websocket':
+        socketState = socketStateType.CLOSED;
+        fireEvent('stateChange', {
+          socketState: socketState,
+          timeUntilReconnect: 0,
+          deviceRegister: isDeviceRegister,
+          serverRegister: isServerRegister,
+          peerId: peerId
+        });
+        socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+        socketReconnectRetryInterval = null;
+        socket && socket.destroy();
+        break;
+      case 'webrtc':
+        socketState = socketStateType.CLOSED;
+        fireEvent('stateChange', {
+          socketState: socketState,
+          timeUntilReconnect: 0,
+          deviceRegister: isDeviceRegister,
+          serverRegister: isServerRegister,
+          peerId: peerId
+        });
+        socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+        socketReconnectRetryInterval = null;
+        webRTCClass && webRTCClass.destroy();
+        break;
+    }
+  };
+  this.logout = function () {
+    return new Promise(function (resolve) {
+      isLoggedOut = true;
+      socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+      socketReconnectRetryInterval = null;
+      reconnectSocketTimeout && clearTimeout(socketReconnectRetryInterval);
+      reconnectSocketTimeout = null;
+      oldPeerId = peerId;
+      peerId = undefined;
+      isServerRegister = false;
+      isDeviceRegister = false;
+      isSocketOpen = false;
+      deviceId = undefined;
+      pushSendDataQueue = [];
+      ackCallback = {};
+      clearTimeouts();
+      switch (protocol) {
+        case 'websocket':
+          socketState = socketStateType.CLOSED;
+          fireEvent('stateChange', {
+            socketState: socketState,
+            timeUntilReconnect: 0,
+            deviceRegister: isDeviceRegister,
+            serverRegister: isServerRegister,
+            peerId: peerId
+          });
+          reconnOnClose.set(false);
+          // reconnectOnClose = false;
+
+          if (socket) {
+            socket.destroy();
+            // socket.destroy();
+          }
+
+          break;
+        case 'webrtc':
+          socketState = socketStateType.CLOSED;
+          fireEvent('stateChange', {
+            socketState: socketState,
+            timeUntilReconnect: 0,
+            deviceRegister: isDeviceRegister,
+            serverRegister: isServerRegister,
+            peerId: peerId
+          });
+          reconnOnClose.set(false);
+          // reconnectOnClose = false;
+          if (webRTCClass) {
+            webRTCClass.destroy();
+          }
+          break;
+      }
+      for (var i in eventCallbacks) {
+        delete eventCallbacks[i];
+      }
+      setTimeout(function () {
+        resolve();
+        // fireEvent("asyncDestroyed");
+      }, 20);
+    });
+  };
+  var reconnectSocketTimeout;
+  this.reconnectSocket = function () {
+    retryStep.set(0);
+    if (isConnecting) return;
+    isSocketOpen = false;
+    isDeviceRegister = false;
+    oldPeerId = peerId;
+    socketState = socketStateType.CLOSED;
+    fireEvent('disconnect', {});
+
+    // retryStep.set(0);
+
+    logLevel.debug && console.debug("[Async][async.js] on socket close, retryStep:", retryStep.get());
+    fireEvent('stateChange', {
+      socketState: socketState,
+      timeUntilReconnect: 1000 * retryStep.get(),
+      deviceRegister: isDeviceRegister,
+      serverRegister: isServerRegister,
+      peerId: peerId
+    });
+    socketReconnectRetryInterval && clearTimeout(socketReconnectRetryInterval);
+    socketReconnectRetryInterval = null;
+    fireEvent("reconnecting", {
+      nextTime: retryStep.get()
+    });
+    if (protocol == "websocket") socket && socket.destroy();else if (protocol == "webrtc") webRTCClass && webRTCClass.destroy();
+    if (isLoggedOut) return;
+    setTimeout(function () {
+      maybeReconnect();
+      if (retryStep.get() < 64) {
+        // retryStep += 3;
+        retryStep.set(3);
+      }
+    }, 100);
+  };
+  this.setRetryTimerTime = function (seconds) {
+    retryStep.set(seconds);
+  };
+  this.generateUUID = Utility.generateUUID;
+  this.registerDevice = registerDevice;
+  init();
+}
+module.exports = Async;
+var _default = Async;
+exports["default"] = _default;
+},{"../utility/logger.js":221,"../utility/utility.js":222,"./socket":219,"./webrtc":220,"@babel/runtime/helpers/interopRequireDefault":7}],219:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Socket = Socket;
+function Socket(params) {
+  if (typeof WebSocket === "undefined" && typeof require !== "undefined" && typeof exports !== "undefined") {
+    WebSocket = require('isomorphic-ws');
+  }
+
+  /*******************************************************
+   *          P R I V A T E   V A R I A B L E S          *
+   *******************************************************/
+
+  var address = params.socketAddress,
+    wsConnectionWaitTime = params.wsConnectionWaitTime || 500,
+    connectionCheckTimeout = params.connectionCheckTimeout || 10000,
+    socket,
+    waitForSocketToConnectTimeoutId,
+    socketRealTimeStatusInterval,
+    logLevel = params.logLevel,
+    pingController = new PingManager({
+      waitTime: connectionCheckTimeout
+    }),
+    socketWatchTimeout,
+    isDestroyed = false,
+    closeCodes = {
+      PING_FAILED: {
+        code: 4900,
+        reason: "Ping with server failed"
+      },
+      REQUEST_FROM_ASYNC_CLASS: {
+        code: 4901,
+        reason: "Close by sdk"
+      },
+      CONNECTION_OPEN_TIMEOUT: {
+        code: 4902,
+        reason: "Connection didn't open after a long time"
+      }
+    },
+    msgLogCallback = params.msgLogCallback,
+    onOpen = params.onOpen,
+    onClose = params.onClose,
+    onMessage = params.onMessage,
+    onCustomError = params.onCustomError,
+    onError = params.onError;
+  function PingManager(params) {
+    var config = {
+      normalWaitTime: params.waitTime,
+      lastRequestTimeoutId: null,
+      lastReceivedMessageTime: 0,
+      totalNoMessageCount: 0,
+      timeoutIds: {
+        first: null,
+        second: null,
+        third: null
+        //fourth: null
+      }
+    };
+
+    return {
+      resetPingLoop: function resetPingLoop() {
+        this.stopPingLoop();
+        this.setPingTimeout();
+      },
+      setPingTimeout: function setPingTimeout() {
+        config.timeoutIds.first = setTimeout(function () {
+          ping();
+          config.timeoutIds.second = setTimeout(function () {
+            ping();
+            config.timeoutIds.third = setTimeout(function () {
+              logLevel.debug && console.debug("[Async][Socket.js] Force closing socket.");
+              // onCloseHandler(null);
+              // socket && socket.close();
+              closeTheSocket(closeCodes.PING_FAILED);
+            }, 2000);
+          }, 2000);
+        }, 8000);
+      },
+      stopPingLoop: function stopPingLoop() {
+        clearTimeout(config.timeoutIds.first);
+        clearTimeout(config.timeoutIds.second);
+        clearTimeout(config.timeoutIds.third);
+        // clearTimeout(config.timeoutIds.fourth);
+      }
+    };
+  }
+
+  /*******************************************************
+   *            P R I V A T E   M E T H O D S            *
+   *******************************************************/
+
+  var connect = function connect() {
+      try {
+        if (socket && socket.readyState == 1) {
+          return;
+        }
+        socket = new WebSocket(address, []);
+
+        /**
+         * Watches the socket to make sure it's state changes to 1 in 5 seconds
+         */
+        socketWatchTimeout && clearTimeout(socketWatchTimeout);
+        socketWatchTimeout = setTimeout(function () {
+          // if(socket.readyState !== 1) {
+          logLevel.debug && console.debug("[Async][Socket.js] socketWatchTimeout triggered.");
+          // onCloseHandler(null);
+          // socket && socket.close();
+          closeTheSocket(closeCodes.CONNECTION_OPEN_TIMEOUT);
+          // }
+        }, 5000);
+        socket.onopen = function (event) {
+          if (onOpen) {
+            waitForSocketToConnect(function () {
+              pingController.resetPingLoop();
+              onOpen();
+              socketWatchTimeout && clearTimeout(socketWatchTimeout);
+            });
+          } else {
+            // onCloseHandler();
+            closeTheSocket();
+          }
+        };
+        socket.onmessage = function (event) {
+          msgLogCallback && msgLogCallback({
+            msg: event.data,
+            direction: "receive",
+            time: new Date().getTime()
+          });
+          if (onMessage) {
+            pingController.resetPingLoop();
+            var messageData = JSON.parse(event.data);
+            onMessage(messageData);
+          } else {
+            // onCloseHandler();
+            closeTheSocket();
+          }
+        };
+        socket.onclose = function (event) {
+          pingController.stopPingLoop();
+          logLevel.debug && console.debug("[Async][Socket.js] socket.onclose happened. EventData:", event);
+          // onCloseHandler(event);
+          closeTheSocket();
+          socketWatchTimeout && clearTimeout(socketWatchTimeout);
+        };
+        socket.onerror = function (event) {
+          logLevel.debug && console.debug("[Async][Socket.js] socket.onerror happened. EventData:", event);
+          if (onError) {
+            onError(event);
+            // onCloseHandler();
+            closeTheSocket();
+            socketWatchTimeout && clearTimeout(socketWatchTimeout);
+          }
+        };
+      } catch (error) {
+        onCustomError({
+          errorCode: 4000,
+          errorMessage: "ERROR in WEBSOCKET!",
+          errorEvent: error
+        });
+      }
+    },
+    onCloseHandler = function onCloseHandler(event) {
+      pingController.stopPingLoop();
+      if (socket) {
+        socket.onclose = null;
+        socket.onmessage = null;
+        socket.onerror = null;
+        socket.onopen = null;
+      }
+    },
+    ping = function ping() {
+      sendData({
+        type: 0
+      });
+    },
+    waitForSocketToConnect = function waitForSocketToConnect(callback) {
+      waitForSocketToConnectTimeoutId && clearTimeout(waitForSocketToConnectTimeoutId);
+      if (socket.readyState === 1) {
+        callback();
+      } else {
+        waitForSocketToConnectTimeoutId = setTimeout(function () {
+          if (socket.readyState === 1) {
+            callback();
+          } else {
+            waitForSocketToConnect(callback);
+          }
+        }, wsConnectionWaitTime);
+      }
+    },
+    sendData = function sendData(params) {
+      var data = {
+        type: params.type,
+        uniqueId: params.uniqueId
+      };
+      if (params.trackerId) {
+        data.trackerId = params.trackerId;
+      }
+      try {
+        if (params.content) {
+          data.content = JSON.stringify(params.content);
+        }
+        if (socket.readyState === 1) {
+          var stringData = JSON.stringify(data);
+          msgLogCallback && msgLogCallback({
+            msg: stringData,
+            direction: "send",
+            time: new Date().getTime()
+          });
+          socket.send(stringData);
+        }
+      } catch (error) {
+        onCustomError({
+          errorCode: 4004,
+          errorMessage: "Error in Socket sendData!",
+          errorEvent: error
+        });
+      }
+    };
+
+  /*******************************************************
+   *             P U B L I C   M E T H O D S             *
+   *******************************************************/
+  var publicized = {};
+  publicized.emit = sendData;
+  publicized.connect = function () {
+    connect();
+  };
+  publicized.close = function () {
+    logLevel.debug && console.debug("[Async][Socket.js] Closing socket by call to this.close");
+    // socket && socket.close();
+    // onCloseHandler(null);
+    closeTheSocket(closeCodes.REQUEST_FROM_ASYNC_CLASS);
+    socketWatchTimeout && clearTimeout(socketWatchTimeout);
+  };
+  publicized.destroy = function () {
+    isDestroyed = true;
+    publicized.close();
+    onClose = null;
+    onOpen = null;
+    onMessage = null;
+    onCustomError = null;
+  };
+  function closeTheSocket(reason) {
+    onCloseHandler();
+    if (socket) {
+      var socketCloseErrorHandler = function socketCloseErrorHandler(err) {
+        console.error('Socket Close Error: ', err);
+      };
+      socket.onerror = socketCloseErrorHandler;
+      if (socket) {
+        if (reason) {
+          socket.close(reason.code, reason.reason);
+        } else {
+          socket.close();
+        }
+        socket.onerror = null;
+        // socket.off && socket.off("error", socketCloseErrorHandler)
+      }
+    }
+
+    setTimeout(function () {
+      socket = null;
+      if (!isDestroyed && onClose) {
+        onClose();
+      }
+    }, 35);
+  }
+  return publicized;
+}
+module.exports = Socket;
+},{"isomorphic-ws":196}],220:[function(require,module,exports){
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+var _typeof = require("@babel/runtime/helpers/typeof");
+var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
+var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
+var fflate = _interopRequireWildcard(require("fflate"));
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+function WebRTCClass(_ref) {
+  var baseUrl = _ref.baseUrl,
+    basePath = _ref.basePath,
+    configuration = _ref.configuration,
+    _ref$connectionCheckT = _ref.connectionCheckTimeout,
+    connectionCheckTimeout = _ref$connectionCheckT === void 0 ? 10000 : _ref$connectionCheckT,
+    logLevel = _ref.logLevel,
+    msgLogCallback = _ref.msgLogCallback,
+    connectionOpenWaitTime = _ref.connectionOpenWaitTime,
+    onOpen = _ref.onOpen,
+    onMessage = _ref.onMessage,
+    onError = _ref.onError,
+    onCustomError = _ref.onCustomError,
+    onClose = _ref.onClose,
+    asyncLogCallback = _ref.asyncLogCallback;
+  var defaultConfig = {
+      protocol: "https",
+      baseUrl: "109.201.0.97",
+      basePath: "/webrtc/",
+      registerEndpoint: "register/",
+      addICEEndpoint: "add-ice/",
+      getICEEndpoint: "get-ice/?",
+      configuration: {
+        bundlePolicy: "balanced",
+        iceTransportPolicy: "relay",
+        iceServers: [{
+          "urls": "turn:turnsandbox.podstream.ir:3478",
+          "username": "mkhorrami",
+          "credential": "mkh_123456"
+        }]
+      },
+      connectionCheckTimeout: 10000,
+      logLevel: null,
+      msgLogCallback: null,
+      connectionOpenWaitTime: 7000
+    },
+    variables = {
+      peerConnection: null,
+      dataChannel: null,
+      pingController: new PingManager({
+        waitTime: defaultConfig.connectionCheckTimeout
+      }),
+      candidatesQueue: [],
+      // candidatesSendQueue: [],
+      candidateManager: new CandidatesSendQueueManager(),
+      clientId: null,
+      deviceId: null,
+      apiCallRetries: {
+        register: 2,
+        getIce: 3,
+        addIce: 5
+      },
+      eventCallback: {},
+      subdomain: null,
+      isDestroyed: false,
+      dataChannelOpenTimeout: null,
+      isDataChannelOpened: false,
+      controller: new AbortController()
+    };
+  var config = {};
+  if (baseUrl) config.baseUrl = baseUrl;
+  if (basePath) config.basePath = basePath;
+  if (configuration) config.configuration = configuration;
+  if (connectionCheckTimeout) config.connectionCheckTimeout = connectionCheckTimeout;
+  if (logLevel) config.logLevel = logLevel;
+  if (connectionOpenWaitTime) config.connectionOpenWaitTime = connectionOpenWaitTime;
+  defaultConfig = Object.assign(defaultConfig, config);
+  defaultConfig.msgLogCallback = msgLogCallback;
+  function isDataChannelOpened() {
+    return variables.isDataChannelOpened;
+  }
+  function CandidatesSendQueueManager() {
+    var config = {
+      candidatesToSend: [],
+      alreadyReceivedServerCandidates: false,
+      reCheckTimeout: null
+    };
+    function trySendingCandidates() {
+      timoutCallback();
+      function timoutCallback() {
+        if (variables.peerConnection && variables.peerConnection.signalingState === 'stable') {
+          config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
+          if (config.candidatesToSend.length) {
+            var entry = config.candidatesToSend.shift();
+            handshakingFunctions.sendCandidate(entry).then(function (result) {
+              if (result.length) {
+                addServerCandidates(result);
+                config.alreadyReceivedServerCandidates = true;
+              }
+              trySendingCandidates();
+            });
+          } else if (!config.alreadyReceivedServerCandidates) {
+            handshakingFunctions.getCandidates(variables.clientId).then(function (result) {
+              addServerCandidates(result);
+            })["catch"]();
+          }
+        } else {
+          config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
+          config.reCheckTimeout = setTimeout(timoutCallback, 1000);
+        }
+      }
+    }
+    function addServerCandidates(candidates) {
+      for (var i in candidates) {
+        webrtcFunctions.putCandidateToQueue(candidates[i]);
+      }
+    }
+    return {
+      add: function add(candidate) {
+        config.candidatesToSend.push(candidate);
+        trySendingCandidates();
+      },
+      destroy: function destroy() {
+        config.reCheckTimeout && clearTimeout(config.reCheckTimeout);
+      }
+    };
+  }
+  function PingManager(params) {
+    var config = {
+      normalWaitTime: params.waitTime,
+      lastRequestTimeoutId: null,
+      lastReceivedMessageTime: 0,
+      totalNoMessageCount: 0,
+      timeoutIds: {
+        first: null,
+        second: null,
+        third: null,
+        fourth: null
+      }
+    };
+    return {
+      resetPingLoop: function resetPingLoop() {
+        this.stopPingLoop();
+        this.setPingTimeout();
+      },
+      setPingTimeout: function setPingTimeout() {
+        config.timeoutIds.first = setTimeout(function () {
+          ping();
+          config.timeoutIds.second = setTimeout(function () {
+            ping();
+            config.timeoutIds.third = setTimeout(function () {
+              defaultConfig.logLevel.debug && console.debug("[Async][Webrtc.js] Force closing connection.");
+              asyncLogCallback && asyncLogCallback("webrtc", "setPingTimeout", "closing");
+              publicized.close();
+            }, 2000);
+          }, 2000);
+        }, 8000);
+      },
+      stopPingLoop: function stopPingLoop() {
+        clearTimeout(config.timeoutIds.first);
+        clearTimeout(config.timeoutIds.second);
+        clearTimeout(config.timeoutIds.third);
+        // clearTimeout(config.timeoutIds.fourth);
+      }
+    };
+  }
+
+  function connect() {
+    variables.isDestroyed = false;
+    webrtcFunctions.createPeerConnection();
+    console.log("[Async][webrtc] defaultConfig.connectionOpenWaitTime", defaultConfig.connectionOpenWaitTime);
+  }
+  function waitForConnectionToOpen() {
+    variables.dataChannelOpenTimeout = setTimeout(function () {
+      if (!isDataChannelOpened()) {
+        asyncLogCallback && asyncLogCallback("webrtc", "dataChannelOpenTimeout", "closing");
+        publicized.close();
+      }
+    }, defaultConfig.connectionOpenWaitTime);
+  }
+  var webrtcFunctions = {
+    createPeerConnection: function createPeerConnection() {
+      try {
+        variables.peerConnection = new RTCPeerConnection(defaultConfig.configuration);
+        console.log("[Async][webrtc] Created peer connection.");
+      } catch (error) {
+        asyncLogCallback && asyncLogCallback("webrtc", "createPeerConnection", "closing");
+        publicized.close();
+        console.error("[Async][webrtc] Webrtc Peer Create Error: ", error.message);
+        return;
+      }
+      variables.peerConnection.onconnectionstatechange = function (event) {
+        asyncLogCallback && asyncLogCallback("webrtc", "onconnectionstatechange", variables.peerConnection.connectionState);
+      };
+      variables.peerConnection.oniceconnectionstatechange = function (event) {
+        asyncLogCallback && asyncLogCallback("webrtc", "oniceconnectionstatechange", variables.peerConnection.connectionState);
+      };
+      variables.peerConnection.addEventListener('signalingstatechange', webrtcFunctions.signalingStateChangeCallback);
+      variables.peerConnection.onicecandidate = function (event) {
+        if (event.candidate) {
+          variables.candidateManager.add(event.candidate);
+          webrtcFunctions.putCandidateToQueue(event.candidate);
+        }
+      };
+      webrtcFunctions.createDataChannel();
+      webrtcFunctions.generateSdpOffer().then(sendOfferToServer);
+      function sendOfferToServer(offer) {
+        handshakingFunctions.register(offer.sdp).then(processRegisterResult)["catch"]();
+        variables.peerConnection.setLocalDescription(offer)["catch"](function (error) {
+          return console.error(error);
+        });
+      }
+      function processRegisterResult(result) {
+        variables.clientId = result.clientId;
+        variables.deviceId = result.deviceId;
+        variables.subdomain = result.subDomain;
+        webrtcFunctions.processAnswer(result.sdpAnswer);
+      }
+    },
+    signalingStateChangeCallback: function signalingStateChangeCallback(signalingStateEvent) {
+      asyncLogCallback && asyncLogCallback("webrtc", "signalingStateChangeCallback", variables.peerConnection.signalingState);
+      if (variables.peerConnection && variables.peerConnection.signalingState === 'stable') {
+        // handshakingFunctions.getCandidates().catch()
+        webrtcFunctions.addTheCandidates();
+      }
+    },
+    createDataChannel: function createDataChannel() {
+      variables.dataChannel = variables.peerConnection.createDataChannel("dataChannel", {
+        ordered: false
+      });
+      variables.dataChannel.onopen = dataChannelCallbacks.onopen;
+      variables.dataChannel.onmessage = dataChannelCallbacks.onmessage;
+      variables.dataChannel.onerror = dataChannelCallbacks.onerror;
+      variables.dataChannel.onclose = dataChannelCallbacks.onclose;
+    },
+    generateSdpOffer: function generateSdpOffer() {
+      return new Promise(function (resolve, reject) {
+        variables.peerConnection.createOffer(function (offer) {
+          resolve(offer);
+        }, function (error) {
+          reject(error);
+          console.error(error);
+        }).then(function (r) {
+          console.log(r);
+          if (r) {
+            resolve(r);
+          }
+        });
+      });
+    },
+    processAnswer: function processAnswer(answer) {
+      var remoteDesc = {
+        type: "answer",
+        sdp: answer
+      };
+      variables.peerConnection.setRemoteDescription(new RTCSessionDescription(remoteDesc))["catch"](function (error) {
+        console.error(error);
+      });
+    },
+    addTheCandidates: function addTheCandidates() {
+      while (variables.candidatesQueue.length) {
+        var entry = variables.candidatesQueue.shift();
+        variables.peerConnection.addIceCandidate(entry.candidate);
+      }
+    },
+    putCandidateToQueue: function putCandidateToQueue(candidate) {
+      variables.candidatesQueue.push({
+        candidate: new RTCIceCandidate(candidate)
+      });
+      if (variables.peerConnection && variables.peerConnection.signalingState === 'stable') {
+        webrtcFunctions.addTheCandidates();
+      }
+    },
+    sendData: function sendData(params) {
+      if (!variables.dataChannel) {
+        console.error("Connection is closed, do not send messages.");
+        return;
+      }
+      var data = {
+        type: params.type,
+        uniqueId: params.uniqueId
+      };
+      if (params.trackerId) {
+        data.trackerId = params.trackerId;
+      }
+      try {
+        if (params.content) {
+          data.content = JSON.stringify(params.content);
+        }
+        if (variables.peerConnection && variables.peerConnection.signalingState === 'stable') {
+          //defaultConfig.logLevel.debug &&
+          // console.log("[Async][WebRTC] Send ", data);
+          var stringData = JSON.stringify(data);
+          defaultConfig.msgLogCallback && defaultConfig.msgLogCallback({
+            msg: stringData,
+            direction: "send",
+            time: new Date().getTime()
+          });
+          variables.dataChannel.send(stringData);
+        }
+      } catch (error) {
+        asyncLogCallback && asyncLogCallback("webrtc", "webrtcFunctions.sendData.catch", error);
+        onCustomError({
+          errorCode: 4004,
+          errorMessage: "Error in channel send message!",
+          errorEvent: error
+        });
+      }
+    }
+  };
+  var dataChannelCallbacks = {
+    onopen: function onopen(event) {
+      asyncLogCallback && asyncLogCallback("webrtc", "dataChannel.onopen", event);
+      variables.isDataChannelOpened = true;
+      variables.pingController.resetPingLoop();
+      onOpen(variables.deviceId);
+    },
+    onmessage: function onmessage(event) {
+      variables.pingController.resetPingLoop();
+      decompressResponse(event.data).then(function (result) {
+        defaultConfig.msgLogCallback && defaultConfig.msgLogCallback({
+          msg: result,
+          direction: "receive",
+          time: new Date().getTime()
+        });
+        var messageData = JSON.parse(result);
+        // console.log("[Async][WebRTC] Receive ", result);
+        onMessage(messageData);
+      });
+    },
+    onerror: function onerror(error) {
+      asyncLogCallback && asyncLogCallback("webrtc", "dataChannel.onerror", error);
+      defaultConfig.logLevel.debug && console.debug("[Async][webrtc] dataChannel.onerror happened. EventData:", error);
+      onError();
+      publicized.close();
+    },
+    onclose: function onclose(event) {
+      asyncLogCallback && asyncLogCallback("webrtc", "dataChannel.onclose", event);
+      publicized.close();
+    }
+  };
+  function getApiUrl() {
+    return (variables.subdomain ? variables.subdomain : defaultConfig.protocol + "://" + defaultConfig.baseUrl) + defaultConfig.basePath;
+  }
+  var handshakingFunctions = {
+    register: function register(offer) {
+      var retries = variables.apiCallRetries.register;
+      return new Promise(promiseHandler);
+      function promiseHandler(resolve, reject) {
+        if (variables.isDestroyed) return;
+        var registerEndPoint = getApiUrl() + defaultConfig.registerEndpoint,
+          controller = new AbortController();
+        var timeoutId = setTimeout(function () {
+          return controller.abort();
+        }, 2500);
+        fetch(registerEndPoint, {
+          method: "POST",
+          body: JSON.stringify({
+            offer: offer
+          }),
+          headers: {
+            "Content-Type": "application/json"
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+          },
+
+          signal: controller.signal
+        }).then(function (response) {
+          clearTimeout(timeoutId);
+          if (response.ok) {
+            waitForConnectionToOpen();
+            return response.json();
+          } else if (retries) {
+            retryTheRequest(resolve, reject);
+            retries--;
+          } else reject();
+        }).then(function (result) {
+          return resolve(result);
+        })["catch"](function (err) {
+          clearTimeout(timeoutId);
+          if (retries) {
+            retryTheRequest(resolve, reject);
+            retries--;
+          } else {
+            asyncLogCallback && asyncLogCallback("webrtc", "register.catch", "closing");
+            publicized.close();
+          }
+          console.error(err);
+        });
+      }
+      function retryTheRequest(resolve, reject) {
+        setTimeout(function () {
+          promiseHandler(resolve, reject);
+        }, 1000);
+      }
+    },
+    getCandidates: function getCandidates(clientId) {
+      var getIceCandidateEndPoint = getApiUrl() + defaultConfig.getICEEndpoint;
+      getIceCandidateEndPoint += "clientId=" + clientId;
+      var retries = variables.apiCallRetries.getIce;
+      return new Promise(promiseHandler);
+      function promiseHandler(resolve, reject) {
+        if (variables.isDestroyed) return;
+        fetch(getIceCandidateEndPoint, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json"
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+          }
+        }).then(function (response) {
+          if (response.ok) return response.json();else if (retries) {
+            retryTheRequest(resolve, reject);
+            retries--;
+          } else reject();
+        }).then(function (result) {
+          resolve(result.iceCandidates);
+          // if(result.iceCandidates && result.iceCandidates.length) {
+          //     // result.iceCandidates.forEach((item) => {
+          //     //     webrtcFunctions.putCandidateToQueue(item);
+          //     // });
+          //     resolve(result.iceCandidates)
+          // }
+          // else {
+          //     if(retries){
+          //         retryTheRequest(resolve, reject);
+          //         retries--;
+          //     } else reject();
+          // }
+        })["catch"](function (err) {
+          if (retries) {
+            retryTheRequest(resolve, reject);
+            retries--;
+          } else reject(err);
+          console.error(err);
+        });
+      }
+      function retryTheRequest(resolve, reject) {
+        setTimeout(function () {
+          promiseHandler(resolve, reject);
+        }, 1000);
+      }
+    },
+    sendCandidate: function sendCandidate(candidate) {
+      var addIceCandidateEndPoint = getApiUrl() + defaultConfig.addICEEndpoint,
+        retries = variables.apiCallRetries.addIce;
+      return new Promise(promiseHandler);
+      function promiseHandler(resolve, reject) {
+        if (variables.isDestroyed) return;
+        fetch(addIceCandidateEndPoint, {
+          method: "POST",
+          body: JSON.stringify({
+            "clientId": variables.clientId,
+            "candidate": candidate
+          }),
+          headers: {
+            "Content-Type": "application/json"
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+          }
+        }).then(function (response) {
+          if (response.ok) {
+            return response.json();
+          } else if (retries) {
+            retryTheRequest(resolve, reject);
+            retries--;
+          } else reject();
+        }).then(function (result) {
+          resolve(result.iceCandidates);
+        })["catch"](function (err) {
+          if (retries) {
+            retryTheRequest(resolve, reject);
+            retries--;
+          } else reject(err);
+          console.error(err);
+        });
+      }
+      function retryTheRequest(resolve, reject) {
+        setTimeout(function () {
+          promiseHandler(resolve, reject);
+        }, 2000);
+      }
+    }
+  };
+  function resetVariables() {
+    variables.subdomain = null;
+    variables.pingController.stopPingLoop();
+    variables.dataChannel && variables.dataChannel.close();
+    variables.dataChannel = null;
+    variables.peerConnection && variables.peerConnection.close();
+    variables.peerConnection = null;
+    variables.candidatesQueue = [];
+    variables.clientId = null;
+    variables.deviceId = null;
+    variables.candidateManager.destroy();
+    variables.candidateManager = new CandidatesSendQueueManager();
+    variables.isDataChannelOpened = false;
+    clearTimeout(variables.dataChannelOpenTimeout);
+    // variables.isDestroyed = false;
+    if (!variables.isDestroyed && onClose) {
+      onClose();
+    }
+  }
+  function ping() {
+    webrtcFunctions.sendData({
+      type: 0
+    });
+  }
+  function removeCallbacks() {
+    if (variables.peerConnection) variables.peerConnection.onicecandidate = null;
+    if (variables.dataChannel) {
+      variables.dataChannel.onclose = null;
+      variables.dataChannel.onmessage = null;
+      variables.dataChannel.onerror = null;
+      variables.dataChannel.onopen = null;
+    }
+  }
+  var publicized = {};
+  // publicized.on: function (messageName, callback) {
+  //         variables.eventCallback[messageName] = callback;
+  //     },
+  publicized.emit = webrtcFunctions.sendData;
+  publicized.connect = connect;
+  publicized.close = function () {
+    asyncLogCallback && asyncLogCallback("webrtc", "publicized.close", "closing");
+    removeCallbacks();
+    resetVariables();
+  };
+  publicized.destroy = function () {
+    variables.isDestroyed = true;
+    asyncLogCallback && asyncLogCallback("webrtc", "publicized.destroy", "closing");
+    publicized.close();
+    onOpen = null;
+    onClose = null;
+    onMessage = null;
+    onError = null;
+    onCustomError = null;
+    // for (let i in variables.eventCallback) {
+    //     delete variables.eventCallback[i];
+    // }
+  };
+
+  /**
+   * Decompress results
+   */
+  function decompress(_x, _x2) {
+    return _decompress.apply(this, arguments);
+  }
+  function _decompress() {
+    _decompress = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(byteArray, encoding) {
+      var result, res;
+      return _regenerator["default"].wrap(function _callee$(_context) {
+        while (1) switch (_context.prev = _context.next) {
+          case 0:
+            result = fflate.decompressSync(new Uint8Array(byteArray));
+            res = new TextDecoder().decode(result);
+            return _context.abrupt("return", res);
+          case 3:
+          case "end":
+            return _context.stop();
+        }
+      }, _callee);
+    }));
+    return _decompress.apply(this, arguments);
+  }
+  function decompressResponse(_x3) {
+    return _decompressResponse.apply(this, arguments);
+  } //utility
+  /**
+   * Base64Url string to array buffer
+   * - b64u->b64->biStr->byte[]->arrBuff
+   * @param base64Url
+   * @returns {ArrayBufferLike}
+   * @private
+   */
+  function _decompressResponse() {
+    _decompressResponse = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(compressedData) {
+      return _regenerator["default"].wrap(function _callee2$(_context2) {
+        while (1) switch (_context2.prev = _context2.next) {
+          case 0:
+            _context2.next = 2;
+            return decompress(_base64UrlToArrayBuffer(compressedData), 'gzip');
+          case 2:
+            return _context2.abrupt("return", _context2.sent);
+          case 3:
+          case "end":
+            return _context2.stop();
+        }
+      }, _callee2);
+    }));
+    return _decompressResponse.apply(this, arguments);
+  }
+  function _base64UrlToArrayBuffer(base64) {
+    // console.log('array buffer from base64Url:', base64);
+    var binaryString = window.atob(base64);
+    var length = binaryString.length;
+    var bytes = new Uint8Array(length);
+    for (var i = 0; i < length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    // console.log('array buffer:', bytes.buffer);
+    return bytes.buffer;
+  }
+  return publicized;
+}
+module.exports = WebRTCClass;
+},{"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/typeof":13,"@babel/runtime/regenerator":15,"fflate":158}],221:[function(require,module,exports){
+"use strict";
+
+function LogLevel(logLevel) {
+  var ll = logLevel || 2;
+  switch (ll) {
+    case 1:
+      return {
+        error: true,
+        debug: false,
+        info: false
+      };
+    case 2:
+      return {
+        error: true,
+        debug: true,
+        info: false
+      };
+    case 3:
+      return {
+        error: true,
+        debug: true,
+        info: true
+      };
+  }
+}
+if (typeof module !== 'undefined' && typeof module.exports != 'undefined') {
+  module.exports = LogLevel;
+} else {
+  if (!window.POD) {
+    window.POD = {};
+  }
+  window.POD.LogLevel = LogLevel;
+}
+},{}],222:[function(require,module,exports){
+(function (global){(function (){
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+var _typeof2 = _interopRequireDefault(require("@babel/runtime/helpers/typeof"));
+/**
+ * General Utilities
+ */
+function Utility() {
+  /**
+   * Checks if Client is using NodeJS or not
+   * @return {boolean}
+   */
+  this.isNode = function () {
+    // return (typeof module !== 'undefined' && typeof module.exports != "undefined");
+    return typeof global !== "undefined" && {}.toString.call(global) === '[object global]';
+  };
+
+  /**
+   * Generates Random String
+   * @param   {int}     sectionCount
+   * @return  {string}
+   */
+  this.generateUUID = function (sectionCount) {
+    var d = new Date().getTime();
+    var textData = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
+    if (sectionCount == 1) {
+      textData = 'xxxxxxxx';
+    }
+    if (sectionCount == 2) {
+      textData = 'xxxxxxxx-xxxx';
+    }
+    if (sectionCount == 3) {
+      textData = 'xxxxxxxx-xxxx-4xxx';
+    }
+    if (sectionCount == 4) {
+      textData = 'xxxxxxxx-xxxx-4xxx-yxxx';
+    }
+    var uuid = textData.replace(/[xy]/g, function (c) {
+      var r = (d + Math.random() * 16) % 16 | 0;
+      d = Math.floor(d / 16);
+      return (c == 'x' ? r : r & 0x7 | 0x8).toString(16);
+    });
+    return uuid;
+  };
+
+  /**
+   * Prints Socket Status on Both Browser and Linux Terminal
+   * @param {object} params Socket status + current msg + send queue
+   * @return
+   */
+  this.asyncLogger = function (params) {
+    var type = params.type,
+      msg = params.msg,
+      peerId = params.peerId,
+      deviceId = params.deviceId,
+      isSocketOpen = params.isSocketOpen,
+      isDeviceRegister = params.isDeviceRegister,
+      isServerRegister = params.isServerRegister,
+      socketState = params.socketState,
+      pushSendDataQueue = params.pushSendDataQueue,
+      workerId = params.workerId,
+      protocol = params.protocol || "websocket",
+      BgColor,
+      FgColor,
+      ColorCSS;
+    switch (type) {
+      case "Send":
+        BgColor = 44;
+        FgColor = 34;
+        ColorCSS = "#4c8aff";
+        break;
+      case "Receive":
+        BgColor = 45;
+        FgColor = 35;
+        ColorCSS = "#aa386d";
+        break;
+      case "Error":
+        BgColor = 41;
+        FgColor = 31;
+        ColorCSS = "#ff0043";
+        break;
+      default:
+        BgColor = 45;
+        ColorCSS = "#212121";
+        break;
+    }
+    switch (protocol) {
+      case "websocket":
+        if (typeof global !== "undefined" && {}.toString.call(global) === '[object global]') {
+          console.log("\n");
+          console.log("\x1b[" + BgColor + "m\x1b[8m%s\x1b[0m", "################################################################");
+          console.log("\x1b[" + BgColor + "m\x1b[8m##################\x1b[0m\x1b[37m\x1b[" + BgColor + "m S O C K E T    S T A T U S \x1b[0m\x1b[" + BgColor + "m\x1b[8m##################\x1b[0m");
+          console.log("\x1b[" + BgColor + "m\x1b[8m%s\x1b[0m", "################################################################");
+          console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t\t\t\t\t\t\t      \x1b[" + BgColor + "m\x1b[8m##\x1b[0m");
+          console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m", " PEER ID\t\t", peerId);
+          if (workerId > 0) {
+            console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m", " WORKER ID\t\t", workerId);
+          }
+          console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m", " DEVICE ID\t\t", deviceId);
+          console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m", " IS SOCKET OPEN\t", isSocketOpen);
+          console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m", " DEVICE REGISTER\t", isDeviceRegister);
+          console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m", " SERVER REGISTER\t", isServerRegister);
+          console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m", " SOCKET STATE\t", socketState);
+          console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[" + FgColor + "m%s\x1b[0m ", " CURRENT MESSAGE\t", type);
+          console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m");
+          Object.keys(msg).forEach(function (key) {
+            if ((0, _typeof2["default"])(msg[key]) === 'object') {
+              console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t \x1b[1m-\x1b[0m \x1b[35m%s\x1b[0m", key);
+              Object.keys(msg[key]).forEach(function (k) {
+                console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t   \x1b[1m•\x1b[0m \x1b[35m%s\x1b[0m : \x1b[33m%s\x1b[0m", k, msg[key][k]);
+              });
+            } else {
+              console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t \x1b[1m•\x1b[0m \x1b[35m%s\x1b[0m : \x1b[33m%s\x1b[0m", key, msg[key]);
+            }
+          });
+          console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m");
+          if (pushSendDataQueue.length > 0) {
+            console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m", " SEND QUEUE");
+            console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m");
+            Object.keys(pushSendDataQueue).forEach(function (key) {
+              if ((0, _typeof2["default"])(pushSendDataQueue[key]) === 'object') {
+                console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t \x1b[1m-\x1b[0m \x1b[35m%s\x1b[0m", key);
+                Object.keys(pushSendDataQueue[key]).forEach(function (k) {
+                  console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t   \x1b[1m•\x1b[0m \x1b[35m%s\x1b[0m : \x1b[36m%s\x1b[0m", k, JSON.stringify(pushSendDataQueue[key][k]));
+                });
+              } else {
+                console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t \x1b[1m•\x1b[0m \x1b[35m%s\x1b[0m : \x1b[33m%s\x1b[0m", key, pushSendDataQueue[key]);
+              }
+            });
+          } else {
+            console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \x1b[2m%s\x1b[0m \x1b[1m%s\x1b[0m ", " SEND QUEUE\t\t", "Empty");
+          }
+          console.log("\x1b[" + BgColor + "m\x1b[8m##\x1b[0m \t\t\t\t\t\t\t      \x1b[" + BgColor + "m\x1b[8m##\x1b[0m");
+          console.log("\x1b[" + BgColor + "m\x1b[8m%s\x1b[0m", "################################################################");
+          console.log("\n");
+        } else {
+          console.log("\n");
+          console.log("%cS O C K E T    S T A T U S", 'background: ' + ColorCSS + '; padding: 10px 142px; font-weight: bold; font-size: 18px; color: #fff;');
+          console.log("\n");
+          console.log("%c   PEER ID\t\t %c" + peerId, 'color: #444', 'color: #ffac28; font-weight: bold');
+          console.log("%c   DEVICE ID\t\t %c" + deviceId, 'color: #444', 'color: #ffac28; font-weight: bold');
+          console.log("%c   IS SOCKET OPEN\t %c" + isSocketOpen, 'color: #444', 'color: #ffac28; font-weight: bold');
+          console.log("%c   DEVICE REGISTER\t %c" + isDeviceRegister, 'color: #444', 'color: #ffac28; font-weight: bold');
+          console.log("%c   SERVER REGISTER\t %c" + isServerRegister, 'color: #444', 'color: #ffac28; font-weight: bold');
+          console.log("%c   SOCKET STATE\t\t %c" + socketState, 'color: #444', 'color: #ffac28; font-weight: bold');
+          console.log("%c   CURRENT MESSAGE\t %c" + type, 'color: #444', 'color: #aa386d; font-weight: bold');
+          console.log("\n");
+          Object.keys(msg).forEach(function (key) {
+            if ((0, _typeof2["default"])(msg[key]) === 'object') {
+              console.log("%c \t-" + key, 'color: #777');
+              Object.keys(msg[key]).forEach(function (k) {
+                console.log("%c \t  •" + k + " : %c" + msg[key][k], 'color: #777', 'color: #f23; font-weight: bold');
+              });
+            } else {
+              console.log("%c \t•" + key + " : %c" + msg[key], 'color: #777', 'color: #f23; font-weight: bold');
+            }
+          });
+          console.log("\n");
+          if (pushSendDataQueue.length > 0) {
+            console.log("%c   SEND QUEUE", 'color: #444');
+            console.log("\n");
+            Object.keys(pushSendDataQueue).forEach(function (key) {
+              if ((0, _typeof2["default"])(pushSendDataQueue[key]) === 'object') {
+                console.log("%c \t-" + key, 'color: #777');
+                Object.keys(pushSendDataQueue[key]).forEach(function (k) {
+                  console.log("%c \t  •" + k + " : %c" + JSON.stringify(pushSendDataQueue[key][k]), 'color: #777', 'color: #999; font-weight: bold');
+                });
+              } else {
+                console.log("%c \t•" + key + " : %c" + pushSendDataQueue[key], 'color: #777', 'color: #999; font-weight: bold');
+              }
+            });
+          } else {
+            console.log("%c   SEND QUEUE\t\t %cEmpty", 'color: #444', 'color: #000; font-weight: bold');
+          }
+          console.log("\n");
+          console.log("%c ", 'font-weight: bold; font-size: 3px; border-left: solid 540px ' + ColorCSS + ';');
+          console.log("\n");
+        }
+        break;
+    }
+  };
+
+  /**
+   * Prints Custom Message in console
+   * @param {string} message Message to be logged in terminal
+   * @return
+   */
+  this.asyncStepLogger = function (message) {
+    if (typeof navigator == "undefined") {
+      console.log("\x1b[90m    ☰ \x1b[0m\x1b[90m%s\x1b[0m", message);
+    } else {
+      console.log("%c   " + message, 'border-left: solid #666 10px; color: #666;');
+    }
+  };
+}
+if (typeof module !== 'undefined' && typeof module.exports != "undefined") {
+  module.exports = Utility;
+} else {
+  if (!window.POD) {
+    window.POD = {};
+  }
+  window.POD.AsyncUtility = Utility;
+}
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/typeof":13}],223:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -40441,7 +40081,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],229:[function(require,module,exports){
+},{}],224:[function(require,module,exports){
 exports.publicEncrypt = require('./publicEncrypt')
 exports.privateDecrypt = require('./privateDecrypt')
 
@@ -40453,7 +40093,7 @@ exports.publicDecrypt = function publicDecrypt (key, buf) {
   return exports.privateDecrypt(key, buf, true)
 }
 
-},{"./privateDecrypt":232,"./publicEncrypt":233}],230:[function(require,module,exports){
+},{"./privateDecrypt":227,"./publicEncrypt":228}],225:[function(require,module,exports){
 var createHash = require('create-hash')
 var Buffer = require('safe-buffer').Buffer
 
@@ -40474,9 +40114,9 @@ function i2ops (c) {
   return out
 }
 
-},{"create-hash":96,"safe-buffer":239}],231:[function(require,module,exports){
-arguments[4][43][0].apply(exports,arguments)
-},{"buffer":47,"dup":43}],232:[function(require,module,exports){
+},{"create-hash":83,"safe-buffer":234}],226:[function(require,module,exports){
+arguments[4][30][0].apply(exports,arguments)
+},{"buffer":34,"dup":30}],227:[function(require,module,exports){
 var parseKeys = require('parse-asn1')
 var mgf = require('./mgf')
 var xor = require('./xor')
@@ -40583,7 +40223,7 @@ function compare (a, b) {
   return dif
 }
 
-},{"./mgf":230,"./withPublic":234,"./xor":235,"bn.js":231,"browserify-rsa":68,"create-hash":96,"parse-asn1":221,"safe-buffer":239}],233:[function(require,module,exports){
+},{"./mgf":225,"./withPublic":229,"./xor":230,"bn.js":226,"browserify-rsa":55,"create-hash":83,"parse-asn1":211,"safe-buffer":234}],228:[function(require,module,exports){
 var parseKeys = require('parse-asn1')
 var randomBytes = require('randombytes')
 var createHash = require('create-hash')
@@ -40673,7 +40313,7 @@ function nonZero (len) {
   return out
 }
 
-},{"./mgf":230,"./withPublic":234,"./xor":235,"bn.js":231,"browserify-rsa":68,"create-hash":96,"parse-asn1":221,"randombytes":236,"safe-buffer":239}],234:[function(require,module,exports){
+},{"./mgf":225,"./withPublic":229,"./xor":230,"bn.js":226,"browserify-rsa":55,"create-hash":83,"parse-asn1":211,"randombytes":231,"safe-buffer":234}],229:[function(require,module,exports){
 var BN = require('bn.js')
 var Buffer = require('safe-buffer').Buffer
 
@@ -40687,7 +40327,7 @@ function withPublic (paddedMsg, key) {
 
 module.exports = withPublic
 
-},{"bn.js":231,"safe-buffer":239}],235:[function(require,module,exports){
+},{"bn.js":226,"safe-buffer":234}],230:[function(require,module,exports){
 module.exports = function xor (a, b) {
   var len = a.length
   var i = -1
@@ -40697,7 +40337,7 @@ module.exports = function xor (a, b) {
   return a
 }
 
-},{}],236:[function(require,module,exports){
+},{}],231:[function(require,module,exports){
 (function (process,global){(function (){
 'use strict'
 
@@ -40751,7 +40391,7 @@ function randomBytes (size, cb) {
 }
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":228,"safe-buffer":239}],237:[function(require,module,exports){
+},{"_process":223,"safe-buffer":234}],232:[function(require,module,exports){
 (function (process,global){(function (){
 'use strict'
 
@@ -40863,7 +40503,7 @@ function randomFillSync (buf, offset, size) {
 }
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":228,"randombytes":236,"safe-buffer":239}],238:[function(require,module,exports){
+},{"_process":223,"randombytes":231,"safe-buffer":234}],233:[function(require,module,exports){
 'use strict'
 var Buffer = require('buffer').Buffer
 var inherits = require('inherits')
@@ -41028,7 +40668,7 @@ function fn5 (a, b, c, d, e, m, k, s) {
 
 module.exports = RIPEMD160
 
-},{"buffer":92,"hash-base":175,"inherits":206}],239:[function(require,module,exports){
+},{"buffer":79,"hash-base":164,"inherits":195}],234:[function(require,module,exports){
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
 var Buffer = buffer.Buffer
@@ -41092,7 +40732,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-},{"buffer":92}],240:[function(require,module,exports){
+},{"buffer":79}],235:[function(require,module,exports){
 (function (process){(function (){
 /* eslint-disable node/no-deprecated-api */
 
@@ -41173,7 +40813,7 @@ if (!safer.constants) {
 module.exports = safer
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":228,"buffer":92}],241:[function(require,module,exports){
+},{"_process":223,"buffer":79}],236:[function(require,module,exports){
 var grammar = module.exports = {
   v: [{
       name: 'version',
@@ -41432,7 +41072,7 @@ Object.keys(grammar).forEach(function (key) {
   });
 });
 
-},{}],242:[function(require,module,exports){
+},{}],237:[function(require,module,exports){
 var parser = require('./parser');
 var writer = require('./writer');
 
@@ -41442,7 +41082,7 @@ exports.parseFmtpConfig = parser.parseFmtpConfig;
 exports.parsePayloads = parser.parsePayloads;
 exports.parseRemoteCandidates = parser.parseRemoteCandidates;
 
-},{"./parser":243,"./writer":244}],243:[function(require,module,exports){
+},{"./parser":238,"./writer":239}],238:[function(require,module,exports){
 var toIntIfInt = function (v) {
   return String(Number(v)) === v ? Number(v) : v;
 };
@@ -41537,7 +41177,7 @@ exports.parseRemoteCandidates = function (str) {
   return candidates;
 };
 
-},{"./grammar":241}],244:[function(require,module,exports){
+},{"./grammar":236}],239:[function(require,module,exports){
 var grammar = require('./grammar');
 
 // customized util.format - discards excess arguments and can void middle ones
@@ -41653,7 +41293,7 @@ module.exports = function (session, opts) {
   return sdp.join('\r\n') + '\r\n';
 };
 
-},{"./grammar":241}],245:[function(require,module,exports){
+},{"./grammar":236}],240:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -41694,7 +41334,7 @@ module.exports = function arrayEquals(array) {
 };
 
 
-},{}],246:[function(require,module,exports){
+},{}],241:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -41712,7 +41352,7 @@ module.exports = function arrayEquals(array) {
 
 exports.Interop = require('./interop');
 
-},{"./interop":247}],247:[function(require,module,exports){
+},{"./interop":242}],242:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -42597,7 +42237,7 @@ Interop.prototype.toUnifiedPlan = function(desc) {
     //#endregion
 };
 
-},{"./array-equals":245,"./transform":248}],248:[function(require,module,exports){
+},{"./array-equals":240,"./transform":243}],243:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -42711,7 +42351,7 @@ exports.parse = function(sdp) {
 };
 
 
-},{"sdp-transform":242}],249:[function(require,module,exports){
+},{"sdp-transform":237}],244:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 // prototype class for hash functions
@@ -42794,7 +42434,7 @@ Hash.prototype._update = function () {
 
 module.exports = Hash
 
-},{"safe-buffer":239}],250:[function(require,module,exports){
+},{"safe-buffer":234}],245:[function(require,module,exports){
 var exports = module.exports = function SHA (algorithm) {
   algorithm = algorithm.toLowerCase()
 
@@ -42811,7 +42451,7 @@ exports.sha256 = require('./sha256')
 exports.sha384 = require('./sha384')
 exports.sha512 = require('./sha512')
 
-},{"./sha":251,"./sha1":252,"./sha224":253,"./sha256":254,"./sha384":255,"./sha512":256}],251:[function(require,module,exports){
+},{"./sha":246,"./sha1":247,"./sha224":248,"./sha256":249,"./sha384":250,"./sha512":251}],246:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-0, as defined
  * in FIPS PUB 180-1
@@ -42907,7 +42547,7 @@ Sha.prototype._hash = function () {
 
 module.exports = Sha
 
-},{"./hash":249,"inherits":206,"safe-buffer":239}],252:[function(require,module,exports){
+},{"./hash":244,"inherits":195,"safe-buffer":234}],247:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
  * in FIPS PUB 180-1
@@ -43008,7 +42648,7 @@ Sha1.prototype._hash = function () {
 
 module.exports = Sha1
 
-},{"./hash":249,"inherits":206,"safe-buffer":239}],253:[function(require,module,exports){
+},{"./hash":244,"inherits":195,"safe-buffer":234}],248:[function(require,module,exports){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
  * in FIPS 180-2
@@ -43063,7 +42703,7 @@ Sha224.prototype._hash = function () {
 
 module.exports = Sha224
 
-},{"./hash":249,"./sha256":254,"inherits":206,"safe-buffer":239}],254:[function(require,module,exports){
+},{"./hash":244,"./sha256":249,"inherits":195,"safe-buffer":234}],249:[function(require,module,exports){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
  * in FIPS 180-2
@@ -43200,7 +42840,7 @@ Sha256.prototype._hash = function () {
 
 module.exports = Sha256
 
-},{"./hash":249,"inherits":206,"safe-buffer":239}],255:[function(require,module,exports){
+},{"./hash":244,"inherits":195,"safe-buffer":234}],250:[function(require,module,exports){
 var inherits = require('inherits')
 var SHA512 = require('./sha512')
 var Hash = require('./hash')
@@ -43259,7 +42899,7 @@ Sha384.prototype._hash = function () {
 
 module.exports = Sha384
 
-},{"./hash":249,"./sha512":256,"inherits":206,"safe-buffer":239}],256:[function(require,module,exports){
+},{"./hash":244,"./sha512":251,"inherits":195,"safe-buffer":234}],251:[function(require,module,exports){
 var inherits = require('inherits')
 var Hash = require('./hash')
 var Buffer = require('safe-buffer').Buffer
@@ -43521,7 +43161,7 @@ Sha512.prototype._hash = function () {
 
 module.exports = Sha512
 
-},{"./hash":249,"inherits":206,"safe-buffer":239}],257:[function(require,module,exports){
+},{"./hash":244,"inherits":195,"safe-buffer":234}],252:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -43652,35 +43292,35 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":169,"inherits":206,"readable-stream/lib/_stream_duplex.js":259,"readable-stream/lib/_stream_passthrough.js":260,"readable-stream/lib/_stream_readable.js":261,"readable-stream/lib/_stream_transform.js":262,"readable-stream/lib/_stream_writable.js":263,"readable-stream/lib/internal/streams/end-of-stream.js":267,"readable-stream/lib/internal/streams/pipeline.js":269}],258:[function(require,module,exports){
+},{"events":156,"inherits":195,"readable-stream/lib/_stream_duplex.js":254,"readable-stream/lib/_stream_passthrough.js":255,"readable-stream/lib/_stream_readable.js":256,"readable-stream/lib/_stream_transform.js":257,"readable-stream/lib/_stream_writable.js":258,"readable-stream/lib/internal/streams/end-of-stream.js":262,"readable-stream/lib/internal/streams/pipeline.js":264}],253:[function(require,module,exports){
+arguments[4][62][0].apply(exports,arguments)
+},{"dup":62}],254:[function(require,module,exports){
+arguments[4][63][0].apply(exports,arguments)
+},{"./_stream_readable":256,"./_stream_writable":258,"_process":223,"dup":63,"inherits":195}],255:[function(require,module,exports){
+arguments[4][64][0].apply(exports,arguments)
+},{"./_stream_transform":257,"dup":64,"inherits":195}],256:[function(require,module,exports){
+arguments[4][65][0].apply(exports,arguments)
+},{"../errors":253,"./_stream_duplex":254,"./internal/streams/async_iterator":259,"./internal/streams/buffer_list":260,"./internal/streams/destroy":261,"./internal/streams/from":263,"./internal/streams/state":265,"./internal/streams/stream":266,"_process":223,"buffer":79,"dup":65,"events":156,"inherits":195,"string_decoder/":267,"util":34}],257:[function(require,module,exports){
+arguments[4][66][0].apply(exports,arguments)
+},{"../errors":253,"./_stream_duplex":254,"dup":66,"inherits":195}],258:[function(require,module,exports){
+arguments[4][67][0].apply(exports,arguments)
+},{"../errors":253,"./_stream_duplex":254,"./internal/streams/destroy":261,"./internal/streams/state":265,"./internal/streams/stream":266,"_process":223,"buffer":79,"dup":67,"inherits":195,"util-deprecate":270}],259:[function(require,module,exports){
+arguments[4][68][0].apply(exports,arguments)
+},{"./end-of-stream":262,"_process":223,"dup":68}],260:[function(require,module,exports){
+arguments[4][69][0].apply(exports,arguments)
+},{"buffer":79,"dup":69,"util":34}],261:[function(require,module,exports){
+arguments[4][70][0].apply(exports,arguments)
+},{"_process":223,"dup":70}],262:[function(require,module,exports){
+arguments[4][71][0].apply(exports,arguments)
+},{"../../../errors":253,"dup":71}],263:[function(require,module,exports){
+arguments[4][72][0].apply(exports,arguments)
+},{"dup":72}],264:[function(require,module,exports){
+arguments[4][73][0].apply(exports,arguments)
+},{"../../../errors":253,"./end-of-stream":262,"dup":73}],265:[function(require,module,exports){
+arguments[4][74][0].apply(exports,arguments)
+},{"../../../errors":253,"dup":74}],266:[function(require,module,exports){
 arguments[4][75][0].apply(exports,arguments)
-},{"dup":75}],259:[function(require,module,exports){
-arguments[4][76][0].apply(exports,arguments)
-},{"./_stream_readable":261,"./_stream_writable":263,"_process":228,"dup":76,"inherits":206}],260:[function(require,module,exports){
-arguments[4][77][0].apply(exports,arguments)
-},{"./_stream_transform":262,"dup":77,"inherits":206}],261:[function(require,module,exports){
-arguments[4][78][0].apply(exports,arguments)
-},{"../errors":258,"./_stream_duplex":259,"./internal/streams/async_iterator":264,"./internal/streams/buffer_list":265,"./internal/streams/destroy":266,"./internal/streams/from":268,"./internal/streams/state":270,"./internal/streams/stream":271,"_process":228,"buffer":92,"dup":78,"events":169,"inherits":206,"string_decoder/":272,"util":47}],262:[function(require,module,exports){
-arguments[4][79][0].apply(exports,arguments)
-},{"../errors":258,"./_stream_duplex":259,"dup":79,"inherits":206}],263:[function(require,module,exports){
-arguments[4][80][0].apply(exports,arguments)
-},{"../errors":258,"./_stream_duplex":259,"./internal/streams/destroy":266,"./internal/streams/state":270,"./internal/streams/stream":271,"_process":228,"buffer":92,"dup":80,"inherits":206,"util-deprecate":275}],264:[function(require,module,exports){
-arguments[4][81][0].apply(exports,arguments)
-},{"./end-of-stream":267,"_process":228,"dup":81}],265:[function(require,module,exports){
-arguments[4][82][0].apply(exports,arguments)
-},{"buffer":92,"dup":82,"util":47}],266:[function(require,module,exports){
-arguments[4][83][0].apply(exports,arguments)
-},{"_process":228,"dup":83}],267:[function(require,module,exports){
-arguments[4][84][0].apply(exports,arguments)
-},{"../../../errors":258,"dup":84}],268:[function(require,module,exports){
-arguments[4][85][0].apply(exports,arguments)
-},{"dup":85}],269:[function(require,module,exports){
-arguments[4][86][0].apply(exports,arguments)
-},{"../../../errors":258,"./end-of-stream":267,"dup":86}],270:[function(require,module,exports){
-arguments[4][87][0].apply(exports,arguments)
-},{"../../../errors":258,"dup":87}],271:[function(require,module,exports){
-arguments[4][88][0].apply(exports,arguments)
-},{"dup":88,"events":169}],272:[function(require,module,exports){
+},{"dup":75,"events":156}],267:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -43977,9 +43617,9 @@ function simpleWrite(buf) {
 function simpleEnd(buf) {
   return buf && buf.length ? this.write(buf) : '';
 }
-},{"safe-buffer":273}],273:[function(require,module,exports){
-arguments[4][90][0].apply(exports,arguments)
-},{"buffer":92,"dup":90}],274:[function(require,module,exports){
+},{"safe-buffer":268}],268:[function(require,module,exports){
+arguments[4][77][0].apply(exports,arguments)
+},{"buffer":79,"dup":77}],269:[function(require,module,exports){
 /*!
  * UAParser.js v0.7.24
  * Lightweight JavaScript-based User-Agent string parser
@@ -44918,7 +44558,7 @@ arguments[4][90][0].apply(exports,arguments)
 
 })(typeof window === 'object' ? window : this);
 
-},{}],275:[function(require,module,exports){
+},{}],270:[function(require,module,exports){
 (function (global){(function (){
 
 /**
@@ -44989,7 +44629,7 @@ function config (name) {
 }
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],276:[function(require,module,exports){
+},{}],271:[function(require,module,exports){
 /**
  * Convert array of 16 byte values to UUID string format of the form:
  * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
@@ -45017,7 +44657,7 @@ function bytesToUuid(buf, offset) {
 
 module.exports = bytesToUuid;
 
-},{}],277:[function(require,module,exports){
+},{}],272:[function(require,module,exports){
 // Unique ID creation requires a high quality random # generator.  In the
 // browser this is a little complicated due to unknown quality of Math.random()
 // and inconsistent support for the `crypto` API.  We do the best we can via
@@ -45053,7 +44693,7 @@ if (getRandomValues) {
   };
 }
 
-},{}],278:[function(require,module,exports){
+},{}],273:[function(require,module,exports){
 var rng = require('./lib/rng');
 var bytesToUuid = require('./lib/bytesToUuid');
 
@@ -45084,7 +44724,7 @@ function v4(options, buf, offset) {
 
 module.exports = v4;
 
-},{"./lib/bytesToUuid":276,"./lib/rng":277}],279:[function(require,module,exports){
+},{"./lib/bytesToUuid":271,"./lib/rng":272}],274:[function(require,module,exports){
 /*
 WildEmitter.js is a slim little event emitter by @henrikjoreteg largely based
 on @visionmedia's Emitter from UI Kit.
@@ -45241,7 +44881,7 @@ WildEmitter.mixin = function (constructor) {
 
 WildEmitter.mixin(WildEmitter);
 
-},{}],280:[function(require,module,exports){
+},{}],275:[function(require,module,exports){
 /**
  * default settings
  *
@@ -45702,7 +45342,7 @@ exports.stripBlankChar = stripBlankChar;
 exports.cssFilter = defaultCSSFilter;
 exports.getDefaultCSSWhiteList = getDefaultCSSWhiteList;
 
-},{"./util":283,"cssfilter":137}],281:[function(require,module,exports){
+},{"./util":278,"cssfilter":124}],276:[function(require,module,exports){
 /**
  * xss
  *
@@ -45755,7 +45395,7 @@ if (isWorkerEnv()) {
   self.filterXSS = module.exports;
 }
 
-},{"./default":280,"./parser":282,"./xss":284}],282:[function(require,module,exports){
+},{"./default":275,"./parser":277,"./xss":279}],277:[function(require,module,exports){
 /**
  * Simple HTML Parser
  *
@@ -46014,7 +45654,7 @@ function stripQuoteWrap(text) {
 exports.parseTag = parseTag;
 exports.parseAttr = parseAttr;
 
-},{"./util":283}],283:[function(require,module,exports){
+},{"./util":278}],278:[function(require,module,exports){
 module.exports = {
   indexOf: function (arr, item) {
     var i, j;
@@ -46050,7 +45690,7 @@ module.exports = {
   },
 };
 
-},{}],284:[function(require,module,exports){
+},{}],279:[function(require,module,exports){
 /**
  * filter xss
  *
@@ -46281,9 +45921,9 @@ FilterXSS.prototype.process = function (html) {
 
 module.exports = FilterXSS;
 
-},{"./default":280,"./parser":282,"./util":283,"cssfilter":137}],285:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.40","date":"۱۴۰۲/۷/۲۶","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
-},{}],286:[function(require,module,exports){
+},{"./default":275,"./parser":277,"./util":278,"cssfilter":124}],280:[function(require,module,exports){
+module.exports={"version":"12.9.7-snapshot.41","date":"۱۴۰۲/۷/۲۶","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+},{}],281:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -49120,10 +48760,10 @@ function ChatCall(params) {
 var _default = ChatCall;
 exports["default"] = _default;
 
-},{"./events.module.js":289,"./lib/call/callServerManager":291,"./lib/call/callsList":295,"./lib/call/deviceManager2":297,"./lib/call/sharedData":299,"./lib/constants":303,"./lib/errorHandler":304,"./lib/requestBlocker":305,"./lib/sdkParams":306,"./lib/store":308,"./messaging.module":313,"./utility/utility":314,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/defineProperty":19,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/helpers/objectDestructuringEmpty":23,"@babel/runtime/helpers/typeof":26,"@babel/runtime/regenerator":28,"kurento-utils":209}],287:[function(require,module,exports){
-'use strict';var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");var _typeof3=require("@babel/runtime/helpers/typeof");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _podasyncWsOnly=_interopRequireDefault(require("podasync-ws-only"));var _utility=_interopRequireDefault(require("./utility/utility"));var _call=_interopRequireDefault(require("./call.module"));var _sdkParams=require("./lib/sdkParams");var _events=_interopRequireWildcard(require("./events.module"));var _messaging=require("./messaging.module");var _buildConfig=_interopRequireDefault(require("./buildConfig.json"));var _deprecateMethods=require("./deprecateMethods");var _xss=_interopRequireDefault(require("xss"));var _constants=require("./lib/constants");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));var _store=require("./lib/store");var _user=require("./lib/store/user");var _reactionsMethods=require("./lib/chat/reactionsMethods");function _getRequireWildcardCache(nodeInterop){if(typeof WeakMap!=="function")return null;var cacheBabelInterop=new WeakMap();var cacheNodeInterop=new WeakMap();return(_getRequireWildcardCache=function _getRequireWildcardCache(nodeInterop){return nodeInterop?cacheNodeInterop:cacheBabelInterop;})(nodeInterop);}function _interopRequireWildcard(obj,nodeInterop){if(!nodeInterop&&obj&&obj.__esModule){return obj;}if(obj===null||_typeof3(obj)!=="object"&&typeof obj!=="function"){return{"default":obj};}var cache=_getRequireWildcardCache(nodeInterop);if(cache&&cache.has(obj)){return cache.get(obj);}var newObj={};var hasPropertyDescriptor=Object.defineProperty&&Object.getOwnPropertyDescriptor;for(var key in obj){if(key!=="default"&&Object.prototype.hasOwnProperty.call(obj,key)){var desc=hasPropertyDescriptor?Object.getOwnPropertyDescriptor(obj,key):null;if(desc&&(desc.get||desc.set)){Object.defineProperty(newObj,key,desc);}else{newObj[key]=obj[key];}}}newObj["default"]=obj;if(cache){cache.set(obj,newObj);}return newObj;}function Chat(params){/*******************************************************
-     *          P R I V A T E   V A R I A B L E S          *
-     *******************************************************/_sdkParams.sdkParams.token=params.token||"111";_sdkParams.sdkParams.generalTypeCode=params.typeCode||'default';_sdkParams.sdkParams.typeCodeOwnerId=params.typeCodeOwnerId||null;_sdkParams.sdkParams.mapApiKey=params.mapApiKey||'8b77db18704aa646ee5aaea13e7370f4f88b9e8c';_sdkParams.sdkParams.productEnv=typeof navigator!='undefined'?navigator.product:'undefined';_sdkParams.sdkParams.forceWaitQueueInMemory=params.forceWaitQueueInMemory&&typeof params.forceWaitQueueInMemory==='boolean'?params.forceWaitQueueInMemory:false;_sdkParams.sdkParams.grantDeviceIdFromSSO=params.grantDeviceIdFromSSO&&typeof params.grantDeviceIdFromSSO==='boolean'?params.grantDeviceIdFromSSO:false;_sdkParams.sdkParams.deliveryIntervalPitch=params.deliveryIntervalPitch||2000;_sdkParams.sdkParams.seenIntervalPitch=params.seenIntervalPitch||2000;_sdkParams.sdkParams.systemMessageIntervalPitch=params.systemMessageIntervalPitch||1000;_sdkParams.sdkParams.socketAddress=params.socketAddress;_sdkParams.sdkParams.serverName=params.serverName;_sdkParams.sdkParams.wsConnectionWaitTime=params.wsConnectionWaitTime;_sdkParams.sdkParams.connectionRetryInterval=params.connectionRetryInterval;_sdkParams.sdkParams.msgPriority=params.msgPriority;_sdkParams.sdkParams.messageTtl=params.messageTtl||10000;_sdkParams.sdkParams.reconnectOnClose=params.reconnectOnClose;_sdkParams.sdkParams.asyncLogging=params.asyncLogging;_sdkParams.sdkParams.connectionCheckTimeout=params.connectionCheckTimeout;_sdkParams.sdkParams.httpRequestTimeout=params.httpRequestTimeout>=0?params.httpRequestTimeout:0;_sdkParams.sdkParams.asyncRequestTimeout=typeof params.asyncRequestTimeout==='number'&&params.asyncRequestTimeout>=0?params.asyncRequestTimeout:0;_sdkParams.sdkParams.connectionCheckTimeoutThreshold=params.connectionCheckTimeoutThreshold;_sdkParams.sdkParams.httpUploadRequestTimeout=params.httpUploadRequestTimeout>=0?params.httpUploadRequestTimeout:0;_sdkParams.sdkParams.actualTimingLog=params.asyncLogging.actualTiming&&typeof params.asyncLogging.actualTiming==='boolean'?params.asyncLogging.actualTiming:false;_sdkParams.sdkParams.consoleLogging=params.asyncLogging.consoleLogging&&typeof params.asyncLogging.consoleLogging==='boolean'?params.asyncLogging.consoleLogging:false;_sdkParams.sdkParams.fullResponseObject=params.fullResponseObject||false;_sdkParams.sdkParams.webrtcConfig=params.webrtcConfig?params.webrtcConfig:null;_sdkParams.sdkParams.chatPingMessageInterval=params.chatPingMessageInterval;_sdkParams.sdkParams.protocol=params.protocol;_sdkParams.sdkParams.callRequestTimeout=typeof params.callRequestTimeout==='number'&&params.callRequestTimeout>=0?params.callRequestTimeout:10000;_sdkParams.sdkParams.callOptions=params.callOptions;var asyncClient,peerId,oldPeerId,//deviceId,
+},{"./events.module.js":284,"./lib/call/callServerManager":286,"./lib/call/callsList":290,"./lib/call/deviceManager2":292,"./lib/call/sharedData":294,"./lib/constants":299,"./lib/errorHandler":300,"./lib/requestBlocker":301,"./lib/sdkParams":302,"./lib/store":304,"./messaging.module":310,"./utility/utility":311,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/objectDestructuringEmpty":10,"@babel/runtime/helpers/typeof":13,"@babel/runtime/regenerator":15,"kurento-utils":199}],282:[function(require,module,exports){
+'use strict';var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");var _typeof3=require("@babel/runtime/helpers/typeof");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _podasyncWsOnly=_interopRequireDefault(require("podasync-ws-only"));var _utility=_interopRequireDefault(require("./utility/utility"));var _call=_interopRequireDefault(require("./call.module"));var _sdkParams=require("./lib/sdkParams");var _events=_interopRequireWildcard(require("./events.module"));var _messaging=require("./messaging.module");var _buildConfig=_interopRequireDefault(require("./buildConfig.json"));var _deprecateMethods=require("./deprecateMethods");var _xss=_interopRequireDefault(require("xss"));var _threadParticipantsMethods=require("./lib/chat/threadParticipantsMethods");var _constants=require("./lib/constants");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));var _store=require("./lib/store");var _user=require("./lib/store/user");var _reactionsMethods=require("./lib/chat/reactionsMethods");function _getRequireWildcardCache(nodeInterop){if(typeof WeakMap!=="function")return null;var cacheBabelInterop=new WeakMap();var cacheNodeInterop=new WeakMap();return(_getRequireWildcardCache=function _getRequireWildcardCache(nodeInterop){return nodeInterop?cacheNodeInterop:cacheBabelInterop;})(nodeInterop);}function _interopRequireWildcard(obj,nodeInterop){if(!nodeInterop&&obj&&obj.__esModule){return obj;}if(obj===null||_typeof3(obj)!=="object"&&typeof obj!=="function"){return{"default":obj};}var cache=_getRequireWildcardCache(nodeInterop);if(cache&&cache.has(obj)){return cache.get(obj);}var newObj={};var hasPropertyDescriptor=Object.defineProperty&&Object.getOwnPropertyDescriptor;for(var key in obj){if(key!=="default"&&Object.prototype.hasOwnProperty.call(obj,key)){var desc=hasPropertyDescriptor?Object.getOwnPropertyDescriptor(obj,key):null;if(desc&&(desc.get||desc.set)){Object.defineProperty(newObj,key,desc);}else{newObj[key]=obj[key];}}}newObj["default"]=obj;if(cache){cache.set(obj,newObj);}return newObj;}function Chat(params){/*******************************************************
+   *          P R I V A T E   V A R I A B L E S          *
+   *******************************************************/_sdkParams.sdkParams.token=params.token||"111";_sdkParams.sdkParams.generalTypeCode=params.typeCode||'default';_sdkParams.sdkParams.typeCodeOwnerId=params.typeCodeOwnerId||null;_sdkParams.sdkParams.mapApiKey=params.mapApiKey||'8b77db18704aa646ee5aaea13e7370f4f88b9e8c';_sdkParams.sdkParams.productEnv=typeof navigator!='undefined'?navigator.product:'undefined';_sdkParams.sdkParams.forceWaitQueueInMemory=params.forceWaitQueueInMemory&&typeof params.forceWaitQueueInMemory==='boolean'?params.forceWaitQueueInMemory:false;_sdkParams.sdkParams.grantDeviceIdFromSSO=params.grantDeviceIdFromSSO&&typeof params.grantDeviceIdFromSSO==='boolean'?params.grantDeviceIdFromSSO:false;_sdkParams.sdkParams.deliveryIntervalPitch=params.deliveryIntervalPitch||2000;_sdkParams.sdkParams.seenIntervalPitch=params.seenIntervalPitch||2000;_sdkParams.sdkParams.systemMessageIntervalPitch=params.systemMessageIntervalPitch||1000;_sdkParams.sdkParams.socketAddress=params.socketAddress;_sdkParams.sdkParams.serverName=params.serverName;_sdkParams.sdkParams.wsConnectionWaitTime=params.wsConnectionWaitTime;_sdkParams.sdkParams.connectionRetryInterval=params.connectionRetryInterval;_sdkParams.sdkParams.msgPriority=params.msgPriority;_sdkParams.sdkParams.messageTtl=params.messageTtl||10000;_sdkParams.sdkParams.reconnectOnClose=params.reconnectOnClose;_sdkParams.sdkParams.asyncLogging=params.asyncLogging;_sdkParams.sdkParams.connectionCheckTimeout=params.connectionCheckTimeout;_sdkParams.sdkParams.httpRequestTimeout=params.httpRequestTimeout>=0?params.httpRequestTimeout:0;_sdkParams.sdkParams.asyncRequestTimeout=typeof params.asyncRequestTimeout==='number'&&params.asyncRequestTimeout>=0?params.asyncRequestTimeout:0;_sdkParams.sdkParams.connectionCheckTimeoutThreshold=params.connectionCheckTimeoutThreshold;_sdkParams.sdkParams.httpUploadRequestTimeout=params.httpUploadRequestTimeout>=0?params.httpUploadRequestTimeout:0;_sdkParams.sdkParams.actualTimingLog=params.asyncLogging.actualTiming&&typeof params.asyncLogging.actualTiming==='boolean'?params.asyncLogging.actualTiming:false;_sdkParams.sdkParams.consoleLogging=params.asyncLogging.consoleLogging&&typeof params.asyncLogging.consoleLogging==='boolean'?params.asyncLogging.consoleLogging:false;_sdkParams.sdkParams.fullResponseObject=params.fullResponseObject||false;_sdkParams.sdkParams.webrtcConfig=params.webrtcConfig?params.webrtcConfig:null;_sdkParams.sdkParams.chatPingMessageInterval=params.chatPingMessageInterval;_sdkParams.sdkParams.protocol=params.protocol;_sdkParams.sdkParams.callRequestTimeout=typeof params.callRequestTimeout==='number'&&params.callRequestTimeout>=0?params.callRequestTimeout:10000;_sdkParams.sdkParams.callOptions=params.callOptions;var asyncClient,peerId,oldPeerId,//deviceId,
 //db,
 //queueDb,
 //hasCache = sdkParams.productEnv !== 'ReactNative' && typeof Dexie != 'undefined',
@@ -49190,25 +48830,25 @@ REVERSE:'/reverse',SEARCH:'/search',ROUTING:'/routing',STATIC_IMAGE:'/static'},C
 minIntegerValue=Number.MAX_SAFE_INTEGER*-1,maxIntegerValue=Number.MAX_SAFE_INTEGER,chatSendQueue=[],chatWaitQueue=[],chatUploadQueue=[],protocolSwitching=params.protocolSwitching,protocolManager=new ProtocolManager({protocol:_sdkParams.sdkParams.protocol}),asyncLogCallback=typeof params.asyncLogCallback=="function"?params.asyncLogCallback:null,msgLogCallback=typeof params.msgLogCallback=="function"?params.msgLogCallback:null;//fullResponseObject = params.fullResponseObject || false,
 //webrtcConfig = (params.webrtcConfig ? params.webrtcConfig : null);
 if(!_sdkParams.sdkParams.consoleLogging){/**
-         * Disable kurento-utils logs
-         */window.Logger={error:function error(){},log:function log(){},debug:function debug(){}};}(0,_events.initEventHandler)();(0,_messaging.initChatMessaging)(Object.assign(params,{asyncClient:asyncClient}));var callModule=new _call["default"](Object.assign(params,{asyncClient:asyncClient}));function ProtocolManager(_ref){var _ref$protocol=_ref.protocol,protocol=_ref$protocol===void 0?'auto':_ref$protocol;var config={switchingEnabled:protocol=="auto",currentProtocol:protocol=="auto"?'websocket':protocol,failOverProtocol:protocol=="auto"||protocol=="websocket"?'webrtc':'websocket',retries:0,allowedRetries:{websocket:protocolSwitching&&typeof protocolSwitching.websocket!=="undefined"?protocolSwitching.websocket:1,webrtc:protocolSwitching&&typeof protocolSwitching.webrtc!=="undefined"?protocolSwitching.webrtc:1},currentWaitTime:0};function canRetry(){return config.retries<=config.allowedRetries[config.currentProtocol];}function _switchProtocol(protocol){var canResetRetries=arguments.length>1&&arguments[1]!==undefined?arguments[1]:true;asyncClient.logout().then(function(){var current;if(protocol){current=protocol.toLowerCase();config.failOverProtocol=current=="webrtc"?"websocket":"webrtc";config.currentProtocol=current;}else{current=config.currentProtocol;config.currentProtocol=config.failOverProtocol;config.failOverProtocol=current;}_sdkParams.sdkParams.consoleLogging&&console.log("[SDK]|/| switchProtocol: ","config.currentProtocol: ",config.currentProtocol,"config.currentWaitTime: ",config.currentWaitTime);_events.chatEvents.fireEvent("autoSwitchAsyncProtocol",{current:config.currentProtocol,previous:config.failOverProtocol});if(canResetRetries)config.retries=1;initAsync();});}function _resetRetries(){config.retries=0;}var publics={switchProtocol:function switchProtocol(protocol){if(protocol=='auto'){config.switchingEnabled=true;_switchProtocol("websocket");}else{config.switchingEnabled=false;_switchProtocol(protocol);}},increaseRetries:function increaseRetries(){config.retries+=1;},canRetry:canRetry,getCurrentProtocol:function getCurrentProtocol(){return config.currentProtocol;},resetRetries:function resetRetries(){_resetRetries();},resetTimerTime:function resetTimerTime(time){config.currentWaitTime=typeof time!="undefined"?time:0;},onAsyncIsReconnecting:function onAsyncIsReconnecting(event){_sdkParams.sdkParams.consoleLogging&&console.log("[SDK]|/| onAsyncIsReconnecting: ","config.currentProtocol: ",config.currentProtocol,"config.currentWaitTime: ",config.currentWaitTime);publics.increaseRetries();if(config.currentWaitTime<64){config.currentWaitTime+=3;}if(!canRetry()&&config.switchingEnabled){_switchProtocol();}},getRetryStepTimerTime:function getRetryStepTimerTime(){return config.currentWaitTime;},reconnectAsync:function reconnectAsync(){publics.resetTimerTime();if(config.switchingEnabled){if(canRetry()){publics.increaseRetries();_switchProtocol(config.currentProtocol,false);// asyncClient.reconnectSocket();
+     * Disable kurento-utils logs
+     */window.Logger={error:function error(){},log:function log(){},debug:function debug(){}};}(0,_events.initEventHandler)();(0,_messaging.initChatMessaging)(Object.assign(params,{asyncClient:asyncClient}));var callModule=new _call["default"](Object.assign(params,{asyncClient:asyncClient}));function ProtocolManager(_ref){var _ref$protocol=_ref.protocol,protocol=_ref$protocol===void 0?'auto':_ref$protocol;var config={switchingEnabled:protocol=="auto",currentProtocol:protocol=="auto"?'websocket':protocol,failOverProtocol:protocol=="auto"||protocol=="websocket"?'webrtc':'websocket',retries:0,allowedRetries:{websocket:protocolSwitching&&typeof protocolSwitching.websocket!=="undefined"?protocolSwitching.websocket:1,webrtc:protocolSwitching&&typeof protocolSwitching.webrtc!=="undefined"?protocolSwitching.webrtc:1},currentWaitTime:0};function canRetry(){return config.retries<=config.allowedRetries[config.currentProtocol];}function _switchProtocol(protocol){var canResetRetries=arguments.length>1&&arguments[1]!==undefined?arguments[1]:true;asyncClient.logout().then(function(){var current;if(protocol){current=protocol.toLowerCase();config.failOverProtocol=current=="webrtc"?"websocket":"webrtc";config.currentProtocol=current;}else{current=config.currentProtocol;config.currentProtocol=config.failOverProtocol;config.failOverProtocol=current;}_sdkParams.sdkParams.consoleLogging&&console.log("[SDK]|/| switchProtocol: ","config.currentProtocol: ",config.currentProtocol,"config.currentWaitTime: ",config.currentWaitTime);_events.chatEvents.fireEvent("autoSwitchAsyncProtocol",{current:config.currentProtocol,previous:config.failOverProtocol});if(canResetRetries)config.retries=1;initAsync();});}function _resetRetries(){config.retries=0;}var publics={switchProtocol:function switchProtocol(protocol){if(protocol=='auto'){config.switchingEnabled=true;_switchProtocol("websocket");}else{config.switchingEnabled=false;_switchProtocol(protocol);}},increaseRetries:function increaseRetries(){config.retries+=1;},canRetry:canRetry,getCurrentProtocol:function getCurrentProtocol(){return config.currentProtocol;},resetRetries:function resetRetries(){_resetRetries();},resetTimerTime:function resetTimerTime(time){config.currentWaitTime=typeof time!="undefined"?time:0;},onAsyncIsReconnecting:function onAsyncIsReconnecting(event){_sdkParams.sdkParams.consoleLogging&&console.log("[SDK]|/| onAsyncIsReconnecting: ","config.currentProtocol: ",config.currentProtocol,"config.currentWaitTime: ",config.currentWaitTime);publics.increaseRetries();if(config.currentWaitTime<64){config.currentWaitTime+=3;}if(!canRetry()&&config.switchingEnabled){_switchProtocol();}},getRetryStepTimerTime:function getRetryStepTimerTime(){return config.currentWaitTime;},reconnectAsync:function reconnectAsync(){publics.resetTimerTime();if(config.switchingEnabled){if(canRetry()){publics.increaseRetries();_switchProtocol(config.currentProtocol,false);// asyncClient.reconnectSocket();
 }else{_switchProtocol();}}else{// switchProtocol(config.currentProtocol);
 asyncClient.reconnectSocket();}}};return publics;}/*******************************************************
-     *            P R I V A T E   M E T H O D S            *
-     *******************************************************/var init=function init(){/**
-             * Initialize Cache Databases
-             */ //startCacheDatabases(function () {
+   *            P R I V A T E   M E T H O D S            *
+   *******************************************************/var init=function init(){/**
+     * Initialize Cache Databases
+     */ //startCacheDatabases(function () {
 if(_sdkParams.sdkParams.grantDeviceIdFromSSO){var getDeviceIdWithTokenTime=new Date().getTime();getDeviceIdWithToken(function(retrievedDeviceId){if(_sdkParams.sdkParams.actualTimingLog){_utility["default"].chatStepLogger('Get Device ID ',new Date().getTime()-getDeviceIdWithTokenTime);}_sdkParams.sdkParams.deviceId=retrievedDeviceId;initAsync();});}else{initAsync();}//});
 },/**
-         * Initialize Async
-         *
-         * Initializes Async module and sets proper callbacks
-         *
-         * @access private
-         *
-         * @return {undefined}
-         * @return {undefined}
-         */initAsync=function initAsync(){var asyncGetReadyTime=new Date().getTime();asyncClient=new _podasyncWsOnly["default"]({protocol:protocolManager.getCurrentProtocol(),queueHost:queueHost,queuePort:queuePort,queueUsername:queueUsername,queuePassword:queuePassword,queueReceive:queueReceive,queueSend:queueSend,queueConnectionTimeout:queueConnectionTimeout,socketAddress:_sdkParams.sdkParams.socketAddress,serverName:_sdkParams.sdkParams.serverName,deviceId:_sdkParams.sdkParams.deviceId,wsConnectionWaitTime:_sdkParams.sdkParams.wsConnectionWaitTime,connectionRetryInterval:_sdkParams.sdkParams.connectionRetryInterval,connectionCheckTimeout:_sdkParams.sdkParams.connectionCheckTimeout,connectionCheckTimeoutThreshold:_sdkParams.sdkParams.connectionCheckTimeoutThreshold,messageTtl:_sdkParams.sdkParams.messageTtl,reconnectOnClose:_sdkParams.sdkParams.reconnectOnClose,asyncLogging:_sdkParams.sdkParams.asyncLogging,logLevel:_sdkParams.sdkParams.consoleLogging?3:1,webrtcConfig:_sdkParams.sdkParams.webrtcConfig,retryStepTimerTime:protocolManager.getRetryStepTimerTime(),onStartWithRetryStepGreaterThanZero:onStateChange,msgLogCallback:msgLogCallback||null,asyncLogCallback:asyncLogCallback||null,onDeviceId:onDeviceId});function onDeviceId(deviceId){if(!_sdkParams.sdkParams.deviceId){_sdkParams.sdkParams.deviceId=deviceId;}asyncClient.registerDevice(_sdkParams.sdkParams.deviceId);}callModule.asyncInitialized(asyncClient);(0,_messaging.messenger)().asyncInitialized(asyncClient);asyncClient.on('asyncReady',function(){if(_sdkParams.sdkParams.actualTimingLog){_utility["default"].chatStepLogger('Async Connection ',new Date().getTime()-asyncGetReadyTime);}peerId=asyncClient.getPeerId();// store.reactionSummaries.removeAllMessages();
+   * Initialize Async
+   *
+   * Initializes Async module and sets proper callbacks
+   *
+   * @access private
+   *
+   * @return {undefined}
+   * @return {undefined}
+   */initAsync=function initAsync(){var asyncGetReadyTime=new Date().getTime();asyncClient=new _podasyncWsOnly["default"]({protocol:protocolManager.getCurrentProtocol(),queueHost:queueHost,queuePort:queuePort,queueUsername:queueUsername,queuePassword:queuePassword,queueReceive:queueReceive,queueSend:queueSend,queueConnectionTimeout:queueConnectionTimeout,socketAddress:_sdkParams.sdkParams.socketAddress,serverName:_sdkParams.sdkParams.serverName,deviceId:_sdkParams.sdkParams.deviceId,wsConnectionWaitTime:_sdkParams.sdkParams.wsConnectionWaitTime,connectionRetryInterval:_sdkParams.sdkParams.connectionRetryInterval,connectionCheckTimeout:_sdkParams.sdkParams.connectionCheckTimeout,connectionCheckTimeoutThreshold:_sdkParams.sdkParams.connectionCheckTimeoutThreshold,messageTtl:_sdkParams.sdkParams.messageTtl,reconnectOnClose:_sdkParams.sdkParams.reconnectOnClose,asyncLogging:_sdkParams.sdkParams.asyncLogging,logLevel:_sdkParams.sdkParams.consoleLogging?3:1,webrtcConfig:_sdkParams.sdkParams.webrtcConfig,retryStepTimerTime:protocolManager.getRetryStepTimerTime(),onStartWithRetryStepGreaterThanZero:onStateChange,msgLogCallback:msgLogCallback||null,asyncLogCallback:asyncLogCallback||null,onDeviceId:onDeviceId});function onDeviceId(deviceId){if(!_sdkParams.sdkParams.deviceId){_sdkParams.sdkParams.deviceId=deviceId;}asyncClient.registerDevice(_sdkParams.sdkParams.deviceId);}callModule.asyncInitialized(asyncClient);(0,_messaging.messenger)().asyncInitialized(asyncClient);asyncClient.on('asyncReady',function(){if(_sdkParams.sdkParams.actualTimingLog){_utility["default"].chatStepLogger('Async Connection ',new Date().getTime()-asyncGetReadyTime);}peerId=asyncClient.getPeerId();// store.reactionSummaries.removeAllMessages();
 if(!_store.store.user()){getUserAndUpdateSDKState();}else if(_store.store.user().id>0){(0,_messaging.messenger)().chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();}_sdkParams.sdkParams.deliveryInterval&&clearInterval(_sdkParams.sdkParams.deliveryInterval);_sdkParams.sdkParams.deliveryInterval=setInterval(function(){if(Object.keys(_sdkParams.sdkParams.messagesDelivery).length){messagesDeliveryQueueHandler();}},_sdkParams.sdkParams.deliveryIntervalPitch);_sdkParams.sdkParams.seenInterval&&clearInterval(_sdkParams.sdkParams.seenInterval);_sdkParams.sdkParams.seenInterval=setInterval(function(){if(Object.keys(_sdkParams.sdkParams.messagesSeen).length){messagesSeenQueueHandler();}},_sdkParams.sdkParams.seenIntervalPitch);//shouldReconnectCall();
 });asyncClient.on('stateChange',onStateChange);function onStateChange(state){_events.chatEvents.fireEvent('chatState',state);chatFullStateObject=state;switch(state.socketState){case 1:// CONNECTED
 protocolManager.resetRetries();protocolManager.resetTimerTime();if(state.deviceRegister&&state.serverRegister){// messenger().chatState = true;
@@ -49231,165 +48871,165 @@ break;}}asyncClient.on('connect',function(newPeerId){asyncGetReadyTime=new Date(
 //     cache: false
 // });
 (0,_messaging.messenger)().chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();}});},/**
-         * Get Device Id With Token
-         *
-         * If ssoGrantDevicesAddress set as TRUE, chat agent gets Device ID
-         * from SSO server and passes it to Async Module
-         *
-         * @access private
-         *
-         * @param {function}  callback    The callback function to run after getting Device Id
-         *
-         * @return {undefined}
-         */getDeviceIdWithToken=function getDeviceIdWithToken(callback){var deviceId;var params={url:SERVICE_ADDRESSES.SSO_ADDRESS+SERVICES_PATH.SSO_DEVICES,method:'GET',headers:{'Authorization':'Bearer '+_sdkParams.sdkParams.token}};httpRequest(params,function(result){if(!result.hasError){var devices=JSON.parse(result.result.responseText).devices;if(devices&&devices.length>0){for(var i=0;i<devices.length;i++){if(devices[i].current){deviceId=devices[i].uid;break;}}if(!deviceId){_events.chatEvents.fireEvent('error',{code:6000,message:CHAT_ERRORS[6000],error:null});}else{callback(deviceId);}}else{_events.chatEvents.fireEvent('error',{code:6001,message:CHAT_ERRORS[6001],error:null});}}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});},/**
-         * Handshake with SSO to get user's keys
-         *
-         * In order to Encrypt and Decrypt cache we need a key.
-         * We can retrieve encryption keys from SSO, all we
-         * need to do is to do a handshake with SSO and
-         * get the keys.
-         *
-         * @access private
-         *
-         * @param params
-         * @param {function}  callback    The callback function to run after Generating Keys
-         *
-         * @return {undefined}
-         */generateEncryptionKey=function generateEncryptionKey(params,callback){var data={validity:10*365*24*60*60,// 10 Years
+   * Get Device Id With Token
+   *
+   * If ssoGrantDevicesAddress set as TRUE, chat agent gets Device ID
+   * from SSO server and passes it to Async Module
+   *
+   * @access private
+   *
+   * @param {function}  callback    The callback function to run after getting Device Id
+   *
+   * @return {undefined}
+   */getDeviceIdWithToken=function getDeviceIdWithToken(callback){var deviceId;var params={url:SERVICE_ADDRESSES.SSO_ADDRESS+SERVICES_PATH.SSO_DEVICES,method:'GET',headers:{'Authorization':'Bearer '+_sdkParams.sdkParams.token}};httpRequest(params,function(result){if(!result.hasError){var devices=JSON.parse(result.result.responseText).devices;if(devices&&devices.length>0){for(var i=0;i<devices.length;i++){if(devices[i].current){deviceId=devices[i].uid;break;}}if(!deviceId){_events.chatEvents.fireEvent('error',{code:6000,message:CHAT_ERRORS[6000],error:null});}else{callback(deviceId);}}else{_events.chatEvents.fireEvent('error',{code:6001,message:CHAT_ERRORS[6001],error:null});}}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});},/**
+   * Handshake with SSO to get user's keys
+   *
+   * In order to Encrypt and Decrypt cache we need a key.
+   * We can retrieve encryption keys from SSO, all we
+   * need to do is to do a handshake with SSO and
+   * get the keys.
+   *
+   * @access private
+   *
+   * @param params
+   * @param {function}  callback    The callback function to run after Generating Keys
+   *
+   * @return {undefined}
+   */generateEncryptionKey=function generateEncryptionKey(params,callback){var data={validity:10*365*24*60*60,// 10 Years
 renew:false,keyAlgorithm:'aes',keySize:256};if(params){if(params.keyAlgorithm!==undefined){data.keyAlgorithm=params.keyAlgorithm;}if(parseInt(params.keySize)>0){data.keySize=params.keySize;}}var httpRequestParams={url:SERVICE_ADDRESSES.SSO_ADDRESS+SERVICES_PATH.SSO_GENERATE_KEY,method:'POST',data:data,headers:{'Authorization':'Bearer '+_sdkParams.sdkParams.token}};httpRequest(httpRequestParams,function(result){if(!result.hasError){try{var response=JSON.parse(result.result.responseText);}catch(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);}}else{_events.chatEvents.fireEvent('error',{code:result.error,message:result.error_description,error:result});}});},/**
-         * Get Encryption Keys by KeyId
-         *
-         * In order to Encrypt and Decrypt cache we need a key.
-         * We can retrieve encryption keys from SSO by sending
-         * KeyId to SSO and get related keys
-         *
-         * @access private
-         *
-         * @param params
-         * @param {function}  callback    The callback function to run after getting Keys
-         *
-         * @return {undefined}
-         */getEncryptionKey=function getEncryptionKey(params,callback){var keyId;if(params){if(typeof params.keyId!=='undefined'){keyId=params.keyId;var httpRequestParams={url:SERVICE_ADDRESSES.SSO_ADDRESS+SERVICES_PATH.SSO_GET_KEY+keyId,method:'GET',headers:{'Authorization':'Bearer '+_sdkParams.sdkParams.token}};httpRequest(httpRequestParams,function(result){if(!result.hasError){try{var response=JSON.parse(result.result.responseText);}catch(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);}callback&&callback({hasError:false,secretKey:response.secretKey});}else{callback&&callback({hasError:true,code:result.errorCode,message:result.errorMessage});_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});}}},/**
-         * HTTP Request class
-         *
-         * Manages all HTTP Requests
-         *
-         * @access private
-         *
-         * @param {object}    params      Given parameters including (Headers, ...)
-         * @param {function}  callback    The callback function to run after
-         *
-         * @return {undefined}
-         */httpRequest=function httpRequest(params,callback){var url=params.url,xhrResponseType=params.responseType||'text',fileSize,originalFileName,threadId,fileUniqueId,fileObject,data=params.data,method=typeof params.method=='string'?params.method:'GET',fileUploadUniqueId=typeof params.uniqueId=='string'?params.uniqueId:'uniqueId',hasError=false;if(!url){callback({hasError:true,errorCode:6201,errorMessage:CHAT_ERRORS[6201]});return;}var hasFile=false;httpRequestObject[eval('fileUploadUniqueId')]=new XMLHttpRequest();var settings=params.settings;httpRequestObject[eval('fileUploadUniqueId')].responseType=xhrResponseType;if(data&&(0,_typeof2["default"])(data)==='object'&&(data.hasOwnProperty('image')||data.hasOwnProperty('file'))){httpRequestObject[eval('fileUploadUniqueId')].timeout=settings&&(0,_typeof2["default"])(parseInt(settings.uploadTimeout))>0&&settings.uploadTimeout>0?settings.uploadTimeout:_sdkParams.sdkParams.httpUploadRequestTimeout;}else{httpRequestObject[eval('fileUploadUniqueId')].timeout=settings&&(0,_typeof2["default"])(parseInt(settings.timeout))>0&&settings.timeout>0?settings.timeout:_sdkParams.sdkParams.httpRequestTimeout;}httpRequestObject[eval('fileUploadUniqueId')].addEventListener('error',function(event){if(callback&&method==='POST'){if(hasFile){hasError=true;_events.chatEvents.fireEvent('fileUploadEvents',{threadId:threadId,uniqueId:fileUniqueId,state:'UPLOAD_ERROR',progress:0,fileInfo:{fileName:originalFileName,fileSize:fileSize},fileObject:fileObject,errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (XMLHttpRequest Error Event Listener)'});}callback({hasError:true,errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (XMLHttpRequest Error Event Listener)'});}else{if(callback){callback({hasError:true,errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (XMLHttpRequest Error Event Listener)'});}if(params.enableDownloadProgressEvents){_events.chatEvents.fireEvent('fileDownloadEvents',{hashCode:params.hashCode,state:'DOWNLOAD_ERROR',errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (XMLHttpRequest Error Event Listener)'});}}},false);if(params.enableDownloadProgressEvents){httpRequestObject[eval('fileUploadUniqueId')].onprogress=function(event){_events.chatEvents.fireEvent('fileDownloadEvents',{hashCode:params.hashCode,state:'DOWNLOADING',progress:Math.round(event.loaded/event.total*100)});};}httpRequestObject[eval('fileUploadUniqueId')].addEventListener('abort',function(event){if(callback){if(hasFile){hasError=true;_events.chatEvents.fireEvent('fileUploadEvents',{threadId:threadId,uniqueId:fileUniqueId,state:'UPLOAD_CANCELED',progress:0,fileInfo:{fileName:originalFileName,fileSize:fileSize},fileObject:fileObject,errorCode:6303,errorMessage:CHAT_ERRORS[6303]});}callback({hasError:true,errorCode:6303,errorMessage:CHAT_ERRORS[6303]});}},false);try{if(method==='GET'){if((0,_typeof2["default"])(data)==='object'&&data!==null){var keys=Object.keys(data);if(keys.length>0){url+='?';for(var i=0;i<keys.length;i++){var key=keys[i];url+=key+'='+data[key];if(i<keys.length-1){url+='&';}}}}else if(typeof data==='string'){url+='?'+data;}httpRequestObject[eval('fileUploadUniqueId')].open(method,url,true);if((0,_typeof2["default"])(params.headers)==='object'){for(var key in params.headers){if(params.headers.hasOwnProperty(key))httpRequestObject[eval('fileUploadUniqueId')].setRequestHeader(key,params.headers[key]);}}httpRequestObject[eval('fileUploadUniqueId')].send();}if(method==='POST'&&data){httpRequestObject[eval('fileUploadUniqueId')].open(method,url,true);if((0,_typeof2["default"])(params.headers)==='object'){for(var key in params.headers){if(params.headers.hasOwnProperty(key))httpRequestObject[eval('fileUploadUniqueId')].setRequestHeader(key,params.headers[key]);}}if((0,_typeof2["default"])(data)=='object'){if(data.hasOwnProperty('image')||data.hasOwnProperty('file')){hasFile=true;var formData=new FormData();for(var key in data){if(data.hasOwnProperty(key))formData.append(key,data[key]);}fileSize=data.fileSize;originalFileName=data.originalFileName;threadId=data.threadId;fileUniqueId=data.uniqueId;fileObject=data['image']?data['image']:data['file'];httpRequestObject[eval('fileUploadUniqueId')].upload.onprogress=function(event){if(event.lengthComputable&&!hasError){_events.chatEvents.fireEvent('fileUploadEvents',{threadId:threadId,uniqueId:fileUniqueId,state:'UPLOADING',progress:Math.round(event.loaded/event.total*100),fileInfo:{fileName:originalFileName,fileSize:fileSize},fileObject:fileObject});}};httpRequestObject[eval('fileUploadUniqueId')].send(formData);}else{httpRequestObject[eval('fileUploadUniqueId')].setRequestHeader('Content-Type','application/x-www-form-urlencoded');var keys=Object.keys(data);if(keys.length>0){var sendData='';for(var i=0;i<keys.length;i++){var key=keys[i];sendData+=key+'='+data[key];if(i<keys.length-1){sendData+='&';}}}httpRequestObject[eval('fileUploadUniqueId')].send(sendData);}}else{httpRequestObject[eval('fileUploadUniqueId')].send(data);}}}catch(e){callback&&callback({hasError:true,cache:false,errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (Request Catch Error)'+e});}httpRequestObject[eval('fileUploadUniqueId')].onreadystatechange=function(){if(httpRequestObject[eval('fileUploadUniqueId')].readyState===4){if(httpRequestObject[eval('fileUploadUniqueId')].status===200){if(hasFile){hasError=false;var fileHashCode='';try{var fileUploadResult=JSON.parse(httpRequestObject[eval('fileUploadUniqueId')].response);if(!!fileUploadResult&&fileUploadResult.hasOwnProperty('result')){fileHashCode=fileUploadResult.result.hashCode;}}catch(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);}_events.chatEvents.fireEvent('fileUploadEvents',{threadId:threadId,uniqueId:fileUniqueId,fileHash:fileHashCode,state:'UPLOADED',progress:100,fileInfo:{fileName:originalFileName,fileSize:fileSize},fileObject:fileObject});}callback&&callback({hasError:false,cache:false,result:{response:httpRequestObject[eval('fileUploadUniqueId')].response,responseText:xhrResponseType==='text'?httpRequestObject[eval('fileUploadUniqueId')].responseText:'',responseHeaders:httpRequestObject[eval('fileUploadUniqueId')].getAllResponseHeaders(),responseContentType:httpRequestObject[eval('fileUploadUniqueId')].getResponseHeader('content-type')}});}else{if(hasFile){hasError=true;_events.chatEvents.fireEvent('fileUploadEvents',{threadId:threadId,uniqueId:fileUniqueId,state:'UPLOAD_ERROR',progress:0,fileInfo:{fileName:originalFileName,fileSize:fileSize},fileObject:fileObject,errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (Request Status != 200)',statusCode:httpRequestObject[eval('fileUploadUniqueId')].status});}callback&&callback({hasError:true,errorMessage:xhrResponseType==='text'?httpRequestObject[eval('fileUploadUniqueId')].responseText:'ُAn error accoured!',errorCode:httpRequestObject[eval('fileUploadUniqueId')].status});}}};},/**
-         * Get User Info
-         *
-         * This functions gets user info from chat serverName.
-         * If info is not retrived the function will attemp
-         * 5 more times to get info from erver
-         *
-         * @recursive
-         * @access private
-         *
-         * @param {function}    callback    The callback function to call after
-         *
-         * @return {object} Instant function return
-         */getUserInfo=function getUserInfoRecursive(callback){getUserInfoRetryCount++;if(getUserInfoRetryCount>getUserInfoRetry){_sdkParams.sdkParams.getUserInfoTimeout&&clearTimeout(_sdkParams.sdkParams.getUserInfoTimeout);getUserInfoRetryCount=0;_events.chatEvents.fireEvent('error',{code:6101,message:CHAT_ERRORS[6101],error:null});}else{_sdkParams.sdkParams.getUserInfoTimeout&&clearTimeout(_sdkParams.sdkParams.getUserInfoTimeout);_sdkParams.sdkParams.getUserInfoTimeout=setTimeout(function(){getUserInfoRecursive(callback);},getUserInfoRetryCount*10000);return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.USER_INFO,typeCode:_sdkParams.sdkParams.generalTypeCode//params.typeCode
+   * Get Encryption Keys by KeyId
+   *
+   * In order to Encrypt and Decrypt cache we need a key.
+   * We can retrieve encryption keys from SSO by sending
+   * KeyId to SSO and get related keys
+   *
+   * @access private
+   *
+   * @param params
+   * @param {function}  callback    The callback function to run after getting Keys
+   *
+   * @return {undefined}
+   */getEncryptionKey=function getEncryptionKey(params,callback){var keyId;if(params){if(typeof params.keyId!=='undefined'){keyId=params.keyId;var httpRequestParams={url:SERVICE_ADDRESSES.SSO_ADDRESS+SERVICES_PATH.SSO_GET_KEY+keyId,method:'GET',headers:{'Authorization':'Bearer '+_sdkParams.sdkParams.token}};httpRequest(httpRequestParams,function(result){if(!result.hasError){try{var response=JSON.parse(result.result.responseText);}catch(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);}callback&&callback({hasError:false,secretKey:response.secretKey});}else{callback&&callback({hasError:true,code:result.errorCode,message:result.errorMessage});_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});}}},/**
+   * HTTP Request class
+   *
+   * Manages all HTTP Requests
+   *
+   * @access private
+   *
+   * @param {object}    params      Given parameters including (Headers, ...)
+   * @param {function}  callback    The callback function to run after
+   *
+   * @return {undefined}
+   */httpRequest=function httpRequest(params,callback){var url=params.url,xhrResponseType=params.responseType||'text',fileSize,originalFileName,threadId,fileUniqueId,fileObject,data=params.data,method=typeof params.method=='string'?params.method:'GET',fileUploadUniqueId=typeof params.uniqueId=='string'?params.uniqueId:'uniqueId',hasError=false;if(!url){callback({hasError:true,errorCode:6201,errorMessage:CHAT_ERRORS[6201]});return;}var hasFile=false;httpRequestObject[eval('fileUploadUniqueId')]=new XMLHttpRequest();var settings=params.settings;httpRequestObject[eval('fileUploadUniqueId')].responseType=xhrResponseType;if(data&&(0,_typeof2["default"])(data)==='object'&&(data.hasOwnProperty('image')||data.hasOwnProperty('file'))){httpRequestObject[eval('fileUploadUniqueId')].timeout=settings&&(0,_typeof2["default"])(parseInt(settings.uploadTimeout))>0&&settings.uploadTimeout>0?settings.uploadTimeout:_sdkParams.sdkParams.httpUploadRequestTimeout;}else{httpRequestObject[eval('fileUploadUniqueId')].timeout=settings&&(0,_typeof2["default"])(parseInt(settings.timeout))>0&&settings.timeout>0?settings.timeout:_sdkParams.sdkParams.httpRequestTimeout;}httpRequestObject[eval('fileUploadUniqueId')].addEventListener('error',function(event){if(callback&&method==='POST'){if(hasFile){hasError=true;_events.chatEvents.fireEvent('fileUploadEvents',{threadId:threadId,uniqueId:fileUniqueId,state:'UPLOAD_ERROR',progress:0,fileInfo:{fileName:originalFileName,fileSize:fileSize},fileObject:fileObject,errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (XMLHttpRequest Error Event Listener)'});}callback({hasError:true,errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (XMLHttpRequest Error Event Listener)'});}else{if(callback){callback({hasError:true,errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (XMLHttpRequest Error Event Listener)'});}if(params.enableDownloadProgressEvents){_events.chatEvents.fireEvent('fileDownloadEvents',{hashCode:params.hashCode,state:'DOWNLOAD_ERROR',errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (XMLHttpRequest Error Event Listener)'});}}},false);if(params.enableDownloadProgressEvents){httpRequestObject[eval('fileUploadUniqueId')].onprogress=function(event){_events.chatEvents.fireEvent('fileDownloadEvents',{hashCode:params.hashCode,state:'DOWNLOADING',progress:Math.round(event.loaded/event.total*100)});};}httpRequestObject[eval('fileUploadUniqueId')].addEventListener('abort',function(event){if(callback){if(hasFile){hasError=true;_events.chatEvents.fireEvent('fileUploadEvents',{threadId:threadId,uniqueId:fileUniqueId,state:'UPLOAD_CANCELED',progress:0,fileInfo:{fileName:originalFileName,fileSize:fileSize},fileObject:fileObject,errorCode:6303,errorMessage:CHAT_ERRORS[6303]});}callback({hasError:true,errorCode:6303,errorMessage:CHAT_ERRORS[6303]});}},false);try{if(method==='GET'){if((0,_typeof2["default"])(data)==='object'&&data!==null){var keys=Object.keys(data);if(keys.length>0){url+='?';for(var i=0;i<keys.length;i++){var key=keys[i];url+=key+'='+data[key];if(i<keys.length-1){url+='&';}}}}else if(typeof data==='string'){url+='?'+data;}httpRequestObject[eval('fileUploadUniqueId')].open(method,url,true);if((0,_typeof2["default"])(params.headers)==='object'){for(var key in params.headers){if(params.headers.hasOwnProperty(key))httpRequestObject[eval('fileUploadUniqueId')].setRequestHeader(key,params.headers[key]);}}httpRequestObject[eval('fileUploadUniqueId')].send();}if(method==='POST'&&data){httpRequestObject[eval('fileUploadUniqueId')].open(method,url,true);if((0,_typeof2["default"])(params.headers)==='object'){for(var key in params.headers){if(params.headers.hasOwnProperty(key))httpRequestObject[eval('fileUploadUniqueId')].setRequestHeader(key,params.headers[key]);}}if((0,_typeof2["default"])(data)=='object'){if(data.hasOwnProperty('image')||data.hasOwnProperty('file')){hasFile=true;var formData=new FormData();for(var key in data){if(data.hasOwnProperty(key))formData.append(key,data[key]);}fileSize=data.fileSize;originalFileName=data.originalFileName;threadId=data.threadId;fileUniqueId=data.uniqueId;fileObject=data['image']?data['image']:data['file'];httpRequestObject[eval('fileUploadUniqueId')].upload.onprogress=function(event){if(event.lengthComputable&&!hasError){_events.chatEvents.fireEvent('fileUploadEvents',{threadId:threadId,uniqueId:fileUniqueId,state:'UPLOADING',progress:Math.round(event.loaded/event.total*100),fileInfo:{fileName:originalFileName,fileSize:fileSize},fileObject:fileObject});}};httpRequestObject[eval('fileUploadUniqueId')].send(formData);}else{httpRequestObject[eval('fileUploadUniqueId')].setRequestHeader('Content-Type','application/x-www-form-urlencoded');var keys=Object.keys(data);if(keys.length>0){var sendData='';for(var i=0;i<keys.length;i++){var key=keys[i];sendData+=key+'='+data[key];if(i<keys.length-1){sendData+='&';}}}httpRequestObject[eval('fileUploadUniqueId')].send(sendData);}}else{httpRequestObject[eval('fileUploadUniqueId')].send(data);}}}catch(e){callback&&callback({hasError:true,cache:false,errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (Request Catch Error)'+e});}httpRequestObject[eval('fileUploadUniqueId')].onreadystatechange=function(){if(httpRequestObject[eval('fileUploadUniqueId')].readyState===4){if(httpRequestObject[eval('fileUploadUniqueId')].status===200){if(hasFile){hasError=false;var fileHashCode='';try{var fileUploadResult=JSON.parse(httpRequestObject[eval('fileUploadUniqueId')].response);if(!!fileUploadResult&&fileUploadResult.hasOwnProperty('result')){fileHashCode=fileUploadResult.result.hashCode;}}catch(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);}_events.chatEvents.fireEvent('fileUploadEvents',{threadId:threadId,uniqueId:fileUniqueId,fileHash:fileHashCode,state:'UPLOADED',progress:100,fileInfo:{fileName:originalFileName,fileSize:fileSize},fileObject:fileObject});}callback&&callback({hasError:false,cache:false,result:{response:httpRequestObject[eval('fileUploadUniqueId')].response,responseText:xhrResponseType==='text'?httpRequestObject[eval('fileUploadUniqueId')].responseText:'',responseHeaders:httpRequestObject[eval('fileUploadUniqueId')].getAllResponseHeaders(),responseContentType:httpRequestObject[eval('fileUploadUniqueId')].getResponseHeader('content-type')}});}else{if(hasFile){hasError=true;_events.chatEvents.fireEvent('fileUploadEvents',{threadId:threadId,uniqueId:fileUniqueId,state:'UPLOAD_ERROR',progress:0,fileInfo:{fileName:originalFileName,fileSize:fileSize},fileObject:fileObject,errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (Request Status != 200)',statusCode:httpRequestObject[eval('fileUploadUniqueId')].status});}callback&&callback({hasError:true,errorMessage:xhrResponseType==='text'?httpRequestObject[eval('fileUploadUniqueId')].responseText:'ُAn error accoured!',errorCode:httpRequestObject[eval('fileUploadUniqueId')].status});}}};},/**
+   * Get User Info
+   *
+   * This functions gets user info from chat serverName.
+   * If info is not retrived the function will attemp
+   * 5 more times to get info from erver
+   *
+   * @recursive
+   * @access private
+   *
+   * @param {function}    callback    The callback function to call after
+   *
+   * @return {object} Instant function return
+   */getUserInfo=function getUserInfoRecursive(callback){getUserInfoRetryCount++;if(getUserInfoRetryCount>getUserInfoRetry){_sdkParams.sdkParams.getUserInfoTimeout&&clearTimeout(_sdkParams.sdkParams.getUserInfoTimeout);getUserInfoRetryCount=0;_events.chatEvents.fireEvent('error',{code:6101,message:CHAT_ERRORS[6101],error:null});}else{_sdkParams.sdkParams.getUserInfoTimeout&&clearTimeout(_sdkParams.sdkParams.getUserInfoTimeout);_sdkParams.sdkParams.getUserInfoTimeout=setTimeout(function(){getUserInfoRecursive(callback);},getUserInfoRetryCount*10000);return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.USER_INFO,typeCode:_sdkParams.sdkParams.generalTypeCode//params.typeCode
 },{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){_sdkParams.sdkParams.getUserInfoTimeout&&clearTimeout(_sdkParams.sdkParams.getUserInfoTimeout);var messageContent=result.result;var currentUser=formatDataToMakeUser(messageContent);returnData.result={user:currentUser};getUserInfoRetryCount=0;callback&&callback(returnData);/**
-                             * Delete callback so if server pushes response
-                             * before cache, cache won't send data again
-                             */callback=undefined;}}});}},sendSystemMessage=function sendSystemMessage(params){return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.SYSTEM_MESSAGE,subjectId:params.threadId,content:params.content,uniqueId:params.uniqueId,pushMsgType:3});},/**
-         * Chat Send Message Queue Handler
-         *
-         * Whenever something pushes into cahtSendQueue
-         * this function invokes and does the message
-         * sending progress throught async
-         *
-         * @access private
-         *
-         * @return {undefined}
-         */chatSendQueueHandler=function chatSendQueueHandler(){if(chatSendQueue.length){var messageToBeSend=chatSendQueue[0];/**
-                 * Getting chatSendQueue from either cache or
-                 * memory and scrolling through the send queue
-                 * to send all the messages which are waiting
-                 * for messenger().chatState to become TRUE
-                 *
-                 * There is a small possibility that a Message
-                 * wouldn't make it through network, so it Will
-                 * not reach chat server. To avoid losing those
-                 * messages, we put a clone of every message
-                 * in waitQ, and when ack of the message comes,
-                 * we delete that message from waitQ. otherwise
-                 * we assume that these messages have been failed to
-                 * send and keep them to be either canceled or resent
-                 * by user later. When user calls getHistory(), they
-                 * will have failed messages alongside with typical
-                 * messages history.
-                 */if((0,_messaging.messenger)().chatState){getChatSendQueue(0,function(chatSendQueue){deleteFromChatSentQueue(messageToBeSend,function(){(0,_messaging.messenger)().sendMessage(messageToBeSend.message,messageToBeSend.callbacks,function(){if(chatSendQueue.length){chatSendQueueHandler();}});});});}}},putInMessagesDeliveryQueue=function putInMessagesDeliveryQueue(threadId,messageId){if(_sdkParams.sdkParams.messagesDelivery.hasOwnProperty(threadId)&&typeof _sdkParams.sdkParams.messagesDelivery[threadId]==='number'&&!!_sdkParams.sdkParams.messagesDelivery[threadId]){if(_sdkParams.sdkParams.messagesDelivery[threadId]<messageId){_sdkParams.sdkParams.messagesDelivery[threadId]=messageId;}}else{_sdkParams.sdkParams.messagesDelivery[threadId]=messageId;}},putInMessagesSeenQueue=function putInMessagesSeenQueue(threadId,messageId){if(_sdkParams.sdkParams.messagesSeen.hasOwnProperty(threadId)&&typeof _sdkParams.sdkParams.messagesSeen[threadId]==='number'&&!!_sdkParams.sdkParams.messagesSeen[threadId]){if(_sdkParams.sdkParams.messagesSeen[threadId]<messageId){_sdkParams.sdkParams.messagesSeen[threadId]=messageId;}}else{_sdkParams.sdkParams.messagesSeen[threadId]=messageId;}},/**
-         * Messages Delivery Queue Handler
-         *
-         * Whenever something pushes into messagesDelivery
-         * this function invokes and does the message
-         * delivery progress throught async
-         *
-         * @access private
-         *
-         * @return {undefined}
-         */messagesDeliveryQueueHandler=function messagesDeliveryQueueHandler(){if(Object.keys(_sdkParams.sdkParams.messagesDelivery).length){if((0,_messaging.messenger)().chatState){for(var key in _sdkParams.sdkParams.messagesDelivery){deliver({messageId:_sdkParams.sdkParams.messagesDelivery[key]});delete _sdkParams.sdkParams.messagesDelivery[key];}}}},/**
-         * Messages Seen Queue Handler
-         *
-         * Whenever something pushes into messagesSeen
-         * this function invokes and does the message
-         * seen progress throught async
-         *
-         * @access private
-         *
-         * @return {undefined}
-         */messagesSeenQueueHandler=function messagesSeenQueueHandler(){if(Object.keys(_sdkParams.sdkParams.messagesSeen).length){if((0,_messaging.messenger)().chatState){for(var key in _sdkParams.sdkParams.messagesSeen){seen({messageId:_sdkParams.sdkParams.messagesSeen[key]});delete _sdkParams.sdkParams.messagesSeen[key];}}}},/**
-         * Clear Cache
-         *
-         * Clears Async queue so that all the remained messages will be
-         * ignored
-         *
-         * @access private
-         *
-         * @return {undefined}
-         */clearChatServerCaches=function clearChatServerCaches(){(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.LOGOUT,pushMsgType:3});},/**
-         * Received Async Message Handler
-         *
-         * This functions parses received message from async
-         *
-         * @access private
-         *
-         * @param {object}    asyncMessage    Received Message from Async
-         *
-         * @return {undefined}
-         */receivedAsyncMessageHandler=function receivedAsyncMessageHandler(asyncMessage){/**
-             * + Message Received From Async      {object}
-             *    - id                            {int}
-             *    - senderMessageId               {int}
-             *    - senderName                    {string}
-             *    - senderId                      {int}
-             *    - type                          {int}
-             *    - content                       {string}
-             */if(asyncMessage.senderName===_sdkParams.sdkParams.serverName){var content=JSON.parse(asyncMessage.content);chatMessageHandler(content);}else{callModule.callMessageHandler(asyncMessage);}},/**
-         * Chat Message Handler
-         *
-         * Manages received chat messages and do the job
-         *
-         * @access private
-         *
-         * @param {object}    chatMessage     Content of Async Message which is considered as Chat Message
-         *
-         * @return {undefined}
-         */chatMessageHandler=function chatMessageHandler(chatMessage){if(chatMessage.typeCode&&chatMessage.typeCode!==_sdkParams.sdkParams.generalTypeCode){return;}var threadId=chatMessage.subjectId,type=chatMessage.type,messageContent=typeof chatMessage.content==='string'&&_utility["default"].isValidJson(chatMessage.content)?JSON.parse(chatMessage.content):chatMessage.content,contentCount=chatMessage.contentCount,uniqueId=chatMessage.uniqueId,time=chatMessage.time;_store.store.asyncRequestTimeouts[uniqueId]&&clearTimeout(_store.store.asyncRequestTimeouts[uniqueId]);switch(type){/**
-                 * Type 1    Get Threads
-                 */case _constants.chatMessageVOTypes.CREATE_THREAD:messageContent.uniqueId=uniqueId;if(_store.store.messagesCallbacks[uniqueId]){createThread(messageContent,true,true);_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}else{createThread(messageContent,true,false);}break;/**
-                 * Type 2    Message
-                 */case _constants.chatMessageVOTypes.MESSAGE:newMessageHandler(threadId,messageContent);break;/**
-                 * Type 3    Message Sent
-                 */case _constants.chatMessageVOTypes.SENT:if(_store.store.sendMessageCallbacks[uniqueId]&&_store.store.sendMessageCallbacks[uniqueId].onSent){_store.store.sendMessageCallbacks[uniqueId].onSent({uniqueId:uniqueId,messageId:messageContent});delete _store.store.sendMessageCallbacks[uniqueId].onSent;if(_store.store.threadCallbacks[threadId]&&_store.store.threadCallbacks[threadId][uniqueId])_store.store.threadCallbacks[threadId][uniqueId].onSent=true;}break;/**
-                 * Type 4    Message Delivery
-                 */case _constants.chatMessageVOTypes.DELIVERY:var threadObject={id:messageContent.conversationId,lastSeenMessageId:messageContent.messageId,lastSeenMessageTime:messageContent.messageTime,lastParticipantId:messageContent.participantId};_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadObject}});// if (fullResponseObject) {
+             * Delete callback so if server pushes response
+             * before cache, cache won't send data again
+             */callback=undefined;}}});}},sendSystemMessage=function sendSystemMessage(params){return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.SYSTEM_MESSAGE,subjectId:params.threadId,content:params.content,uniqueId:params.uniqueId,pushMsgType:3});},/**
+   * Chat Send Message Queue Handler
+   *
+   * Whenever something pushes into cahtSendQueue
+   * this function invokes and does the message
+   * sending progress throught async
+   *
+   * @access private
+   *
+   * @return {undefined}
+   */chatSendQueueHandler=function chatSendQueueHandler(){if(chatSendQueue.length){var messageToBeSend=chatSendQueue[0];/**
+       * Getting chatSendQueue from either cache or
+       * memory and scrolling through the send queue
+       * to send all the messages which are waiting
+       * for messenger().chatState to become TRUE
+       *
+       * There is a small possibility that a Message
+       * wouldn't make it through network, so it Will
+       * not reach chat server. To avoid losing those
+       * messages, we put a clone of every message
+       * in waitQ, and when ack of the message comes,
+       * we delete that message from waitQ. otherwise
+       * we assume that these messages have been failed to
+       * send and keep them to be either canceled or resent
+       * by user later. When user calls getHistory(), they
+       * will have failed messages alongside with typical
+       * messages history.
+       */if((0,_messaging.messenger)().chatState){getChatSendQueue(0,function(chatSendQueue){deleteFromChatSentQueue(messageToBeSend,function(){(0,_messaging.messenger)().sendMessage(messageToBeSend.message,messageToBeSend.callbacks,function(){if(chatSendQueue.length){chatSendQueueHandler();}});});});}}},putInMessagesDeliveryQueue=function putInMessagesDeliveryQueue(threadId,messageId){if(_sdkParams.sdkParams.messagesDelivery.hasOwnProperty(threadId)&&typeof _sdkParams.sdkParams.messagesDelivery[threadId]==='number'&&!!_sdkParams.sdkParams.messagesDelivery[threadId]){if(_sdkParams.sdkParams.messagesDelivery[threadId]<messageId){_sdkParams.sdkParams.messagesDelivery[threadId]=messageId;}}else{_sdkParams.sdkParams.messagesDelivery[threadId]=messageId;}},putInMessagesSeenQueue=function putInMessagesSeenQueue(threadId,messageId){if(_sdkParams.sdkParams.messagesSeen.hasOwnProperty(threadId)&&typeof _sdkParams.sdkParams.messagesSeen[threadId]==='number'&&!!_sdkParams.sdkParams.messagesSeen[threadId]){if(_sdkParams.sdkParams.messagesSeen[threadId]<messageId){_sdkParams.sdkParams.messagesSeen[threadId]=messageId;}}else{_sdkParams.sdkParams.messagesSeen[threadId]=messageId;}},/**
+   * Messages Delivery Queue Handler
+   *
+   * Whenever something pushes into messagesDelivery
+   * this function invokes and does the message
+   * delivery progress throught async
+   *
+   * @access private
+   *
+   * @return {undefined}
+   */messagesDeliveryQueueHandler=function messagesDeliveryQueueHandler(){if(Object.keys(_sdkParams.sdkParams.messagesDelivery).length){if((0,_messaging.messenger)().chatState){for(var key in _sdkParams.sdkParams.messagesDelivery){deliver({messageId:_sdkParams.sdkParams.messagesDelivery[key]});delete _sdkParams.sdkParams.messagesDelivery[key];}}}},/**
+   * Messages Seen Queue Handler
+   *
+   * Whenever something pushes into messagesSeen
+   * this function invokes and does the message
+   * seen progress throught async
+   *
+   * @access private
+   *
+   * @return {undefined}
+   */messagesSeenQueueHandler=function messagesSeenQueueHandler(){if(Object.keys(_sdkParams.sdkParams.messagesSeen).length){if((0,_messaging.messenger)().chatState){for(var key in _sdkParams.sdkParams.messagesSeen){seen({messageId:_sdkParams.sdkParams.messagesSeen[key]});delete _sdkParams.sdkParams.messagesSeen[key];}}}},/**
+   * Clear Cache
+   *
+   * Clears Async queue so that all the remained messages will be
+   * ignored
+   *
+   * @access private
+   *
+   * @return {undefined}
+   */clearChatServerCaches=function clearChatServerCaches(){(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.LOGOUT,pushMsgType:3});},/**
+   * Received Async Message Handler
+   *
+   * This functions parses received message from async
+   *
+   * @access private
+   *
+   * @param {object}    asyncMessage    Received Message from Async
+   *
+   * @return {undefined}
+   */receivedAsyncMessageHandler=function receivedAsyncMessageHandler(asyncMessage){/**
+     * + Message Received From Async      {object}
+     *    - id                            {int}
+     *    - senderMessageId               {int}
+     *    - senderName                    {string}
+     *    - senderId                      {int}
+     *    - type                          {int}
+     *    - content                       {string}
+     */if(asyncMessage.senderName===_sdkParams.sdkParams.serverName){var content=JSON.parse(asyncMessage.content);chatMessageHandler(content);}else{callModule.callMessageHandler(asyncMessage);}},/**
+   * Chat Message Handler
+   *
+   * Manages received chat messages and do the job
+   *
+   * @access private
+   *
+   * @param {object}    chatMessage     Content of Async Message which is considered as Chat Message
+   *
+   * @return {undefined}
+   */chatMessageHandler=function chatMessageHandler(chatMessage){if(chatMessage.typeCode&&chatMessage.typeCode!==_sdkParams.sdkParams.generalTypeCode){return;}var threadId=chatMessage.subjectId,type=chatMessage.type,messageContent=typeof chatMessage.content==='string'&&_utility["default"].isValidJson(chatMessage.content)?JSON.parse(chatMessage.content):chatMessage.content,contentCount=chatMessage.contentCount,uniqueId=chatMessage.uniqueId,time=chatMessage.time;_store.store.asyncRequestTimeouts[uniqueId]&&clearTimeout(_store.store.asyncRequestTimeouts[uniqueId]);switch(type){/**
+       * Type 1    Get Threads
+       */case _constants.chatMessageVOTypes.CREATE_THREAD:messageContent.uniqueId=uniqueId;if(_store.store.messagesCallbacks[uniqueId]){createThread(messageContent,true,true);_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}else{createThread(messageContent,true,false);}break;/**
+       * Type 2    Message
+       */case _constants.chatMessageVOTypes.MESSAGE:newMessageHandler(threadId,messageContent);break;/**
+       * Type 3    Message Sent
+       */case _constants.chatMessageVOTypes.SENT:if(_store.store.sendMessageCallbacks[uniqueId]&&_store.store.sendMessageCallbacks[uniqueId].onSent){_store.store.sendMessageCallbacks[uniqueId].onSent({uniqueId:uniqueId,messageId:messageContent});delete _store.store.sendMessageCallbacks[uniqueId].onSent;if(_store.store.threadCallbacks[threadId]&&_store.store.threadCallbacks[threadId][uniqueId])_store.store.threadCallbacks[threadId][uniqueId].onSent=true;}break;/**
+       * Type 4    Message Delivery
+       */case _constants.chatMessageVOTypes.DELIVERY:var threadObject={id:messageContent.conversationId,lastSeenMessageId:messageContent.messageId,lastSeenMessageTime:messageContent.messageTime,lastParticipantId:messageContent.participantId};_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadObject}});// if (fullResponseObject) {
 //     getHistory({
 //         offset: 0,
 //         threadId: threadId,
@@ -49418,56 +49058,56 @@ renew:false,keyAlgorithm:'aes',keySize:256};if(params){if(params.keyAlgorithm!==
 //     });
 // }
 sendMessageCallbacksHandler(_constants.chatMessageVOTypes.DELIVERY,threadId,uniqueId);break;/**
-                 * Type 5    Message Seen
-                 */case _constants.chatMessageVOTypes.SEEN:var threadObject={id:messageContent.conversationId,lastSeenMessageId:messageContent.messageId,lastSeenMessageTime:messageContent.messageTime,lastParticipantId:messageContent.participantId};_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadObject}});_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_SEEN',result:{message:messageContent.messageId,threadId:threadId,senderId:messageContent.participantId}});sendMessageCallbacksHandler(_constants.chatMessageVOTypes.SEEN,threadId,uniqueId);break;/**
-                 * Type 6    Chat Ping
-                 */case _constants.chatMessageVOTypes.PING:break;/**
-                 * Type 7    Block Contact
-                 */case _constants.chatMessageVOTypes.BLOCK:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
-                 * Type 8    Unblock Blocked User
-                 */case _constants.chatMessageVOTypes.UNBLOCK:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
-                 * Type 9   Leave Thread
-                 */case _constants.chatMessageVOTypes.LEAVE_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){if(!threadsResult.cache){var threads=threadsResult.result.threads;if(threads.length>0){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LEAVE_PARTICIPANT',result:{thread:threads[0],participant:formatDataToMakeParticipant(messageContent,threadId)}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0]}});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LEAVE_PARTICIPANT',result:{threadId:threadId,participant:formatDataToMakeParticipant(messageContent,threadId)}});}}});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LEAVE_PARTICIPANT',result:{thread:threadId,participant:formatDataToMakeParticipant(messageContent,threadId)}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId}});}break;/**
-                 * Type 11    Add Participant to Thread
-                 */case _constants.chatMessageVOTypes.ADD_PARTICIPANT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_ADD_PARTICIPANTS',result:{thread:threads[0]}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0]}});}});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_ADD_PARTICIPANTS',result:{thread:messageContent}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:messageContent}});}break;/**
-                 * Type 13    Get Contacts List
-                 */case _constants.chatMessageVOTypes.GET_CONTACTS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
-                 * Type 14    Get Threads List
-                 */case _constants.chatMessageVOTypes.GET_THREADS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
-                 * Type 15    Get Message History of an Thread
-                 */case _constants.chatMessageVOTypes.GET_HISTORY:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
-                 * Type 17    Remove sb from thread
-                 */case _constants.chatMessageVOTypes.REMOVED_FROM_THREAD:_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVED_FROM',result:{thread:threadId}});break;/**
-                 * Type 18    Remove a participant from Thread
-                 */case _constants.chatMessageVOTypes.REMOVE_PARTICIPANT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVE_PARTICIPANTS',result:{thread:threads[0]}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0]}});}});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVE_PARTICIPANTS',result:{thread:threadId}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId}});}break;/**
-                 * Type 19    Mute Thread
-                 */case _constants.chatMessageVOTypes.MUTE_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var thread=threadsResult.result.threads[0];thread.mute=true;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_MUTE',result:{thread:thread}});});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_MUTE',result:{thread:threadId}});}break;/**
-                 * Type 20    Unmute muted Thread
-                 */case _constants.chatMessageVOTypes.UNMUTE_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var thread=threadsResult.result.threads[0];thread.mute=false;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNMUTE',result:{thread:thread}});});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNMUTE',result:{thread:threadId}});}break;/**
-                 * Type 21    Update Thread Info
-                 */case _constants.chatMessageVOTypes.UPDATE_THREAD_INFO:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[messageContent.id],cache:false},function(threadsResult){var thread=formatDataToMakeConversation(threadsResult.result.threads[0]);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:thread}});});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:messageContent}});}break;/**
-                 * Type 22    Forward Multiple Messages
-                 */case _constants.chatMessageVOTypes.FORWARD_MESSAGE:newMessageHandler(threadId,messageContent);break;/**
-                 * Type 23    User Info
-                 */case _constants.chatMessageVOTypes.USER_INFO:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('systemEvents',{type:'SERVER_TIME',result:{time:time}});break;/**
-                 * Type 25    Get Blocked List
-                 */case _constants.chatMessageVOTypes.GET_BLOCKED:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
-                 * Type 27    Thread Participants List
-                 */case _constants.chatMessageVOTypes.THREAD_PARTICIPANTS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
-                 * Type 28    Edit Message
-                 */case _constants.chatMessageVOTypes.EDIT_MESSAGE:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}chatEditMessageHandler(threadId,messageContent);break;/**
-                 * Type 29    Delete Message
-                 */case _constants.chatMessageVOTypes.DELETE_MESSAGE:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}var msgTime=parseInt(parseInt(messageContent.time)/1000)*1000000000+parseInt(messageContent.timeNanos);if(_store.store.threads.get(threadId))_store.store.threads.get(threadId).unreadCount.decrease(msgTime);if(messageContent.pinned){unPinMessage({messageId:messageContent.id,notifyAll:true});}if(_sdkParams.sdkParams.fullResponseObject){var time,timeMiliSeconds;if(messageContent.time.toString().length>14){time=messageContent.time;timeMiliSeconds=parseInt(messageContent.time/1000000);}else{time=messageContent.timeNanos?parseInt(parseInt(messageContent.time)/1000)*1000000000+parseInt(messageContent.timeNanos):parseInt(pushMessageVO.time);timeMiliSeconds=parseInt(messageContent.time);}getThreads({threadIds:[threadId]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_DELETE',result:{message:{id:messageContent.id,pinned:messageContent.pinned,threadId:threadId,time:time,timeMiliSeconds:timeMiliSeconds,timeNanos:messageContent.timeNanos}}});if(messageContent.pinned){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0]}});}}});}else{_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_DELETE',result:{message:{id:messageContent.id,pinned:messageContent.pinned,threadId:threadId,time:time,timeMiliSeconds:timeMiliSeconds,timeNanos:messageContent.timeNanos}}});if(messageContent.pinned){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId}});}}break;/**
-                 * Type 30    Thread Info Updated
-                 */case _constants.chatMessageVOTypes.THREAD_INFO_UPDATED:// TODO: Check this line again
+       * Type 5    Message Seen
+       */case _constants.chatMessageVOTypes.SEEN:var threadObject={id:messageContent.conversationId,lastSeenMessageId:messageContent.messageId,lastSeenMessageTime:messageContent.messageTime,lastParticipantId:messageContent.participantId};_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadObject}});_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_SEEN',result:{message:messageContent.messageId,threadId:threadId,senderId:messageContent.participantId}});sendMessageCallbacksHandler(_constants.chatMessageVOTypes.SEEN,threadId,uniqueId);break;/**
+       * Type 6    Chat Ping
+       */case _constants.chatMessageVOTypes.PING:break;/**
+       * Type 7    Block Contact
+       */case _constants.chatMessageVOTypes.BLOCK:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
+       * Type 8    Unblock Blocked User
+       */case _constants.chatMessageVOTypes.UNBLOCK:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
+       * Type 9   Leave Thread
+       */case _constants.chatMessageVOTypes.LEAVE_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){if(!threadsResult.cache){var threads=threadsResult.result.threads;if(threads.length>0){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LEAVE_PARTICIPANT',result:{thread:threads[0],participant:(0,_threadParticipantsMethods.formatDataToMakeParticipant)(messageContent,threadId)}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0]}});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LEAVE_PARTICIPANT',result:{threadId:threadId,participant:(0,_threadParticipantsMethods.formatDataToMakeParticipant)(messageContent,threadId)}});}}});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LEAVE_PARTICIPANT',result:{thread:threadId,participant:(0,_threadParticipantsMethods.formatDataToMakeParticipant)(messageContent,threadId)}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId}});}break;/**
+       * Type 11    Add Participant to Thread
+       */case _constants.chatMessageVOTypes.ADD_PARTICIPANT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_ADD_PARTICIPANTS',result:{thread:threads[0]}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0]}});}});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_ADD_PARTICIPANTS',result:{thread:messageContent}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:messageContent}});}break;/**
+       * Type 13    Get Contacts List
+       */case _constants.chatMessageVOTypes.GET_CONTACTS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       * Type 14    Get Threads List
+       */case _constants.chatMessageVOTypes.GET_THREADS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+       * Type 15    Get Message History of an Thread
+       */case _constants.chatMessageVOTypes.GET_HISTORY:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       * Type 17    Remove sb from thread
+       */case _constants.chatMessageVOTypes.REMOVED_FROM_THREAD:_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVED_FROM',result:{thread:threadId}});break;/**
+       * Type 18    Remove a participant from Thread
+       */case _constants.chatMessageVOTypes.REMOVE_PARTICIPANT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVE_PARTICIPANTS',result:{thread:threads[0]}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0]}});}});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVE_PARTICIPANTS',result:{thread:threadId}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId}});}break;/**
+       * Type 19    Mute Thread
+       */case _constants.chatMessageVOTypes.MUTE_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var thread=threadsResult.result.threads[0];thread.mute=true;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_MUTE',result:{thread:thread}});});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_MUTE',result:{thread:threadId}});}break;/**
+       * Type 20    Unmute muted Thread
+       */case _constants.chatMessageVOTypes.UNMUTE_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var thread=threadsResult.result.threads[0];thread.mute=false;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNMUTE',result:{thread:thread}});});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNMUTE',result:{thread:threadId}});}break;/**
+       * Type 21    Update Thread Info
+       */case _constants.chatMessageVOTypes.UPDATE_THREAD_INFO:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[messageContent.id],cache:false},function(threadsResult){var thread=formatDataToMakeConversation(threadsResult.result.threads[0]);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:thread}});});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:messageContent}});}break;/**
+       * Type 22    Forward Multiple Messages
+       */case _constants.chatMessageVOTypes.FORWARD_MESSAGE:newMessageHandler(threadId,messageContent);break;/**
+       * Type 23    User Info
+       */case _constants.chatMessageVOTypes.USER_INFO:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('systemEvents',{type:'SERVER_TIME',result:{time:time}});break;/**
+       * Type 25    Get Blocked List
+       */case _constants.chatMessageVOTypes.GET_BLOCKED:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       * Type 27    Thread Participants List
+       */case _constants.chatMessageVOTypes.THREAD_PARTICIPANTS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       * Type 28    Edit Message
+       */case _constants.chatMessageVOTypes.EDIT_MESSAGE:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}chatEditMessageHandler(threadId,messageContent);break;/**
+       * Type 29    Delete Message
+       */case _constants.chatMessageVOTypes.DELETE_MESSAGE:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}var msgTime=parseInt(parseInt(messageContent.time)/1000)*1000000000+parseInt(messageContent.timeNanos);if(_store.store.threads.get(threadId))_store.store.threads.get(threadId).unreadCount.decrease(msgTime);if(messageContent.pinned){unPinMessage({messageId:messageContent.id,notifyAll:true});}if(_sdkParams.sdkParams.fullResponseObject){var time,timeMiliSeconds;if(messageContent.time.toString().length>14){time=messageContent.time;timeMiliSeconds=parseInt(messageContent.time/1000000);}else{time=messageContent.timeNanos?parseInt(parseInt(messageContent.time)/1000)*1000000000+parseInt(messageContent.timeNanos):parseInt(pushMessageVO.time);timeMiliSeconds=parseInt(messageContent.time);}getThreads({threadIds:[threadId]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_DELETE',result:{message:{id:messageContent.id,pinned:messageContent.pinned,threadId:threadId,time:time,timeMiliSeconds:timeMiliSeconds,timeNanos:messageContent.timeNanos}}});if(messageContent.pinned){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0]}});}}});}else{_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_DELETE',result:{message:{id:messageContent.id,pinned:messageContent.pinned,threadId:threadId,time:time,timeMiliSeconds:timeMiliSeconds,timeNanos:messageContent.timeNanos}}});if(messageContent.pinned){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId}});}}break;/**
+       * Type 30    Thread Info Updated
+       */case _constants.chatMessageVOTypes.THREAD_INFO_UPDATED:// TODO: Check this line again
 // if (!messageContent.conversation && !messageContent.conversation.id) {
 //     messageContent.conversation.id = threadId;
 // }
 //
 // var thread = formatDataToMakeConversation(messageContent.conversation);
 var thread=formatDataToMakeConversation(messageContent);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:thread}});break;/**
-                 * Type 31    Thread Last Seen Updated
-                 */case _constants.chatMessageVOTypes.LAST_SEEN_UPDATED:var threadObject=messageContent;threadObject.unreadCount=messageContent.unreadCount?messageContent.unreadCount:0;threadObject.lastSeenMessageTime=messageContent.lastSeenMessageNanos?parseInt(parseInt(messageContent.lastSeenMessageTime)/1000)*1000000000+parseInt(messageContent.lastSeenMessageNanos):parseInt(messageContent.lastSeenMessageTime);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNREAD_COUNT_UPDATED',result:{thread:threadObject,unreadCount:messageContent.unreadCount?messageContent.unreadCount:0}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_SEEN_UPDATED',result:{thread:threadObject,unreadCount:messageContent.unreadCount?messageContent.unreadCount:0}});if(_store.store.threads.get(threadId)&&(!_store.store.threads.get(threadId).lastSeenMessageTime.get()||_store.store.threads.get(threadId).lastSeenMessageTime.get()&&threadObject.lastSeenMessageTime>_store.store.threads.get(threadId).lastSeenMessageTime.get()&&threadObject.unreadCount<_store.store.threads.get(threadId).unreadCount.get())){var localThreadLastSeenUpdated=JSON.parse(JSON.stringify(messageContent));_store.store.threads.save(localThreadLastSeenUpdated);_store.store.threads.get(threadId).lastSeenMessageTime.set(threadObject.lastSeenMessageTime);_store.store.threads.get(threadId).unreadCount.set(messageContent.unreadCount);}// if (fullResponseObject) {
+       * Type 31    Thread Last Seen Updated
+       */case _constants.chatMessageVOTypes.LAST_SEEN_UPDATED:var threadObject=messageContent;threadObject.unreadCount=messageContent.unreadCount?messageContent.unreadCount:0;threadObject.lastSeenMessageTime=messageContent.lastSeenMessageNanos?parseInt(parseInt(messageContent.lastSeenMessageTime)/1000)*1000000000+parseInt(messageContent.lastSeenMessageNanos):parseInt(messageContent.lastSeenMessageTime);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNREAD_COUNT_UPDATED',result:{thread:threadObject,unreadCount:messageContent.unreadCount?messageContent.unreadCount:0}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_SEEN_UPDATED',result:{thread:threadObject,unreadCount:messageContent.unreadCount?messageContent.unreadCount:0}});if(_store.store.threads.get(threadId)&&(!_store.store.threads.get(threadId).lastSeenMessageTime.get()||_store.store.threads.get(threadId).lastSeenMessageTime.get()&&threadObject.lastSeenMessageTime>_store.store.threads.get(threadId).lastSeenMessageTime.get()&&threadObject.unreadCount<_store.store.threads.get(threadId).unreadCount.get())){var localThreadLastSeenUpdated=JSON.parse(JSON.stringify(messageContent));_store.store.threads.save(localThreadLastSeenUpdated);_store.store.threads.get(threadId).lastSeenMessageTime.set(threadObject.lastSeenMessageTime);_store.store.threads.get(threadId).unreadCount.set(messageContent.unreadCount);}// if (fullResponseObject) {
 //     getThreads({
 //         threadIds: [messageContent.id]
 //     }, function (threadsResult) {
@@ -49507,175 +49147,175 @@ var thread=formatDataToMakeConversation(messageContent);_events.chatEvents.fireE
 //     });
 // }
 break;/**
-                 * Type 32    Get Message Delivered List
-                 */case _constants.chatMessageVOTypes.GET_MESSAGE_DELIVERY_PARTICIPANTS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
-                 * Type 33    Get Message Seen List
-                 */case _constants.chatMessageVOTypes.GET_MESSAGE_SEEN_PARTICIPANTS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
-                 * Type 34    Is Public Group Name Available?
-                 */case _constants.chatMessageVOTypes.IS_NAME_AVAILABLE:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
-                 * Type 39    Join Public Group or Channel
-                 */case _constants.chatMessageVOTypes.JOIN_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
-                 * Type 40    Bot Messages
-                 */case _constants.chatMessageVOTypes.BOT_MESSAGE:_events.chatEvents.fireEvent('botEvents',{type:'BOT_MESSAGE',result:{bot:messageContent}});break;/**
-                 * Type 41    Spam P2P Thread
-                 */case _constants.chatMessageVOTypes.SPAM_PV_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
-                 * Type 42    Set Role To User
-                 */case _constants.chatMessageVOTypes.SET_ROLE_TO_USER:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_ADD_ADMIN',result:{thread:threads[0],admin:messageContent}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0],admin:messageContent}});}});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_ADD_ADMIN',result:{thread:threadId,admin:messageContent}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId,admin:messageContent}});}break;/**
-                 * Type 43    Remove Role From User
-                 */case _constants.chatMessageVOTypes.REMOVE_ROLE_FROM_USER:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVE_ADMIN',result:{thread:threads[0],admin:messageContent}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0],admin:messageContent}});}});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVE_ADMIN',result:{thread:threadId,admin:messageContent}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId,admin:messageContent}});}break;/**
-                 * Type 44    Clear History
-                 */case _constants.chatMessageVOTypes.CLEAR_HISTORY:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
-                 * Type 46    System Messages
-                 */case _constants.chatMessageVOTypes.SYSTEM_MESSAGE:_events.chatEvents.fireEvent('systemEvents',{type:'IS_TYPING',result:{thread:threadId,user:messageContent}});break;/**
-                 * Type 47    Get Not Seen Duration
-                 */case _constants.chatMessageVOTypes.GET_NOT_SEEN_DURATION:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
-                 * Type 48    Pin Thread
-                 */case _constants.chatMessageVOTypes.PIN_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var thread=threadsResult.result.threads[0];_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_PIN',result:{thread:thread}});});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_PIN',result:{thread:threadId}});}break;/**
-                 * Type 49    UnPin Thread
-                 */case _constants.chatMessageVOTypes.UNPIN_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var thread=threadsResult.result.threads[0];_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNPIN',result:{thread:thread}});});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNPIN',result:{thread:threadId}});}break;/**
-                 * Type 50    Pin Message
-                 */case _constants.chatMessageVOTypes.PIN_MESSAGE:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'MESSAGE_PIN',result:{thread:threadId,pinMessage:formatDataToMakePinMessage(threadId,messageContent)}});break;/**
-                 * Type 51    UnPin Message
-                 */case _constants.chatMessageVOTypes.UNPIN_MESSAGE:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'MESSAGE_UNPIN',result:{thread:threadId,pinMessage:formatDataToMakePinMessage(threadId,messageContent)}});break;/**
-                 * Type 52    Update Chat Profile
-                 */case _constants.chatMessageVOTypes.UPDATE_CHAT_PROFILE:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('userEvents',{type:'CHAT_PROFILE_UPDATED',result:{user:messageContent}});break;/**
-                 * Type 53    Change Thread Privacy
-                 */case _constants.chatMessageVOTypes.CHANGE_THREAD_PRIVACY:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_PRIVACY_CHANGED',result:{thread:messageContent}});break;/**
-                 * Type 54    Get Participant Roles
-                 */case _constants.chatMessageVOTypes.GET_PARTICIPANT_ROLES:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('userEvents',{type:'GET_PARTICIPANT_ROLES',result:{roles:messageContent}});break;/**
-                 * Type 60    Get Contact Not Seen Duration
-                 */case _constants.chatMessageVOTypes.GET_CONTACT_NOT_SEEN_DURATION:_events.chatEvents.fireEvent('contactEvents',{type:'CONTACTS_LAST_SEEN',result:messageContent});break;/**
-                 * Type 61      Get All Unread Message Count
-                 */case _constants.chatMessageVOTypes.ALL_UNREAD_MESSAGE_COUNT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('systemEvents',{type:'ALL_UNREAD_MESSAGES_COUNT',result:messageContent});break;/**
-                 * Type 62    Create Bot
-                 */case _constants.chatMessageVOTypes.CREATE_BOT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
-                 * Type 63    Define Bot Commands
-                 */case _constants.chatMessageVOTypes.DEFINE_BOT_COMMAND:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
-                 * Type 64    Start Bot
-                 */case _constants.chatMessageVOTypes.START_BOT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
-                 * Type 65    Stop Bot
-                 */case _constants.chatMessageVOTypes.STOP_BOT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
-                 * Type 66    Last Message Deleted
-                 */case _constants.chatMessageVOTypes.LAST_MESSAGE_DELETED:delete messageContent.unreadCount;var threadOfDeletedMessage=formatDataToMakeConversation(messageContent);_store.store.threads.save(threadOfDeletedMessage);new Promise(function(resolve,reject){if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){resolve(threads[0]);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:threads[0]}});}});}else{var thread=formatDataToMakeConversation(messageContent);resolve(thread);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:thread}});}}).then(function(thread){if(typeof messageContent.unreadCount!=="undefined"){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNREAD_COUNT_UPDATED',result:{thread:thread,unreadCount:messageContent.unreadCount?messageContent.unreadCount:0}});}});break;/**
-                 * Type 67    Last Message Edited
-                 */case _constants.chatMessageVOTypes.LAST_MESSAGE_EDITED:if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:threads[0]}});}});}else{var thread=formatDataToMakeConversation(messageContent);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:thread}});}break;/**
-                 * Type 68    Get Bot Commands List
-                 */case _constants.chatMessageVOTypes.BOT_COMMANDS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
-                 * Type 69    Get Thread All Bots
-                 */case _constants.chatMessageVOTypes.THREAD_ALL_BOTS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
-                 * Type 70    Send Call Request
-                 */case _constants.chatMessageVOTypes.CALL_REQUEST:case _constants.chatMessageVOTypes.ACCEPT_CALL:case _constants.chatMessageVOTypes.REJECT_CALL:case _constants.chatMessageVOTypes.RECEIVE_CALL_REQUEST:case _constants.chatMessageVOTypes.START_CALL:case _constants.chatMessageVOTypes.END_CALL_REQUEST:case _constants.chatMessageVOTypes.END_CALL:case _constants.chatMessageVOTypes.GET_CALLS:case _constants.chatMessageVOTypes.RECONNECT:case _constants.chatMessageVOTypes.CONNECT:case _constants.chatMessageVOTypes.GROUP_CALL_REQUEST:case _constants.chatMessageVOTypes.LEAVE_CALL:case _constants.chatMessageVOTypes.ADD_CALL_PARTICIPANT:case _constants.chatMessageVOTypes.CALL_PARTICIPANT_JOINED:case _constants.chatMessageVOTypes.REMOVE_CALL_PARTICIPANT:case _constants.chatMessageVOTypes.TERMINATE_CALL:case _constants.chatMessageVOTypes.MUTE_CALL_PARTICIPANT:case _constants.chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT:case _constants.chatMessageVOTypes.RECORD_CALL:case _constants.chatMessageVOTypes.RECORD_CALL_STARTED:case _constants.chatMessageVOTypes.END_RECORD_CALL:case _constants.chatMessageVOTypes.START_SCREEN_SHARE:case _constants.chatMessageVOTypes.END_SCREEN_SHARE:case _constants.chatMessageVOTypes.DELETE_FROM_CALL_HISTORY:case _constants.chatMessageVOTypes.TURN_ON_VIDEO_CALL:case _constants.chatMessageVOTypes.TURN_OFF_VIDEO_CALL:case _constants.chatMessageVOTypes.ACTIVE_CALL_PARTICIPANTS:case _constants.chatMessageVOTypes.CALL_SESSION_CREATED:case _constants.chatMessageVOTypes.CANCEL_GROUP_CALL:case _constants.chatMessageVOTypes.DESTINED_RECORD_CALL:case _constants.chatMessageVOTypes.GET_CALLS_TO_JOIN:case _constants.chatMessageVOTypes.SWITCH_TO_GROUP_CALL_REQUEST:case _constants.chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE:case _constants.chatMessageVOTypes.INQUIRY_CALL:case _constants.chatMessageVOTypes.CALL_RECORDING_FAILED:callModule.handleChatMessages(type,messageContent,contentCount,threadId,uniqueId);break;/**
-                 * Type 90    Contacts Synced
-                 */case _constants.chatMessageVOTypes.CONTACT_SYNCED:_events.chatEvents.fireEvent('contactEvents',{type:'CONTACTS_SYNCED',result:messageContent});break;/**
-                 * Type 101    Location Ping
-                 */case _constants.chatMessageVOTypes.LOCATION_PING:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('systemEvents',{type:'LOCATION_PING',result:messageContent});break;/**
-                 * Type 102    Close Thread
-                 */case _constants.chatMessageVOTypes.CLOSE_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var thread=threadsResult.result.threads[0];thread.mute=true;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_CLOSE',result:{thread:thread}});});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_CLOSE',result:{thread:threadId}});}break;/**
-                 * Type 104    Remove Bot Commands
-                 */case _constants.chatMessageVOTypes.REMOVE_BOT_COMMANDS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
-                 * Type 107    Register Assistant
-                 */case _constants.chatMessageVOTypes.REGISTER_ASSISTANT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANT_REGISTER',result:messageContent});break;/**
-                 * Type 108    Deactivate Assistant
-                 */case _constants.chatMessageVOTypes.DEACTIVATE_ASSISTANT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANT_DEACTIVATE',result:messageContent});break;/**
-                 * Type 109    Get Assistants List
-                 */case _constants.chatMessageVOTypes.GET_ASSISTANTS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANTS_LIST',result:messageContent});break;/**
-                 * Type 115    Get Assistants History
-                 */case _constants.chatMessageVOTypes.ASSISTANT_HISTORY:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANTS_HSITORY',result:messageContent});break;/**
-                 * Type 116    Block Assistants
-                 */case _constants.chatMessageVOTypes.BLOCK_ASSISTANT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANT_BLOCK',result:messageContent});break;/**
-                 * Type 117    UnBlock Assistant
-                 */case _constants.chatMessageVOTypes.UNBLOCK_ASSISTANT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANT_UNBLOCK',result:messageContent});break;/**
-                 * Type 118    Blocked Assistants List
-                 */case _constants.chatMessageVOTypes.BLOCKED_ASSISTANTS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANTS_BLOCKED_LIST',result:messageContent});break;/**
-                 * Type 130    Mutual Groups
-                 */case _constants.chatMessageVOTypes.MUTUAL_GROUPS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}_events.chatEvents.fireEvent('threadEvents',{type:'MUTUAL_GROUPS',result:messageContent});break;/**
-                 * Type 140    Create Tag
-                 */case _constants.chatMessageVOTypes.CREATE_TAG:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'NEW_TAG',result:messageContent});break;/**
-                 * Type 141    Edit Tag
-                 */case _constants.chatMessageVOTypes.EDIT_TAG:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'EDIT_TAG',result:messageContent});break;/**
-                 * Type 142    Delete Tag
-                 */case _constants.chatMessageVOTypes.DELETE_TAG:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'DELETE_TAG',result:messageContent});break;/**
-                 * Type 143    Delete Tag
-                 */case _constants.chatMessageVOTypes.ADD_TAG_PARTICIPANT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'ADD_TAG_PARTICIPANT',result:messageContent});break;/**
-                 * Type 144    Delete Tag
-                 */case _constants.chatMessageVOTypes.REMOVE_TAG_PARTICIPANT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'REMOVE_TAG_PARTICIPANT',result:messageContent});break;/**
-                 * Type 145    Delete Tag
-                 */case _constants.chatMessageVOTypes.GET_TAG_LIST:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'TAG_LIST',result:messageContent});break;/**
-                 * Type 151    Delete Message Thread
-                 */case _constants.chatMessageVOTypes.DELETE_MESSAGE_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(!messageContent){messageContent={};}messageContent.threadId=threadId;_events.chatEvents.fireEvent('threadEvents',{type:'DELETE_THREAD',result:messageContent});break;/**
-                 * Type 152    Gives us a json to export for user
-                 */case _constants.chatMessageVOTypes.EXPORT_CHAT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
-                 * Type 200    Adding a user to contacts list
-                 */case _constants.chatMessageVOTypes.ADD_CONTACTS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
-                 * Type 201    Remove contacts result
-                 */case _constants.chatMessageVOTypes.REMOVE_CONTACTS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
-                 * Type 220    Adding a user to contacts list
-                 */case _constants.chatMessageVOTypes.CONTACT_THREAD_UPDATE:messageContent.threadId=threadId;_events.chatEvents.fireEvent('threadEvents',{type:'CONTACT_THREAD_UPDATE',result:messageContent});break;/**
-                 /**
-                 * Type 223    ARCHIVE_THREAD
-                 */case _constants.chatMessageVOTypes.ARCHIVE_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
-                 /**
-                 * Type 224    UNARCHIVE_THREAD
-                 */case _constants.chatMessageVOTypes.UNARCHIVE_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
-                * Type 226    CUSTOMER_INFO
-                */case _constants.chatMessageVOTypes.CUSTOMER_INFO:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
-                 * Type 234    LAST_MESSAGE_INFO
-                 */case _constants.chatMessageVOTypes.LAST_MESSAGE_INFO:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
-                 * Type 236    GET PIN MESSAGE
-                 */case _constants.chatMessageVOTypes.GET_PIN_MESSAGE:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
-                 * Type 237    GET_THREAD_LIGHT
-                 */case _constants.chatMessageVOTypes.GET_THREAD_LIGHT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
-                 * Type 238    REPLY_PRIVATELY
-                 */case _constants.chatMessageVOTypes.REPLY_PRIVATELY:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
-                 * Type 239    ADD_REACTION
-                 */case _constants.chatMessageVOTypes.ADD_REACTION:(0,_reactionsMethods.onAddReaction)(uniqueId,messageContent,contentCount);break;/**
-                 * Type 240    REPLACE_REACTION
-                 */case _constants.chatMessageVOTypes.REPLACE_REACTION:(0,_reactionsMethods.onReplaceReaction)(uniqueId,messageContent,contentCount);break;/**
-                 * Type 241    REMOVE_REACTION
-                 */case _constants.chatMessageVOTypes.REMOVE_REACTION:(0,_reactionsMethods.onRemoveReaction)(uniqueId,messageContent,contentCount);break;/**
-                 * Type 242    REACTION_LIST
-                 */case _constants.chatMessageVOTypes.REACTION_LIST:(0,_reactionsMethods.onReactionList)(uniqueId,messageContent);break;/**
-                 * Type 243   Get My Reaction
-                 */case _constants.chatMessageVOTypes.GET_MY_REACTION:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
-                 Type 244   REACTION_COUNT
-                 */case _constants.chatMessageVOTypes.REACTION_COUNT:(0,_reactionsMethods.onReactionSummaries)(uniqueId,messageContent);break;/**
-                 * Type 999   All unknown errors
-                 */case _constants.chatMessageVOTypes.ERROR:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(true,messageContent.message,messageContent.code,messageContent,0));}/**
-                     * If error code is 21, Token is invalid &
-                     * user should logged out
-                     */if(messageContent.code===21){// TODO: Temporarily removed due to unknown side-effects
+       * Type 32    Get Message Delivered List
+       */case _constants.chatMessageVOTypes.GET_MESSAGE_DELIVERY_PARTICIPANTS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       * Type 33    Get Message Seen List
+       */case _constants.chatMessageVOTypes.GET_MESSAGE_SEEN_PARTICIPANTS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       * Type 34    Is Public Group Name Available?
+       */case _constants.chatMessageVOTypes.IS_NAME_AVAILABLE:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       * Type 39    Join Public Group or Channel
+       */case _constants.chatMessageVOTypes.JOIN_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       * Type 40    Bot Messages
+       */case _constants.chatMessageVOTypes.BOT_MESSAGE:_events.chatEvents.fireEvent('botEvents',{type:'BOT_MESSAGE',result:{bot:messageContent}});break;/**
+       * Type 41    Spam P2P Thread
+       */case _constants.chatMessageVOTypes.SPAM_PV_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
+       * Type 42    Set Role To User
+       */case _constants.chatMessageVOTypes.SET_ROLE_TO_USER:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_ADD_ADMIN',result:{thread:threads[0],admin:messageContent}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0],admin:messageContent}});}});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_ADD_ADMIN',result:{thread:threadId,admin:messageContent}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId,admin:messageContent}});}break;/**
+       * Type 43    Remove Role From User
+       */case _constants.chatMessageVOTypes.REMOVE_ROLE_FROM_USER:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVE_ADMIN',result:{thread:threads[0],admin:messageContent}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0],admin:messageContent}});}});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVE_ADMIN',result:{thread:threadId,admin:messageContent}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId,admin:messageContent}});}break;/**
+       * Type 44    Clear History
+       */case _constants.chatMessageVOTypes.CLEAR_HISTORY:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
+       * Type 46    System Messages
+       */case _constants.chatMessageVOTypes.SYSTEM_MESSAGE:_events.chatEvents.fireEvent('systemEvents',{type:'IS_TYPING',result:{thread:threadId,user:messageContent}});break;/**
+       * Type 47    Get Not Seen Duration
+       */case _constants.chatMessageVOTypes.GET_NOT_SEEN_DURATION:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
+       * Type 48    Pin Thread
+       */case _constants.chatMessageVOTypes.PIN_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var thread=threadsResult.result.threads[0];_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_PIN',result:{thread:thread}});});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_PIN',result:{thread:threadId}});}break;/**
+       * Type 49    UnPin Thread
+       */case _constants.chatMessageVOTypes.UNPIN_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var thread=threadsResult.result.threads[0];_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNPIN',result:{thread:thread}});});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNPIN',result:{thread:threadId}});}break;/**
+       * Type 50    Pin Message
+       */case _constants.chatMessageVOTypes.PIN_MESSAGE:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'MESSAGE_PIN',result:{thread:threadId,pinMessage:formatDataToMakePinMessage(threadId,messageContent)}});break;/**
+       * Type 51    UnPin Message
+       */case _constants.chatMessageVOTypes.UNPIN_MESSAGE:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'MESSAGE_UNPIN',result:{thread:threadId,pinMessage:formatDataToMakePinMessage(threadId,messageContent)}});break;/**
+       * Type 52    Update Chat Profile
+       */case _constants.chatMessageVOTypes.UPDATE_CHAT_PROFILE:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('userEvents',{type:'CHAT_PROFILE_UPDATED',result:{user:messageContent}});break;/**
+       * Type 53    Change Thread Privacy
+       */case _constants.chatMessageVOTypes.CHANGE_THREAD_PRIVACY:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_PRIVACY_CHANGED',result:{thread:messageContent}});break;/**
+       * Type 54    Get Participant Roles
+       */case _constants.chatMessageVOTypes.GET_PARTICIPANT_ROLES:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('userEvents',{type:'GET_PARTICIPANT_ROLES',result:{roles:messageContent}});break;/**
+       * Type 60    Get Contact Not Seen Duration
+       */case _constants.chatMessageVOTypes.GET_CONTACT_NOT_SEEN_DURATION:_events.chatEvents.fireEvent('contactEvents',{type:'CONTACTS_LAST_SEEN',result:messageContent});break;/**
+       * Type 61      Get All Unread Message Count
+       */case _constants.chatMessageVOTypes.ALL_UNREAD_MESSAGE_COUNT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('systemEvents',{type:'ALL_UNREAD_MESSAGES_COUNT',result:messageContent});break;/**
+       * Type 62    Create Bot
+       */case _constants.chatMessageVOTypes.CREATE_BOT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       * Type 63    Define Bot Commands
+       */case _constants.chatMessageVOTypes.DEFINE_BOT_COMMAND:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       * Type 64    Start Bot
+       */case _constants.chatMessageVOTypes.START_BOT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       * Type 65    Stop Bot
+       */case _constants.chatMessageVOTypes.STOP_BOT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       * Type 66    Last Message Deleted
+       */case _constants.chatMessageVOTypes.LAST_MESSAGE_DELETED:delete messageContent.unreadCount;var threadOfDeletedMessage=formatDataToMakeConversation(messageContent);_store.store.threads.save(threadOfDeletedMessage);new Promise(function(resolve,reject){if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){resolve(threads[0]);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:threads[0]}});}});}else{var thread=formatDataToMakeConversation(messageContent);resolve(thread);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:thread}});}}).then(function(thread){if(typeof messageContent.unreadCount!=="undefined"){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNREAD_COUNT_UPDATED',result:{thread:thread,unreadCount:messageContent.unreadCount?messageContent.unreadCount:0}});}});break;/**
+       * Type 67    Last Message Edited
+       */case _constants.chatMessageVOTypes.LAST_MESSAGE_EDITED:if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:threads[0]}});}});}else{var thread=formatDataToMakeConversation(messageContent);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:thread}});}break;/**
+       * Type 68    Get Bot Commands List
+       */case _constants.chatMessageVOTypes.BOT_COMMANDS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       * Type 69    Get Thread All Bots
+       */case _constants.chatMessageVOTypes.THREAD_ALL_BOTS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       * Type 70    Send Call Request
+       */case _constants.chatMessageVOTypes.CALL_REQUEST:case _constants.chatMessageVOTypes.ACCEPT_CALL:case _constants.chatMessageVOTypes.REJECT_CALL:case _constants.chatMessageVOTypes.RECEIVE_CALL_REQUEST:case _constants.chatMessageVOTypes.START_CALL:case _constants.chatMessageVOTypes.END_CALL_REQUEST:case _constants.chatMessageVOTypes.END_CALL:case _constants.chatMessageVOTypes.GET_CALLS:case _constants.chatMessageVOTypes.RECONNECT:case _constants.chatMessageVOTypes.CONNECT:case _constants.chatMessageVOTypes.GROUP_CALL_REQUEST:case _constants.chatMessageVOTypes.LEAVE_CALL:case _constants.chatMessageVOTypes.ADD_CALL_PARTICIPANT:case _constants.chatMessageVOTypes.CALL_PARTICIPANT_JOINED:case _constants.chatMessageVOTypes.REMOVE_CALL_PARTICIPANT:case _constants.chatMessageVOTypes.TERMINATE_CALL:case _constants.chatMessageVOTypes.MUTE_CALL_PARTICIPANT:case _constants.chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT:case _constants.chatMessageVOTypes.RECORD_CALL:case _constants.chatMessageVOTypes.RECORD_CALL_STARTED:case _constants.chatMessageVOTypes.END_RECORD_CALL:case _constants.chatMessageVOTypes.START_SCREEN_SHARE:case _constants.chatMessageVOTypes.END_SCREEN_SHARE:case _constants.chatMessageVOTypes.DELETE_FROM_CALL_HISTORY:case _constants.chatMessageVOTypes.TURN_ON_VIDEO_CALL:case _constants.chatMessageVOTypes.TURN_OFF_VIDEO_CALL:case _constants.chatMessageVOTypes.ACTIVE_CALL_PARTICIPANTS:case _constants.chatMessageVOTypes.CALL_SESSION_CREATED:case _constants.chatMessageVOTypes.CANCEL_GROUP_CALL:case _constants.chatMessageVOTypes.DESTINED_RECORD_CALL:case _constants.chatMessageVOTypes.GET_CALLS_TO_JOIN:case _constants.chatMessageVOTypes.SWITCH_TO_GROUP_CALL_REQUEST:case _constants.chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE:case _constants.chatMessageVOTypes.INQUIRY_CALL:case _constants.chatMessageVOTypes.CALL_RECORDING_FAILED:callModule.handleChatMessages(type,messageContent,contentCount,threadId,uniqueId);break;/**
+       * Type 90    Contacts Synced
+       */case _constants.chatMessageVOTypes.CONTACT_SYNCED:_events.chatEvents.fireEvent('contactEvents',{type:'CONTACTS_SYNCED',result:messageContent});break;/**
+       * Type 101    Location Ping
+       */case _constants.chatMessageVOTypes.LOCATION_PING:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('systemEvents',{type:'LOCATION_PING',result:messageContent});break;/**
+       * Type 102    Close Thread
+       */case _constants.chatMessageVOTypes.CLOSE_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var thread=threadsResult.result.threads[0];thread.mute=true;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_CLOSE',result:{thread:thread}});});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_CLOSE',result:{thread:threadId}});}break;/**
+       * Type 104    Remove Bot Commands
+       */case _constants.chatMessageVOTypes.REMOVE_BOT_COMMANDS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       * Type 107    Register Assistant
+       */case _constants.chatMessageVOTypes.REGISTER_ASSISTANT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANT_REGISTER',result:messageContent});break;/**
+       * Type 108    Deactivate Assistant
+       */case _constants.chatMessageVOTypes.DEACTIVATE_ASSISTANT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANT_DEACTIVATE',result:messageContent});break;/**
+       * Type 109    Get Assistants List
+       */case _constants.chatMessageVOTypes.GET_ASSISTANTS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANTS_LIST',result:messageContent});break;/**
+       * Type 115    Get Assistants History
+       */case _constants.chatMessageVOTypes.ASSISTANT_HISTORY:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANTS_HSITORY',result:messageContent});break;/**
+       * Type 116    Block Assistants
+       */case _constants.chatMessageVOTypes.BLOCK_ASSISTANT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANT_BLOCK',result:messageContent});break;/**
+       * Type 117    UnBlock Assistant
+       */case _constants.chatMessageVOTypes.UNBLOCK_ASSISTANT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANT_UNBLOCK',result:messageContent});break;/**
+       * Type 118    Blocked Assistants List
+       */case _constants.chatMessageVOTypes.BLOCKED_ASSISTANTS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANTS_BLOCKED_LIST',result:messageContent});break;/**
+       * Type 130    Mutual Groups
+       */case _constants.chatMessageVOTypes.MUTUAL_GROUPS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}_events.chatEvents.fireEvent('threadEvents',{type:'MUTUAL_GROUPS',result:messageContent});break;/**
+       * Type 140    Create Tag
+       */case _constants.chatMessageVOTypes.CREATE_TAG:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'NEW_TAG',result:messageContent});break;/**
+       * Type 141    Edit Tag
+       */case _constants.chatMessageVOTypes.EDIT_TAG:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'EDIT_TAG',result:messageContent});break;/**
+       * Type 142    Delete Tag
+       */case _constants.chatMessageVOTypes.DELETE_TAG:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'DELETE_TAG',result:messageContent});break;/**
+       * Type 143    Delete Tag
+       */case _constants.chatMessageVOTypes.ADD_TAG_PARTICIPANT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'ADD_TAG_PARTICIPANT',result:messageContent});break;/**
+       * Type 144    Delete Tag
+       */case _constants.chatMessageVOTypes.REMOVE_TAG_PARTICIPANT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'REMOVE_TAG_PARTICIPANT',result:messageContent});break;/**
+       * Type 145    Delete Tag
+       */case _constants.chatMessageVOTypes.GET_TAG_LIST:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'TAG_LIST',result:messageContent});break;/**
+       * Type 151    Delete Message Thread
+       */case _constants.chatMessageVOTypes.DELETE_MESSAGE_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(!messageContent){messageContent={};}messageContent.threadId=threadId;_events.chatEvents.fireEvent('threadEvents',{type:'DELETE_THREAD',result:messageContent});break;/**
+       * Type 152    Gives us a json to export for user
+       */case _constants.chatMessageVOTypes.EXPORT_CHAT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+       * Type 200    Adding a user to contacts list
+       */case _constants.chatMessageVOTypes.ADD_CONTACTS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+       * Type 201    Remove contacts result
+       */case _constants.chatMessageVOTypes.REMOVE_CONTACTS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+       * Type 220    Adding a user to contacts list
+       */case _constants.chatMessageVOTypes.CONTACT_THREAD_UPDATE:messageContent.threadId=threadId;_events.chatEvents.fireEvent('threadEvents',{type:'CONTACT_THREAD_UPDATE',result:messageContent});break;/**
+       /**
+       * Type 223    ARCHIVE_THREAD
+       */case _constants.chatMessageVOTypes.ARCHIVE_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+       /**
+       * Type 224    UNARCHIVE_THREAD
+       */case _constants.chatMessageVOTypes.UNARCHIVE_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+        * Type 226    CUSTOMER_INFO
+        */case _constants.chatMessageVOTypes.CUSTOMER_INFO:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+       * Type 234    LAST_MESSAGE_INFO
+       */case _constants.chatMessageVOTypes.LAST_MESSAGE_INFO:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+       * Type 236    GET PIN MESSAGE
+       */case _constants.chatMessageVOTypes.GET_PIN_MESSAGE:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+       * Type 237    GET_THREAD_LIGHT
+       */case _constants.chatMessageVOTypes.GET_THREAD_LIGHT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+       * Type 238    REPLY_PRIVATELY
+       */case _constants.chatMessageVOTypes.REPLY_PRIVATELY:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+       * Type 239    ADD_REACTION
+       */case _constants.chatMessageVOTypes.ADD_REACTION:(0,_reactionsMethods.onAddReaction)(uniqueId,messageContent,contentCount);break;/**
+       * Type 240    REPLACE_REACTION
+       */case _constants.chatMessageVOTypes.REPLACE_REACTION:(0,_reactionsMethods.onReplaceReaction)(uniqueId,messageContent,contentCount);break;/**
+       * Type 241    REMOVE_REACTION
+       */case _constants.chatMessageVOTypes.REMOVE_REACTION:(0,_reactionsMethods.onRemoveReaction)(uniqueId,messageContent,contentCount);break;/**
+       * Type 242    REACTION_LIST
+       */case _constants.chatMessageVOTypes.REACTION_LIST:(0,_reactionsMethods.onReactionList)(uniqueId,messageContent);break;/**
+       * Type 243   Get My Reaction
+       */case _constants.chatMessageVOTypes.GET_MY_REACTION:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+       Type 244   REACTION_COUNT
+       */case _constants.chatMessageVOTypes.REACTION_COUNT:(0,_reactionsMethods.onReactionSummaries)(uniqueId,messageContent);break;/**
+       * Type 999   All unknown errors
+       */case _constants.chatMessageVOTypes.ERROR:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(true,messageContent.message,messageContent.code,messageContent,0));}/**
+         * If error code is 21, Token is invalid &
+         * user should logged out
+         */if(messageContent.code===21){// TODO: Temporarily removed due to unknown side-effects
 // messenger().chatState = false;
 // asyncClient.logout();
 // clearChatServerCaches();
 }/* If the error code is 208, so the user
-                     * has been blocked cause of spam activity
-                     */if(messageContent.code===208){if(_store.store.sendMessageCallbacks[uniqueId]){getItemFromChatWaitQueue(uniqueId,function(message){_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_FAILED',cache:false,result:{message:message}});});}}_events.chatEvents.fireEvent('error',{code:messageContent.code,message:messageContent.message,error:messageContent,uniqueId:uniqueId});break;}},/**
-         * Send Message Callbacks Handler
-         *
-         * When you send Delivery or Seen Acknowledgements of a message
-         * You should send Delivery and Seen for all the Messages before
-         * that message so that you wont have un delivered/unseen messages
-         * after seeing the last message of a thread
-         *
-         * @access private
-         *
-         * @param {int}     actionType      Switch between Delivery or Seen
-         * @param {int}    threadId        Id of thread
-         * @param {string}  uniqueId        uniqueId of message
-         *
-         * @return {undefined}
-         */sendMessageCallbacksHandler=function sendMessageCallbacksHandler(actionType,threadId,uniqueId){switch(actionType){case _constants.chatMessageVOTypes.DELIVERY:if(_store.store.threadCallbacks[threadId]){var lastThreadCallbackIndex=Object.keys(_store.store.threadCallbacks[threadId]).indexOf(uniqueId);if(typeof lastThreadCallbackIndex!=='undefined'){while(lastThreadCallbackIndex>-1){var tempUniqueId=Object.entries(_store.store.threadCallbacks[threadId])[lastThreadCallbackIndex][0];if(_store.store.sendMessageCallbacks[tempUniqueId]&&_store.store.sendMessageCallbacks[tempUniqueId].onDeliver){if(_store.store.threadCallbacks[threadId][tempUniqueId]&&_store.store.threadCallbacks[threadId][tempUniqueId].onSent){_store.store.sendMessageCallbacks[tempUniqueId].onDeliver({uniqueId:tempUniqueId});delete _store.store.sendMessageCallbacks[tempUniqueId].onDeliver;_store.store.threadCallbacks[threadId][tempUniqueId].onDeliver=true;}}lastThreadCallbackIndex-=1;}}}break;case _constants.chatMessageVOTypes.SEEN:if(_store.store.threadCallbacks[threadId]){var lastThreadCallbackIndex=Object.keys(_store.store.threadCallbacks[threadId]).indexOf(uniqueId);if(typeof lastThreadCallbackIndex!=='undefined'){while(lastThreadCallbackIndex>-1){var tempUniqueId=Object.entries(_store.store.threadCallbacks[threadId])[lastThreadCallbackIndex][0];if(_store.store.sendMessageCallbacks[tempUniqueId]&&_store.store.sendMessageCallbacks[tempUniqueId].onSeen){if(_store.store.threadCallbacks[threadId][tempUniqueId]&&_store.store.threadCallbacks[threadId][tempUniqueId].onSent){if(!_store.store.threadCallbacks[threadId][tempUniqueId].onDeliver){_store.store.sendMessageCallbacks[tempUniqueId].onDeliver({uniqueId:tempUniqueId});delete _store.store.sendMessageCallbacks[tempUniqueId].onDeliver;_store.store.threadCallbacks[threadId][tempUniqueId].onDeliver=true;}_store.store.sendMessageCallbacks[tempUniqueId].onSeen({uniqueId:tempUniqueId});delete _store.store.sendMessageCallbacks[tempUniqueId].onSeen;_store.store.threadCallbacks[threadId][tempUniqueId].onSeen=true;if(_store.store.threadCallbacks[threadId][tempUniqueId].onSent&&_store.store.threadCallbacks[threadId][tempUniqueId].onDeliver&&_store.store.threadCallbacks[threadId][tempUniqueId].onSeen){delete _store.store.threadCallbacks[threadId][tempUniqueId];delete _store.store.sendMessageCallbacks[tempUniqueId];}}}lastThreadCallbackIndex-=1;}}}break;default:break;}},/**
-         * New Message Handler
-         *
-         * Handles Event Emitter of a newly received Chat Message
-         *
-         * @access private
-         *
-         * @param {int}    threadId         ID of image
-         * @param {object}  messageContent   Json Content of the message
-         *
-         * @return {undefined}
-         */newMessageHandler=function newMessageHandler(threadId,messageContent){var message=formatDataToMakeMessage(threadId,messageContent);var threadObject=message.conversation;var lastMessageVoCopy=Object.assign({},message);lastMessageVoCopy.conversation&&delete lastMessageVoCopy.conversation;threadObject.lastParticipantImage=!!message.participant&&message.participant.hasOwnProperty('image')?message.participant.image:'';threadObject.lastMessageVO=lastMessageVoCopy;threadObject.lastParticipantName=!!message.participant&&message.participant.hasOwnProperty('name')?message.participant.name:'';threadObject.lastMessage=message.hasOwnProperty('message')?message.message:'';var stringMsg=JSON.parse(JSON.stringify(message));stringMsg.conversation=JSON.parse(JSON.stringify(threadObject));_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_NEW',cache:false,result:{message:stringMsg}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNREAD_COUNT_UPDATED',result:{thread:threadObject,unreadCount:threadObject.unreadCount?threadObject.unreadCount:0}});var storeThread=_store.store.threads.get(threadObject.id);if(!storeThread){_store.store.threads.save(threadObject);storeThread=_store.store.threads.get(threadObject.id);}// let unreadCount = message.conversation.unreadCount;
+         * has been blocked cause of spam activity
+         */if(messageContent.code===208){if(_store.store.sendMessageCallbacks[uniqueId]){getItemFromChatWaitQueue(uniqueId,function(message){_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_FAILED',cache:false,result:{message:message}});});}}_events.chatEvents.fireEvent('error',{code:messageContent.code,message:messageContent.message,error:messageContent,uniqueId:uniqueId});break;}},/**
+   * Send Message Callbacks Handler
+   *
+   * When you send Delivery or Seen Acknowledgements of a message
+   * You should send Delivery and Seen for all the Messages before
+   * that message so that you wont have un delivered/unseen messages
+   * after seeing the last message of a thread
+   *
+   * @access private
+   *
+   * @param {int}     actionType      Switch between Delivery or Seen
+   * @param {int}    threadId        Id of thread
+   * @param {string}  uniqueId        uniqueId of message
+   *
+   * @return {undefined}
+   */sendMessageCallbacksHandler=function sendMessageCallbacksHandler(actionType,threadId,uniqueId){switch(actionType){case _constants.chatMessageVOTypes.DELIVERY:if(_store.store.threadCallbacks[threadId]){var lastThreadCallbackIndex=Object.keys(_store.store.threadCallbacks[threadId]).indexOf(uniqueId);if(typeof lastThreadCallbackIndex!=='undefined'){while(lastThreadCallbackIndex>-1){var tempUniqueId=Object.entries(_store.store.threadCallbacks[threadId])[lastThreadCallbackIndex][0];if(_store.store.sendMessageCallbacks[tempUniqueId]&&_store.store.sendMessageCallbacks[tempUniqueId].onDeliver){if(_store.store.threadCallbacks[threadId][tempUniqueId]&&_store.store.threadCallbacks[threadId][tempUniqueId].onSent){_store.store.sendMessageCallbacks[tempUniqueId].onDeliver({uniqueId:tempUniqueId});delete _store.store.sendMessageCallbacks[tempUniqueId].onDeliver;_store.store.threadCallbacks[threadId][tempUniqueId].onDeliver=true;}}lastThreadCallbackIndex-=1;}}}break;case _constants.chatMessageVOTypes.SEEN:if(_store.store.threadCallbacks[threadId]){var lastThreadCallbackIndex=Object.keys(_store.store.threadCallbacks[threadId]).indexOf(uniqueId);if(typeof lastThreadCallbackIndex!=='undefined'){while(lastThreadCallbackIndex>-1){var tempUniqueId=Object.entries(_store.store.threadCallbacks[threadId])[lastThreadCallbackIndex][0];if(_store.store.sendMessageCallbacks[tempUniqueId]&&_store.store.sendMessageCallbacks[tempUniqueId].onSeen){if(_store.store.threadCallbacks[threadId][tempUniqueId]&&_store.store.threadCallbacks[threadId][tempUniqueId].onSent){if(!_store.store.threadCallbacks[threadId][tempUniqueId].onDeliver){_store.store.sendMessageCallbacks[tempUniqueId].onDeliver({uniqueId:tempUniqueId});delete _store.store.sendMessageCallbacks[tempUniqueId].onDeliver;_store.store.threadCallbacks[threadId][tempUniqueId].onDeliver=true;}_store.store.sendMessageCallbacks[tempUniqueId].onSeen({uniqueId:tempUniqueId});delete _store.store.sendMessageCallbacks[tempUniqueId].onSeen;_store.store.threadCallbacks[threadId][tempUniqueId].onSeen=true;if(_store.store.threadCallbacks[threadId][tempUniqueId].onSent&&_store.store.threadCallbacks[threadId][tempUniqueId].onDeliver&&_store.store.threadCallbacks[threadId][tempUniqueId].onSeen){delete _store.store.threadCallbacks[threadId][tempUniqueId];delete _store.store.sendMessageCallbacks[tempUniqueId];}}}lastThreadCallbackIndex-=1;}}}break;default:break;}},/**
+   * New Message Handler
+   *
+   * Handles Event Emitter of a newly received Chat Message
+   *
+   * @access private
+   *
+   * @param {int}    threadId         ID of image
+   * @param {object}  messageContent   Json Content of the message
+   *
+   * @return {undefined}
+   */newMessageHandler=function newMessageHandler(threadId,messageContent){var message=formatDataToMakeMessage(threadId,messageContent);var threadObject=message.conversation;var lastMessageVoCopy=Object.assign({},message);lastMessageVoCopy.conversation&&delete lastMessageVoCopy.conversation;threadObject.lastParticipantImage=!!message.participant&&message.participant.hasOwnProperty('image')?message.participant.image:'';threadObject.lastMessageVO=lastMessageVoCopy;threadObject.lastParticipantName=!!message.participant&&message.participant.hasOwnProperty('name')?message.participant.name:'';threadObject.lastMessage=message.hasOwnProperty('message')?message.message:'';var stringMsg=JSON.parse(JSON.stringify(message));stringMsg.conversation=JSON.parse(JSON.stringify(threadObject));_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_NEW',cache:false,result:{message:stringMsg}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNREAD_COUNT_UPDATED',result:{thread:threadObject,unreadCount:threadObject.unreadCount?threadObject.unreadCount:0}});var storeThread=_store.store.threads.get(threadObject.id);if(!storeThread){_store.store.threads.save(threadObject);storeThread=_store.store.threads.get(threadObject.id);}// let unreadCount = message.conversation.unreadCount;
 // store.threads.get(threadObject.id).unreadCount.set();
 if(message.ownerId!=_store.store.user().id){if(!storeThread.unreadCount.get())storeThread.unreadCount.set(1);else storeThread.unreadCount.increase();// if(unreadCount) {
 //     storeThread.unreadCount.set(unreadCount);
@@ -49724,798 +49364,729 @@ if(message.ownerId!=_store.store.user().id){if(!storeThread.unreadCount.get())st
 //     });
 // }
 /**
-             * Update waitQ and remove sent messages from it
-             */deleteFromChatWaitQueue(message,function(){});},/**
-         * Chat Edit Message Handler
-         *
-         * Handles Event Emitter of an edited Chat Message
-         *
-         * @access private
-         *
-         * @param {int}    threadId         ID of image
-         * @param {object}  messageContent   Json Content of the message
-         *
-         * @return {undefined}
-         */chatEditMessageHandler=function chatEditMessageHandler(threadId,messageContent){var message=formatDataToMakeMessage(threadId,messageContent);if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_EDIT',result:{message:message}});if(message.pinned){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0]}});}}});}else{_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_EDIT',result:{message:message}});if(message.pinned){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId}});}}},/**
-         * Create Thread
-         *
-         * Makes formatted Thread Object out of given contentCount,
-         * If Thread has been newly created, a THREAD_NEW event
-         * will be emitted
-         *
-         * @access private
-         *
-         * @param {object}    messageContent    Json object of thread taken from chat server
-         * @param {boolean}   addFromService    if this is a newly created Thread, addFromService should be True
-         *
-         * @param showThread
-         * @return {object} Formatted Thread Object
-         */createThread=function createThread(messageContent,addFromService,showThread){var threadData=formatDataToMakeConversation(messageContent);var redirectToThread=showThread===true?showThread:false;if(addFromService){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_NEW',redirectToThread:redirectToThread,result:{thread:threadData}});}return threadData;},/**
-         * Format Data To Make Linked User
-         *
-         * This functions re-formats given JSON to proper Object
-         *
-         * @access private
-         *
-         * @param {object}  messageContent    Json object of thread taken from chat server
-         *
-         * @return {object} linkedUser Object
-         */formatDataToMakeLinkedUser=function formatDataToMakeLinkedUser(messageContent){/**
-             * + RelatedUserVO                 {object}
-             *   - coreUserId                  {int}
-             *   - username                    {string}
-             *   - nickname                    {string}
-             *   - name                        {string}
-             *   - image                       {string}
-             */var linkedUser={coreUserId:typeof messageContent.coreUserId!=='undefined'?messageContent.coreUserId:messageContent.id,username:messageContent.username,nickname:messageContent.nickname,name:messageContent.name,image:messageContent.image};// return linkedUser;
+     * Update waitQ and remove sent messages from it
+     */deleteFromChatWaitQueue(message,function(){});},/**
+   * Chat Edit Message Handler
+   *
+   * Handles Event Emitter of an edited Chat Message
+   *
+   * @access private
+   *
+   * @param {int}    threadId         ID of image
+   * @param {object}  messageContent   Json Content of the message
+   *
+   * @return {undefined}
+   */chatEditMessageHandler=function chatEditMessageHandler(threadId,messageContent){var message=formatDataToMakeMessage(threadId,messageContent);if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_EDIT',result:{message:message}});if(message.pinned){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0]}});}}});}else{_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_EDIT',result:{message:message}});if(message.pinned){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId}});}}},/**
+   * Create Thread
+   *
+   * Makes formatted Thread Object out of given contentCount,
+   * If Thread has been newly created, a THREAD_NEW event
+   * will be emitted
+   *
+   * @access private
+   *
+   * @param {object}    messageContent    Json object of thread taken from chat server
+   * @param {boolean}   addFromService    if this is a newly created Thread, addFromService should be True
+   *
+   * @param showThread
+   * @return {object} Formatted Thread Object
+   */createThread=function createThread(messageContent,addFromService,showThread){var threadData=formatDataToMakeConversation(messageContent);var redirectToThread=showThread===true?showThread:false;if(addFromService){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_NEW',redirectToThread:redirectToThread,result:{thread:threadData}});}return threadData;},/**
+   * Format Data To Make Linked User
+   *
+   * This functions re-formats given JSON to proper Object
+   *
+   * @access private
+   *
+   * @param {object}  messageContent    Json object of thread taken from chat server
+   *
+   * @return {object} linkedUser Object
+   */formatDataToMakeLinkedUser=function formatDataToMakeLinkedUser(messageContent){/**
+     * + RelatedUserVO                 {object}
+     *   - coreUserId                  {int}
+     *   - username                    {string}
+     *   - nickname                    {string}
+     *   - name                        {string}
+     *   - image                       {string}
+     */var linkedUser={coreUserId:typeof messageContent.coreUserId!=='undefined'?messageContent.coreUserId:messageContent.id,username:messageContent.username,nickname:messageContent.nickname,name:messageContent.name,image:messageContent.image};// return linkedUser;
 return JSON.parse(JSON.stringify(linkedUser));},/**
-         * Format Data To Make Contact
-         *
-         * This functions reformats given JSON to proper Object
-         *
-         * @access private
-         *
-         * @param {object}  messageContent    Json object of thread taken from chat server
-         *
-         * @return {object} contact Object
-         */formatDataToMakeContact=function formatDataToMakeContact(messageContent){/**
-             * + ContactVO                        {object}
-             *    - id                            {int}
-             *    - blocked                       {boolean}
-             *    - userId                        {int}
-             *    - firstName                     {string}
-             *    - lastName                      {string}
-             *    - image                         {string}
-             *    - email                         {string}
-             *    - cellphoneNumber               {string}
-             *    - uniqueId                      {string}
-             *    - notSeenDuration               {int}
-             *    - hasUser                       {boolean}
-             *    - linkedUser                    {object : RelatedUserVO}
-             */var contact={id:messageContent.id,blocked:typeof messageContent.blocked!=='undefined'?messageContent.blocked:false,userId:messageContent.userId,firstName:messageContent.firstName,lastName:messageContent.lastName,image:messageContent.profileImage,email:messageContent.email,cellphoneNumber:messageContent.cellphoneNumber,uniqueId:messageContent.uniqueId,notSeenDuration:messageContent.notSeenDuration,hasUser:messageContent.hasUser,linkedUser:undefined};if(typeof messageContent.linkedUser!=='undefined'){contact.linkedUser=formatDataToMakeLinkedUser(messageContent.linkedUser);}// return contact;
+   * Format Data To Make Contact
+   *
+   * This functions reformats given JSON to proper Object
+   *
+   * @access private
+   *
+   * @param {object}  messageContent    Json object of thread taken from chat server
+   *
+   * @return {object} contact Object
+   */formatDataToMakeContact=function formatDataToMakeContact(messageContent){/**
+     * + ContactVO                        {object}
+     *    - id                            {int}
+     *    - blocked                       {boolean}
+     *    - userId                        {int}
+     *    - firstName                     {string}
+     *    - lastName                      {string}
+     *    - image                         {string}
+     *    - email                         {string}
+     *    - cellphoneNumber               {string}
+     *    - uniqueId                      {string}
+     *    - notSeenDuration               {int}
+     *    - hasUser                       {boolean}
+     *    - linkedUser                    {object : RelatedUserVO}
+     */var contact={id:messageContent.id,blocked:typeof messageContent.blocked!=='undefined'?messageContent.blocked:false,userId:messageContent.userId,firstName:messageContent.firstName,lastName:messageContent.lastName,image:messageContent.profileImage,email:messageContent.email,cellphoneNumber:messageContent.cellphoneNumber,uniqueId:messageContent.uniqueId,notSeenDuration:messageContent.notSeenDuration,hasUser:messageContent.hasUser,linkedUser:undefined};if(typeof messageContent.linkedUser!=='undefined'){contact.linkedUser=formatDataToMakeLinkedUser(messageContent.linkedUser);}// return contact;
 return JSON.parse(JSON.stringify(contact));},/**
-         * Format Data To Make User
-         *
-         * This functions reformats given JSON to proper Object
-         *
-         * @access private
-         *
-         * @param {object}  messageContent    Json object of thread taken from chat server
-         *
-         * @return {object} user Object
-         */formatDataToMakeUser=function formatDataToMakeUser(messageContent){/**
-             * + User                     {object}
-             *    - id                    {int}
-             *    - name                  {string}
-             *    - email                 {string}
-             *    - cellphoneNumber       {string}
-             *    - image                 {string}
-             *    - lastSeen              {int}
-             *    - sendEnable            {boolean}
-             *    - receiveEnable         {boolean}
-             *    - contactSynced         {boolean}
-             *    - chatProfileVO         {object:chatProfileVO}
-             */var user={id:messageContent.id,coreUserId:messageContent.coreUserId,username:messageContent.username,name:messageContent.name,email:messageContent.email,cellphoneNumber:messageContent.cellphoneNumber,image:messageContent.image,lastSeen:messageContent.lastSeen,sendEnable:messageContent.sendEnable,receiveEnable:messageContent.receiveEnable,contactSynced:messageContent.contactSynced,callCenter:messageContent.callCenter};if(messageContent.contactId){user.contactId=messageContent.contactId;}if(messageContent.contactName){user.contactName=messageContent.contactName;}if(messageContent.contactFirstName){user.contactFirstName=messageContent.contactFirstName;}if(messageContent.contactLastName){user.contactLastName=messageContent.contactLastName;}if(messageContent.blocked){user.blocked=messageContent.blocked;}// Add chatProfileVO if exist
+   * Format Data To Make User
+   *
+   * This functions reformats given JSON to proper Object
+   *
+   * @access private
+   *
+   * @param {object}  messageContent    Json object of thread taken from chat server
+   *
+   * @return {object} user Object
+   */formatDataToMakeUser=function formatDataToMakeUser(messageContent){/**
+     * + User                     {object}
+     *    - id                    {int}
+     *    - name                  {string}
+     *    - email                 {string}
+     *    - cellphoneNumber       {string}
+     *    - image                 {string}
+     *    - lastSeen              {int}
+     *    - sendEnable            {boolean}
+     *    - receiveEnable         {boolean}
+     *    - contactSynced         {boolean}
+     *    - chatProfileVO         {object:chatProfileVO}
+     */var user={id:messageContent.id,coreUserId:messageContent.coreUserId,username:messageContent.username,name:messageContent.name,email:messageContent.email,cellphoneNumber:messageContent.cellphoneNumber,image:messageContent.image,lastSeen:messageContent.lastSeen,sendEnable:messageContent.sendEnable,receiveEnable:messageContent.receiveEnable,contactSynced:messageContent.contactSynced,callCenter:messageContent.callCenter};if(messageContent.contactId){user.contactId=messageContent.contactId;}if(messageContent.contactName){user.contactName=messageContent.contactName;}if(messageContent.contactFirstName){user.contactFirstName=messageContent.contactFirstName;}if(messageContent.contactLastName){user.contactLastName=messageContent.contactLastName;}if(messageContent.blocked){user.blocked=messageContent.blocked;}// Add chatProfileVO if exist
 if(messageContent.chatProfileVO){user.chatProfileVO=messageContent.chatProfileVO;}// return user;
 return JSON.parse(JSON.stringify(user));},/**
-         * Format Data To Make Blocked User
-         *
-         * This functions reformats given JSON to proper Object
-         *
-         * @access private
-         *
-         * @param {object}  messageContent    Json object of thread taken from chat server
-         *
-         * @return {object} blockedUser Object
-         */formatDataToMakeBlockedUser=function formatDataToMakeBlockedUser(messageContent){/**
-             * + BlockedUser              {object}
-             *    - id                    {int}
-             *    - coreUserId            {int}
-             *    - firstName             {string}
-             *    - lastName              {string}
-             *    - nickName              {string}
-             *    - profileImage          {string}
-             *    - contact               {object: contactVO}
-             */var blockedUser={blockId:messageContent.id,coreUserId:messageContent.coreUserId,firstName:messageContent.firstName,lastName:messageContent.lastName,nickName:messageContent.nickName,profileImage:messageContent.profileImage};// Add contactVO if exist
+   * Format Data To Make Blocked User
+   *
+   * This functions reformats given JSON to proper Object
+   *
+   * @access private
+   *
+   * @param {object}  messageContent    Json object of thread taken from chat server
+   *
+   * @return {object} blockedUser Object
+   */formatDataToMakeBlockedUser=function formatDataToMakeBlockedUser(messageContent){/**
+     * + BlockedUser              {object}
+     *    - id                    {int}
+     *    - coreUserId            {int}
+     *    - firstName             {string}
+     *    - lastName              {string}
+     *    - nickName              {string}
+     *    - profileImage          {string}
+     *    - contact               {object: contactVO}
+     */var blockedUser={blockId:messageContent.id,coreUserId:messageContent.coreUserId,firstName:messageContent.firstName,lastName:messageContent.lastName,nickName:messageContent.nickName,profileImage:messageContent.profileImage};// Add contactVO if exist
 if(messageContent.contactVO){blockedUser.contact=messageContent.contactVO;}// return blockedUser;
 return JSON.parse(JSON.stringify(blockedUser));},formatDataToMakeAssistanthistoryItem=function formatDataToMakeAssistanthistoryItem(messageContent){var assistant={actionType:Object.keys(_constants.assistantActionTypes)[Object.values(_constants.assistantActionTypes).indexOf(messageContent.actionType)],actionTime:messageContent.actionTime};// Add chatProfileVO if exist
 if(messageContent.participantVO){assistant.participantVO=messageContent.participantVO;}// return participant;
 return JSON.parse(JSON.stringify(assistant));},formatDataToMakeAssistantHistoryList=function formatDataToMakeAssistantHistoryList(assistantsList){var returnData=[];for(var i=0;i<assistantsList.length;i++){returnData.push(formatDataToMakeAssistanthistoryItem(assistantsList[i]));}return returnData;},/**
-         * Format Data To Make Invitee
-         *
-         * This functions reformats given JSON to proper Object
-         *
-         * @access private
-         *
-         * @param {object}  messageContent    Json object of thread taken from chat server
-         *
-         * @return {object} inviteeData Object
-         */formatDataToMakeInvitee=function formatDataToMakeInvitee(messageContent){/**
-             * + InviteeVO       {object}
-             *    - id           {string}
-             *    - idType       {int}
-             */return{id:messageContent.id,idType:_constants.inviteeVOidTypes[messageContent.idType]};},/**
-         * Format Data To Make Participant
-         *
-         * This functions reformats given JSON to proper Object
-         *
-         * @access private
-         *
-         * @param {object}  messageContent    Json object of thread taken from chat server
-         *
-         * @param threadId
-         * @return {object} participant Object
-         */formatDataToMakeParticipant=function formatDataToMakeParticipant(messageContent,threadId){/**
-             * + ParticipantVO                   {object}
-             *    - id                           {int}
-             *    - coreUserId                   {int}
-             *    - threadId                     {int}
-             *    - sendEnable                   {boolean}
-             *    - receiveEnable                {boolean}
-             *    - firstName                    {string}
-             *    - lastName                     {string}
-             *    - name                         {string}
-             *    - cellphoneNumber              {string}
-             *    - email                        {string}
-             *    - image                        {string}
-             *    - chatProfileVO                {object}
-             *    - myFriend                     {boolean}
-             *    - online                       {boolean}
-             *    - notSeenDuration              {int}
-             *    - contactId                    {int}
-             *    - contactName                  {string}
-             *    - contactFirstName             {string}
-             *    - contactLastName              {string}
-             *    - blocked                      {boolean}
-             *    - admin                        {boolean}
-             *    - auditor                      {boolean}
-             *    - keyId                        {string}
-             *    - roles                        {list:string}
-             *    - username                     {string}
-             */var participant={id:messageContent.id,coreUserId:messageContent.coreUserId,threadId:parseInt(threadId),sendEnable:messageContent.sendEnable,receiveEnable:messageContent.receiveEnable,firstName:messageContent.firstName,lastName:messageContent.lastName,name:messageContent.name,cellphoneNumber:messageContent.cellphoneNumber,email:messageContent.email,image:messageContent.image,myFriend:messageContent.myFriend,online:messageContent.online,notSeenDuration:messageContent.notSeenDuration,contactId:messageContent.contactId,contactName:messageContent.contactName,contactFirstName:messageContent.contactFirstName,contactLastName:messageContent.contactLastName,blocked:messageContent.blocked,admin:messageContent.admin,auditor:messageContent.auditor,keyId:messageContent.keyId,roles:messageContent.roles,username:messageContent.username};// Add chatProfileVO if exist
-if(messageContent.chatProfileVO){participant.chatProfileVO=messageContent.chatProfileVO;}// return participant;
-return JSON.parse(JSON.stringify(participant));},/**
-         * Format Data To Make Conversation
-         *
-         * This functions reformats given JSON to proper Object
-         *
-         * @access private
-         *
-         * @param {object}  messageContent    Json object of thread taken from chat server
-         *
-         * @return {object} Conversation Object
-         */formatDataToMakeConversation=function formatDataToMakeConversation(messageContent){/**
-             * + Conversation                           {object}
-             *    - id                                  {int}
-             *    - joinDate                            {int}
-             *    - title                               {string}
-             *    - inviter                             {object : ParticipantVO}
-             *    - participants                        {list : ParticipantVO}
-             *    - time                                {int}
-             *    - lastMessage                         {string}
-             *    - lastParticipantName                 {string}
-             *    - group                               {boolean}
-             *    - partner                             {int}
-             *    - lastParticipantImage                {string}
-             *    - image                               {string}
-             *    - description                         {string}
-             *    - unreadCount                         {int}
-             *    - lastSeenMessageId                   {int}
-             *    - lastSeenMessageTime                 {int}
-             *    - lastSeenMessageNanos                {integer}
-             *    - lastMessageVO                       {object : ChatMessageVO}
-             *    - pinMessageVO                        {object : pinMessageVO}
-             *    - partnerLastSeenMessageId            {int}
-             *    - partnerLastSeenMessageTime          {int}
-             *    - partnerLastSeenMessageNanos         {integer}
-             *    - partnerLastDeliveredMessageId       {int}
-             *    - partnerLastDeliveredMessageTime     {int}
-             *    - partnerLastDeliveredMessageNanos    {integer}
-             *    - type                                {int}
-             *    - metadata                            {string}
-             *    - mute                                {boolean}
-             *    - participantCount                    {int}
-             *    - canEditInfo                         {boolean}
-             *    - canSpam                             {boolean}
-             *    - admin                               {boolean}
-             *    - mentioned                           {boolean}
-             *    - pin                                 {boolean}
-             *    - uniqueName                          {string}
-             *    - userGroupHash                       {string}
-             *    - leftWithHistory                     {boolean}
-             *    - closed                              {boolean}
-             */var conversation={id:messageContent.id,joinDate:messageContent.joinDate,title:messageContent.title,inviter:undefined,participants:undefined,time:messageContent.time,lastMessage:messageContent.lastMessage,lastParticipantName:messageContent.lastParticipantName,group:messageContent.group,partner:messageContent.partner,lastParticipantImage:messageContent.lastParticipantImage,image:messageContent.image,description:messageContent.description,unreadCount:messageContent.unreadCount,lastSeenMessageId:messageContent.lastSeenMessageId,lastSeenMessageTime:messageContent.lastSeenMessageNanos?parseInt(parseInt(messageContent.lastSeenMessageTime)/1000)*1000000000+parseInt(messageContent.lastSeenMessageNanos):parseInt(messageContent.lastSeenMessageTime),lastMessageVO:undefined,pinMessageVO:undefined,partnerLastSeenMessageId:messageContent.partnerLastSeenMessageId,partnerLastSeenMessageTime:messageContent.partnerLastSeenMessageNanos?parseInt(parseInt(messageContent.partnerLastSeenMessageTime)/1000)*1000000000+parseInt(messageContent.partnerLastSeenMessageNanos):parseInt(messageContent.partnerLastSeenMessageTime),partnerLastDeliveredMessageId:messageContent.partnerLastDeliveredMessageId,partnerLastDeliveredMessageTime:messageContent.partnerLastDeliveredMessageNanos?parseInt(parseInt(messageContent.partnerLastDeliveredMessageTime)/1000)*1000000000+parseInt(messageContent.partnerLastDeliveredMessageNanos):parseInt(messageContent.partnerLastDeliveredMessageTime),archiveThread:messageContent.archiveThread,type:messageContent.type,metadata:messageContent.metadata,mute:messageContent.mute,participantCount:messageContent.participantCount,canEditInfo:messageContent.canEditInfo,canSpam:messageContent.canSpam,admin:messageContent.admin,mentioned:messageContent.mentioned,pin:messageContent.pin,uniqueName:messageContent.uniqueName,userGroupHash:messageContent.userGroupHash,leftWithHistory:messageContent.leftWithHistory,closed:messageContent.closed,seenByAnyAssistant:messageContent.seenByAnyAssistant};// Add inviter if exist
-if(messageContent.inviter){conversation.inviter=formatDataToMakeParticipant(messageContent.inviter,messageContent.id);}// Add participants list if exist
-if(messageContent.participants&&Array.isArray(messageContent.participants)){conversation.participants=[];for(var i=0;i<messageContent.participants.length;i++){var participantData=formatDataToMakeParticipant(messageContent.participants[i],messageContent.id);if(participantData){conversation.participants.push(participantData);}}}// Add lastMessageVO if exist
+   * Format Data To Make Invitee
+   *
+   * This functions reformats given JSON to proper Object
+   *
+   * @access private
+   *
+   * @param {object}  messageContent    Json object of thread taken from chat server
+   *
+   * @return {object} inviteeData Object
+   */formatDataToMakeInvitee=function formatDataToMakeInvitee(messageContent){/**
+     * + InviteeVO       {object}
+     *    - id           {string}
+     *    - idType       {int}
+     */return{id:messageContent.id,idType:_constants.inviteeVOidTypes[messageContent.idType]};},/**
+   * Format Data To Make Conversation
+   *
+   * This functions reformats given JSON to proper Object
+   *
+   * @access private
+   *
+   * @param {object}  messageContent    Json object of thread taken from chat server
+   *
+   * @return {object} Conversation Object
+   */formatDataToMakeConversation=function formatDataToMakeConversation(messageContent){/**
+     * + Conversation                           {object}
+     *    - id                                  {int}
+     *    - joinDate                            {int}
+     *    - title                               {string}
+     *    - inviter                             {object : ParticipantVO}
+     *    - participants                        {list : ParticipantVO}
+     *    - time                                {int}
+     *    - lastMessage                         {string}
+     *    - lastParticipantName                 {string}
+     *    - group                               {boolean}
+     *    - partner                             {int}
+     *    - lastParticipantImage                {string}
+     *    - image                               {string}
+     *    - description                         {string}
+     *    - unreadCount                         {int}
+     *    - lastSeenMessageId                   {int}
+     *    - lastSeenMessageTime                 {int}
+     *    - lastSeenMessageNanos                {integer}
+     *    - lastMessageVO                       {object : ChatMessageVO}
+     *    - pinMessageVO                        {object : pinMessageVO}
+     *    - partnerLastSeenMessageId            {int}
+     *    - partnerLastSeenMessageTime          {int}
+     *    - partnerLastSeenMessageNanos         {integer}
+     *    - partnerLastDeliveredMessageId       {int}
+     *    - partnerLastDeliveredMessageTime     {int}
+     *    - partnerLastDeliveredMessageNanos    {integer}
+     *    - type                                {int}
+     *    - metadata                            {string}
+     *    - mute                                {boolean}
+     *    - participantCount                    {int}
+     *    - canEditInfo                         {boolean}
+     *    - canSpam                             {boolean}
+     *    - admin                               {boolean}
+     *    - mentioned                           {boolean}
+     *    - pin                                 {boolean}
+     *    - uniqueName                          {string}
+     *    - userGroupHash                       {string}
+     *    - leftWithHistory                     {boolean}
+     *    - closed                              {boolean}
+     */var conversation={id:messageContent.id,joinDate:messageContent.joinDate,title:messageContent.title,inviter:undefined,participants:undefined,time:messageContent.time,lastMessage:messageContent.lastMessage,lastParticipantName:messageContent.lastParticipantName,group:messageContent.group,partner:messageContent.partner,lastParticipantImage:messageContent.lastParticipantImage,image:messageContent.image,description:messageContent.description,unreadCount:messageContent.unreadCount,lastSeenMessageId:messageContent.lastSeenMessageId,lastSeenMessageTime:messageContent.lastSeenMessageNanos?parseInt(parseInt(messageContent.lastSeenMessageTime)/1000)*1000000000+parseInt(messageContent.lastSeenMessageNanos):parseInt(messageContent.lastSeenMessageTime),lastMessageVO:undefined,pinMessageVO:undefined,partnerLastSeenMessageId:messageContent.partnerLastSeenMessageId,partnerLastSeenMessageTime:messageContent.partnerLastSeenMessageNanos?parseInt(parseInt(messageContent.partnerLastSeenMessageTime)/1000)*1000000000+parseInt(messageContent.partnerLastSeenMessageNanos):parseInt(messageContent.partnerLastSeenMessageTime),partnerLastDeliveredMessageId:messageContent.partnerLastDeliveredMessageId,partnerLastDeliveredMessageTime:messageContent.partnerLastDeliveredMessageNanos?parseInt(parseInt(messageContent.partnerLastDeliveredMessageTime)/1000)*1000000000+parseInt(messageContent.partnerLastDeliveredMessageNanos):parseInt(messageContent.partnerLastDeliveredMessageTime),archiveThread:messageContent.archiveThread,type:messageContent.type,metadata:messageContent.metadata,mute:messageContent.mute,participantCount:messageContent.participantCount,canEditInfo:messageContent.canEditInfo,canSpam:messageContent.canSpam,admin:messageContent.admin,mentioned:messageContent.mentioned,pin:messageContent.pin,uniqueName:messageContent.uniqueName,userGroupHash:messageContent.userGroupHash,leftWithHistory:messageContent.leftWithHistory,closed:messageContent.closed,seenByAnyAssistant:messageContent.seenByAnyAssistant};// Add inviter if exist
+if(messageContent.inviter){conversation.inviter=(0,_threadParticipantsMethods.formatDataToMakeParticipant)(messageContent.inviter,messageContent.id);}// Add participants list if exist
+if(messageContent.participants&&Array.isArray(messageContent.participants)){conversation.participants=[];for(var i=0;i<messageContent.participants.length;i++){var participantData=(0,_threadParticipantsMethods.formatDataToMakeParticipant)(messageContent.participants[i],messageContent.id);if(participantData){conversation.participants.push(participantData);}}}// Add lastMessageVO if exist
 if(messageContent.lastMessageVO){conversation.lastMessageVO=formatDataToMakeMessage(messageContent.id,messageContent.lastMessageVO);}// Add pinMessageVO if exist
 if(messageContent.pinMessageVO){conversation.pinMessageVO=formatDataToMakePinMessage(messageContent.id,messageContent.pinMessageVO);}// return conversation;
 return JSON.parse(JSON.stringify(conversation));},/**
-         * Format Data To Make Reply Info
-         *
-         * This functions reformats given JSON to proper Object
-         *
-         * @access private
-         *
-         * @param {object}  messageContent    Json object of thread taken from chat server
-         *
-         * @param threadId
-         * @return {object} replyInfo Object
-         */formatDataToMakeReplyInfo=function formatDataToMakeReplyInfo(messageContent,threadId){/**
-             * + replyInfoVO                  {object : replyInfoVO}
-             *   - participant                {object : ParticipantVO}
-             *   - repliedToMessageId         {int}
-             *   - repliedToMessageTime       {int}
-             *   - repliedToMessageNanos      {int}
-             *   - message                    {string}
-             *   - deleted                    {boolean}
-             *   - messageType                {int}
-             *   - metadata                   {string}
-             *   - systemMetadata             {string}
-             */var replyInfo={participant:undefined,repliedToMessageId:messageContent.repliedToMessageId,repliedToMessageTime:messageContent.repliedToMessageNanos?parseInt(parseInt(messageContent.repliedToMessageTime)/1000)*1000000000+parseInt(messageContent.repliedToMessageNanos):parseInt(messageContent.repliedToMessageTime),repliedToMessageTimeMiliSeconds:parseInt(messageContent.repliedToMessageTime),repliedToMessageTimeNanos:parseInt(messageContent.repliedToMessageNanos),message:messageContent.message,deleted:messageContent.deleted,messageType:messageContent.messageType,metadata:messageContent.metadata,systemMetadata:messageContent.systemMetadata};if(messageContent.participant){replyInfo.participant=formatDataToMakeParticipant(messageContent.participant,threadId);}if(messageContent.replyPrivatelyInfoVO){replyInfo.replyPrivatelyInfoVO=messageContent.replyPrivatelyInfoVO;}// return replyInfo;
+   * Format Data To Make Reply Info
+   *
+   * This functions reformats given JSON to proper Object
+   *
+   * @access private
+   *
+   * @param {object}  messageContent    Json object of thread taken from chat server
+   *
+   * @param threadId
+   * @return {object} replyInfo Object
+   */formatDataToMakeReplyInfo=function formatDataToMakeReplyInfo(messageContent,threadId){/**
+     * + replyInfoVO                  {object : replyInfoVO}
+     *   - participant                {object : ParticipantVO}
+     *   - repliedToMessageId         {int}
+     *   - repliedToMessageTime       {int}
+     *   - repliedToMessageNanos      {int}
+     *   - message                    {string}
+     *   - deleted                    {boolean}
+     *   - messageType                {int}
+     *   - metadata                   {string}
+     *   - systemMetadata             {string}
+     */var replyInfo={participant:undefined,repliedToMessageId:messageContent.repliedToMessageId,repliedToMessageTime:messageContent.repliedToMessageNanos?parseInt(parseInt(messageContent.repliedToMessageTime)/1000)*1000000000+parseInt(messageContent.repliedToMessageNanos):parseInt(messageContent.repliedToMessageTime),repliedToMessageTimeMiliSeconds:parseInt(messageContent.repliedToMessageTime),repliedToMessageTimeNanos:parseInt(messageContent.repliedToMessageNanos),message:messageContent.message,deleted:messageContent.deleted,messageType:messageContent.messageType,metadata:messageContent.metadata,systemMetadata:messageContent.systemMetadata};if(messageContent.participant){replyInfo.participant=(0,_threadParticipantsMethods.formatDataToMakeParticipant)(messageContent.participant,threadId);}if(messageContent.replyPrivatelyInfoVO){replyInfo.replyPrivatelyInfoVO=messageContent.replyPrivatelyInfoVO;}// return replyInfo;
 return JSON.parse(JSON.stringify(replyInfo));},/**
-         * Format Data To Make Forward Info
-         *
-         * This functions reformats given JSON to proper Object
-         *
-         * @access private
-         *
-         * @param {object}  messageContent    Json object of thread taken from chat server
-         *
-         * @param threadId
-         * @return {object} forwardInfo Object
-         */formatDataToMakeForwardInfo=function formatDataToMakeForwardInfo(messageContent,threadId){/**
-             * + forwardInfo                  {object : forwardInfoVO}
-             *   - participant                {object : ParticipantVO}
-             *   - conversation               {object : ConversationSummary}
-             */var forwardInfo={participant:undefined,conversation:undefined};if(messageContent.conversation){forwardInfo.conversation=formatDataToMakeConversation(messageContent.conversation);}if(messageContent.participant){forwardInfo.participant=formatDataToMakeParticipant(messageContent.participant,threadId);}// return forwardInfo;
+   * Format Data To Make Forward Info
+   *
+   * This functions reformats given JSON to proper Object
+   *
+   * @access private
+   *
+   * @param {object}  messageContent    Json object of thread taken from chat server
+   *
+   * @param threadId
+   * @return {object} forwardInfo Object
+   */formatDataToMakeForwardInfo=function formatDataToMakeForwardInfo(messageContent,threadId){/**
+     * + forwardInfo                  {object : forwardInfoVO}
+     *   - participant                {object : ParticipantVO}
+     *   - conversation               {object : ConversationSummary}
+     */var forwardInfo={participant:undefined,conversation:undefined};if(messageContent.conversation){forwardInfo.conversation=formatDataToMakeConversation(messageContent.conversation);}if(messageContent.participant){forwardInfo.participant=(0,_threadParticipantsMethods.formatDataToMakeParticipant)(messageContent.participant,threadId);}// return forwardInfo;
 return JSON.parse(JSON.stringify(forwardInfo));},/**
-         * Format Data To Make Message
-         *
-         * This functions reformats given JSON to proper Object
-         *
-         * @access private
-         *
-         *
-         * @return {object} message Object
-         * @param threadId
-         * @param pushMessageVO
-         * @param fromCache
-         */formatDataToMakeMessage=function formatDataToMakeMessage(threadId,pushMessageVO,fromCache){/**
-             * + MessageVO                       {object}
-             *    - id                           {int}
-             *    - threadId                     {int}
-             *    - ownerId                      {int}
-             *    - uniqueId                     {string}
-             *    - previousId                   {int}
-             *    - message                      {string}
-             *    - messageType                  {int}
-             *    - edited                       {boolean}
-             *    - editable                     {boolean}
-             *    - deletable                    {boolean}
-             *    - delivered                    {boolean}
-             *    - seen                         {boolean}
-             *    - mentioned                    {boolean}
-             *    - pinned                       {boolean}
-             *    - participant                  {object : ParticipantVO}
-             *    - conversation                 {object : ConversationVO}
-             *    - replyInfo                    {object : replyInfoVO}
-             *    - forwardInfo                  {object : forwardInfoVO}
-             *    - metadata                     {string}
-             *    - systemMetadata               {string}
-             *    - time                         {int}
-             *    - timeNanos                    {int}
-             */if(fromCache||pushMessageVO.time.toString().length>14){var time=pushMessageVO.time,timeMiliSeconds=parseInt(pushMessageVO.time/1000000);}else{var time=pushMessageVO.timeNanos?parseInt(parseInt(pushMessageVO.time)/1000)*1000000000+parseInt(pushMessageVO.timeNanos):parseInt(pushMessageVO.time),timeMiliSeconds=parseInt(pushMessageVO.time);}var message={id:pushMessageVO.id,threadId:threadId,ownerId:pushMessageVO.ownerId?pushMessageVO.ownerId:undefined,uniqueId:pushMessageVO.uniqueId,previousId:pushMessageVO.previousId,message:filterXSS(pushMessageVO.message),messageType:pushMessageVO.messageType,edited:pushMessageVO.edited,editable:pushMessageVO.editable,deletable:pushMessageVO.deletable,delivered:pushMessageVO.delivered,seen:pushMessageVO.seen,mentioned:pushMessageVO.mentioned,pinned:pushMessageVO.pinned,participant:undefined,conversation:undefined,replyInfo:undefined,forwardInfo:undefined,metadata:pushMessageVO.metadata,systemMetadata:pushMessageVO.systemMetadata,time:time,timeMiliSeconds:timeMiliSeconds,timeNanos:parseInt(pushMessageVO.timeNanos),callHistory:pushMessageVO.callHistoryVO};if(pushMessageVO.participant){message.ownerId=pushMessageVO.participant.id;}else if(pushMessageVO.participantVO){message.ownerId=pushMessageVO.participantVO.id;}if(pushMessageVO.conversation){message.conversation=formatDataToMakeConversation(pushMessageVO.conversation);message.threadId=pushMessageVO.conversation.id;}if(pushMessageVO.replyInfoVO||pushMessageVO.replyInfo){message.replyInfo=pushMessageVO.replyInfoVO?formatDataToMakeReplyInfo(pushMessageVO.replyInfoVO,threadId):formatDataToMakeReplyInfo(pushMessageVO.replyInfo,threadId);}if(pushMessageVO.forwardInfo){message.forwardInfo=formatDataToMakeForwardInfo(pushMessageVO.forwardInfo,threadId);}if(pushMessageVO.participant){message.participant=formatDataToMakeParticipant(pushMessageVO.participant,threadId);}// return message;
+   * Format Data To Make Message
+   *
+   * This functions reformats given JSON to proper Object
+   *
+   * @access private
+   *
+   *
+   * @return {object} message Object
+   * @param threadId
+   * @param pushMessageVO
+   * @param fromCache
+   */formatDataToMakeMessage=function formatDataToMakeMessage(threadId,pushMessageVO,fromCache){/**
+     * + MessageVO                       {object}
+     *    - id                           {int}
+     *    - threadId                     {int}
+     *    - ownerId                      {int}
+     *    - uniqueId                     {string}
+     *    - previousId                   {int}
+     *    - message                      {string}
+     *    - messageType                  {int}
+     *    - edited                       {boolean}
+     *    - editable                     {boolean}
+     *    - deletable                    {boolean}
+     *    - delivered                    {boolean}
+     *    - seen                         {boolean}
+     *    - mentioned                    {boolean}
+     *    - pinned                       {boolean}
+     *    - participant                  {object : ParticipantVO}
+     *    - conversation                 {object : ConversationVO}
+     *    - replyInfo                    {object : replyInfoVO}
+     *    - forwardInfo                  {object : forwardInfoVO}
+     *    - metadata                     {string}
+     *    - systemMetadata               {string}
+     *    - time                         {int}
+     *    - timeNanos                    {int}
+     */if(fromCache||pushMessageVO.time.toString().length>14){var time=pushMessageVO.time,timeMiliSeconds=parseInt(pushMessageVO.time/1000000);}else{var time=pushMessageVO.timeNanos?parseInt(parseInt(pushMessageVO.time)/1000)*1000000000+parseInt(pushMessageVO.timeNanos):parseInt(pushMessageVO.time),timeMiliSeconds=parseInt(pushMessageVO.time);}var message={id:pushMessageVO.id,threadId:threadId,ownerId:pushMessageVO.ownerId?pushMessageVO.ownerId:undefined,uniqueId:pushMessageVO.uniqueId,previousId:pushMessageVO.previousId,message:filterXSS(pushMessageVO.message),messageType:pushMessageVO.messageType,edited:pushMessageVO.edited,editable:pushMessageVO.editable,deletable:pushMessageVO.deletable,delivered:pushMessageVO.delivered,seen:pushMessageVO.seen,mentioned:pushMessageVO.mentioned,pinned:pushMessageVO.pinned,participant:undefined,conversation:undefined,replyInfo:undefined,forwardInfo:undefined,metadata:pushMessageVO.metadata,systemMetadata:pushMessageVO.systemMetadata,time:time,timeMiliSeconds:timeMiliSeconds,timeNanos:parseInt(pushMessageVO.timeNanos),callHistory:pushMessageVO.callHistoryVO};if(pushMessageVO.participant){message.ownerId=pushMessageVO.participant.id;}else if(pushMessageVO.participantVO){message.ownerId=pushMessageVO.participantVO.id;}if(pushMessageVO.conversation){message.conversation=formatDataToMakeConversation(pushMessageVO.conversation);message.threadId=pushMessageVO.conversation.id;}if(pushMessageVO.replyInfoVO||pushMessageVO.replyInfo){message.replyInfo=pushMessageVO.replyInfoVO?formatDataToMakeReplyInfo(pushMessageVO.replyInfoVO,threadId):formatDataToMakeReplyInfo(pushMessageVO.replyInfo,threadId);}if(pushMessageVO.forwardInfo){message.forwardInfo=formatDataToMakeForwardInfo(pushMessageVO.forwardInfo,threadId);}if(pushMessageVO.participant){message.participant=(0,_threadParticipantsMethods.formatDataToMakeParticipant)(pushMessageVO.participant,threadId);}// return message;
 return JSON.parse(JSON.stringify(message));},/**
-         * Format Data To Make Pin Message
-         *
-         * This functions reformats given JSON to proper Object
-         *
-         * @access private
-         *
-         * @param {object}  messageContent    Json object of thread taken from chat server
-         *
-         * @return {object} pin message Object
-         */formatDataToMakePinMessage=function formatDataToMakePinMessage(threadId,pushMessageVO){/**
-             * + PinMessageVO                    {object}
-             *    - messageId                    {int}
-             *    - time                         {int}
-             *    - sender                       {int}
-             *    - text                         {string}
-             *    - notifyAll                    {boolean}
-             */pushMessageVO.time=pushMessageVO.timeNanos?parseInt(parseInt(pushMessageVO.time)/1000)*1000000000+parseInt(pushMessageVO.timeNanos):parseInt(pushMessageVO.time);var pinMessage={threadId:threadId,time:pushMessageVO.time,timeNanos:pushMessageVO.timeNanos,sender:pushMessageVO.sender,messageId:pushMessageVO.messageId,text:filterXSS(pushMessageVO.text),metadata:pushMessageVO.metadata,systemMetadata:pushMessageVO.systemMetadata};if(typeof pushMessageVO.notifyAll==='boolean'){pinMessage.notifyAll=pushMessageVO.notifyAll;}// return pinMessage;
+   * Format Data To Make Pin Message
+   *
+   * This functions reformats given JSON to proper Object
+   *
+   * @access private
+   *
+   * @param {object}  messageContent    Json object of thread taken from chat server
+   *
+   * @return {object} pin message Object
+   */formatDataToMakePinMessage=function formatDataToMakePinMessage(threadId,pushMessageVO){/**
+     * + PinMessageVO                    {object}
+     *    - messageId                    {int}
+     *    - time                         {int}
+     *    - sender                       {int}
+     *    - text                         {string}
+     *    - notifyAll                    {boolean}
+     */pushMessageVO.time=pushMessageVO.timeNanos?parseInt(parseInt(pushMessageVO.time)/1000)*1000000000+parseInt(pushMessageVO.timeNanos):parseInt(pushMessageVO.time);var pinMessage={threadId:threadId,time:pushMessageVO.time,timeNanos:pushMessageVO.timeNanos,sender:pushMessageVO.sender,messageId:pushMessageVO.messageId,text:filterXSS(pushMessageVO.text),metadata:pushMessageVO.metadata,systemMetadata:pushMessageVO.systemMetadata};if(typeof pushMessageVO.notifyAll==='boolean'){pinMessage.notifyAll=pushMessageVO.notifyAll;}// return pinMessage;
 return JSON.parse(JSON.stringify(pinMessage));},/**
-         * Reformat Thread History
-         *
-         * This functions reformats given Array of thread Messages
-         * into proper chat message object
-         *
-         * @access private
-         *
-         * @param {int}    threadId         Id of Thread
-         * @param {object}  historyContent   Array of Thread History Messages
-         *
-         * @return {object} Formatted Thread History
-         */reformatThreadHistory=function reformatThreadHistory(threadId,historyContent){var returnData=[];for(var i=0;i<historyContent.length;i++){returnData.push(formatDataToMakeMessage(threadId,historyContent[i]));}return returnData;},/**
-         * Reformat Thread Participants
-         *
-         * This functions reformats given Array of thread Participants
-         * into proper thread participant
-         *
-         * @access private
-         *
-         * @param {object}  participantsContent   Array of Thread Participant Objects
-         * @param {int}    threadId              Id of Thread
-         *
-         * @return {object} Formatted Thread Participant Array
-         */reformatThreadParticipants=function reformatThreadParticipants(participantsContent,threadId){var returnData=[];for(var i=0;i<participantsContent.length;i++){returnData.push(formatDataToMakeParticipant(participantsContent[i],threadId));}return returnData;},/**
-         * Unset Not Seen Duration
-         *
-         * This functions unsets notSeenDuration property of cached objects
-         *
-         * @access private
-         *
-         * @param {object}  content   Object or Array to be modified
-         *
-         * @return {object}
-         */unsetNotSeenDuration=function unsetNotSeenDuration(content){/**
-             * Make a copy from original object to modify it's
-             * attributes, because we don't want to change
-             * the original object
-             */var temp=cloneObject(content);if(temp.hasOwnProperty('notSeenDuration')){temp.notSeenDuration=undefined;}if(temp.hasOwnProperty('inviter')){temp.inviter.notSeenDuration=undefined;}if(temp.hasOwnProperty('participant')){temp.participant.notSeenDuration=undefined;}return temp;},/**
-         * Clone Object/Array
-         *
-         * This functions makes a deep clone of given object or array
-         *
-         * @access private
-         *
-         * @param {object}  original   Object or Array to be cloned
-         *
-         * @return {object} Cloned object
-         */cloneObject=function cloneObject(original){var out,value,key;out=Array.isArray(original)?[]:{};for(key in original){value=original[key];out[key]=(0,_typeof2["default"])(value)==='object'&&value!==null?cloneObject(value):value;}return out;},/**
-         * Get Treads.
-         *
-         * This functions gets threads list
-         *
-         * @access private
-         *
-         * @param {int}       count                 count of threads to be received
-         * @param {int}       offset                offset of select query
-         * @param {array}     threadIds             An array of thread ids to be received
-         * @param {string}    name                  Search term to look up in thread Titles
-         * @param {int}      creatorCoreUserId     SSO User Id of thread creator
-         * @param {int}      partnerCoreUserId     SSO User Id of thread partner
-         * @param {int}      partnerCoreContactId  Contact Id of thread partner
-         * @param {function}  callback              The callback function to call after
-         *
-         * @return {object} Instant sendMessage result
-         */getThreads=function getThreads(params,callback){var count=25,offset=0,content={},returnCache=false;if(params){if(parseInt(params.count)>0){count=params.count;}if(parseInt(params.offset)>0){offset=params.offset;}if(typeof params.threadName==='string'){content.name=params.threadName;}if(typeof params.username==='string'){content.username=params.username;}if(typeof params.cellphoneNumber==='string'){content.cellphoneNumber=params.cellphoneNumber;}if(Array.isArray(params.threadIds)){content.threadIds=params.threadIds;}if(typeof params["new"]==='boolean'){content["new"]=params["new"];}if(parseInt(params.creatorCoreUserId)>0){content.creatorCoreUserId=params.creatorCoreUserId;}if(parseInt(params.partnerCoreUserId)>0){content.partnerCoreUserId=params.partnerCoreUserId;}if(parseInt(params.partnerCoreContactId)>0){content.partnerCoreContactId=params.partnerCoreContactId;}if(parseInt(params.fromTime)>0&&parseInt(params.fromTime)<9999999999999){content.fromTime=parseInt(params.fromTime);}if(parseInt(params.toTime)>0&&parseInt(params.toTime)<9999999999999){content.toTime=parseInt(params.toTime);}var functionLevelCache=typeof params.cache=='boolean'?params.cache:true;if(typeof params.isGroup==='boolean'){content.isGroup=params.isGroup;}if(typeof params.type==='number'){content.type=params.type;}}content.count=count;content.offset=offset;var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.GET_THREADS,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
+   * Reformat Thread History
+   *
+   * This functions reformats given Array of thread Messages
+   * into proper chat message object
+   *
+   * @access private
+   *
+   * @param {int}    threadId         Id of Thread
+   * @param {object}  historyContent   Array of Thread History Messages
+   *
+   * @return {object} Formatted Thread History
+   */reformatThreadHistory=function reformatThreadHistory(threadId,historyContent){var returnData=[];for(var i=0;i<historyContent.length;i++){returnData.push(formatDataToMakeMessage(threadId,historyContent[i]));}return returnData;},/**
+   * Unset Not Seen Duration
+   *
+   * This functions unsets notSeenDuration property of cached objects
+   *
+   * @access private
+   *
+   * @param {object}  content   Object or Array to be modified
+   *
+   * @return {object}
+   */unsetNotSeenDuration=function unsetNotSeenDuration(content){/**
+     * Make a copy from original object to modify it's
+     * attributes, because we don't want to change
+     * the original object
+     */var temp=cloneObject(content);if(temp.hasOwnProperty('notSeenDuration')){temp.notSeenDuration=undefined;}if(temp.hasOwnProperty('inviter')){temp.inviter.notSeenDuration=undefined;}if(temp.hasOwnProperty('participant')){temp.participant.notSeenDuration=undefined;}return temp;},/**
+   * Clone Object/Array
+   *
+   * This functions makes a deep clone of given object or array
+   *
+   * @access private
+   *
+   * @param {object}  original   Object or Array to be cloned
+   *
+   * @return {object} Cloned object
+   */cloneObject=function cloneObject(original){var out,value,key;out=Array.isArray(original)?[]:{};for(key in original){value=original[key];out[key]=(0,_typeof2["default"])(value)==='object'&&value!==null?cloneObject(value):value;}return out;},/**
+   * Get Treads.
+   *
+   * This functions gets threads list
+   *
+   * @access private
+   *
+   * @param {int}       count                 count of threads to be received
+   * @param {int}       offset                offset of select query
+   * @param {array}     threadIds             An array of thread ids to be received
+   * @param {string}    name                  Search term to look up in thread Titles
+   * @param {int}      creatorCoreUserId     SSO User Id of thread creator
+   * @param {int}      partnerCoreUserId     SSO User Id of thread partner
+   * @param {int}      partnerCoreContactId  Contact Id of thread partner
+   * @param {function}  callback              The callback function to call after
+   *
+   * @return {object} Instant sendMessage result
+   */getThreads=function getThreads(params,callback){var count=25,offset=0,content={},returnCache=false;if(params){if(parseInt(params.count)>0){count=params.count;}if(parseInt(params.offset)>0){offset=params.offset;}if(typeof params.threadName==='string'){content.name=params.threadName;}if(typeof params.username==='string'){content.username=params.username;}if(typeof params.cellphoneNumber==='string'){content.cellphoneNumber=params.cellphoneNumber;}if(Array.isArray(params.threadIds)){content.threadIds=params.threadIds;}if(typeof params["new"]==='boolean'){content["new"]=params["new"];}if(parseInt(params.creatorCoreUserId)>0){content.creatorCoreUserId=params.creatorCoreUserId;}if(parseInt(params.partnerCoreUserId)>0){content.partnerCoreUserId=params.partnerCoreUserId;}if(parseInt(params.partnerCoreContactId)>0){content.partnerCoreContactId=params.partnerCoreContactId;}if(parseInt(params.fromTime)>0&&parseInt(params.fromTime)<9999999999999){content.fromTime=parseInt(params.fromTime);}if(parseInt(params.toTime)>0&&parseInt(params.toTime)<9999999999999){content.toTime=parseInt(params.toTime);}var functionLevelCache=typeof params.cache=='boolean'?params.cache:true;if(typeof params.isGroup==='boolean'){content.isGroup=params.isGroup;}if(typeof params.type==='number'){content.type=params.type;}}content.count=count;content.offset=offset;var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.GET_THREADS,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 content:content};/**
-             * Retrive get threads response from server
-             */return(0,_messaging.messenger)().sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode,uniqueId:result.uniqueId};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={threads:[],contentCount:result.contentCount,hasNext:messageContent&&!(messageLength<count),//(offset + count < result.contentCount && messageLength > 0),
+     * Retrive get threads response from server
+     */return(0,_messaging.messenger)().sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode,uniqueId:result.uniqueId};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={threads:[],contentCount:result.contentCount,hasNext:messageContent&&!(messageLength<count),//(offset + count < result.contentCount && messageLength > 0),
 nextOffset:offset*1+messageLength*1},threadData;for(var i=0;i<messageLength;i++){threadData=createThread(messageContent[i],false);if(threadData){resultData.threads.push(threadData);}}_store.store.threads.saveMany(resultData.threads);returnData.result=resultData;}callback&&callback(returnData);/**
-                     * Delete callback so if server pushes response before
-                     * cache, cache won't send data again
-                     */callback=undefined;if(!returnData.hasError&&returnCache){_events.chatEvents.fireEvent('threadEvents',{type:'THREADS_LIST_CHANGE',result:returnData.result});}}});},getAllThreads=function getAllThreads(params,callback){var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.GET_THREADS,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
+         * Delete callback so if server pushes response before
+         * cache, cache won't send data again
+         */callback=undefined;if(!returnData.hasError&&returnCache){_events.chatEvents.fireEvent('threadEvents',{type:'THREADS_LIST_CHANGE',result:returnData.result});}}});},getAllThreads=function getAllThreads(params,callback){var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.GET_THREADS,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 content:{}};sendMessageParams.content.summary=params.summary;return(0,_messaging.messenger)().sendMessage(sendMessageParams,{onResult:function onResult(result){callback&&callback(result);}});},/**
-         * Get History.
-         *
-         * This functions gets history of a thread
-         *
-         * @access private
-         *
-         * @param {int}       count             Count of threads to be received
-         * @param {int}       offset            Offset of select query
-         * @param {int}      threadId          Id of thread to get its history
-         * @param {int}      id                Id of single message to get
-         * @param {int}      userId            Messages of this SSO User
-         * @param {int}       messageType       Type of messages to get (types should be set by client)
-         * @param {int}      fromTime          Get messages which have bigger time than given fromTime
-         * @param {int}       fromTimeNanos     Get messages which have bigger time than given fromTimeNanos
-         * @param {int}      toTime            Get messages which have smaller time than given toTime
-         * @param {int}       toTimeNanos       Get messages which have smaller time than given toTimeNanos
-         * @param {int}      senderId          Messages of this sender only
-         * @param {string}    uniqueIds         Array of unique ids to retrieve
-         * @param {string}    order             Order of select query (default: DESC)
-         * @param {string}    query             Search term to be looked up in messages content
-         * @param {object}    metadataCriteria  This JSON will be used to search in message metadata with GraphQL
-         * @param {function}  callback          The callback function to call after
-         *
-         * @return {object} Instant result of sendMessage
-         */getHistory=function getHistory(params,callback){if(parseInt(params.threadId)>0){var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.GET_HISTORY,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
+   * Get History.
+   *
+   * This functions gets history of a thread
+   *
+   * @access private
+   *
+   * @param {int}       count             Count of threads to be received
+   * @param {int}       offset            Offset of select query
+   * @param {int}      threadId          Id of thread to get its history
+   * @param {int}      id                Id of single message to get
+   * @param {int}      userId            Messages of this SSO User
+   * @param {int}       messageType       Type of messages to get (types should be set by client)
+   * @param {int}      fromTime          Get messages which have bigger time than given fromTime
+   * @param {int}       fromTimeNanos     Get messages which have bigger time than given fromTimeNanos
+   * @param {int}      toTime            Get messages which have smaller time than given toTime
+   * @param {int}       toTimeNanos       Get messages which have smaller time than given toTimeNanos
+   * @param {int}      senderId          Messages of this sender only
+   * @param {string}    uniqueIds         Array of unique ids to retrieve
+   * @param {string}    order             Order of select query (default: DESC)
+   * @param {string}    query             Search term to be looked up in messages content
+   * @param {object}    metadataCriteria  This JSON will be used to search in message metadata with GraphQL
+   * @param {function}  callback          The callback function to call after
+   *
+   * @return {object} Instant result of sendMessage
+   */getHistory=function getHistory(params,callback){if(parseInt(params.threadId)>0){var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.GET_HISTORY,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 content:{},subjectId:params.threadId},offset=parseInt(params.offset)>0?parseInt(params.offset):0,count=parseInt(params.count)>0?parseInt(params.count):config.getHistoryCount,order=typeof params.order!='undefined'?params.order.toLowerCase():'desc',functionLevelCache=typeof params.cache=='boolean'?params.cache:true,cacheResult={},serverResult={},cacheFirstMessage,cacheLastMessage,messages,returnCache,cacheReady=false,dynamicHistoryCount=params.dynamicHistoryCount&&typeof params.dynamicHistoryCount==='boolean'?params.dynamicHistoryCount:false,sendingQueue=params.queues&&typeof params.queues.sending==='boolean'?params.queues.sending:true,failedQueue=params.queues&&typeof params.queues.failed==='boolean'?params.queues.failed:true,uploadingQueue=params.queues&&typeof params.queues.uploading==='boolean'?params.queues.uploading:true,sendingQueueMessages=[],failedQueueMessages=[],uploadingQueueMessages=[];if(sendingQueue){getChatSendQueue(parseInt(params.threadId),function(sendQueueMessages){for(var i=0;i<sendQueueMessages.length;i++){var time=new Date().getTime();sendingQueueMessages.push(formatDataToMakeMessage(sendQueueMessages[i].threadId,{uniqueId:sendQueueMessages[i].uniqueId,ownerId:_store.store.user().id,message:sendQueueMessages[i].content,metadata:sendQueueMessages[i].metadata,systemMetadata:sendQueueMessages[i].systemMetadata,replyInfo:sendQueueMessages[i].replyInfo,forwardInfo:sendQueueMessages[i].forwardInfo,time:time,timeNanos:time%1000*1000000}));}});}if(uploadingQueue){getChatUploadQueue(parseInt(params.threadId),function(uploadQueueMessages){for(var i=0;i<uploadQueueMessages.length;i++){uploadQueueMessages[i].message.participant=_store.store.user();var time=new Date().getTime();uploadQueueMessages[i].message.time=time;uploadQueueMessages[i].message.timeNanos=time%1000*1000000;uploadingQueueMessages.push(formatDataToMakeMessage(params.threadId,uploadQueueMessages[i].message,false));}});}getChatWaitQueue(parseInt(params.threadId),failedQueue,function(waitQueueMessages){if(cacheSecret.length>0){for(var i=0;i<waitQueueMessages.length;i++){var decryptedEnqueuedMessage={};if(cacheInMemory){decryptedEnqueuedMessage=waitQueueMessages[i];}else{decryptedEnqueuedMessage=_utility["default"].jsonParser(chatDecrypt(waitQueueMessages[i].message,cacheSecret));}var time=new Date().getTime();failedQueueMessages[i]=formatDataToMakeMessage(waitQueueMessages[i].threadId,{uniqueId:decryptedEnqueuedMessage.uniqueId,ownerId:_store.store.user().id,message:decryptedEnqueuedMessage.content,metadata:decryptedEnqueuedMessage.metadata,systemMetadata:decryptedEnqueuedMessage.systemMetadata,replyInfo:decryptedEnqueuedMessage.replyInfo,forwardInfo:decryptedEnqueuedMessage.forwardInfo,participant:_store.store.user(),time:time,timeNanos:time%1000*1000000});}}else{failedQueueMessages=[];}if(dynamicHistoryCount){var tempCount=count-(sendingQueueMessages.length+failedQueueMessages.length+uploadingQueueMessages.length);sendMessageParams.content.count=tempCount>0?tempCount:0;}else{sendMessageParams.content.count=count;}sendMessageParams.content.offset=offset;sendMessageParams.content.order=order;if(parseInt(params.messageId)>0){sendMessageParams.content.id=params.messageId;}if(Array.isArray(params.uniqueIds)){sendMessageParams.content.uniqueIds=params.uniqueIds;}if(parseInt(params.fromTimeFull)>0&&params.fromTimeFull.toString().length===19){sendMessageParams.content.fromTime=parseInt(params.fromTimeFull.toString().substring(0,13));sendMessageParams.content.fromTimeNanos=parseInt(params.fromTimeFull.toString().substring(10,19));}else{if(parseInt(params.fromTime)>0&&parseInt(params.fromTime)<9999999999999){sendMessageParams.content.fromTime=parseInt(params.fromTime);}if(parseInt(params.fromTimeNanos)>0&&parseInt(params.fromTimeNanos)<999999999){sendMessageParams.content.fromTimeNanos=parseInt(params.fromTimeNanos);}}if(parseInt(params.toTimeFull)>0&&params.toTimeFull.toString().length===19){sendMessageParams.content.toTime=parseInt(params.toTimeFull.toString().substring(0,13));sendMessageParams.content.toTimeNanos=parseInt(params.toTimeFull.toString().substring(10,19));}else{if(parseInt(params.toTime)>0&&parseInt(params.toTime)<9999999999999){sendMessageParams.content.toTime=parseInt(params.toTime);}if(parseInt(params.toTimeNanos)>0&&parseInt(params.toTimeNanos)<999999999){sendMessageParams.content.toTimeNanos=parseInt(params.toTimeNanos);}}if(typeof params.query!='undefined'){sendMessageParams.content.query=params.query;}if(params.allMentioned&&typeof params.allMentioned=='boolean'){sendMessageParams.content.allMentioned=params.allMentioned;}if(params.unreadMentioned&&typeof params.unreadMentioned=='boolean'){sendMessageParams.content.unreadMentioned=params.unreadMentioned;}if(params.messageType&&typeof params.messageType.toUpperCase()!=='undefined'&&_constants.chatMessageTypes[params.messageType.toUpperCase()]>0){sendMessageParams.content.messageType=_constants.chatMessageTypes[params.messageType.toUpperCase()];}if((0,_typeof2["default"])(params.metadataCriteria)=='object'&&params.metadataCriteria.hasOwnProperty('field')){sendMessageParams.content.metadataCriteria=params.metadataCriteria;}if(typeof params.onlyNewMessages==="boolean"){sendMessageParams.content.newMessages=params.onlyNewMessages;}/**
-                     * Get Thread Messages From Server
-                     */return(0,_messaging.messenger)().sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode},resultMessagesId=[];if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length;var history=reformatThreadHistory(params.threadId,messageContent);if(messageLength>0){/**
-                                     * Calculating First and Last Messages of result
-                                     */var lastMessage=history[messageContent.length-1],firstMessage=history[0];/**
-                                     * Sending Delivery for Last Message of Thread
-                                     */if(_store.store.user().id!==firstMessage.participant.id&&!firstMessage.delivered){putInMessagesDeliveryQueue(params.threadId,firstMessage.id);}}returnData.result={history:history,contentCount:result.contentCount,hasNext:result.result&&!(result.result.length<sendMessageParams.content.count),//(sendMessageParams.content.offset + sendMessageParams.content.count < result.contentCount && messageLength > 0),
+         * Get Thread Messages From Server
+         */return(0,_messaging.messenger)().sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode},resultMessagesId=[];if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length;var history=reformatThreadHistory(params.threadId,messageContent);if(messageLength>0){/**
+                 * Calculating First and Last Messages of result
+                 */var lastMessage=history[messageContent.length-1],firstMessage=history[0];/**
+                 * Sending Delivery for Last Message of Thread
+                 */if(_store.store.user().id!==firstMessage.participant.id&&!firstMessage.delivered){putInMessagesDeliveryQueue(params.threadId,firstMessage.id);}}returnData.result={history:history,contentCount:result.contentCount,hasNext:result.result&&!(result.result.length<sendMessageParams.content.count),//(sendMessageParams.content.offset + sendMessageParams.content.count < result.contentCount && messageLength > 0),
 nextOffset:sendMessageParams.content.offset*1+messageLength*1};if(sendingQueue){returnData.result.sending=sendingQueueMessages;}if(uploadingQueue){returnData.result.uploading=uploadingQueueMessages;}if(failedQueue){returnData.result.failed=failedQueueMessages;}callback&&callback(returnData);callback=undefined;}}});});}else{_events.chatEvents.fireEvent('error',{code:999,message:'Thread ID is required for Getting history!'});}},/**
-         * Update Thread Info
-         *
-         * This functions updates metadata of thread
-         *
-         * @access private
-         *
-         * @param {int}       threadId      Id of thread
-         * @param {string}    image         URL og thread image to be set
-         * @param {string}    description   Description for thread
-         * @param {string}    title         New Title for thread
-         * @param {object}    metadata      New Metadata to be set on thread
-         * @param {function}  callback      The callback function to call after
-         *
-         * @return {object} Instant sendMessage result
-         */updateThreadInfo=function updateThreadInfo(params,callback){var updateThreadInfoData={chatMessageVOType:_constants.chatMessageVOTypes.UPDATE_THREAD_INFO,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
+   * Update Thread Info
+   *
+   * This functions updates metadata of thread
+   *
+   * @access private
+   *
+   * @param {int}       threadId      Id of thread
+   * @param {string}    image         URL og thread image to be set
+   * @param {string}    description   Description for thread
+   * @param {string}    title         New Title for thread
+   * @param {object}    metadata      New Metadata to be set on thread
+   * @param {function}  callback      The callback function to call after
+   *
+   * @return {object} Instant sendMessage result
+   */updateThreadInfo=function updateThreadInfo(params,callback){var updateThreadInfoData={chatMessageVOType:_constants.chatMessageVOTypes.UPDATE_THREAD_INFO,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 content:{},pushMsgType:3,token:_sdkParams.sdkParams.token},threadInfoContent={},fileUploadParams={},metadata={file:{}},threadId,fileUniqueId=_utility["default"].generateUUID();if(params){if(!params.userGroupHash||params.userGroupHash.length===0||typeof params.userGroupHash!=='string'){_events.chatEvents.fireEvent('error',{code:6304,message:CHAT_ERRORS[6304]});return;}else{fileUploadParams.userGroupHash=params.userGroupHash;}if(parseInt(params.threadId)>0){threadId=parseInt(params.threadId);updateThreadInfoData.subjectId=threadId;}else{_events.chatEvents.fireEvent('error',{code:999,message:'Thread ID is required for Updating thread info!'});}if(typeof params.description=='string'){threadInfoContent.description=params.description;}if(typeof params.title=='string'){threadInfoContent.name=params.title;}if((0,_typeof2["default"])(params.metadata)=='object'){threadInfoContent.metadata=JSON.parse(JSON.stringify(params.metadata));}else if(typeof params.metadata=='string'){try{threadInfoContent.metadata=JSON.parse(params.metadata);}catch(e){threadInfoContent.metadata={};}}else{threadInfoContent.metadata={};}updateThreadInfoData.content=threadInfoContent;if((0,_typeof2["default"])(params.image)=='object'&&params.image.size>0){return chatUploadHandler({threadId:threadId,file:params.image,fileUniqueId:fileUniqueId},function(uploadHandlerResult,uploadHandlerMetadata,fileType,fileExtension){fileUploadParams=Object.assign(fileUploadParams,uploadHandlerResult);threadInfoContent.metadata=JSON.stringify(Object.assign(threadInfoContent.metadata,uploadHandlerMetadata));putInChatUploadQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.UPDATE_THREAD_INFO,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 subjectId:threadId,content:threadInfoContent,metadata:threadInfoContent.metadata,uniqueId:fileUniqueId,pushMsgType:3,token:_sdkParams.sdkParams.token},callbacks:callback},function(){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){uploadImageToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){metadata['name']=result.result.name;metadata['fileHash']=result.result.hash;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;metadata['file']['actualHeight']=result.result.actualHeight;metadata['file']['actualWidth']=result.result.actualWidth;metadata['file']['link']="".concat(SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS,"/api/images/").concat(result.result.hash,"?checkUserGroupAccess=true");transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}else{_events.chatEvents.fireEvent('error',{code:999,message:'Thread picture can be a image type only!'});}});});}else if(typeof params.image=='string'&&params.image.length>5){threadInfoContent.metadata=JSON.stringify(Object.assign(threadInfoContent.metadata,{fileHash:params.image}));getImageDownloadLinkFromPodspaceNew({hashCode:params.image},function(result){if(!result.hasError){threadInfoContent.image=result.downloadUrl;}});return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.UPDATE_THREAD_INFO,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 subjectId:threadId,content:threadInfoContent,metadata:threadInfoContent.metadata,uniqueId:fileUniqueId,pushMsgType:3,token:_sdkParams.sdkParams.token},{onResult:function onResult(result){callback&&callback(result);}});}else{if(Object.keys(threadInfoContent.metadata).length===0){delete threadInfoContent.metadata;}return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.UPDATE_THREAD_INFO,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 subjectId:threadId,content:threadInfoContent,metadata:threadInfoContent.metadata,uniqueId:fileUniqueId,pushMsgType:3,token:_sdkParams.sdkParams.token},{onResult:function onResult(result){callback&&callback(result);}});}}},/**
-         * Update Chat Profile
-         *
-         * This functions updates metadata of thread
-         *
-         * @access private
-         *
-         * @param {int}       threadId      Id of thread
-         * @param {string}    image         URL og thread image to be set
-         * @param {string}    description   Description for thread
-         * @param {string}    title         New Title for thread
-         * @param {object}    metadata      New Metadata to be set on thread
-         * @param {function}  callback      The callback function to call after
-         *
-         * @return {object} Instant sendMessage result
-         */updateChatProfile=function updateChatProfile(params,callback){var updateChatProfileData={chatMessageVOType:_constants.chatMessageVOTypes.UPDATE_CHAT_PROFILE,content:{},pushMsgType:3,token:_sdkParams.sdkParams.token};if(params){if(typeof params.bio=='string'){updateChatProfileData.content.bio=params.bio;}if((0,_typeof2["default"])(params.metadata)=='object'){updateChatProfileData.content.metadata=JSON.stringify(params.metadata);}else if(typeof params.metadata=='string'){updateChatProfileData.content.metadata=params.metadata;}}return(0,_messaging.messenger)().sendMessage(updateChatProfileData,{onResult:function onResult(result){callback&&callback(result);}});},/**
-         * Get Participant Roles
-         *
-         * This functions retrieves roles of an user if they are
-         * part of the thread
-         *
-         * @access private
-         *
-         * @param {int}       threadId      Id of thread
-         * @param {function}  callback      The callback function to call after
-         *
-         * @return {object} Instant sendMessage result
-         */getCurrentUserRoles=function getCurrentUserRoles(params,callback){var updateChatProfileData={chatMessageVOType:_constants.chatMessageVOTypes.GET_PARTICIPANT_ROLES,pushMsgType:3,subjectId:params.threadId,token:_sdkParams.sdkParams.token};return(0,_messaging.messenger)().sendMessage(updateChatProfileData,{onResult:function onResult(result){callback&&callback(result);}});},/**
-         * Get Thread Participants
-         *
-         * Gets participants list of given thread
-         *
-         * @access pubic
-         *
-         * @param {int}     threadId        Id of thread which you want to get participants of
-         * @param {int}     count           Count of objects to get
-         * @param {int}     offset          Offset of select Query
-         * @param {string}  name            Search in Participants list (LIKE in name, contactName, email)
-         *
-         * @return {object} Instant Response
-         */getThreadParticipants=function getThreadParticipants(params,callback){var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.THREAD_PARTICIPANTS,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:{},subjectId:params.threadId},returnCache=false;var offset=parseInt(params.offset)>0?parseInt(params.offset):0,count=parseInt(params.count)>0?parseInt(params.count):config.getHistoryCount;sendMessageParams.content.count=count;sendMessageParams.content.offset=offset;if(typeof params.name==='string'){sendMessageParams.content.name=params.name;}if(typeof params.username==='string'){sendMessageParams.content.username=params.username;}if(typeof params.cellphoneNumber==='string'){sendMessageParams.content.cellphoneNumber=params.cellphoneNumber;}if(typeof params.admin==='boolean'){sendMessageParams.content.admin=params.admin;}var functionLevelCache=typeof params.cache=='boolean'?params.cache:true;return(0,_messaging.messenger)().sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={participants:reformatThreadParticipants(messageContent,params.threadId),contentCount:result.contentCount,hasNext:sendMessageParams.content.offset+sendMessageParams.content.count<result.contentCount&&messageLength>0,nextOffset:sendMessageParams.content.offset*1+messageLength*1};returnData.result=resultData;}callback&&callback(returnData);/**
-                     * Delete callback so if server pushes response before
-                     * cache, cache won't send data again
-                     */callback=undefined;if(!returnData.hasError&&returnCache){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_PARTICIPANTS_LIST_CHANGE',threadId:params.threadId,result:returnData.result});}}});},/**
-         * Deliver
-         *
-         * This functions sends delivery messages for a message
-         *
-         * @access private
-         *
-         * @param {int}   messageId  Id of Message
-         *
-         * @return {object} Instant sendMessage result
-         */deliver=function deliver(params){return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.DELIVERY,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
+   * Update Chat Profile
+   *
+   * This functions updates metadata of thread
+   *
+   * @access private
+   *
+   * @param {int}       threadId      Id of thread
+   * @param {string}    image         URL og thread image to be set
+   * @param {string}    description   Description for thread
+   * @param {string}    title         New Title for thread
+   * @param {object}    metadata      New Metadata to be set on thread
+   * @param {function}  callback      The callback function to call after
+   *
+   * @return {object} Instant sendMessage result
+   */updateChatProfile=function updateChatProfile(params,callback){var updateChatProfileData={chatMessageVOType:_constants.chatMessageVOTypes.UPDATE_CHAT_PROFILE,content:{},pushMsgType:3,token:_sdkParams.sdkParams.token};if(params){if(typeof params.bio=='string'){updateChatProfileData.content.bio=params.bio;}if((0,_typeof2["default"])(params.metadata)=='object'){updateChatProfileData.content.metadata=JSON.stringify(params.metadata);}else if(typeof params.metadata=='string'){updateChatProfileData.content.metadata=params.metadata;}}return(0,_messaging.messenger)().sendMessage(updateChatProfileData,{onResult:function onResult(result){callback&&callback(result);}});},/**
+   * Get Participant Roles
+   *
+   * This functions retrieves roles of an user if they are
+   * part of the thread
+   *
+   * @access private
+   *
+   * @param {int}       threadId      Id of thread
+   * @param {function}  callback      The callback function to call after
+   *
+   * @return {object} Instant sendMessage result
+   */getCurrentUserRoles=function getCurrentUserRoles(params,callback){var updateChatProfileData={chatMessageVOType:_constants.chatMessageVOTypes.GET_PARTICIPANT_ROLES,pushMsgType:3,subjectId:params.threadId,token:_sdkParams.sdkParams.token};return(0,_messaging.messenger)().sendMessage(updateChatProfileData,{onResult:function onResult(result){callback&&callback(result);}});},/**
+   * Deliver
+   *
+   * This functions sends delivery messages for a message
+   *
+   * @access private
+   *
+   * @param {int}   messageId  Id of Message
+   *
+   * @return {object} Instant sendMessage result
+   */deliver=function deliver(params){return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.DELIVERY,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 content:params.messageId,pushMsgType:3});},/**
-         * Seen
-         *
-         * This functions sends seen acknowledge for a message
-         *
-         * @access private
-         *
-         * @param {int}   messageId  Id of Message
-         *
-         * @return {object} Instant sendMessage result
-         */seen=function seen(params){return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.SEEN,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
+   * Seen
+   *
+   * This functions sends seen acknowledge for a message
+   *
+   * @access private
+   *
+   * @param {int}   messageId  Id of Message
+   *
+   * @return {object} Instant sendMessage result
+   */seen=function seen(params){return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.SEEN,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 content:params.messageId,pushMsgType:3});},/**
-         * Get Image.
-         *
-         * This functions gets an uploaded image from File Server.
-         *
-         * @since 3.9.9
-         * @access private
-         *
-         * @param {int}    imageId         ID of image
-         * @param {int}     width           Required width to get
-         * @param {int}     height          Required height to get
-         * @param {boolean} actual          Required height to get
-         * @param {boolean} downloadable    TRUE to be downloadable / FALSE to not
-         * @param {string}  hashCode        HashCode of uploaded file
-         *
-         * @return {object} Image Object
-         */getImage=function getImage(params,callback){var getImageData={};if(params){if(parseInt(params.imageId)>0){getImageData.imageId=params.imageId;}if(typeof params.hashCode=='string'){getImageData.hashCode=params.hashCode;}if(parseInt(params.width)>0){getImageData.width=params.width;}if(parseInt(params.height)>0){getImageData.height=params.height;}if(parseInt(params.actual)>0){getImageData.actual=params.actual;}if(parseInt(params.downloadable)>0){getImageData.downloadable=params.downloadable;}}httpRequest({url:SERVICE_ADDRESSES.FILESERVER_ADDRESS+SERVICES_PATH.GET_IMAGE,method:'GET',data:getImageData},function(result){if(!result.hasError){var queryString='?';for(var i in params){queryString+=i+'='+params[i]+'&';}queryString=queryString.slice(0,-1);var image=SERVICE_ADDRESSES.FILESERVER_ADDRESS+SERVICES_PATH.GET_IMAGE+queryString;callback({hasError:result.hasError,result:image});}else{callback({hasError:true});}});},/**
-         * Get File.
-         *
-         * This functions gets an uploaded file from File Server.
-         *
-         * @since 3.9.9
-         * @access private
-         *
-         * @param {int}    fileId          ID of file
-         * @param {boolean} downloadable    TRUE to be downloadable / False to not
-         * @param {string}  hashCode        HashCode of uploaded file
-         *
-         * @return {object} File Object
-         */getFile=function getFile(params,callback){var getFileData={};if(params){if(typeof params.fileId!=='undefined'){getFileData.fileId=params.fileId;}if(typeof params.hashCode=='string'){getFileData.hashCode=params.hashCode;}if(typeof params.downloadable=='boolean'){getFileData.downloadable=params.downloadable;}}httpRequest({url:SERVICE_ADDRESSES.FILESERVER_ADDRESS+SERVICES_PATH.GET_FILE,method:'GET',data:getFileData},function(result){if(!result.hasError){var queryString='?';for(var i in params){queryString+=i+'='+params[i]+'&';}queryString=queryString.slice(0,-1);var file=SERVICE_ADDRESSES.FILESERVER_ADDRESS+SERVICES_PATH.GET_FILE+queryString;callback({hasError:result.hasError,result:file});}else{callback({hasError:true});}});},/**
-         * Deprecated
-         *
-         * Get File From PodSpace
-         *
-         * This functions gets an uploaded file from Pod Space File Server.
-         *
-         * @since 3.9.9
-         * @access private
-         *
-         * @param {string}  hashCode        HashCode of uploaded file
-         *
-         * @return {object} File Object
-         */getFileFromPodspace=function getFileFromPodspace(params,callback){var downloadUniqueId=_utility["default"].generateUUID(),getFileData={};if(params){if(params.hashCode&&typeof params.hashCode=='string'){getFileData.hash=params.hashCode;}else{callback({hasError:true,error:'Enter a file hash to get'});return;}}if(params.responseType==='link'){var returnLink=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE+"?hash=".concat(params.hashCode,"&_token_=").concat(_sdkParams.sdkParams.token,"&_token_issuer_=1");callback({hasError:false,type:'link',result:returnLink});}else{httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE,method:'GET',responseType:'blob',uniqueId:downloadUniqueId,headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1// 'Range': 'bytes=100-200'
+   * Get Image.
+   *
+   * This functions gets an uploaded image from File Server.
+   *
+   * @since 3.9.9
+   * @access private
+   *
+   * @param {int}    imageId         ID of image
+   * @param {int}     width           Required width to get
+   * @param {int}     height          Required height to get
+   * @param {boolean} actual          Required height to get
+   * @param {boolean} downloadable    TRUE to be downloadable / FALSE to not
+   * @param {string}  hashCode        HashCode of uploaded file
+   *
+   * @return {object} Image Object
+   */getImage=function getImage(params,callback){var getImageData={};if(params){if(parseInt(params.imageId)>0){getImageData.imageId=params.imageId;}if(typeof params.hashCode=='string'){getImageData.hashCode=params.hashCode;}if(parseInt(params.width)>0){getImageData.width=params.width;}if(parseInt(params.height)>0){getImageData.height=params.height;}if(parseInt(params.actual)>0){getImageData.actual=params.actual;}if(parseInt(params.downloadable)>0){getImageData.downloadable=params.downloadable;}}httpRequest({url:SERVICE_ADDRESSES.FILESERVER_ADDRESS+SERVICES_PATH.GET_IMAGE,method:'GET',data:getImageData},function(result){if(!result.hasError){var queryString='?';for(var i in params){queryString+=i+'='+params[i]+'&';}queryString=queryString.slice(0,-1);var image=SERVICE_ADDRESSES.FILESERVER_ADDRESS+SERVICES_PATH.GET_IMAGE+queryString;callback({hasError:result.hasError,result:image});}else{callback({hasError:true});}});},/**
+   * Get File.
+   *
+   * This functions gets an uploaded file from File Server.
+   *
+   * @since 3.9.9
+   * @access private
+   *
+   * @param {int}    fileId          ID of file
+   * @param {boolean} downloadable    TRUE to be downloadable / False to not
+   * @param {string}  hashCode        HashCode of uploaded file
+   *
+   * @return {object} File Object
+   */getFile=function getFile(params,callback){var getFileData={};if(params){if(typeof params.fileId!=='undefined'){getFileData.fileId=params.fileId;}if(typeof params.hashCode=='string'){getFileData.hashCode=params.hashCode;}if(typeof params.downloadable=='boolean'){getFileData.downloadable=params.downloadable;}}httpRequest({url:SERVICE_ADDRESSES.FILESERVER_ADDRESS+SERVICES_PATH.GET_FILE,method:'GET',data:getFileData},function(result){if(!result.hasError){var queryString='?';for(var i in params){queryString+=i+'='+params[i]+'&';}queryString=queryString.slice(0,-1);var file=SERVICE_ADDRESSES.FILESERVER_ADDRESS+SERVICES_PATH.GET_FILE+queryString;callback({hasError:result.hasError,result:file});}else{callback({hasError:true});}});},/**
+   * Deprecated
+   *
+   * Get File From PodSpace
+   *
+   * This functions gets an uploaded file from Pod Space File Server.
+   *
+   * @since 3.9.9
+   * @access private
+   *
+   * @param {string}  hashCode        HashCode of uploaded file
+   *
+   * @return {object} File Object
+   */getFileFromPodspace=function getFileFromPodspace(params,callback){var downloadUniqueId=_utility["default"].generateUUID(),getFileData={};if(params){if(params.hashCode&&typeof params.hashCode=='string'){getFileData.hash=params.hashCode;}else{callback({hasError:true,error:'Enter a file hash to get'});return;}}if(params.responseType==='link'){var returnLink=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE+"?hash=".concat(params.hashCode,"&_token_=").concat(_sdkParams.sdkParams.token,"&_token_issuer_=1");callback({hasError:false,type:'link',result:returnLink});}else{httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE,method:'GET',responseType:'blob',uniqueId:downloadUniqueId,headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1// 'Range': 'bytes=100-200'
 },data:getFileData},function(result){if(!result.hasError){callback({hasError:result.hasError,result:result.result.response,type:'blob'});}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){_sdkParams.sdkParams.consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - File download has been canceled!"));});}};}},/**
-         * Get File From PodSpace New
-         *
-         * This functions gets an uploaded file from Pod Space File Server.
-         *
-         * @since 3.9.9
-         * @access private
-         *
-         * @param {string}  hashCode        HashCode of uploaded file
-         *
-         * @return {object} File Object
-         */getFileFromPodspaceNew=function getFileFromPodspaceNew(params,callback){var downloadUniqueId=_utility["default"].generateUUID(),getFileData={};if(params){if(params.hashCode&&typeof params.hashCode=='string'){getFileData.hash=params.hashCode;}else{callback({hasError:true,error:'Enter a file hash to get'});return;}if(params.checkUserGroupAccess){getFileData.checkUserGroupAccess=true;}}if(params.responseType==='link'){var returnLink=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true";callback({hasError:false,type:'link',result:returnLink});}else{httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true",method:'GET',responseType:'blob',uniqueId:downloadUniqueId,headers:{'Authorization':'Bearer '+_sdkParams.sdkParams.token},enableDownloadProgressEvents:params.enableDownloadProgressEvents,hashCode:params.hashCode//data: getFileData
+   * Get File From PodSpace New
+   *
+   * This functions gets an uploaded file from Pod Space File Server.
+   *
+   * @since 3.9.9
+   * @access private
+   *
+   * @param {string}  hashCode        HashCode of uploaded file
+   *
+   * @return {object} File Object
+   */getFileFromPodspaceNew=function getFileFromPodspaceNew(params,callback){var downloadUniqueId=_utility["default"].generateUUID(),getFileData={};if(params){if(params.hashCode&&typeof params.hashCode=='string'){getFileData.hash=params.hashCode;}else{callback({hasError:true,error:'Enter a file hash to get'});return;}if(params.checkUserGroupAccess){getFileData.checkUserGroupAccess=true;}}if(params.responseType==='link'){var returnLink=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true";callback({hasError:false,type:'link',result:returnLink});}else{httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true",method:'GET',responseType:'blob',uniqueId:downloadUniqueId,headers:{'Authorization':'Bearer '+_sdkParams.sdkParams.token},enableDownloadProgressEvents:params.enableDownloadProgressEvents,hashCode:params.hashCode//data: getFileData
 },function(result){if(!result.hasError){callback({hasError:result.hasError,result:result.result.response,type:'blob'});}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){_sdkParams.sdkParams.consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - File download has been canceled!"));});}};}},/**
-         * Deprecated
-         *
-         * Get Image From PodSpace
-         *
-         * This functions gets an uploaded image from Pod Space File Server.
-         *
-         * @since 3.9.9
-         * @access private
-         *
-         * @param {string}  hashCode        HashCode of uploaded file
-         * @param {string}  size            (1: 100×75, 2: 200×150, 3: 400×300)
-         * @param {string}  quality         Image quality betwenn 0.0 anf 1.0
-         *
-         * @return {object} File Object
-         */getImageFromPodspace=function getImageFromPodspace(params,callback){var downloadUniqueId=_utility["default"].generateUUID(),getImageData={size:params.size,quality:params.quality,crop:params.crop};if(params){if(params.hashCode&&typeof params.hashCode=='string'){getImageData.hash=params.hashCode;}else{callback({hasError:true,error:'Enter a file hash to get'});return;}if(params.responseType==='link'){var returnLink=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE+"?hash=".concat(params.hashCode,"&_token_=").concat(_sdkParams.sdkParams.token,"&_token_issuer_=1&size=").concat(params.size,"&quality=").concat(params.quality,"&crop=").concat(params.crop);callback({hasError:false,type:'link',result:returnLink});}else if(params.responseType==='base64'){httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE,method:'GET',uniqueId:downloadUniqueId,responseType:'blob',headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1},data:getImageData},function(result){if(!result.hasError){var fr=new FileReader();fr.onloadend=function(){callback({hasError:result.hasError,type:'base64',result:fr.result});};fr.readAsDataURL(result.result.response);}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){_sdkParams.sdkParams.consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - Image download has been canceled!"));});}};}else{httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE,method:'GET',responseType:'blob',uniqueId:downloadUniqueId,headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1},data:getImageData},function(result){if(!result.hasError){callback({hasError:result.hasError,type:'blob',result:result.result.response});}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){_sdkParams.sdkParams.consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - Image download has been canceled!"));});}};}}},/**
-         * Get Image From PodSpace New
-         *
-         * This functions gets an uploaded image from Pod Space File Server.
-         *
-         * @since 3.9.9
-         * @access private
-         *
-         * @param {string}  hashCode        HashCode of uploaded file
-         * @param {string}  size            (1: 100×75, 2: 200×150, 3: 400×300)
-         * @param {string}  quality         Image quality betwenn 0.0 anf 1.0
-         *
-         * @return {object} File Object
-         */getImageFromPodspaceNew=function getImageFromPodspaceNew(params,callback){var downloadUniqueId=_utility["default"].generateUUID(),getImageData={size:params.size,quality:params.quality,crop:params.crop};if(params){if(params.hashCode&&typeof params.hashCode=='string'){getImageData.hash=params.hashCode;}else{callback({hasError:true,error:'Enter a file hash to get'});return;}if(params.responseType==='link'){var returnLink=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true&size=".concat(params.size,"&quality=").concat(params.quality,"&crop=").concat(params.crop);//+ SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE + `?hash=${params.hashCode}&_token_=${token}&_token_issuer_=1&size=${params.size}&quality=${params.quality}&crop=${params.crop}`;
+   * Deprecated
+   *
+   * Get Image From PodSpace
+   *
+   * This functions gets an uploaded image from Pod Space File Server.
+   *
+   * @since 3.9.9
+   * @access private
+   *
+   * @param {string}  hashCode        HashCode of uploaded file
+   * @param {string}  size            (1: 100×75, 2: 200×150, 3: 400×300)
+   * @param {string}  quality         Image quality betwenn 0.0 anf 1.0
+   *
+   * @return {object} File Object
+   */getImageFromPodspace=function getImageFromPodspace(params,callback){var downloadUniqueId=_utility["default"].generateUUID(),getImageData={size:params.size,quality:params.quality,crop:params.crop};if(params){if(params.hashCode&&typeof params.hashCode=='string'){getImageData.hash=params.hashCode;}else{callback({hasError:true,error:'Enter a file hash to get'});return;}if(params.responseType==='link'){var returnLink=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE+"?hash=".concat(params.hashCode,"&_token_=").concat(_sdkParams.sdkParams.token,"&_token_issuer_=1&size=").concat(params.size,"&quality=").concat(params.quality,"&crop=").concat(params.crop);callback({hasError:false,type:'link',result:returnLink});}else if(params.responseType==='base64'){httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE,method:'GET',uniqueId:downloadUniqueId,responseType:'blob',headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1},data:getImageData},function(result){if(!result.hasError){var fr=new FileReader();fr.onloadend=function(){callback({hasError:result.hasError,type:'base64',result:fr.result});};fr.readAsDataURL(result.result.response);}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){_sdkParams.sdkParams.consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - Image download has been canceled!"));});}};}else{httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE,method:'GET',responseType:'blob',uniqueId:downloadUniqueId,headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1},data:getImageData},function(result){if(!result.hasError){callback({hasError:result.hasError,type:'blob',result:result.result.response});}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){_sdkParams.sdkParams.consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - Image download has been canceled!"));});}};}}},/**
+   * Get Image From PodSpace New
+   *
+   * This functions gets an uploaded image from Pod Space File Server.
+   *
+   * @since 3.9.9
+   * @access private
+   *
+   * @param {string}  hashCode        HashCode of uploaded file
+   * @param {string}  size            (1: 100×75, 2: 200×150, 3: 400×300)
+   * @param {string}  quality         Image quality betwenn 0.0 anf 1.0
+   *
+   * @return {object} File Object
+   */getImageFromPodspaceNew=function getImageFromPodspaceNew(params,callback){var downloadUniqueId=_utility["default"].generateUUID(),getImageData={size:params.size,quality:params.quality,crop:params.crop};if(params){if(params.hashCode&&typeof params.hashCode=='string'){getImageData.hash=params.hashCode;}else{callback({hasError:true,error:'Enter a file hash to get'});return;}if(params.responseType==='link'){var returnLink=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true&size=".concat(params.size,"&quality=").concat(params.quality,"&crop=").concat(params.crop);//+ SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE + `?hash=${params.hashCode}&_token_=${token}&_token_issuer_=1&size=${params.size}&quality=${params.quality}&crop=${params.crop}`;
 callback({hasError:false,type:'link',result:returnLink});}else if(params.responseType==='base64'){httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true&size=".concat(params.size,"&quality=").concat(params.quality,"&crop=").concat(params.crop),method:'GET',uniqueId:downloadUniqueId,responseType:'blob',headers:{'Authorization':'Bearer '+_sdkParams.sdkParams.token},enableDownloadProgressEvents:params.enableDownloadProgressEvents,hashCode:params.hashCode//data: getImageData
 },function(result){if(!result.hasError){var fr=new FileReader();fr.onloadend=function(){callback({hasError:result.hasError,type:'base64',result:fr.result});};fr.readAsDataURL(result.result.response);}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){_sdkParams.sdkParams.consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - Image download has been canceled!"));});}};}else{httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true&size=".concat(params.size,"&quality=").concat(params.quality,"&crop=").concat(params.crop),method:'GET',responseType:'blob',uniqueId:downloadUniqueId,headers:{'Authorization':'Bearer '+_sdkParams.sdkParams.token},enableDownloadProgressEvents:params.enableDownloadProgressEvents,hashCode:params.hashCode//data: getImageData
 },function(result){if(!result.hasError){callback({hasError:result.hasError,type:'blob',result:result.result.response});}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){_sdkParams.sdkParams.consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - Image download has been canceled!"));});}};}}},/**
-         * Deprecated
-         *
-         * Get Image Download Link From PodSpace
-         *
-         * This functions gets an uploaded image download link from Pod Space File Server.
-         *
-         * @since 9.1.3
-         * @access private
-         *
-         * @param {string}  hashCode        HashCode of uploaded file
-         *
-         * @return {string} Image Link
-         */getImageDownloadLinkFromPodspace=function getImageDownloadLinkFromPodspace(params,callback){if(params){if(params.hashCode&&typeof params.hashCode=='string'){var downloadUrl=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE+'?hash='+params.hashCode;callback&&callback({hasError:false,downloadUrl:downloadUrl});return downloadUrl;}else{callback&&callback({hasError:true,error:'Enter a image hash to get download link!'});}}},/**
-         * Get Image Download Link From PodSpace
-         *
-         * This functions gets an uploaded image download link from Pod Space File Server.
-         *
-         * @since 9.1.3
-         * @access private
-         *
-         * @param {string}  hashCode        HashCode of uploaded file
-         *
-         * @return {string} Image Link
-         */getImageDownloadLinkFromPodspaceNew=function getImageDownloadLinkFromPodspaceNew(params,callback){if(params){if(params.hashCode&&typeof params.hashCode=='string'){var downloadUrl=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE_NEW.replace('{fileHash}',params.hashCode);// + '?hash=' + params.hashCode;
+   * Deprecated
+   *
+   * Get Image Download Link From PodSpace
+   *
+   * This functions gets an uploaded image download link from Pod Space File Server.
+   *
+   * @since 9.1.3
+   * @access private
+   *
+   * @param {string}  hashCode        HashCode of uploaded file
+   *
+   * @return {string} Image Link
+   */getImageDownloadLinkFromPodspace=function getImageDownloadLinkFromPodspace(params,callback){if(params){if(params.hashCode&&typeof params.hashCode=='string'){var downloadUrl=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE+'?hash='+params.hashCode;callback&&callback({hasError:false,downloadUrl:downloadUrl});return downloadUrl;}else{callback&&callback({hasError:true,error:'Enter a image hash to get download link!'});}}},/**
+   * Get Image Download Link From PodSpace
+   *
+   * This functions gets an uploaded image download link from Pod Space File Server.
+   *
+   * @since 9.1.3
+   * @access private
+   *
+   * @param {string}  hashCode        HashCode of uploaded file
+   *
+   * @return {string} Image Link
+   */getImageDownloadLinkFromPodspaceNew=function getImageDownloadLinkFromPodspaceNew(params,callback){if(params){if(params.hashCode&&typeof params.hashCode=='string'){var downloadUrl=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE_NEW.replace('{fileHash}',params.hashCode);// + '?hash=' + params.hashCode;
 callback&&callback({hasError:false,downloadUrl:downloadUrl});return downloadUrl;}else{callback&&callback({hasError:true,error:'Enter a image hash to get download link!'});}}},/**
-         * Get File Download Link From PodSpace
-         *
-         * This functions gets an uploaded file download link from Pod Space File Server.
-         *
-         * @since 9.1.3
-         * @access private
-         *
-         * @param {string}  hashCode        HashCode of uploaded file
-         *
-         * @return {string} File Link
-         */getFileDownloadLinkFromPodspace=function getFileDownloadLinkFromPodspace(params,callback){if(params){if(params.hashCode&&typeof params.hashCode=='string'){var downloadUrl=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE+'?hash='+params.hashCode;callback&&callback({hasError:false,downloadUrl:downloadUrl});return downloadUrl;}else{callback&&callback({hasError:true,error:'Enter a file hash to get download link!'});}}},/**
-         * Upload File
-         *
-         * Upload files to File Server
-         *
-         * @since 3.9.9
-         * @access private
-         *
-         * @param {string}  fileName        A name for the file
-         * @param {file}    file            FILE: the file
-         *
-         * @link http://docs.pod.land/v1.0.8.0/Developer/CustomPost/605/File
-         *
-         * @return {object} Uploaded File Object
-         */uploadFile=function uploadFile(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.file.name;fileType=params.file.type;fileSize=params.file.size;fileExtension=params.file.name.split('.').pop();var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFileData.file=params.file;}if(params.randomFileName){uploadFileData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadFileData.fileName=fileName;}uploadFileData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadFileData.threadId=params.threadId;}else{uploadThreadId=0;uploadFileData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadFileData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadFileData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadFileData.originalFileName=params.originalFileName;}else{uploadFileData.originalFileName=fileName;}}httpRequest({url:SERVICE_ADDRESSES.FILESERVER_ADDRESS+SERVICES_PATH.UPLOAD_FILE,method:'POST',headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result'});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:_store.store.user(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},/**
-         * Upload File To Pod Space
-         *
-         * Upload files to Pod Space Server
-         *
-         * @since 3.9.9
-         * @access private
-         *
-         * @param {string}  fileName        A name for the file
-         * @param {file}    file            FILE: the file
-         * @param {string}  userGroupHash   Unique identifier of threads on podspace
-         * @param {string}  token           User Token
-         * @param {string}  _token_issuer_  Token Issuer
-         *
-         * @link
-            *
-            * @return {object} Uploaded File Object
-         */uploadFileToPodspace=function uploadFileToPodspace(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.file.name;fileType=params.file.type;fileSize=params.file.size;fileExtension=params.file.name.split('.').pop();var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFileData.file=params.file;}if(params.randomFileName){uploadFileData.filename=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadFileData.filename=fileName;}uploadFileData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadFileData.threadId=params.threadId;}else{uploadThreadId=0;uploadFileData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadFileData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadFileData.uniqueId=uploadUniqueId;}if(typeof params.userGroupHash=='string'){//userGroupHash = params.userGroupHash;
+   * Get File Download Link From PodSpace
+   *
+   * This functions gets an uploaded file download link from Pod Space File Server.
+   *
+   * @since 9.1.3
+   * @access private
+   *
+   * @param {string}  hashCode        HashCode of uploaded file
+   *
+   * @return {string} File Link
+   */getFileDownloadLinkFromPodspace=function getFileDownloadLinkFromPodspace(params,callback){if(params){if(params.hashCode&&typeof params.hashCode=='string'){var downloadUrl=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE+'?hash='+params.hashCode;callback&&callback({hasError:false,downloadUrl:downloadUrl});return downloadUrl;}else{callback&&callback({hasError:true,error:'Enter a file hash to get download link!'});}}},/**
+   * Upload File
+   *
+   * Upload files to File Server
+   *
+   * @since 3.9.9
+   * @access private
+   *
+   * @param {string}  fileName        A name for the file
+   * @param {file}    file            FILE: the file
+   *
+   * @link http://docs.pod.land/v1.0.8.0/Developer/CustomPost/605/File
+   *
+   * @return {object} Uploaded File Object
+   */uploadFile=function uploadFile(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.file.name;fileType=params.file.type;fileSize=params.file.size;fileExtension=params.file.name.split('.').pop();var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFileData.file=params.file;}if(params.randomFileName){uploadFileData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadFileData.fileName=fileName;}uploadFileData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadFileData.threadId=params.threadId;}else{uploadThreadId=0;uploadFileData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadFileData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadFileData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadFileData.originalFileName=params.originalFileName;}else{uploadFileData.originalFileName=fileName;}}httpRequest({url:SERVICE_ADDRESSES.FILESERVER_ADDRESS+SERVICES_PATH.UPLOAD_FILE,method:'POST',headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result'});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:_store.store.user(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},/**
+   * Upload File To Pod Space
+   *
+   * Upload files to Pod Space Server
+   *
+   * @since 3.9.9
+   * @access private
+   *
+   * @param {string}  fileName        A name for the file
+   * @param {file}    file            FILE: the file
+   * @param {string}  userGroupHash   Unique identifier of threads on podspace
+   * @param {string}  token           User Token
+   * @param {string}  _token_issuer_  Token Issuer
+   *
+   * @link
+      *
+      * @return {object} Uploaded File Object
+   */uploadFileToPodspace=function uploadFileToPodspace(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.file.name;fileType=params.file.type;fileSize=params.file.size;fileExtension=params.file.name.split('.').pop();var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFileData.file=params.file;}if(params.randomFileName){uploadFileData.filename=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadFileData.filename=fileName;}uploadFileData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadFileData.threadId=params.threadId;}else{uploadThreadId=0;uploadFileData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadFileData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadFileData.uniqueId=uploadUniqueId;}if(typeof params.userGroupHash=='string'){//userGroupHash = params.userGroupHash;
 uploadFileData.userGroupHash=params.userGroupHash;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to enter a userGroupHash to be able to upload on PodSpace!'});return;}if(typeof params.originalFileName=='string'){uploadFileData.originalFileName=params.originalFileName;}else{uploadFileData.originalFileName=fileName;}}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_FILE_TO_USERGROUP,method:'POST',headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result'});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:_store.store.user(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},uploadFileToPodspaceNew=function uploadFileToPodspaceNew(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.file.name;fileType=params.file.type;fileSize=params.file.size;fileExtension=params.file.name.split('.').pop();var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFileData.file=params.file;}if(params.randomFileName){uploadFileData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadFileData.fileName=fileName;}uploadFileData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadFileData.threadId=params.threadId;}else{uploadThreadId=0;uploadFileData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadFileData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadFileData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadFileData.originalFileName=params.originalFileName;}else{uploadFileData.originalFileName=fileName;}}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_FILE_NEW,method:'POST',headers:{'Authorization':'Bearer '+_sdkParams.sdkParams.token},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result'});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:_store.store.user(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},/**
-         * Upload File To Pod Space
-         *
-         * Upload files to Pod Space Server
-         *
-         * @since 3.9.9
-         * @access private
-         *
-         * @param {file}    file            FILE: the file
-         * @param {string}  userGroupHash   Unique identifier of threads on podspace
-         * @param {string}  token           User Token
-         *
-         * @link
-            *
-            * @return {object} Uploaded File Object
-         */uploadFileToPodspaceUserGroupNew=function uploadFileToPodspaceUserGroupNew(params,callback){var fileName,//fileType,
+   * Upload File To Pod Space
+   *
+   * Upload files to Pod Space Server
+   *
+   * @since 3.9.9
+   * @access private
+   *
+   * @param {file}    file            FILE: the file
+   * @param {string}  userGroupHash   Unique identifier of threads on podspace
+   * @param {string}  token           User Token
+   *
+   * @link
+      *
+      * @return {object} Uploaded File Object
+   */uploadFileToPodspaceUserGroupNew=function uploadFileToPodspaceUserGroupNew(params,callback){var fileName,//fileType,
 fileSize,//fileExtension,
 uploadUniqueId,uploadThreadId;fileName=params.file.name;//fileType = params.file.type;
 fileSize=params.file.size;//fileExtension = params.file.name.split('.').pop();
 var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFileData.file=params.file;}if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadFileData.threadId=params.threadId;}else{uploadThreadId=0;uploadFileData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadFileData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadFileData.uniqueId=uploadUniqueId;}if(typeof params.userGroupHash=='string'){uploadFileData.userGroupHash=params.userGroupHash;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to enter a userGroupHash to be able to upload on PodSpace!'});return;}if(typeof params.originalFileName=='string'){uploadFileData.originalFileName=params.originalFileName;}else{uploadFileData.originalFileName=fileName;}}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_FILE_TO_USERGROUP_NEW.replace('{userGroupHash}',uploadFileData.userGroupHash),method:'POST',headers:{'Authorization':'Bearer '+_sdkParams.sdkParams.token},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result'});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:_store.store.user(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},/**
-         * Upload File
-         *
-         * Upload files to File Server
-         *
-         * @since 3.9.9
-         * @access private
-         *
-         * @param {string}  fileName        A name for the file
-         * @param {file}    file            FILE: the file
-         *
-         * @link http://docs.pod.land/v1.0.8.0/Developer/CustomPost/605/File
-         *
-         * @return {object} Uploaded File Object
-         */uploadFileFromUrl=function uploadFileFromUrl(params,callback){var uploadUniqueId,uploadThreadId;var uploadFileData={},fileExtension;if(params){if(typeof params.fileUrl!=='undefined'){uploadFileData.url=params.fileUrl;}if(typeof params.fileExtension!=='undefined'){fileExtension=params.fileExtension;}else{fileExtension='png';}if(typeof params.fileName=='string'){uploadFileData.filename=params.fileName;}else{uploadFileData.filename=_utility["default"].generateUUID()+'.'+fileExtension;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();}if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;}else{uploadThreadId=0;}uploadFileData.isPublic=true;}httpRequest({url:SERVICE_ADDRESSES.POD_DRIVE_ADDRESS+SERVICES_PATH.DRIVE_UPLOAD_FILE_FROM_URL,method:'POST',headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result',error:e});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:_store.store.user(),content:{file:{uniqueId:uploadUniqueId,fileUrl:params.fileUrl}}};},/**
-         * Upload Image
-         *
-         * Upload images to Image Server
-         *
-         * @since 3.9.9
-         * @access private
-         *
-         * @param {string}  fileName        A name for the file
-         * @param {file}    image           FILE: the image file  (if its an image file)
-         * @param {float}   xC              Crop Start point x    (if its an image file)
-         * @param {float}   yC              Crop Start point Y    (if its an image file)
-         * @param {float}   hC              Crop size Height      (if its an image file)
-         * @param {float}   wC              Crop size Weight      (if its an image file)
-         *
-         * @link http://docs.pod.land/v1.0.8.0/Developer/CustomPost/215/UploadImage
-         *
-         * @return {object} Uploaded Image Object
-         */uploadImage=function uploadImage(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.image=params.image;uploadImageData.file=params.image;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.fileName=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}if(parseInt(params.xC)>0){uploadImageData.xC=params.xC;}if(parseInt(params.yC)>0){uploadImageData.yC=params.yC;}if(parseInt(params.hC)>0){uploadImageData.hC=params.hC;}if(parseInt(params.wC)>0){uploadImageData.wC=params.wC;}}httpRequest({url:SERVICE_ADDRESSES.FILESERVER_ADDRESS+SERVICES_PATH.UPLOAD_IMAGE,method:'POST',headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(typeof response.hasError!=='undefined'&&!response.hasError){callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:_store.store.user(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}},/**
-         * Upload Image To Pod Space Publically
-         *
-         * Upload images to Pod Space Image Server
-         *
-         * @since 3.9.9
-         * @access private
-         *
-         * @param {string}  fileName        A name for the file
-         * @param {file}    image           FILE: the image file  (if its an image file)
-         * @param {float}   xC              Crop Start point x    (if its an image file)
-         * @param {float}   yC              Crop Start point Y    (if its an image file)
-         * @param {float}   hC              Crop size Height      (if its an image file)
-         * @param {float}   wC              Crop size Weight      (if its an image file)
-         * @param {string}  token           User Token
-         * @param {string}  _token_issuer_  Token Issuer
-         *
-         * @link https://podspace.pod.ir/apidocs/?srv=/nzh/drive/uploadImage
-         *
-         * @return {object} Uploaded Image Object
-         */uploadImageToPodspace=function uploadImageToPodspace(params,callback){var fileName,fileType,fileSize,fileWidth=0,fileHeight=0,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();var reader=new FileReader();reader.onload=function(e){var image=new Image();image.onload=function(){fileWidth=this.width;fileHeight=this.height;continueImageUpload(params);};image.src=e.target.result;};reader.readAsDataURL(params.image);var continueImageUpload=function continueImageUpload(params){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.file=params.image;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to send a image file!'});return;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.filename=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}uploadImageData.xC=parseInt(params.xC)||0;uploadImageData.yC=parseInt(params.yC)||0;uploadImageData.hC=parseInt(params.hC)||fileHeight;uploadImageData.wC=parseInt(params.wC)||fileWidth;}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_IMAGE,method:'POST',headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(typeof response.hasError!=='undefined'&&!response.hasError){callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:_store.store.user(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}};},uploadImageToPodspaceNew=function uploadImageToPodspaceNew(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.image=params.image;uploadImageData.file=params.image;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.fileName=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}if(parseInt(params.xC)>0){uploadImageData.xC=params.xC;}if(parseInt(params.yC)>0){uploadImageData.yC=params.yC;}if(parseInt(params.hC)>0){uploadImageData.hC=params.hC;}if(parseInt(params.wC)>0){uploadImageData.wC=params.wC;}}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_IMAGE_NEW,method:'POST',headers:{'Authorization':'Bearer '+_sdkParams.sdkParams.token},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(!response.hasError){callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:_store.store.user(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}},/**
-         * Deprecated
-         *
-         * Upload Image To Pod Space
-         *
-         * Upload images to Pod Space Image Server
-         *
-         * @since 3.9.9
-         * @access private
-         *
-         * @param {string}  fileName        A name for the file
-         * @param {file}    image           FILE: the image file  (if its an image file)
-         * @param {float}   xC              Crop Start point x    (if its an image file)
-         * @param {float}   yC              Crop Start point Y    (if its an image file)
-         * @param {float}   hC              Crop size Height      (if its an image file)
-         * @param {float}   wC              Crop size Weight      (if its an image file)
-         * @param {string}  userGroupHash   Unique identifier of threads on podspace
-         * @param {string}  token           User Token
-         * @param {string}  _token_issuer_  Token Issuer
-         *
-         * @link https://podspace.pod.ir/apidocs/?srv=/userGroup/uploadImage/
-         *
-         * @return {object} Uploaded Image Object
-         */uploadImageToPodspaceUserGroup=function uploadImageToPodspaceUserGroup(params,callback){var fileName,fileType,fileSize,fileWidth=0,fileHeight=0,fileExtension,uploadUniqueId,uploadThreadId;var continueImageUpload=function continueImageUpload(params){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.file=params.image;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to send a image file!'});return;}if(typeof params.userGroupHash=='string'){// userGroupHash = params.userGroupHash;
+   * Upload File
+   *
+   * Upload files to File Server
+   *
+   * @since 3.9.9
+   * @access private
+   *
+   * @param {string}  fileName        A name for the file
+   * @param {file}    file            FILE: the file
+   *
+   * @link http://docs.pod.land/v1.0.8.0/Developer/CustomPost/605/File
+   *
+   * @return {object} Uploaded File Object
+   */uploadFileFromUrl=function uploadFileFromUrl(params,callback){var uploadUniqueId,uploadThreadId;var uploadFileData={},fileExtension;if(params){if(typeof params.fileUrl!=='undefined'){uploadFileData.url=params.fileUrl;}if(typeof params.fileExtension!=='undefined'){fileExtension=params.fileExtension;}else{fileExtension='png';}if(typeof params.fileName=='string'){uploadFileData.filename=params.fileName;}else{uploadFileData.filename=_utility["default"].generateUUID()+'.'+fileExtension;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();}if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;}else{uploadThreadId=0;}uploadFileData.isPublic=true;}httpRequest({url:SERVICE_ADDRESSES.POD_DRIVE_ADDRESS+SERVICES_PATH.DRIVE_UPLOAD_FILE_FROM_URL,method:'POST',headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result',error:e});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:_store.store.user(),content:{file:{uniqueId:uploadUniqueId,fileUrl:params.fileUrl}}};},/**
+   * Upload Image
+   *
+   * Upload images to Image Server
+   *
+   * @since 3.9.9
+   * @access private
+   *
+   * @param {string}  fileName        A name for the file
+   * @param {file}    image           FILE: the image file  (if its an image file)
+   * @param {float}   xC              Crop Start point x    (if its an image file)
+   * @param {float}   yC              Crop Start point Y    (if its an image file)
+   * @param {float}   hC              Crop size Height      (if its an image file)
+   * @param {float}   wC              Crop size Weight      (if its an image file)
+   *
+   * @link http://docs.pod.land/v1.0.8.0/Developer/CustomPost/215/UploadImage
+   *
+   * @return {object} Uploaded Image Object
+   */uploadImage=function uploadImage(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.image=params.image;uploadImageData.file=params.image;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.fileName=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}if(parseInt(params.xC)>0){uploadImageData.xC=params.xC;}if(parseInt(params.yC)>0){uploadImageData.yC=params.yC;}if(parseInt(params.hC)>0){uploadImageData.hC=params.hC;}if(parseInt(params.wC)>0){uploadImageData.wC=params.wC;}}httpRequest({url:SERVICE_ADDRESSES.FILESERVER_ADDRESS+SERVICES_PATH.UPLOAD_IMAGE,method:'POST',headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(typeof response.hasError!=='undefined'&&!response.hasError){callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:_store.store.user(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}},/**
+   * Upload Image To Pod Space Publically
+   *
+   * Upload images to Pod Space Image Server
+   *
+   * @since 3.9.9
+   * @access private
+   *
+   * @param {string}  fileName        A name for the file
+   * @param {file}    image           FILE: the image file  (if its an image file)
+   * @param {float}   xC              Crop Start point x    (if its an image file)
+   * @param {float}   yC              Crop Start point Y    (if its an image file)
+   * @param {float}   hC              Crop size Height      (if its an image file)
+   * @param {float}   wC              Crop size Weight      (if its an image file)
+   * @param {string}  token           User Token
+   * @param {string}  _token_issuer_  Token Issuer
+   *
+   * @link https://podspace.pod.ir/apidocs/?srv=/nzh/drive/uploadImage
+   *
+   * @return {object} Uploaded Image Object
+   */uploadImageToPodspace=function uploadImageToPodspace(params,callback){var fileName,fileType,fileSize,fileWidth=0,fileHeight=0,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();var reader=new FileReader();reader.onload=function(e){var image=new Image();image.onload=function(){fileWidth=this.width;fileHeight=this.height;continueImageUpload(params);};image.src=e.target.result;};reader.readAsDataURL(params.image);var continueImageUpload=function continueImageUpload(params){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.file=params.image;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to send a image file!'});return;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.filename=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}uploadImageData.xC=parseInt(params.xC)||0;uploadImageData.yC=parseInt(params.yC)||0;uploadImageData.hC=parseInt(params.hC)||fileHeight;uploadImageData.wC=parseInt(params.wC)||fileWidth;}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_IMAGE,method:'POST',headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(typeof response.hasError!=='undefined'&&!response.hasError){callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:_store.store.user(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}};},uploadImageToPodspaceNew=function uploadImageToPodspaceNew(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.image=params.image;uploadImageData.file=params.image;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.fileName=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}if(parseInt(params.xC)>0){uploadImageData.xC=params.xC;}if(parseInt(params.yC)>0){uploadImageData.yC=params.yC;}if(parseInt(params.hC)>0){uploadImageData.hC=params.hC;}if(parseInt(params.wC)>0){uploadImageData.wC=params.wC;}}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_IMAGE_NEW,method:'POST',headers:{'Authorization':'Bearer '+_sdkParams.sdkParams.token},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(!response.hasError){callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:_store.store.user(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}},/**
+   * Deprecated
+   *
+   * Upload Image To Pod Space
+   *
+   * Upload images to Pod Space Image Server
+   *
+   * @since 3.9.9
+   * @access private
+   *
+   * @param {string}  fileName        A name for the file
+   * @param {file}    image           FILE: the image file  (if its an image file)
+   * @param {float}   xC              Crop Start point x    (if its an image file)
+   * @param {float}   yC              Crop Start point Y    (if its an image file)
+   * @param {float}   hC              Crop size Height      (if its an image file)
+   * @param {float}   wC              Crop size Weight      (if its an image file)
+   * @param {string}  userGroupHash   Unique identifier of threads on podspace
+   * @param {string}  token           User Token
+   * @param {string}  _token_issuer_  Token Issuer
+   *
+   * @link https://podspace.pod.ir/apidocs/?srv=/userGroup/uploadImage/
+   *
+   * @return {object} Uploaded Image Object
+   */uploadImageToPodspaceUserGroup=function uploadImageToPodspaceUserGroup(params,callback){var fileName,fileType,fileSize,fileWidth=0,fileHeight=0,fileExtension,uploadUniqueId,uploadThreadId;var continueImageUpload=function continueImageUpload(params){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.file=params.image;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to send a image file!'});return;}if(typeof params.userGroupHash=='string'){// userGroupHash = params.userGroupHash;
 uploadImageData.userGroupHash=params.userGroupHash;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to enter a userGroupHash to be able to upload on PodSpace!'});return;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.filename=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}uploadImageData.xC=parseInt(params.xC)||0;uploadImageData.yC=parseInt(params.yC)||0;uploadImageData.hC=parseInt(params.hC)||fileHeight;uploadImageData.wC=parseInt(params.wC)||fileWidth;}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_IMAGE_TO_USERGROUP,method:'POST',headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(typeof response.hasError!=='undefined'&&!response.hasError){response.result.actualHeight=fileHeight;response.result.actualWidth=fileWidth;callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:_store.store.user(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}};fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();var reader=new FileReader();reader.onload=function(e){var image=new Image();image.onload=function(){fileWidth=this.width;fileHeight=this.height;continueImageUpload(params);};image.src=e.target.result;};reader.readAsDataURL(params.image);},/**
-         * Upload Image To Podspace User Group
-         *
-         * Upload images to Pod Space Image Server
-         *
-         * @since 3.9.9
-         * @access private
-         *
-         * @param {string}  fileName        A name for the file
-         * @param {file}    image           FILE: the image file  (if its an image file)
-         * @param {float}   xC              Crop Start point x    (if its an image file)
-         * @param {float}   yC              Crop Start point Y    (if its an image file)
-         * @param {float}   hC              Crop size Height      (if its an image file)
-         * @param {float}   wC              Crop size Weight      (if its an image file)
-         * @param {string}  userGroupHash   Unique identifier of threads on podspace
-         * @param {string}  token           User Token
-         * @param {string}  _token_issuer_  Token Issuer
-         *
-         * @link https://podspace.pod.ir/apidocs/?srv=/userGroup/uploadImage/
-         *
-         * @return {object} Uploaded Image Object
-         */uploadImageToPodspaceUserGroupNew=function uploadImageToPodspaceUserGroupNew(params,callback){var fileName,fileType,fileSize,fileWidth=0,fileHeight=0,fileExtension,uploadUniqueId,uploadThreadId;var continueImageUpload=function continueImageUpload(params){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.file=params.image;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to send a image file!'});return;}if(typeof params.userGroupHash=='string'){uploadImageData.userGroupHash=params.userGroupHash;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to enter a userGroupHash to be able to upload on PodSpace!'});return;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.filename=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}uploadImageData.x=parseInt(params.xC)||0;uploadImageData.y=parseInt(params.yC)||0;uploadImageData.height=parseInt(params.hC)||fileHeight;uploadImageData.weight=parseInt(params.wC)||fileWidth;}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_IMAGE_TO_USERGROUP_NEW.replace('{userGroupHash}',uploadImageData.userGroupHash),method:'POST',headers:{'Authorization':'Bearer '+_sdkParams.sdkParams.token},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(response.status<400){response.result.actualHeight=fileHeight;response.result.actualWidth=fileWidth;callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:_store.store.user(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}};fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();var reader=new FileReader();reader.onload=function(e){var image=new Image();image.onload=function(){fileWidth=this.width;fileHeight=this.height;continueImageUpload(params);};image.src=e.target.result;};reader.readAsDataURL(params.image);},sendFileMessage=function sendFileMessage(params,callbacks){var metadata={file:{}},fileUploadParams={},fileUniqueId=typeof params.fileUniqueId=='string'&&params.fileUniqueId.length>0?params.fileUniqueId:_utility["default"].generateUUID();if(params){if(!params.userGroupHash||params.userGroupHash.length===0||typeof params.userGroupHash!=='string'){_events.chatEvents.fireEvent('error',{code:6304,message:CHAT_ERRORS[6304]});return;}else{fileUploadParams.userGroupHash=params.userGroupHash;}return chatUploadHandler({threadId:params.threadId,file:params.file,fileUniqueId:fileUniqueId},function(uploadHandlerResult,uploadHandlerMetadata,fileType,fileExtension){fileUploadParams=Object.assign(fileUploadParams,uploadHandlerResult);putInChatUploadQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
+   * Upload Image To Podspace User Group
+   *
+   * Upload images to Pod Space Image Server
+   *
+   * @since 3.9.9
+   * @access private
+   *
+   * @param {string}  fileName        A name for the file
+   * @param {file}    image           FILE: the image file  (if its an image file)
+   * @param {float}   xC              Crop Start point x    (if its an image file)
+   * @param {float}   yC              Crop Start point Y    (if its an image file)
+   * @param {float}   hC              Crop size Height      (if its an image file)
+   * @param {float}   wC              Crop size Weight      (if its an image file)
+   * @param {string}  userGroupHash   Unique identifier of threads on podspace
+   * @param {string}  token           User Token
+   * @param {string}  _token_issuer_  Token Issuer
+   *
+   * @link https://podspace.pod.ir/apidocs/?srv=/userGroup/uploadImage/
+   *
+   * @return {object} Uploaded Image Object
+   */uploadImageToPodspaceUserGroupNew=function uploadImageToPodspaceUserGroupNew(params,callback){var fileName,fileType,fileSize,fileWidth=0,fileHeight=0,fileExtension,uploadUniqueId,uploadThreadId;var continueImageUpload=function continueImageUpload(params){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.file=params.image;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to send a image file!'});return;}if(typeof params.userGroupHash=='string'){uploadImageData.userGroupHash=params.userGroupHash;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to enter a userGroupHash to be able to upload on PodSpace!'});return;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.filename=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}uploadImageData.x=parseInt(params.xC)||0;uploadImageData.y=parseInt(params.yC)||0;uploadImageData.height=parseInt(params.hC)||fileHeight;uploadImageData.weight=parseInt(params.wC)||fileWidth;}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_IMAGE_TO_USERGROUP_NEW.replace('{userGroupHash}',uploadImageData.userGroupHash),method:'POST',headers:{'Authorization':'Bearer '+_sdkParams.sdkParams.token},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(response.status<400){response.result.actualHeight=fileHeight;response.result.actualWidth=fileWidth;callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:_store.store.user(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}};fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();var reader=new FileReader();reader.onload=function(e){var image=new Image();image.onload=function(){fileWidth=this.width;fileHeight=this.height;continueImageUpload(params);};image.src=e.target.result;};reader.readAsDataURL(params.image);},sendFileMessage=function sendFileMessage(params,callbacks){var metadata={file:{}},fileUploadParams={},fileUniqueId=typeof params.fileUniqueId=='string'&&params.fileUniqueId.length>0?params.fileUniqueId:_utility["default"].generateUUID();if(params){if(!params.userGroupHash||params.userGroupHash.length===0||typeof params.userGroupHash!=='string'){_events.chatEvents.fireEvent('error',{code:6304,message:CHAT_ERRORS[6304]});return;}else{fileUploadParams.userGroupHash=params.userGroupHash;}return chatUploadHandler({threadId:params.threadId,file:params.file,fileUniqueId:fileUniqueId},function(uploadHandlerResult,uploadHandlerMetadata,fileType,fileExtension){fileUploadParams=Object.assign(fileUploadParams,uploadHandlerResult);putInChatUploadQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 messageType:params.messageType&&typeof params.messageType.toUpperCase()!=='undefined'&&_constants.chatMessageTypes[params.messageType.toUpperCase()]>0?_constants.chatMessageTypes[params.messageType.toUpperCase()]:1,subjectId:params.threadId,repliedTo:params.repliedTo,content:filterXSS(params.content),metadata:JSON.stringify(objectDeepMerger(uploadHandlerMetadata,params.metadata)),systemMetadata:JSON.stringify(params.systemMetadata),uniqueId:fileUniqueId,pushMsgType:3},callbacks:callbacks},function(){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){uploadImageToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){// Send onFileUpload callback result
 if((0,_typeof2["default"])(callbacks)==='object'&&callbacks.hasOwnProperty('onFileUpload')){callbacks.onFileUpload&&callbacks.onFileUpload({name:result.result.name,hashCode:result.result.hash,parentHash:result.result.parentHash,size:result.result.size,actualHeight:result.result.actualHeight,actualWidth:result.result.actualWidth,link:"".concat(SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS,"/api/images/").concat(result.result.hash,"?checkUserGroupAccess=true")});}metadata['name']=result.result.name;metadata['fileHash']=result.result.hash;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;metadata['file']['actualHeight']=result.result.actualHeight;metadata['file']['actualWidth']=result.result.actualWidth;metadata['file']['link']="".concat(SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS,"/api/images/").concat(result.result.hash,"?checkUserGroupAccess=true");transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}else{uploadFileToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){metadata['fileHash']=result.result.hash;metadata['name']=result.result.name;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}});});}},/**
-         * Delete Cache Database
-         *
-         * This function truncates all tables of cache Database
-         * and drops whole tables
-         *
-         * @access private
-         *
-         * @return {undefined}
-         */deleteCacheDatabases=function deleteCacheDatabases(){(0,_deprecateMethods.printIsDeprecate)(_deprecateMethods.deprecatedString.deleteCacheDatabases.methodName);return;// if (db) {
+   * Delete Cache Database
+   *
+   * This function truncates all tables of cache Database
+   * and drops whole tables
+   *
+   * @access private
+   *
+   * @return {undefined}
+   */deleteCacheDatabases=function deleteCacheDatabases(){(0,_deprecateMethods.printIsDeprecate)(_deprecateMethods.deprecatedString.deleteCacheDatabases.methodName);return;// if (db) {
 //     db.close();
 // }
 //
@@ -50546,15 +50117,15 @@ if((0,_typeof2["default"])(callbacks)==='object'&&callbacks.hasOwnProperty('onFi
 //         });
 // }
 },/**
-         * Clear Cache Database of Some User
-         *
-         * This function removes everything in cache
-         * for one specific user
-         *
-         * @access private
-         *
-         * @return {undefined}
-         */clearCacheDatabasesOfUser=function clearCacheDatabasesOfUser(callback){(0,_deprecateMethods.printIsDeprecate)(_deprecateMethods.deprecatedString.clearCacheDatabasesOfUser.methodName);return;// if (db && !cacheDeletingInProgress) {
+   * Clear Cache Database of Some User
+   *
+   * This function removes everything in cache
+   * for one specific user
+   *
+   * @access private
+   *
+   * @return {undefined}
+   */clearCacheDatabasesOfUser=function clearCacheDatabasesOfUser(callback){(0,_deprecateMethods.printIsDeprecate)(_deprecateMethods.deprecatedString.clearCacheDatabasesOfUser.methodName);return;// if (db && !cacheDeletingInProgress) {
 //     cacheDeletingInProgress = true;
 //     db.threads
 //         .where('owner')
@@ -50606,15 +50177,15 @@ if((0,_typeof2["default"])(callbacks)==='object'&&callbacks.hasOwnProperty('onFi
 //         });
 // }
 },/**
-         * Initialize Cache Database
-         *
-         * if client's environment is capable of supporting indexedDB
-         * and the hasCache attribute set to be true, we created
-         * a indexedDB instance based on DexieDb and Initialize
-         * client sde caching
-         *
-         * @return {undefined}
-         */startCacheDatabases=function startCacheDatabases(callback){(0,_deprecateMethods.printIsDeprecate)(_deprecateMethods.deprecatedString.startCacheDatabases.methodName);return;// if (hasCache) {
+   * Initialize Cache Database
+   *
+   * if client's environment is capable of supporting indexedDB
+   * and the hasCache attribute set to be true, we created
+   * a indexedDB instance based on DexieDb and Initialize
+   * client sde caching
+   *
+   * @return {undefined}
+   */startCacheDatabases=function startCacheDatabases(callback){(0,_deprecateMethods.printIsDeprecate)(_deprecateMethods.deprecatedString.startCacheDatabases.methodName);return;// if (hasCache) {
 //     queueDb = new Dexie('podQueues');
 //
 //     queueDb.version(1)
@@ -50657,27 +50228,27 @@ if((0,_typeof2["default"])(callbacks)==='object'&&callbacks.hasOwnProperty('onFi
 //     callback && callback();
 // }
 },/**
-         * Get Chat Send Queue
-         *
-         * This function returns chat send queue
-         *
-         * @access private
-         *
-         * @return {array}  An array of messages on sendQueue
-         */getChatSendQueue=function getChatSendQueue(threadId,callback){if(threadId){var tempSendQueue=[];for(var i=0;i<chatSendQueue.length;i++){if(chatSendQueue[i].threadId===threadId){tempSendQueue.push(chatSendQueue[i]);}}callback&&callback(tempSendQueue);}else{callback&&callback(chatSendQueue);}},/**
-         * Get Chat Wait Queue
-         *
-         * This function checks if cache is enbled on client's
-         * machine, and if it is, retrieves WaitQueue from
-         * cache. Otherwise returns WaitQueue from RAM
-         * After getting failed messages from cache or RAM
-         * we should check them with server to be sure if
-         * they have been sent already or not?
-         *
-         * @access private
-         *
-         * @return {array}  An array of messages on Wait Queue
-         */getChatWaitQueue=function getChatWaitQueue(threadId,active,callback){callback&&callback([]);// if (active && threadId > 0) {
+   * Get Chat Send Queue
+   *
+   * This function returns chat send queue
+   *
+   * @access private
+   *
+   * @return {array}  An array of messages on sendQueue
+   */getChatSendQueue=function getChatSendQueue(threadId,callback){if(threadId){var tempSendQueue=[];for(var i=0;i<chatSendQueue.length;i++){if(chatSendQueue[i].threadId===threadId){tempSendQueue.push(chatSendQueue[i]);}}callback&&callback(tempSendQueue);}else{callback&&callback(chatSendQueue);}},/**
+   * Get Chat Wait Queue
+   *
+   * This function checks if cache is enbled on client's
+   * machine, and if it is, retrieves WaitQueue from
+   * cache. Otherwise returns WaitQueue from RAM
+   * After getting failed messages from cache or RAM
+   * we should check them with server to be sure if
+   * they have been sent already or not?
+   *
+   * @access private
+   *
+   * @return {array}  An array of messages on Wait Queue
+   */getChatWaitQueue=function getChatWaitQueue(threadId,active,callback){callback&&callback([]);// if (active && threadId > 0) {
 //     var uniqueIds = [],
 //         queueToBeSent = [];
 //
@@ -50719,211 +50290,211 @@ if((0,_typeof2["default"])(callbacks)==='object'&&callbacks.hasOwnProperty('onFi
 //     callback && callback([]);
 // }
 },/**
-         * Get Chat Upload Queue
-         *
-         * This function checks if cache is enabled on client's
-         * machine, and if it is, retrieves uploadQueue from
-         * cache. Otherwise returns uploadQueue from RAM
-         *
-         * @access private
-         *
-         * @return {array}  An array of messages on uploadQueue
-         */getChatUploadQueue=function getChatUploadQueue(threadId,callback){var uploadQ=[];for(var i=0;i<chatUploadQueue.length;i++){if(parseInt(chatUploadQueue[i].message.subjectId)===threadId){uploadQ.push(chatUploadQueue[i]);}}callback&&callback(uploadQ);},/**
-         * Delete an Item from Chat Send Queue
-         *
-         * This function gets an item and deletes it
-         * from Chat Send Queue
-         *
-         * @access private
-         *
-         * @return {undefined}
-         */deleteFromChatSentQueue=function deleteFromChatSentQueue(item,callback){for(var i=0;i<chatSendQueue.length;i++){if(chatSendQueue[i].message.uniqueId===item.message.uniqueId){chatSendQueue.splice(i,1);}}callback&&callback();},/**
-         * Delete an Item from Chat Wait Queue
-         *
-         * This function gets an item and deletes it
-         * from Chat Wait Queue, from either cached
-         * queue or the queue on RAM memory
-         *
-         * @access private
-         *
-         * @return {undefined}
-         */deleteFromChatWaitQueue=function deleteFromChatWaitQueue(item,callback){for(var i=0;i<chatWaitQueue.length;i++){if(chatWaitQueue[i].uniqueId===item.uniqueId){chatWaitQueue.splice(i,1);}}callback&&callback();},/**
-         * Delete an Item from Chat Upload Queue
-         *
-         * This function gets an item and deletes it
-         * from Chat Upload Queue
-         *
-         * @access private
-         *
-         * @return {undefined}
-         */deleteFromChatUploadQueue=function deleteFromChatUploadQueue(item,callback){for(var i=0;i<chatUploadQueue.length;i++){if(chatUploadQueue[i].message.uniqueId===item.message.uniqueId){chatUploadQueue.splice(i,1);}}callback&&callback();},deleteThreadFailedMessagesFromWaitQueue=function deleteThreadFailedMessagesFromWaitQueue(threadId,callback){for(var i=0;i<chatWaitQueue.length;i++){if(chatWaitQueue[i].uniqueId===item.uniqueId){chatWaitQueue.splice(i,1);}}callback&&callback();},/**
-         * Push Message Into Send Queue
-         *
-         * This functions takes a message and puts it
-         * into chat's send queue
-         *
-         * @access private
-         *
-         * @param {object}    params    The Message and its callbacks to be enqueued
-         *
-         * @return {undefined}
-         */putInChatSendQueue=function putInChatSendQueue(params,callback,skip){chatSendQueue.push(params);if(!skip){var time=new Date().getTime();params.message.time=time;params.message.timeNanos=time%1000*1000000;putInChatWaitQueue(params.message,function(){callback&&callback();});}else{callback&&callback();}},/**
-         * Put an Item inside Chat Wait Queue
-         *
-         * This function takes an item and puts it
-         * inside Chat Wait Queue, either on cached
-         * wait queue or the wait queue on RAM memory
-         *
-         * @access private
-         *
-         * @return {undefined}
-         */putInChatWaitQueue=function putInChatWaitQueue(item,callback){if(item.uniqueId!==''){var waitQueueUniqueId=typeof item.uniqueId=='string'?item.uniqueId:Array.isArray(item.uniqueId)?item.uniqueId[0]:null;if(waitQueueUniqueId!=null){_sdkParams.sdkParams.consoleLogging&&console.log('Forced to use in memory cache');item.uniqueId=waitQueueUniqueId;chatWaitQueue.push(item);callback&&callback();}}},getItemFromChatWaitQueue=function getItemFromChatWaitQueue(uniqueId,callback){for(var i=0;i<chatWaitQueue.length;i++){if(chatWaitQueue[i].uniqueId===uniqueId){var decryptedEnqueuedMessage=chatWaitQueue[i];var time=new Date().getTime();var message=formatDataToMakeMessage(decryptedEnqueuedMessage.threadId,{uniqueId:decryptedEnqueuedMessage.uniqueId,ownerId:_store.store.user().id,message:decryptedEnqueuedMessage.content,metadata:decryptedEnqueuedMessage.metadata,systemMetadata:decryptedEnqueuedMessage.systemMetadata,replyInfo:decryptedEnqueuedMessage.replyInfo,forwardInfo:decryptedEnqueuedMessage.forwardInfo,participant:_store.store.user(),time:time,timeNanos:time%1000*1000000});callback&&callback(message);break;}}},/**
-         * Put an Item inside Chat Upload Queue
-         *
-         * This function takes an item and puts it
-         * inside Chat upload Queue
-         *
-         * @access private
-         *
-         * @return {undefined}
-         */putInChatUploadQueue=function putInChatUploadQueue(params,callback){chatUploadQueue.push(params);callback&&callback();},/**
-         * Transfer an Item from uploadQueue to sendQueue
-         *
-         * This function takes an uniqueId, finds that item
-         * inside uploadQ. takes it's uploaded metadata and
-         * attaches them to the message. Finally removes item
-         * from uploadQueue and pushes it inside sendQueue
-         *
-         * @access private
-         *
-         * @return {undefined}
-         */transferFromUploadQToSendQ=function transferFromUploadQToSendQ(threadId,uniqueId,metadata,callback){getChatUploadQueue(threadId,function(uploadQueue){for(var i=0;i<uploadQueue.length;i++){if(uploadQueue[i].message.uniqueId===uniqueId){try{var message=uploadQueue[i].message,callbacks=uploadQueue[i].callbacks;var oldMetadata=JSON.parse(message.metadata),newMetadata=JSON.parse(metadata);var finalMetaData=objectDeepMerger(newMetadata,oldMetadata);if(typeof message!=='undefined'&&message&&typeof message.content!=='undefined'&&message.content&&message.content.hasOwnProperty('message')){message.content.message['metadata']=JSON.stringify(finalMetaData);}if(typeof message!=='undefined'&&message&&typeof message.content!=='undefined'&&message.content&&message.content.hasOwnProperty('metadata')){message.content['metadata']=JSON.stringify(finalMetaData);}if(message.chatMessageVOType===21){getImageDownloadLinkFromPodspace({hashCode:finalMetaData.fileHash},function(result){if(!result.hasError){message.content.image=result.downloadUrl;}});}message.metadata=JSON.stringify(finalMetaData);}catch(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);}deleteFromChatUploadQueue(uploadQueue[i],function(){putInChatSendQueue({message:message,callbacks:callbacks},function(){callback&&callback();},true);});break;}}});},/**
-         * Decrypt Encrypted strings using secret key and salt
-         *
-         * @param string    String to get decrypted
-         * @param secret    Cache Secret
-         * @param salt      Salt used while string was getting encrypted
-         *
-         * @return  string  Decrypted string
-         */chatDecrypt=function chatDecrypt(string,secret,salt){var decryptedString=_utility["default"].decrypt(string,secret,salt);if(!decryptedString.hasError){return decryptedString.result;}else{/**
-                 * If there is a problem with decrypting cache
-                 * Some body is trying to decrypt cache with wrong key
-                 * or cacheSecret has been expired, so we should truncate
-                 * cache databases to avoid attacks.
-                 *
-                 * But before deleting cache database we should make
-                 * sure that cacheSecret has been retrieved from server
-                 * and is ready. If so, and cache is still not decryptable,
-                 * there is definitely something wrong with the key; so we are
-                 * good to go and delete cache databases.
-                 */if(typeof secret!=='undefined'&&secret!==''){if(db){db.threads.where('owner').equals(parseInt(_store.store.user().id)).count().then(function(threadsCount){if(threadsCount>0){clearCacheDatabasesOfUser(function(){_sdkParams.sdkParams.consoleLogging&&console.log('All cache databases have been cleared.');});}})["catch"](function(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);});}}return'{}';}},objectDeepMerger=function objectDeepMerger(){var target={};var merger=function merger(obj){for(var prop in obj){if(obj.hasOwnProperty(prop)){if(Object.prototype.toString.call(obj[prop])==='[object Object]'){target[prop]=objectDeepMerger(target[prop],obj[prop]);}else{target[prop]=obj[prop];}}}};for(var i=0;i<arguments.length;i++){merger(i<0||arguments.length<=i?undefined:arguments[i]);}return target;},setRoleToUser=function setRoleToUser(params,callback){var setRoleData={chatMessageVOType:_constants.chatMessageVOTypes.SET_ROLE_TO_USER,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
+   * Get Chat Upload Queue
+   *
+   * This function checks if cache is enabled on client's
+   * machine, and if it is, retrieves uploadQueue from
+   * cache. Otherwise returns uploadQueue from RAM
+   *
+   * @access private
+   *
+   * @return {array}  An array of messages on uploadQueue
+   */getChatUploadQueue=function getChatUploadQueue(threadId,callback){var uploadQ=[];for(var i=0;i<chatUploadQueue.length;i++){if(parseInt(chatUploadQueue[i].message.subjectId)===threadId){uploadQ.push(chatUploadQueue[i]);}}callback&&callback(uploadQ);},/**
+   * Delete an Item from Chat Send Queue
+   *
+   * This function gets an item and deletes it
+   * from Chat Send Queue
+   *
+   * @access private
+   *
+   * @return {undefined}
+   */deleteFromChatSentQueue=function deleteFromChatSentQueue(item,callback){for(var i=0;i<chatSendQueue.length;i++){if(chatSendQueue[i].message.uniqueId===item.message.uniqueId){chatSendQueue.splice(i,1);}}callback&&callback();},/**
+   * Delete an Item from Chat Wait Queue
+   *
+   * This function gets an item and deletes it
+   * from Chat Wait Queue, from either cached
+   * queue or the queue on RAM memory
+   *
+   * @access private
+   *
+   * @return {undefined}
+   */deleteFromChatWaitQueue=function deleteFromChatWaitQueue(item,callback){for(var i=0;i<chatWaitQueue.length;i++){if(chatWaitQueue[i].uniqueId===item.uniqueId){chatWaitQueue.splice(i,1);}}callback&&callback();},/**
+   * Delete an Item from Chat Upload Queue
+   *
+   * This function gets an item and deletes it
+   * from Chat Upload Queue
+   *
+   * @access private
+   *
+   * @return {undefined}
+   */deleteFromChatUploadQueue=function deleteFromChatUploadQueue(item,callback){for(var i=0;i<chatUploadQueue.length;i++){if(chatUploadQueue[i].message.uniqueId===item.message.uniqueId){chatUploadQueue.splice(i,1);}}callback&&callback();},deleteThreadFailedMessagesFromWaitQueue=function deleteThreadFailedMessagesFromWaitQueue(threadId,callback){for(var i=0;i<chatWaitQueue.length;i++){if(chatWaitQueue[i].uniqueId===item.uniqueId){chatWaitQueue.splice(i,1);}}callback&&callback();},/**
+   * Push Message Into Send Queue
+   *
+   * This functions takes a message and puts it
+   * into chat's send queue
+   *
+   * @access private
+   *
+   * @param {object}    params    The Message and its callbacks to be enqueued
+   *
+   * @return {undefined}
+   */putInChatSendQueue=function putInChatSendQueue(params,callback,skip){chatSendQueue.push(params);if(!skip){var time=new Date().getTime();params.message.time=time;params.message.timeNanos=time%1000*1000000;putInChatWaitQueue(params.message,function(){callback&&callback();});}else{callback&&callback();}},/**
+   * Put an Item inside Chat Wait Queue
+   *
+   * This function takes an item and puts it
+   * inside Chat Wait Queue, either on cached
+   * wait queue or the wait queue on RAM memory
+   *
+   * @access private
+   *
+   * @return {undefined}
+   */putInChatWaitQueue=function putInChatWaitQueue(item,callback){if(item.uniqueId!==''){var waitQueueUniqueId=typeof item.uniqueId=='string'?item.uniqueId:Array.isArray(item.uniqueId)?item.uniqueId[0]:null;if(waitQueueUniqueId!=null){_sdkParams.sdkParams.consoleLogging&&console.log('Forced to use in memory cache');item.uniqueId=waitQueueUniqueId;chatWaitQueue.push(item);callback&&callback();}}},getItemFromChatWaitQueue=function getItemFromChatWaitQueue(uniqueId,callback){for(var i=0;i<chatWaitQueue.length;i++){if(chatWaitQueue[i].uniqueId===uniqueId){var decryptedEnqueuedMessage=chatWaitQueue[i];var time=new Date().getTime();var message=formatDataToMakeMessage(decryptedEnqueuedMessage.threadId,{uniqueId:decryptedEnqueuedMessage.uniqueId,ownerId:_store.store.user().id,message:decryptedEnqueuedMessage.content,metadata:decryptedEnqueuedMessage.metadata,systemMetadata:decryptedEnqueuedMessage.systemMetadata,replyInfo:decryptedEnqueuedMessage.replyInfo,forwardInfo:decryptedEnqueuedMessage.forwardInfo,participant:_store.store.user(),time:time,timeNanos:time%1000*1000000});callback&&callback(message);break;}}},/**
+   * Put an Item inside Chat Upload Queue
+   *
+   * This function takes an item and puts it
+   * inside Chat upload Queue
+   *
+   * @access private
+   *
+   * @return {undefined}
+   */putInChatUploadQueue=function putInChatUploadQueue(params,callback){chatUploadQueue.push(params);callback&&callback();},/**
+   * Transfer an Item from uploadQueue to sendQueue
+   *
+   * This function takes an uniqueId, finds that item
+   * inside uploadQ. takes it's uploaded metadata and
+   * attaches them to the message. Finally removes item
+   * from uploadQueue and pushes it inside sendQueue
+   *
+   * @access private
+   *
+   * @return {undefined}
+   */transferFromUploadQToSendQ=function transferFromUploadQToSendQ(threadId,uniqueId,metadata,callback){getChatUploadQueue(threadId,function(uploadQueue){for(var i=0;i<uploadQueue.length;i++){if(uploadQueue[i].message.uniqueId===uniqueId){try{var message=uploadQueue[i].message,callbacks=uploadQueue[i].callbacks;var oldMetadata=JSON.parse(message.metadata),newMetadata=JSON.parse(metadata);var finalMetaData=objectDeepMerger(newMetadata,oldMetadata);if(typeof message!=='undefined'&&message&&typeof message.content!=='undefined'&&message.content&&message.content.hasOwnProperty('message')){message.content.message['metadata']=JSON.stringify(finalMetaData);}if(typeof message!=='undefined'&&message&&typeof message.content!=='undefined'&&message.content&&message.content.hasOwnProperty('metadata')){message.content['metadata']=JSON.stringify(finalMetaData);}if(message.chatMessageVOType===21){getImageDownloadLinkFromPodspace({hashCode:finalMetaData.fileHash},function(result){if(!result.hasError){message.content.image=result.downloadUrl;}});}message.metadata=JSON.stringify(finalMetaData);}catch(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);}deleteFromChatUploadQueue(uploadQueue[i],function(){putInChatSendQueue({message:message,callbacks:callbacks},function(){callback&&callback();},true);});break;}}});},/**
+   * Decrypt Encrypted strings using secret key and salt
+   *
+   * @param string    String to get decrypted
+   * @param secret    Cache Secret
+   * @param salt      Salt used while string was getting encrypted
+   *
+   * @return  string  Decrypted string
+   */chatDecrypt=function chatDecrypt(string,secret,salt){var decryptedString=_utility["default"].decrypt(string,secret,salt);if(!decryptedString.hasError){return decryptedString.result;}else{/**
+       * If there is a problem with decrypting cache
+       * Some body is trying to decrypt cache with wrong key
+       * or cacheSecret has been expired, so we should truncate
+       * cache databases to avoid attacks.
+       *
+       * But before deleting cache database we should make
+       * sure that cacheSecret has been retrieved from server
+       * and is ready. If so, and cache is still not decryptable,
+       * there is definitely something wrong with the key; so we are
+       * good to go and delete cache databases.
+       */if(typeof secret!=='undefined'&&secret!==''){if(db){db.threads.where('owner').equals(parseInt(_store.store.user().id)).count().then(function(threadsCount){if(threadsCount>0){clearCacheDatabasesOfUser(function(){_sdkParams.sdkParams.consoleLogging&&console.log('All cache databases have been cleared.');});}})["catch"](function(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);});}}return'{}';}},objectDeepMerger=function objectDeepMerger(){var target={};var merger=function merger(obj){for(var prop in obj){if(obj.hasOwnProperty(prop)){if(Object.prototype.toString.call(obj[prop])==='[object Object]'){target[prop]=objectDeepMerger(target[prop],obj[prop]);}else{target[prop]=obj[prop];}}}};for(var i=0;i<arguments.length;i++){merger(i<0||arguments.length<=i?undefined:arguments[i]);}return target;},setRoleToUser=function setRoleToUser(params,callback){var setRoleData={chatMessageVOType:_constants.chatMessageVOTypes.SET_ROLE_TO_USER,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 content:[],pushMsgType:3,token:_sdkParams.sdkParams.token};if(params){if(parseInt(params.threadId)>0){setRoleData.subjectId=params.threadId;}if(params.admins&&Array.isArray(params.admins)){for(var i=0;i<params.admins.length;i++){var temp={};if(parseInt(params.admins[i].userId)>0){temp.userId=params.admins[i].userId;}if(Array.isArray(params.admins[i].roles)){temp.roles=params.admins[i].roles;}setRoleData.content.push(temp);}setRoleData.content=JSON.stringify(setRoleData.content);}}return(0,_messaging.messenger)().sendMessage(setRoleData,{onResult:function onResult(result){callback&&callback(result);}});},removeRoleFromUser=function removeRoleFromUser(params,callback){var setAdminData={chatMessageVOType:_constants.chatMessageVOTypes.REMOVE_ROLE_FROM_USER,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 content:[],pushMsgType:3,token:_sdkParams.sdkParams.token};if(params){if(parseInt(params.threadId)>0){setAdminData.subjectId=params.threadId;}if(params.admins&&Array.isArray(params.admins)){for(var i=0;i<params.admins.length;i++){var temp={};if(parseInt(params.admins[i].userId)>0){temp.userId=params.admins[i].userId;}if(Array.isArray(params.admins[i].roles)){temp.roles=params.admins[i].roles;}setAdminData.content.push(temp);}setAdminData.content=JSON.stringify(setAdminData.content);}}return(0,_messaging.messenger)().sendMessage(setAdminData,{onResult:function onResult(result){callback&&callback(result);}});},unPinMessage=function unPinMessage(params,callback){return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.UNPIN_MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 subjectId:params.messageId,content:JSON.stringify({'notifyAll':typeof params.notifyAll==='boolean'?params.notifyAll:false}),pushMsgType:3,token:_sdkParams.sdkParams.token},{onResult:function onResult(result){callback&&callback(result);}});},chatUploadHandler=function chatUploadHandler(params,callbacks){if(typeof params.file!=='undefined'){var fileName,fileType,fileSize,fileExtension,chatUploadHandlerResult={},metadata={file:{}},fileUniqueId=params.fileUniqueId;fileName=params.file.name;fileType=params.file.type;fileSize=params.file.size;fileExtension=params.file.name.split('.').pop();_events.chatEvents.fireEvent('fileUploadEvents',{threadId:params.threadId,uniqueId:fileUniqueId,state:'NOT_STARTED',progress:0,fileInfo:{fileName:fileName,fileSize:fileSize},fileObject:params.file});/**
-                 * File is a valid Image
-                 * Should upload to image server
-                 */if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){chatUploadHandlerResult.image=params.file;if(params.xC>=0){fileUploadParams.xC=params.xC;}if(params.yC>=0){fileUploadParams.yC=params.yC;}if(params.hC>0){fileUploadParams.hC=params.hC;}if(params.wC>0){fileUploadParams.wC=params.wC;}}else{chatUploadHandlerResult.file=params.file;}metadata['file']['originalName']=fileName;metadata['file']['mimeType']=fileType;metadata['file']['size']=fileSize;chatUploadHandlerResult.threadId=params.threadId;chatUploadHandlerResult.uniqueId=fileUniqueId;chatUploadHandlerResult.fileObject=params.file;chatUploadHandlerResult.originalFileName=fileName;callbacks&&callbacks(chatUploadHandlerResult,metadata,fileType,fileExtension);}else{_events.chatEvents.fireEvent('error',{code:6302,message:CHAT_ERRORS[6302]});}return{uniqueId:fileUniqueId,threadId:params.threadId,participant:_store.store.user(),content:{caption:params.content,file:{uniqueId:fileUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},cancelFileDownload=function cancelFileDownload(params,callback){if(params){if(typeof params.uniqueId=='string'){var uniqueId=params.uniqueId;httpRequestObject[eval('uniqueId')]&&httpRequestObject[eval('uniqueId')].abort();httpRequestObject[eval('uniqueId')]&&delete httpRequestObject[eval('uniqueId')];callback&&callback(uniqueId);}}},cancelFileUpload=function cancelFileUpload(params,callback){if(params){if(typeof params.uniqueId=='string'){var uniqueId=params.uniqueId;httpRequestObject[eval('uniqueId')]&&httpRequestObject[eval('uniqueId')].abort();httpRequestObject[eval('uniqueId')]&&delete httpRequestObject[eval('uniqueId')];deleteFromChatUploadQueue({message:{uniqueId:uniqueId}},callback);}}},cancelMessage=function cancelMessage(uniqueId,callback){deleteFromChatSentQueue({message:{uniqueId:uniqueId}},function(){deleteFromChatWaitQueue({uniqueId:uniqueId},callback);});},mapReverse=function mapReverse(params,callback){var data={};if(params){if(parseFloat(params.lat)>0){data.lat=params.lat;}if(parseFloat(params.lng)>0){data.lng=params.lng;}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.REVERSE,method:'GET',data:data,headers:{'Api-Key':_sdkParams.sdkParams.mapApiKey}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:result.hasError,cache:result.cache,errorMessage:result.message,errorCode:result.errorCode,result:responseData};callback&&callback(returnData);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});},mapSearch=function mapSearch(params,callback){var data={};if(params){if(typeof params.term==='string'){data.term=params.term;}if(parseFloat(params.lat)>0){data.lat=params.lat;}if(parseFloat(params.lng)>0){data.lng=params.lng;}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.SEARCH,method:'GET',data:data,headers:{'Api-Key':_sdkParams.sdkParams.mapApiKey}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:result.hasError,cache:result.cache,errorMessage:result.message,errorCode:result.errorCode,result:responseData};callback&&callback(returnData);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});},mapRouting=function mapRouting(params,callback){var data={};if(params){if(typeof params.alternative==='boolean'){data.alternative=params.alternative;}else{data.alternative=true;}if((0,_typeof2["default"])(params.origin)==='object'){if(parseFloat(params.origin.lat)>0&&parseFloat(params.origin.lng)){data.origin=params.origin.lat+','+parseFloat(params.origin.lng);}else{_sdkParams.sdkParams.consoleLogging&&console.log('No origin has been selected!');}}if((0,_typeof2["default"])(params.destination)==='object'){if(parseFloat(params.destination.lat)>0&&parseFloat(params.destination.lng)){data.destination=params.destination.lat+','+parseFloat(params.destination.lng);}else{_sdkParams.sdkParams.consoleLogging&&console.log('No destination has been selected!');}}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.ROUTING,method:'GET',data:data,headers:{'Api-Key':_sdkParams.sdkParams.mapApiKey}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:result.hasError,cache:result.cache,errorMessage:result.message,errorCode:result.errorCode,result:responseData};callback&&callback(returnData);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});},mapStaticImage=function mapStaticImage(params,callback){var data={},url=SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.STATIC_IMAGE,hasError=false;if(params){if(typeof params.type==='string'){data.type=params.type;}else{data.type='standard-night';}if(parseInt(params.zoom)>0){data.zoom=params.zoom;}else{data.zoom=15;}if(parseInt(params.width)>0){data.width=params.width;}else{data.width=800;}if(parseInt(params.height)>0){data.height=params.height;}else{data.height=600;}if((0,_typeof2["default"])(params.center)==='object'){if(parseFloat(params.center.lat)>0&&parseFloat(params.center.lng)){data.center=params.center.lat+','+parseFloat(params.center.lng);}else{hasError=true;_events.chatEvents.fireEvent('error',{code:6700,message:CHAT_ERRORS[6700],error:undefined});}}else{hasError=true;_events.chatEvents.fireEvent('error',{code:6700,message:CHAT_ERRORS[6700],error:undefined});}data.key=_sdkParams.sdkParams.mapApiKey;}var keys=Object.keys(data);if(keys.length>0){url+='?';for(var i=0;i<keys.length;i++){var key=keys[i];url+=key+'='+data[key];if(i<keys.length-1){url+='&';}}}var returnData={hasError:hasError,cache:false,errorMessage:hasError?CHAT_ERRORS[6700]:'',errorCode:hasError?6700:undefined,result:{link:!hasError?url:''}};callback&&callback(returnData);},//TODO Change Node Version
+       * File is a valid Image
+       * Should upload to image server
+       */if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){chatUploadHandlerResult.image=params.file;if(params.xC>=0){fileUploadParams.xC=params.xC;}if(params.yC>=0){fileUploadParams.yC=params.yC;}if(params.hC>0){fileUploadParams.hC=params.hC;}if(params.wC>0){fileUploadParams.wC=params.wC;}}else{chatUploadHandlerResult.file=params.file;}metadata['file']['originalName']=fileName;metadata['file']['mimeType']=fileType;metadata['file']['size']=fileSize;chatUploadHandlerResult.threadId=params.threadId;chatUploadHandlerResult.uniqueId=fileUniqueId;chatUploadHandlerResult.fileObject=params.file;chatUploadHandlerResult.originalFileName=fileName;callbacks&&callbacks(chatUploadHandlerResult,metadata,fileType,fileExtension);}else{_events.chatEvents.fireEvent('error',{code:6302,message:CHAT_ERRORS[6302]});}return{uniqueId:fileUniqueId,threadId:params.threadId,participant:_store.store.user(),content:{caption:params.content,file:{uniqueId:fileUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},cancelFileDownload=function cancelFileDownload(params,callback){if(params){if(typeof params.uniqueId=='string'){var uniqueId=params.uniqueId;httpRequestObject[eval('uniqueId')]&&httpRequestObject[eval('uniqueId')].abort();httpRequestObject[eval('uniqueId')]&&delete httpRequestObject[eval('uniqueId')];callback&&callback(uniqueId);}}},cancelFileUpload=function cancelFileUpload(params,callback){if(params){if(typeof params.uniqueId=='string'){var uniqueId=params.uniqueId;httpRequestObject[eval('uniqueId')]&&httpRequestObject[eval('uniqueId')].abort();httpRequestObject[eval('uniqueId')]&&delete httpRequestObject[eval('uniqueId')];deleteFromChatUploadQueue({message:{uniqueId:uniqueId}},callback);}}},cancelMessage=function cancelMessage(uniqueId,callback){deleteFromChatSentQueue({message:{uniqueId:uniqueId}},function(){deleteFromChatWaitQueue({uniqueId:uniqueId},callback);});},mapReverse=function mapReverse(params,callback){var data={};if(params){if(parseFloat(params.lat)>0){data.lat=params.lat;}if(parseFloat(params.lng)>0){data.lng=params.lng;}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.REVERSE,method:'GET',data:data,headers:{'Api-Key':_sdkParams.sdkParams.mapApiKey}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:result.hasError,cache:result.cache,errorMessage:result.message,errorCode:result.errorCode,result:responseData};callback&&callback(returnData);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});},mapSearch=function mapSearch(params,callback){var data={};if(params){if(typeof params.term==='string'){data.term=params.term;}if(parseFloat(params.lat)>0){data.lat=params.lat;}if(parseFloat(params.lng)>0){data.lng=params.lng;}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.SEARCH,method:'GET',data:data,headers:{'Api-Key':_sdkParams.sdkParams.mapApiKey}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:result.hasError,cache:result.cache,errorMessage:result.message,errorCode:result.errorCode,result:responseData};callback&&callback(returnData);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});},mapRouting=function mapRouting(params,callback){var data={};if(params){if(typeof params.alternative==='boolean'){data.alternative=params.alternative;}else{data.alternative=true;}if((0,_typeof2["default"])(params.origin)==='object'){if(parseFloat(params.origin.lat)>0&&parseFloat(params.origin.lng)){data.origin=params.origin.lat+','+parseFloat(params.origin.lng);}else{_sdkParams.sdkParams.consoleLogging&&console.log('No origin has been selected!');}}if((0,_typeof2["default"])(params.destination)==='object'){if(parseFloat(params.destination.lat)>0&&parseFloat(params.destination.lng)){data.destination=params.destination.lat+','+parseFloat(params.destination.lng);}else{_sdkParams.sdkParams.consoleLogging&&console.log('No destination has been selected!');}}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.ROUTING,method:'GET',data:data,headers:{'Api-Key':_sdkParams.sdkParams.mapApiKey}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:result.hasError,cache:result.cache,errorMessage:result.message,errorCode:result.errorCode,result:responseData};callback&&callback(returnData);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});},mapStaticImage=function mapStaticImage(params,callback){var data={},url=SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.STATIC_IMAGE,hasError=false;if(params){if(typeof params.type==='string'){data.type=params.type;}else{data.type='standard-night';}if(parseInt(params.zoom)>0){data.zoom=params.zoom;}else{data.zoom=15;}if(parseInt(params.width)>0){data.width=params.width;}else{data.width=800;}if(parseInt(params.height)>0){data.height=params.height;}else{data.height=600;}if((0,_typeof2["default"])(params.center)==='object'){if(parseFloat(params.center.lat)>0&&parseFloat(params.center.lng)){data.center=params.center.lat+','+parseFloat(params.center.lng);}else{hasError=true;_events.chatEvents.fireEvent('error',{code:6700,message:CHAT_ERRORS[6700],error:undefined});}}else{hasError=true;_events.chatEvents.fireEvent('error',{code:6700,message:CHAT_ERRORS[6700],error:undefined});}data.key=_sdkParams.sdkParams.mapApiKey;}var keys=Object.keys(data);if(keys.length>0){url+='?';for(var i=0;i<keys.length;i++){var key=keys[i];url+=key+'='+data[key];if(i<keys.length-1){url+='&';}}}var returnData={hasError:hasError,cache:false,errorMessage:hasError?CHAT_ERRORS[6700]:'',errorCode:hasError?6700:undefined,result:{link:!hasError?url:''}};callback&&callback(returnData);},//TODO Change Node Version
 getImageFormUrl=function getImageFormUrl(url,uniqueId,callback){_sdkParams.sdkParams.getImageFromLinkObjects[uniqueId]=new Image();_sdkParams.sdkParams.getImageFromLinkObjects[uniqueId].setAttribute('crossOrigin','anonymous');_sdkParams.sdkParams.getImageFromLinkObjects[uniqueId].onload=function(){var canvas=document.createElement("canvas");canvas.width=this.width;canvas.height=this.height;var ctx=canvas.getContext("2d");ctx.drawImage(this,0,0);var dataURI=canvas.toDataURL("image/jpg");var byteString;if(dataURI.split(',')[0].indexOf('base64')>=0)byteString=atob(dataURI.split(',')[1]);else byteString=unescape(dataURI.split(',')[1]);var mimeString=dataURI.split(',')[0].split(':')[1].split(';')[0];var ia=new Uint8Array(byteString.length);for(var i=0;i<byteString.length;i++){ia[i]=byteString.charCodeAt(i);}delete _sdkParams.sdkParams.getImageFromLinkObjects[uniqueId];return callback(new Blob([ia],{type:mimeString}));};_sdkParams.sdkParams.getImageFromLinkObjects[uniqueId].src=url;};/******************************************************
-     *             P U B L I C   M E T H O D S            *
-     ******************************************************/var publicized={};publicized.on=_events.chatEvents.on;publicized.off=_events.chatEvents.off;publicized.getPeerId=function(){return peerId;};publicized.getCurrentUser=function(){return _store.store.user();};publicized.getUserInfo=function(callback){return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.USER_INFO,typeCode:_sdkParams.sdkParams.generalTypeCode},{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;var currentUser=formatDataToMakeUser(messageContent);returnData.result={user:currentUser};callback&&callback(returnData);}}});};publicized.getThreads=getThreads;publicized.getAllThreads=getAllThreads;publicized.getHistory=getHistory;publicized.getAllMentionedMessages=function(params,callback){return getHistory({threadId:params.threadId,allMentioned:true,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
+   *             P U B L I C   M E T H O D S            *
+   ******************************************************/var publicized={};publicized.on=_events.chatEvents.on;publicized.off=_events.chatEvents.off;publicized.getPeerId=function(){return peerId;};publicized.getCurrentUser=function(){return _store.store.user();};publicized.getUserInfo=function(callback){return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.USER_INFO,typeCode:_sdkParams.sdkParams.generalTypeCode},{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;var currentUser=formatDataToMakeUser(messageContent);returnData.result={user:currentUser};callback&&callback(returnData);}}});};publicized.getThreads=getThreads;publicized.getAllThreads=getAllThreads;publicized.getHistory=getHistory;publicized.getAllMentionedMessages=function(params,callback){return getHistory({threadId:params.threadId,allMentioned:true,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 count:params.count||25,offset:params.offset||0,cache:false,queues:{uploading:false,sending:false}},callback);};publicized.getUnreadMentionedMessages=function(params,callback){return getHistory({threadId:params.threadId,unreadMentioned:true,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 count:params.count||25,offset:params.offset||0,cache:false,queues:{uploading:false,sending:false}},callback);};publicized.getAllUnreadMessagesCount=function(params,callback){return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.ALL_UNREAD_MESSAGE_COUNT,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 content:JSON.stringify({'mute':typeof params.countMuteThreads==='boolean'?params.countMuteThreads:false}),pushMsgType:3,token:_sdkParams.sdkParams.token},{onResult:function onResult(result){callback&&callback(result);}});};/**
-     * Get Contacts
-     *
-     * Gets contacts list from chat server
-     *
-     * @access pubic
-     *
-     * @param {int}     count           Count of objects to get
-     * @param {int}     offset          Offset of select Query
-     * @param {string}  query           Search in contacts list to get (search LIKE firstName, lastName, email)
-     *
-     * @return {object} Instant Response
-     */publicized.getContacts=function(params,callback){var count=25,offset=0,content={},returnCache=false;if(params){if(parseInt(params.count)>0){count=parseInt(params.count);}if(parseInt(params.offset)>0){offset=parseInt(params.offset);}if(typeof params.query==='string'){content.query=params.query;}if(typeof params.email==='string'){content.email=params.email;}if(typeof params.cellphoneNumber==='string'){content.cellphoneNumber=params.cellphoneNumber;}if(parseInt(params.contactId)>0){content.id=params.contactId;}if(typeof params.uniqueId==='string'){content.uniqueId=params.uniqueId;}if(typeof params.username==='string'){content.username=params.username;}if(typeof params.coreUserId!=="undefined"){content.coreUserId=params.coreUserId;}var functionLevelCache=typeof params.cache=='boolean'?params.cache:true;}content.size=count;content.offset=offset;var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.GET_CONTACTS,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
+   * Get Contacts
+   *
+   * Gets contacts list from chat server
+   *
+   * @access pubic
+   *
+   * @param {int}     count           Count of objects to get
+   * @param {int}     offset          Offset of select Query
+   * @param {string}  query           Search in contacts list to get (search LIKE firstName, lastName, email)
+   *
+   * @return {object} Instant Response
+   */publicized.getContacts=function(params,callback){var count=25,offset=0,content={},returnCache=false;if(params){if(parseInt(params.count)>0){count=parseInt(params.count);}if(parseInt(params.offset)>0){offset=parseInt(params.offset);}if(typeof params.query==='string'){content.query=params.query;}if(typeof params.email==='string'){content.email=params.email;}if(typeof params.cellphoneNumber==='string'){content.cellphoneNumber=params.cellphoneNumber;}if(parseInt(params.contactId)>0){content.id=params.contactId;}if(typeof params.uniqueId==='string'){content.uniqueId=params.uniqueId;}if(typeof params.username==='string'){content.username=params.username;}if(typeof params.coreUserId!=="undefined"){content.coreUserId=params.coreUserId;}var functionLevelCache=typeof params.cache=='boolean'?params.cache:true;}content.size=count;content.offset=offset;var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.GET_CONTACTS,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 content:content};/**
-         * Retrieve Contacts from server
-         */return(0,_messaging.messenger)().sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={contacts:[],contentCount:result.contentCount,hasNext:offset+count<result.contentCount&&messageLength>0,nextOffset:offset*1+messageLength*1},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;}callback&&callback(returnData);/**
-                 * Delete callback so if server pushes response before
-                 * cache, cache won't send data again
-                 */callback=undefined;if(!returnData.hasError&&returnCache){_events.chatEvents.fireEvent('contactEvents',{type:'CONTACTS_LIST_CHANGE',result:returnData.result});}}});};publicized.getThreadParticipants=getThreadParticipants;/**
-     * Get Thread Admins
-     *
-     * Gets admins list of given thread
-     *
-     * @access pubic
-     *
-     * @param {int}     threadId        Id of thread which you want to get admins of
-     *
-     * @return {object} Instant Response
-     */publicized.getThreadAdmins=function(params,callback){getThreadParticipants({threadId:params.threadId,admin:true,cache:false},callback);};publicized.addParticipants=function(params,callback){/**
-         * + AddParticipantsRequest   {object}
-         *    - subjectId             {int}
-         *    + content               {list} List of CONTACT IDs or inviteeVO Objects
-         *    - uniqueId              {string}
-         */var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.ADD_PARTICIPANT,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
+     * Retrieve Contacts from server
+     */return(0,_messaging.messenger)().sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={contacts:[],contentCount:result.contentCount,hasNext:offset+count<result.contentCount&&messageLength>0,nextOffset:offset*1+messageLength*1},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;}callback&&callback(returnData);/**
+         * Delete callback so if server pushes response before
+         * cache, cache won't send data again
+         */callback=undefined;if(!returnData.hasError&&returnCache){_events.chatEvents.fireEvent('contactEvents',{type:'CONTACTS_LIST_CHANGE',result:returnData.result});}}});};publicized.getThreadParticipants=_threadParticipantsMethods.getThreadParticipants;/**
+   * Get Thread Admins
+   *
+   * Gets admins list of given thread
+   *
+   * @access pubic
+   *
+   * @param {int}     threadId        Id of thread which you want to get admins of
+   *
+   * @return {object} Instant Response
+   */publicized.getThreadAdmins=function(params,callback){(0,_threadParticipantsMethods.getThreadParticipants)({threadId:params.threadId,admin:true,cache:false},callback);};publicized.addParticipants=function(params,callback){/**
+     * + AddParticipantsRequest   {object}
+     *    - subjectId             {int}
+     *    + content               {list} List of CONTACT IDs or inviteeVO Objects
+     *    - uniqueId              {string}
+     */var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.ADD_PARTICIPANT,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 content:[]};if(params){if(parseInt(params.threadId)>0){sendMessageParams.subjectId=params.threadId;}if(Array.isArray(params.contactIds)){sendMessageParams.content=params.contactIds;}if(Array.isArray(params.usernames)){sendMessageParams.content=[];for(var i=0;i<params.usernames.length;i++){sendMessageParams.content.push({id:params.usernames[i],idType:_constants.inviteeVOidTypes.TO_BE_USER_USERNAME});}}if(Array.isArray(params.coreUserids)){sendMessageParams.content=[];for(var i=0;i<params.coreUserids.length;i++){sendMessageParams.content.push({id:params.coreUserids[i],idType:_constants.inviteeVOidTypes.TO_BE_CORE_USER_ID});}}}return(0,_messaging.messenger)().sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}callback&&callback(returnData);}});};publicized.removeParticipants=function(params,callback){/**
-         * + RemoveParticipantsRequest    {object}
-         *    - subjectId                 {int}
-         *    + content                   {list} List of PARTICIPANT IDs from Thread's Participants object
-         *       -id                      {int}
-         *    - uniqueId                  {string}
-         */var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.REMOVE_PARTICIPANT,typeCode:_sdkParams.sdkParams.generalTypeCode//params.typeCode
+     * + RemoveParticipantsRequest    {object}
+     *    - subjectId                 {int}
+     *    + content                   {list} List of PARTICIPANT IDs from Thread's Participants object
+     *       -id                      {int}
+     *    - uniqueId                  {string}
+     */var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.REMOVE_PARTICIPANT,typeCode:_sdkParams.sdkParams.generalTypeCode//params.typeCode
 };if(params){if(parseInt(params.threadId)>0){sendMessageParams.subjectId=params.threadId;}if(Array.isArray(params.usernames)){sendMessageParams.content=[];for(var i=0;i<params.usernames.length;i++){sendMessageParams.content.push({id:params.usernames[i],idType:_constants.inviteeVOidTypes.TO_BE_USER_USERNAME});}}if(Array.isArray(params.participantIds)){sendMessageParams.content=params.participantIds;}}return(0,_messaging.messenger)().sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}callback&&callback(returnData);}});};publicized.getCurrentUserRoles=getCurrentUserRoles;publicized.leaveThread=function(params,callback){/**
-         * + LeaveThreadRequest    {object}
-         *    - subjectId          {int}
-         *    - uniqueId           {string}
-         */var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.LEAVE_THREAD,typeCode:_sdkParams.sdkParams.generalTypeCode//params.typeCode
+     * + LeaveThreadRequest    {object}
+     *    - subjectId          {int}
+     *    - uniqueId           {string}
+     */var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.LEAVE_THREAD,typeCode:_sdkParams.sdkParams.generalTypeCode//params.typeCode
 };if(params){if(parseInt(params.threadId)>0){sendMessageParams.subjectId=params.threadId;}if(typeof params.clearHistory==='boolean'){sendMessageParams.content={clearHistory:params.clearHistory};}else{sendMessageParams.content={clearHistory:true};}}return(0,_messaging.messenger)().sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}callback&&callback(returnData);}});};publicized.createThread=function(params,callback){/**
-         * + CreateThreadRequest      {object}
-         *    + invitees              {object}
-         *       -id                  {string}
-         *       -idType              {int} ** inviteeVOidTypes
-         *    - title                 {string}
-         *    - type                  {int} ** createThreadTypes
-         *    - image                 {string}
-         *    - description           {string}
-         *    - metadata              {string}
-         *    - uniqueName            {string}
-         *    + message               {object}
-         *       -text                {string}
-         *       -type                {int}
-         *       -repliedTo           {int}
-         *       -uniqueId            {string}
-         *       -metadata            {string}
-         *       -systemMetadata      {string}
-         *       -forwardedMessageIds {string}
-         *       -forwardedUniqueIds  {string}
-         */var content={};if(params){if(typeof params.title==='string'){content.title=params.title;}if(typeof params.type==='string'){var threadType=params.type;content.type=_constants.createThreadTypes[threadType];}if(typeof params.uniqueName==='string'){content.uniqueName=params.uniqueName;}if(Array.isArray(params.invitees)){content.invitees=[];for(var i=0;i<params.invitees.length;i++){var tempInvitee=formatDataToMakeInvitee(params.invitees[i]);if(tempInvitee){content.invitees.push(tempInvitee);}}}if(typeof params.image==='string'){content.image=params.image;}if(typeof params.description==='string'){content.description=params.description;}if(typeof params.metadata==='string'){content.metadata=params.metadata;}else if((0,_typeof2["default"])(params.metadata)==='object'){try{content.metadata=JSON.stringify(params.metadata);}catch(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);}}if((0,_typeof2["default"])(params.message)=='object'){content.message={};if(typeof params.message.text==='string'){content.message.text=params.message.text;}if(typeof params.message.uniqueId==='string'){content.message.uniqueId=params.message.uniqueId;}if(params.message.type>0){content.message.messageType=params.message.type;}if(params.message.repliedTo>0){content.message.repliedTo=params.message.repliedTo;}if(typeof params.message.metadata==='string'){content.message.metadata=params.message.metadata;}else if((0,_typeof2["default"])(params.message.metadata)==='object'){content.message.metadata=JSON.stringify(params.message.metadata);}if(typeof params.message.systemMetadata==='string'){content.message.systemMetadata=params.message.systemMetadata;}else if((0,_typeof2["default"])(params.message.systemMetadata)==='object'){content.message.systemMetadata=JSON.stringify(params.message.systemMetadata);}if(Array.isArray(params.message.forwardedMessageIds)){content.message.forwardedMessageIds=params.message.forwardedMessageIds;content.message.forwardedUniqueIds=[];for(var i=0;i<params.message.forwardedMessageIds.length;i++){content.message.forwardedUniqueIds.push(_utility["default"].generateUUID());}}}}var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.CREATE_THREAD,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
+     * + CreateThreadRequest      {object}
+     *    + invitees              {object}
+     *       -id                  {string}
+     *       -idType              {int} ** inviteeVOidTypes
+     *    - title                 {string}
+     *    - type                  {int} ** createThreadTypes
+     *    - image                 {string}
+     *    - description           {string}
+     *    - metadata              {string}
+     *    - uniqueName            {string}
+     *    + message               {object}
+     *       -text                {string}
+     *       -type                {int}
+     *       -repliedTo           {int}
+     *       -uniqueId            {string}
+     *       -metadata            {string}
+     *       -systemMetadata      {string}
+     *       -forwardedMessageIds {string}
+     *       -forwardedUniqueIds  {string}
+     */var content={};if(params){if(typeof params.title==='string'){content.title=params.title;}if(typeof params.type==='string'){var threadType=params.type;content.type=_constants.createThreadTypes[threadType];}if(typeof params.uniqueName==='string'){content.uniqueName=params.uniqueName;}if(Array.isArray(params.invitees)){content.invitees=[];for(var i=0;i<params.invitees.length;i++){var tempInvitee=formatDataToMakeInvitee(params.invitees[i]);if(tempInvitee){content.invitees.push(tempInvitee);}}}if(typeof params.image==='string'){content.image=params.image;}if(typeof params.description==='string'){content.description=params.description;}if(typeof params.metadata==='string'){content.metadata=params.metadata;}else if((0,_typeof2["default"])(params.metadata)==='object'){try{content.metadata=JSON.stringify(params.metadata);}catch(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);}}if((0,_typeof2["default"])(params.message)=='object'){content.message={};if(typeof params.message.text==='string'){content.message.text=params.message.text;}if(typeof params.message.uniqueId==='string'){content.message.uniqueId=params.message.uniqueId;}if(params.message.type>0){content.message.messageType=params.message.type;}if(params.message.repliedTo>0){content.message.repliedTo=params.message.repliedTo;}if(typeof params.message.metadata==='string'){content.message.metadata=params.message.metadata;}else if((0,_typeof2["default"])(params.message.metadata)==='object'){content.message.metadata=JSON.stringify(params.message.metadata);}if(typeof params.message.systemMetadata==='string'){content.message.systemMetadata=params.message.systemMetadata;}else if((0,_typeof2["default"])(params.message.systemMetadata)==='object'){content.message.systemMetadata=JSON.stringify(params.message.systemMetadata);}if(Array.isArray(params.message.forwardedMessageIds)){content.message.forwardedMessageIds=params.message.forwardedMessageIds;content.message.forwardedUniqueIds=[];for(var i=0;i<params.message.forwardedMessageIds.length;i++){content.message.forwardedUniqueIds.push(_utility["default"].generateUUID());}}}}var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.CREATE_THREAD,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 content:content};return(0,_messaging.messenger)().sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}callback&&callback(returnData);}});};publicized.createSelfThread=function(params,callback){var content={type:_constants.createThreadTypes['SELF']};if(params){if(typeof params.description==='string'){content.description=params.description;}if(typeof params.metadata==='string'){content.metadata=params.metadata;}else if((0,_typeof2["default"])(params.metadata)==='object'){try{content.metadata=JSON.stringify(params.metadata);}catch(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);}}if((0,_typeof2["default"])(params.message)=='object'){content.message={};if(typeof params.message.text==='string'){content.message.text=params.message.text;}if(typeof params.message.uniqueId==='string'){content.message.uniqueId=params.message.uniqueId;}if(params.message.type>0){content.message.messageType=params.message.type;}if(params.message.repliedTo>0){content.message.repliedTo=params.message.repliedTo;}if(typeof params.message.metadata==='string'){content.message.metadata=params.message.metadata;}else if((0,_typeof2["default"])(params.message.metadata)==='object'){content.message.metadata=JSON.stringify(params.message.metadata);}if(typeof params.message.systemMetadata==='string'){content.message.systemMetadata=params.message.systemMetadata;}else if((0,_typeof2["default"])(params.message.systemMetadata)==='object'){content.message.systemMetadata=JSON.stringify(params.message.systemMetadata);}if(Array.isArray(params.message.forwardedMessageIds)){content.message.forwardedMessageIds=params.message.forwardedMessageIds;content.message.forwardedUniqueIds=[];for(var i=0;i<params.message.forwardedMessageIds.length;i++){content.message.forwardedUniqueIds.push(_utility["default"].generateUUID());}}}}var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.CREATE_THREAD,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 content:content};return(0,_messaging.messenger)().sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}callback&&callback(returnData);}});};publicized.replyTextMessagePrivately=function(params,callbacks){var metadata={},uniqueId;if(typeof params.uniqueId!=='undefined'){uniqueId=params.uniqueId;}else{uniqueId=_utility["default"].generateUUID();}var sendContentParams={text:filterXSS(params.textMessage)};if(typeof params.invitees!=='undefined'&&params.invitees){sendContentParams.invitees=params.invitees;}if(typeof params.targetThreadId!=='undefined'&&params.targetThreadId){sendContentParams.targetThreadId=params.targetThreadId;}putInChatSendQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.REPLY_PRIVATELY,typeCode:_sdkParams.sdkParams.generalTypeCode,messageType:1,subjectId:params.threadId,repliedTo:params.repliedTo,content:sendContentParams,uniqueId:uniqueId,systemMetadata:JSON.stringify(params.systemMetadata),metadata:JSON.stringify(params.metadata)},callbacks:callbacks},function(){chatSendQueueHandler();},true);return{uniqueId:uniqueId,threadId:params.threadId,participant:_store.store.user(),content:sendContentParams};};publicized.sendTextMessage=function(params,callbacks){var metadata={},uniqueId;if(typeof params.uniqueId!=='undefined'){uniqueId=params.uniqueId;}else{uniqueId=_utility["default"].generateUUID();}putInChatSendQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 messageType:params.messageType&&typeof params.messageType.toUpperCase()!=='undefined'&&_constants.chatMessageTypes[params.messageType.toUpperCase()]>0?_constants.chatMessageTypes[params.messageType.toUpperCase()]:_constants.chatMessageTypes.TEXT,subjectId:params.threadId,repliedTo:params.repliedTo,content:filterXSS(params.textMessage),uniqueId:uniqueId,systemMetadata:JSON.stringify(params.systemMetadata),metadata:JSON.stringify(metadata),pushMsgType:3},callbacks:callbacks},function(){chatSendQueueHandler();});return{uniqueId:uniqueId,threadId:params.threadId,participant:_store.store.user(),content:params.content};};publicized.sendBotMessage=function(params,callbacks){var metadata={};return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.BOT_MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 subjectId:params.messageId,content:params.content,uniqueId:params.uniqueId,metadata:metadata,pushMsgType:3},callbacks);};publicized.sendFileMessage=sendFileMessage;publicized.createThreadWithFileMessage=function(params,createThreadCallback,sendFileMessageCallback){/**
-         * + CreateThreadRequest      {object}
-         *    + invitees              {object}
-         *       -id                  {string}
-         *       -idType              {int} ** inviteeVOidTypes
-         *    - title                 {string}
-         *    - type                  {int} ** createThreadTypes
-         *    - image                 {string}
-         *    - description           {string}
-         *    - metadata              {string}
-         *    - uniqueName            {string}
-         *    + message               {object}
-         *       -text                {string}
-         *       -type                {int}
-         *       -repliedTo           {int}
-         *       -uniqueId            {string}
-         *       -metadata            {string}
-         *       -systemMetadata      {string}
-         *       -forwardedMessageIds {string}
-         *       -forwardedUniqueIds  {string}
-         */var content={};if(params){if(typeof params.title==='string'){content.title=params.title;}if(typeof params.type==='string'){var threadType=params.type;content.type=_constants.createThreadTypes[threadType];}if(Array.isArray(params.invitees)){content.invitees=[];for(var i=0;i<params.invitees.length;i++){var tempInvitee=formatDataToMakeInvitee(params.invitees[i]);if(tempInvitee){content.invitees.push(tempInvitee);}}}if(typeof params.description==='string'){content.description=params.description;}if(typeof params.content==='string'){content.content=params.content;}if(typeof params.metadata==='string'){content.metadata=params.metadata;}else if((0,_typeof2["default"])(params.metadata)==='object'){try{content.metadata=JSON.stringify(params.metadata);}catch(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);}}}var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.CREATE_THREAD,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
+     * + CreateThreadRequest      {object}
+     *    + invitees              {object}
+     *       -id                  {string}
+     *       -idType              {int} ** inviteeVOidTypes
+     *    - title                 {string}
+     *    - type                  {int} ** createThreadTypes
+     *    - image                 {string}
+     *    - description           {string}
+     *    - metadata              {string}
+     *    - uniqueName            {string}
+     *    + message               {object}
+     *       -text                {string}
+     *       -type                {int}
+     *       -repliedTo           {int}
+     *       -uniqueId            {string}
+     *       -metadata            {string}
+     *       -systemMetadata      {string}
+     *       -forwardedMessageIds {string}
+     *       -forwardedUniqueIds  {string}
+     */var content={};if(params){if(typeof params.title==='string'){content.title=params.title;}if(typeof params.type==='string'){var threadType=params.type;content.type=_constants.createThreadTypes[threadType];}if(Array.isArray(params.invitees)){content.invitees=[];for(var i=0;i<params.invitees.length;i++){var tempInvitee=formatDataToMakeInvitee(params.invitees[i]);if(tempInvitee){content.invitees.push(tempInvitee);}}}if(typeof params.description==='string'){content.description=params.description;}if(typeof params.content==='string'){content.content=params.content;}if(typeof params.metadata==='string'){content.metadata=params.metadata;}else if((0,_typeof2["default"])(params.metadata)==='object'){try{content.metadata=JSON.stringify(params.metadata);}catch(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);}}}var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.CREATE_THREAD,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 content:content};return(0,_messaging.messenger)().sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}createThreadCallback&&createThreadCallback(returnData);sendFileMessage({threadId:returnData.result.thread.id,file:params.file,content:params.caption,messageType:params.messageType,userGroupHash:returnData.result.thread.userGroupHash},sendFileMessageCallback);}});};publicized.sendLocationMessage=function(params,callbacks){var data={},url=SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.STATIC_IMAGE,hasError=false,fileUniqueId=_utility["default"].generateUUID();if(params){if(typeof params.mapType==='string'){data.type=params.mapType;}else{data.type='standard-night';}if(parseInt(params.mapZoom)>0){data.zoom=params.mapZoom;}else{data.zoom=15;}if(parseInt(params.mapWidth)>0){data.width=params.mapWidth;}else{data.width=800;}if(parseInt(params.mapHeight)>0){data.height=params.mapHeight;}else{data.height=600;}if((0,_typeof2["default"])(params.mapCenter)==='object'){if(parseFloat(params.mapCenter.lat)>0&&parseFloat(params.mapCenter.lng)){data.center=params.mapCenter.lat+','+parseFloat(params.mapCenter.lng);}else{hasError=true;_events.chatEvents.fireEvent('error',{code:6700,message:CHAT_ERRORS[6700],error:undefined});}}else{hasError=true;_events.chatEvents.fireEvent('error',{code:6700,message:CHAT_ERRORS[6700],error:undefined});}data.key=_sdkParams.sdkParams.mapApiKey;data.marker='red';}var keys=Object.keys(data);if(keys.length>0){url+='?';for(var i=0;i<keys.length;i++){var key=keys[i];url+=key+'='+data[key];if(i<keys.length-1){url+='&';}}}if(!hasError){mapReverse({lng:parseFloat(params.mapCenter.lng),lat:parseFloat(params.mapCenter.lat)},function(address){getImageFormUrl(url,fileUniqueId,function(blobImage){sendFileMessage({threadId:params.threadId,fileUniqueId:fileUniqueId,file:new File([blobImage],"location.png",{type:"image/png",lastModified:new Date()}),content:address.result.formatted_address,messageType:'POD_SPACE_PICTURE',userGroupHash:params.userGroupHash,metadata:{mapLink:"https://maps.neshan.org/@".concat(data.center,",").concat(data.zoom,"z"),address:address}},callbacks);});});}return{uniqueId:fileUniqueId,threadId:params.threadId,participant:_store.store.user(),cancel:function cancel(){if(typeof _sdkParams.sdkParams.getImageFromLinkObjects!=='undefined'&&_sdkParams.sdkParams.getImageFromLinkObjects.hasOwnProperty(fileUniqueId)){_sdkParams.sdkParams.getImageFromLinkObjects[fileUniqueId].onload=function(){};delete _sdkParams.sdkParams.getImageFromLinkObjects[fileUniqueId];_sdkParams.sdkParams.consoleLogging&&console.log("\"".concat(fileUniqueId,"\" - Downloading Location Map has been canceled!"));}cancelFileUpload({uniqueId:fileUniqueId},function(){_sdkParams.sdkParams.consoleLogging&&console.log("\"".concat(fileUniqueId,"\" - Sending Location Message has been canceled!"));});}};};publicized.resendMessage=function(uniqueId,callbacks){for(var i=0;i<chatWaitQueue.length;i++){if(chatWaitQueue[i].uniqueId===uniqueId){putInChatSendQueue({message:chatWaitQueue[i],callbacks:callbacks},function(){chatSendQueueHandler();},true);// break;
 }}};publicized.cancelMessage=cancelMessage;publicized.clearHistory=function(params,callback){/**
-         * + Clear History Request Object    {object}
-         *    - subjectId                    {int}
-         */var clearHistoryParams={chatMessageVOType:_constants.chatMessageVOTypes.CLEAR_HISTORY,typeCode:_sdkParams.sdkParams.generalTypeCode//params.typeCode
+     * + Clear History Request Object    {object}
+     *    - subjectId                    {int}
+     */var clearHistoryParams={chatMessageVOType:_constants.chatMessageVOTypes.CLEAR_HISTORY,typeCode:_sdkParams.sdkParams.generalTypeCode//params.typeCode
 };if(params){if(parseInt(params.threadId)>0){clearHistoryParams.subjectId=params.threadId;}}return(0,_messaging.messenger)().sendMessage(clearHistoryParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){returnData.result={thread:result.result};}callback&&callback(returnData);}});};publicized.getImage=getImage;publicized.getFile=getFile;publicized.getFileFromPodspace=getFileFromPodspaceNew;//getFileFromPodspace;
 publicized.getImageFromPodspace=getImageFromPodspaceNew;//getImageFromPodspace;
 publicized.uploadFile=uploadFile;publicized.uploadImage=uploadImage;publicized.uploadFileToPodspace=uploadFileToPodspaceNew;publicized.uploadImageToPodspace=uploadImageToPodspaceNew;publicized.cancelFileUpload=cancelFileUpload;publicized.cancelFileDownload=cancelFileDownload;publicized.editMessage=function(params,callback){return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.EDIT_MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
@@ -50962,113 +50533,111 @@ AddContactVO={uniqueIdList:uniqueIdList,emailList:emailList,userNameList:userNam
 var returnData={hasError:result.hasError,cache:false,errorMessage:result.message,errorCode:result.errorCode};if((0,_typeof2["default"])(result.result)=='object'){var _result$result,_result$result2,_result$result2$resul;var messageContent=result===null||result===void 0?void 0:(_result$result=result.result)===null||_result$result===void 0?void 0:_result$result.result,messageLength=result===null||result===void 0?void 0:(_result$result2=result.result)===null||_result$result2===void 0?void 0:(_result$result2$resul=_result$result2.result)===null||_result$result2$resul===void 0?void 0:_result$result2$resul.length,resultData={contacts:[],contentCount:messageLength},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;// }
 callback&&callback(returnData);}//callback && callback(result);
 }});/* var requestParams = {
-            url: SERVICE_ADDRESSES.PLATFORM_ADDRESS + SERVICES_PATH.ADD_CONTACTS,
-            method: 'POST',
-            data: data,
-            headers: {
-                '_token_': token,
-                '_token_issuer_': 1
-            }
-        }; */ /*httpRequest(requestParams, function (result) {
-            if (!result.hasError) {
-                var responseData = JSON.parse(result.result.responseText);
-
-                var returnData = {
-                    hasError: responseData.hasError,
-                    cache: false,
-                    errorMessage: responseData.message,
-                    errorCode: responseData.errorCode
-                };
-
-                if (!responseData.hasError) {*/ //} else {
+        url: SERVICE_ADDRESSES.PLATFORM_ADDRESS + SERVICES_PATH.ADD_CONTACTS,
+        method: 'POST',
+        data: data,
+        headers: {
+            '_token_': token,
+            '_token_issuer_': 1
+        }
+    }; */ /*httpRequest(requestParams, function (result) {
+        if (!result.hasError) {
+            var responseData = JSON.parse(result.result.responseText);
+              var returnData = {
+                hasError: responseData.hasError,
+                cache: false,
+                errorMessage: responseData.message,
+                errorCode: responseData.errorCode
+            };
+              if (!responseData.hasError) {*/ //} else {
 /*  chatEvents.fireEvent('error', {
-                    code: result.errorCode,
-                    message: result.errorMessage,
-                    error: result
-                });
-                */ //}
+          code: result.errorCode,
+          message: result.errorMessage,
+          error: result
+      });
+      */ //}
 //});
 };/*
-    publicized.removeContacts = function ({id}, callback) {
-        var data = {
-                chatMessageVOType: chatMessageVOTypes.REMOVE_CONTACTS,
-                content: [
-                    parseInt(id)
-                ],
-                pushMsgType: 3,
-                token: token,
-                typeCode: generalTypeCode
-            }
-
-
-            if(!id) {
-                chatEvents.fireEvent('error', {
-                    code: 999,
-                    message: 'ID is required for Deleting Contact!',
-                    error: undefined
-                });
-            }
-
-
-        return messenger().sendMessage(data, {
-            onResult: function (result) {
-            if (!result.hasError) {
-                // var responseData = JSON.parse(result.result.responseText);
-                //
-                /!*var returnData = {
-                    hasError: result.hasError,
-                    cache: false,
-                    errorMessage: result.errorMessage,
-                    errorCode: result.errorCode
-                };
-
-
-
-                if (!result.hasError) {
-                    returnData.result = result.result;
-                }*!/
-
-                /!**
-                 * Remove the contact from cache
-                 *!/
-                if (canUseCache) {
-                    if (db) {
-                        db.contacts.where('id')
-                            .equals(parseInt(params.id))
-                            .delete()
-                            .catch(function (error) {
-                                chatEvents.fireEvent('error', {
-                                    code: 6602,
-                                    message: CHAT_ERRORS[6602],
-                                    error: error
-                                });
-                            });
-                    } else {
-                        chatEvents.fireEvent('error', {
-                            code: 6601,
-                            message: CHAT_ERRORS[6601],
-                            error: null
-                        });
-                    }
-                }
-
-                result.result.uniqueId = result.uniqueId;
-                callback && callback(result.result);
-            } else {
-                chatEvents.fireEvent('error', {
-                    code: result.errorCode,
-                    message: result.errorMessage,
-                    error: result
-                });
-            }
-        }});
-    };
-*/publicized.updateContacts=function(params,callback){var data={};if(params){if(parseInt(params.id)>0){data.id=parseInt(params.id);}else{_events.chatEvents.fireEvent('error',{code:999,message:'ID is required for Updating Contact!',error:undefined});}if(typeof params.firstName==='string'){data.firstName=params.firstName;}else{_events.chatEvents.fireEvent('error',{code:999,message:'firstName is required for Updating Contact!'});}if(typeof params.lastName==='string'){data.lastName=params.lastName;}else{_events.chatEvents.fireEvent('error',{code:999,message:'lastName is required for Updating Contact!'});}if(typeof params.cellphoneNumber==='string'){data.cellphoneNumber=params.cellphoneNumber;}else{_events.chatEvents.fireEvent('error',{code:999,message:'cellphoneNumber is required for Updating Contact!'});}if(typeof params.email==='string'){data.email=params.email;}else{_events.chatEvents.fireEvent('error',{code:999,message:'email is required for Updating Contact!'});}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.UPDATE_CONTACTS,method:'GET',data:data,headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if(!responseData.hasError){var messageContent=responseData.result,messageLength=responseData.result.length,resultData={contacts:[],contentCount:messageLength},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;}callback&&callback(returnData);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});};publicized.removeContacts=function(params,callback){var data={};if(params){if(parseInt(params.id)>0){data.id=parseInt(params.id);}else{_events.chatEvents.fireEvent('error',{code:999,message:'ID is required for Deleting Contact!',error:undefined});}}data.ownerId=_sdkParams.sdkParams.typeCodeOwnerId?_sdkParams.sdkParams.typeCodeOwnerId:params.ownerId?params.ownerId:undefined;var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.REMOVE_CONTACTS,method:'POST',data:data,headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if(!responseData.hasError){returnData.result=responseData.result;}callback&&callback(returnData);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});};publicized.searchContacts=function(params,callback){var data={size:50,offset:0},returnCache=false;if(params){if(typeof params.firstName==='string'){data.firstName=params.firstName;}if(typeof params.lastName==='string'){data.lastName=params.lastName;}if(parseInt(params.cellphoneNumber)>0){data.cellphoneNumber=params.cellphoneNumber;}if(typeof params.email==='string'){data.email=params.email;}if(typeof params.query==='string'){data.q=params.query;}if(typeof params.uniqueId==='string'){data.uniqueId=params.uniqueId;}if(parseInt(params.id)>0){data.id=params.id;}if(parseInt(params.typeCode)>0){data.typeCode=params.typeCode;}if(parseInt(params.size)>0){data.size=params.size;}if(parseInt(params.offset)>0){data.offset=params.offset;}var functionLevelCache=typeof params.cache=='boolean'?params.cache:true;}var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.SEARCH_CONTACTS,method:'POST',data:data,headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1}};/**
-         * Get Search Contacts Result From Server
-         */httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if(!responseData.hasError){var messageContent=responseData.result,messageLength=responseData.result.length,resultData={contacts:[],contentCount:messageLength},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;}callback&&callback(returnData);/**
-                 * Delete callback so if server pushes response before
-                 * cache, cache won't send data again
-                 */callback=undefined;if(!returnData.hasError&&returnCache){_events.chatEvents.fireEvent('contactEvents',{type:'CONTACTS_SEARCH_RESULT_CHANGE',result:returnData.result});}}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});};publicized.createBot=function(params,callback){var createBotData={chatMessageVOType:_constants.chatMessageVOTypes.CREATE_BOT,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
+      publicized.removeContacts = function ({id}, callback) {
+          var data = {
+                  chatMessageVOType: chatMessageVOTypes.REMOVE_CONTACTS,
+                  content: [
+                      parseInt(id)
+                  ],
+                  pushMsgType: 3,
+                  token: token,
+                  typeCode: generalTypeCode
+              }
+  
+  
+              if(!id) {
+                  chatEvents.fireEvent('error', {
+                      code: 999,
+                      message: 'ID is required for Deleting Contact!',
+                      error: undefined
+                  });
+              }
+  
+  
+          return messenger().sendMessage(data, {
+              onResult: function (result) {
+              if (!result.hasError) {
+                  // var responseData = JSON.parse(result.result.responseText);
+                  //
+                  /!*var returnData = {
+                      hasError: result.hasError,
+                      cache: false,
+                      errorMessage: result.errorMessage,
+                      errorCode: result.errorCode
+                  };
+  
+  
+  
+                  if (!result.hasError) {
+                      returnData.result = result.result;
+                  }*!/
+  
+                  /!**
+                   * Remove the contact from cache
+                   *!/
+                  if (canUseCache) {
+                      if (db) {
+                          db.contacts.where('id')
+                              .equals(parseInt(params.id))
+                              .delete()
+                              .catch(function (error) {
+                                  chatEvents.fireEvent('error', {
+                                      code: 6602,
+                                      message: CHAT_ERRORS[6602],
+                                      error: error
+                                  });
+                              });
+                      } else {
+                          chatEvents.fireEvent('error', {
+                              code: 6601,
+                              message: CHAT_ERRORS[6601],
+                              error: null
+                          });
+                      }
+                  }
+  
+                  result.result.uniqueId = result.uniqueId;
+                  callback && callback(result.result);
+              } else {
+                  chatEvents.fireEvent('error', {
+                      code: result.errorCode,
+                      message: result.errorMessage,
+                      error: result
+                  });
+              }
+          }});
+      };
+  */publicized.updateContacts=function(params,callback){var data={};if(params){if(parseInt(params.id)>0){data.id=parseInt(params.id);}else{_events.chatEvents.fireEvent('error',{code:999,message:'ID is required for Updating Contact!',error:undefined});}if(typeof params.firstName==='string'){data.firstName=params.firstName;}else{_events.chatEvents.fireEvent('error',{code:999,message:'firstName is required for Updating Contact!'});}if(typeof params.lastName==='string'){data.lastName=params.lastName;}else{_events.chatEvents.fireEvent('error',{code:999,message:'lastName is required for Updating Contact!'});}if(typeof params.cellphoneNumber==='string'){data.cellphoneNumber=params.cellphoneNumber;}else{_events.chatEvents.fireEvent('error',{code:999,message:'cellphoneNumber is required for Updating Contact!'});}if(typeof params.email==='string'){data.email=params.email;}else{_events.chatEvents.fireEvent('error',{code:999,message:'email is required for Updating Contact!'});}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.UPDATE_CONTACTS,method:'GET',data:data,headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if(!responseData.hasError){var messageContent=responseData.result,messageLength=responseData.result.length,resultData={contacts:[],contentCount:messageLength},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;}callback&&callback(returnData);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});};publicized.removeContacts=function(params,callback){var data={};if(params){if(parseInt(params.id)>0){data.id=parseInt(params.id);}else{_events.chatEvents.fireEvent('error',{code:999,message:'ID is required for Deleting Contact!',error:undefined});}}data.ownerId=_sdkParams.sdkParams.typeCodeOwnerId?_sdkParams.sdkParams.typeCodeOwnerId:params.ownerId?params.ownerId:undefined;var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.REMOVE_CONTACTS,method:'POST',data:data,headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if(!responseData.hasError){returnData.result=responseData.result;}callback&&callback(returnData);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});};publicized.searchContacts=function(params,callback){var data={size:50,offset:0},returnCache=false;if(params){if(typeof params.firstName==='string'){data.firstName=params.firstName;}if(typeof params.lastName==='string'){data.lastName=params.lastName;}if(parseInt(params.cellphoneNumber)>0){data.cellphoneNumber=params.cellphoneNumber;}if(typeof params.email==='string'){data.email=params.email;}if(typeof params.query==='string'){data.q=params.query;}if(typeof params.uniqueId==='string'){data.uniqueId=params.uniqueId;}if(parseInt(params.id)>0){data.id=params.id;}if(parseInt(params.typeCode)>0){data.typeCode=params.typeCode;}if(parseInt(params.size)>0){data.size=params.size;}if(parseInt(params.offset)>0){data.offset=params.offset;}var functionLevelCache=typeof params.cache=='boolean'?params.cache:true;}var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.SEARCH_CONTACTS,method:'POST',data:data,headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1}};/**
+     * Get Search Contacts Result From Server
+     */httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if(!responseData.hasError){var messageContent=responseData.result,messageLength=responseData.result.length,resultData={contacts:[],contentCount:messageLength},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;}callback&&callback(returnData);/**
+         * Delete callback so if server pushes response before
+         * cache, cache won't send data again
+         */callback=undefined;if(!returnData.hasError&&returnCache){_events.chatEvents.fireEvent('contactEvents',{type:'CONTACTS_SEARCH_RESULT_CHANGE',result:returnData.result});}}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});};publicized.createBot=function(params,callback){var createBotData={chatMessageVOType:_constants.chatMessageVOTypes.CREATE_BOT,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 content:'',pushMsgType:3,token:_sdkParams.sdkParams.token};if(params){if(typeof params.botName==='string'&&params.botName.length>0){if(params.botName.substr(-3)==="BOT"){createBotData.content=params.botName;}else{_events.chatEvents.fireEvent('error',{code:999,message:'Bot name should end in "BOT", ex. "testBOT"'});return;}}else{_events.chatEvents.fireEvent('error',{code:999,message:'Insert a bot name to create one!'});return;}}else{_events.chatEvents.fireEvent('error',{code:999,message:'Insert a bot name to create one!'});return;}return(0,_messaging.messenger)().sendMessage(createBotData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.defineBotCommand=function(params,callback){var defineBotCommandData={chatMessageVOType:_constants.chatMessageVOTypes.DEFINE_BOT_COMMAND,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 content:{},pushMsgType:3,token:_sdkParams.sdkParams.token},commandList=[];if(params){if(typeof params.botName!=='string'||params.botName.length===0){_events.chatEvents.fireEvent('error',{code:999,message:'You need to insert a botName!'});return;}if(!Array.isArray(params.commandList)||!params.commandList.length){_events.chatEvents.fireEvent('error',{code:999,message:'Bot Commands List has to be an array of strings.'});return;}else{for(var i=0;i<params.commandList.length;i++){commandList.push('/'+params.commandList[i].trim());}}defineBotCommandData.content={botName:params.botName.trim(),commandList:commandList};}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to create bot commands'});return;}return(0,_messaging.messenger)().sendMessage(defineBotCommandData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.removeBotCommand=function(params,callback){var defineBotCommandData={chatMessageVOType:_constants.chatMessageVOTypes.REMOVE_BOT_COMMANDS,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 content:{},pushMsgType:3,token:_sdkParams.sdkParams.token},commandList=[];if(params){if(typeof params.botName!=='string'||params.botName.length===0){_events.chatEvents.fireEvent('error',{code:999,message:'You need to insert a botName!'});return;}if(!Array.isArray(params.commandList)||!params.commandList.length){_events.chatEvents.fireEvent('error',{code:999,message:'Bot Commands List has to be an array of strings.'});return;}else{for(var i=0;i<params.commandList.length;i++){commandList.push('/'+params.commandList[i].trim());}}defineBotCommandData.content={botName:params.botName.trim(),commandList:commandList};}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to remove bot commands'});return;}return(0,_messaging.messenger)().sendMessage(defineBotCommandData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.startBot=function(params,callback){var startBotData={chatMessageVOType:_constants.chatMessageVOTypes.START_BOT,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
@@ -51089,8 +50658,8 @@ content:[]};if(params){if(Array.isArray(params.assistants)&&(0,_typeof2["default
 content:{},pushMsgType:3,token:_sdkParams.sdkParams.token};if(params){if(typeof params.contactType==='string'&&params.contactType.length){sendData.content.contactType=params.contactType;}else{_events.chatEvents.fireEvent('error',{code:999,message:'Enter a ContactType to get all related Assistants!'});return;}sendData.content.count=!!params.count?+params.count:25;sendData.content.offset=!!params.offset?+params.offset:0;}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to get Assistants list!'});return;}return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.getBlockedAssistantsList=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.BLOCKED_ASSISTANTS,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 content:{},pushMsgType:3,token:_sdkParams.sdkParams.token};if(params){if(typeof params.contactType==='string'&&params.contactType.length){sendData.content.contactType=params.contactType;}else{_events.chatEvents.fireEvent('error',{code:999,message:'Enter a ContactType to get all Blocked Assistants!'});return;}sendData.content.count=!!params.count?+params.count:25;sendData.content.offset=!!params.offset?+params.offset:0;}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to get Blocked Assistants list!'});return;}return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.getAssistantsHistory=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.ASSISTANT_HISTORY,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 content:{offset:+params.offset>0?+params.offset:0,count:+params.count>0?+params.count:config.getHistoryCount}};if(+params.fromTime>0&&+params.fromTime<9999999999999){sendData.content.fromTime=+params.fromTime;}if(+params.toTime>0&&+params.toTime<9999999999999){sendData.content.toTime=+params.toTime;}if(!!params.actionType&&_constants.assistantActionTypes.hasOwnProperty(params.actionType.toUpperCase())){sendData.content.actionType=_constants.assistantActionTypes[params.actionType.toUpperCase()];}return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={participants:formatDataToMakeAssistantHistoryList(messageContent),contentCount:result.contentCount,hasNext:sendData.content.offset+sendData.content.count<result.contentCount&&messageLength>0,nextOffset:sendData.content.offset*1+messageLength*1};returnData.result=resultData;}callback&&callback(returnData);callback=undefined;}});};publicized.mapReverse=mapReverse;publicized.mapSearch=mapSearch;publicized.mapRouting=mapRouting;publicized.mapStaticImage=mapStaticImage;publicized.setAdmin=function(params,callback){setRoleToUser(params,callback);};publicized.removeAdmin=function(params,callback){removeRoleFromUser(params,callback);};publicized.setAuditor=function(params,callback){setRoleToUser(params,callback);};publicized.removeAuditor=function(params,callback){removeRoleFromUser(params,callback);};function requestExportChat(stackArr,wantedCount,stepCount,offset,sendData){sendData.content.offset=offset;sendData.content.count=stepCount;return new Promise(function(resolve,reject){return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){/* for(var i in result.result) {
-                            stackArr.push(result.result[i]);
-                        } */stackArr.push.apply(stackArr,(0,_toConsumableArray2["default"])(result.result));_sdkParams.sdkParams.consoleLogging&&console.log("[SDK][exportChat] a step passed...");// wantedCount = wantedCount > result.contentCount ? result.contentCount : wantedCount;
+                stackArr.push(result.result[i]);
+            } */stackArr.push.apply(stackArr,(0,_toConsumableArray2["default"])(result.result));_sdkParams.sdkParams.consoleLogging&&console.log("[SDK][exportChat] a step passed...");// wantedCount = wantedCount > result.contentCount ? result.contentCount : wantedCount;
 if(result.result.length<stepCount){wantedCount=stackArr.length;}setTimeout(function(){_events.chatEvents.fireEvent('threadEvents',{type:'EXPORT_CHAT',subType:'IN_PROGRESS',threadId:sendData.subjectId,percent:Math.floor(stackArr.length/wantedCount*100)});if(stackArr.length<wantedCount){stepCount=wantedCount-stackArr.length<stepCount?wantedCount-stackArr.length:stepCount;//setTimeout(function () {
 resolve(requestExportChat(stackArr,wantedCount,stepCount,stackArr.length,sendData));//}, 1000)
 }else{resolve(stackArr);}});}else{if(result.errorCode!==21){_sdkParams.sdkParams.consoleLogging&&console.log("[SDK][exportChat] Problem in one step... . Rerunning the request.",wantedCount,stepCount,stackArr.length,sendData,result);setTimeout(function(){resolve(requestExportChat(stackArr,wantedCount,stepCount,stackArr.length,sendData));},2000);}else{reject(result);}}}});});}publicized.exportChat=function(params,callback){var stackArr=[],wantedCount=10000,stepCount=500,offset=0;var sendData={chatMessageVOType:_constants.chatMessageVOTypes.EXPORT_CHAT,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
@@ -51105,42 +50674,42 @@ str+="\u0646\u0627\u0645 \u06A9\u0627\u0631\u0628\u0631\u06CC \u0641\u0631\u0633
 str+="\u0645\u062A\u0646 \u067E\u06CC\u0627\u0645"+',';//matne payam
 str+='\r\n';var line='',radif=1;for(var i=0;i<result.length;i++){line='';if(result[i].messageType!==1){continue;}var sender='';if(result[i].participant.contactName){sender=result[i].participant.contactName+',';}else{if(result[i].participant.firstName){sender=result[i].participant.firstName+' ';}if(result[i].participant.lastName){sender+=result[i].participant.lastName;}sender+=',';}line+=new Date(result[i].time).toLocaleDateString('fa-IR')+',';line+=new Date(result[i].time).toLocaleTimeString('fa-IR')+',';line+=sender;line+=result[i].participant.username+',';line+='"'+result[i].message.replaceAll(",","،").replaceAll('"','”')+'",';// line += result[i].message.replaceAll(",", ".").replace(/(\r\n|\n|\r)/gm, " ") + ',';
 str+=line+'\r\n';radif++;}var blob=new Blob([str],{type:'text/csv;charset=utf-8;'});_events.chatEvents.fireEvent('threadEvents',{type:'EXPORT_CHAT',subType:'DONE',threadId:sendData.subjectId,result:blob});/*if (navigator.msSaveBlob) { // IE 10+
-                if(params.autoStartDownload) {
-                    navigator.msSaveBlob(blob, exportedFilename);
-                }
-                callback && callback({
-                    hasError: false,
-                    type: 'blob',
-                    result: blob
-                });
-            } else {*/if(responseType==='link'){var link=document.createElement("a"),url=URL.createObjectURL(blob);//if (link.download !== undefined) { // feature detection
+          if(params.autoStartDownload) {
+              navigator.msSaveBlob(blob, exportedFilename);
+          }
+          callback && callback({
+              hasError: false,
+              type: 'blob',
+              result: blob
+          });
+      } else {*/if(responseType==='link'){var link=document.createElement("a"),url=URL.createObjectURL(blob);//if (link.download !== undefined) { // feature detection
 // Browsers that support HTML5 download attribute
 link.setAttribute("href",'data:text/csv; charset=utf-8,'+encodeURIComponent(universalBOM+str));link.setAttribute("download",exportedFilename);if(autoStartDownload){link.style.visibility='hidden';document.body.appendChild(link);link.click();document.body.removeChild(link);}//}
 callback&&callback({hasError:false,type:'link',result:link});}else{callback&&callback({hasError:false,type:'blob',result:blob});}//}
 callback=undefined;});/*.catch(function (result) {
-            consoleLogging && console.log(result);
-        });*/};publicized.startCall=callModule.startCall;publicized.startGroupCall=callModule.startGroupCall;publicized.callReceived=callModule.callReceived;publicized.terminateCall=callModule.terminateCall;publicized.acceptCall=callModule.acceptCall;publicized.rejectCall=publicized.cancelCall=callModule.rejectCall;publicized.endCall=callModule.endCall;publicized.startRecordingCall=callModule.startRecordingCall;publicized.stopRecordingCall=callModule.stopRecordingCall;publicized.startScreenShare=callModule.startScreenShare;publicized.resizeScreenShare=callModule.resizeScreenShare;publicized.endScreenShare=callModule.endScreenShare;publicized.getCallsList=callModule.getCallsList;publicized.getCallsToJoin=callModule.getCallsToJoin;publicized.deleteFromCallList=callModule.deleteFromCallList;publicized.getCallParticipants=callModule.getCallParticipants;publicized.addCallParticipants=callModule.addCallParticipants;publicized.removeCallParticipants=callModule.removeCallParticipants;publicized.muteCallParticipants=callModule.muteCallParticipants;publicized.unMuteCallParticipants=callModule.unMuteCallParticipants;publicized.turnOnVideoCall=callModule.turnOnVideoCall;publicized.turnOffVideoCall=callModule.turnOffVideoCall;publicized.disableParticipantsVideoReceive=callModule.disableParticipantsVideoReceive;publicized.enableParticipantsVideoReceive=callModule.enableParticipantsVideoReceive;publicized.pauseCamera=callModule.pauseCamera;publicized.resumeCamera=callModule.resumeCamera;publicized.pauseMice=callModule.pauseMice;publicized.resumeMice=callModule.resumeMice;publicized.resizeCallVideo=callModule.resizeCallVideo;// publicized.restartMedia = callModule.restartMedia;
+      consoleLogging && console.log(result);
+    });*/};publicized.startCall=callModule.startCall;publicized.startGroupCall=callModule.startGroupCall;publicized.callReceived=callModule.callReceived;publicized.terminateCall=callModule.terminateCall;publicized.acceptCall=callModule.acceptCall;publicized.rejectCall=publicized.cancelCall=callModule.rejectCall;publicized.endCall=callModule.endCall;publicized.startRecordingCall=callModule.startRecordingCall;publicized.stopRecordingCall=callModule.stopRecordingCall;publicized.startScreenShare=callModule.startScreenShare;publicized.resizeScreenShare=callModule.resizeScreenShare;publicized.endScreenShare=callModule.endScreenShare;publicized.getCallsList=callModule.getCallsList;publicized.getCallsToJoin=callModule.getCallsToJoin;publicized.deleteFromCallList=callModule.deleteFromCallList;publicized.getCallParticipants=callModule.getCallParticipants;publicized.addCallParticipants=callModule.addCallParticipants;publicized.removeCallParticipants=callModule.removeCallParticipants;publicized.muteCallParticipants=callModule.muteCallParticipants;publicized.unMuteCallParticipants=callModule.unMuteCallParticipants;publicized.turnOnVideoCall=callModule.turnOnVideoCall;publicized.turnOffVideoCall=callModule.turnOffVideoCall;publicized.disableParticipantsVideoReceive=callModule.disableParticipantsVideoReceive;publicized.enableParticipantsVideoReceive=callModule.enableParticipantsVideoReceive;publicized.pauseCamera=callModule.pauseCamera;publicized.resumeCamera=callModule.resumeCamera;publicized.pauseMice=callModule.pauseMice;publicized.resumeMice=callModule.resumeMice;publicized.resizeCallVideo=callModule.resizeCallVideo;// publicized.restartMedia = callModule.restartMedia;
 // publicized.callStop = callModule.callStop;
 publicized.sendCallMetaData=callModule.sendCallMetaData;publicized.sendCallSticker=callModule.sendCallSticker;publicized.callStickerTypes=_constants.callStickerTypes;publicized.recallThreadParticipant=callModule.recallThreadParticipant;publicized.deviceManager=callModule.deviceManager;publicized.inquiryCallParticipants=callModule.inquiryCallParticipants;publicized.resetCallStream=callModule.resetCallStream;publicized.getMutualGroups=function(params,callback){var count=+params.count?+params.count:25,offset=+params.offset?+params.offset:0;var sendData={chatMessageVOType:_constants.chatMessageVOTypes.MUTUAL_GROUPS,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 content:{count:count,offset:offset}};if(params){if((0,_typeof2["default"])(params.user)==='object'&&params.user.hasOwnProperty('id')&&params.user.hasOwnProperty('idType')&&params.user.id.length&&_constants.inviteeVOidTypes[params.user.idType]>0){sendData.content.toBeUserVO={id:params.user.id,idType:+_constants.inviteeVOidTypes[params.user.idType]};}else{_events.chatEvents.fireEvent('error',{code:999,message:'You should send an user object like {id: 92, idType: "TO_BE_USER_CONTACT_ID"}'});return;}}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Get Mutual Groups!'});return;}return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode,uniqueId:result.uniqueId};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={threads:[],contentCount:result.contentCount,hasNext:offset+count<result.contentCount&&messageLength>0,nextOffset:offset*1+messageLength*1},threadData;for(var i=0;i<messageLength;i++){threadData=createThread(messageContent[i],false);if(threadData){resultData.threads.push(threadData);}}returnData.result=resultData;}callback&&callback(returnData);/**
-                 * Delete callback so if server pushes response before
-                 * cache, cache won't send data again
-                 */callback=undefined;}});};publicized.sendLocationPing=function(params,callback){/**
-         * + locationPingRequest     {object}
-         *    + content              {list} A map of { location: string, locationId: int }
-         */var locationPingData={chatMessageVOType:_constants.chatMessageVOTypes.LOCATION_PING,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
+         * Delete callback so if server pushes response before
+         * cache, cache won't send data again
+         */callback=undefined;}});};publicized.sendLocationPing=function(params,callback){/**
+     * + locationPingRequest     {object}
+     *    + content              {list} A map of { location: string, locationId: int }
+     */var locationPingData={chatMessageVOType:_constants.chatMessageVOTypes.LOCATION_PING,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
 pushMsgType:3,token:_sdkParams.sdkParams.token},content={};if(params){if(typeof params.location==='string'&&_sdkParams.sdkParams.locationPingTypes.hasOwnProperty(params.location.toUpperCase())){content.location=_sdkParams.sdkParams.locationPingTypes[params.location.toUpperCase()];if(params.location.toUpperCase()==='THREAD'){if(typeof params.threadId==='number'&&params.threadId>0){content.locationId=+params.threadId;}else{_events.chatEvents.fireEvent('error',{code:999,message:'You set the location to be a thread, you have to send a valid ThreadId'});return;}}}else{_events.chatEvents.fireEvent('error',{code:999,message:'Send a valid location type (CHAT / THREAD / CONTACTS)'});return;}locationPingData.content=JSON.stringify(content);}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to LocationPing!'});return;}return(0,_messaging.messenger)().sendMessage(locationPingData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.clearChatServerCaches=clearChatServerCaches;publicized.deleteCacheDatabases=deleteCacheDatabases;publicized.clearCacheDatabasesOfUser=clearCacheDatabasesOfUser;publicized.getChatState=function(){return chatFullStateObject;};publicized.reconnect=function(){asyncClient.reconnectSocket();};publicized.setToken=function(newToken){if(typeof newToken!=='undefined'){_sdkParams.sdkParams.token=newToken;if(!_store.store.user()||!_store.store.user().id){getUserAndUpdateSDKState();}}};publicized.generateUUID=_utility["default"].generateUUID;publicized.logout=function(){// clearChatServerCaches();
 _events.chatEvents.clearEventCallbacks();_store.store.messagesCallbacks={};_store.store.sendMessageCallbacks={};_store.store.threadCallbacks={};(0,_messaging.messenger)().stopChatPing();asyncClient.logout();};publicized.inviteeIdTypes=_constants.inviteeVOidTypes;/**
-     * Check a turn server availability
-     *
-     * @param turnIp
-     * @param port
-     * @param useUDP
-     * @param username
-     * @param password
-     * @param timeout
-     * @return {Promise<boolean>}
-     */publicized.checkTURNServer=function(turnIp,port){var useUDP=arguments.length>2&&arguments[2]!==undefined?arguments[2]:false;var username=arguments.length>3&&arguments[3]!==undefined?arguments[3]:'mkhorrami';var password=arguments.length>4&&arguments[4]!==undefined?arguments[4]:'mkh_123456';var timeout=arguments.length>5?arguments[5]:undefined;var url='turn:'+turnIp+':'+port+'?transport='+(useUDP?'udp':'tcp');var turnConfig={urls:url,username:username,credential:password};if(navigator.userAgent.indexOf('firefox')!==-1&&navigator.userAgent.indexOf('92.0.5')!==-1){alert('Browser version is not suitable for video call. Upgrade or use another browser.');}console.log('turnConfig: ',turnConfig);return new Promise(function(resolve,reject){var promiseResolved;setTimeout(function(){if(promiseResolved)return;resolve(false);promiseResolved=true;},timeout||5000);promiseResolved=false;var myPeerConnection=window.RTCPeerConnection||window.mozRTCPeerConnection||window.webkitRTCPeerConnection//compatibility for firefox and chrome
+   * Check a turn server availability
+   *
+   * @param turnIp
+   * @param port
+   * @param useUDP
+   * @param username
+   * @param password
+   * @param timeout
+   * @return {Promise<boolean>}
+   */publicized.checkTURNServer=function(turnIp,port){var useUDP=arguments.length>2&&arguments[2]!==undefined?arguments[2]:false;var username=arguments.length>3&&arguments[3]!==undefined?arguments[3]:'mkhorrami';var password=arguments.length>4&&arguments[4]!==undefined?arguments[4]:'mkh_123456';var timeout=arguments.length>5?arguments[5]:undefined;var url='turn:'+turnIp+':'+port+'?transport='+(useUDP?'udp':'tcp');var turnConfig={urls:url,username:username,credential:password};if(navigator.userAgent.indexOf('firefox')!==-1&&navigator.userAgent.indexOf('92.0.5')!==-1){alert('Browser version is not suitable for video call. Upgrade or use another browser.');}console.log('turnConfig: ',turnConfig);return new Promise(function(resolve,reject){var promiseResolved;setTimeout(function(){if(promiseResolved)return;resolve(false);promiseResolved=true;},timeout||5000);promiseResolved=false;var myPeerConnection=window.RTCPeerConnection||window.mozRTCPeerConnection||window.webkitRTCPeerConnection//compatibility for firefox and chrome
 ,pc=new myPeerConnection({iceServers:[turnConfig]}),noop=function noop(){};pc.createDataChannel("");//create a bogus data channel
 pc.createOffer(function(sdp){if(sdp.sdp.indexOf('typ relay')>-1){// sometimes sdp contains the ice candidates...
 promiseResolved=true;resolve(true);}pc.setLocalDescription(sdp,noop,noop);},noop);// create offer and set local description
@@ -51159,7 +50728,7 @@ token:_sdkParams.sdkParams.token,content:params.content};return(0,_messaging.mes
 window.PodChat=Chat;}var _default=Chat;// })();
 exports["default"]=_default;
 
-},{"./buildConfig.json":285,"./call.module":286,"./deprecateMethods":288,"./events.module":289,"./lib/call/deviceManager.js":296,"./lib/chat/reactionsMethods":302,"./lib/constants":303,"./lib/sdkParams":306,"./lib/store":308,"./lib/store/user":312,"./messaging.module":313,"./utility/utility":314,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/helpers/toConsumableArray":25,"@babel/runtime/helpers/typeof":26,"podasync-ws-only":1,"xss":281}],288:[function(require,module,exports){
+},{"./buildConfig.json":280,"./call.module":281,"./deprecateMethods":283,"./events.module":284,"./lib/call/deviceManager.js":291,"./lib/chat/reactionsMethods":297,"./lib/chat/threadParticipantsMethods":298,"./lib/constants":299,"./lib/sdkParams":302,"./lib/store":304,"./lib/store/user":309,"./messaging.module":310,"./utility/utility":311,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/toConsumableArray":12,"@babel/runtime/helpers/typeof":13,"podasync-ws-only":218,"xss":276}],283:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -51230,7 +50799,7 @@ function printIsDeprecate(key) {
   console.warn("||| Method: " + deprecatedString[key].methodName + " is deprecated! " + (deprecatedString[key].replacementString ? " use " + deprecatedString[key].replacementString + "instead. " : "") + (deprecatedString[key].deprecationDate ? " Deprecation Date: " + deprecatedString[key].deprecationDate : ""));
 }
 
-},{}],289:[function(require,module,exports){
+},{}],284:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -51350,7 +50919,7 @@ function initEventHandler() {
 var _default = ChatEvents;
 exports["default"] = _default;
 
-},{"./lib/sdkParams":306,"./utility/utility":314,"@babel/runtime/helpers/interopRequireDefault":20}],290:[function(require,module,exports){
+},{"./lib/sdkParams":302,"./utility/utility":311,"@babel/runtime/helpers/interopRequireDefault":7}],285:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -52678,7 +52247,7 @@ function ScreenShareStateManager() {
   };
 }
 
-},{"../../events.module":289,"../../utility/utility":314,"../constants":303,"../errorHandler":304,"../sdkParams":306,"../store":308,"./callServerManager":291,"./callUsers":294,"./callsList":295,"./sharedData":299,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/defineProperty":19,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/regenerator":28}],291:[function(require,module,exports){
+},{"../../events.module":284,"../../utility/utility":311,"../constants":299,"../errorHandler":300,"../sdkParams":302,"../store":304,"./callServerManager":286,"./callUsers":289,"./callsList":290,"./sharedData":294,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15}],286:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -52720,7 +52289,7 @@ function CallServerManager() {
 var callServerController = new CallServerManager();
 exports.callServerController = callServerController;
 
-},{"../sdkParams":306}],292:[function(require,module,exports){
+},{"../sdkParams":302}],287:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -53701,7 +53270,7 @@ function CallTopicManager(_ref) {
   return publicized;
 }
 
-},{"../../events.module":289,"../../messaging.module":313,"../../utility/utility":314,"../errorHandler":304,"../sdkParams":306,"./callsList":295,"./sharedData":299,"./topicMetaDataManager":300,"./webrtcPeer":301,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/helpers/toConsumableArray":25,"@babel/runtime/regenerator":28}],293:[function(require,module,exports){
+},{"../../events.module":284,"../../messaging.module":310,"../../utility/utility":311,"../errorHandler":300,"../sdkParams":302,"./callsList":290,"./sharedData":294,"./topicMetaDataManager":295,"./webrtcPeer":296,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/toConsumableArray":12,"@babel/runtime/regenerator":15}],288:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -54320,7 +53889,7 @@ function CallScreenShare(user) {
   return publicized;
 }
 
-},{"../sdkParams":306,"../store":308,"./callTopicManager":292,"./callsList":295,"./deviceStartStopManager":298,"./sharedData":299,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/regenerator":28}],294:[function(require,module,exports){
+},{"../sdkParams":302,"../store":304,"./callTopicManager":287,"./callsList":290,"./deviceStartStopManager":293,"./sharedData":294,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15}],289:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -54459,7 +54028,7 @@ function CallUsers(_ref) {
   return publicized;
 }
 
-},{"../../events.module":289,"../../messaging.module":313,"../store":308,"./callUser":293,"./callsList":295,"./sharedData":299,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/regenerator":28}],295:[function(require,module,exports){
+},{"../../events.module":284,"../../messaging.module":310,"../store":304,"./callUser":288,"./callsList":290,"./sharedData":294,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15}],290:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -54579,7 +54148,7 @@ function callsManager() {
   return callsMgr;
 }
 
-},{"../sdkParams":306,"./callManager":290,"./sharedData":299,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/regenerator":28}],296:[function(require,module,exports){
+},{"../sdkParams":302,"./callManager":285,"./sharedData":294,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15}],291:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -54944,7 +54513,7 @@ var deviceManager = {
 var _default = deviceManager;
 exports["default"] = _default;
 
-},{"../../events.module.js":289,"../constants.js":303,"../errorHandler.js":304,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/helpers/typeof":26,"@babel/runtime/regenerator":28}],297:[function(require,module,exports){
+},{"../../events.module.js":284,"../constants.js":299,"../errorHandler.js":300,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/typeof":13,"@babel/runtime/regenerator":15}],292:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -55358,7 +54927,7 @@ function DeviceManager() {
 
 ;
 
-},{"../../events.module.js":289,"../constants.js":303,"../errorHandler.js":304,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/helpers/typeof":26,"@babel/runtime/regenerator":28}],298:[function(require,module,exports){
+},{"../../events.module.js":284,"../constants.js":299,"../errorHandler.js":300,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/typeof":13,"@babel/runtime/regenerator":15}],293:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -55436,7 +55005,7 @@ function DevicePauseStopManager(_ref) {
   };
 }
 
-},{"../store":308,"./callsList":295}],299:[function(require,module,exports){
+},{"../store":304,"./callsList":290}],294:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -55617,7 +55186,7 @@ function currentCallMyUser() {
   return currentCall().users().get(_store.store.user().id);
 }
 
-},{"../../events.module":289,"../../messaging.module":313,"../constants":303,"../errorHandler":304,"../sdkParams":306,"../store":308,"./callsList":295}],300:[function(require,module,exports){
+},{"../../events.module":284,"../../messaging.module":310,"../constants":299,"../errorHandler":300,"../sdkParams":302,"../store":304,"./callsList":290}],295:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -55661,7 +55230,7 @@ function topicMetaDataManager(params) {
   };
 }
 
-},{}],301:[function(require,module,exports){
+},{}],296:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -55981,7 +55550,7 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
   };
 }
 
-},{"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/regenerator":28}],302:[function(require,module,exports){
+},{"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15}],297:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -56012,6 +55581,9 @@ var _store = require("../store");
 var _utility = _interopRequireDefault(require("../../utility/utility"));
 
 var _events = require("../../events.module");
+
+var reactionsListRequestsParams = {};
+var reactionSummariesRequests = {};
 
 function addReaction(params, callback) {
   var sendData = {
@@ -56082,8 +55654,6 @@ function removeReaction(params, callback) {
     }
   });
 }
-
-var reactionsListRequestsParams = {};
 
 function getReactionList(_ref) {
   var threadId = _ref.threadId,
@@ -56283,7 +55853,211 @@ function onAddReaction(uniqueId, messageContent, contentCount) {
   });
 }
 
-},{"../../events.module":289,"../../messaging.module":313,"../../utility/utility":314,"../constants":303,"../sdkParams":306,"../store":308,"@babel/runtime/helpers/interopRequireDefault":20}],303:[function(require,module,exports){
+},{"../../events.module":284,"../../messaging.module":310,"../../utility/utility":311,"../constants":299,"../sdkParams":302,"../store":304,"@babel/runtime/helpers/interopRequireDefault":7}],298:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.formatDataToMakeParticipant = formatDataToMakeParticipant;
+exports.getThreadParticipants = getThreadParticipants;
+exports.reformatThreadParticipants = reformatThreadParticipants;
+
+var _constants = require("../constants");
+
+var _sdkParams = require("../sdkParams");
+
+var _events = require("../../events.module");
+
+var _messaging = require("../../messaging.module");
+/**
+ * Get Thread Participants
+ *
+ * Gets participants list of given thread
+ *
+ * @access pubic
+ *
+ * @param {int}     threadId        Id of thread which you want to get participants of
+ * @param {int}     count           Count of objects to get
+ * @param {int}     offset          Offset of select Query
+ * @param {string}  name            Search in Participants list (LIKE in name, contactName, email)
+ *
+ * @return {object} Instant Response
+ */
+
+
+function getThreadParticipants(params, callback) {
+  var sendMessageParams = {
+    chatMessageVOType: _constants.chatMessageVOTypes.THREAD_PARTICIPANTS,
+    typeCode: _sdkParams.sdkParams.generalTypeCode,
+    //params.typeCode,
+    content: {},
+    subjectId: params.threadId
+  },
+      returnCache = false;
+  var offset = parseInt(params.offset) > 0 ? parseInt(params.offset) : 0,
+      count = parseInt(params.count) > 0 ? parseInt(params.count) : 20;
+  sendMessageParams.content.count = count;
+  sendMessageParams.content.offset = offset;
+
+  if (typeof params.name === 'string') {
+    sendMessageParams.content.name = params.name;
+  }
+
+  if (typeof params.username === 'string') {
+    sendMessageParams.content.username = params.username;
+  }
+
+  if (typeof params.cellphoneNumber === 'string') {
+    sendMessageParams.content.cellphoneNumber = params.cellphoneNumber;
+  }
+
+  if (typeof params.admin === 'boolean') {
+    sendMessageParams.content.admin = params.admin;
+  }
+
+  return (0, _messaging.messenger)().sendMessage(sendMessageParams, {
+    onResult: function onResult(result) {
+      var returnData = {
+        hasError: result.hasError,
+        cache: false,
+        errorMessage: result.errorMessage,
+        errorCode: result.errorCode
+      };
+
+      if (!returnData.hasError) {
+        var messageContent = result.result,
+            messageLength = messageContent.length,
+            resultData = {
+          participants: reformatThreadParticipants(messageContent, params.threadId),
+          contentCount: result.contentCount,
+          hasNext: sendMessageParams.content.offset + sendMessageParams.content.count < result.contentCount && messageLength > 0,
+          nextOffset: sendMessageParams.content.offset * 1 + messageLength * 1
+        };
+        returnData.result = resultData;
+      }
+
+      callback && callback(returnData);
+      /**
+       * Delete callback so if server pushes response before
+       * cache, cache won't send data again
+       */
+
+      callback = undefined;
+
+      if (!returnData.hasError && returnCache) {
+        _events.chatEvents.fireEvent('threadEvents', {
+          type: 'THREAD_PARTICIPANTS_LIST_CHANGE',
+          threadId: params.threadId,
+          result: returnData.result
+        });
+      }
+    }
+  });
+}
+/**
+ * Reformat Thread Participants
+ *
+ * This functions reformats given Array of thread Participants
+ * into proper thread participant
+ *
+ * @access private
+ *
+ * @param {object}  participantsContent   Array of Thread Participant Objects
+ * @param {int}    threadId              Id of Thread
+ *
+ * @return {object} Formatted Thread Participant Array
+ */
+
+
+function reformatThreadParticipants(participantsContent, threadId) {
+  var returnData = [];
+
+  for (var i = 0; i < participantsContent.length; i++) {
+    returnData.push(formatDataToMakeParticipant(participantsContent[i], threadId));
+  }
+
+  return returnData;
+}
+/**
+ * Format Data To Make Participant
+ *
+ * This functions reformats given JSON to proper Object
+ *
+ * @access private
+ *
+ * @param {object}  messageContent    Json object of thread taken from chat server
+ *
+ * @param threadId
+ * @return {object} participant Object
+ */
+
+
+function formatDataToMakeParticipant(messageContent, threadId) {
+  /**
+   * + ParticipantVO                   {object}
+   *    - id                           {int}
+   *    - coreUserId                   {int}
+   *    - threadId                     {int}
+   *    - sendEnable                   {boolean}
+   *    - receiveEnable                {boolean}
+   *    - firstName                    {string}
+   *    - lastName                     {string}
+   *    - name                         {string}
+   *    - cellphoneNumber              {string}
+   *    - email                        {string}
+   *    - image                        {string}
+   *    - chatProfileVO                {object}
+   *    - myFriend                     {boolean}
+   *    - online                       {boolean}
+   *    - notSeenDuration              {int}
+   *    - contactId                    {int}
+   *    - contactName                  {string}
+   *    - contactFirstName             {string}
+   *    - contactLastName              {string}
+   *    - blocked                      {boolean}
+   *    - admin                        {boolean}
+   *    - auditor                      {boolean}
+   *    - keyId                        {string}
+   *    - roles                        {list:string}
+   *    - username                     {string}
+   */
+  var participant = {
+    id: messageContent.id,
+    coreUserId: messageContent.coreUserId,
+    threadId: parseInt(threadId),
+    sendEnable: messageContent.sendEnable,
+    receiveEnable: messageContent.receiveEnable,
+    firstName: messageContent.firstName,
+    lastName: messageContent.lastName,
+    name: messageContent.name,
+    cellphoneNumber: messageContent.cellphoneNumber,
+    email: messageContent.email,
+    image: messageContent.image,
+    myFriend: messageContent.myFriend,
+    online: messageContent.online,
+    notSeenDuration: messageContent.notSeenDuration,
+    contactId: messageContent.contactId,
+    contactName: messageContent.contactName,
+    contactFirstName: messageContent.contactFirstName,
+    contactLastName: messageContent.contactLastName,
+    blocked: messageContent.blocked,
+    admin: messageContent.admin,
+    auditor: messageContent.auditor,
+    keyId: messageContent.keyId,
+    roles: messageContent.roles,
+    username: messageContent.username
+  }; // Add chatProfileVO if exist
+
+  if (messageContent.chatProfileVO) {
+    participant.chatProfileVO = messageContent.chatProfileVO;
+  } // return participant;
+
+
+  return JSON.parse(JSON.stringify(participant));
+}
+
+},{"../../events.module":284,"../../messaging.module":310,"../constants":299,"../sdkParams":302}],299:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -56519,7 +56293,7 @@ var callMetaDataTypes = {
 };
 exports.callMetaDataTypes = callMetaDataTypes;
 
-},{}],304:[function(require,module,exports){
+},{}],300:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -56702,7 +56476,7 @@ exports.raiseError = raiseError;
 var _default = handleError;
 exports["default"] = _default;
 
-},{"../events.module":289,"@babel/runtime/helpers/defineProperty":19,"@babel/runtime/helpers/interopRequireDefault":20}],305:[function(require,module,exports){
+},{"../events.module":284,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7}],301:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -56799,7 +56573,7 @@ function getRemainingTime(key) {
   return new Date(filteredRequest.time + filteredRequest.blockTimeSeconds - cTime).getSeconds();
 }
 
-},{}],306:[function(require,module,exports){
+},{}],302:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -56854,7 +56628,7 @@ var sdkParams = {
 };
 exports.sdkParams = sdkParams;
 
-},{}],307:[function(require,module,exports){
+},{}],303:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -56880,7 +56654,7 @@ var storeEvents = {
 };
 exports.storeEvents = storeEvents;
 
-},{"@babel/runtime/helpers/interopRequireDefault":20,"events":169}],308:[function(require,module,exports){
+},{"@babel/runtime/helpers/interopRequireDefault":7,"events":156}],304:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -56898,6 +56672,8 @@ var _user = require("./user");
 
 var _reactionsList = require("./reactionsList");
 
+var _threadParticipantsList = require("./threadParticipantsList");
+
 var store = {
   threads: _threads.threadsList,
   events: _eventEmitter.storeEvents,
@@ -56911,7 +56687,7 @@ var store = {
 };
 exports.store = store;
 
-},{"./eventEmitter":307,"./reactionsList":309,"./reactionsSummaries":310,"./threads":311,"./user":312}],309:[function(require,module,exports){
+},{"./eventEmitter":303,"./reactionsList":305,"./reactionsSummaries":306,"./threadParticipantsList":307,"./threads":308,"./user":309}],305:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -57016,12 +56792,11 @@ var ReactionsListCache = /*#__PURE__*/function () {
 
       if (!this.messageExists(request.messageId)) {
         this._list[request.messageId] = {};
-      } // if(!this.stickerExists(request.messageId, sticker)) {
-      //     this._list[request.messageId][sticker] = {
-      //         isValid: true
-      //     };
-      // }
+      }
 
+      if (!this.stickerExists(request.messageId, sticker)) {
+        this._list[request.messageId][sticker] = {};
+      }
 
       this._list[request.messageId][sticker][this.genKey(request.count, request.offset)] = result;
     }
@@ -57042,7 +56817,7 @@ var ReactionsListCache = /*#__PURE__*/function () {
 var reactionsListCache = new ReactionsListCache();
 exports.reactionsListCache = reactionsListCache;
 
-},{"./index":308,"@babel/runtime/helpers/classCallCheck":17,"@babel/runtime/helpers/createClass":18,"@babel/runtime/helpers/interopRequireDefault":20}],310:[function(require,module,exports){
+},{"./index":304,"@babel/runtime/helpers/classCallCheck":4,"@babel/runtime/helpers/createClass":5,"@babel/runtime/helpers/interopRequireDefault":7}],306:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -57313,7 +57088,133 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
 var reactionsSummariesCache = new ReactionsSummariesCache();
 exports.reactionsSummariesCache = reactionsSummariesCache;
 
-},{"./index":308,"@babel/runtime/helpers/classCallCheck":17,"@babel/runtime/helpers/createClass":18,"@babel/runtime/helpers/defineProperty":19,"@babel/runtime/helpers/interopRequireDefault":20}],311:[function(require,module,exports){
+},{"./index":304,"@babel/runtime/helpers/classCallCheck":4,"@babel/runtime/helpers/createClass":5,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7}],307:[function(require,module,exports){
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.threadParticipantsListCache = void 0;
+
+var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
+
+var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
+
+var _index = require("./index");
+
+var list = [];
+var eventsList = {
+  SINGLE_THREAD_UPDATE: "singleThreadUpdate",
+  UNREAD_COUNT_UPDATED: 'unreadCountUpdated',
+  LAST_SEEN_MESSAGE_TIME_UPDATED: 'lastSeenMessageTimeUpdated'
+};
+var msgsReactionsStatus = {
+  REQUESTED: 1,
+  IS_EMPTY: 2,
+  HAS_REACTION: 3
+};
+
+var ThreadParticipantsListCache = /*#__PURE__*/function () {
+  function ThreadParticipantsListCache(props) {
+    (0, _classCallCheck2["default"])(this, ThreadParticipantsListCache); // super(props);
+
+    this._list = {};
+  }
+
+  (0, _createClass2["default"])(ThreadParticipantsListCache, [{
+    key: "list",
+    get: function get() {
+      return this._list;
+    }
+  }, {
+    key: "getItem",
+    value: function getItem(messageId, count, offset) {
+      if (!this.messageExists(messageId) || !this._list[messageId] || !this._list[messageId][this.genKey(count, offset)]) return null;
+      return {
+        messageId: messageId,
+        count: count,
+        offset: offset,
+        reactionVOList: this._list[messageId][this.genKey(count, offset)] // isValid: this._list[messageId][sticker].isValid
+
+      };
+    }
+  }, {
+    key: "removeCachedData",
+    value: function removeCachedData(messageId, sticker) {
+      if (!messageId) return this.removeAllMessages(); // return this.invalidateAllMessages();
+
+      if (!sticker) {
+        return delete this._list[messageId]; // return this.invalidateMessage(messageId);
+      }
+
+      if (this._list[messageId] && this._list[messageId][sticker]) delete this._list[messageId][sticker]; // this._list[messageId][sticker].isValid = false;
+
+      if (this._list[messageId] && this._list[messageId]['all']) delete this._list[messageId]['all']; // this._list[messageId]['all'].isValid = false;
+    } // invalidateAllMessages() {
+    //     Object.keys(this._list).forEach(item=>{
+    //         this.invalidateMessage(item)
+    //     })
+    //
+    // }
+    // invalidateMessage(messageId) {
+    //     let item = this._list[messageId];
+    //     if(item && typeof item === 'object') {
+    //         Object.keys(item).forEach(objKey=> {
+    //             if(objKey && item[objKey] && typeof item[objKey] === "object") {
+    //                 item[objKey].isValid = false;
+    //             }
+    //         })
+    //     }
+    // }
+
+  }, {
+    key: "messageExists",
+    value: function messageExists(messageId) {
+      return !!this._list[messageId];
+    }
+  }, {
+    key: "stickerExists",
+    value: function stickerExists(messageId) {
+      var sticker = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+      if (!sticker) return !!this._list[messageId] && !!this._list[messageId]['all'];else return !!this._list[messageId] && !!this._list[messageId][sticker];
+    }
+  }, {
+    key: "save",
+    value: function save(request, result) {
+      var cClass = this,
+          sticker = request.sticker ? request.sticker : 'all';
+
+      if (!this.messageExists(request.messageId)) {
+        this._list[request.messageId] = {};
+      } // if(!this.stickerExists(request.messageId, sticker)) {
+      //     this._list[request.messageId][sticker] = {
+      //         isValid: true
+      //     };
+      // }
+
+
+      this._list[request.messageId][sticker][this.genKey(request.count, request.offset)] = result;
+    }
+  }, {
+    key: "genKey",
+    value: function genKey(count, offset) {
+      return "count:".concat(count, ",offset:").concat(offset);
+    }
+  }, {
+    key: "removeAllMessages",
+    value: function removeAllMessages() {
+      this._list = {};
+    }
+  }]);
+  return ThreadParticipantsListCache;
+}();
+
+var threadParticipantsListCache = new ThreadParticipantsListCache();
+exports.threadParticipantsListCache = threadParticipantsListCache;
+
+},{"./index":304,"@babel/runtime/helpers/classCallCheck":4,"@babel/runtime/helpers/createClass":5,"@babel/runtime/helpers/interopRequireDefault":7}],308:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -57491,7 +57392,7 @@ function ThreadObject(thread) {
   };
 }
 
-},{"./eventEmitter":307,"@babel/runtime/helpers/defineProperty":19,"@babel/runtime/helpers/interopRequireDefault":20}],312:[function(require,module,exports){
+},{"./eventEmitter":303,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7}],309:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -57513,7 +57414,7 @@ function user() {
   return localUser;
 }
 
-},{}],313:[function(require,module,exports){
+},{}],310:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -57866,7 +57767,7 @@ function messenger() {
 var _default = ChatMessaging;
 exports["default"] = _default;
 
-},{"./lib/constants":303,"./lib/errorHandler":304,"./lib/sdkParams":306,"./lib/store":308,"./utility/utility":314,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/helpers/typeof":26,"dompurify":151}],314:[function(require,module,exports){
+},{"./lib/constants":299,"./lib/errorHandler":300,"./lib/sdkParams":302,"./lib/store":304,"./utility/utility":311,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/typeof":13,"dompurify":138}],311:[function(require,module,exports){
 (function (global){(function (){
 "use strict";
 
@@ -58453,4 +58354,4 @@ var _default = new ChatUtility();
 exports["default"] = _default;
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/helpers/typeof":26,"crypto-js":109}]},{},[287]);
+},{"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/typeof":13,"crypto-js":96}]},{},[282]);
