@@ -815,9 +815,6 @@ function CallTopicManager(
                                 videoTrack.applyConstraints({
                                     width,
                                     height,
-                                    advanced: [
-                                        {aspectRatio: 1.77}
-                                    ]
                                 });
                             }, 1500);
                         }).catch(e => sdkParams.consoleLogging && console.log(e));
@@ -826,19 +823,17 @@ function CallTopicManager(
                             width: newWidth,
                             height: newHeight,
                             advanced: [
-                                {aspectRatio: 1.77}
+                                {aspectRatio: 1.777}
                             ]
                         }).then((res) => {
-                            setTimeout(function () {
-                                videoTrack.applyConstraints({
-                                    width: width,
-                                    height: height,
-                                    advanced: [
-                                        {aspectRatio: 1.77}
-                                    ]
-                                });
-                            }, 1500);
+
                         }).catch(e => sdkParams.consoleLogging && console.log(e));
+                        setTimeout(function () {
+                            videoTrack.applyConstraints({
+                                width: width,
+                                height: height,
+                            });
+                        }, 1500);
                     }
                 }
             }

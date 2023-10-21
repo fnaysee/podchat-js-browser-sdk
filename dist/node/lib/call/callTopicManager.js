@@ -877,10 +877,7 @@ function CallTopicManager(_ref) {
               setTimeout(function () {
                 videoTrack.applyConstraints({
                   width: width,
-                  height: height,
-                  advanced: [{
-                    aspectRatio: 1.77
-                  }]
+                  height: height
                 });
               }, 1500);
             })["catch"](function (e) {
@@ -891,21 +888,17 @@ function CallTopicManager(_ref) {
               width: newWidth,
               height: newHeight,
               advanced: [{
-                aspectRatio: 1.77
+                aspectRatio: 1.777
               }]
-            }).then(function (res) {
-              setTimeout(function () {
-                videoTrack.applyConstraints({
-                  width: width,
-                  height: height,
-                  advanced: [{
-                    aspectRatio: 1.77
-                  }]
-                });
-              }, 1500);
-            })["catch"](function (e) {
+            }).then(function (res) {})["catch"](function (e) {
               return _sdkParams.sdkParams.consoleLogging && console.log(e);
             });
+            setTimeout(function () {
+              videoTrack.applyConstraints({
+                width: width,
+                height: height
+              });
+            }, 1500);
           }
         }
       }

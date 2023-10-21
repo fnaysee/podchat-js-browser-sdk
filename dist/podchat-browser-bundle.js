@@ -45922,7 +45922,7 @@ FilterXSS.prototype.process = function (html) {
 module.exports = FilterXSS;
 
 },{"./default":275,"./parser":277,"./util":278,"cssfilter":124}],280:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.44","date":"۱۴۰۲/۷/۲۶","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.7-snapshot.44","date":"۱۴۰۲/۷/۲۹","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],281:[function(require,module,exports){
 "use strict";
 
@@ -53169,10 +53169,7 @@ function CallTopicManager(_ref) {
               setTimeout(function () {
                 videoTrack.applyConstraints({
                   width: width,
-                  height: height,
-                  advanced: [{
-                    aspectRatio: 1.77
-                  }]
+                  height: height
                 });
               }, 1500);
             })["catch"](function (e) {
@@ -53183,21 +53180,17 @@ function CallTopicManager(_ref) {
               width: newWidth,
               height: newHeight,
               advanced: [{
-                aspectRatio: 1.77
+                aspectRatio: 1.777
               }]
-            }).then(function (res) {
-              setTimeout(function () {
-                videoTrack.applyConstraints({
-                  width: width,
-                  height: height,
-                  advanced: [{
-                    aspectRatio: 1.77
-                  }]
-                });
-              }, 1500);
-            })["catch"](function (e) {
+            }).then(function (res) {})["catch"](function (e) {
               return _sdkParams.sdkParams.consoleLogging && console.log(e);
             });
+            setTimeout(function () {
+              videoTrack.applyConstraints({
+                width: width,
+                height: height
+              });
+            }, 1500);
           }
         }
       }
@@ -53729,9 +53722,10 @@ function CallScreenShare(user) {
           userContainer.appendChild(config.htmlElements[config.user.videoTopicName]);
           config.videoTopicManager.startMedia();
         }
-      }
+      } // if(currentCall().screenShareInfo.iAmOwner())
 
-      if ((0, _sharedData.currentCall)().screenShareInfo.iAmOwner()) (_config$videoTopicMan = config.videoTopicManager) === null || _config$videoTopicMan === void 0 ? void 0 : _config$videoTopicMan.restartMediaOnKeyFrame("screenShare", [1000, 4000]); // else {
+
+      (_config$videoTopicMan = config.videoTopicManager) === null || _config$videoTopicMan === void 0 ? void 0 : _config$videoTopicMan.restartMediaOnKeyFrame("screenShare", [1000, 4000]); // else {
       //     config.videoTopicManager?.restartMediaOnKeyFrame("screenShare", [1000, 3000, 6000]);
       // }
 

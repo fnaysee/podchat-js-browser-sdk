@@ -456,9 +456,10 @@ function CallScreenShare(user) {
           userContainer.appendChild(config.htmlElements[config.user.videoTopicName]);
           config.videoTopicManager.startMedia();
         }
-      }
+      } // if(currentCall().screenShareInfo.iAmOwner())
 
-      if ((0, _sharedData.currentCall)().screenShareInfo.iAmOwner()) (_config$videoTopicMan = config.videoTopicManager) === null || _config$videoTopicMan === void 0 ? void 0 : _config$videoTopicMan.restartMediaOnKeyFrame("screenShare", [1000, 4000]); // else {
+
+      (_config$videoTopicMan = config.videoTopicManager) === null || _config$videoTopicMan === void 0 ? void 0 : _config$videoTopicMan.restartMediaOnKeyFrame("screenShare", [1000, 4000]); // else {
       //     config.videoTopicManager?.restartMediaOnKeyFrame("screenShare", [1000, 3000, 6000]);
       // }
 

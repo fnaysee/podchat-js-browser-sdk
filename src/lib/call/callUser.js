@@ -275,7 +275,7 @@ function CallScreenShare(user) {
                 }
             }
 
-            if(currentCall().screenShareInfo.iAmOwner())
+            // if(currentCall().screenShareInfo.iAmOwner())
                 config.videoTopicManager?.restartMediaOnKeyFrame("screenShare", [1000, 4000]);
             // else {
             //     config.videoTopicManager?.restartMediaOnKeyFrame("screenShare", [1000, 3000, 6000]);

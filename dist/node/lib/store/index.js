@@ -15,8 +15,6 @@ var _user = require("./user");
 
 var _reactionsList = require("./reactionsList");
 
-var _threadParticipantsList = require("./threadParticipantsList");
-
 var store = {
   threads: _threads.threadsList,
   events: _eventEmitter.storeEvents,
