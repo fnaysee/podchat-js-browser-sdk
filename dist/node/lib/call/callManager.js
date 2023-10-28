@@ -74,7 +74,7 @@ function CallManager(_ref) {
           _events.chatEvents.fireEvent('callEvents', {
             type: 'CALL_RECORDING_STARTED',
             result: {
-              id: params.recordingOwner
+              id: callConfig.recordingOwner
             }
           });
         }

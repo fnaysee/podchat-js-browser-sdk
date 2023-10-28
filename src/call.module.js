@@ -956,8 +956,10 @@ function ChatCall(params) {
                     result: messageContent
                 });
 
-                currentCallMyUser().videoTopicManager().restartMediaOnKeyFrame(store.user().id, [4000,8000,12000,25000]);
-                currentCallMyUser().videoTopicManager().restartMediaOnKeyFrame("screenShare", [4000,8000,12000,25000]);
+                // if(currentCallMyUser() && currentCallMyUser().videoTopicManager())
+                //     currentCallMyUser().videoTopicManager().restartMediaOnKeyFrame(store.user().id, [4000,8000,12000,25000]);
+                if(currentCall().users().get("screenShare"))
+                    currentCall().users().get("screenShare").videoTopicManager().restartMediaOnKeyFrame("screenShare", [4000,8000,12000,25000]);
 
                 break;
 

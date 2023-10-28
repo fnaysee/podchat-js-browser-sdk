@@ -45922,7 +45922,7 @@ FilterXSS.prototype.process = function (html) {
 module.exports = FilterXSS;
 
 },{"./default":275,"./parser":277,"./util":278,"cssfilter":124}],280:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.45","date":"۱۴۰۲/۷/۲۹","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.7-snapshot.45","date":"۱۴۰۲/۸/۶","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],281:[function(require,module,exports){
 "use strict";
 
@@ -46938,10 +46938,11 @@ function ChatCall(params) {
         _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'START_RECORDING_CALL',
           result: messageContent
-        });
+        }); // if(currentCallMyUser() && currentCallMyUser().videoTopicManager())
+        //     currentCallMyUser().videoTopicManager().restartMediaOnKeyFrame(store.user().id, [4000,8000,12000,25000]);
 
-        (0, _sharedData.currentCallMyUser)().videoTopicManager().restartMediaOnKeyFrame(_store.store.user().id, [4000, 8000, 12000, 25000]);
-        (0, _sharedData.currentCallMyUser)().videoTopicManager().restartMediaOnKeyFrame("screenShare", [4000, 8000, 12000, 25000]);
+
+        if ((0, _sharedData.currentCall)().users().get("screenShare")) (0, _sharedData.currentCall)().users().get("screenShare").videoTopicManager().restartMediaOnKeyFrame("screenShare", [4000, 8000, 12000, 25000]);
         break;
 
       /**
@@ -51018,7 +51019,7 @@ function CallManager(_ref) {
           _events.chatEvents.fireEvent('callEvents', {
             type: 'CALL_RECORDING_STARTED',
             result: {
-              id: params.recordingOwner
+              id: callConfig.recordingOwner
             }
           });
         }

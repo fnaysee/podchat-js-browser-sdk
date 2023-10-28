@@ -944,10 +944,11 @@ function ChatCall(params) {
         _eventsModule.chatEvents.fireEvent('callEvents', {
           type: 'START_RECORDING_CALL',
           result: messageContent
-        });
+        }); // if(currentCallMyUser() && currentCallMyUser().videoTopicManager())
+        //     currentCallMyUser().videoTopicManager().restartMediaOnKeyFrame(store.user().id, [4000,8000,12000,25000]);
 
-        (0, _sharedData.currentCallMyUser)().videoTopicManager().restartMediaOnKeyFrame(_store.store.user().id, [4000, 8000, 12000, 25000]);
-        (0, _sharedData.currentCallMyUser)().videoTopicManager().restartMediaOnKeyFrame("screenShare", [4000, 8000, 12000, 25000]);
+
+        if ((0, _sharedData.currentCall)().users().get("screenShare")) (0, _sharedData.currentCall)().users().get("screenShare").videoTopicManager().restartMediaOnKeyFrame("screenShare", [4000, 8000, 12000, 25000]);
         break;
 
       /**
