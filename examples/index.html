@@ -1208,11 +1208,10 @@
         }
 
         function getThreads(params) {
-            // var instantResult = chatAgent.getThreads(params, function (threadsResult) {
-            //     console.log(threadsResult);
-            // });
-            var instantResult = chatAgent.getThreadsLight(params, function (threadsResult) {
+            var instantResult = chatAgent.getThreads(params, function (threadsResult) {
+                console.log(threadsResult);
             });
+            // var instantResult = chatAgent.getThreadsLight(params, function (threadsResult) {});
             // console.log(instantResult);
         }
 

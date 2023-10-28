@@ -1,7 +1,7 @@
 import {chatMessageVOTypes, inviteeVOidTypes, callStickerTypes, callMetaDataTypes} from "./lib/constants"
 import Utility from "./utility/utility"
 
-import errorHandler, {errorList} from "./lib/errorHandler";
+import {errorList} from "./lib/errorHandler";
 import CallsList from "./lib/call/callsList";
 import {DeviceManager} from "./lib/call/deviceManager2";
 import Call from "./lib/call/call";
@@ -158,14 +158,6 @@ function ChatCall(app, params) {
                 config.servers = serversList;
                 config.currentServerIndex = 0;
             },
-            // setCurrentServer: function (query) {
-            //     for(let i in config.servers) {
-            //         if(config.servers[i].indexOf(query) !== -1) {
-            //             config.currentServerIndex = i;
-            //             break;
-            //         }
-            //     }
-            // },
             getCurrentServer: function () {
                 return config.servers[0]//config.currentServerIndex];
             },
