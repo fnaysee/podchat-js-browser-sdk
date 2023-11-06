@@ -12,7 +12,6 @@ import {CallServerManager} from "../callServerManager";
 import {callMetaDataTypes} from "../../constants";
 import {errorList, getFilledErrorObject, raiseError} from "../../errorHandler";
 import {callsManager} from "../callsList";
-import {WebrtcPeerConnection} from "./webrtcPeer";
 import PeerConnectionManager from "./peerConnectionManager";
 
 function MultiTrackCallManager({callId, callConfig}) {
@@ -27,22 +26,25 @@ function MultiTrackCallManager({callId, callConfig}) {
         receivePeerManager: null
     };
 
-    function onTrackCallback(){
-
-    }
-
     function startCallWebRTCFunctions(callConfig) {
         config.callServerController.setServers(callConfig.kurentoAddress);
 
-        config.sendPeerManager = new PeerConnectionManager(callId, 'send', {
-            iceServers: publicized.getTurnServer(publicized.callConfig()),
-            iceTransportPolicy: 'relay',
-        }, onTrackCallback);
+        // console.log('debug startCallWebRTCFunctions:: ', {
+        //     iceServers: publicized.getTurnServer(publicized.callConfig()),
+        //     iceTransportPolicy: 'relay',
+        // });
 
         config.receivePeerManager = new PeerConnectionManager(callId, 'receive', {
             iceServers: publicized.getTurnServer(publicized.callConfig()),
             iceTransportPolicy: 'relay',
-        }, onTrackCallback);
+        }, config.callConfig.brokerAddress);
+
+        config.sendPeerManager = new PeerConnectionManager(callId, 'send', {
+            iceServers: publicized.getTurnServer(publicized.callConfig()),
+            iceTransportPolicy: 'relay',
+        }, config.callConfig.brokerAddress);
+
+
 
         if (sharedVariables.callDivId) {
             new Promise(resolve => {
@@ -125,14 +127,25 @@ function MultiTrackCallManager({callId, callConfig}) {
             onResultCallback = function (res) {
                 if (res.done === 'TRUE') {
                     callStopQueue.callStarted = true;
-                    // callController.startCall(params);
 
+                    let user = config.users.get(store.user().id);
+                    //Start my own senders
+                    console.log('debug ', 77, user.user())
+                    if(user.user().video){
+                        console.log('debug 111 createSessionInChat() video 1', user.user())
+                        user.startVideo(user.user().topicSend);
+                    }
+                    if(!user.user().mute){
+                        console.log('debug 111 createSessionInChat() voice 2', user.user())
+                        user.startAudio(user.user().topicSend);
+                    }
                 } else {
                     callsManager().removeItem(config.callId);
                     // endCall({callId: config.callId});
                     // callStop(true, true);
                 }
-            }
+            };
+
         sendCallMessage(message, onResultCallback, {
                 timeoutTime: 4000,
                 timeoutRetriesCount: 5
@@ -216,18 +229,34 @@ function MultiTrackCallManager({callId, callConfig}) {
 
     function handleReceivingTracksChanges(jsonMessage) {
         // jsonMessage.recvList
-        jsonMessage.recvList.forEach(item =>{
-            let userId = config.users.findUserIdByTopic(item.topic);
-            let user = config.users.get(userId);
-            if(user) {
-                user.processTrackChange()
+        console.log('debug jsonMessage', {jsonMessage})
+        if(jsonMessage && jsonMessage.recvList && jsonMessage.recvList.length) {
+            try {
+                let list = JSON.parse(jsonMessage.recvList);
+                console.log('debug handleReceivingTracksChanges 1', {list})
+                list.forEach(item => {
+                    console.log('debug handleReceivingTracksChanges 2', {item})
+
+                    let userId = config.users.findUserIdByTopic(item.topic);
+                    let user = config.users.get(userId);
+                    console.log('debug handleReceivingTracksChanges 3',  user, userId, user.user(), item, user && !user.isMe())
+                    if (user && !user.isMe()) {
+                        user.processTrackChange(item)
+                    }
+                    // config.receivePeerManager.addTrack(jsonMessage.recvList)
+                });
+            } catch (error) {
+                console.error('Unable to parse receive list', error);
             }
-            // config.receivePeerManager.addTrack(jsonMessage.recvList)
-        })
+        }
     }
 
     function handleProcessSdpOffer(jsonMessage) {
-        this.receivePeerManager.handleProcessSDPOfferForReceiveTrack(jsonMessage);
+        config.receivePeerManager.handleProcessSDPOfferForReceiveTrack(jsonMessage, ()=>{
+            receiveAddIceCandidates.forEach(item => {
+                addIceCandidate(config.sendPeerManager.getPeer(), item, 'receivePeerManager');
+            });
+        });
     }
 
     function handleProcessSdpAnswer(jsonMessage) {
@@ -259,57 +288,75 @@ function MultiTrackCallManager({callId, callConfig}) {
                 return;
             }
 
-            sdkParams.consoleLogging && console.log("[SDK][handleProcessSdpAnswer]", jsonMessage, jsonMessage.topic);
+            sendAddIceCandidates.forEach(item => {
+                addIceCandidate(config.sendPeerManager.getPeer(), item, 'sendPeerManager');
+            });
+            sdkParams.consoleLogging && console.log("[SDK][handleProcessSdpAnswer]", jsonMessage);
         });
     }
 
-    function handleAddIceCandidate(jsonMessage) {
-        let userId = config.users.findUserIdByTopic(jsonMessage.topic);
-
-        if (!userId) {
-            console.warn("[SDK] Skipping ADD_ICE_CANDIDATE, topic not exists.", {jsonMessage})
-            return;
-        }
-
-        let peer; //= callUsers[userId].peers[jsonMessage.topic];
-
-        if (jsonMessage.topic.indexOf('Vi-') > -1 || jsonMessage.topic.indexOf('screen-Share') !== -1) {
-            peer = config.users.get(userId).videoTopicManager();
-        } else if (jsonMessage.topic.indexOf('Vo-') > -1) {
-            peer = config.users.get(userId).audioTopicManager();
-        }
-
-        if(!peer)
-            return;
-
-        peer = peer.getPeer();
-
-        if (peer == null) {
-            chatEvents.fireEvent('callEvents', {
-                type: 'CALL_ERROR',
-                code: 7000,
-                message: "[handleAddIceCandidate] Skip, no WebRTC Peer",
-                error: JSON.stringify(peer),
-                environmentDetails: getCallDetails()
-            });
-            return;
-        }
-
-        peer.addIceCandidate(jsonMessage.candidate, (err) => {
+    function addIceCandidate(peer, data, key) {
+        peer.addIceCandidate(data, (err) => {
             if (err) {
-                console.error("[handleAddIceCandidate] " + err);
+                console.error("[" + key + "] " + err);
 
                 chatEvents.fireEvent('callEvents', {
                     type: 'CALL_ERROR',
                     code: 7000,
-                    message: "[handleAddIceCandidate] " + err,
-                    error: JSON.stringify(jsonMessage.candidate),
+                    message: "[" + key + "] " + err,
+                    error: JSON.stringify(data),
                     environmentDetails: getCallDetails()
                 });
 
                 return;
             }
         });
+    }
+    let sendAddIceCandidates = [];
+    function handleSendAddIceCandidate(jsonMessage) {
+        let peer = config.sendPeerManager.getPeer();
+        if (!peer) {
+            chatEvents.fireEvent('callEvents', {
+                type: 'CALL_ERROR',
+                code: 7000,
+                message: "[handleSendAddIceCandidate] Skip, no WebRTC Peer",
+                error: JSON.stringify(peer),
+                environmentDetails: getCallDetails()
+            });
+            return;
+        }
+
+        if(jsonMessage.candidate && jsonMessage.candidate.length) {
+            let candidate = JSON.parse(jsonMessage.candidate);
+            if(peer.peerConnection.currentRemoteDescription) {
+                addIceCandidate(peer, candidate, 'handleSendAddIceCandidate');
+            } else {
+                sendAddIceCandidates.push(candidate);
+            }
+        }
+    }
+    let receiveAddIceCandidates = [];
+    function handleReceiveAddIceCandidate(jsonMessage) {
+        let peer = config.receivePeerManager.getPeer();
+        if (!peer) {
+            chatEvents.fireEvent('callEvents', {
+                type: 'CALL_ERROR',
+                code: 7000,
+                message: "[handleReceiveAddIceCandidate] Skip, no WebRTC Peer",
+                error: JSON.stringify(peer),
+                environmentDetails: getCallDetails()
+            });
+            return;
+        }
+        if(jsonMessage.candidate && jsonMessage.candidate.length) {
+            let candidate = JSON.parse(jsonMessage.candidate);
+
+            if(peer.peerConnection.currentRemoteDescription) {
+                addIceCandidate(peer, candidate, 'handleReceiveAddIceCandidate');
+            } else {
+                receiveAddIceCandidates.push(candidate);
+            }
+        }
     }
 
     function getCallDetails(customData) {
@@ -568,6 +615,23 @@ function MultiTrackCallManager({callId, callConfig}) {
                     break;
                 case 'SEND_COMPLETE': //For send connection 2
                     // console.log("send completed. trying next if any")
+                    // let data = message.addition;
+                    // if(data && data.length) {
+                    //     try{
+                    //         data = JSON.parse(data);
+                    //     } catch (error) {
+                    //         console.error('Unable to parse SEND_COMPLETE result', error);
+                    //     }
+                    //     if(data[0].topic.indexOf('Vo-') > -1) {
+                    //         // let el = config.users.get(store.user().id).getAudioHtmlElement();
+                    //         // config.htmlElements[config.user.audioTopicName] = el;
+                    //         // config.users.get(store.user().id).appendAudioToCallDiv();
+                    //     } else {
+                    //         let el = config.users.get(store.user().id).getVideoHtmlElement();
+                    //         config.htmlElements[config.user.videoTopicName] = el;
+                    //         config.users.get(store.user().id).appendVideoToCallDiv();
+                    //     }
+                    // }
                     config.sendPeerManager.processingCurrentTrackCompleted();
                     break;
 
@@ -576,13 +640,35 @@ function MultiTrackCallManager({callId, callConfig}) {
                     handleReceivingTracksChanges(message);
                     break;
                 case 'PROCESS_SDP_OFFER':  //Then janus sends offers
+                case 'PROCESS_SDP_UPDATE':
                     handleProcessSdpOffer(message);
                     break;
-                case 'ADD_ICE_CANDIDATE':
-                    handleAddIceCandidate(message);
+                case 'SEND_ADD_ICE_CANDIDATE':
+                    handleSendAddIceCandidate(message);
+                case 'RECIVE_ADD_ICE_CANDIDATE':
+                    handleReceiveAddIceCandidate(message);
                     break;
                 case 'JOIN_AADDITIONN_COMPLETE': // For receive connections 2
-                    console.log("join completed. trying next if any")
+                    // console.log("join completed. trying next if any")
+
+                    // let recvData = message.addition;
+                    // if(recvData && recvData.length) {
+                    //     try {
+                    //         recvData = JSON.parse(recvData);
+                    //     } catch (error) {
+                    //         console.error('Unable to parse JOIN_AADDITIONN_COMPLETE result', error);
+                    //     }
+                    //     let userId = config.users.findUserIdByTopic(recvData[0].topic);
+                    //     if(recvData[0].topic.indexOf('Vo-') > -1) {
+                    //         let el = config.users.get(userId).getAudioHtmlElement();
+                    //         config.htmlElements[config.user.audioTopicName] = el;
+                    //         config.users.get(userId).appendAudioToCallDiv();
+                    //     } else {
+                    //         let el = config.users.get(userId).getVideoHtmlElement();
+                    //         config.htmlElements[config.user.videoTopicName] = el;
+                    //         config.users.get(userId).appendVideoToCallDiv();
+                    //     }
+                    // }
                     config.receivePeerManager.processingCurrentTrackCompleted();
                     break;
 
@@ -605,7 +691,7 @@ function MultiTrackCallManager({callId, callConfig}) {
                         store.messagesCallbacks[uniqueId](message);
                     }
                     break;
-
+                case 'EXIT_CLIENT':
                 case 'CLOSE':
                     if (store.messagesCallbacks[uniqueId]) {
                         store.messagesCallbacks[uniqueId](message);

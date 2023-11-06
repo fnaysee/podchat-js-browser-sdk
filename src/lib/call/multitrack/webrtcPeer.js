@@ -1,6 +1,9 @@
+import {currentCall} from "../sharedData";
+import {sdkParams} from "../../sdkParams";
+
 function WebrtcPeerConnection({
     callId,
-    direction = 'send',
+    direction,
     rtcPeerConfig,
     connectionStateChange = null,
     iceConnectionStateChange = null,
@@ -17,15 +20,18 @@ function WebrtcPeerConnection({
 
     function createPeer() {
         try {
+            console.log('debug createPeer', config.rtcPeerConfig, config.direction);
             config.peerConnection = new RTCPeerConnection(config.rtcPeerConfig);
         } catch (err) {
             console.error("[SDK][WebrtcPeerConnection][createPeer]", err);
         }
-
+        console.log('debug createPeer 2', config.rtcPeerConfig, config.direction);
         config.peerConnection.onconnectionstatechange = connectionStateChange;
         config.peerConnection.oniceconnectionstatechange = iceConnectionStateChange;
+        console.log('debug createPeer 3', config.rtcPeerConfig, config.direction);
+
         config.peerConnection.addEventListener('signalingstatechange', signalingStateChangeCallback);
-        config.peerConnection.addEventListener('track', onRemoteTrack);
+        // config.peerConnection.addEventListener('track', onRemoteTrack);
     }
 
     createPeer();
@@ -151,7 +157,7 @@ function WebrtcPeerConnection({
                 let localDescription = config.peerConnection.localDescription
 
                 // console.debug('[SDK][WebRtcModule] Local description set\n', localDescription.sdp)
-                callback(null, localDescription.sdp)
+                callback(undefined, localDescription.sdp)
             }).catch(callback)
         },
         processAnswer(sdpAnswer, callback) {
@@ -189,14 +195,16 @@ function WebrtcPeerConnection({
             });
         },
         addIceCandidate(candidate, callback){
+            console.log('debug 3', {candidate})
             config.candidatesQueue.push({
                 candidate: new RTCIceCandidate(candidate),
                 callback: callback
             });
+            addTheCandidates();
             // console.log("[SDK][WebRtcModule] Remote ICE candidate received", candidate)
-            if (config.peerConnection.signalingState === 'stable') {
-                addTheCandidates();
-            }
+            // if (config.peerConnection.signalingState === 'stable') {
+            //     addTheCandidates();
+            // }
         },
         getRemoteStream(index) {
             if (config.peerConnection) {
@@ -214,6 +222,30 @@ function WebrtcPeerConnection({
                     callback && callback();
                 }
             });
+        },
+        generateSDPAnswer() {
+            return new Promise(resolve => {
+                config.peerConnection.createAnswer(function (answer) {
+                    config.peerConnection.setLocalDescription(answer);
+                    resolve(answer)
+
+
+                    // sendClientMessage({
+                    //     id:"RECIVE_SDP_ANSWER",
+                    //     sdpAnswer: answer.sdp,
+                    //     clientId: getClientId(),
+                    //     chatId:getChatId(),
+                    //     addition: [{chatId:topic[0].chatId, clientId:topic[0].clientId, mline:topic[0].mline, topic:topic[0].topic, mediaType:topic[0].mediaType}]
+                    // });
+
+                }, function (error) {
+                    if(error) {
+                        console.error("error: ", {error});
+                    }
+                });
+
+            })
+
         },
         async updateStream(stream) {
             let localTrack = stream.getTracks()[0];
