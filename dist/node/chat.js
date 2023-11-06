@@ -51,6 +51,7 @@ function Chat(params) {
   /*******************************************************
    *          P R I V A T E   V A R I A B L E S          *
    *******************************************************/
+  _sdkParams.sdkParams.appId = params.appId;
   _sdkParams.sdkParams.token = params.token || "111";
   _sdkParams.sdkParams.generalTypeCode = params.typeCode || 'default';
   _sdkParams.sdkParams.typeCodeOwnerId = params.typeCodeOwnerId || null;
@@ -399,6 +400,7 @@ function Chat(params) {
   initAsync = function initAsync() {
     var asyncGetReadyTime = new Date().getTime();
     asyncClient = new _podasyncWsOnly["default"]({
+      appId: _sdkParams.sdkParams.appId,
       protocol: protocolManager.getCurrentProtocol(),
       queueHost: queueHost,
       queuePort: queuePort,

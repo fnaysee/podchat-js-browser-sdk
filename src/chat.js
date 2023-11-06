@@ -49,6 +49,7 @@ function Chat(params) {
     /*******************************************************
      *          P R I V A T E   V A R I A B L E S          *
      *******************************************************/
+    sdkParams.appId = params.appId;
     sdkParams.token = params.token || "111";
     sdkParams.generalTypeCode = params.typeCode || 'default';
     sdkParams.typeCodeOwnerId = params.typeCodeOwnerId || null;
@@ -399,6 +400,7 @@ function Chat(params) {
             var asyncGetReadyTime = new Date().getTime();
 
             asyncClient = new Async({
+                appId: sdkParams.appId,
                 protocol: protocolManager.getCurrentProtocol(),
                 queueHost: queueHost,
                 queuePort: queuePort,
