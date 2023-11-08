@@ -9,8 +9,6 @@ exports["default"] = void 0;
 
 var _constants = require("../constants");
 
-var _messaging = require("../../messaging.module");
-
 var _utility = _interopRequireDefault(require("../../utility/utility"));
 
 function ReactionsMethods(app) {

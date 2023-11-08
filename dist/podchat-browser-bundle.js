@@ -41723,7 +41723,7 @@ FilterXSS.prototype.process = function (html) {
 module.exports = FilterXSS;
 
 },{"./default":253,"./parser":255,"./util":256,"cssfilter":124}],258:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.47","date":"۱۴۰۲/۸/۱۷","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.7-snapshot.48","date":"۱۴۰۲/۸/۱۷","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],259:[function(require,module,exports){
 "use strict";
 
@@ -50770,8 +50770,6 @@ exports["default"] = void 0;
 
 var _constants = require("../constants");
 
-var _messaging = require("../../messaging.module");
-
 var _utility = _interopRequireDefault(require("../../utility/utility"));
 
 function ReactionsMethods(app) {
@@ -51043,7 +51041,7 @@ function ReactionsMethods(app) {
 var _default = ReactionsMethods;
 exports["default"] = _default;
 
-},{"../../messaging.module":287,"../../utility/utility":288,"../constants":277,"@babel/runtime/helpers/interopRequireDefault":7}],276:[function(require,module,exports){
+},{"../../utility/utility":288,"../constants":277,"@babel/runtime/helpers/interopRequireDefault":7}],276:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -51052,8 +51050,6 @@ Object.defineProperty(exports, "__esModule", {
 exports["default"] = void 0;
 
 var _constants = require("../constants");
-
-var _messaging = require("../../messaging.module");
 
 function ThreadParticipantsMethods(app) {
   /**
@@ -51250,7 +51246,7 @@ function ThreadParticipantsMethods(app) {
 var _default = ThreadParticipantsMethods;
 exports["default"] = _default;
 
-},{"../../messaging.module":287,"../constants":277}],277:[function(require,module,exports){
+},{"../constants":277}],277:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

@@ -7,8 +7,6 @@ exports["default"] = void 0;
 
 var _constants = require("../constants");
 
-var _messaging = require("../../messaging.module");
-
 function ThreadParticipantsMethods(app) {
   /**
    * Get Thread Participants
