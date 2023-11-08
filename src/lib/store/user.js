@@ -1,14 +1,15 @@
-let localUser = null;
+class SDKUser {
+    constructor() {
+        this._user = null;
+    }
 
-function setSDKUser(serverUSer) {
-    localUser = serverUSer;
-    localUser.isMe = (userId) => {
-        return localUser.id == userId;
+    get(){
+        return this._user;
+    }
+
+    setUser(data){
+        this._user = data;
     }
 }
 
-function user(){
-    return localUser
-}
-
-export {setSDKUser, user};
+export {SDKUser};

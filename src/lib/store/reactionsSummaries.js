@@ -1,5 +1,3 @@
-import {store} from "./index";
-
 let list = [];
 const eventsList = {
     SINGLE_THREAD_UPDATE: "singleThreadUpdate",
@@ -17,6 +15,7 @@ class ReactionsSummariesCache {
     constructor(props) {
         // super(props);
         this._list = {};
+        this._app = props.app;
     }
 
     get list() {
@@ -153,7 +152,7 @@ class ReactionsSummariesCache {
         let message = this.getItem(messageId);
         if(!message)
             return;
-        if(store.user().isMe(userId)) {
+        if(this._app.store.user.get().isMe(userId)) {
             this._list[messageId].userReaction = {
                 id: reactionId,
                 reaction: reaction,
@@ -180,5 +179,5 @@ class ReactionsSummariesCache {
         this._list = {};
     }
 }
-const reactionsSummariesCache = new ReactionsSummariesCache();
-export {reactionsSummariesCache}
+
+export {ReactionsSummariesCache}

@@ -3,9 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.store = void 0;
-
-var _threads = require("./threads");
+exports.Store = Store;
 
 var _eventEmitter = require("./eventEmitter");
 
@@ -15,15 +13,18 @@ var _user = require("./user");
 
 var _reactionsList = require("./reactionsList");
 
-var store = {
-  threads: _threads.threadsList,
-  events: _eventEmitter.storeEvents,
-  reactionSummaries: _reactionsSummaries.reactionsSummariesCache,
-  user: _user.user,
-  threadCallbacks: {},
-  sendMessageCallbacks: {},
-  messagesCallbacks: {},
-  asyncRequestTimeouts: {},
-  reactionsList: _reactionsList.reactionsListCache
-};
-exports.store = store;
+var _threads = require("./threads");
+
+function Store(app) {
+  return {
+    threads: new _threads.ThreadsList(app),
+    events: new _eventEmitter.StoreEvents(),
+    reactionSummaries: new _reactionsSummaries.ReactionsSummariesCache(app),
+    user: new _user.SDKUser(app),
+    threadCallbacks: {},
+    sendMessageCallbacks: {},
+    messagesCallbacks: {},
+    asyncRequestTimeouts: {},
+    reactionsList: new _reactionsList.ReactionsListCache(app)
+  };
+}

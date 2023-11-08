@@ -1,11 +1,6 @@
 import {CallUser, CallScreenShare} from "./callUser";
-import {chatEvents} from "../../events.module";
-import {callsManager} from "./callsList";
-import {messenger} from "../../messaging.module";
-import {store} from "../store";
-import {currentCall} from "./sharedData";
 
-function CallUsers({callId}) {
+function CallUsers({app, callId}) {
     const config = {
         list: {},
         callId
@@ -22,9 +17,9 @@ function CallUsers({callId}) {
     const publicized = {
         addItem(memberObject, type = "user") {
             if (type == 'user')
-                config.list[memberObject.userId] = new CallUser(memberObject);
+                config.list[memberObject.userId] = new CallUser(app, memberObject);
             else if (type == 'screenShare') {
-                config.list[memberObject.userId] = new CallScreenShare(memberObject);
+                config.list[memberObject.userId] = new CallScreenShare(app, memberObject);
             }
         },
         async removeItem(userId) {
@@ -39,10 +34,10 @@ function CallUsers({callId}) {
         },
         getHTMLElements,
         generateCallUIList: function () {
-            let me = store.user().id
+            let me = app.store.user.get().id
                 , callUIElements = {};
 
-            if (!callsManager().get(config.callId))
+            if (!app.callsManager.get(config.callId))
                 return;
 
             for (let i in config.list) {
@@ -51,7 +46,7 @@ function CallUsers({callId}) {
                 config.list[i] && console.log('HTMLElements:: ', {HTMLElements}, config.list[i], config.list[i].user(), config.list[i].user().videoTopicName);
                 if (config.list[i] && HTMLElements) {
                     tags.container = HTMLElements.container;
-                    if ((i === 'screenShare' && currentCall().screenShareInfo.isStarted())
+                    if ((i === 'screenShare' && app.call.currentCall().screenShareInfo.isStarted())
                         || i != 'screenShare' && config.list[i].user().video && HTMLElements[config.list[i].user().videoTopicName])
                         tags.video = HTMLElements[config.list[i].user().videoTopicName];
                     // if (!config.list[i].mute && config.list[i].getHTMLElements()[config.list[i].user().audioTopicName])

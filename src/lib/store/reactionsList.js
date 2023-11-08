@@ -1,4 +1,3 @@
-import {store} from "./index";
 
 let list = [];
 const eventsList = {
@@ -111,5 +110,4 @@ class ReactionsListCache {
         this._list = {};
     }
 }
-const reactionsListCache = new ReactionsListCache();
-export {reactionsListCache}
+export {ReactionsListCache}

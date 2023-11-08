@@ -5,13 +5,11 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.reactionsListCache = void 0;
+exports.ReactionsListCache = void 0;
 
 var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
 
 var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
-
-var _index = require("./index");
 
 var list = [];
 var eventsList = {
@@ -124,5 +122,4 @@ var ReactionsListCache = /*#__PURE__*/function () {
   return ReactionsListCache;
 }();
 
-var reactionsListCache = new ReactionsListCache();
-exports.reactionsListCache = reactionsListCache;
+exports.ReactionsListCache = ReactionsListCache;

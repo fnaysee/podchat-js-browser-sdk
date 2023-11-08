@@ -1,6 +1,5 @@
-import {sdkParams} from "../sdkParams";
 
-function CallServerManager() {
+function CallServerManager(app) {
     let config = {
         servers: [],
         currentServerIndex: 0,
@@ -22,13 +21,12 @@ function CallServerManager() {
         },
         changeServer: function () {
             if(this.canChangeServer()) {
-                sdkParams.consoleLogging && console.debug('[SDK][changeServer] Changing kurento server...');
+                app.sdkParams.consoleLogging && console.debug('[SDK][changeServer] Changing kurento server...');
                 config.currentServerIndex++;
             }
         }
     }
 }
 
-const callServerController = new CallServerManager();
 
-export {callServerController, CallServerManager}
+export default CallServerManager

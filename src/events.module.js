@@ -1,9 +1,6 @@
 import Utility from "./utility/utility"
-import {sdkParams} from "./lib/sdkParams";
 
-let chatEvents = new ChatEvents();
-
-function ChatEvents() {
+function ChatEvents(app) {
         let
             eventCallbacks = {
             connect: {},
@@ -29,7 +26,7 @@ function ChatEvents() {
         this.code = error.error ? error.error.code : error.code;
         this.message = error.error ? error.error.message : error.message;
         this.uniqueId = error.uniqueId ? error.uniqueId : '';
-        this.token = sdkParams.token;
+        this.token = app.sdkParams.token;
         this.error =  JSON.stringify((error.error ? error.error : error));
         this.environmentDetails = error.environmentDetails
     };
@@ -49,9 +46,9 @@ function ChatEvents() {
     this.fireEvent = function (eventName, param) {
         if (eventName === "chatReady") {
             if (typeof navigator === "undefined") {
-                sdkParams.consoleLogging && console.log("\x1b[90m    ☰ \x1b[0m\x1b[90m%s\x1b[0m", "Chat is Ready 😉");
+                app.sdkParams.consoleLogging && console.log("\x1b[90m    ☰ \x1b[0m\x1b[90m%s\x1b[0m", "Chat is Ready 😉");
             } else {
-                sdkParams.consoleLogging && console.log("%c   Chat is Ready 😉", 'border-left: solid #666 10px; color: #666;');
+                app.sdkParams.consoleLogging && console.log("%c   Chat is Ready 😉", 'border-left: solid #666 10px; color: #666;');
             }
         }
 
@@ -88,19 +85,12 @@ function ChatEvents() {
 
     this.clearEventCallbacks = function () {
         // Delete all event callbacks
-        for (var i in eventCallbacks) {
+        for (let i in eventCallbacks) {
             delete eventCallbacks[i];
         }
     }
 }
 
-function initEventHandler() {
-    if(!chatEvents) {
-        chatEvents = new ChatEvents()
-    }
 
-    return chatEvents;
-}
 
 export default ChatEvents;
-export { initEventHandler, chatEvents }

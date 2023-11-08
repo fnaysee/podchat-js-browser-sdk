@@ -2,8 +2,6 @@
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 
-var _typeof = require("@babel/runtime/helpers/typeof");
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -15,13 +13,7 @@ var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/
 
 require("../constants.js");
 
-var _eventsModule = require("../../events.module.js");
-
-var _errorHandler = _interopRequireWildcard(require("../errorHandler.js"));
-
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+var _errorHandler = require("../errorHandler.js");
 
 var deviceList = {
   audioIn: [],
@@ -141,7 +133,7 @@ var deviceManager = {
         });
         resolve(stream);
       })["catch"](function (e) {
-        var error = (0, _errorHandler.raiseError)(_errorHandler.errorList.SCREENSHARE_PERMISSION_ERROR, callback, true, {
+        var error = app.errorHandler.raiseError(_errorHandler.errorList.SCREENSHARE_PERMISSION_ERROR, callback, true, {
           eventName: 'callEvents',
           eventType: 'CALL_ERROR'
         });
@@ -253,14 +245,13 @@ var deviceManager = {
         if (video) _mediaStreams.setVideoInput(stream);
         resolve(stream);
       })["catch"](function (error) {
-        _eventsModule.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_ERROR',
           code: audio ? 12400 : 12401,
           message: error // environmentDetails: getSDKCallDetails()
 
         });
-
-        reject((0, _errorHandler["default"])(audio ? 12400 : 12401));
+        reject(app.errorHandler.handleError(audio ? 12400 : 12401));
       });
     });
   },

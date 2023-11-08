@@ -1,29 +1,27 @@
 import {chatMessageVOTypes} from "./lib/constants"
 import DOMPurify from 'dompurify'
 import Utility from "./utility/utility"
-import {errorList, raiseError} from "./lib/errorHandler";
-import {sdkParams} from "./lib/sdkParams";
-import {store} from "./lib/store";
-
-let chatMessaging = null;
+import {errorList} from "./lib/errorHandler";
 
 /**
  * Communicates with chat server
+ * @param app
  * @param params
  * @constructor
  */
-function ChatMessaging(params) {
-    var currentModuleInstance = this,
+function ChatMessaging(app, params) {
+    let currentModuleInstance = this,
         asyncClient = params.asyncClient;
+
     //Utility = params.Utility,
-    // consoleLogging = sdkParams.consoleLogging,
-    //generalTypeCode = sdkParams.generalTypeCode,
+    // consoleLogging = app.sdkParams.consoleLogging,
+    //generalTypeCode = app.sdkParams.generalTypeCode,
     //chatPingMessageInterval = params.chatPingMessageInterval,
     //asyncRequestTimeout = params.asyncRequestTimeout,
     //messageTtl = params.messageTtl,
     //serverName = params.serverName,
     //msgPriority = params.msgPriority,
-    //typeCodeOwnerId = sdkParams.typeCodeOwnerId || null;
+    //typeCodeOwnerId = app.sdkParams.typeCodeOwnerId || null;
 
     this.threadCallbacks = {};
     this.sendMessageCallbacks = {};
@@ -38,13 +36,13 @@ function ChatMessaging(params) {
      *
      */
     this.startChatPing = function () {
-        sdkParams.chatPingMessageInterval && clearInterval(sdkParams.chatPingMessageInterval);
-        sdkParams.chatPingMessageInterval = setInterval(() => {
+        app.sdkParams.chatPingMessageInterval && clearInterval(app.sdkParams.chatPingMessageInterval);
+        app.sdkParams.chatPingMessageInterval = setInterval(() => {
             currentModuleInstance.ping();
         }, 20000);//TODO: chatPingMessageInterval
     }
     this.stopChatPing = function () {
-        clearInterval(sdkParams.chatPingMessageInterval);
+        clearInterval(app.sdkParams.chatPingMessageInterval);
     }
 
     this.asyncInitialized = function (client) {
@@ -84,7 +82,7 @@ function ChatMessaging(params) {
             } else if (callbacks.onResult) {
                 clbck = callbacks.onResult;
             }
-            raiseError(errorList.SOCKET_NOT_CONNECTED, clbck, true, {});
+            app.errorHandler.raiseError(errorList.SOCKET_NOT_CONNECTED, clbck, true, {});
             return;
         }
 
@@ -107,20 +105,20 @@ function ChatMessaging(params) {
 
         var asyncPriority = (params.asyncPriority > 0)
             ? params.asyncPriority
-            : sdkParams.msgPriority;
+            : app.sdkParams.msgPriority;
 
         var messageVO = {
             type: params.chatMessageVOType,
-            token: sdkParams.token,
+            token: app.sdkParams.token,
             tokenIssuer: 1
         };
 
-        if (params.typeCode || sdkParams.generalTypeCode) {
-            messageVO.typeCode = sdkParams.generalTypeCode;//params.typeCode;
+        if (params.typeCode || app.sdkParams.generalTypeCode) {
+            messageVO.typeCode = app.sdkParams.generalTypeCode;//params.typeCode;
         }
 
-        if (sdkParams.typeCodeOwnerId) {
-            messageVO.ownerId = sdkParams.typeCodeOwnerId;
+        if (app.sdkParams.typeCodeOwnerId) {
+            messageVO.ownerId = app.sdkParams.typeCodeOwnerId;
         }
 
         if (params.messageType) {
@@ -171,35 +169,35 @@ function ChatMessaging(params) {
 
         if (typeof callbacks == 'object') {
             if (callbacks.onSeen || callbacks.onDeliver || callbacks.onSent) {
-                if (!store.threadCallbacks[threadId]) {
-                    store.threadCallbacks[threadId] = {};
+                if (!app.store.threadCallbacks[threadId]) {
+                    app.store.threadCallbacks[threadId] = {};
                 }
 
-                store.threadCallbacks[threadId][uniqueId] = {};
+                app.store.threadCallbacks[threadId][uniqueId] = {};
 
-                store.sendMessageCallbacks[uniqueId] = {};
+                app.store.sendMessageCallbacks[uniqueId] = {};
 
                 if (callbacks.onSent) {
-                    store.sendMessageCallbacks[uniqueId].onSent = callbacks.onSent;
-                    store.threadCallbacks[threadId][uniqueId].onSent = false;
-                    store.threadCallbacks[threadId][uniqueId].uniqueId = uniqueId;
+                    app.store.sendMessageCallbacks[uniqueId].onSent = callbacks.onSent;
+                    app.store.threadCallbacks[threadId][uniqueId].onSent = false;
+                    app.store.threadCallbacks[threadId][uniqueId].uniqueId = uniqueId;
                 }
 
                 if (callbacks.onSeen) {
-                    store.sendMessageCallbacks[uniqueId].onSeen = callbacks.onSeen;
-                    store.threadCallbacks[threadId][uniqueId].onSeen = false;
+                    app.store.sendMessageCallbacks[uniqueId].onSeen = callbacks.onSeen;
+                    app.store.threadCallbacks[threadId][uniqueId].onSeen = false;
                 }
 
                 if (callbacks.onDeliver) {
-                    store.sendMessageCallbacks[uniqueId].onDeliver = callbacks.onDeliver;
-                    store.threadCallbacks[threadId][uniqueId].onDeliver = false;
+                    app.store.sendMessageCallbacks[uniqueId].onDeliver = callbacks.onDeliver;
+                    app.store.threadCallbacks[threadId][uniqueId].onDeliver = false;
                 }
 
             } else if (callbacks.onResult) {
-                store.messagesCallbacks[uniqueId] = callbacks.onResult;
+                app.store.messagesCallbacks[uniqueId] = callbacks.onResult;
             }
         } else if (typeof callbacks == 'function') {
-            store.messagesCallbacks[uniqueId] = callbacks;
+            app.store.messagesCallbacks[uniqueId] = callbacks;
         }
 
         /**
@@ -222,12 +220,12 @@ function ChatMessaging(params) {
                 ? params.pushMsgType
                 : 3,
             content: {
-                peerName: sdkParams.serverName,
+                peerName: app.sdkParams.serverName,
                 priority: asyncPriority,
                 content: JSON.stringify(messageVO),
                 ttl: (params.messageTtl > 0)
                     ? params.messageTtl
-                    : sdkParams.messageTtl
+                    : app.sdkParams.messageTtl
             },
             uniqueId: messageVO.uniqueId
         };
@@ -240,15 +238,15 @@ function ChatMessaging(params) {
                     callbacks.onResult(res);
                 }
 
-                if (store.messagesCallbacks[uniqueId]) {
-                    delete store.messagesCallbacks[uniqueId];
+                if (app.store.messagesCallbacks[uniqueId]) {
+                    delete app.store.messagesCallbacks[uniqueId];
                 }
             }
         });
 
-        if (sdkParams.asyncRequestTimeout > 0) {
-            store.asyncRequestTimeouts[uniqueId] && clearTimeout(store.asyncRequestTimeouts[uniqueId]);
-            store.asyncRequestTimeouts[uniqueId] = setTimeout(function () {
+        if (app.sdkParams.asyncRequestTimeout > 0) {
+            app.store.asyncRequestTimeouts[uniqueId] && clearTimeout(app.store.asyncRequestTimeouts[uniqueId]);
+            app.store.asyncRequestTimeouts[uniqueId] = setTimeout(function () {
                 if (typeof callbacks == 'function') {
                     callbacks({
                         hasError: true,
@@ -263,18 +261,18 @@ function ChatMessaging(params) {
                     });
                 }
 
-                if (store.messagesCallbacks[uniqueId]) {
-                    delete store.messagesCallbacks[uniqueId];
+                if (app.store.messagesCallbacks[uniqueId]) {
+                    delete app.store.messagesCallbacks[uniqueId];
                 }
-                if (store.sendMessageCallbacks[uniqueId]) {
-                    delete store.sendMessageCallbacks[uniqueId];
+                if (app.store.sendMessageCallbacks[uniqueId]) {
+                    delete app.store.sendMessageCallbacks[uniqueId];
                 }
-                if (!!store.threadCallbacks[threadId] && store.threadCallbacks[threadId][uniqueId]) {
-                    store.threadCallbacks[threadId][uniqueId] = {};
-                    delete store.threadCallbacks[threadId][uniqueId];
+                if (!!app.store.threadCallbacks[threadId] && app.store.threadCallbacks[threadId][uniqueId]) {
+                    app.store.threadCallbacks[threadId][uniqueId] = {};
+                    delete app.store.threadCallbacks[threadId][uniqueId];
                 }
 
-            }, sdkParams.asyncRequestTimeout);
+            }, app.sdkParams.asyncRequestTimeout);
         }
 
         /*          currentModuleInstance.sendPingTimeout && clearTimeout(currentModuleInstance.sendPingTimeout);
@@ -315,20 +313,6 @@ function ChatMessaging(params) {
             });
         }
     };
-
-}
-
-function initChatMessaging(params) {
-    if (!chatMessaging) {
-        chatMessaging = new ChatMessaging(params)
-    }
-
-    return chatMessaging;
-}
-
-function messenger() {
-    return chatMessaging;
 }
 
 export default ChatMessaging;
-export {messenger, initChatMessaging}

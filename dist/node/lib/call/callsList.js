@@ -5,7 +5,7 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.callsManager = callsManager;
+exports["default"] = void 0;
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
@@ -13,11 +13,7 @@ var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/
 
 var _callManager = require("./callManager");
 
-var _sdkParams = require("../sdkParams");
-
-var _sharedData = require("./sharedData");
-
-function CallsList() {
+function CallsList(app) {
   var config = {
     list: {},
     currentCallId: null
@@ -40,8 +36,9 @@ function CallsList() {
                 return publicized.destroyAllCalls();
 
               case 3:
-                callsManager().currentCallId = callId;
+                app.callsManager.currentCallId = callId;
                 config.list[callId] = new _callManager.CallManager({
+                  app: app,
                   callId: callId,
                   callConfig: callConfig
                 });
@@ -72,7 +69,7 @@ function CallsList() {
                 delete config.list[callId];
 
               case 4:
-                callsManager().currentCallId = null;
+                app.callsManager.currentCallId = null;
 
               case 5:
               case "end":
@@ -86,7 +83,7 @@ function CallsList() {
       return config.list[id];
     },
     routeCallMessage: function routeCallMessage(callId, message) {
-      if (config.list[callId]) config.list[callId].processCallMessage(message);else _sdkParams.sdkParams.consoleLogging && console.warn("[SDK] Skipping call message, call not exists. uniqueId: ", {
+      if (config.list[callId]) config.list[callId].processCallMessage(message);else app.sdkParams.consoleLogging && console.warn("[SDK] Skipping call message, call not exists. uniqueId: ", {
         message: message
       });
     },
@@ -96,7 +93,7 @@ function CallsList() {
 
         for (var i in config.list) {
           console.log("destroyAllCalls()", i);
-          (0, _sharedData.endCall)({
+          app.call.endCall({
             callId: i
           });
           allPromises.push(publicized.removeItem(i));
@@ -111,8 +108,5 @@ function CallsList() {
   return publicized;
 }
 
-var callsMgr = new CallsList();
-
-function callsManager() {
-  return callsMgr;
-}
+var _default = CallsList;
+exports["default"] = _default;

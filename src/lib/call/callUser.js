@@ -1,20 +1,11 @@
-import {sdkParams} from "../sdkParams";
-import {DevicePauseStopManager} from "./deviceStartStopManager";
 import {CallTopicManager} from "./callTopicManager";
 
-import {
-    currentCall,
-    sharedVariables
-} from "./sharedData";
-import {callsManager} from "./callsList";
-import {store} from "../store";
-
-function CallUser(user) {
+function CallUser(app, user) {
     const config = {
         callId: user.callId,
         userId: user.userId,
         user,
-        isMe: user.userId == store.user().id,
+        isMe: user.userId == app.store.user.get().id,
         containerTag: null,
         htmlElements: {},
         videoTopicManager: null,
@@ -23,7 +14,7 @@ function CallUser(user) {
 
     const publicized = {
         isMe() {
-            return config.userId == store.user().id;
+            return config.userId == app.store.user.get().id;
         },
         isScreenShare() {
             return false;
@@ -35,12 +26,12 @@ function CallUser(user) {
             return config.htmlElements;
         },
         appendAudioToCallDiv(){
-            if (!sharedVariables.callDivId) {
-                sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
+            if (!app.call.sharedVariables.callDivId) {
+                app.sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
                 return;
             }
             let user = config.user,
-                callParentDiv = document.getElementById(sharedVariables.callDivId),
+                callParentDiv = document.getElementById(app.call.sharedVariables.callDivId),
                 userContainer = document.getElementById("callParticipantWrapper-" + config.userId);
 
             if (!userContainer) {
@@ -56,12 +47,12 @@ function CallUser(user) {
             }
         },
         appendVideoToCallDiv(){
-            if (!sharedVariables.callDivId) {
-                sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
+            if (!app.call.sharedVariables.callDivId) {
+                app.sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
                 return;
             }
             let user = config.user,
-                callParentDiv = document.getElementById(sharedVariables.callDivId),
+                callParentDiv = document.getElementById(app.call.sharedVariables.callDivId),
                 userContainer = document.getElementById("callParticipantWrapper-" + config.userId);
 
             if (!userContainer) {
@@ -75,7 +66,7 @@ function CallUser(user) {
                 }
             }
 
-            currentCall().sendCallDivs()
+            app.call.currentCall().sendCallDivs()
         },
         videoTopicManager() {
             return config.videoTopicManager;
@@ -90,11 +81,12 @@ function CallUser(user) {
             config.user.audioTopicName = 'Vo-' + sendTopic;
             config.user.mute = false;
             config.audioTopicManager = new CallTopicManager({
+                app,
                 callId: config.user.callId,
                 userId: config.user.userId,
                 topic: 'Vo-' + config.user.topicSend,
                 mediaType: 'audio',
-                direction: (config.user.userId === store.user().id ? 'send' : 'receive'),
+                direction: (config.user.userId === app.store.user.get().id ? 'send' : 'receive'),
                 user: config.user,
                 onHTMLElement(el) {
                     config.htmlElements[config.user.audioTopicName] = el;
@@ -110,11 +102,12 @@ function CallUser(user) {
             config.user.videoTopicName = 'Vi-' + sendTopic;
             config.user.video = true;
             config.videoTopicManager = new CallTopicManager({
+                app,
                 callId: config.user.callId,
                 userId: config.user.userId,
                 topic: 'Vi-' + config.user.topicSend,
                 mediaType: 'video',
-                direction: (config.user.userId === store.user().id ? 'send' : 'receive'),
+                direction: (config.user.userId === app.store.user.get().id ? 'send' : 'receive'),
                 user: config.user,
                 onHTMLElement(el) {
                     config.htmlElements[config.user.videoTopicName] = el;
@@ -186,7 +179,7 @@ function CallUser(user) {
         //     callId: config.callId,
         //     userId: config.user.userId,
         //     mediaType: 'audio',
-        //     timeout: sdkParams.callOptions?.streamCloseTimeout || 10000
+        //     timeout: app.sdkParams.callOptions?.streamCloseTimeout || 10000
         // });
         // if (config.user.mute) {
         //     config.user.audioStopManager.pauseStream();
@@ -196,7 +189,7 @@ function CallUser(user) {
         //     callId: config.callId,
         //     userId: config.user.userId,
         //     mediaType: 'video',
-        //     timeout: sdkParams.callOptions?.streamCloseTimeout || 10000
+        //     timeout: app.sdkParams.callOptions?.streamCloseTimeout || 10000
         // });
         // if (!config.user.video) {
 
@@ -231,11 +224,11 @@ function CallUser(user) {
     return publicized;
 }
 
-function CallScreenShare(user) {
+function CallScreenShare(app, user) {
     const config = {
         callId: user.callId,
         userId: user.userId,
-        isMe: user.userId == store.user().id,
+        isMe: user.userId == app.store.user.get().id,
         user,
         type: "screenShare",
         containerTag: null,
@@ -256,12 +249,12 @@ function CallScreenShare(user) {
             return config.htmlElements;
         },
         appendVideoToCallDiv(){
-            if (!sharedVariables.callDivId) {
-                sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
+            if (!app.call.sharedVariables.callDivId) {
+                app.sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
                 return;
             }
             let user = config.user,
-                callParentDiv = document.getElementById(sharedVariables.callDivId),
+                callParentDiv = document.getElementById(app.call.sharedVariables.callDivId),
                 userContainer = document.getElementById("callParticipantWrapper-" + config.userId);
 
             if (!userContainer) {
@@ -281,7 +274,7 @@ function CallScreenShare(user) {
             //     config.videoTopicManager?.restartMediaOnKeyFrame("screenShare", [1000, 3000, 6000]);
             // }
 
-            currentCall().sendCallDivs()
+            app.call.currentCall().sendCallDivs()
         },
         videoTopicManager() {
             return config.videoTopicManager;
@@ -299,11 +292,12 @@ function CallScreenShare(user) {
             config.user.videoTopicName = sendTopic;
             config.user.video = true;
             config.videoTopicManager = new CallTopicManager({
+                app,
                 callId: config.user.callId,
                 userId: config.user.userId,
                 topic: config.user.videoTopicName,
                 mediaType: 'video',
-                direction: (callsManager().get(config.callId).screenShareInfo.iAmOwner() ? 'send' : 'receive'),
+                direction: (app.callsManager.get(config.callId).screenShareInfo.iAmOwner() ? 'send' : 'receive'),
                 user: config.user,
                 isScreenShare: true,
                 onHTMLElement(el) {
@@ -340,7 +334,7 @@ function CallScreenShare(user) {
     }
 
     function setup(user) {
-        let iAmOwner = callsManager().get(config.callId).screenShareInfo.iAmOwner();
+        let iAmOwner = app.callsManager.get(config.callId).screenShareInfo.iAmOwner();
 
         let obj = {
             video: true,

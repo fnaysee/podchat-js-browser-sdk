@@ -15,51 +15,43 @@ var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/
 
 var _callUsers = require("./callUsers");
 
-var _events = require("../../events.module");
-
-var _sdkParams = require("../sdkParams");
-
-var _store = require("../store");
-
-var _sharedData = require("./sharedData");
-
 var _utility = _interopRequireDefault(require("../../utility/utility"));
 
-var _callServerManager = require("./callServerManager");
+var _callServerManager = _interopRequireDefault(require("./callServerManager"));
 
 var _constants = require("../constants");
 
 var _errorHandler = require("../errorHandler");
-
-var _callsList = require("./callsList");
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 
 function CallManager(_ref) {
-  var callId = _ref.callId,
+  var app = _ref.app,
+      callId = _ref.callId,
       callConfig = _ref.callConfig;
   var config = {
     callId: callId,
     callConfig: callConfig,
     users: new _callUsers.CallUsers({
+      app: app,
       callId: callId
     }),
-    callServerController: new _callServerManager.CallServerManager(),
-    screenShareInfo: new ScreenShareStateManager(),
+    callServerController: new _callServerManager["default"](app),
+    screenShareInfo: new ScreenShareStateManager(app),
     deviceManager: null
   };
 
   function startCallWebRTCFunctions(callConfig) {
     config.callServerController.setServers(callConfig.kurentoAddress);
 
-    if (_sharedData.sharedVariables.callDivId) {
+    if (app.call.sharedVariables.callDivId) {
       new Promise(function (resolve) {
         var callVideo = typeof callConfig.video === 'boolean' ? callConfig.video : true,
             callMute = typeof callConfig.mute === 'boolean' ? callConfig.mute : false;
-        config.deviceManager = _sharedData.sharedVariables.deviceManager;
-        _sharedData.sharedVariables.deviceManager = null;
+        config.deviceManager = app.call.sharedVariables.deviceManager;
+        app.call.sharedVariables.deviceManager = null;
 
         if (callConfig.selfData) {
           callConfig.selfData.callId = config.callId;
@@ -71,7 +63,7 @@ function CallManager(_ref) {
         config.screenShareInfo.setIsStarted(!!callConfig.screenShareOwner);
 
         if (callConfig.recordingOwner) {
-          _events.chatEvents.fireEvent('callEvents', {
+          app.chatEvents.fireEvent('callEvents', {
             type: 'CALL_RECORDING_STARTED',
             result: {
               id: callConfig.recordingOwner
@@ -81,7 +73,7 @@ function CallManager(_ref) {
 
         if (callConfig.clientsList && callConfig.clientsList.length) {
           for (var i in callConfig.clientsList) {
-            if (callConfig.clientsList[i].userId !== _store.store.user().id) {
+            if (callConfig.clientsList[i].userId !== app.store.user.get().id) {
               callConfig.clientsList[i].callId = config.callId;
               callConfig.clientsList[i].cameraPaused = false;
               config.users.addItem(callConfig.clientsList[i]);
@@ -107,18 +99,18 @@ function CallManager(_ref) {
         createSessionInChat();
         resolve();
       }).then(function () {
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_DIVS',
           result: config.users.generateCallUIList()
         });
       });
     } else {
-      _sdkParams.sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
+      app.sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
     }
   }
 
   function createSessionInChat() {
-    _sharedData.callStopQueue.callStarted = true;
+    app.call.callStopQueue.callStarted = true;
 
     var message = {
       id: 'CREATE_SESSION',
@@ -127,9 +119,9 @@ function CallManager(_ref) {
     },
         onResultCallback = function onResultCallback(res) {
       if (res.done === 'TRUE') {
-        _sharedData.callStopQueue.callStarted = true; // callController.startCall(params);
+        app.call.callStopQueue.callStarted = true; // callController.startCall(params);
       } else {
-        (0, _callsList.callsManager)().removeItem(config.callId); // endCall({callId: config.callId});
+        app.callsManager.removeItem(config.callId); // endCall({callId: config.callId});
         // callStop(true, true);
       }
     };
@@ -159,14 +151,14 @@ function CallManager(_ref) {
               return config.users.destroy();
 
             case 4:
-              if (_sharedData.callStopQueue.callStarted) {
+              if (app.call.callStopQueue.callStarted) {
                 sendCallMessage({
                   id: 'CLOSE'
                 }, null, {});
-                _sharedData.callStopQueue.callStarted = false;
+                app.call.callStopQueue.callStarted = false;
               }
 
-              if (resetCameraPaused) _sharedData.joinCallParams.cameraPaused = false;
+              if (resetCameraPaused) app.call.joinCallParams.cameraPaused = false;
               clearTimeout(config.callRequestTimeout);
               config.callConfig = {};
               if (resetCurrentCallId) config.callId = null;
@@ -186,7 +178,7 @@ function CallManager(_ref) {
         timeoutTime = _ref2$timeoutTime === void 0 ? 0 : _ref2$timeoutTime,
         _ref2$timeoutRetriesC = _ref2.timeoutRetriesCount,
         timeoutRetriesCount = _ref2$timeoutRetriesC === void 0 ? 0 : _ref2$timeoutRetriesC;
-    message.token = _sdkParams.sdkParams.token; // let uniqueId;
+    message.token = app.sdkParams.token; // let uniqueId;
 
     if (!message.uniqueId) {
       message.uniqueId = _utility["default"].generateUUID();
@@ -201,25 +193,25 @@ function CallManager(_ref) {
         // callServerName,
         priority: 1,
         content: JSON.stringify(message),
-        ttl: _sdkParams.sdkParams.messageTtl
+        ttl: app.sdkParams.messageTtl
       }
     };
 
     if (typeof callback == 'function') {
-      _store.store.messagesCallbacks[message.uniqueId] = callback;
+      app.store.messagesCallbacks[message.uniqueId] = callback;
     }
 
-    _sharedData.sharedVariables.asyncClient.send(data, function (res) {});
+    app.call.sharedVariables.asyncClient.send(data, function (res) {});
 
-    if (timeoutTime || _sharedData.sharedVariables.globalCallRequestTimeout > 0) {
-      _store.store.asyncRequestTimeouts[message.uniqueId] && clearTimeout(_store.store.asyncRequestTimeouts[message.uniqueId]);
-      _store.store.asyncRequestTimeouts[message.uniqueId] = setTimeout(function () {
-        if (_store.store.messagesCallbacks[message.uniqueId]) {
-          delete _store.store.messagesCallbacks[message.uniqueId];
+    if (timeoutTime || app.call.sharedVariables.globalCallRequestTimeout > 0) {
+      app.store.asyncRequestTimeouts[message.uniqueId] && clearTimeout(app.store.asyncRequestTimeouts[message.uniqueId]);
+      app.store.asyncRequestTimeouts[message.uniqueId] = setTimeout(function () {
+        if (app.store.messagesCallbacks[message.uniqueId]) {
+          delete app.store.messagesCallbacks[message.uniqueId];
         }
 
         if (timeoutRetriesCount) {
-          _sdkParams.sdkParams.consoleLogging && console.log("[SDK][sendCallMessage] Retrying call request. uniqueId :" + message.uniqueId, {
+          app.sdkParams.consoleLogging && console.log("[SDK][sendCallMessage] Retrying call request. uniqueId :" + message.uniqueId, {
             message: message
           }); //timeoutCallback();
 
@@ -235,7 +227,7 @@ function CallManager(_ref) {
             done: 'SKIP'
           });
         }
-      }, timeoutTime || _sharedData.sharedVariables.globalCallRequestTimeout);
+      }, timeoutTime || app.call.sharedVariables.globalCallRequestTimeout);
     }
   }
 
@@ -332,36 +324,33 @@ function CallManager(_ref) {
     peer = topicManager.getPeer();
 
     if (peer == null) {
-      _events.chatEvents.fireEvent('callEvents', {
+      app.chatEvents.fireEvent('callEvents', {
         type: 'CALL_ERROR',
         code: 7000,
         message: "[handleProcessSdpAnswer] Skip, no WebRTC Peer",
         error: peer,
         environmentDetails: getCallDetails()
       });
-
       return;
     }
 
     peer.processAnswer(jsonMessage.sdpAnswer, function (err) {
       if (err) {
         sendCallSocketError("[handleProcessSdpAnswer] Error: " + err);
-
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_ERROR',
           code: 7000,
           message: "[handleProcessSdpAnswer] Error: " + err,
           environmentDetails: getCallDetails()
         });
-
         return;
       }
 
-      _sdkParams.sdkParams.consoleLogging && console.log("[SDK][handleProcessSdpAnswer]", jsonMessage, jsonMessage.topic, topicManager.metadata().isIceCandidateIntervalSet().toString());
+      app.sdkParams.consoleLogging && console.log("[SDK][handleProcessSdpAnswer]", jsonMessage, jsonMessage.topic, topicManager.metadata().isIceCandidateIntervalSet().toString());
 
       if (topicManager.metadata().isIceCandidateIntervalSet()) {
         topicManager.topicMetaData().sdpAnswerReceived = true; // topicManager.startMedia()
-        // if (userId == 'screenShare' || userId == store.user().id) {
+        // if (userId == 'screenShare' || userId == app.store.user.get().id) {
         //     topicManager.restartMediaOnKeyFrame(userId, [2000, 4000, 8000, 12000, 20000]);
         // }
       }
@@ -390,29 +379,26 @@ function CallManager(_ref) {
     peer = peer.getPeer();
 
     if (peer == null) {
-      _events.chatEvents.fireEvent('callEvents', {
+      app.chatEvents.fireEvent('callEvents', {
         type: 'CALL_ERROR',
         code: 7000,
         message: "[handleAddIceCandidate] Skip, no WebRTC Peer",
         error: JSON.stringify(peer),
         environmentDetails: getCallDetails()
       });
-
       return;
     }
 
     peer.addIceCandidate(jsonMessage.candidate, function (err) {
       if (err) {
         console.error("[handleAddIceCandidate] " + err);
-
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_ERROR',
           code: 7000,
           message: "[handleAddIceCandidate] " + err,
           error: JSON.stringify(jsonMessage.candidate),
           environmentDetails: getCallDetails()
         });
-
         return;
       }
     });
@@ -420,9 +406,9 @@ function CallManager(_ref) {
 
   function getCallDetails(customData) {
     return _objectSpread({
-      currentUser: _store.store.user,
+      currentUser: app.store.user.get(),
       currentServers: {
-        callTurnIp: _sharedData.sharedVariables.callTurnIp
+        callTurnIp: app.call.sharedVariables.callTurnIp
       },
       isJanus: config.callId && config.callServerController.isJanus(),
       screenShareInfo: {
@@ -435,13 +421,12 @@ function CallManager(_ref) {
   }
 
   function sendCallSocketError(message) {
-    _events.chatEvents.fireEvent('callEvents', {
+    app.chatEvents.fireEvent('callEvents', {
       type: 'CALL_ERROR',
       code: 7000,
       message: message,
       environmentDetails: getCallDetails()
     });
-
     sendCallMessage({
       id: 'ERROR',
       message: message
@@ -468,7 +453,7 @@ function CallManager(_ref) {
     var jMessage = JSON.parse(jsonMessage.message);
     var id = jMessage.id;
 
-    if (!id || typeof id === "undefined" || jsonMessage.userid == _store.store.user().id) {
+    if (!id || typeof id === "undefined" || jsonMessage.userid == app.store.user.get().id) {
       return;
     }
 
@@ -495,16 +480,15 @@ function CallManager(_ref) {
         break;
 
       case _constants.callMetaDataTypes.CUSTOMUSERMETADATA:
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          _store.store.messagesCallbacks[uniqueId](jsonMessage);
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](jsonMessage);
         }
 
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CUSTOM_USER_METADATA',
           userId: jMessage.userid,
           content: jMessage.content
         });
-
         break;
 
       case _constants.callMetaDataTypes.SCREENSHAREMETADATA:
@@ -518,7 +502,7 @@ function CallManager(_ref) {
             }, 2500);
           }
 
-          _events.chatEvents.fireEvent("callEvents", {
+          app.chatEvents.fireEvent("callEvents", {
             type: 'SCREENSHARE_METADATA',
             userId: jMessage.userid,
             content: jMessage.content
@@ -544,8 +528,7 @@ function CallManager(_ref) {
 
   function handleError(jsonMessage, sendingTopic, receiveTopic) {
     var errMessage = jsonMessage.message;
-
-    _events.chatEvents.fireEvent('callEvents', {
+    app.chatEvents.fireEvent('callEvents', {
       type: 'CALL_ERROR',
       code: 7000,
       message: "Kurento error: " + errMessage,
@@ -561,7 +544,7 @@ function CallManager(_ref) {
       return config.callConfig;
     },
     callStop: callStop,
-    endCall: _sharedData.endCall,
+    endCall: app.call.endCall,
     users: function users() {
       return config.users;
     },
@@ -569,14 +552,14 @@ function CallManager(_ref) {
       return config.deviceManager;
     },
     sendCallDivs: function sendCallDivs() {
-      _events.chatEvents.fireEvent('callEvents', {
+      app.chatEvents.fireEvent('callEvents', {
         type: 'CALL_DIVS',
         result: config.users.generateCallUIList()
       });
     },
     screenShareInfo: config.screenShareInfo,
     raiseCallError: function raiseCallError(errorObject, callBack, fireEvent) {
-      (0, _errorHandler.raiseError)(errorObject, callBack, fireEvent, {
+      app.errorHandler.raiseError(errorObject, callBack, fireEvent, {
         eventName: 'callEvents',
         eventType: 'CALL_ERROR',
         environmentDetails: getCallDetails()
@@ -585,8 +568,8 @@ function CallManager(_ref) {
     getCallDetails: getCallDetails,
     sendCallMessage: sendCallMessage,
     getTurnServer: function getTurnServer(params) {
-      if (!!params.turnAddress && params.turnAddress.length > 0 || _sharedData.sharedVariables.useInternalTurnAddress && !!params.internalTurnAddress && params.turnAddress.length > 0) {
-        var serversTemp = _sharedData.sharedVariables.useInternalTurnAddress ? params.internalTurnAddress.split(',') : params.turnAddress.split(','),
+      if (!!params.turnAddress && params.turnAddress.length > 0 || app.call.sharedVariables.useInternalTurnAddress && !!params.internalTurnAddress && params.turnAddress.length > 0) {
+        var serversTemp = app.call.sharedVariables.useInternalTurnAddress ? params.internalTurnAddress.split(',') : params.turnAddress.split(','),
             turnsList = [];
 
         for (var i in serversTemp) {
@@ -600,7 +583,7 @@ function CallManager(_ref) {
         return turnsList;
       } else {
         return [{
-          "urls": "turn:" + _sharedData.sharedVariables.callTurnIp + ":3478",
+          "urls": "turn:" + app.call.sharedVariables.callTurnIp + ":3478",
           "username": "mkhorrami",
           "credential": "mkh_123456"
         }];
@@ -619,7 +602,7 @@ function CallManager(_ref) {
 
       if (mediaType === 'video') {
         //TODO: Deprecated!
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: isResolved ? 'POOR_VIDEO_CONNECTION_RESOLVED' : 'POOR_VIDEO_CONNECTION',
           subType: isResolved ? undefined : isLongTime ? 'LONG_TIME' : 'SHORT_TIME',
           message: 'Poor connection resolved',
@@ -631,7 +614,7 @@ function CallManager(_ref) {
         });
       }
 
-      _events.chatEvents.fireEvent('callEvents', {
+      app.chatEvents.fireEvent('callEvents', {
         type: isResolved ? 'POOR_CONNECTION_RESOLVED' : 'POOR_CONNECTION',
         subType: isResolved ? undefined : isLongTime ? 'LONG_TIME' : 'SHORT_TIME',
         message: "Poor connection ".concat(isResolved ? 'resolved' : ''),
@@ -658,9 +641,9 @@ function CallManager(_ref) {
       var uniqueId = message.uniqueId;
 
       if (message.done !== 'FALSE' || message.done === 'FALSE' && message.desc === 'duplicated') {
-        _store.store.asyncRequestTimeouts[uniqueId] && clearTimeout(_store.store.asyncRequestTimeouts[uniqueId]);
+        app.store.asyncRequestTimeouts[uniqueId] && clearTimeout(app.store.asyncRequestTimeouts[uniqueId]);
       } else if (message.done === 'FALSE') {
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_ERROR',
           code: 7000,
           message: "Kurento error: " + (message.desc ? message.desc : message.message),
@@ -688,7 +671,7 @@ function CallManager(_ref) {
           break;
 
         case 'GET_KEY_FRAME':
-          var user = config.users.get(_store.store.user().id);
+          var user = config.users.get(app.store.user.get().id);
 
           if (user && user.user().video) {
             user.videoTopicManager().restartMediaOnKeyFrame([2000, 4000, 8000, 12000]);
@@ -707,35 +690,35 @@ function CallManager(_ref) {
           break;
 
         /*case 'STOPALL':
-            if (store.messagesCallbacks[uniqueId]) {
-                store.messagesCallbacks[uniqueId](jsonMessage);
+            if (app.store.messagesCallbacks[uniqueId]) {
+                app.store.messagesCallbacks[uniqueId](jsonMessage);
             }
             break;*/
 
         case 'STOP':
-          if (_store.store.messagesCallbacks[uniqueId]) {
-            _store.store.messagesCallbacks[uniqueId](message);
+          if (app.store.messagesCallbacks[uniqueId]) {
+            app.store.messagesCallbacks[uniqueId](message);
           }
 
           break;
 
         case 'CLOSE':
-          if (_store.store.messagesCallbacks[uniqueId]) {
-            _store.store.messagesCallbacks[uniqueId](message);
+          if (app.store.messagesCallbacks[uniqueId]) {
+            app.store.messagesCallbacks[uniqueId](message);
           }
 
           break;
 
         case 'SESSION_NEW_CREATED':
-          if (_store.store.messagesCallbacks[uniqueId]) {
-            _store.store.messagesCallbacks[uniqueId](message);
+          if (app.store.messagesCallbacks[uniqueId]) {
+            app.store.messagesCallbacks[uniqueId](message);
           }
 
           break;
 
         case 'SESSION_REFRESH':
-          if (_store.store.messagesCallbacks[uniqueId]) {
-            _store.store.messagesCallbacks[uniqueId](message);
+          if (app.store.messagesCallbacks[uniqueId]) {
+            app.store.messagesCallbacks[uniqueId](message);
           }
 
           break;
@@ -745,7 +728,7 @@ function CallManager(_ref) {
           break;
 
         case 'ERROR':
-          publicized.raiseCallError((0, _errorHandler.getFilledErrorObject)(_objectSpread(_objectSpread({}, _errorHandler.errorList.CALL_SERVER_ERROR), {}, {
+          publicized.raiseCallError(app.errorHandler.getFilledErrorObject(_objectSpread(_objectSpread({}, _errorHandler.errorList.CALL_SERVER_ERROR), {}, {
             replacements: [JSON.stringify(message)]
           })), null, true);
           break;
@@ -766,7 +749,7 @@ function CallManager(_ref) {
           break;
       }
 
-      _store.store.messagesCallbacks[uniqueId] && delete _store.store.messagesCallbacks[uniqueId];
+      app.store.messagesCallbacks[uniqueId] && delete app.store.messagesCallbacks[uniqueId];
     },
     handleParticipantJoin: function handleParticipantJoin(messageContent) {
       if (Array.isArray(messageContent)) {
@@ -786,7 +769,7 @@ function CallManager(_ref) {
               config.users.addItem(correctedData);
               resolve();
             }).then(function () {
-              _events.chatEvents.fireEvent('callEvents', {
+              app.chatEvents.fireEvent('callEvents', {
                 type: 'CALL_DIVS',
                 result: config.users.generateCallUIList()
               });
@@ -797,7 +780,7 @@ function CallManager(_ref) {
               config.users.addItem(correctedData);
               resolve();
             }).then(function () {
-              _events.chatEvents.fireEvent('callEvents', {
+              app.chatEvents.fireEvent('callEvents', {
                 type: 'CALL_DIVS',
                 result: config.users.generateCallUIList()
               });
@@ -810,19 +793,19 @@ function CallManager(_ref) {
         }
       }
 
-      _events.chatEvents.fireEvent('callEvents', {
+      app.chatEvents.fireEvent('callEvents', {
         type: 'CALL_PARTICIPANT_JOINED',
         result: messageContent
       });
 
-      if (config.users.get(_store.store.user().id).video) {
-        config.users.get(_store.store.user().id).videoTopicManager().restartMediaOnKeyFrame(_store.store.user().id, [2000, 4000, 8000, 12000, 16000, 24000]);
+      if (config.users.get(app.store.user.get().id).video) {
+        config.users.get(app.store.user.get().id).videoTopicManager().restartMediaOnKeyFrame(app.store.user().id, [2000, 4000, 8000, 12000, 16000, 24000]);
       }
 
       if (config.screenShareInfo.isStarted() && config.screenShareInfo.iAmOwner()) {
         sendCallMetaData({
           id: _constants.callMetaDataTypes.SCREENSHAREMETADATA,
-          userid: _store.store.user().id,
+          userid: app.store.user.get().id,
           content: {
             dimension: {
               width: config.screenShareInfo.getWidth(),
@@ -838,24 +821,22 @@ function CallManager(_ref) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                _events.chatEvents.fireEvent('callEvents', {
+                app.chatEvents.fireEvent('callEvents', {
                   type: 'CALL_PARTICIPANT_LEFT',
                   callId: threadId,
                   result: messageContent
                 }); //If I'm the only call participant, stop the call
-
 
                 if (!(Object.values(config.users.getAll()).length < 2)) {
                   _context.next = 5;
                   break;
                 }
 
-                _events.chatEvents.fireEvent('callEvents', {
+                app.chatEvents.fireEvent('callEvents', {
                   type: 'CALL_ENDED',
                   callId: config.callId
                 });
-
-                (0, _callsList.callsManager)().removeItem(config.callId);
+                app.callsManager.removeItem(config.callId);
                 return _context.abrupt("return");
 
               case 5:
@@ -864,13 +845,13 @@ function CallManager(_ref) {
                   break;
                 }
 
-                if (!(messageContent[0].userId == _store.store.user().id)) {
+                if (!(messageContent[0].userId == app.store.user.get().id)) {
                   _context.next = 10;
                   break;
                 }
 
                 // await callStop();
-                (0, _callsList.callsManager)().removeItem(config.callId);
+                app.callsManager.removeItem(config.callId);
                 _context.next = 13;
                 break;
 
@@ -904,13 +885,12 @@ function CallManager(_ref) {
       }
 
       setTimeout(function () {
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_DIVS',
           result: config.users.generateCallUIList()
         });
       });
-
-      _events.chatEvents.fireEvent('callEvents', {
+      app.chatEvents.fireEvent('callEvents', {
         type: 'CALL_PARTICIPANT_MUTE',
         result: messageContent
       });
@@ -978,13 +958,12 @@ function CallManager(_ref) {
 
               case 8:
                 setTimeout(function () {
-                  _events.chatEvents.fireEvent('callEvents', {
+                  app.chatEvents.fireEvent('callEvents', {
                     type: 'CALL_DIVS',
                     result: config.users.generateCallUIList()
                   });
                 });
-
-                _events.chatEvents.fireEvent('callEvents', {
+                app.chatEvents.fireEvent('callEvents', {
                   type: 'CALL_PARTICIPANT_UNMUTE',
                   result: messageContent
                 });
@@ -1042,13 +1021,12 @@ function CallManager(_ref) {
 
               case 12:
                 setTimeout(function () {
-                  _events.chatEvents.fireEvent('callEvents', {
+                  app.chatEvents.fireEvent('callEvents', {
                     type: 'CALL_DIVS',
                     result: config.users.generateCallUIList()
                   });
                 });
-
-                _events.chatEvents.fireEvent('callEvents', {
+                app.chatEvents.fireEvent('callEvents', {
                   type: 'TURN_ON_VIDEO_CALL',
                   result: messageContent
                 });
@@ -1070,19 +1048,18 @@ function CallManager(_ref) {
       }
 
       setTimeout(function () {
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_DIVS',
           result: config.users.generateCallUIList()
         });
       });
-
-      _events.chatEvents.fireEvent('callEvents', {
+      app.chatEvents.fireEvent('callEvents', {
         type: 'TURN_OFF_VIDEO_CALL',
         result: messageContent
       });
     },
     handleStartScreenShare: function handleStartScreenShare(messageContent) {
-      _sdkParams.sdkParams.consoleLogging && console.log("[sdk][startScreenShare][onResult]: ", messageContent);
+      app.sdkParams.consoleLogging && console.log("[sdk][startScreenShare][onResult]: ", messageContent);
 
       var result = _utility["default"].createReturnData(false, '', 0, messageContent, null);
 
@@ -1103,14 +1080,14 @@ function CallManager(_ref) {
       }
 
       if (config.screenShareInfo.isStarted() && config.screenShareInfo.iAmOwner()) {
-        var qualityObject = (0, _sharedData.calculateScreenSize)({
-          quality: _sharedData.sharedVariables.startScreenSharetParams.quality
+        var qualityObject = app.call.calculateScreenSize({
+          quality: app.call.sharedVariables.startScreenSharetParams.quality
         });
         config.screenShareInfo.setWidth(qualityObject.width);
         config.screenShareInfo.setHeight(qualityObject.height);
         sendCallMetaData({
           id: _constants.callMetaDataTypes.SCREENSHAREMETADATA,
-          userid: _store.store.user().id,
+          userid: app.store.user.get().id,
           content: {
             dimension: {
               width: config.screenShareInfo.getWidth(),
@@ -1134,8 +1111,7 @@ function CallManager(_ref) {
         callConfig.screenShareObject.cameraPaused = false;
         callConfig.screenShareObject.userId = "screenShare";
         config.users.addItem(callConfig.screenShareObject, "screenShare");
-
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'START_SCREEN_SHARE',
           result: messageContent
         });
@@ -1157,12 +1133,11 @@ function CallManager(_ref) {
                 return config.deviceManager.mediaStreams.stopScreenShareInput();
 
               case 6:
-                _events.chatEvents.fireEvent('callEvents', {
+                app.chatEvents.fireEvent('callEvents', {
                   type: 'END_SCREEN_SHARE',
                   result: messageContent
                 });
-
-                _events.chatEvents.fireEvent('callEvents', {
+                app.chatEvents.fireEvent('callEvents', {
                   type: 'CALL_DIVS',
                   result: config.users.generateCallUIList()
                 });
@@ -1254,13 +1229,13 @@ function CallManager(_ref) {
   return publicized;
 }
 
-function ScreenShareStateManager() {
+function ScreenShareStateManager(app) {
   var config = {
     ownerId: 0,
     imOwner: false,
     isStarted: false,
-    width: _sharedData.sharedVariables.callVideoMinWidth,
-    height: _sharedData.sharedVariables.callVideoMinHeight
+    width: app.call.sharedVariables.callVideoMinWidth,
+    height: app.call.sharedVariables.callVideoMinHeight
   };
   return {
     setOwner: function setOwner(ownerId) {
@@ -1273,7 +1248,7 @@ function ScreenShareStateManager() {
       return config.isStarted;
     },
     iAmOwner: function iAmOwner() {
-      return config.ownerId === _store.store.user().id;
+      return config.ownerId === app.store.user.get().id;
     },
     setWidth: function setWidth(width) {
       config.width = width;
@@ -1295,8 +1270,8 @@ function ScreenShareStateManager() {
         config.screenShareInfo.setHeight(dimension.height);
         config.screenShareInfo.setWidth(dimension.width);
       } else {
-        config.screenShareInfo.setHeight(_sharedData.sharedVariables.callVideoMinHeight);
-        config.screenShareInfo.setWidth(_sharedData.sharedVariables.callVideoMinWidth);
+        config.screenShareInfo.setHeight(app.call.sharedVariables.callVideoMinHeight);
+        config.screenShareInfo.setWidth(app.call.sharedVariables.callVideoMinWidth);
       }
     }
   };

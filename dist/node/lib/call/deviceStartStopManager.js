@@ -5,10 +5,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.DevicePauseStopManager = DevicePauseStopManager;
 
-var _store = require("../store");
-
-var _callsList = require("./callsList");
-
 function DevicePauseStopManager(_ref) {
   var userId = _ref.userId,
       mediaType = _ref.mediaType,
@@ -37,7 +33,7 @@ function DevicePauseStopManager(_ref) {
 
       if (config.paused) {
         config.stopped = true;
-        (0, _callsList.callsManager)().get(callId).users.get(userId).destroyAudio(); //     .deactivateParticipantStream(
+        app.callsManager.get(callId).users.get(userId).destroyAudio(); //     .deactivateParticipantStream(
         //     config.userId,
         //     config.mediaType,
         //     (config.mediaType === 'video' ? 'video' : 'mute')

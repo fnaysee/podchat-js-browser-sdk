@@ -6,12 +6,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.errorList = exports["default"] = void 0;
-exports.getFilledErrorObject = getFilledErrorObject;
-exports.raiseError = void 0;
 
 var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
-
-var _events = require("../events.module");
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
@@ -111,49 +107,56 @@ var errorList = {
 };
 exports.errorList = errorList;
 
-var handleError = function handleError(error) {
-  var item = Object.values(errorList).filter(function (item) {
-    return item.code == error;
-  });
-  if (!item.length) return {};
-  return item[0];
-};
-
-function getFilledErrorObject(errorObject) {
-  for (var i in errorObject.variables) {
-    errorObject.message = errorObject.message.replace(errorObject.variables[i], errorObject.replacements[i]);
+function ErrorHandler(app) {
+  function handleError(error) {
+    var item = Object.values(errorList).filter(function (item) {
+      return item.code == error;
+    });
+    if (!item.length) return {};
+    return item[0];
   }
 
-  return errorObject;
+  function getFilledErrorObject(errorObject) {
+    for (var i in errorObject.variables) {
+      errorObject.message = errorObject.message.replace(errorObject.variables[i], errorObject.replacements[i]);
+    }
+
+    return errorObject;
+  }
+
+  function raiseError(errorObject, callback) {
+    var fireEvent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+    var _ref = arguments.length > 3 ? arguments[3] : undefined,
+        _ref$eventName = _ref.eventName,
+        eventName = _ref$eventName === void 0 ? 'error' : _ref$eventName,
+        _ref$eventType = _ref.eventType,
+        eventType = _ref$eventType === void 0 ? null : _ref$eventType,
+        _ref$environmentDetai = _ref.environmentDetails,
+        environmentDetails = _ref$environmentDetai === void 0 ? null : _ref$environmentDetai;
+
+    callback && callback({
+      hasError: true,
+      errorCode: errorObject.code,
+      errorMessage: errorObject.message
+    });
+    fireEvent && app.chatEvents.fireEvent(eventName, {
+      type: eventType,
+      code: errorObject.code,
+      message: errorObject.message,
+      environmentDetails: environmentDetails
+    });
+    return _objectSpread({
+      hasError: true
+    }, errorObject);
+  }
+
+  return {
+    handleError: handleError,
+    raiseError: raiseError,
+    getFilledErrorObject: getFilledErrorObject
+  };
 }
 
-var raiseError = function raiseError(errorObject, callback) {
-  var fireEvent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
-  var _ref = arguments.length > 3 ? arguments[3] : undefined,
-      _ref$eventName = _ref.eventName,
-      eventName = _ref$eventName === void 0 ? 'error' : _ref$eventName,
-      _ref$eventType = _ref.eventType,
-      eventType = _ref$eventType === void 0 ? null : _ref$eventType,
-      _ref$environmentDetai = _ref.environmentDetails,
-      environmentDetails = _ref$environmentDetai === void 0 ? null : _ref$environmentDetai;
-
-  callback && callback({
-    hasError: true,
-    errorCode: errorObject.code,
-    errorMessage: errorObject.message
-  });
-  fireEvent && _events.chatEvents.fireEvent(eventName, {
-    type: eventType,
-    code: errorObject.code,
-    message: errorObject.message,
-    environmentDetails: environmentDetails
-  });
-  return _objectSpread({
-    hasError: true
-  }, errorObject);
-};
-
-exports.raiseError = raiseError;
-var _default = handleError;
+var _default = ErrorHandler;
 exports["default"] = _default;

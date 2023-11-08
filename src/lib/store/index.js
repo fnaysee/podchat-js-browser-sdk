@@ -1,19 +1,21 @@
-import {threadsList} from "./threads";
-import {storeEvents} from "./eventEmitter";
-import {reactionsSummariesCache} from "./reactionsSummaries";
-import {user} from "./user";
-import {reactionsListCache} from "./reactionsList";
+import {StoreEvents} from "./eventEmitter";
+import {ReactionsSummariesCache} from "./reactionsSummaries";
+import {SDKUser} from "./user";
+import {ReactionsListCache} from "./reactionsList";
+import {ThreadsList} from "./threads";
 
-let store = {
-    threads: threadsList,
-    events: storeEvents,
-    reactionSummaries: reactionsSummariesCache,
-    user,
-    threadCallbacks: {},
-    sendMessageCallbacks: {},
-    messagesCallbacks: {},
-    asyncRequestTimeouts: {},
-    reactionsList: reactionsListCache
-};
+function Store(app) {
+    return {
+        threads: new ThreadsList(app),
+        events: new StoreEvents(),
+        reactionSummaries: new ReactionsSummariesCache(app),
+        user: new SDKUser(app),
+        threadCallbacks: {},
+        sendMessageCallbacks: {},
+        messagesCallbacks: {},
+        asyncRequestTimeouts: {},
+        reactionsList: new ReactionsListCache(app)
+    }
+}
 
-export {store}
+export {Store}

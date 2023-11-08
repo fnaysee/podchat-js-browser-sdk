@@ -1,5 +1,3 @@
-import {chatEvents} from "../events.module";
-
 const errorList = {
     INVALID_CALLID: {
         code: 12000,
@@ -92,42 +90,50 @@ const errorList = {
     },
 };
 
+function ErrorHandler(app) {
+    function handleError(error) {
+        let item = Object.values(errorList).filter(item => item.code == error);
+        if(!item.length)
+            return {};
 
-const handleError = function (error) {
-    let item = Object.values(errorList).filter(item => item.code == error);
-    if(!item.length)
-        return {};
-
-    return item[0];
-};
-
-function getFilledErrorObject(errorObject) {
-    for(let i in errorObject.variables) {
-        errorObject.message = errorObject.message.replace(errorObject.variables[i], errorObject.replacements[i])
+        return item[0];
     }
-    return errorObject;
+
+    function getFilledErrorObject(errorObject) {
+        for(let i in errorObject.variables) {
+            errorObject.message = errorObject.message.replace(errorObject.variables[i], errorObject.replacements[i])
+        }
+        return errorObject;
+    }
+
+    function raiseError(errorObject, callback, fireEvent = false, {
+        eventName = 'error',
+        eventType = null,
+        environmentDetails = null
+    }) {
+        callback && callback({
+            hasError: true,
+            errorCode: errorObject.code,
+            errorMessage: errorObject.message
+        });
+
+        fireEvent && app.chatEvents.fireEvent(eventName, {
+            type: eventType,
+            code: errorObject.code,
+            message: errorObject.message,
+            environmentDetails
+        });
+
+        return { hasError: true, ...errorObject };
+    }
+
+    return {
+        handleError,
+        raiseError,
+        getFilledErrorObject
+    }
 }
 
-const raiseError = function (errorObject, callback, fireEvent = false, {
-    eventName = 'error',
-    eventType = null,
-    environmentDetails = null
-}) {
-    callback && callback({
-        hasError: true,
-        errorCode: errorObject.code,
-        errorMessage: errorObject.message
-    });
 
-    fireEvent && chatEvents.fireEvent(eventName, {
-        type: eventType,
-        code: errorObject.code,
-        message: errorObject.message,
-        environmentDetails
-    });
-
-    return { hasError: true, ...errorObject };
-}
-
-export default handleError
-export {errorList, raiseError, getFilledErrorObject}
+export default ErrorHandler
+export {errorList}

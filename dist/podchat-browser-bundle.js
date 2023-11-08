@@ -611,7 +611,7 @@ Entity.prototype.encode = function encode(data, enc, /* internal */ reporter) {
   return this._getEncoder(enc).encode(data, reporter);
 };
 
-},{"./decoders":25,"./encoders":28,"inherits":195}],18:[function(require,module,exports){
+},{"./decoders":25,"./encoders":28,"inherits":191}],18:[function(require,module,exports){
 'use strict';
 
 const inherits = require('inherits');
@@ -766,7 +766,7 @@ EncoderBuffer.prototype.join = function join(out, offset) {
   return out;
 };
 
-},{"../base/reporter":21,"inherits":195,"safer-buffer":235}],19:[function(require,module,exports){
+},{"../base/reporter":21,"inherits":191,"safer-buffer":226}],19:[function(require,module,exports){
 'use strict';
 
 const base = exports;
@@ -1416,7 +1416,7 @@ Node.prototype._isPrintstr = function isPrintstr(str) {
   return /^[A-Za-z0-9 '()+,-./:=?]*$/.test(str);
 };
 
-},{"../base/buffer":18,"../base/reporter":21,"minimalistic-assert":204}],21:[function(require,module,exports){
+},{"../base/buffer":18,"../base/reporter":21,"minimalistic-assert":196}],21:[function(require,module,exports){
 'use strict';
 
 const inherits = require('inherits');
@@ -1541,7 +1541,7 @@ ReporterError.prototype.rethrow = function rethrow(msg) {
   return this;
 };
 
-},{"inherits":195}],22:[function(require,module,exports){
+},{"inherits":191}],22:[function(require,module,exports){
 'use strict';
 
 // Helper
@@ -1961,7 +1961,7 @@ function derDecodeLen(buf, primitive, fail) {
   return len;
 }
 
-},{"../base/buffer":18,"../base/node":20,"../constants/der":22,"bn.js":30,"inherits":195}],25:[function(require,module,exports){
+},{"../base/buffer":18,"../base/node":20,"../constants/der":22,"bn.js":30,"inherits":191}],25:[function(require,module,exports){
 'use strict';
 
 const decoders = exports;
@@ -2022,7 +2022,7 @@ PEMDecoder.prototype.decode = function decode(data, options) {
   return DERDecoder.prototype.decode.call(this, input, options);
 };
 
-},{"./der":24,"inherits":195,"safer-buffer":235}],27:[function(require,module,exports){
+},{"./der":24,"inherits":191,"safer-buffer":226}],27:[function(require,module,exports){
 'use strict';
 
 const inherits = require('inherits');
@@ -2319,7 +2319,7 @@ function encodeTag(tag, primitive, cls, reporter) {
   return res;
 }
 
-},{"../base/node":20,"../constants/der":22,"inherits":195,"safer-buffer":235}],28:[function(require,module,exports){
+},{"../base/node":20,"../constants/der":22,"inherits":191,"safer-buffer":226}],28:[function(require,module,exports){
 'use strict';
 
 const encoders = exports;
@@ -2352,7 +2352,7 @@ PEMEncoder.prototype.encode = function encode(data, options) {
   return out.join('\n');
 };
 
-},{"./der":27,"inherits":195}],30:[function(require,module,exports){
+},{"./der":27,"inherits":191}],30:[function(require,module,exports){
 (function (module, exports) {
   'use strict';
 
@@ -9800,7 +9800,7 @@ AES.prototype.scrub = function () {
 
 module.exports.AES = AES
 
-},{"safe-buffer":234}],36:[function(require,module,exports){
+},{"safe-buffer":225}],36:[function(require,module,exports){
 var aes = require('./aes')
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('cipher-base')
@@ -9919,7 +9919,7 @@ StreamCipher.prototype.setAAD = function setAAD (buf) {
 
 module.exports = StreamCipher
 
-},{"./aes":35,"./ghash":40,"./incr32":41,"buffer-xor":78,"cipher-base":80,"inherits":195,"safe-buffer":234}],37:[function(require,module,exports){
+},{"./aes":35,"./ghash":40,"./incr32":41,"buffer-xor":78,"cipher-base":80,"inherits":191,"safe-buffer":225}],37:[function(require,module,exports){
 var ciphers = require('./encrypter')
 var deciphers = require('./decrypter')
 var modes = require('./modes/list.json')
@@ -10060,7 +10060,7 @@ function createDecipher (suite, password) {
 exports.createDecipher = createDecipher
 exports.createDecipheriv = createDecipheriv
 
-},{"./aes":35,"./authCipher":36,"./modes":48,"./streamCipher":51,"cipher-base":80,"evp_bytestokey":157,"inherits":195,"safe-buffer":234}],39:[function(require,module,exports){
+},{"./aes":35,"./authCipher":36,"./modes":48,"./streamCipher":51,"cipher-base":80,"evp_bytestokey":157,"inherits":191,"safe-buffer":225}],39:[function(require,module,exports){
 var MODES = require('./modes')
 var AuthCipher = require('./authCipher')
 var Buffer = require('safe-buffer').Buffer
@@ -10176,7 +10176,7 @@ function createCipher (suite, password) {
 exports.createCipheriv = createCipheriv
 exports.createCipher = createCipher
 
-},{"./aes":35,"./authCipher":36,"./modes":48,"./streamCipher":51,"cipher-base":80,"evp_bytestokey":157,"inherits":195,"safe-buffer":234}],40:[function(require,module,exports){
+},{"./aes":35,"./authCipher":36,"./modes":48,"./streamCipher":51,"cipher-base":80,"evp_bytestokey":157,"inherits":191,"safe-buffer":225}],40:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var ZEROES = Buffer.alloc(16, 0)
 
@@ -10267,7 +10267,7 @@ GHASH.prototype.final = function (abl, bl) {
 
 module.exports = GHASH
 
-},{"safe-buffer":234}],41:[function(require,module,exports){
+},{"safe-buffer":225}],41:[function(require,module,exports){
 function incr32 (iv) {
   var len = iv.length
   var item
@@ -10338,7 +10338,7 @@ exports.encrypt = function (self, data, decrypt) {
   return out
 }
 
-},{"buffer-xor":78,"safe-buffer":234}],44:[function(require,module,exports){
+},{"buffer-xor":78,"safe-buffer":225}],44:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 function encryptByte (self, byteParam, decrypt) {
@@ -10382,7 +10382,7 @@ exports.encrypt = function (self, chunk, decrypt) {
   return out
 }
 
-},{"safe-buffer":234}],45:[function(require,module,exports){
+},{"safe-buffer":225}],45:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 function encryptByte (self, byteParam, decrypt) {
@@ -10409,7 +10409,7 @@ exports.encrypt = function (self, chunk, decrypt) {
   return out
 }
 
-},{"safe-buffer":234}],46:[function(require,module,exports){
+},{"safe-buffer":225}],46:[function(require,module,exports){
 var xor = require('buffer-xor')
 var Buffer = require('safe-buffer').Buffer
 var incr32 = require('../incr32')
@@ -10441,7 +10441,7 @@ exports.encrypt = function (self, chunk) {
   return xor(chunk, pad)
 }
 
-},{"../incr32":41,"buffer-xor":78,"safe-buffer":234}],47:[function(require,module,exports){
+},{"../incr32":41,"buffer-xor":78,"safe-buffer":225}],47:[function(require,module,exports){
 exports.encrypt = function (self, block) {
   return self._cipher.encryptBlock(block)
 }
@@ -10712,7 +10712,7 @@ StreamCipher.prototype._final = function () {
 
 module.exports = StreamCipher
 
-},{"./aes":35,"cipher-base":80,"inherits":195,"safe-buffer":234}],52:[function(require,module,exports){
+},{"./aes":35,"cipher-base":80,"inherits":191,"safe-buffer":225}],52:[function(require,module,exports){
 var DES = require('browserify-des')
 var aes = require('browserify-aes/browser')
 var aesModes = require('browserify-aes/modes')
@@ -10833,7 +10833,7 @@ DES.prototype._final = function () {
   return Buffer.from(this._des.final())
 }
 
-},{"cipher-base":80,"des.js":127,"inherits":195,"safe-buffer":234}],54:[function(require,module,exports){
+},{"cipher-base":80,"des.js":127,"inherits":191,"safe-buffer":225}],54:[function(require,module,exports){
 exports['des-ecb'] = {
   key: 8,
   iv: 0
@@ -10898,7 +10898,7 @@ crt.getr = getr
 module.exports = crt
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"bn.js":32,"buffer":79,"randombytes":231}],56:[function(require,module,exports){
+},{"bn.js":32,"buffer":79,"randombytes":222}],56:[function(require,module,exports){
 module.exports = require('./browser/algorithms.json')
 
 },{"./browser/algorithms.json":57}],57:[function(require,module,exports){
@@ -11159,7 +11159,7 @@ module.exports = {
   createVerify: createVerify
 }
 
-},{"./algorithms.json":57,"./sign":60,"./verify":61,"create-hash":83,"inherits":195,"readable-stream":76,"safe-buffer":77}],60:[function(require,module,exports){
+},{"./algorithms.json":57,"./sign":60,"./verify":61,"create-hash":83,"inherits":191,"readable-stream":76,"safe-buffer":77}],60:[function(require,module,exports){
 // much of this based on https://github.com/indutny/self-signed/blob/gh-pages/lib/rsa.js
 var Buffer = require('safe-buffer').Buffer
 var createHmac = require('create-hmac')
@@ -11304,7 +11304,7 @@ module.exports = sign
 module.exports.getKey = getKey
 module.exports.makeKey = makeKey
 
-},{"./curves.json":58,"bn.js":32,"browserify-rsa":55,"create-hmac":85,"elliptic":139,"parse-asn1":211,"safe-buffer":77}],61:[function(require,module,exports){
+},{"./curves.json":58,"bn.js":32,"browserify-rsa":55,"create-hmac":85,"elliptic":139,"parse-asn1":202,"safe-buffer":77}],61:[function(require,module,exports){
 // much of this based on https://github.com/indutny/self-signed/blob/gh-pages/lib/rsa.js
 var Buffer = require('safe-buffer').Buffer
 var BN = require('bn.js')
@@ -11390,7 +11390,7 @@ function checkValue (b, q) {
 
 module.exports = verify
 
-},{"./curves.json":58,"bn.js":32,"elliptic":139,"parse-asn1":211,"safe-buffer":77}],62:[function(require,module,exports){
+},{"./curves.json":58,"bn.js":32,"elliptic":139,"parse-asn1":202,"safe-buffer":77}],62:[function(require,module,exports){
 'use strict';
 
 function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
@@ -11661,7 +11661,7 @@ Object.defineProperty(Duplex.prototype, 'destroyed', {
   }
 });
 }).call(this)}).call(this,require('_process'))
-},{"./_stream_readable":65,"./_stream_writable":67,"_process":223,"inherits":195}],64:[function(require,module,exports){
+},{"./_stream_readable":65,"./_stream_writable":67,"_process":214,"inherits":191}],64:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -11701,7 +11701,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":66,"inherits":195}],65:[function(require,module,exports){
+},{"./_stream_transform":66,"inherits":191}],65:[function(require,module,exports){
 (function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -12828,7 +12828,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":62,"./_stream_duplex":63,"./internal/streams/async_iterator":68,"./internal/streams/buffer_list":69,"./internal/streams/destroy":70,"./internal/streams/from":72,"./internal/streams/state":74,"./internal/streams/stream":75,"_process":223,"buffer":79,"events":156,"inherits":195,"string_decoder/":267,"util":34}],66:[function(require,module,exports){
+},{"../errors":62,"./_stream_duplex":63,"./internal/streams/async_iterator":68,"./internal/streams/buffer_list":69,"./internal/streams/destroy":70,"./internal/streams/from":72,"./internal/streams/state":74,"./internal/streams/stream":75,"_process":214,"buffer":79,"events":156,"inherits":191,"string_decoder/":250,"util":34}],66:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13030,7 +13030,7 @@ function done(stream, er, data) {
   if (stream._transformState.transforming) throw new ERR_TRANSFORM_ALREADY_TRANSFORMING();
   return stream.push(null);
 }
-},{"../errors":62,"./_stream_duplex":63,"inherits":195}],67:[function(require,module,exports){
+},{"../errors":62,"./_stream_duplex":63,"inherits":191}],67:[function(require,module,exports){
 (function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -13730,7 +13730,7 @@ Writable.prototype._destroy = function (err, cb) {
   cb(err);
 };
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":62,"./_stream_duplex":63,"./internal/streams/destroy":70,"./internal/streams/state":74,"./internal/streams/stream":75,"_process":223,"buffer":79,"inherits":195,"util-deprecate":270}],68:[function(require,module,exports){
+},{"../errors":62,"./_stream_duplex":63,"./internal/streams/destroy":70,"./internal/streams/state":74,"./internal/streams/stream":75,"_process":214,"buffer":79,"inherits":191,"util-deprecate":252}],68:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -13940,7 +13940,7 @@ var createReadableStreamAsyncIterator = function createReadableStreamAsyncIterat
 
 module.exports = createReadableStreamAsyncIterator;
 }).call(this)}).call(this,require('_process'))
-},{"./end-of-stream":71,"_process":223}],69:[function(require,module,exports){
+},{"./end-of-stream":71,"_process":214}],69:[function(require,module,exports){
 'use strict';
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -14259,7 +14259,7 @@ module.exports = {
   errorOrDestroy: errorOrDestroy
 };
 }).call(this)}).call(this,require('_process'))
-},{"_process":223}],71:[function(require,module,exports){
+},{"_process":214}],71:[function(require,module,exports){
 // Ported from https://github.com/mafintosh/end-of-stream with
 // permission from the author, Mathias Buus (@mafintosh).
 'use strict';
@@ -16371,7 +16371,7 @@ function numberIsNaN (obj) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"base64-js":31,"buffer":79,"ieee754":194}],80:[function(require,module,exports){
+},{"base64-js":31,"buffer":79,"ieee754":190}],80:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('stream').Transform
 var StringDecoder = require('string_decoder').StringDecoder
@@ -16472,7 +16472,7 @@ CipherBase.prototype._toString = function (value, enc, fin) {
 
 module.exports = CipherBase
 
-},{"inherits":195,"safe-buffer":234,"stream":252,"string_decoder":267}],81:[function(require,module,exports){
+},{"inherits":191,"safe-buffer":225,"stream":235,"string_decoder":250}],81:[function(require,module,exports){
 (function (Buffer){(function (){
 var elliptic = require('elliptic')
 var BN = require('bn.js')
@@ -16634,14 +16634,14 @@ module.exports = function createHash (alg) {
   return new Hash(sha(alg))
 }
 
-},{"cipher-base":80,"inherits":195,"md5.js":200,"ripemd160":233,"sha.js":245}],84:[function(require,module,exports){
+},{"cipher-base":80,"inherits":191,"md5.js":193,"ripemd160":224,"sha.js":228}],84:[function(require,module,exports){
 var MD5 = require('md5.js')
 
 module.exports = function (buffer) {
   return new MD5().update(buffer).digest()
 }
 
-},{"md5.js":200}],85:[function(require,module,exports){
+},{"md5.js":193}],85:[function(require,module,exports){
 'use strict'
 var inherits = require('inherits')
 var Legacy = require('./legacy')
@@ -16705,7 +16705,7 @@ module.exports = function createHmac (alg, key) {
   return new Hmac(alg, key)
 }
 
-},{"./legacy":86,"cipher-base":80,"create-hash/md5":84,"inherits":195,"ripemd160":233,"safe-buffer":234,"sha.js":245}],86:[function(require,module,exports){
+},{"./legacy":86,"cipher-base":80,"create-hash/md5":84,"inherits":191,"ripemd160":224,"safe-buffer":225,"sha.js":228}],86:[function(require,module,exports){
 'use strict'
 var inherits = require('inherits')
 var Buffer = require('safe-buffer').Buffer
@@ -16753,7 +16753,7 @@ Hmac.prototype._final = function () {
 }
 module.exports = Hmac
 
-},{"cipher-base":80,"inherits":195,"safe-buffer":234}],87:[function(require,module,exports){
+},{"cipher-base":80,"inherits":191,"safe-buffer":225}],87:[function(require,module,exports){
 'use strict'
 
 exports.randomBytes = exports.rng = exports.pseudoRandomBytes = exports.prng = require('randombytes')
@@ -16852,7 +16852,7 @@ exports.constants = {
   'POINT_CONVERSION_HYBRID': 6
 }
 
-},{"browserify-cipher":52,"browserify-sign":59,"browserify-sign/algos":56,"create-ecdh":81,"create-hash":83,"create-hmac":85,"diffie-hellman":133,"pbkdf2":212,"public-encrypt":224,"randombytes":231,"randomfill":232}],88:[function(require,module,exports){
+},{"browserify-cipher":52,"browserify-sign":59,"browserify-sign/algos":56,"create-ecdh":81,"create-hash":83,"create-hmac":85,"diffie-hellman":133,"pbkdf2":203,"public-encrypt":215,"randombytes":222,"randomfill":223}],88:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -24272,7 +24272,7 @@ proto._update = function _update(inp, inOff, out, outOff) {
   }
 };
 
-},{"inherits":195,"minimalistic-assert":204}],129:[function(require,module,exports){
+},{"inherits":191,"minimalistic-assert":196}],129:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -24415,7 +24415,7 @@ Cipher.prototype._finalDecrypt = function _finalDecrypt() {
   return this._unpad(out);
 };
 
-},{"minimalistic-assert":204}],130:[function(require,module,exports){
+},{"minimalistic-assert":196}],130:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -24559,7 +24559,7 @@ DES.prototype._decrypt = function _decrypt(state, lStart, rStart, out, off) {
   utils.rip(l, r, out, off);
 };
 
-},{"./cipher":129,"./utils":132,"inherits":195,"minimalistic-assert":204}],131:[function(require,module,exports){
+},{"./cipher":129,"./utils":132,"inherits":191,"minimalistic-assert":196}],131:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -24615,7 +24615,7 @@ EDE.prototype._update = function _update(inp, inOff, out, outOff) {
 EDE.prototype._pad = DES.prototype._pad;
 EDE.prototype._unpad = DES.prototype._unpad;
 
-},{"./cipher":129,"./des":130,"inherits":195,"minimalistic-assert":204}],132:[function(require,module,exports){
+},{"./cipher":129,"./des":130,"inherits":191,"minimalistic-assert":196}],132:[function(require,module,exports){
 'use strict';
 
 exports.readUInt32BE = function readUInt32BE(bytes, off) {
@@ -25087,7 +25087,7 @@ function formatReturnValue(bn, enc) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"./generatePrime":135,"bn.js":137,"buffer":79,"miller-rabin":202,"randombytes":231}],135:[function(require,module,exports){
+},{"./generatePrime":135,"bn.js":137,"buffer":79,"miller-rabin":194,"randombytes":222}],135:[function(require,module,exports){
 var randomBytes = require('randombytes');
 module.exports = findPrime;
 findPrime.simpleSieve = simpleSieve;
@@ -25194,7 +25194,7 @@ function findPrime(bits, gen) {
 
 }
 
-},{"bn.js":137,"miller-rabin":202,"randombytes":231}],136:[function(require,module,exports){
+},{"bn.js":137,"miller-rabin":194,"randombytes":222}],136:[function(require,module,exports){
 module.exports={
     "modp1": {
         "gen": "02",
@@ -27466,7 +27466,7 @@ Point.prototype.eqXToP = function eqXToP(x) {
 Point.prototype.toP = Point.prototype.normalize;
 Point.prototype.mixedAdd = Point.prototype.add;
 
-},{"../utils":153,"./base":140,"bn.js":154,"inherits":195}],142:[function(require,module,exports){
+},{"../utils":153,"./base":140,"bn.js":154,"inherits":191}],142:[function(require,module,exports){
 'use strict';
 
 var curve = exports;
@@ -27656,7 +27656,7 @@ Point.prototype.getX = function getX() {
   return this.x.fromRed();
 };
 
-},{"../utils":153,"./base":140,"bn.js":154,"inherits":195}],144:[function(require,module,exports){
+},{"../utils":153,"./base":140,"bn.js":154,"inherits":191}],144:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -28596,7 +28596,7 @@ JPoint.prototype.isInfinity = function isInfinity() {
   return this.z.cmpn(0) === 0;
 };
 
-},{"../utils":153,"./base":140,"bn.js":154,"inherits":195}],145:[function(require,module,exports){
+},{"../utils":153,"./base":140,"bn.js":154,"inherits":191}],145:[function(require,module,exports){
 'use strict';
 
 var curves = exports;
@@ -28804,7 +28804,7 @@ defineCurve('secp256k1', {
   ],
 });
 
-},{"./curve":142,"./precomputed/secp256k1":152,"./utils":153,"hash.js":181}],146:[function(require,module,exports){
+},{"./curve":142,"./precomputed/secp256k1":152,"./utils":153,"hash.js":177}],146:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -29049,7 +29049,7 @@ EC.prototype.getKeyRecoveryParam = function(e, signature, Q, enc) {
   throw new Error('Unable to find valid recovery factor');
 };
 
-},{"../curves":145,"../utils":153,"./key":147,"./signature":148,"bn.js":154,"brorand":33,"hmac-drbg":193}],147:[function(require,module,exports){
+},{"../curves":145,"../utils":153,"./key":147,"./signature":148,"bn.js":154,"brorand":33,"hmac-drbg":189}],147:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -29460,7 +29460,7 @@ EDDSA.prototype.isPoint = function isPoint(val) {
   return val instanceof this.pointClass;
 };
 
-},{"../curves":145,"../utils":153,"./key":150,"./signature":151,"hash.js":181}],150:[function(require,module,exports){
+},{"../curves":145,"../utils":153,"./key":150,"./signature":151,"hash.js":177}],150:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -30527,7 +30527,7 @@ function intFromLE(bytes) {
 utils.intFromLE = intFromLE;
 
 
-},{"bn.js":154,"minimalistic-assert":204,"minimalistic-crypto-utils":205}],154:[function(require,module,exports){
+},{"bn.js":154,"minimalistic-assert":196,"minimalistic-crypto-utils":197}],154:[function(require,module,exports){
 arguments[4][30][0].apply(exports,arguments)
 },{"buffer":34,"dup":30}],155:[function(require,module,exports){
 module.exports={
@@ -31166,7 +31166,7 @@ function EVP_BytesToKey (password, salt, keyBits, ivLen) {
 
 module.exports = EVP_BytesToKey
 
-},{"md5.js":200,"safe-buffer":234}],158:[function(require,module,exports){
+},{"md5.js":193,"safe-buffer":225}],158:[function(require,module,exports){
 "use strict";
 // DEFLATE is a complex format; to read this code, you should probably check the RFC first:
 // https://tools.ietf.org/html/rfc1951
@@ -33801,279 +33801,6 @@ exports.default = (function (c, id, msg, transfer, cb) {
 });
 
 },{}],160:[function(require,module,exports){
-/* jshint node: true */
-'use strict';
-
-var normalice = require('normalice');
-
-/**
-  # freeice
-
-  The `freeice` module is a simple way of getting random STUN or TURN server
-  for your WebRTC application.  The list of servers (just STUN at this stage)
-  were sourced from this [gist](https://gist.github.com/zziuni/3741933).
-
-  ## Example Use
-
-  The following demonstrates how you can use `freeice` with
-  [rtc-quickconnect](https://github.com/rtc-io/rtc-quickconnect):
-
-  <<< examples/quickconnect.js
-
-  As the `freeice` module generates ice servers in a list compliant with the
-  WebRTC spec you will be able to use it with raw `RTCPeerConnection`
-  constructors and other WebRTC libraries.
-
-  ## Hey, don't use my STUN/TURN server!
-
-  If for some reason your free STUN or TURN server ends up in the
-  list of servers ([stun](https://github.com/DamonOehlman/freeice/blob/master/stun.json) or
-  [turn](https://github.com/DamonOehlman/freeice/blob/master/turn.json))
-  that is used in this module, you can feel
-  free to open an issue on this repository and those servers will be removed
-  within 24 hours (or sooner).  This is the quickest and probably the most
-  polite way to have something removed (and provides us some visibility
-  if someone opens a pull request requesting that a server is added).
-
-  ## Please add my server!
-
-  If you have a server that you wish to add to the list, that's awesome! I'm
-  sure I speak on behalf of a whole pile of WebRTC developers who say thanks.
-  To get it into the list, feel free to either open a pull request or if you
-  find that process a bit daunting then just create an issue requesting
-  the addition of the server (make sure you provide all the details, and if
-  you have a Terms of Service then including that in the PR/issue would be
-  awesome).
-
-  ## I know of a free server, can I add it?
-
-  Sure, if you do your homework and make sure it is ok to use (I'm currently
-  in the process of reviewing the terms of those STUN servers included from
-  the original list).  If it's ok to go, then please see the previous entry
-  for how to add it.
-
-  ## Current List of Servers
-
-  * current as at the time of last `README.md` file generation
-
-  ### STUN
-
-  <<< stun.json
-
-  ### TURN
-
-  <<< turn.json
-
-**/
-
-var freeice = function(opts) {
-  // if a list of servers has been provided, then use it instead of defaults
-  var servers = {
-    stun: (opts || {}).stun || require('./stun.json'),
-    turn: (opts || {}).turn || require('./turn.json')
-  };
-
-  var stunCount = (opts || {}).stunCount || 2;
-  var turnCount = (opts || {}).turnCount || 0;
-  var selected;
-
-  function getServers(type, count) {
-    var out = [];
-    var input = [].concat(servers[type]);
-    var idx;
-
-    while (input.length && out.length < count) {
-      idx = (Math.random() * input.length) | 0;
-      out = out.concat(input.splice(idx, 1));
-    }
-
-    return out.map(function(url) {
-        //If it's a not a string, don't try to "normalice" it otherwise using type:url will screw it up
-        if ((typeof url !== 'string') && (! (url instanceof String))) {
-            return url;
-        } else {
-            return normalice(type + ':' + url);
-        }
-    });
-  }
-
-  // add stun servers
-  selected = [].concat(getServers('stun', stunCount));
-
-  if (turnCount) {
-    selected = selected.concat(getServers('turn', turnCount));
-  }
-
-  return selected;
-};
-
-module.exports = freeice;
-},{"./stun.json":161,"./turn.json":162,"normalice":206}],161:[function(require,module,exports){
-module.exports=[
-  "stun.l.google.com:19302",
-  "stun1.l.google.com:19302",
-  "stun2.l.google.com:19302",
-  "stun3.l.google.com:19302",
-  "stun4.l.google.com:19302",
-  "stun.ekiga.net",
-  "stun.ideasip.com",
-  "stun.schlund.de",
-  "stun.stunprotocol.org:3478",
-  "stun.voiparound.com",
-  "stun.voipbuster.com",
-  "stun.voipstunt.com",
-  "stun.voxgratia.org"
-]
-
-},{}],162:[function(require,module,exports){
-module.exports=[]
-
-},{}],163:[function(require,module,exports){
-var WildEmitter = require('wildemitter');
-
-function getMaxVolume (analyser, fftBins) {
-  var maxVolume = -Infinity;
-  analyser.getFloatFrequencyData(fftBins);
-
-  for(var i=4, ii=fftBins.length; i < ii; i++) {
-    if (fftBins[i] > maxVolume && fftBins[i] < 0) {
-      maxVolume = fftBins[i];
-    }
-  };
-
-  return maxVolume;
-}
-
-
-var audioContextType;
-if (typeof window !== 'undefined') {
-  audioContextType = window.AudioContext || window.webkitAudioContext;
-}
-// use a single audio context due to hardware limits
-var audioContext = null;
-module.exports = function(stream, options) {
-  var harker = new WildEmitter();
-
-  // make it not break in non-supported browsers
-  if (!audioContextType) return harker;
-
-  //Config
-  var options = options || {},
-      smoothing = (options.smoothing || 0.1),
-      interval = (options.interval || 50),
-      threshold = options.threshold,
-      play = options.play,
-      history = options.history || 10,
-      running = true;
-
-  // Ensure that just a single AudioContext is internally created
-  audioContext = options.audioContext || audioContext || new audioContextType();
-
-  var sourceNode, fftBins, analyser;
-
-  analyser = audioContext.createAnalyser();
-  analyser.fftSize = 512;
-  analyser.smoothingTimeConstant = smoothing;
-  fftBins = new Float32Array(analyser.frequencyBinCount);
-
-  if (stream.jquery) stream = stream[0];
-  if (stream instanceof HTMLAudioElement || stream instanceof HTMLVideoElement) {
-    //Audio Tag
-    sourceNode = audioContext.createMediaElementSource(stream);
-    if (typeof play === 'undefined') play = true;
-    threshold = threshold || -50;
-  } else {
-    //WebRTC Stream
-    sourceNode = audioContext.createMediaStreamSource(stream);
-    threshold = threshold || -50;
-  }
-
-  sourceNode.connect(analyser);
-  if (play) analyser.connect(audioContext.destination);
-
-  harker.speaking = false;
-
-  harker.suspend = function() {
-    return audioContext.suspend();
-  }
-  harker.resume = function() {
-    return audioContext.resume();
-  }
-  Object.defineProperty(harker, 'state', { get: function() {
-    return audioContext.state;
-  }});
-  audioContext.onstatechange = function() {
-    harker.emit('state_change', audioContext.state);
-  }
-
-  harker.setThreshold = function(t) {
-    threshold = t;
-  };
-
-  harker.setInterval = function(i) {
-    interval = i;
-  };
-
-  harker.stop = function() {
-    running = false;
-    harker.emit('volume_change', -100, threshold);
-    if (harker.speaking) {
-      harker.speaking = false;
-      harker.emit('stopped_speaking');
-    }
-    analyser.disconnect();
-    sourceNode.disconnect();
-  };
-  harker.speakingHistory = [];
-  for (var i = 0; i < history; i++) {
-      harker.speakingHistory.push(0);
-  }
-
-  // Poll the analyser node to determine if speaking
-  // and emit events if changed
-  var looper = function() {
-    setTimeout(function() {
-
-      //check if stop has been called
-      if(!running) {
-        return;
-      }
-
-      var currentVolume = getMaxVolume(analyser, fftBins);
-
-      harker.emit('volume_change', currentVolume, threshold);
-
-      var history = 0;
-      if (currentVolume > threshold && !harker.speaking) {
-        // trigger quickly, short history
-        for (var i = harker.speakingHistory.length - 3; i < harker.speakingHistory.length; i++) {
-          history += harker.speakingHistory[i];
-        }
-        if (history >= 2) {
-          harker.speaking = true;
-          harker.emit('speaking');
-        }
-      } else if (currentVolume < threshold && harker.speaking) {
-        for (var i = 0; i < harker.speakingHistory.length; i++) {
-          history += harker.speakingHistory[i];
-        }
-        if (history == 0) {
-          harker.speaking = false;
-          harker.emit('stopped_speaking');
-        }
-      }
-      harker.speakingHistory.shift();
-      harker.speakingHistory.push(0 + (currentVolume > threshold));
-
-      looper();
-    }, interval);
-  };
-  looper();
-
-  return harker;
-}
-
-},{"wildemitter":274}],164:[function(require,module,exports){
 'use strict'
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('readable-stream').Transform
@@ -34170,39 +33897,39 @@ HashBase.prototype._digest = function () {
 
 module.exports = HashBase
 
-},{"inherits":195,"readable-stream":179,"safe-buffer":180}],165:[function(require,module,exports){
+},{"inherits":191,"readable-stream":175,"safe-buffer":176}],161:[function(require,module,exports){
 arguments[4][62][0].apply(exports,arguments)
-},{"dup":62}],166:[function(require,module,exports){
+},{"dup":62}],162:[function(require,module,exports){
 arguments[4][63][0].apply(exports,arguments)
-},{"./_stream_readable":168,"./_stream_writable":170,"_process":223,"dup":63,"inherits":195}],167:[function(require,module,exports){
+},{"./_stream_readable":164,"./_stream_writable":166,"_process":214,"dup":63,"inherits":191}],163:[function(require,module,exports){
 arguments[4][64][0].apply(exports,arguments)
-},{"./_stream_transform":169,"dup":64,"inherits":195}],168:[function(require,module,exports){
+},{"./_stream_transform":165,"dup":64,"inherits":191}],164:[function(require,module,exports){
 arguments[4][65][0].apply(exports,arguments)
-},{"../errors":165,"./_stream_duplex":166,"./internal/streams/async_iterator":171,"./internal/streams/buffer_list":172,"./internal/streams/destroy":173,"./internal/streams/from":175,"./internal/streams/state":177,"./internal/streams/stream":178,"_process":223,"buffer":79,"dup":65,"events":156,"inherits":195,"string_decoder/":267,"util":34}],169:[function(require,module,exports){
+},{"../errors":161,"./_stream_duplex":162,"./internal/streams/async_iterator":167,"./internal/streams/buffer_list":168,"./internal/streams/destroy":169,"./internal/streams/from":171,"./internal/streams/state":173,"./internal/streams/stream":174,"_process":214,"buffer":79,"dup":65,"events":156,"inherits":191,"string_decoder/":250,"util":34}],165:[function(require,module,exports){
 arguments[4][66][0].apply(exports,arguments)
-},{"../errors":165,"./_stream_duplex":166,"dup":66,"inherits":195}],170:[function(require,module,exports){
+},{"../errors":161,"./_stream_duplex":162,"dup":66,"inherits":191}],166:[function(require,module,exports){
 arguments[4][67][0].apply(exports,arguments)
-},{"../errors":165,"./_stream_duplex":166,"./internal/streams/destroy":173,"./internal/streams/state":177,"./internal/streams/stream":178,"_process":223,"buffer":79,"dup":67,"inherits":195,"util-deprecate":270}],171:[function(require,module,exports){
+},{"../errors":161,"./_stream_duplex":162,"./internal/streams/destroy":169,"./internal/streams/state":173,"./internal/streams/stream":174,"_process":214,"buffer":79,"dup":67,"inherits":191,"util-deprecate":252}],167:[function(require,module,exports){
 arguments[4][68][0].apply(exports,arguments)
-},{"./end-of-stream":174,"_process":223,"dup":68}],172:[function(require,module,exports){
+},{"./end-of-stream":170,"_process":214,"dup":68}],168:[function(require,module,exports){
 arguments[4][69][0].apply(exports,arguments)
-},{"buffer":79,"dup":69,"util":34}],173:[function(require,module,exports){
+},{"buffer":79,"dup":69,"util":34}],169:[function(require,module,exports){
 arguments[4][70][0].apply(exports,arguments)
-},{"_process":223,"dup":70}],174:[function(require,module,exports){
+},{"_process":214,"dup":70}],170:[function(require,module,exports){
 arguments[4][71][0].apply(exports,arguments)
-},{"../../../errors":165,"dup":71}],175:[function(require,module,exports){
+},{"../../../errors":161,"dup":71}],171:[function(require,module,exports){
 arguments[4][72][0].apply(exports,arguments)
-},{"dup":72}],176:[function(require,module,exports){
+},{"dup":72}],172:[function(require,module,exports){
 arguments[4][73][0].apply(exports,arguments)
-},{"../../../errors":165,"./end-of-stream":174,"dup":73}],177:[function(require,module,exports){
+},{"../../../errors":161,"./end-of-stream":170,"dup":73}],173:[function(require,module,exports){
 arguments[4][74][0].apply(exports,arguments)
-},{"../../../errors":165,"dup":74}],178:[function(require,module,exports){
+},{"../../../errors":161,"dup":74}],174:[function(require,module,exports){
 arguments[4][75][0].apply(exports,arguments)
-},{"dup":75,"events":156}],179:[function(require,module,exports){
+},{"dup":75,"events":156}],175:[function(require,module,exports){
 arguments[4][76][0].apply(exports,arguments)
-},{"./lib/_stream_duplex.js":166,"./lib/_stream_passthrough.js":167,"./lib/_stream_readable.js":168,"./lib/_stream_transform.js":169,"./lib/_stream_writable.js":170,"./lib/internal/streams/end-of-stream.js":174,"./lib/internal/streams/pipeline.js":176,"dup":76}],180:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":162,"./lib/_stream_passthrough.js":163,"./lib/_stream_readable.js":164,"./lib/_stream_transform.js":165,"./lib/_stream_writable.js":166,"./lib/internal/streams/end-of-stream.js":170,"./lib/internal/streams/pipeline.js":172,"dup":76}],176:[function(require,module,exports){
 arguments[4][77][0].apply(exports,arguments)
-},{"buffer":79,"dup":77}],181:[function(require,module,exports){
+},{"buffer":79,"dup":77}],177:[function(require,module,exports){
 var hash = exports;
 
 hash.utils = require('./hash/utils');
@@ -34219,7 +33946,7 @@ hash.sha384 = hash.sha.sha384;
 hash.sha512 = hash.sha.sha512;
 hash.ripemd160 = hash.ripemd.ripemd160;
 
-},{"./hash/common":182,"./hash/hmac":183,"./hash/ripemd":184,"./hash/sha":185,"./hash/utils":192}],182:[function(require,module,exports){
+},{"./hash/common":178,"./hash/hmac":179,"./hash/ripemd":180,"./hash/sha":181,"./hash/utils":188}],178:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -34313,7 +34040,7 @@ BlockHash.prototype._pad = function pad() {
   return res;
 };
 
-},{"./utils":192,"minimalistic-assert":204}],183:[function(require,module,exports){
+},{"./utils":188,"minimalistic-assert":196}],179:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -34362,7 +34089,7 @@ Hmac.prototype.digest = function digest(enc) {
   return this.outer.digest(enc);
 };
 
-},{"./utils":192,"minimalistic-assert":204}],184:[function(require,module,exports){
+},{"./utils":188,"minimalistic-assert":196}],180:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -34510,7 +34237,7 @@ var sh = [
   8, 5, 12, 9, 12, 5, 14, 6, 8, 13, 6, 5, 15, 13, 11, 11
 ];
 
-},{"./common":182,"./utils":192}],185:[function(require,module,exports){
+},{"./common":178,"./utils":188}],181:[function(require,module,exports){
 'use strict';
 
 exports.sha1 = require('./sha/1');
@@ -34519,7 +34246,7 @@ exports.sha256 = require('./sha/256');
 exports.sha384 = require('./sha/384');
 exports.sha512 = require('./sha/512');
 
-},{"./sha/1":186,"./sha/224":187,"./sha/256":188,"./sha/384":189,"./sha/512":190}],186:[function(require,module,exports){
+},{"./sha/1":182,"./sha/224":183,"./sha/256":184,"./sha/384":185,"./sha/512":186}],182:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -34595,7 +34322,7 @@ SHA1.prototype._digest = function digest(enc) {
     return utils.split32(this.h, 'big');
 };
 
-},{"../common":182,"../utils":192,"./common":191}],187:[function(require,module,exports){
+},{"../common":178,"../utils":188,"./common":187}],183:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -34627,7 +34354,7 @@ SHA224.prototype._digest = function digest(enc) {
 };
 
 
-},{"../utils":192,"./256":188}],188:[function(require,module,exports){
+},{"../utils":188,"./256":184}],184:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -34734,7 +34461,7 @@ SHA256.prototype._digest = function digest(enc) {
     return utils.split32(this.h, 'big');
 };
 
-},{"../common":182,"../utils":192,"./common":191,"minimalistic-assert":204}],189:[function(require,module,exports){
+},{"../common":178,"../utils":188,"./common":187,"minimalistic-assert":196}],185:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -34771,7 +34498,7 @@ SHA384.prototype._digest = function digest(enc) {
     return utils.split32(this.h.slice(0, 12), 'big');
 };
 
-},{"../utils":192,"./512":190}],190:[function(require,module,exports){
+},{"../utils":188,"./512":186}],186:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -35103,7 +34830,7 @@ function g1_512_lo(xh, xl) {
   return r;
 }
 
-},{"../common":182,"../utils":192,"minimalistic-assert":204}],191:[function(require,module,exports){
+},{"../common":178,"../utils":188,"minimalistic-assert":196}],187:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -35154,7 +34881,7 @@ function g1_256(x) {
 }
 exports.g1_256 = g1_256;
 
-},{"../utils":192}],192:[function(require,module,exports){
+},{"../utils":188}],188:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -35434,7 +35161,7 @@ function shr64_lo(ah, al, num) {
 }
 exports.shr64_lo = shr64_lo;
 
-},{"inherits":195,"minimalistic-assert":204}],193:[function(require,module,exports){
+},{"inherits":191,"minimalistic-assert":196}],189:[function(require,module,exports){
 'use strict';
 
 var hash = require('hash.js');
@@ -35549,7 +35276,7 @@ HmacDRBG.prototype.generate = function generate(len, enc, add, addEnc) {
   return utils.encode(res, enc);
 };
 
-},{"hash.js":181,"minimalistic-assert":204,"minimalistic-crypto-utils":205}],194:[function(require,module,exports){
+},{"hash.js":177,"minimalistic-assert":196,"minimalistic-crypto-utils":197}],190:[function(require,module,exports){
 /*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
@@ -35636,7 +35363,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],195:[function(require,module,exports){
+},{}],191:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -35665,7 +35392,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],196:[function(require,module,exports){
+},{}],192:[function(require,module,exports){
 (function (global){(function (){
 // https://github.com/maxogden/websocket-stream/blob/48dc3ddf943e5ada668c31ccd94e9186f02fafbd/ws-fallback.js
 
@@ -35686,964 +35413,7 @@ if (typeof WebSocket !== 'undefined') {
 module.exports = ws
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],197:[function(require,module,exports){
-// Does nothing at all.
-
-},{}],198:[function(require,module,exports){
-/*
- * (C) Copyright 2014-2015 Kurento (http://kurento.org/)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-var freeice = require('freeice')
-var inherits = require('inherits')
-var UAParser = require('ua-parser-js')
-var uuidv4 = require('uuid/v4')
-var hark = require('hark')
-
-var EventEmitter = require('events').EventEmitter
-var recursive = require('merge').recursive.bind(undefined, true)
-var sdpTranslator = require('sdp-translator')
-var logger = (typeof window === 'undefined') ? console : window.Logger ||
-  console
-
-try {
-  require('kurento-browser-extensions')
-} catch (error) {
-  if (typeof getScreenConstraints === 'undefined') {
-    logger.warn('screen sharing is not available')
-
-    getScreenConstraints = function getScreenConstraints(sendSource, callback) {
-      callback(new Error("This library is not enabled for screen sharing"))
-    }
-  }
-}
-
-var MEDIA_CONSTRAINTS = {
-  audio: true,
-  video: {
-    width: 640,
-    framerate: 15
-  }
-}
-
-// Somehow, the UAParser constructor gets an empty window object.
-// We need to pass the user agent string in order to get information
-var ua = (typeof window !== 'undefined' && window.navigator) ? window.navigator
-  .userAgent : ''
-var parser = new UAParser(ua)
-var browser = parser.getBrowser()
-
-function insertScriptSrcInHtmlDom(scriptSrc) {
-  //Create a script tag
-  var script = document.createElement('script');
-  // Assign a URL to the script element
-  script.src = scriptSrc;
-  // Get the first script tag on the page (we'll insert our new one before it)
-  var ref = document.querySelector('script');
-  // Insert the new node before the reference node
-  ref.parentNode.insertBefore(script, ref);
-}
-
-function importScriptsDependsOnBrowser() {
-  if (browser.name === 'IE') {
-    insertScriptSrcInHtmlDom(
-      "https://cdn.temasys.io/adapterjs/0.15.x/adapter.debug.js");
-  }
-}
-
-importScriptsDependsOnBrowser();
-var usePlanB = false
-if (browser.name === 'Chrome' || browser.name === 'Chromium') {
-  logger.debug(browser.name + ": using SDP PlanB")
-  usePlanB = true
-}
-
-function noop(error) {
-  if (error) logger.error(error)
-}
-
-function trackStop(track) {
-  track.stop && track.stop()
-}
-
-function streamStop(stream) {
-  stream.getTracks().forEach(trackStop)
-}
-
-/**
- * Returns a string representation of a SessionDescription object.
- */
-var dumpSDP = function (description) {
-  if (typeof description === 'undefined' || description === null) {
-    return ''
-  }
-
-  return 'type: ' + description.type + '\r\n' + description.sdp
-}
-
-function bufferizeCandidates(pc, onerror) {
-  var candidatesQueue = []
-
-  function setSignalingstatechangeAccordingWwebBrowser(functionToExecute, pc) {
-    if (typeof AdapterJS !== 'undefined' && AdapterJS.webrtcDetectedBrowser ===
-      'IE' && AdapterJS.webrtcDetectedVersion >= 9) {
-      pc.onsignalingstatechange = functionToExecute;
-    } else {
-      pc.addEventListener('signalingstatechange', functionToExecute);
-    }
-
-  }
-
-  var signalingstatechangeFunction = function () {
-    if (pc.signalingState === 'stable') {
-      while (candidatesQueue.length) {
-        var entry = candidatesQueue.shift();
-        pc.addIceCandidate(entry.candidate, entry.callback, entry.callback);
-      }
-    }
-  };
-
-  setSignalingstatechangeAccordingWwebBrowser(signalingstatechangeFunction, pc);
-  return function (candidate, callback) {
-    callback = callback || onerror;
-    switch (pc.signalingState) {
-    case 'closed':
-      callback(new Error('PeerConnection object is closed'));
-      break;
-    case 'stable':
-      if (pc.remoteDescription) {
-        pc.addIceCandidate(candidate, callback, callback);
-        break;
-
-      }
-      default:
-        candidatesQueue.push({
-          candidate: candidate,
-          callback: callback
-
-        });
-    }
-  };
-}
-
-/* Simulcast utilities */
-
-function removeFIDFromOffer(sdp) {
-  var n = sdp.indexOf("a=ssrc-group:FID");
-
-  if (n > 0) {
-    return sdp.slice(0, n);
-  } else {
-    return sdp;
-  }
-}
-
-function getSimulcastInfo(videoStream) {
-  var videoTracks = videoStream.getVideoTracks();
-  if (!videoTracks.length) {
-    logger.warn('No video tracks available in the video stream')
-    return ''
-  }
-  var lines = [
-    'a=x-google-flag:conference',
-    'a=ssrc-group:SIM 1 2 3',
-    'a=ssrc:1 cname:localVideo',
-    'a=ssrc:1 msid:' + videoStream.id + ' ' + videoTracks[0].id,
-    'a=ssrc:1 mslabel:' + videoStream.id,
-    'a=ssrc:1 label:' + videoTracks[0].id,
-    'a=ssrc:2 cname:localVideo',
-    'a=ssrc:2 msid:' + videoStream.id + ' ' + videoTracks[0].id,
-    'a=ssrc:2 mslabel:' + videoStream.id,
-    'a=ssrc:2 label:' + videoTracks[0].id,
-    'a=ssrc:3 cname:localVideo',
-    'a=ssrc:3 msid:' + videoStream.id + ' ' + videoTracks[0].id,
-    'a=ssrc:3 mslabel:' + videoStream.id,
-    'a=ssrc:3 label:' + videoTracks[0].id
-  ];
-
-  lines.push('');
-
-  return lines.join('\n');
-}
-
-function sleep(milliseconds) {
-  var start = new Date().getTime();
-  for (var i = 0; i < 1e7; i++) {
-    if ((new Date().getTime() - start) > milliseconds) {
-      break;
-    }
-  }
-}
-
-function setIceCandidateAccordingWebBrowser(functionToExecute, pc) {
-  if (typeof AdapterJS !== 'undefined' && AdapterJS.webrtcDetectedBrowser ===
-    'IE' && AdapterJS.webrtcDetectedVersion >= 9) {
-    pc.onicecandidate = functionToExecute;
-  } else {
-    pc.addEventListener('icecandidate', functionToExecute);
-  }
-
-}
-
-/**
- * Wrapper object of an RTCPeerConnection. This object is aimed to simplify the
- * development of WebRTC-based applications.
- *
- * @constructor module:kurentoUtils.WebRtcPeer
- *
- * @param {String} mode Mode in which the PeerConnection will be configured.
- *  Valid values are: 'recvonly', 'sendonly', and 'sendrecv'
- * @param localVideo Video tag for the local stream
- * @param remoteVideo Video tag for the remote stream
- * @param {MediaStream} videoStream Stream to be used as primary source
- *  (typically video and audio, or only video if combined with audioStream) for
- *  localVideo and to be added as stream to the RTCPeerConnection
- * @param {MediaStream} audioStream Stream to be used as second source
- *  (typically for audio) for localVideo and to be added as stream to the
- *  RTCPeerConnection
- */
-function WebRtcPeer(mode, options, callback) {
-  if (!(this instanceof WebRtcPeer)) {
-    return new WebRtcPeer(mode, options, callback)
-  }
-
-  WebRtcPeer.super_.call(this)
-
-  if (options instanceof Function) {
-    callback = options
-    options = undefined
-  }
-
-  options = options || {}
-  callback = (callback || noop).bind(this)
-
-  var self = this
-  var localVideo = options.localVideo
-  var remoteVideo = options.remoteVideo
-  var videoStream = options.videoStream
-  var audioStream = options.audioStream
-  var mediaConstraints = options.mediaConstraints
-
-  var pc = options.peerConnection
-  var sendSource = options.sendSource || 'webcam'
-
-  var dataChannelConfig = options.dataChannelConfig
-  var useDataChannels = options.dataChannels || false
-  var dataChannel
-
-  var guid = uuidv4()
-  var configuration = recursive({
-      iceServers: freeice()
-    },
-    options.configuration)
-
-  var onicecandidate = options.onicecandidate
-  if (onicecandidate) this.on('icecandidate', onicecandidate)
-
-  var oncandidategatheringdone = options.oncandidategatheringdone
-  if (oncandidategatheringdone) {
-    this.on('candidategatheringdone', oncandidategatheringdone)
-  }
-
-  var simulcast = options.simulcast
-  var multistream = options.multistream
-  var interop = new sdpTranslator.Interop()
-  var candidatesQueueOut = []
-  var candidategatheringdone = false
-
-  Object.defineProperties(this, {
-    'peerConnection': {
-      get: function () {
-        return pc
-      }
-    },
-
-    'id': {
-      value: options.id || guid,
-      writable: false
-    },
-
-    'remoteVideo': {
-      get: function () {
-        return remoteVideo
-      }
-    },
-
-    'localVideo': {
-      get: function () {
-        return localVideo
-      }
-    },
-
-    'dataChannel': {
-      get: function () {
-        return dataChannel
-      }
-    },
-
-    /**
-     * @member {(external:ImageData|undefined)} currentFrame
-     */
-    'currentFrame': {
-      get: function () {
-        // [ToDo] Find solution when we have a remote stream but we didn't set
-        // a remoteVideo tag
-        if (!remoteVideo) return;
-
-        if (remoteVideo.readyState < remoteVideo.HAVE_CURRENT_DATA)
-          throw new Error('No video stream data available')
-
-        var canvas = document.createElement('canvas')
-        canvas.width = remoteVideo.videoWidth
-        canvas.height = remoteVideo.videoHeight
-
-        canvas.getContext('2d').drawImage(remoteVideo, 0, 0)
-
-        return canvas
-      }
-    }
-  })
-
-  // Init PeerConnection
-  if (!pc) {
-    pc = new RTCPeerConnection(configuration);
-    if (useDataChannels && !dataChannel) {
-      var dcId = 'WebRtcPeer-' + self.id
-      var dcOptions = undefined
-      if (dataChannelConfig) {
-        dcId = dataChannelConfig.id || dcId
-        dcOptions = dataChannelConfig.options
-      }
-      dataChannel = pc.createDataChannel(dcId, dcOptions);
-      if (dataChannelConfig) {
-        dataChannel.onopen = dataChannelConfig.onopen;
-        dataChannel.onclose = dataChannelConfig.onclose;
-        dataChannel.onmessage = dataChannelConfig.onmessage;
-        dataChannel.onbufferedamountlow = dataChannelConfig.onbufferedamountlow;
-        dataChannel.onerror = dataChannelConfig.onerror || noop;
-      }
-    }
-  }
-
-  // Shims over the now deprecated getLocalStreams() and getRemoteStreams()
-  // (usage of these methods should be dropped altogether)
-  if (!pc.getLocalStreams && pc.getSenders) {
-    pc.getLocalStreams = function () {
-      var stream = new MediaStream();
-      pc.getSenders().forEach(function (sender) {
-        stream.addTrack(sender.track);
-      });
-      return [stream];
-    };
-  }
-  if (!pc.getRemoteStreams && pc.getReceivers) {
-    pc.getRemoteStreams = function () {
-      var stream = new MediaStream();
-      pc.getReceivers().forEach(function (sender) {
-        stream.addTrack(sender.track);
-      });
-      return [stream];
-    };
-  }
-
-  // If event.candidate == null, it means that candidate gathering has finished
-  // and RTCPeerConnection.iceGatheringState == "complete".
-  // Such candidate does not need to be sent to the remote peer.
-  // https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/icecandidate_event#Indicating_that_ICE_gathering_is_complete
-  var iceCandidateFunction = function (event) {
-    var candidate = event.candidate;
-    if (EventEmitter.listenerCount(self, 'icecandidate') || EventEmitter
-      .listenerCount(self, 'candidategatheringdone')) {
-      if (candidate) {
-        var cand;
-        if (multistream && usePlanB) {
-          cand = interop.candidateToUnifiedPlan(candidate);
-        } else {
-          cand = candidate;
-        }
-        if (typeof AdapterJS === 'undefined') {
-          self.emit('icecandidate', cand);
-
-        }
-        candidategatheringdone = false;
-      } else if (!candidategatheringdone) {
-        if (typeof AdapterJS !== 'undefined' && AdapterJS
-          .webrtcDetectedBrowser === 'IE' && AdapterJS
-          .webrtcDetectedVersion >= 9) {
-          EventEmitter.prototype.emit('candidategatheringdone', cand);
-        } else {
-          self.emit('candidategatheringdone');
-        }
-        candidategatheringdone = true;
-      }
-    } else if (!candidategatheringdone) {
-      candidatesQueueOut.push(candidate);
-      if (!candidate)
-        candidategatheringdone = true;
-
-    }
-  };
-
-  setIceCandidateAccordingWebBrowser(iceCandidateFunction, pc);
-  pc.onaddstream = options.onaddstream
-  pc.onnegotiationneeded = options.onnegotiationneeded
-  this.on('newListener', function (event, listener) {
-    if (event === 'icecandidate' || event === 'candidategatheringdone') {
-      while (candidatesQueueOut.length) {
-        var candidate = candidatesQueueOut.shift()
-
-        if (!candidate === (event === 'candidategatheringdone')) {
-          listener(candidate)
-        }
-      }
-    }
-  })
-
-  var addIceCandidate = bufferizeCandidates(pc)
-
-  /**
-   * Callback function invoked when an ICE candidate is received. Developers are
-   * expected to invoke this function in order to complete the SDP negotiation.
-   *
-   * @function module:kurentoUtils.WebRtcPeer.prototype.addIceCandidate
-   *
-   * @param iceCandidate - Literal object with the ICE candidate description
-   * @param callback - Called when the ICE candidate has been added.
-   */
-  this.addIceCandidate = function (iceCandidate, callback) {
-    var candidate
-
-    if (multistream && usePlanB) {
-      candidate = interop.candidateToPlanB(iceCandidate)
-    } else {
-      candidate = new RTCIceCandidate(iceCandidate)
-    }
-
-    logger.debug('Remote ICE candidate received', iceCandidate)
-    callback = (callback || noop).bind(this)
-    addIceCandidate(candidate, callback)
-  }
-
-  this.generateOffer = function (callback) {
-    callback = callback.bind(this)
-
-    if (mode === 'recvonly') {
-      /* Add reception tracks on the RTCPeerConnection. Send tracks are
-       * unconditionally added to "sendonly" and "sendrecv" modes, in the
-       * constructor's "start()" method, but nothing is done for "recvonly".
-       *
-       * Here, we add new transceivers to receive audio and/or video, so the
-       * SDP Offer that will be generated by the PC includes these medias
-       * with the "a=recvonly" attribute.
-       */
-      var useAudio =
-        (mediaConstraints && typeof mediaConstraints.audio === 'boolean') ?
-        mediaConstraints.audio : true
-      var useVideo =
-        (mediaConstraints && typeof mediaConstraints.video === 'boolean') ?
-        mediaConstraints.video : true
-
-      if (useAudio) {
-        pc.addTransceiver('audio', {
-          direction: 'recvonly'
-        });
-      }
-
-      if (useVideo) {
-        pc.addTransceiver('video', {
-          direction: 'recvonly'
-        });
-      }
-    } else if (mode === 'sendonly') {
-      /* The constructor's "start()" method already added any available track,
-       * which by default creates Transceiver with "sendrecv" direction.
-       *
-       * Here, we set all transceivers to only send audio and/or video, so the
-       * SDP Offer that will be generated by the PC includes these medias
-       * with the "a=sendonly" attribute.
-       */
-      pc.getTransceivers().forEach(function (transceiver) {
-        transceiver.direction = "sendonly";
-      });
-    }
-
-    if (typeof AdapterJS !== 'undefined' && AdapterJS
-      .webrtcDetectedBrowser === 'IE' && AdapterJS.webrtcDetectedVersion >= 9
-    ) {
-      var setLocalDescriptionOnSuccess = function () {
-        sleep(1000);
-        var localDescription = pc.localDescription;
-        logger.debug('Local description set\n', localDescription.sdp);
-        if (multistream && usePlanB) {
-          localDescription = interop.toUnifiedPlan(localDescription);
-          logger.debug('offer::origPlanB->UnifiedPlan', dumpSDP(
-            localDescription));
-        }
-        callback(null, localDescription.sdp, self.processAnswer.bind(self));
-      };
-      var createOfferOnSuccess = function (offer) {
-        logger.debug('Created SDP offer');
-        logger.debug('Local description set\n', pc.localDescription);
-        pc.setLocalDescription(offer, setLocalDescriptionOnSuccess,
-          callback);
-      };
-      pc.createOffer(createOfferOnSuccess, callback);
-    } else {
-      pc.createOffer()
-        .then(function (offer) {
-          logger.debug('Created SDP offer');
-          offer = mangleSdpToAddSimulcast(offer);
-          return pc.setLocalDescription(offer);
-        })
-        .then(function () {
-          var localDescription = pc.localDescription;
-          logger.debug('Local description set\n', localDescription.sdp);
-          if (multistream && usePlanB) {
-            localDescription = interop.toUnifiedPlan(localDescription);
-            logger.debug('offer::origPlanB->UnifiedPlan', dumpSDP(
-              localDescription));
-          }
-          callback(null, localDescription.sdp, self.processAnswer.bind(
-            self));
-        })
-        .catch(callback);
-    }
-  }
-
-  this.getLocalSessionDescriptor = function () {
-    return pc.localDescription
-  }
-
-  this.getRemoteSessionDescriptor = function () {
-    return pc.remoteDescription
-  }
-
-  function setRemoteVideo() {
-    if (remoteVideo) {
-      remoteVideo.pause()
-
-      var stream = pc.getRemoteStreams()[0]
-      remoteVideo.srcObject = stream
-      logger.debug('Remote stream:', stream)
-
-      if (typeof AdapterJS !== 'undefined' && AdapterJS
-        .webrtcDetectedBrowser === 'IE' && AdapterJS.webrtcDetectedVersion >= 9
-      ) {
-        remoteVideo = attachMediaStream(remoteVideo, stream);
-      } else {
-        remoteVideo.load();
-      }
-    }
-  }
-
-  this.showLocalVideo = function () {
-    localVideo.srcObject = videoStream
-    localVideo.muted = true
-
-    if (typeof AdapterJS !== 'undefined' && AdapterJS
-      .webrtcDetectedBrowser === 'IE' && AdapterJS.webrtcDetectedVersion >= 9
-    ) {
-      localVideo = attachMediaStream(localVideo, videoStream);
-    }
-  };
-  this.send = function (data) {
-    if (dataChannel && dataChannel.readyState === 'open') {
-      dataChannel.send(data)
-    } else {
-      logger.warn(
-        'Trying to send data over a non-existing or closed data channel')
-    }
-  }
-
-  /**
-   * Callback function invoked when a SDP answer is received. Developers are
-   * expected to invoke this function in order to complete the SDP negotiation.
-   *
-   * @function module:kurentoUtils.WebRtcPeer.prototype.processAnswer
-   *
-   * @param sdpAnswer - Description of sdpAnswer
-   * @param callback -
-   *            Invoked after the SDP answer is processed, or there is an error.
-   */
-  this.processAnswer = function (sdpAnswer, callback) {
-    callback = (callback || noop).bind(this)
-
-    var answer = new RTCSessionDescription({
-      type: 'answer',
-      sdp: sdpAnswer
-    })
-
-    if (multistream && usePlanB) {
-      var planBAnswer = interop.toPlanB(answer)
-      logger.debug('asnwer::planB', dumpSDP(planBAnswer))
-      answer = planBAnswer
-    }
-
-    logger.debug('SDP answer received, setting remote description')
-
-    if (pc.signalingState === 'closed') {
-      return callback('PeerConnection is closed')
-    }
-
-    pc.setRemoteDescription(answer).then(function () {
-        setRemoteVideo()
-
-        callback()
-      },
-      callback)
-  }
-
-  /**
-   * Callback function invoked when a SDP offer is received. Developers are
-   * expected to invoke this function in order to complete the SDP negotiation.
-   *
-   * @function module:kurentoUtils.WebRtcPeer.prototype.processOffer
-   *
-   * @param sdpOffer - Description of sdpOffer
-   * @param callback - Called when the remote description has been set
-   *  successfully.
-   */
-  this.processOffer = function (sdpOffer, callback) {
-    callback = callback.bind(this)
-
-    var offer = new RTCSessionDescription({
-      type: 'offer',
-      sdp: sdpOffer
-    })
-
-    if (multistream && usePlanB) {
-      var planBOffer = interop.toPlanB(offer)
-      logger.debug('offer::planB', dumpSDP(planBOffer))
-      offer = planBOffer
-    }
-
-    logger.debug('SDP offer received, setting remote description')
-
-    if (pc.signalingState === 'closed') {
-      return callback('PeerConnection is closed')
-    }
-
-    pc.setRemoteDescription(offer).then(function () {
-      return setRemoteVideo()
-    }).then(function () {
-      return pc.createAnswer()
-    }).then(function (answer) {
-      answer = mangleSdpToAddSimulcast(answer)
-      logger.debug('Created SDP answer')
-      return pc.setLocalDescription(answer)
-    }).then(function () {
-      var localDescription = pc.localDescription
-      if (multistream && usePlanB) {
-        localDescription = interop.toUnifiedPlan(localDescription)
-        logger.debug('answer::origPlanB->UnifiedPlan', dumpSDP(
-          localDescription))
-      }
-      logger.debug('Local description set\n', localDescription.sdp)
-      callback(null, localDescription.sdp)
-    }).catch(callback)
-  }
-
-  function mangleSdpToAddSimulcast(answer) {
-    if (simulcast) {
-      if (browser.name === 'Chrome' || browser.name === 'Chromium') {
-        logger.debug('Adding multicast info')
-        answer = new RTCSessionDescription({
-          'type': answer.type,
-          'sdp': removeFIDFromOffer(answer.sdp) + getSimulcastInfo(
-            videoStream)
-        })
-      } else {
-        logger.warn('Simulcast is only available in Chrome browser.')
-      }
-    }
-
-    return answer
-  }
-
-  /**
-   * This function creates the RTCPeerConnection object taking into account the
-   * properties received in the constructor. It starts the SDP negotiation
-   * process: generates the SDP offer and invokes the onsdpoffer callback. This
-   * callback is expected to send the SDP offer, in order to obtain an SDP
-   * answer from another peer.
-   */
-  function start() {
-    if (pc.signalingState === 'closed') {
-      callback(
-        'The peer connection object is in "closed" state. This is most likely due to an invocation of the dispose method before accepting in the dialogue'
-      )
-    }
-
-    if (videoStream && localVideo) {
-      self.showLocalVideo()
-    }
-
-    if (videoStream) {
-      videoStream.getTracks().forEach(function (track) {
-        pc.addTrack(track, videoStream);
-      });
-    }
-
-    if (audioStream) {
-      audioStream.getTracks().forEach(function (track) {
-        pc.addTrack(track, audioStream);
-      });
-    }
-
-    callback()
-  }
-
-  if (mode !== 'recvonly' && !videoStream && !audioStream) {
-    function getMedia(constraints) {
-      if (constraints === undefined) {
-        constraints = MEDIA_CONSTRAINTS
-      }
-      if (typeof AdapterJS !== 'undefined' && AdapterJS
-        .webrtcDetectedBrowser === 'IE' && AdapterJS.webrtcDetectedVersion >= 9
-      ) {
-        navigator.getUserMedia(constraints, function (stream) {
-          videoStream = stream;
-          start();
-        }, callback);
-      } else {
-        navigator.mediaDevices.getUserMedia(constraints).then(function (
-          stream) {
-          videoStream = stream;
-
-          start();
-        }).catch(callback);
-      }
-    }
-    if (sendSource === 'webcam') {
-      getMedia(mediaConstraints)
-    } else {
-      getScreenConstraints(sendSource, function (error, constraints_) {
-        if (error)
-          return callback(error)
-
-        constraints = [mediaConstraints]
-        constraints.unshift(constraints_)
-        getMedia(recursive.apply(undefined, constraints))
-      }, guid)
-    }
-  } else {
-    setTimeout(start, 0)
-  }
-
-  this.on('_dispose', function () {
-    if (localVideo) {
-      localVideo.pause();
-      localVideo.srcObject = null;
-
-      if (typeof AdapterJS === 'undefined') {
-        localVideo.load();
-      }
-      localVideo.muted = false;
-
-    }
-    if (remoteVideo) {
-      remoteVideo.pause();
-      remoteVideo.srcObject = null;
-      if (typeof AdapterJS === 'undefined') {
-        remoteVideo.load();
-
-      }
-    }
-    self.removeAllListeners();
-
-    if (typeof window !== 'undefined' && window.cancelChooseDesktopMedia !==
-      undefined) {
-      window.cancelChooseDesktopMedia(guid)
-    }
-  })
-}
-inherits(WebRtcPeer, EventEmitter)
-
-function createEnableDescriptor(type) {
-  var method = 'get' + type + 'Tracks'
-
-  return {
-    enumerable: true,
-    get: function () {
-      // [ToDo] Should return undefined if not all tracks have the same value?
-
-      if (!this.peerConnection) return
-
-      var streams = this.peerConnection.getLocalStreams()
-      if (!streams.length) return
-
-      for (var i = 0, stream; stream = streams[i]; i++) {
-        var tracks = stream[method]()
-        for (var j = 0, track; track = tracks[j]; j++)
-          if (!track.enabled) return false
-      }
-
-      return true
-    },
-    set: function (value) {
-      function trackSetEnable(track) {
-        track.enabled = value
-      }
-
-      this.peerConnection.getLocalStreams().forEach(function (stream) {
-        stream[method]().forEach(trackSetEnable)
-      })
-    }
-  }
-}
-
-Object.defineProperties(WebRtcPeer.prototype, {
-  'enabled': {
-    enumerable: true,
-    get: function () {
-      return this.audioEnabled && this.videoEnabled
-    },
-    set: function (value) {
-      this.audioEnabled = this.videoEnabled = value
-    }
-  },
-  'audioEnabled': createEnableDescriptor('Audio'),
-  'videoEnabled': createEnableDescriptor('Video')
-})
-
-WebRtcPeer.prototype.getLocalStream = function (index) {
-  if (this.peerConnection) {
-    return this.peerConnection.getLocalStreams()[index || 0]
-  }
-}
-
-WebRtcPeer.prototype.getRemoteStream = function (index) {
-  if (this.peerConnection) {
-    return this.peerConnection.getRemoteStreams()[index || 0]
-  }
-}
-
-/**
- * @description This method frees the resources used by WebRtcPeer.
- *
- * @function module:kurentoUtils.WebRtcPeer.prototype.dispose
- */
-WebRtcPeer.prototype.dispose = function () {
-  logger.debug('Disposing WebRtcPeer')
-
-  var pc = this.peerConnection
-  var dc = this.dataChannel
-  try {
-    if (dc) {
-      if (dc.readyState === 'closed') return
-
-      dc.close()
-    }
-
-    if (pc) {
-      if (pc.signalingState === 'closed') return
-
-      console.log("//////////////injaaa")
-      // pc.getLocalStreams().forEach(streamStop)
-
-      // FIXME This is not yet implemented in firefox
-      // if(videoStream) pc.removeStream(videoStream);
-      // if(audioStream) pc.removeStream(audioStream);
-
-      pc.close()
-    }
-  } catch (err) {
-    logger.warn('Exception disposing webrtc peer ' + err)
-  }
-
-  if (typeof AdapterJS === 'undefined') {
-    this.emit('_dispose');
-  }
-
-}
-
-//
-// Specialized child classes
-//
-
-function WebRtcPeerRecvonly(options, callback) {
-  if (!(this instanceof WebRtcPeerRecvonly)) {
-    return new WebRtcPeerRecvonly(options, callback)
-  }
-
-  WebRtcPeerRecvonly.super_.call(this, 'recvonly', options, callback)
-}
-inherits(WebRtcPeerRecvonly, WebRtcPeer)
-
-function WebRtcPeerSendonly(options, callback) {
-  if (!(this instanceof WebRtcPeerSendonly)) {
-    return new WebRtcPeerSendonly(options, callback)
-  }
-
-  WebRtcPeerSendonly.super_.call(this, 'sendonly', options, callback)
-}
-inherits(WebRtcPeerSendonly, WebRtcPeer)
-
-function WebRtcPeerSendrecv(options, callback) {
-  if (!(this instanceof WebRtcPeerSendrecv)) {
-    return new WebRtcPeerSendrecv(options, callback)
-  }
-
-  WebRtcPeerSendrecv.super_.call(this, 'sendrecv', options, callback)
-}
-inherits(WebRtcPeerSendrecv, WebRtcPeer)
-
-function harkUtils(stream, options) {
-  return hark(stream, options);
-}
-
-exports.bufferizeCandidates = bufferizeCandidates
-
-exports.WebRtcPeerRecvonly = WebRtcPeerRecvonly
-exports.WebRtcPeerSendonly = WebRtcPeerSendonly
-exports.WebRtcPeerSendrecv = WebRtcPeerSendrecv
-exports.hark = harkUtils
-
-},{"events":156,"freeice":160,"hark":163,"inherits":195,"kurento-browser-extensions":197,"merge":201,"sdp-translator":241,"ua-parser-js":269,"uuid/v4":273}],199:[function(require,module,exports){
-/*
- * (C) Copyright 2014 Kurento (http://kurento.org/)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
-
-/**
- * This module contains a set of reusable components that have been found useful
- * during the development of the WebRTC applications with Kurento.
- * 
- * @module kurentoUtils
- * 
- * @copyright 2014 Kurento (http://kurento.org/)
- * @license ALv2
- */
-
-var WebRtcPeer = require('./WebRtcPeer');
-
-exports.WebRtcPeer = WebRtcPeer;
-
-},{"./WebRtcPeer":198}],200:[function(require,module,exports){
+},{}],193:[function(require,module,exports){
 'use strict'
 var inherits = require('inherits')
 var HashBase = require('hash-base')
@@ -36791,185 +35561,7 @@ function fnI (a, b, c, d, m, k, s) {
 
 module.exports = MD5
 
-},{"hash-base":164,"inherits":195,"safe-buffer":234}],201:[function(require,module,exports){
-/*!
- * @name JavaScript/NodeJS Merge v1.2.1
- * @author yeikos
- * @repository https://github.com/yeikos/js.merge
-
- * Copyright 2014 yeikos - MIT license
- * https://raw.github.com/yeikos/js.merge/master/LICENSE
- */
-
-;(function(isNode) {
-
-	/**
-	 * Merge one or more objects 
-	 * @param bool? clone
-	 * @param mixed,... arguments
-	 * @return object
-	 */
-
-	var Public = function(clone) {
-
-		return merge(clone === true, false, arguments);
-
-	}, publicName = 'merge';
-
-	/**
-	 * Merge two or more objects recursively 
-	 * @param bool? clone
-	 * @param mixed,... arguments
-	 * @return object
-	 */
-
-	Public.recursive = function(clone) {
-
-		return merge(clone === true, true, arguments);
-
-	};
-
-	/**
-	 * Clone the input removing any reference
-	 * @param mixed input
-	 * @return mixed
-	 */
-
-	Public.clone = function(input) {
-
-		var output = input,
-			type = typeOf(input),
-			index, size;
-
-		if (type === 'array') {
-
-			output = [];
-			size = input.length;
-
-			for (index=0;index<size;++index)
-
-				output[index] = Public.clone(input[index]);
-
-		} else if (type === 'object') {
-
-			output = {};
-
-			for (index in input)
-
-				output[index] = Public.clone(input[index]);
-
-		}
-
-		return output;
-
-	};
-
-	/**
-	 * Merge two objects recursively
-	 * @param mixed input
-	 * @param mixed extend
-	 * @return mixed
-	 */
-
-	function merge_recursive(base, extend) {
-
-		if (typeOf(base) !== 'object')
-
-			return extend;
-
-		for (var key in extend) {
-
-			if (typeOf(base[key]) === 'object' && typeOf(extend[key]) === 'object') {
-
-				base[key] = merge_recursive(base[key], extend[key]);
-
-			} else {
-
-				base[key] = extend[key];
-
-			}
-
-		}
-
-		return base;
-
-	}
-
-	/**
-	 * Merge two or more objects
-	 * @param bool clone
-	 * @param bool recursive
-	 * @param array argv
-	 * @return object
-	 */
-
-	function merge(clone, recursive, argv) {
-
-		var result = argv[0],
-			size = argv.length;
-
-		if (clone || typeOf(result) !== 'object')
-
-			result = {};
-
-		for (var index=0;index<size;++index) {
-
-			var item = argv[index],
-
-				type = typeOf(item);
-
-			if (type !== 'object') continue;
-
-			for (var key in item) {
-
-				if (key === '__proto__') continue;
-
-				var sitem = clone ? Public.clone(item[key]) : item[key];
-
-				if (recursive) {
-
-					result[key] = merge_recursive(result[key], sitem);
-
-				} else {
-
-					result[key] = sitem;
-
-				}
-
-			}
-
-		}
-
-		return result;
-
-	}
-
-	/**
-	 * Get type of variable
-	 * @param mixed input
-	 * @return string
-	 *
-	 * @see http://jsperf.com/typeofvar
-	 */
-
-	function typeOf(input) {
-
-		return ({}).toString.call(input).slice(8, -1).toLowerCase();
-
-	}
-
-	if (isNode) {
-
-		module.exports = Public;
-
-	} else {
-
-		window[publicName] = Public;
-
-	}
-
-})(typeof module === 'object' && module && typeof module.exports === 'object' && module.exports);
-},{}],202:[function(require,module,exports){
+},{"hash-base":160,"inherits":191,"safe-buffer":225}],194:[function(require,module,exports){
 var bn = require('bn.js');
 var brorand = require('brorand');
 
@@ -37086,9 +35678,9 @@ MillerRabin.prototype.getDivisor = function getDivisor(n, k) {
   return false;
 };
 
-},{"bn.js":203,"brorand":33}],203:[function(require,module,exports){
+},{"bn.js":195,"brorand":33}],195:[function(require,module,exports){
 arguments[4][30][0].apply(exports,arguments)
-},{"buffer":34,"dup":30}],204:[function(require,module,exports){
+},{"buffer":34,"dup":30}],196:[function(require,module,exports){
 module.exports = assert;
 
 function assert(val, msg) {
@@ -37101,7 +35693,7 @@ assert.equal = function assertEqual(l, r, msg) {
     throw new Error(msg || ('Assertion failed: ' + l + ' != ' + r));
 };
 
-},{}],205:[function(require,module,exports){
+},{}],197:[function(require,module,exports){
 'use strict';
 
 var utils = exports;
@@ -37161,69 +35753,7 @@ utils.encode = function encode(arr, enc) {
     return arr;
 };
 
-},{}],206:[function(require,module,exports){
-/**
-  # normalice
-
-  Normalize an ice server configuration object (or plain old string) into a format
-  that is usable in all browsers supporting WebRTC.  Primarily this module is designed
-  to help with the transition of the `url` attribute of the configuration object to
-  the `urls` attribute.
-
-  ## Example Usage
-
-  <<< examples/simple.js
-
-**/
-
-var protocols = [
-  'stun:',
-  'turn:'
-];
-
-module.exports = function(input) {
-  var url = (input || {}).url || input;
-  var protocol;
-  var parts;
-  var output = {};
-
-  // if we don't have a string url, then allow the input to passthrough
-  if (typeof url != 'string' && (! (url instanceof String))) {
-    return input;
-  }
-
-  // trim the url string, and convert to an array
-  url = url.trim();
-
-  // if the protocol is not known, then passthrough
-  protocol = protocols[protocols.indexOf(url.slice(0, 5))];
-  if (! protocol) {
-    return input;
-  }
-
-  // now let's attack the remaining url parts
-  url = url.slice(5);
-  parts = url.split('@');
-
-  output.username = input.username;
-  output.credential = input.credential;
-  // if we have an authentication part, then set the credentials
-  if (parts.length > 1) {
-    url = parts[1];
-    parts = parts[0].split(':');
-
-    // add the output credential and username
-    output.username = parts[0];
-    output.credential = (input || {}).credential || parts[1] || '';
-  }
-
-  output.url = protocol + url;
-  output.urls = [ output.url ];
-
-  return output;
-};
-
-},{}],207:[function(require,module,exports){
+},{}],198:[function(require,module,exports){
 module.exports={"2.16.840.1.101.3.4.1.1": "aes-128-ecb",
 "2.16.840.1.101.3.4.1.2": "aes-128-cbc",
 "2.16.840.1.101.3.4.1.3": "aes-128-ofb",
@@ -37237,7 +35767,7 @@ module.exports={"2.16.840.1.101.3.4.1.1": "aes-128-ecb",
 "2.16.840.1.101.3.4.1.43": "aes-256-ofb",
 "2.16.840.1.101.3.4.1.44": "aes-256-cfb"
 }
-},{}],208:[function(require,module,exports){
+},{}],199:[function(require,module,exports){
 // from https://github.com/indutny/self-signed/blob/gh-pages/lib/asn1.js
 // Fedor, you are amazing.
 'use strict'
@@ -37361,7 +35891,7 @@ exports.signature = asn1.define('signature', function () {
   )
 })
 
-},{"./certificate":209,"asn1.js":16}],209:[function(require,module,exports){
+},{"./certificate":200,"asn1.js":16}],200:[function(require,module,exports){
 // from https://github.com/Rantanen/node-dtls/blob/25a7dc861bda38cfeac93a723500eea4f0ac2e86/Certificate.js
 // thanks to @Rantanen
 
@@ -37452,7 +35982,7 @@ var X509Certificate = asn.define('X509Certificate', function () {
 
 module.exports = X509Certificate
 
-},{"asn1.js":16}],210:[function(require,module,exports){
+},{"asn1.js":16}],201:[function(require,module,exports){
 // adapted from https://github.com/apatil/pemstrip
 var findProc = /Proc-Type: 4,ENCRYPTED[\n\r]+DEK-Info: AES-((?:128)|(?:192)|(?:256))-CBC,([0-9A-H]+)[\n\r]+([0-9A-z\n\r+/=]+)[\n\r]+/m
 var startRegex = /^-----BEGIN ((?:.*? KEY)|CERTIFICATE)-----/m
@@ -37485,7 +36015,7 @@ module.exports = function (okey, password) {
   }
 }
 
-},{"browserify-aes":37,"evp_bytestokey":157,"safe-buffer":234}],211:[function(require,module,exports){
+},{"browserify-aes":37,"evp_bytestokey":157,"safe-buffer":225}],202:[function(require,module,exports){
 var asn1 = require('./asn1')
 var aesid = require('./aesid.json')
 var fixProc = require('./fixProc')
@@ -37594,11 +36124,11 @@ function decrypt (data, password) {
   return Buffer.concat(out)
 }
 
-},{"./aesid.json":207,"./asn1":208,"./fixProc":210,"browserify-aes":37,"pbkdf2":212,"safe-buffer":234}],212:[function(require,module,exports){
+},{"./aesid.json":198,"./asn1":199,"./fixProc":201,"browserify-aes":37,"pbkdf2":203,"safe-buffer":225}],203:[function(require,module,exports){
 exports.pbkdf2 = require('./lib/async')
 exports.pbkdf2Sync = require('./lib/sync')
 
-},{"./lib/async":213,"./lib/sync":216}],213:[function(require,module,exports){
+},{"./lib/async":204,"./lib/sync":207}],204:[function(require,module,exports){
 (function (global){(function (){
 var Buffer = require('safe-buffer').Buffer
 
@@ -37720,7 +36250,7 @@ module.exports = function (password, salt, iterations, keylen, digest, callback)
 }
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./default-encoding":214,"./precondition":215,"./sync":216,"./to-buffer":217,"safe-buffer":234}],214:[function(require,module,exports){
+},{"./default-encoding":205,"./precondition":206,"./sync":207,"./to-buffer":208,"safe-buffer":225}],205:[function(require,module,exports){
 (function (process,global){(function (){
 var defaultEncoding
 /* istanbul ignore next */
@@ -37736,7 +36266,7 @@ if (global.process && global.process.browser) {
 module.exports = defaultEncoding
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":223}],215:[function(require,module,exports){
+},{"_process":214}],206:[function(require,module,exports){
 var MAX_ALLOC = Math.pow(2, 30) - 1 // default in iojs
 
 module.exports = function (iterations, keylen) {
@@ -37757,7 +36287,7 @@ module.exports = function (iterations, keylen) {
   }
 }
 
-},{}],216:[function(require,module,exports){
+},{}],207:[function(require,module,exports){
 var md5 = require('create-hash/md5')
 var RIPEMD160 = require('ripemd160')
 var sha = require('sha.js')
@@ -37864,7 +36394,7 @@ function pbkdf2 (password, salt, iterations, keylen, digest) {
 
 module.exports = pbkdf2
 
-},{"./default-encoding":214,"./precondition":215,"./to-buffer":217,"create-hash/md5":84,"ripemd160":233,"safe-buffer":234,"sha.js":245}],217:[function(require,module,exports){
+},{"./default-encoding":205,"./precondition":206,"./to-buffer":208,"create-hash/md5":84,"ripemd160":224,"safe-buffer":225,"sha.js":228}],208:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 module.exports = function (thing, encoding, name) {
@@ -37879,7 +36409,7 @@ module.exports = function (thing, encoding, name) {
   }
 }
 
-},{"safe-buffer":234}],218:[function(require,module,exports){
+},{"safe-buffer":225}],209:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -38779,7 +37309,7 @@ function Async(params) {
 module.exports = Async;
 var _default = Async;
 exports["default"] = _default;
-},{"../utility/logger.js":221,"../utility/utility.js":222,"./socket":219,"./webrtc":220,"@babel/runtime/helpers/interopRequireDefault":7}],219:[function(require,module,exports){
+},{"../utility/logger.js":212,"../utility/utility.js":213,"./socket":210,"./webrtc":211,"@babel/runtime/helpers/interopRequireDefault":7}],210:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -39052,7 +37582,7 @@ function Socket(params) {
   return publicized;
 }
 module.exports = Socket;
-},{"isomorphic-ws":196}],220:[function(require,module,exports){
+},{"isomorphic-ws":192}],211:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -39655,7 +38185,7 @@ function WebRTCClass(_ref) {
   return publicized;
 }
 module.exports = WebRTCClass;
-},{"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/typeof":13,"@babel/runtime/regenerator":15,"fflate":158}],221:[function(require,module,exports){
+},{"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/typeof":13,"@babel/runtime/regenerator":15,"fflate":158}],212:[function(require,module,exports){
 "use strict";
 
 function LogLevel(logLevel) {
@@ -39689,7 +38219,7 @@ if (typeof module !== 'undefined' && typeof module.exports != 'undefined') {
   }
   window.POD.LogLevel = LogLevel;
 }
-},{}],222:[function(require,module,exports){
+},{}],213:[function(require,module,exports){
 (function (global){(function (){
 "use strict";
 
@@ -39895,7 +38425,7 @@ if (typeof module !== 'undefined' && typeof module.exports != "undefined") {
   window.POD.AsyncUtility = Utility;
 }
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/typeof":13}],223:[function(require,module,exports){
+},{"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/typeof":13}],214:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -40081,7 +38611,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],224:[function(require,module,exports){
+},{}],215:[function(require,module,exports){
 exports.publicEncrypt = require('./publicEncrypt')
 exports.privateDecrypt = require('./privateDecrypt')
 
@@ -40093,7 +38623,7 @@ exports.publicDecrypt = function publicDecrypt (key, buf) {
   return exports.privateDecrypt(key, buf, true)
 }
 
-},{"./privateDecrypt":227,"./publicEncrypt":228}],225:[function(require,module,exports){
+},{"./privateDecrypt":218,"./publicEncrypt":219}],216:[function(require,module,exports){
 var createHash = require('create-hash')
 var Buffer = require('safe-buffer').Buffer
 
@@ -40114,9 +38644,9 @@ function i2ops (c) {
   return out
 }
 
-},{"create-hash":83,"safe-buffer":234}],226:[function(require,module,exports){
+},{"create-hash":83,"safe-buffer":225}],217:[function(require,module,exports){
 arguments[4][30][0].apply(exports,arguments)
-},{"buffer":34,"dup":30}],227:[function(require,module,exports){
+},{"buffer":34,"dup":30}],218:[function(require,module,exports){
 var parseKeys = require('parse-asn1')
 var mgf = require('./mgf')
 var xor = require('./xor')
@@ -40223,7 +38753,7 @@ function compare (a, b) {
   return dif
 }
 
-},{"./mgf":225,"./withPublic":229,"./xor":230,"bn.js":226,"browserify-rsa":55,"create-hash":83,"parse-asn1":211,"safe-buffer":234}],228:[function(require,module,exports){
+},{"./mgf":216,"./withPublic":220,"./xor":221,"bn.js":217,"browserify-rsa":55,"create-hash":83,"parse-asn1":202,"safe-buffer":225}],219:[function(require,module,exports){
 var parseKeys = require('parse-asn1')
 var randomBytes = require('randombytes')
 var createHash = require('create-hash')
@@ -40313,7 +38843,7 @@ function nonZero (len) {
   return out
 }
 
-},{"./mgf":225,"./withPublic":229,"./xor":230,"bn.js":226,"browserify-rsa":55,"create-hash":83,"parse-asn1":211,"randombytes":231,"safe-buffer":234}],229:[function(require,module,exports){
+},{"./mgf":216,"./withPublic":220,"./xor":221,"bn.js":217,"browserify-rsa":55,"create-hash":83,"parse-asn1":202,"randombytes":222,"safe-buffer":225}],220:[function(require,module,exports){
 var BN = require('bn.js')
 var Buffer = require('safe-buffer').Buffer
 
@@ -40327,7 +38857,7 @@ function withPublic (paddedMsg, key) {
 
 module.exports = withPublic
 
-},{"bn.js":226,"safe-buffer":234}],230:[function(require,module,exports){
+},{"bn.js":217,"safe-buffer":225}],221:[function(require,module,exports){
 module.exports = function xor (a, b) {
   var len = a.length
   var i = -1
@@ -40337,7 +38867,7 @@ module.exports = function xor (a, b) {
   return a
 }
 
-},{}],231:[function(require,module,exports){
+},{}],222:[function(require,module,exports){
 (function (process,global){(function (){
 'use strict'
 
@@ -40391,7 +38921,7 @@ function randomBytes (size, cb) {
 }
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":223,"safe-buffer":234}],232:[function(require,module,exports){
+},{"_process":214,"safe-buffer":225}],223:[function(require,module,exports){
 (function (process,global){(function (){
 'use strict'
 
@@ -40503,7 +39033,7 @@ function randomFillSync (buf, offset, size) {
 }
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":223,"randombytes":231,"safe-buffer":234}],233:[function(require,module,exports){
+},{"_process":214,"randombytes":222,"safe-buffer":225}],224:[function(require,module,exports){
 'use strict'
 var Buffer = require('buffer').Buffer
 var inherits = require('inherits')
@@ -40668,7 +39198,7 @@ function fn5 (a, b, c, d, e, m, k, s) {
 
 module.exports = RIPEMD160
 
-},{"buffer":79,"hash-base":164,"inherits":195}],234:[function(require,module,exports){
+},{"buffer":79,"hash-base":160,"inherits":191}],225:[function(require,module,exports){
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
 var Buffer = buffer.Buffer
@@ -40732,7 +39262,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-},{"buffer":79}],235:[function(require,module,exports){
+},{"buffer":79}],226:[function(require,module,exports){
 (function (process){(function (){
 /* eslint-disable node/no-deprecated-api */
 
@@ -40813,1545 +39343,7 @@ if (!safer.constants) {
 module.exports = safer
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":223,"buffer":79}],236:[function(require,module,exports){
-var grammar = module.exports = {
-  v: [{
-      name: 'version',
-      reg: /^(\d*)$/
-  }],
-  o: [{ //o=- 20518 0 IN IP4 203.0.113.1
-    // NB: sessionId will be a String in most cases because it is huge
-    name: 'origin',
-    reg: /^(\S*) (\d*) (\d*) (\S*) IP(\d) (\S*)/,
-    names: ['username', 'sessionId', 'sessionVersion', 'netType', 'ipVer', 'address'],
-    format: "%s %s %d %s IP%d %s"
-  }],
-  // default parsing of these only (though some of these feel outdated)
-  s: [{ name: 'name' }],
-  i: [{ name: 'description' }],
-  u: [{ name: 'uri' }],
-  e: [{ name: 'email' }],
-  p: [{ name: 'phone' }],
-  z: [{ name: 'timezones' }], // TODO: this one can actually be parsed properly..
-  r: [{ name: 'repeats' }],   // TODO: this one can also be parsed properly
-  //k: [{}], // outdated thing ignored
-  t: [{ //t=0 0
-    name: 'timing',
-    reg: /^(\d*) (\d*)/,
-    names: ['start', 'stop'],
-    format: "%d %d"
-  }],
-  c: [{ //c=IN IP4 10.47.197.26
-      name: 'connection',
-      reg: /^IN IP(\d) (\S*)/,
-      names: ['version', 'ip'],
-      format: "IN IP%d %s"
-  }],
-  b: [{ //b=AS:4000
-      push: 'bandwidth',
-      reg: /^(TIAS|AS|CT|RR|RS):(\d*)/,
-      names: ['type', 'limit'],
-      format: "%s:%s"
-  }],
-  m: [{ //m=video 51744 RTP/AVP 126 97 98 34 31
-      // NB: special - pushes to session
-      // TODO: rtp/fmtp should be filtered by the payloads found here?
-      reg: /^(\w*) (\d*) ([\w\/]*)(?: (.*))?/,
-      names: ['type', 'port', 'protocol', 'payloads'],
-      format: "%s %d %s %s"
-  }],
-  a: [
-    { //a=rtpmap:110 opus/48000/2
-      push: 'rtp',
-      reg: /^rtpmap:(\d*) ([\w\-]*)(?:\s*\/(\d*)(?:\s*\/(\S*))?)?/,
-      names: ['payload', 'codec', 'rate', 'encoding'],
-      format: function (o) {
-        return (o.encoding) ?
-          "rtpmap:%d %s/%s/%s":
-          o.rate ?
-          "rtpmap:%d %s/%s":
-          "rtpmap:%d %s";
-      }
-    },
-    {
-      //a=fmtp:108 profile-level-id=24;object=23;bitrate=64000
-      //a=fmtp:111 minptime=10; useinbandfec=1
-      push: 'fmtp',
-      reg: /^fmtp:(\d*) ([\S| ]*)/,
-      names: ['payload', 'config'],
-      format: "fmtp:%d %s"
-    },
-    { //a=control:streamid=0
-        name: 'control',
-        reg: /^control:(.*)/,
-        format: "control:%s"
-    },
-    { //a=rtcp:65179 IN IP4 193.84.77.194
-      name: 'rtcp',
-      reg: /^rtcp:(\d*)(?: (\S*) IP(\d) (\S*))?/,
-      names: ['port', 'netType', 'ipVer', 'address'],
-      format: function (o) {
-        return (o.address != null) ?
-          "rtcp:%d %s IP%d %s":
-          "rtcp:%d";
-      }
-    },
-    { //a=rtcp-fb:98 trr-int 100
-      push: 'rtcpFbTrrInt',
-      reg: /^rtcp-fb:(\*|\d*) trr-int (\d*)/,
-      names: ['payload', 'value'],
-      format: "rtcp-fb:%d trr-int %d"
-    },
-    { //a=rtcp-fb:98 nack rpsi
-      push: 'rtcpFb',
-      reg: /^rtcp-fb:(\*|\d*) ([\w-_]*)(?: ([\w-_]*))?/,
-      names: ['payload', 'type', 'subtype'],
-      format: function (o) {
-        return (o.subtype != null) ?
-          "rtcp-fb:%s %s %s":
-          "rtcp-fb:%s %s";
-      }
-    },
-    { //a=extmap:2 urn:ietf:params:rtp-hdrext:toffset
-      //a=extmap:1/recvonly URI-gps-string
-      push: 'ext',
-      reg: /^extmap:([\w_\/]*) (\S*)(?: (\S*))?/,
-      names: ['value', 'uri', 'config'], // value may include "/direction" suffix
-      format: function (o) {
-        return (o.config != null) ?
-          "extmap:%s %s %s":
-          "extmap:%s %s";
-      }
-    },
-    {
-      //a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:PS1uQCVeeCFCanVmcjkpPywjNWhcYD0mXXtxaVBR|2^20|1:32
-      push: 'crypto',
-      reg: /^crypto:(\d*) ([\w_]*) (\S*)(?: (\S*))?/,
-      names: ['id', 'suite', 'config', 'sessionConfig'],
-      format: function (o) {
-        return (o.sessionConfig != null) ?
-          "crypto:%d %s %s %s":
-          "crypto:%d %s %s";
-      }
-    },
-    { //a=setup:actpass
-      name: 'setup',
-      reg: /^setup:(\w*)/,
-      format: "setup:%s"
-    },
-    { //a=mid:1
-      name: 'mid',
-      reg: /^mid:([^\s]*)/,
-      format: "mid:%s"
-    },
-    { //a=msid:0c8b064d-d807-43b4-b434-f92a889d8587 98178685-d409-46e0-8e16-7ef0db0db64a
-      name: 'msid',
-      reg: /^msid:(.*)/,
-      format: "msid:%s"
-    },
-    { //a=ptime:20
-      name: 'ptime',
-      reg: /^ptime:(\d*)/,
-      format: "ptime:%d"
-    },
-    { //a=maxptime:60
-      name: 'maxptime',
-      reg: /^maxptime:(\d*)/,
-      format: "maxptime:%d"
-    },
-    { //a=sendrecv
-      name: 'direction',
-      reg: /^(sendrecv|recvonly|sendonly|inactive)/
-    },
-    { //a=ice-lite
-      name: 'icelite',
-      reg: /^(ice-lite)/
-    },
-    { //a=ice-ufrag:F7gI
-      name: 'iceUfrag',
-      reg: /^ice-ufrag:(\S*)/,
-      format: "ice-ufrag:%s"
-    },
-    { //a=ice-pwd:x9cml/YzichV2+XlhiMu8g
-      name: 'icePwd',
-      reg: /^ice-pwd:(\S*)/,
-      format: "ice-pwd:%s"
-    },
-    { //a=fingerprint:SHA-1 00:11:22:33:44:55:66:77:88:99:AA:BB:CC:DD:EE:FF:00:11:22:33
-      name: 'fingerprint',
-      reg: /^fingerprint:(\S*) (\S*)/,
-      names: ['type', 'hash'],
-      format: "fingerprint:%s %s"
-    },
-    {
-      //a=candidate:0 1 UDP 2113667327 203.0.113.1 54400 typ host
-      //a=candidate:1162875081 1 udp 2113937151 192.168.34.75 60017 typ host generation 0
-      //a=candidate:3289912957 2 udp 1845501695 193.84.77.194 60017 typ srflx raddr 192.168.34.75 rport 60017 generation 0
-      //a=candidate:229815620 1 tcp 1518280447 192.168.150.19 60017 typ host tcptype active generation 0
-      //a=candidate:3289912957 2 tcp 1845501695 193.84.77.194 60017 typ srflx raddr 192.168.34.75 rport 60017 tcptype passive generation 0
-      push:'candidates',
-      reg: /^candidate:(\S*) (\d*) (\S*) (\d*) (\S*) (\d*) typ (\S*)(?: raddr (\S*) rport (\d*))?(?: tcptype (\S*))?(?: generation (\d*))?/,
-      names: ['foundation', 'component', 'transport', 'priority', 'ip', 'port', 'type', 'raddr', 'rport', 'tcptype', 'generation'],
-      format: function (o) {
-        var str = "candidate:%s %d %s %d %s %d typ %s";
-
-        str += (o.raddr != null) ? " raddr %s rport %d" : "%v%v";
-
-        // NB: candidate has three optional chunks, so %void middles one if it's missing
-        str += (o.tcptype != null) ? " tcptype %s" : "%v";
-
-        if (o.generation != null) {
-          str += " generation %d";
-        }
-        return str;
-      }
-    },
-    { //a=end-of-candidates (keep after the candidates line for readability)
-      name: 'endOfCandidates',
-      reg: /^(end-of-candidates)/
-    },
-    { //a=remote-candidates:1 203.0.113.1 54400 2 203.0.113.1 54401 ...
-      name: 'remoteCandidates',
-      reg: /^remote-candidates:(.*)/,
-      format: "remote-candidates:%s"
-    },
-    { //a=ice-options:google-ice
-      name: 'iceOptions',
-      reg: /^ice-options:(\S*)/,
-      format: "ice-options:%s"
-    },
-    { //a=ssrc:2566107569 cname:t9YU8M1UxTF8Y1A1
-      push: "ssrcs",
-      reg: /^ssrc:(\d*) ([\w_]*):(.*)/,
-      names: ['id', 'attribute', 'value'],
-      format: "ssrc:%d %s:%s"
-    },
-    { //a=ssrc-group:FEC 1 2
-      push: "ssrcGroups",
-      reg: /^ssrc-group:(\w*) (.*)/,
-      names: ['semantics', 'ssrcs'],
-      format: "ssrc-group:%s %s"
-    },
-    { //a=msid-semantic: WMS Jvlam5X3SX1OP6pn20zWogvaKJz5Hjf9OnlV
-      name: "msidSemantic",
-      reg: /^msid-semantic:\s?(\w*) (\S*)/,
-      names: ['semantic', 'token'],
-      format: "msid-semantic: %s %s" // space after ":" is not accidental
-    },
-    { //a=group:BUNDLE audio video
-      push: 'groups',
-      reg: /^group:(\w*) (.*)/,
-      names: ['type', 'mids'],
-      format: "group:%s %s"
-    },
-    { //a=rtcp-mux
-      name: 'rtcpMux',
-      reg: /^(rtcp-mux)/
-    },
-    { //a=rtcp-rsize
-      name: 'rtcpRsize',
-      reg: /^(rtcp-rsize)/
-    },
-    { // any a= that we don't understand is kepts verbatim on media.invalid
-      push: 'invalid',
-      names: ["value"]
-    }
-  ]
-};
-
-// set sensible defaults to avoid polluting the grammar with boring details
-Object.keys(grammar).forEach(function (key) {
-  var objs = grammar[key];
-  objs.forEach(function (obj) {
-    if (!obj.reg) {
-      obj.reg = /(.*)/;
-    }
-    if (!obj.format) {
-      obj.format = "%s";
-    }
-  });
-});
-
-},{}],237:[function(require,module,exports){
-var parser = require('./parser');
-var writer = require('./writer');
-
-exports.write = writer;
-exports.parse = parser.parse;
-exports.parseFmtpConfig = parser.parseFmtpConfig;
-exports.parsePayloads = parser.parsePayloads;
-exports.parseRemoteCandidates = parser.parseRemoteCandidates;
-
-},{"./parser":238,"./writer":239}],238:[function(require,module,exports){
-var toIntIfInt = function (v) {
-  return String(Number(v)) === v ? Number(v) : v;
-};
-
-var attachProperties = function (match, location, names, rawName) {
-  if (rawName && !names) {
-    location[rawName] = toIntIfInt(match[1]);
-  }
-  else {
-    for (var i = 0; i < names.length; i += 1) {
-      if (match[i+1] != null) {
-        location[names[i]] = toIntIfInt(match[i+1]);
-      }
-    }
-  }
-};
-
-var parseReg = function (obj, location, content) {
-  var needsBlank = obj.name && obj.names;
-  if (obj.push && !location[obj.push]) {
-    location[obj.push] = [];
-  }
-  else if (needsBlank && !location[obj.name]) {
-    location[obj.name] = {};
-  }
-  var keyLocation = obj.push ?
-    {} :  // blank object that will be pushed
-    needsBlank ? location[obj.name] : location; // otherwise, named location or root
-
-  attachProperties(content.match(obj.reg), keyLocation, obj.names, obj.name);
-
-  if (obj.push) {
-    location[obj.push].push(keyLocation);
-  }
-};
-
-var grammar = require('./grammar');
-var validLine = RegExp.prototype.test.bind(/^([a-z])=(.*)/);
-
-exports.parse = function (sdp) {
-  var session = {}
-    , media = []
-    , location = session; // points at where properties go under (one of the above)
-
-  // parse lines we understand
-  sdp.split(/(\r\n|\r|\n)/).filter(validLine).forEach(function (l) {
-    var type = l[0];
-    var content = l.slice(2);
-    if (type === 'm') {
-      media.push({rtp: [], fmtp: []});
-      location = media[media.length-1]; // point at latest media line
-    }
-
-    for (var j = 0; j < (grammar[type] || []).length; j += 1) {
-      var obj = grammar[type][j];
-      if (obj.reg.test(content)) {
-        return parseReg(obj, location, content);
-      }
-    }
-  });
-
-  session.media = media; // link it up
-  return session;
-};
-
-var fmtpReducer = function (acc, expr) {
-  var s = expr.split('=');
-  if (s.length === 2) {
-    acc[s[0]] = toIntIfInt(s[1]);
-  }
-  return acc;
-};
-
-exports.parseFmtpConfig = function (str) {
-  return str.split(/\;\s?/).reduce(fmtpReducer, {});
-};
-
-exports.parsePayloads = function (str) {
-  return str.split(' ').map(Number);
-};
-
-exports.parseRemoteCandidates = function (str) {
-  var candidates = [];
-  var parts = str.split(' ').map(toIntIfInt);
-  for (var i = 0; i < parts.length; i += 3) {
-    candidates.push({
-      component: parts[i],
-      ip: parts[i + 1],
-      port: parts[i + 2]
-    });
-  }
-  return candidates;
-};
-
-},{"./grammar":236}],239:[function(require,module,exports){
-var grammar = require('./grammar');
-
-// customized util.format - discards excess arguments and can void middle ones
-var formatRegExp = /%[sdv%]/g;
-var format = function (formatStr) {
-  var i = 1;
-  var args = arguments;
-  var len = args.length;
-  return formatStr.replace(formatRegExp, function (x) {
-    if (i >= len) {
-      return x; // missing argument
-    }
-    var arg = args[i];
-    i += 1;
-    switch (x) {
-      case '%%':
-        return '%';
-      case '%s':
-        return String(arg);
-      case '%d':
-        return Number(arg);
-      case '%v':
-        return '';
-    }
-  });
-  // NB: we discard excess arguments - they are typically undefined from makeLine
-};
-
-var makeLine = function (type, obj, location) {
-  var str = obj.format instanceof Function ?
-    (obj.format(obj.push ? location : location[obj.name])) :
-    obj.format;
-
-  var args = [type + '=' + str];
-  if (obj.names) {
-    for (var i = 0; i < obj.names.length; i += 1) {
-      var n = obj.names[i];
-      if (obj.name) {
-        args.push(location[obj.name][n]);
-      }
-      else { // for mLine and push attributes
-        args.push(location[obj.names[i]]);
-      }
-    }
-  }
-  else {
-    args.push(location[obj.name]);
-  }
-  return format.apply(null, args);
-};
-
-// RFC specified order
-// TODO: extend this with all the rest
-var defaultOuterOrder = [
-  'v', 'o', 's', 'i',
-  'u', 'e', 'p', 'c',
-  'b', 't', 'r', 'z', 'a'
-];
-var defaultInnerOrder = ['i', 'c', 'b', 'a'];
-
-
-module.exports = function (session, opts) {
-  opts = opts || {};
-  // ensure certain properties exist
-  if (session.version == null) {
-    session.version = 0; // "v=0" must be there (only defined version atm)
-  }
-  if (session.name == null) {
-    session.name = " "; // "s= " must be there if no meaningful name set
-  }
-  session.media.forEach(function (mLine) {
-    if (mLine.payloads == null) {
-      mLine.payloads = "";
-    }
-  });
-
-  var outerOrder = opts.outerOrder || defaultOuterOrder;
-  var innerOrder = opts.innerOrder || defaultInnerOrder;
-  var sdp = [];
-
-  // loop through outerOrder for matching properties on session
-  outerOrder.forEach(function (type) {
-    grammar[type].forEach(function (obj) {
-      if (obj.name in session && session[obj.name] != null) {
-        sdp.push(makeLine(type, obj, session));
-      }
-      else if (obj.push in session && session[obj.push] != null) {
-        session[obj.push].forEach(function (el) {
-          sdp.push(makeLine(type, obj, el));
-        });
-      }
-    });
-  });
-
-  // then for each media line, follow the innerOrder
-  session.media.forEach(function (mLine) {
-    sdp.push(makeLine('m', grammar.m[0], mLine));
-
-    innerOrder.forEach(function (type) {
-      grammar[type].forEach(function (obj) {
-        if (obj.name in mLine && mLine[obj.name] != null) {
-          sdp.push(makeLine(type, obj, mLine));
-        }
-        else if (obj.push in mLine && mLine[obj.push] != null) {
-          mLine[obj.push].forEach(function (el) {
-            sdp.push(makeLine(type, obj, el));
-          });
-        }
-      });
-    });
-  });
-
-  return sdp.join('\r\n') + '\r\n';
-};
-
-},{"./grammar":236}],240:[function(require,module,exports){
-/* Copyright @ 2015 Atlassian Pty Ltd
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-module.exports = function arrayEquals(array) {
-    // if the other array is a falsy value, return
-    if (!array)
-        return false;
-
-    // compare lengths - can save a lot of time
-    if (this.length != array.length)
-        return false;
-
-    for (var i = 0, l = this.length; i < l; i++) {
-        // Check if we have nested arrays
-        if (this[i] instanceof Array && array[i] instanceof Array) {
-            // recurse into the nested arrays
-            if (!arrayEquals.apply(this[i], [array[i]]))
-                return false;
-        } else if (this[i] != array[i]) {
-            // Warning - two different object instances will never be equal:
-            // {x:20} != {x:20}
-            return false;
-        }
-    }
-    return true;
-};
-
-
-},{}],241:[function(require,module,exports){
-/* Copyright @ 2015 Atlassian Pty Ltd
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-exports.Interop = require('./interop');
-
-},{"./interop":242}],242:[function(require,module,exports){
-/* Copyright @ 2015 Atlassian Pty Ltd
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-/* global RTCSessionDescription */
-/* global RTCIceCandidate */
-/* jshint -W097 */
-"use strict";
-
-var transform = require('./transform');
-var arrayEquals = require('./array-equals');
-
-function Interop() {
-
-    /**
-     * This map holds the most recent Unified Plan offer/answer SDP that was
-     * converted to Plan B, with the SDP type ('offer' or 'answer') as keys and
-     * the SDP string as values.
-     *
-     * @type {{}}
-     */
-    this.cache = {
-        mlB2UMap : {},
-        mlU2BMap : {}
-    };
-}
-
-module.exports = Interop;
-
-/**
- * Changes the candidate args to match with the related Unified Plan
- */
-Interop.prototype.candidateToUnifiedPlan = function(candidate) {
-    var cand = new RTCIceCandidate(candidate);
-
-    cand.sdpMLineIndex = this.cache.mlB2UMap[cand.sdpMLineIndex];
-    /* TODO: change sdpMid to (audio|video)-SSRC */
-
-    return cand;
-};
-
-/**
- * Changes the candidate args to match with the related Plan B
- */
-Interop.prototype.candidateToPlanB = function(candidate) {
-    var cand = new RTCIceCandidate(candidate);
-
-    if (cand.sdpMid.indexOf('audio') === 0) {
-      cand.sdpMid = 'audio';
-    } else if (cand.sdpMid.indexOf('video') === 0) {
-      cand.sdpMid = 'video';
-    } else {
-      throw new Error('candidate with ' + cand.sdpMid + ' not allowed');
-    }
-
-    cand.sdpMLineIndex = this.cache.mlU2BMap[cand.sdpMLineIndex];
-
-    return cand;
-};
-
-/**
- * Returns the index of the first m-line with the given media type and with a
- * direction which allows sending, in the last Unified Plan description with
- * type "answer" converted to Plan B. Returns {null} if there is no saved
- * answer, or if none of its m-lines with the given type allow sending.
- * @param type the media type ("audio" or "video").
- * @returns {*}
- */
-Interop.prototype.getFirstSendingIndexFromAnswer = function(type) {
-    if (!this.cache.answer) {
-        return null;
-    }
-
-    var session = transform.parse(this.cache.answer);
-    if (session && session.media && Array.isArray(session.media)){
-        for (var i = 0; i < session.media.length; i++) {
-            if (session.media[i].type == type &&
-                (!session.media[i].direction /* default to sendrecv */ ||
-                    session.media[i].direction === 'sendrecv' ||
-                    session.media[i].direction === 'sendonly')){
-                return i;
-            }
-        }
-    }
-
-    return null;
-};
-
-/**
- * This method transforms a Unified Plan SDP to an equivalent Plan B SDP. A
- * PeerConnection wrapper transforms the SDP to Plan B before passing it to the
- * application.
- *
- * @param desc
- * @returns {*}
- */
-Interop.prototype.toPlanB = function(desc) {
-    var self = this;
-    //#region Preliminary input validation.
-
-    if (typeof desc !== 'object' || desc === null ||
-        typeof desc.sdp !== 'string') {
-        console.warn('An empty description was passed as an argument.');
-        return desc;
-    }
-
-    // Objectify the SDP for easier manipulation.
-    var session = transform.parse(desc.sdp);
-
-    // If the SDP contains no media, there's nothing to transform.
-    if (typeof session.media === 'undefined' ||
-        !Array.isArray(session.media) || session.media.length === 0) {
-        console.warn('The description has no media.');
-        return desc;
-    }
-
-    // Try some heuristics to "make sure" this is a Unified Plan SDP. Plan B
-    // SDP has a video, an audio and a data "channel" at most.
-    if (session.media.length <= 3 && session.media.every(function(m) {
-            return ['video', 'audio', 'data'].indexOf(m.mid) !== -1;
-        })) {
-        console.warn('This description does not look like Unified Plan.');
-        return desc;
-    }
-
-    //#endregion
-
-    // HACK https://bugzilla.mozilla.org/show_bug.cgi?id=1113443
-    var sdp = desc.sdp;
-    var rewrite = false;
-    for (var i = 0; i < session.media.length; i++) {
-        var uLine = session.media[i];
-        uLine.rtp.forEach(function(rtp) {
-            if (rtp.codec === 'NULL')
-            {
-                rewrite = true;
-                var offer = transform.parse(self.cache.offer);
-                rtp.codec = offer.media[i].rtp[0].codec;
-            }
-        });
-    }
-    if (rewrite) {
-        sdp = transform.write(session);
-    }
-
-    // Unified Plan SDP is our "precious". Cache it for later use in the Plan B
-    // -> Unified Plan transformation.
-    this.cache[desc.type] = sdp;
-
-    //#region Convert from Unified Plan to Plan B.
-
-    // We rebuild the session.media array.
-    var media = session.media;
-    session.media = [];
-
-    // Associative array that maps channel types to channel objects for fast
-    // access to channel objects by their type, e.g. type2bl['audio']->channel
-    // obj.
-    var type2bl = {};
-
-    // Used to build the group:BUNDLE value after the channels construction
-    // loop.
-    var types = [];
-
-    media.forEach(function(uLine) {
-        // rtcp-mux is required in the Plan B SDP.
-        if ((typeof uLine.rtcpMux !== 'string' ||
-            uLine.rtcpMux !== 'rtcp-mux') &&
-            uLine.direction !== 'inactive') {
-            throw new Error('Cannot convert to Plan B because m-lines ' +
-                'without the rtcp-mux attribute were found.');
-        }
-
-        // If we don't have a channel for this uLine.type OR the selected is
-        // inactive, then select this uLine as the channel basis.
-        if (typeof type2bl[uLine.type] === 'undefined' ||
-            type2bl[uLine.type].direction === 'inactive') {
-            type2bl[uLine.type] = uLine;
-        }
-
-        if (uLine.protocol != type2bl[uLine.type].protocol) {
-          throw new Error('Cannot convert to Plan B because m-lines ' +
-              'have different protocols and this library does not have ' +
-              'support for that');
-        }
-
-        if (uLine.payloads != type2bl[uLine.type].payloads) {
-          throw new Error('Cannot convert to Plan B because m-lines ' +
-              'have different payloads and this library does not have ' +
-              'support for that');
-        }
-
-    });
-
-    // Implode the Unified Plan m-lines/tracks into Plan B channels.
-    media.forEach(function(uLine) {
-        if (uLine.type === 'application') {
-            session.media.push(uLine);
-            types.push(uLine.mid);
-            return;
-        }
-
-        // Add sources to the channel and handle a=msid.
-        if (typeof uLine.sources === 'object') {
-            Object.keys(uLine.sources).forEach(function(ssrc) {
-                if (typeof type2bl[uLine.type].sources !== 'object')
-                    type2bl[uLine.type].sources = {};
-
-                // Assign the sources to the channel.
-                type2bl[uLine.type].sources[ssrc] =
-                    uLine.sources[ssrc];
-
-                if (typeof uLine.msid !== 'undefined') {
-                    // In Plan B the msid is an SSRC attribute. Also, we don't
-                    // care about the obsolete label and mslabel attributes.
-                    //
-                    // Note that it is not guaranteed that the uLine will
-                    // have an msid. recvonly channels in particular don't have
-                    // one.
-                    type2bl[uLine.type].sources[ssrc].msid =
-                        uLine.msid;
-                }
-                // NOTE ssrcs in ssrc groups will share msids, as
-                // draft-uberti-rtcweb-plan-00 mandates.
-            });
-        }
-
-        // Add ssrc groups to the channel.
-        if (typeof uLine.ssrcGroups !== 'undefined' &&
-                Array.isArray(uLine.ssrcGroups)) {
-
-            // Create the ssrcGroups array, if it's not defined.
-            if (typeof type2bl[uLine.type].ssrcGroups === 'undefined' ||
-                    !Array.isArray(type2bl[uLine.type].ssrcGroups)) {
-                type2bl[uLine.type].ssrcGroups = [];
-            }
-
-            type2bl[uLine.type].ssrcGroups =
-                type2bl[uLine.type].ssrcGroups.concat(
-                    uLine.ssrcGroups);
-        }
-
-        if (type2bl[uLine.type] === uLine) {
-            // Plan B mids are in ['audio', 'video', 'data']
-            uLine.mid = uLine.type;
-
-            // Plan B doesn't support/need the bundle-only attribute.
-            delete uLine.bundleOnly;
-
-            // In Plan B the msid is an SSRC attribute.
-            delete uLine.msid;
-
-	    if (uLine.type == media[0].type) {
-	      types.unshift(uLine.type);
-	      // Add the channel to the new media array.
-	      session.media.unshift(uLine);
-	    } else {
-	      types.push(uLine.type);
-	      // Add the channel to the new media array.
-	      session.media.push(uLine);
-	    }
-        }
-    });
-
-    if (typeof session.groups !== 'undefined') {
-      // We regenerate the BUNDLE group with the new mids.
-      session.groups.some(function(group) {
-	  if (group.type === 'BUNDLE') {
-	      group.mids = types.join(' ');
-	      return true;
-	  }
-      });
-    }
-
-    // msid semantic
-    session.msidSemantic = {
-        semantic: 'WMS',
-        token: '*'
-    };
-
-    var resStr = transform.write(session);
-
-    return new RTCSessionDescription({
-        type: desc.type,
-        sdp: resStr
-    });
-
-    //#endregion
-};
-
-/* follow rules defined in RFC4145 */
-function addSetupAttr(uLine) {
-    if (typeof uLine.setup === 'undefined') {
-        return;
-    }
-
-    if (uLine.setup === "active") {
-            uLine.setup = "passive";
-    } else if (uLine.setup === "passive") {
-        uLine.setup = "active";
-    }
-}
-
-/**
- * This method transforms a Plan B SDP to an equivalent Unified Plan SDP. A
- * PeerConnection wrapper transforms the SDP to Unified Plan before passing it
- * to FF.
- *
- * @param desc
- * @returns {*}
- */
-Interop.prototype.toUnifiedPlan = function(desc) {
-    var self = this;
-    //#region Preliminary input validation.
-
-    if (typeof desc !== 'object' || desc === null ||
-        typeof desc.sdp !== 'string') {
-        console.warn('An empty description was passed as an argument.');
-        return desc;
-    }
-
-    var session = transform.parse(desc.sdp);
-
-    // If the SDP contains no media, there's nothing to transform.
-    if (typeof session.media === 'undefined' ||
-        !Array.isArray(session.media) || session.media.length === 0) {
-        console.warn('The description has no media.');
-        return desc;
-    }
-
-    // Try some heuristics to "make sure" this is a Plan B SDP. Plan B SDP has
-    // a video, an audio and a data "channel" at most.
-    if (session.media.length > 3 || !session.media.every(function(m) {
-            return ['video', 'audio', 'data'].indexOf(m.mid) !== -1;
-        })) {
-        console.warn('This description does not look like Plan B.');
-        return desc;
-    }
-
-    // Make sure this Plan B SDP can be converted to a Unified Plan SDP.
-    var mids = [];
-    session.media.forEach(function(m) {
-        mids.push(m.mid);
-    });
-
-    var hasBundle = false;
-    if (typeof session.groups !== 'undefined' &&
-        Array.isArray(session.groups)) {
-        hasBundle = session.groups.every(function(g) {
-            return g.type !== 'BUNDLE' ||
-                arrayEquals.apply(g.mids.sort(), [mids.sort()]);
-        });
-    }
-
-    if (!hasBundle) {
-        var mustBeBundle = false;
-
-        session.media.forEach(function(m) {
-            if (m.direction !== 'inactive') {
-                mustBeBundle = true;
-            }
-        });
-
-        if (mustBeBundle) {
-            throw new Error("Cannot convert to Unified Plan because m-lines that" +
-              " are not bundled were found.");
-        }
-    }
-
-    //#endregion
-
-
-    //#region Convert from Plan B to Unified Plan.
-
-    // Unfortunately, a Plan B offer/answer doesn't have enough information to
-    // rebuild an equivalent Unified Plan offer/answer.
-    //
-    // For example, if this is a local answer (in Unified Plan style) that we
-    // convert to Plan B prior to handing it over to the application (the
-    // PeerConnection wrapper called us, for instance, after a successful
-    // createAnswer), we want to remember the m-line at which we've seen the
-    // (local) SSRC. That's because when the application wants to do call the
-    // SLD method, forcing us to do the inverse transformation (from Plan B to
-    // Unified Plan), we need to know to which m-line to assign the (local)
-    // SSRC. We also need to know all the other m-lines that the original
-    // answer had and include them in the transformed answer as well.
-    //
-    // Another example is if this is a remote offer that we convert to Plan B
-    // prior to giving it to the application, we want to remember the mid at
-    // which we've seen the (remote) SSRC.
-    //
-    // In the iteration that follows, we use the cached Unified Plan (if it
-    // exists) to assign mids to ssrcs.
-
-    var type;
-    if (desc.type === 'answer') {
-        type = 'offer';
-    } else if (desc.type === 'offer') {
-        type = 'answer';
-    } else {
-        throw new Error("Type '" + desc.type + "' not supported.");
-    }
-
-    var cached;
-    if (typeof this.cache[type] !== 'undefined') {
-        cached = transform.parse(this.cache[type]);
-    }
-
-    var recvonlySsrcs = {
-        audio: {},
-        video: {}
-    };
-
-    // A helper map that sends mids to m-line objects. We use it later to
-    // rebuild the Unified Plan style session.media array.
-    var mid2ul = {};
-    var bIdx = 0;
-    var uIdx = 0;
-
-    var sources2ul = {};
-
-    var candidates;
-    var iceUfrag;
-    var icePwd;
-    var fingerprint;
-    var payloads = {};
-    var rtcpFb = {};
-    var rtp = {};
-
-    session.media.forEach(function(bLine) {
-        if ((typeof bLine.rtcpMux !== 'string' ||
-            bLine.rtcpMux !== 'rtcp-mux') &&
-            bLine.direction !== 'inactive') {
-            throw new Error("Cannot convert to Unified Plan because m-lines " +
-                "without the rtcp-mux attribute were found.");
-        }
-
-        if (bLine.type === 'application') {
-            mid2ul[bLine.mid] = bLine;
-            return;
-        }
-
-        // With rtcp-mux and bundle all the channels should have the same ICE
-        // stuff.
-        var sources = bLine.sources;
-        var ssrcGroups = bLine.ssrcGroups;
-        var port = bLine.port;
-
-        /* Chrome adds different candidates even using bundle, so we concat the candidates list */
-        if (typeof bLine.candidates != 'undefined') {
-            if (typeof candidates != 'undefined') {
-                candidates = candidates.concat(bLine.candidates);
-            } else {
-                candidates = bLine.candidates;
-            }
-        }
-
-        if ((typeof iceUfrag != 'undefined') && (typeof bLine.iceUfrag != 'undefined') && (iceUfrag != bLine.iceUfrag)) {
-            throw new Error("Only BUNDLE supported, iceUfrag must be the same for all m-lines.\n" +
-                            "\tLast iceUfrag: " + iceUfrag + "\n" +
-                            "\tNew iceUfrag: " + bLine.iceUfrag
-            );
-        }
-
-        if (typeof bLine.iceUfrag != 'undefined') {
-                iceUfrag = bLine.iceUfrag;
-        }
-
-        if ((typeof icePwd != 'undefined') && (typeof bLine.icePwd != 'undefined') && (icePwd != bLine.icePwd)) {
-            throw new Error("Only BUNDLE supported, icePwd must be the same for all m-lines.\n" +
-                            "\tLast icePwd: " + icePwd + "\n" +
-                            "\tNew icePwd: " + bLine.icePwd
-            );
-        }
-
-        if (typeof bLine.icePwd != 'undefined') {
-                icePwd = bLine.icePwd;
-        }
-
-        if ((typeof fingerprint != 'undefined') && (typeof bLine.fingerprint != 'undefined') &&
-            (fingerprint.type != bLine.fingerprint.type || fingerprint.hash != bLine.fingerprint.hash)) {
-            throw new Error("Only BUNDLE supported, fingerprint must be the same for all m-lines.\n" +
-                            "\tLast fingerprint: " + JSON.stringify(fingerprint) + "\n" +
-                            "\tNew fingerprint: " + JSON.stringify(bLine.fingerprint)
-            );
-        }
-
-        if (typeof bLine.fingerprint != 'undefined') {
-                fingerprint = bLine.fingerprint;
-        }
-
-        payloads[bLine.type] = bLine.payloads;
-        rtcpFb[bLine.type] = bLine.rtcpFb;
-        rtp[bLine.type] = bLine.rtp;
-
-        // inverted ssrc group map
-        var ssrc2group = {};
-        if (typeof ssrcGroups !== 'undefined' && Array.isArray(ssrcGroups)) {
-            ssrcGroups.forEach(function (ssrcGroup) {
-                // XXX This might brake if an SSRC is in more than one group
-                // for some reason.
-                if (typeof ssrcGroup.ssrcs !== 'undefined' &&
-                    Array.isArray(ssrcGroup.ssrcs)) {
-                    ssrcGroup.ssrcs.forEach(function (ssrc) {
-                        if (typeof ssrc2group[ssrc] === 'undefined') {
-                            ssrc2group[ssrc] = [];
-                        }
-
-                        ssrc2group[ssrc].push(ssrcGroup);
-                    });
-                }
-            });
-        }
-
-        // ssrc to m-line index.
-        var ssrc2ml = {};
-
-        if (typeof sources === 'object') {
-
-            // We'll use the "bLine" object as a prototype for each new "mLine"
-            // that we create, but first we need to clean it up a bit.
-            delete bLine.sources;
-            delete bLine.ssrcGroups;
-            delete bLine.candidates;
-            delete bLine.iceUfrag;
-            delete bLine.icePwd;
-            delete bLine.fingerprint;
-            delete bLine.port;
-            delete bLine.mid;
-
-            // Explode the Plan B channel sources with one m-line per source.
-            Object.keys(sources).forEach(function(ssrc) {
-
-                // The (unified) m-line for this SSRC. We either create it from
-                // scratch or, if it's a grouped SSRC, we re-use a related
-                // mline. In other words, if the source is grouped with another
-                // source, put the two together in the same m-line.
-                var uLine;
-
-                // We assume here that we are the answerer in the O/A, so any
-                // offers which we translate come from the remote side, while
-                // answers are local. So the check below is to make that we
-                // handle receive-only SSRCs in a special way only if they come
-                // from the remote side.
-                if (desc.type==='offer') {
-                    // We want to detect SSRCs which are used by a remote peer
-                    // in an m-line with direction=recvonly (i.e. they are
-                    // being used for RTCP only).
-                    // This information would have gotten lost if the remote
-                    // peer used Unified Plan and their local description was
-                    // translated to Plan B. So we use the lack of an MSID
-                    // attribute to deduce a "receive only" SSRC.
-                    if (!sources[ssrc].msid) {
-                        recvonlySsrcs[bLine.type][ssrc] = sources[ssrc];
-                        // Receive-only SSRCs must not create new m-lines. We
-                        // will assign them to an existing m-line later.
-                        return;
-                    }
-                }
-
-                if (typeof ssrc2group[ssrc] !== 'undefined' &&
-                    Array.isArray(ssrc2group[ssrc])) {
-                    ssrc2group[ssrc].some(function (ssrcGroup) {
-                        // ssrcGroup.ssrcs *is* an Array, no need to check
-                        // again here.
-                        return ssrcGroup.ssrcs.some(function (related) {
-                            if (typeof ssrc2ml[related] === 'object') {
-                                uLine = ssrc2ml[related];
-                                return true;
-                            }
-                        });
-                    });
-                }
-
-                if (typeof uLine === 'object') {
-                    // the m-line already exists. Just add the source.
-                    uLine.sources[ssrc] = sources[ssrc];
-                    delete sources[ssrc].msid;
-                } else {
-                    // Use the "bLine" as a prototype for the "uLine".
-                    uLine = Object.create(bLine);
-                    ssrc2ml[ssrc] = uLine;
-
-                    if (typeof sources[ssrc].msid !== 'undefined') {
-                        // Assign the msid of the source to the m-line. Note
-                        // that it is not guaranteed that the source will have
-                        // msid. In particular "recvonly" sources don't have an
-                        // msid. Note that "recvonly" is a term only defined
-                        // for m-lines.
-                        uLine.msid = sources[ssrc].msid;
-                        delete sources[ssrc].msid;
-                    }
-
-                    // We assign one SSRC per media line.
-                    uLine.sources = {};
-                    uLine.sources[ssrc] = sources[ssrc];
-                    uLine.ssrcGroups = ssrc2group[ssrc];
-
-                    // Use the cached Unified Plan SDP (if it exists) to assign
-                    // SSRCs to mids.
-                    if (typeof cached !== 'undefined' &&
-                        typeof cached.media !== 'undefined' &&
-                        Array.isArray(cached.media)) {
-
-                        cached.media.forEach(function (m) {
-                            if (typeof m.sources === 'object') {
-                                Object.keys(m.sources).forEach(function (s) {
-                                    if (s === ssrc) {
-                                        uLine.mid = m.mid;
-                                    }
-                                });
-                            }
-                        });
-                    }
-
-                    if (typeof uLine.mid === 'undefined') {
-
-                        // If this is an SSRC that we see for the first time
-                        // assign it a new mid. This is typically the case when
-                        // this method is called to transform a remote
-                        // description for the first time or when there is a
-                        // new SSRC in the remote description because a new
-                        // peer has joined the conference. Local SSRCs should
-                        // have already been added to the map in the toPlanB
-                        // method.
-                        //
-                        // Because FF generates answers in Unified Plan style,
-                        // we MUST already have a cached answer with all the
-                        // local SSRCs mapped to some m-line/mid.
-
-                        uLine.mid = [bLine.type, '-', ssrc].join('');
-                    }
-
-                    // Include the candidates in the 1st media line.
-                    uLine.candidates = candidates;
-                    uLine.iceUfrag = iceUfrag;
-                    uLine.icePwd = icePwd;
-                    uLine.fingerprint = fingerprint;
-                    uLine.port = port;
-
-                    mid2ul[uLine.mid] = uLine;
-                    sources2ul[uIdx] = uLine.sources;
-
-                    self.cache.mlU2BMap[uIdx] = bIdx;
-                    if (typeof self.cache.mlB2UMap[bIdx] === 'undefined') {
-                      self.cache.mlB2UMap[bIdx] = uIdx;
-                    }
-                    uIdx++;
-                }
-            });
-        } else {
-          var uLine = bLine;
-
-          uLine.candidates = candidates;
-          uLine.iceUfrag = iceUfrag;
-          uLine.icePwd = icePwd;
-          uLine.fingerprint = fingerprint;
-          uLine.port = port;
-
-          mid2ul[uLine.mid] = uLine;
-
-          self.cache.mlU2BMap[uIdx] = bIdx;
-          if (typeof self.cache.mlB2UMap[bIdx] === 'undefined') {
-            self.cache.mlB2UMap[bIdx] = uIdx;
-          }
-        }
-
-        bIdx++;
-    });
-
-    // Rebuild the media array in the right order and add the missing mLines
-    // (missing from the Plan B SDP).
-    session.media = [];
-    mids = []; // reuse
-
-    if (desc.type === 'answer') {
-
-        // The media lines in the answer must match the media lines in the
-        // offer. The order is important too. Here we assume that Firefox is
-        // the answerer, so we merely have to use the reconstructed (unified)
-        // answer to update the cached (unified) answer accordingly.
-        //
-        // In the general case, one would have to use the cached (unified)
-        // offer to find the m-lines that are missing from the reconstructed
-        // answer, potentially grabbing them from the cached (unified) answer.
-        // One has to be careful with this approach because inactive m-lines do
-        // not always have an mid, making it tricky (impossible?) to find where
-        // exactly and which m-lines are missing from the reconstructed answer.
-
-        for (var i = 0; i < cached.media.length; i++) {
-            var uLine = cached.media[i];
-
-            delete uLine.msid;
-            delete uLine.sources;
-            delete uLine.ssrcGroups;
-
-            if (typeof sources2ul[i] === 'undefined') {
-              if (!uLine.direction
-                  || uLine.direction === 'sendrecv')
-                  uLine.direction = 'recvonly';
-              else if (uLine.direction === 'sendonly')
-                  uLine.direction = 'inactive';
-            } else {
-              if (!uLine.direction
-                  || uLine.direction === 'sendrecv')
-                  uLine.direction = 'sendrecv';
-              else if (uLine.direction === 'recvonly')
-                  uLine.direction = 'sendonly';
-            }
-
-            uLine.sources = sources2ul[i];
-            uLine.candidates = candidates;
-            uLine.iceUfrag = iceUfrag;
-            uLine.icePwd = icePwd;
-            uLine.fingerprint = fingerprint;
-
-            uLine.rtp = rtp[uLine.type];
-            uLine.payloads = payloads[uLine.type];
-            uLine.rtcpFb = rtcpFb[uLine.type];
-
-            session.media.push(uLine);
-
-            if (typeof uLine.mid === 'string') {
-                // inactive lines don't/may not have an mid.
-                mids.push(uLine.mid);
-            }
-        }
-    } else {
-
-        // SDP offer/answer (and the JSEP spec) forbids removing an m-section
-        // under any circumstances. If we are no longer interested in sending a
-        // track, we just remove the msid and ssrc attributes and set it to
-        // either a=recvonly (as the reofferer, we must use recvonly if the
-        // other side was previously sending on the m-section, but we can also
-        // leave the possibility open if it wasn't previously in use), or
-        // a=inactive.
-
-        if (typeof cached !== 'undefined' &&
-            typeof cached.media !== 'undefined' &&
-            Array.isArray(cached.media)) {
-            cached.media.forEach(function(uLine) {
-                mids.push(uLine.mid);
-                if (typeof mid2ul[uLine.mid] !== 'undefined') {
-                    session.media.push(mid2ul[uLine.mid]);
-                } else {
-                    delete uLine.msid;
-                    delete uLine.sources;
-                    delete uLine.ssrcGroups;
-
-                    if (!uLine.direction
-                        || uLine.direction === 'sendrecv') {
-                        uLine.direction = 'sendonly';
-                    }
-                    if (!uLine.direction
-                        || uLine.direction === 'recvonly') {
-                        uLine.direction = 'inactive';
-                    }
-
-                    addSetupAttr (uLine);
-                    session.media.push(uLine);
-                }
-            });
-        }
-
-        // Add all the remaining (new) m-lines of the transformed SDP.
-        Object.keys(mid2ul).forEach(function(mid) {
-            if (mids.indexOf(mid) === -1) {
-                mids.push(mid);
-                if (mid2ul[mid].direction === 'recvonly') {
-                    // This is a remote recvonly channel. Add its SSRC to the
-                    // appropriate sendrecv or sendonly channel.
-                    // TODO(gp) what if we don't have sendrecv/sendonly
-                    // channel?
-
-                    var done = false;
-
-                    session.media.some(function (uLine) {
-                        if ((uLine.direction === 'sendrecv' ||
-                            uLine.direction === 'sendonly') &&
-                            uLine.type === mid2ul[mid].type) {
-                            // mid2ul[mid] shouldn't have any ssrc-groups
-                            Object.keys(mid2ul[mid].sources).forEach(
-                                function (ssrc) {
-                                uLine.sources[ssrc] =
-                                    mid2ul[mid].sources[ssrc];
-                            });
-
-                            done = true;
-                            return true;
-                        }
-                    });
-
-                    if (!done) {
-                        session.media.push(mid2ul[mid]);
-                    }
-                } else {
-                    session.media.push(mid2ul[mid]);
-                }
-            }
-        });
-    }
-
-    // After we have constructed the Plan Unified m-lines we can figure out
-    // where (in which m-line) to place the 'recvonly SSRCs'.
-    // Note: we assume here that we are the answerer in the O/A, so any offers
-    // which we translate come from the remote side, while answers are local
-    // (and so our last local description is cached as an 'answer').
-    ["audio", "video"].forEach(function (type) {
-        if (!session || !session.media || !Array.isArray(session.media))
-            return;
-
-        var idx = null;
-        if (Object.keys(recvonlySsrcs[type]).length > 0) {
-            idx = self.getFirstSendingIndexFromAnswer(type);
-            if (idx === null){
-                // If this is the first offer we receive, we don't have a
-                // cached answer. Assume that we will be sending media using
-                // the first m-line for each media type.
-
-                for (var i = 0; i < session.media.length; i++) {
-                    if (session.media[i].type === type) {
-                        idx = i;
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (idx && session.media.length > idx) {
-            var mLine = session.media[idx];
-            Object.keys(recvonlySsrcs[type]).forEach(function(ssrc) {
-                if (mLine.sources && mLine.sources[ssrc]) {
-                    console.warn("Replacing an existing SSRC.");
-                }
-                if (!mLine.sources) {
-                    mLine.sources = {};
-                }
-
-                mLine.sources[ssrc] = recvonlySsrcs[type][ssrc];
-            });
-        }
-    });
-
-    if (typeof session.groups !== 'undefined') {
-      // We regenerate the BUNDLE group (since we regenerated the mids)
-      session.groups.some(function(group) {
-	  if (group.type === 'BUNDLE') {
-	      group.mids = mids.join(' ');
-	      return true;
-	  }
-      });
-    }
-
-    // msid semantic
-    session.msidSemantic = {
-        semantic: 'WMS',
-        token: '*'
-    };
-
-    var resStr = transform.write(session);
-
-    // Cache the transformed SDP (Unified Plan) for later re-use in this
-    // function.
-    this.cache[desc.type] = resStr;
-
-    return new RTCSessionDescription({
-        type: desc.type,
-        sdp: resStr
-    });
-
-    //#endregion
-};
-
-},{"./array-equals":240,"./transform":243}],243:[function(require,module,exports){
-/* Copyright @ 2015 Atlassian Pty Ltd
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-var transform = require('sdp-transform');
-
-exports.write = function(session, opts) {
-
-  if (typeof session !== 'undefined' &&
-      typeof session.media !== 'undefined' &&
-      Array.isArray(session.media)) {
-
-    session.media.forEach(function (mLine) {
-      // expand sources to ssrcs
-      if (typeof mLine.sources !== 'undefined' &&
-        Object.keys(mLine.sources).length !== 0) {
-          mLine.ssrcs = [];
-          Object.keys(mLine.sources).forEach(function (ssrc) {
-            var source = mLine.sources[ssrc];
-            Object.keys(source).forEach(function (attribute) {
-              mLine.ssrcs.push({
-                id: ssrc,
-                attribute: attribute,
-                value: source[attribute]
-              });
-            });
-          });
-          delete mLine.sources;
-        }
-
-      // join ssrcs in ssrc groups
-      if (typeof mLine.ssrcGroups !== 'undefined' &&
-        Array.isArray(mLine.ssrcGroups)) {
-          mLine.ssrcGroups.forEach(function (ssrcGroup) {
-            if (typeof ssrcGroup.ssrcs !== 'undefined' &&
-                Array.isArray(ssrcGroup.ssrcs)) {
-              ssrcGroup.ssrcs = ssrcGroup.ssrcs.join(' ');
-            }
-          });
-        }
-    });
-  }
-
-  // join group mids
-  if (typeof session !== 'undefined' &&
-      typeof session.groups !== 'undefined' && Array.isArray(session.groups)) {
-
-    session.groups.forEach(function (g) {
-      if (typeof g.mids !== 'undefined' && Array.isArray(g.mids)) {
-        g.mids = g.mids.join(' ');
-      }
-    });
-  }
-
-  return transform.write(session, opts);
-};
-
-exports.parse = function(sdp) {
-  var session = transform.parse(sdp);
-
-  if (typeof session !== 'undefined' && typeof session.media !== 'undefined' &&
-      Array.isArray(session.media)) {
-
-    session.media.forEach(function (mLine) {
-      // group sources attributes by ssrc
-      if (typeof mLine.ssrcs !== 'undefined' && Array.isArray(mLine.ssrcs)) {
-        mLine.sources = {};
-        mLine.ssrcs.forEach(function (ssrc) {
-          if (!mLine.sources[ssrc.id])
-          mLine.sources[ssrc.id] = {};
-        mLine.sources[ssrc.id][ssrc.attribute] = ssrc.value;
-        });
-
-        delete mLine.ssrcs;
-      }
-
-      // split ssrcs in ssrc groups
-      if (typeof mLine.ssrcGroups !== 'undefined' &&
-        Array.isArray(mLine.ssrcGroups)) {
-          mLine.ssrcGroups.forEach(function (ssrcGroup) {
-            if (typeof ssrcGroup.ssrcs === 'string') {
-              ssrcGroup.ssrcs = ssrcGroup.ssrcs.split(' ');
-            }
-          });
-        }
-    });
-  }
-  // split group mids
-  if (typeof session !== 'undefined' &&
-      typeof session.groups !== 'undefined' && Array.isArray(session.groups)) {
-
-    session.groups.forEach(function (g) {
-      if (typeof g.mids === 'string') {
-        g.mids = g.mids.split(' ');
-      }
-    });
-  }
-
-  return session;
-};
-
-
-},{"sdp-transform":237}],244:[function(require,module,exports){
+},{"_process":214,"buffer":79}],227:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 // prototype class for hash functions
@@ -42434,7 +39426,7 @@ Hash.prototype._update = function () {
 
 module.exports = Hash
 
-},{"safe-buffer":234}],245:[function(require,module,exports){
+},{"safe-buffer":225}],228:[function(require,module,exports){
 var exports = module.exports = function SHA (algorithm) {
   algorithm = algorithm.toLowerCase()
 
@@ -42451,7 +39443,7 @@ exports.sha256 = require('./sha256')
 exports.sha384 = require('./sha384')
 exports.sha512 = require('./sha512')
 
-},{"./sha":246,"./sha1":247,"./sha224":248,"./sha256":249,"./sha384":250,"./sha512":251}],246:[function(require,module,exports){
+},{"./sha":229,"./sha1":230,"./sha224":231,"./sha256":232,"./sha384":233,"./sha512":234}],229:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-0, as defined
  * in FIPS PUB 180-1
@@ -42547,7 +39539,7 @@ Sha.prototype._hash = function () {
 
 module.exports = Sha
 
-},{"./hash":244,"inherits":195,"safe-buffer":234}],247:[function(require,module,exports){
+},{"./hash":227,"inherits":191,"safe-buffer":225}],230:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
  * in FIPS PUB 180-1
@@ -42648,7 +39640,7 @@ Sha1.prototype._hash = function () {
 
 module.exports = Sha1
 
-},{"./hash":244,"inherits":195,"safe-buffer":234}],248:[function(require,module,exports){
+},{"./hash":227,"inherits":191,"safe-buffer":225}],231:[function(require,module,exports){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
  * in FIPS 180-2
@@ -42703,7 +39695,7 @@ Sha224.prototype._hash = function () {
 
 module.exports = Sha224
 
-},{"./hash":244,"./sha256":249,"inherits":195,"safe-buffer":234}],249:[function(require,module,exports){
+},{"./hash":227,"./sha256":232,"inherits":191,"safe-buffer":225}],232:[function(require,module,exports){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
  * in FIPS 180-2
@@ -42840,7 +39832,7 @@ Sha256.prototype._hash = function () {
 
 module.exports = Sha256
 
-},{"./hash":244,"inherits":195,"safe-buffer":234}],250:[function(require,module,exports){
+},{"./hash":227,"inherits":191,"safe-buffer":225}],233:[function(require,module,exports){
 var inherits = require('inherits')
 var SHA512 = require('./sha512')
 var Hash = require('./hash')
@@ -42899,7 +39891,7 @@ Sha384.prototype._hash = function () {
 
 module.exports = Sha384
 
-},{"./hash":244,"./sha512":251,"inherits":195,"safe-buffer":234}],251:[function(require,module,exports){
+},{"./hash":227,"./sha512":234,"inherits":191,"safe-buffer":225}],234:[function(require,module,exports){
 var inherits = require('inherits')
 var Hash = require('./hash')
 var Buffer = require('safe-buffer').Buffer
@@ -43161,7 +40153,7 @@ Sha512.prototype._hash = function () {
 
 module.exports = Sha512
 
-},{"./hash":244,"inherits":195,"safe-buffer":234}],252:[function(require,module,exports){
+},{"./hash":227,"inherits":191,"safe-buffer":225}],235:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -43292,35 +40284,35 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":156,"inherits":195,"readable-stream/lib/_stream_duplex.js":254,"readable-stream/lib/_stream_passthrough.js":255,"readable-stream/lib/_stream_readable.js":256,"readable-stream/lib/_stream_transform.js":257,"readable-stream/lib/_stream_writable.js":258,"readable-stream/lib/internal/streams/end-of-stream.js":262,"readable-stream/lib/internal/streams/pipeline.js":264}],253:[function(require,module,exports){
+},{"events":156,"inherits":191,"readable-stream/lib/_stream_duplex.js":237,"readable-stream/lib/_stream_passthrough.js":238,"readable-stream/lib/_stream_readable.js":239,"readable-stream/lib/_stream_transform.js":240,"readable-stream/lib/_stream_writable.js":241,"readable-stream/lib/internal/streams/end-of-stream.js":245,"readable-stream/lib/internal/streams/pipeline.js":247}],236:[function(require,module,exports){
 arguments[4][62][0].apply(exports,arguments)
-},{"dup":62}],254:[function(require,module,exports){
+},{"dup":62}],237:[function(require,module,exports){
 arguments[4][63][0].apply(exports,arguments)
-},{"./_stream_readable":256,"./_stream_writable":258,"_process":223,"dup":63,"inherits":195}],255:[function(require,module,exports){
+},{"./_stream_readable":239,"./_stream_writable":241,"_process":214,"dup":63,"inherits":191}],238:[function(require,module,exports){
 arguments[4][64][0].apply(exports,arguments)
-},{"./_stream_transform":257,"dup":64,"inherits":195}],256:[function(require,module,exports){
+},{"./_stream_transform":240,"dup":64,"inherits":191}],239:[function(require,module,exports){
 arguments[4][65][0].apply(exports,arguments)
-},{"../errors":253,"./_stream_duplex":254,"./internal/streams/async_iterator":259,"./internal/streams/buffer_list":260,"./internal/streams/destroy":261,"./internal/streams/from":263,"./internal/streams/state":265,"./internal/streams/stream":266,"_process":223,"buffer":79,"dup":65,"events":156,"inherits":195,"string_decoder/":267,"util":34}],257:[function(require,module,exports){
+},{"../errors":236,"./_stream_duplex":237,"./internal/streams/async_iterator":242,"./internal/streams/buffer_list":243,"./internal/streams/destroy":244,"./internal/streams/from":246,"./internal/streams/state":248,"./internal/streams/stream":249,"_process":214,"buffer":79,"dup":65,"events":156,"inherits":191,"string_decoder/":250,"util":34}],240:[function(require,module,exports){
 arguments[4][66][0].apply(exports,arguments)
-},{"../errors":253,"./_stream_duplex":254,"dup":66,"inherits":195}],258:[function(require,module,exports){
+},{"../errors":236,"./_stream_duplex":237,"dup":66,"inherits":191}],241:[function(require,module,exports){
 arguments[4][67][0].apply(exports,arguments)
-},{"../errors":253,"./_stream_duplex":254,"./internal/streams/destroy":261,"./internal/streams/state":265,"./internal/streams/stream":266,"_process":223,"buffer":79,"dup":67,"inherits":195,"util-deprecate":270}],259:[function(require,module,exports){
+},{"../errors":236,"./_stream_duplex":237,"./internal/streams/destroy":244,"./internal/streams/state":248,"./internal/streams/stream":249,"_process":214,"buffer":79,"dup":67,"inherits":191,"util-deprecate":252}],242:[function(require,module,exports){
 arguments[4][68][0].apply(exports,arguments)
-},{"./end-of-stream":262,"_process":223,"dup":68}],260:[function(require,module,exports){
+},{"./end-of-stream":245,"_process":214,"dup":68}],243:[function(require,module,exports){
 arguments[4][69][0].apply(exports,arguments)
-},{"buffer":79,"dup":69,"util":34}],261:[function(require,module,exports){
+},{"buffer":79,"dup":69,"util":34}],244:[function(require,module,exports){
 arguments[4][70][0].apply(exports,arguments)
-},{"_process":223,"dup":70}],262:[function(require,module,exports){
+},{"_process":214,"dup":70}],245:[function(require,module,exports){
 arguments[4][71][0].apply(exports,arguments)
-},{"../../../errors":253,"dup":71}],263:[function(require,module,exports){
+},{"../../../errors":236,"dup":71}],246:[function(require,module,exports){
 arguments[4][72][0].apply(exports,arguments)
-},{"dup":72}],264:[function(require,module,exports){
+},{"dup":72}],247:[function(require,module,exports){
 arguments[4][73][0].apply(exports,arguments)
-},{"../../../errors":253,"./end-of-stream":262,"dup":73}],265:[function(require,module,exports){
+},{"../../../errors":236,"./end-of-stream":245,"dup":73}],248:[function(require,module,exports){
 arguments[4][74][0].apply(exports,arguments)
-},{"../../../errors":253,"dup":74}],266:[function(require,module,exports){
+},{"../../../errors":236,"dup":74}],249:[function(require,module,exports){
 arguments[4][75][0].apply(exports,arguments)
-},{"dup":75,"events":156}],267:[function(require,module,exports){
+},{"dup":75,"events":156}],250:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -43617,948 +40609,9 @@ function simpleWrite(buf) {
 function simpleEnd(buf) {
   return buf && buf.length ? this.write(buf) : '';
 }
-},{"safe-buffer":268}],268:[function(require,module,exports){
+},{"safe-buffer":251}],251:[function(require,module,exports){
 arguments[4][77][0].apply(exports,arguments)
-},{"buffer":79,"dup":77}],269:[function(require,module,exports){
-/*!
- * UAParser.js v0.7.24
- * Lightweight JavaScript-based User-Agent string parser
- * https://github.com/faisalman/ua-parser-js
- *
- * Copyright © 2012-2021 Faisal Salman <f@faisalman.com>
- * Licensed under MIT License
- */
-
-(function (window, undefined) {
-
-    'use strict';
-
-    //////////////
-    // Constants
-    /////////////
-
-
-    var LIBVERSION  = '0.7.24',
-        EMPTY       = '',
-        UNKNOWN     = '?',
-        FUNC_TYPE   = 'function',
-        UNDEF_TYPE  = 'undefined',
-        OBJ_TYPE    = 'object',
-        STR_TYPE    = 'string',
-        MAJOR       = 'major', // deprecated
-        MODEL       = 'model',
-        NAME        = 'name',
-        TYPE        = 'type',
-        VENDOR      = 'vendor',
-        VERSION     = 'version',
-        ARCHITECTURE= 'architecture',
-        CONSOLE     = 'console',
-        MOBILE      = 'mobile',
-        TABLET      = 'tablet',
-        SMARTTV     = 'smarttv',
-        WEARABLE    = 'wearable',
-        EMBEDDED    = 'embedded';
-
-
-    ///////////
-    // Helper
-    //////////
-
-
-    var util = {
-        extend : function (regexes, extensions) {
-            var mergedRegexes = {};
-            for (var i in regexes) {
-                if (extensions[i] && extensions[i].length % 2 === 0) {
-                    mergedRegexes[i] = extensions[i].concat(regexes[i]);
-                } else {
-                    mergedRegexes[i] = regexes[i];
-                }
-            }
-            return mergedRegexes;
-        },
-        has : function (str1, str2) {
-          if (typeof str1 === "string") {
-            return str2.toLowerCase().indexOf(str1.toLowerCase()) !== -1;
-          } else {
-            return false;
-          }
-        },
-        lowerize : function (str) {
-            return str.toLowerCase();
-        },
-        major : function (version) {
-            return typeof(version) === STR_TYPE ? version.replace(/[^\d\.]/g,'').split(".")[0] : undefined;
-        },
-        trim : function (str) {
-          return str.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
-        }
-    };
-
-
-    ///////////////
-    // Map helper
-    //////////////
-
-
-    var mapper = {
-
-        rgx : function (ua, arrays) {
-
-            var i = 0, j, k, p, q, matches, match;
-
-            // loop through all regexes maps
-            while (i < arrays.length && !matches) {
-
-                var regex = arrays[i],       // even sequence (0,2,4,..)
-                    props = arrays[i + 1];   // odd sequence (1,3,5,..)
-                j = k = 0;
-
-                // try matching uastring with regexes
-                while (j < regex.length && !matches) {
-
-                    matches = regex[j++].exec(ua);
-
-                    if (!!matches) {
-                        for (p = 0; p < props.length; p++) {
-                            match = matches[++k];
-                            q = props[p];
-                            // check if given property is actually array
-                            if (typeof q === OBJ_TYPE && q.length > 0) {
-                                if (q.length == 2) {
-                                    if (typeof q[1] == FUNC_TYPE) {
-                                        // assign modified match
-                                        this[q[0]] = q[1].call(this, match);
-                                    } else {
-                                        // assign given value, ignore regex match
-                                        this[q[0]] = q[1];
-                                    }
-                                } else if (q.length == 3) {
-                                    // check whether function or regex
-                                    if (typeof q[1] === FUNC_TYPE && !(q[1].exec && q[1].test)) {
-                                        // call function (usually string mapper)
-                                        this[q[0]] = match ? q[1].call(this, match, q[2]) : undefined;
-                                    } else {
-                                        // sanitize match using given regex
-                                        this[q[0]] = match ? match.replace(q[1], q[2]) : undefined;
-                                    }
-                                } else if (q.length == 4) {
-                                        this[q[0]] = match ? q[3].call(this, match.replace(q[1], q[2])) : undefined;
-                                }
-                            } else {
-                                this[q] = match ? match : undefined;
-                            }
-                        }
-                    }
-                }
-                i += 2;
-            }
-        },
-
-        str : function (str, map) {
-
-            for (var i in map) {
-                // check if array
-                if (typeof map[i] === OBJ_TYPE && map[i].length > 0) {
-                    for (var j = 0; j < map[i].length; j++) {
-                        if (util.has(map[i][j], str)) {
-                            return (i === UNKNOWN) ? undefined : i;
-                        }
-                    }
-                } else if (util.has(map[i], str)) {
-                    return (i === UNKNOWN) ? undefined : i;
-                }
-            }
-            return str;
-        }
-    };
-
-
-    ///////////////
-    // String map
-    //////////////
-
-
-    var maps = {
-
-        browser : {
-            oldsafari : {
-                version : {
-                    '1.0'   : '/8',
-                    '1.2'   : '/1',
-                    '1.3'   : '/3',
-                    '2.0'   : '/412',
-                    '2.0.2' : '/416',
-                    '2.0.3' : '/417',
-                    '2.0.4' : '/419',
-                    '?'     : '/'
-                }
-            }
-        },
-
-        device : {
-            amazon : {
-                model : {
-                    'Fire Phone' : ['SD', 'KF']
-                }
-            },
-            sprint : {
-                model : {
-                    'Evo Shift 4G' : '7373KT'
-                },
-                vendor : {
-                    'HTC'       : 'APA',
-                    'Sprint'    : 'Sprint'
-                }
-            }
-        },
-
-        os : {
-            windows : {
-                version : {
-                    'ME'        : '4.90',
-                    'NT 3.11'   : 'NT3.51',
-                    'NT 4.0'    : 'NT4.0',
-                    '2000'      : 'NT 5.0',
-                    'XP'        : ['NT 5.1', 'NT 5.2'],
-                    'Vista'     : 'NT 6.0',
-                    '7'         : 'NT 6.1',
-                    '8'         : 'NT 6.2',
-                    '8.1'       : 'NT 6.3',
-                    '10'        : ['NT 6.4', 'NT 10.0'],
-                    'RT'        : 'ARM'
-                }
-            }
-        }
-    };
-
-
-    //////////////
-    // Regex map
-    /////////////
-
-
-    var regexes = {
-
-        browser : [[
-
-            // Presto based
-            /(opera\smini)\/([\w\.-]+)/i,                                       // Opera Mini
-            /(opera\s[mobiletab]{3,6}).+version\/([\w\.-]+)/i,                  // Opera Mobi/Tablet
-            /(opera).+version\/([\w\.]+)/i,                                     // Opera > 9.80
-            /(opera)[\/\s]+([\w\.]+)/i                                          // Opera < 9.80
-            ], [NAME, VERSION], [
-
-            /(opios)[\/\s]+([\w\.]+)/i                                          // Opera mini on iphone >= 8.0
-            ], [[NAME, 'Opera Mini'], VERSION], [
-
-            /\s(opr)\/([\w\.]+)/i                                               // Opera Webkit
-            ], [[NAME, 'Opera'], VERSION], [
-
-            // Mixed
-            /(kindle)\/([\w\.]+)/i,                                             // Kindle
-            /(lunascape|maxthon|netfront|jasmine|blazer)[\/\s]?([\w\.]*)/i,
-                                                                                // Lunascape/Maxthon/Netfront/Jasmine/Blazer
-            // Trident based
-            /(avant\s|iemobile|slim)(?:browser)?[\/\s]?([\w\.]*)/i,
-                                                                                // Avant/IEMobile/SlimBrowser
-            /(bidubrowser|baidubrowser)[\/\s]?([\w\.]+)/i,                      // Baidu Browser
-            /(?:ms|\()(ie)\s([\w\.]+)/i,                                        // Internet Explorer
-
-            // Webkit/KHTML based
-            /(rekonq)\/([\w\.]*)/i,                                             // Rekonq
-            /(chromium|flock|rockmelt|midori|epiphany|silk|skyfire|ovibrowser|bolt|iron|vivaldi|iridium|phantomjs|bowser|quark|qupzilla|falkon)\/([\w\.-]+)/i
-                                                                                // Chromium/Flock/RockMelt/Midori/Epiphany/Silk/Skyfire/Bolt/Iron/Iridium/PhantomJS/Bowser/QupZilla/Falkon
-            ], [NAME, VERSION], [
-
-            /(konqueror)\/([\w\.]+)/i                                           // Konqueror
-            ], [[NAME, 'Konqueror'], VERSION], [
-
-            /(trident).+rv[:\s]([\w\.]{1,9}).+like\sgecko/i                     // IE11
-            ], [[NAME, 'IE'], VERSION], [
-
-            /(edge|edgios|edga|edg)\/((\d+)?[\w\.]+)/i                          // Microsoft Edge
-            ], [[NAME, 'Edge'], VERSION], [
-
-            /(yabrowser)\/([\w\.]+)/i                                           // Yandex
-            ], [[NAME, 'Yandex'], VERSION], [
-
-            /(Avast)\/([\w\.]+)/i                                               // Avast Secure Browser
-            ], [[NAME, 'Avast Secure Browser'], VERSION], [
-
-            /(AVG)\/([\w\.]+)/i                                                 // AVG Secure Browser
-            ], [[NAME, 'AVG Secure Browser'], VERSION], [
-
-            /(puffin)\/([\w\.]+)/i                                              // Puffin
-            ], [[NAME, 'Puffin'], VERSION], [
-
-            /(focus)\/([\w\.]+)/i                                               // Firefox Focus
-            ], [[NAME, 'Firefox Focus'], VERSION], [
-
-            /(opt)\/([\w\.]+)/i                                                 // Opera Touch
-            ], [[NAME, 'Opera Touch'], VERSION], [
-
-            /((?:[\s\/])uc?\s?browser|(?:juc.+)ucweb)[\/\s]?([\w\.]+)/i         // UCBrowser
-            ], [[NAME, 'UCBrowser'], VERSION], [
-
-            /(comodo_dragon)\/([\w\.]+)/i                                       // Comodo Dragon
-            ], [[NAME, /_/g, ' '], VERSION], [
-
-            /(windowswechat qbcore)\/([\w\.]+)/i                                // WeChat Desktop for Windows Built-in Browser
-            ], [[NAME, 'WeChat(Win) Desktop'], VERSION], [
-
-            /(micromessenger)\/([\w\.]+)/i                                      // WeChat
-            ], [[NAME, 'WeChat'], VERSION], [
-
-            /(brave)\/([\w\.]+)/i                                               // Brave browser
-            ], [[NAME, 'Brave'], VERSION], [
-
-            /(whale)\/([\w\.]+)/i                                               // Whale browser
-            ], [[NAME, 'Whale'], VERSION], [
-
-            /(qqbrowserlite)\/([\w\.]+)/i                                       // QQBrowserLite
-            ], [NAME, VERSION], [
-
-            /(QQ)\/([\d\.]+)/i                                                  // QQ, aka ShouQ
-            ], [NAME, VERSION], [
-
-            /m?(qqbrowser)[\/\s]?([\w\.]+)/i                                    // QQBrowser
-            ], [NAME, VERSION], [
-
-            /(baiduboxapp)[\/\s]?([\w\.]+)/i                                    // Baidu App
-            ], [NAME, VERSION], [
-
-            /(2345Explorer)[\/\s]?([\w\.]+)/i                                   // 2345 Browser
-            ], [NAME, VERSION], [
-
-            /(MetaSr)[\/\s]?([\w\.]+)/i                                         // SouGouBrowser
-            ], [NAME], [
-
-            /(LBBROWSER)/i                                                      // LieBao Browser
-            ], [NAME], [
-
-            /xiaomi\/miuibrowser\/([\w\.]+)/i                                   // MIUI Browser
-            ], [VERSION, [NAME, 'MIUI Browser']], [
-
-            /;fbav\/([\w\.]+);/i                                                // Facebook App for iOS & Android with version
-            ], [VERSION, [NAME, 'Facebook']], [
-            
-            /FBAN\/FBIOS|FB_IAB\/FB4A/i                                         // Facebook App for iOS & Android without version
-            ], [[NAME, 'Facebook']], [
-
-            /safari\s(line)\/([\w\.]+)/i,                                       // Line App for iOS
-            /android.+(line)\/([\w\.]+)\/iab/i                                  // Line App for Android
-            ], [NAME, VERSION], [
-
-            /headlesschrome(?:\/([\w\.]+)|\s)/i                                 // Chrome Headless
-            ], [VERSION, [NAME, 'Chrome Headless']], [
-
-            /\swv\).+(chrome)\/([\w\.]+)/i                                      // Chrome WebView
-            ], [[NAME, /(.+)/, '$1 WebView'], VERSION], [
-
-            /((?:oculus|samsung)browser)\/([\w\.]+)/i
-            ], [[NAME, /(.+(?:g|us))(.+)/, '$1 $2'], VERSION], [                // Oculus / Samsung Browser
-
-            /android.+version\/([\w\.]+)\s+(?:mobile\s?safari|safari)*/i        // Android Browser
-            ], [VERSION, [NAME, 'Android Browser']], [
-
-            /(coc_coc_browser)\/([\w\.]+)/i                                     // Coc Coc Browser
-            ], [[NAME, 'Coc Coc'], VERSION], [
-
-              /(sailfishbrowser)\/([\w\.]+)/i                                     // Sailfish Browser
-            ], [[NAME, 'Sailfish Browser'], VERSION], [
-
-            /(chrome|omniweb|arora|[tizenoka]{5}\s?browser)\/v?([\w\.]+)/i
-                                                                                // Chrome/OmniWeb/Arora/Tizen/Nokia
-            ], [NAME, VERSION], [
-
-            /(dolfin)\/([\w\.]+)/i                                              // Dolphin
-            ], [[NAME, 'Dolphin'], VERSION], [
-
-            /(qihu|qhbrowser|qihoobrowser|360browser)/i                         // 360
-            ], [[NAME, '360 Browser']], [
-
-            /((?:android.+)crmo|crios)\/([\w\.]+)/i                             // Chrome for Android/iOS
-            ], [[NAME, 'Chrome'], VERSION], [
-
-            /(coast)\/([\w\.]+)/i                                               // Opera Coast
-            ], [[NAME, 'Opera Coast'], VERSION], [
-
-            /fxios\/([\w\.-]+)/i                                                // Firefox for iOS
-            ], [VERSION, [NAME, 'Firefox']], [
-
-            /version\/([\w\.]+)\s.*mobile\/\w+\s(safari)/i                      // Mobile Safari
-            ], [VERSION, [NAME, 'Mobile Safari']], [
-
-            /version\/([\w\.]+)\s.*(mobile\s?safari|safari)/i                   // Safari & Safari Mobile
-            ], [VERSION, NAME], [
-
-            /webkit.+?(gsa)\/([\w\.]+)\s.*(mobile\s?safari|safari)(\/[\w\.]+)/i // Google Search Appliance on iOS
-            ], [[NAME, 'GSA'], VERSION], [
-
-            /webkit.+?(mobile\s?safari|safari)(\/[\w\.]+)/i                     // Safari < 3.0
-            ], [NAME, [VERSION, mapper.str, maps.browser.oldsafari.version]], [
-
-            /(webkit|khtml)\/([\w\.]+)/i
-            ], [NAME, VERSION], [
-
-            // Gecko based
-            /(navigator|netscape)\/([\w\.-]+)/i                                 // Netscape
-            ], [[NAME, 'Netscape'], VERSION], [
-            /(swiftfox)/i,                                                      // Swiftfox
-            /(icedragon|iceweasel|camino|chimera|fennec|maemo\sbrowser|minimo|conkeror)[\/\s]?([\w\.\+]+)/i,
-                                                                                // IceDragon/Iceweasel/Camino/Chimera/Fennec/Maemo/Minimo/Conkeror
-            /(firefox|seamonkey|k-meleon|icecat|iceape|firebird|phoenix|palemoon|basilisk|waterfox)\/([\w\.-]+)$/i,
-
-                                                                                // Firefox/SeaMonkey/K-Meleon/IceCat/IceApe/Firebird/Phoenix
-            /(firefox)\/([\w\.]+)\s[\w\s\-]+\/[\w\.]+$/i,                       // Other Firefox-based
-            /(mozilla)\/([\w\.]+)\s.+rv\:.+gecko\/\d+/i,                        // Mozilla
-
-            // Other
-            /(polaris|lynx|dillo|icab|doris|amaya|w3m|netsurf|sleipnir)[\/\s]?([\w\.]+)/i,
-                                                                                // Polaris/Lynx/Dillo/iCab/Doris/Amaya/w3m/NetSurf/Sleipnir
-            /(links)\s\(([\w\.]+)/i,                                            // Links
-            /(gobrowser)\/?([\w\.]*)/i,                                         // GoBrowser
-            /(ice\s?browser)\/v?([\w\._]+)/i,                                   // ICE Browser
-            /(mosaic)[\/\s]([\w\.]+)/i                                          // Mosaic
-            ], [NAME, VERSION]
-        ],
-
-        cpu : [[
-
-            /(?:(amd|x(?:(?:86|64)[_-])?|wow|win)64)[;\)]/i                     // AMD64
-            ], [[ARCHITECTURE, 'amd64']], [
-
-            /(ia32(?=;))/i                                                      // IA32 (quicktime)
-            ], [[ARCHITECTURE, util.lowerize]], [
-
-            /((?:i[346]|x)86)[;\)]/i                                            // IA32
-            ], [[ARCHITECTURE, 'ia32']], [
-
-            // PocketPC mistakenly identified as PowerPC
-            /windows\s(ce|mobile);\sppc;/i
-            ], [[ARCHITECTURE, 'arm']], [
-
-            /((?:ppc|powerpc)(?:64)?)(?:\smac|;|\))/i                           // PowerPC
-            ], [[ARCHITECTURE, /ower/, '', util.lowerize]], [
-
-            /(sun4\w)[;\)]/i                                                    // SPARC
-            ], [[ARCHITECTURE, 'sparc']], [
-
-            /((?:avr32|ia64(?=;))|68k(?=\))|arm(?:64|(?=v\d+[;l]))|(?=atmel\s)avr|(?:irix|mips|sparc)(?:64)?(?=;)|pa-risc)/i
-                                                                                // IA64, 68K, ARM/64, AVR/32, IRIX/64, MIPS/64, SPARC/64, PA-RISC
-            ], [[ARCHITECTURE, util.lowerize]]
-        ],
-
-        device : [[
-
-            /\((ipad|playbook);[\w\s\),;-]+(rim|apple)/i                        // iPad/PlayBook
-            ], [MODEL, VENDOR, [TYPE, TABLET]], [
-
-            /applecoremedia\/[\w\.]+ \((ipad)/                                  // iPad
-            ], [MODEL, [VENDOR, 'Apple'], [TYPE, TABLET]], [
-
-            /(apple\s{0,1}tv)/i                                                 // Apple TV
-            ], [[MODEL, 'Apple TV'], [VENDOR, 'Apple'], [TYPE, SMARTTV]], [
-
-            /(archos)\s(gamepad2?)/i,                                           // Archos
-            /(hp).+(touchpad)/i,                                                // HP TouchPad
-            /(hp).+(tablet)/i,                                                  // HP Tablet
-            /(kindle)\/([\w\.]+)/i,                                             // Kindle
-            /\s(nook)[\w\s]+build\/(\w+)/i,                                     // Nook
-            /(dell)\s(strea[kpr\s\d]*[\dko])/i                                  // Dell Streak
-            ], [VENDOR, MODEL, [TYPE, TABLET]], [
-
-            /(kf[A-z]+)(\sbuild\/|\)).+silk\//i                                 // Kindle Fire HD
-            ], [MODEL, [VENDOR, 'Amazon'], [TYPE, TABLET]], [
-            /(sd|kf)[0349hijorstuw]+(\sbuild\/|\)).+silk\//i                    // Fire Phone
-            ], [[MODEL, mapper.str, maps.device.amazon.model], [VENDOR, 'Amazon'], [TYPE, MOBILE]], [
-            /android.+aft([\w])(\sbuild\/|\))/i                                 // Fire TV
-            ], [MODEL, [VENDOR, 'Amazon'], [TYPE, SMARTTV]], [
-
-            /\((ip[honed|\s\w*]+);.+(apple)/i                                   // iPod/iPhone
-            ], [MODEL, VENDOR, [TYPE, MOBILE]], [
-            /\((ip[honed|\s\w*]+);/i                                            // iPod/iPhone
-            ], [MODEL, [VENDOR, 'Apple'], [TYPE, MOBILE]], [
-
-            /(blackberry)[\s-]?(\w+)/i,                                         // BlackBerry
-            /(blackberry|benq|palm(?=\-)|sonyericsson|acer|asus|dell|meizu|motorola|polytron)[\s_-]?([\w-]*)/i,
-                                                                                // BenQ/Palm/Sony-Ericsson/Acer/Asus/Dell/Meizu/Motorola/Polytron
-            /(hp)\s([\w\s]+\w)/i,                                               // HP iPAQ
-            /(asus)-?(\w+)/i                                                    // Asus
-            ], [VENDOR, MODEL, [TYPE, MOBILE]], [
-            /\(bb10;\s(\w+)/i                                                   // BlackBerry 10
-            ], [MODEL, [VENDOR, 'BlackBerry'], [TYPE, MOBILE]], [
-                                                                                // Asus Tablets
-            /android.+(transfo[prime\s]{4,10}\s\w+|eeepc|slider\s\w+|nexus 7|padfone|p00c)/i
-            ], [MODEL, [VENDOR, 'Asus'], [TYPE, TABLET]], [
-
-            /(sony)\s(tablet\s[ps])\sbuild\//i,                                  // Sony
-            /(sony)?(?:sgp.+)\sbuild\//i
-            ], [[VENDOR, 'Sony'], [MODEL, 'Xperia Tablet'], [TYPE, TABLET]], [
-            /android.+\s([c-g]\d{4}|so[-l]\w+)(?=\sbuild\/|\).+chrome\/(?![1-6]{0,1}\d\.))/i
-            ], [MODEL, [VENDOR, 'Sony'], [TYPE, MOBILE]], [
-
-            /\s(ouya)\s/i,                                                      // Ouya
-            /(nintendo)\s([wids3u]+)/i                                          // Nintendo
-            ], [VENDOR, MODEL, [TYPE, CONSOLE]], [
-
-            /android.+;\s(shield)\sbuild/i                                      // Nvidia
-            ], [MODEL, [VENDOR, 'Nvidia'], [TYPE, CONSOLE]], [
-
-            /(playstation\s[34portablevi]+)/i                                   // Playstation
-            ], [MODEL, [VENDOR, 'Sony'], [TYPE, CONSOLE]], [
-
-            /(sprint\s(\w+))/i                                                  // Sprint Phones
-            ], [[VENDOR, mapper.str, maps.device.sprint.vendor], [MODEL, mapper.str, maps.device.sprint.model], [TYPE, MOBILE]], [
-
-            /(htc)[;_\s-]{1,2}([\w\s]+(?=\)|\sbuild)|\w+)/i,                    // HTC
-            /(zte)-(\w*)/i,                                                     // ZTE
-            /(alcatel|geeksphone|nexian|panasonic|(?=;\s)sony)[_\s-]?([\w-]*)/i
-                                                                                // Alcatel/GeeksPhone/Nexian/Panasonic/Sony
-            ], [VENDOR, [MODEL, /_/g, ' '], [TYPE, MOBILE]], [
-
-            /(nexus\s9)/i                                                       // HTC Nexus 9
-            ], [MODEL, [VENDOR, 'HTC'], [TYPE, TABLET]], [
-
-            /d\/huawei([\w\s-]+)[;\)]/i,                                        // Huawei
-            /android.+\s(nexus\s6p|vog-[at]?l\d\d|ane-[at]?l[x\d]\d|eml-a?l\d\da?|lya-[at]?l\d[\dc]|clt-a?l\d\di?)/i
-
-            ], [MODEL, [VENDOR, 'Huawei'], [TYPE, MOBILE]], [
-
-            /android.+(bah2?-a?[lw]\d{2})/i                                     // Huawei MediaPad
-            ], [MODEL, [VENDOR, 'Huawei'], [TYPE, TABLET]], [
-
-            /(microsoft);\s(lumia[\s\w]+)/i                                     // Microsoft Lumia
-            ], [VENDOR, MODEL, [TYPE, MOBILE]], [
-
-            /[\s\(;](xbox(?:\sone)?)[\s\);]/i                                   // Microsoft Xbox
-            ], [MODEL, [VENDOR, 'Microsoft'], [TYPE, CONSOLE]], [
-            /(kin\.[onetw]{3})/i                                                // Microsoft Kin
-            ], [[MODEL, /\./g, ' '], [VENDOR, 'Microsoft'], [TYPE, MOBILE]], [
-
-                                                                                // Motorola
-            /\s(milestone|droid(?:[2-4x]|\s(?:bionic|x2|pro|razr))?:?(\s4g)?)[\w\s]+build\//i,
-            /mot[\s-]?(\w*)/i,
-            /(XT\d{3,4}) build\//i,
-            /(nexus\s6)/i
-            ], [MODEL, [VENDOR, 'Motorola'], [TYPE, MOBILE]], [
-            /android.+\s(mz60\d|xoom[\s2]{0,2})\sbuild\//i
-            ], [MODEL, [VENDOR, 'Motorola'], [TYPE, TABLET]], [
-
-            /hbbtv\/\d+\.\d+\.\d+\s+\([\w\s]*;\s*(\w[^;]*);([^;]*)/i            // HbbTV devices
-            ], [[VENDOR, util.trim], [MODEL, util.trim], [TYPE, SMARTTV]], [
-
-            /hbbtv.+maple;(\d+)/i
-            ], [[MODEL, /^/, 'SmartTV'], [VENDOR, 'Samsung'], [TYPE, SMARTTV]], [
-
-            /\(dtv[\);].+(aquos)/i                                              // Sharp
-            ], [MODEL, [VENDOR, 'Sharp'], [TYPE, SMARTTV]], [
-
-            /android.+((sch-i[89]0\d|shw-m380s|SM-P605|SM-P610|SM-P587|gt-p\d{4}|gt-n\d+|sgh-t8[56]9|nexus 10))/i,
-            /((SM-T\w+))/i
-            ], [[VENDOR, 'Samsung'], MODEL, [TYPE, TABLET]], [                  // Samsung
-            /smart-tv.+(samsung)/i
-            ], [VENDOR, [TYPE, SMARTTV], MODEL], [
-            /((s[cgp]h-\w+|gt-\w+|galaxy\snexus|sm-\w[\w\d]+))/i,
-            /(sam[sung]*)[\s-]*(\w+-?[\w-]*)/i,
-            /sec-((sgh\w+))/i
-            ], [[VENDOR, 'Samsung'], MODEL, [TYPE, MOBILE]], [
-
-            /sie-(\w*)/i                                                        // Siemens
-            ], [MODEL, [VENDOR, 'Siemens'], [TYPE, MOBILE]], [
-
-            /(maemo|nokia).*(n900|lumia\s\d+)/i,                                // Nokia
-            /(nokia)[\s_-]?([\w-]*)/i
-            ], [[VENDOR, 'Nokia'], MODEL, [TYPE, MOBILE]], [
-
-            /android[x\d\.\s;]+\s([ab][1-7]\-?[0178a]\d\d?)/i                   // Acer
-            ], [MODEL, [VENDOR, 'Acer'], [TYPE, TABLET]], [
-
-            /android.+([vl]k\-?\d{3})\s+build/i                                 // LG Tablet
-            ], [MODEL, [VENDOR, 'LG'], [TYPE, TABLET]], [
-            /android\s3\.[\s\w;-]{10}(lg?)-([06cv9]{3,4})/i                     // LG Tablet
-            ], [[VENDOR, 'LG'], MODEL, [TYPE, TABLET]], [
-            /linux;\snetcast.+smarttv/i,                                        // LG SmartTV
-            /lg\snetcast\.tv-201\d/i
-            ], [[VENDOR, 'LG'], MODEL, [TYPE, SMARTTV]], [
-            /(nexus\s[45])/i,                                                   // LG
-            /lg[e;\s\/-]+(\w*)/i,
-            /android.+lg(\-?[\d\w]+)\s+build/i
-            ], [MODEL, [VENDOR, 'LG'], [TYPE, MOBILE]], [
-
-            /(lenovo)\s?(s(?:5000|6000)(?:[\w-]+)|tab(?:[\s\w]+))/i             // Lenovo tablets
-            ], [VENDOR, MODEL, [TYPE, TABLET]], [
-            /android.+(ideatab[a-z0-9\-\s]+)/i                                  // Lenovo
-            ], [MODEL, [VENDOR, 'Lenovo'], [TYPE, TABLET]], [
-            /(lenovo)[_\s-]?([\w-]+)/i
-            ], [VENDOR, MODEL, [TYPE, MOBILE]], [
-
-            /linux;.+((jolla));/i                                               // Jolla
-            ], [VENDOR, MODEL, [TYPE, MOBILE]], [
-
-            /((pebble))app\/[\d\.]+\s/i                                         // Pebble
-            ], [VENDOR, MODEL, [TYPE, WEARABLE]], [
-
-            /android.+;\s(oppo)\s?([\w\s]+)\sbuild/i                            // OPPO
-            ], [VENDOR, MODEL, [TYPE, MOBILE]], [
-
-            /crkey/i                                                            // Google Chromecast
-            ], [[MODEL, 'Chromecast'], [VENDOR, 'Google'], [TYPE, SMARTTV]], [
-
-            /android.+;\s(glass)\s\d/i                                          // Google Glass
-            ], [MODEL, [VENDOR, 'Google'], [TYPE, WEARABLE]], [
-
-            /android.+;\s(pixel c)[\s)]/i                                       // Google Pixel C
-            ], [MODEL, [VENDOR, 'Google'], [TYPE, TABLET]], [
-
-            /android.+;\s(pixel( [2-9]a?)?( xl)?)[\s)]/i                        // Google Pixel
-            ], [MODEL, [VENDOR, 'Google'], [TYPE, MOBILE]], [
-
-            /android.+;\s(\w+)\s+build\/hm\1/i,                                 // Xiaomi Hongmi 'numeric' models
-            /android.+(hm[\s\-_]?note?[\s_]?(?:\d\w)?)\sbuild/i,                // Xiaomi Hongmi
-            /android.+(redmi[\s\-_]?(?:note|k)?(?:[\s_]?[\w\s]+))(?:\sbuild|\))/i,      
-                                                                                // Xiaomi Redmi
-            /android.+(mi[\s\-_]?(?:a\d|one|one[\s_]plus|note lte)?[\s_]?(?:\d?\w?)[\s_]?(?:plus)?)\sbuild/i    
-                                                                                // Xiaomi Mi
-            ], [[MODEL, /_/g, ' '], [VENDOR, 'Xiaomi'], [TYPE, MOBILE]], [
-            /android.+(mi[\s\-_]?(?:pad)(?:[\s_]?[\w\s]+))(?:\sbuild|\))/i     // Mi Pad tablets
-            ],[[MODEL, /_/g, ' '], [VENDOR, 'Xiaomi'], [TYPE, TABLET]], [
-            /android.+;\s(m[1-5]\snote)\sbuild/i                                // Meizu
-            ], [MODEL, [VENDOR, 'Meizu'], [TYPE, MOBILE]], [
-            /(mz)-([\w-]{2,})/i
-            ], [[VENDOR, 'Meizu'], MODEL, [TYPE, MOBILE]], [
-
-            /android.+a000(1)\s+build/i,                                        // OnePlus
-            /android.+oneplus\s(a\d{4})[\s)]/i
-            ], [MODEL, [VENDOR, 'OnePlus'], [TYPE, MOBILE]], [
-
-            /android.+[;\/]\s*(RCT[\d\w]+)\s+build/i                            // RCA Tablets
-            ], [MODEL, [VENDOR, 'RCA'], [TYPE, TABLET]], [
-
-            /android.+[;\/\s](Venue[\d\s]{2,7})\s+build/i                       // Dell Venue Tablets
-            ], [MODEL, [VENDOR, 'Dell'], [TYPE, TABLET]], [
-
-            /android.+[;\/]\s*(Q[T|M][\d\w]+)\s+build/i                         // Verizon Tablet
-            ], [MODEL, [VENDOR, 'Verizon'], [TYPE, TABLET]], [
-
-            /android.+[;\/]\s+(Barnes[&\s]+Noble\s+|BN[RT])(\S(?:.*\S)?)\s+build/i     // Barnes & Noble Tablet
-            ], [[VENDOR, 'Barnes & Noble'], MODEL, [TYPE, TABLET]], [
-
-            /android.+[;\/]\s+(TM\d{3}.*\b)\s+build/i                           // Barnes & Noble Tablet
-            ], [MODEL, [VENDOR, 'NuVision'], [TYPE, TABLET]], [
-
-            /android.+;\s(k88)\sbuild/i                                         // ZTE K Series Tablet
-            ], [MODEL, [VENDOR, 'ZTE'], [TYPE, TABLET]], [
-
-            /android.+[;\/]\s*(gen\d{3})\s+build.*49h/i                         // Swiss GEN Mobile
-            ], [MODEL, [VENDOR, 'Swiss'], [TYPE, MOBILE]], [
-
-            /android.+[;\/]\s*(zur\d{3})\s+build/i                              // Swiss ZUR Tablet
-            ], [MODEL, [VENDOR, 'Swiss'], [TYPE, TABLET]], [
-
-            /android.+[;\/]\s*((Zeki)?TB.*\b)\s+build/i                         // Zeki Tablets
-            ], [MODEL, [VENDOR, 'Zeki'], [TYPE, TABLET]], [
-
-            /(android).+[;\/]\s+([YR]\d{2})\s+build/i,
-            /android.+[;\/]\s+(Dragon[\-\s]+Touch\s+|DT)(\w{5})\sbuild/i        // Dragon Touch Tablet
-            ], [[VENDOR, 'Dragon Touch'], MODEL, [TYPE, TABLET]], [
-
-            /android.+[;\/]\s*(NS-?\w{0,9})\sbuild/i                            // Insignia Tablets
-            ], [MODEL, [VENDOR, 'Insignia'], [TYPE, TABLET]], [
-
-            /android.+[;\/]\s*((NX|Next)-?\w{0,9})\s+build/i                    // NextBook Tablets
-            ], [MODEL, [VENDOR, 'NextBook'], [TYPE, TABLET]], [
-
-            /android.+[;\/]\s*(Xtreme\_)?(V(1[045]|2[015]|30|40|60|7[05]|90))\s+build/i
-            ], [[VENDOR, 'Voice'], MODEL, [TYPE, MOBILE]], [                    // Voice Xtreme Phones
-
-            /android.+[;\/]\s*(LVTEL\-)?(V1[12])\s+build/i                     // LvTel Phones
-            ], [[VENDOR, 'LvTel'], MODEL, [TYPE, MOBILE]], [
-
-            /android.+;\s(PH-1)\s/i
-            ], [MODEL, [VENDOR, 'Essential'], [TYPE, MOBILE]], [                // Essential PH-1
-
-            /android.+[;\/]\s*(V(100MD|700NA|7011|917G).*\b)\s+build/i          // Envizen Tablets
-            ], [MODEL, [VENDOR, 'Envizen'], [TYPE, TABLET]], [
-
-            /android.+[;\/]\s*(Le[\s\-]+Pan)[\s\-]+(\w{1,9})\s+build/i          // Le Pan Tablets
-            ], [VENDOR, MODEL, [TYPE, TABLET]], [
-
-            /android.+[;\/]\s*(Trio[\s\w\-\.]+)\s+build/i                       // MachSpeed Tablets
-            ], [MODEL, [VENDOR, 'MachSpeed'], [TYPE, TABLET]], [
-
-            /android.+[;\/]\s*(Trinity)[\-\s]*(T\d{3})\s+build/i                // Trinity Tablets
-            ], [VENDOR, MODEL, [TYPE, TABLET]], [
-
-            /android.+[;\/]\s*TU_(1491)\s+build/i                               // Rotor Tablets
-            ], [MODEL, [VENDOR, 'Rotor'], [TYPE, TABLET]], [
-
-            //android.+(KS(.+))\s+build/i                                        // Amazon Kindle Tablets
-            //], [MODEL, [VENDOR, 'Amazon'], [TYPE, TABLET]], [
-
-            /android.+(Gigaset)[\s\-]+(Q\w{1,9})\s+build/i                      // Gigaset Tablets
-            ], [VENDOR, MODEL, [TYPE, TABLET]], [
-                                                                                // Android Phones from Unidentified Vendors
-            /android .+?; ([^;]+?)(?: build|\) applewebkit).+? mobile safari/i
-            ], [MODEL, [TYPE, MOBILE]], [
-                                                                                // Android Tablets from Unidentified Vendors
-            /android .+?;\s([^;]+?)(?: build|\) applewebkit).+?(?! mobile) safari/i
-            ], [MODEL, [TYPE, TABLET]], [
-
-            /\s(tablet|tab)[;\/]/i,                                             // Unidentifiable Tablet
-            /\s(mobile)(?:[;\/]|\ssafari)/i                                     // Unidentifiable Mobile
-            ], [[TYPE, util.lowerize], VENDOR, MODEL], [
-
-            /[\s\/\(](smart-?tv)[;\)]/i                                         // SmartTV
-            ], [[TYPE, SMARTTV]], [
-
-            /(android[\w\.\s\-]{0,9});.+build/i                                 // Generic Android Device
-            ], [MODEL, [VENDOR, 'Generic']], [
-
-            /(phone)/i
-            ], [[TYPE, MOBILE]]
-        ],
-
-        engine : [[
-
-            /windows.+\sedge\/([\w\.]+)/i                                       // EdgeHTML
-            ], [VERSION, [NAME, 'EdgeHTML']], [
-
-            /webkit\/537\.36.+chrome\/(?!27)([\w\.]+)/i                         // Blink
-            ], [VERSION, [NAME, 'Blink']], [
-
-            /(presto)\/([\w\.]+)/i,                                             // Presto
-            /(webkit|trident|netfront|netsurf|amaya|lynx|w3m|goanna)\/([\w\.]+)/i,
-                                                                                // WebKit/Trident/NetFront/NetSurf/Amaya/Lynx/w3m/Goanna
-            /(khtml|tasman|links)[\/\s]\(?([\w\.]+)/i,                          // KHTML/Tasman/Links
-            /(icab)[\/\s]([23]\.[\d\.]+)/i                                      // iCab
-            ], [NAME, VERSION], [
-
-            /rv\:([\w\.]{1,9}).+(gecko)/i                                       // Gecko
-            ], [VERSION, NAME]
-        ],
-
-        os : [[
-
-            // Xbox, consider this before other Windows-based devices
-            /(xbox);\s+xbox\s([^\);]+)/i,                                       // Microsoft Xbox (360, One, X, S, Series X, Series S)
-
-            // Windows based
-            /microsoft\s(windows)\s(vista|xp)/i                                 // Windows (iTunes)
-            ], [NAME, VERSION], [
-            /(windows)\snt\s6\.2;\s(arm)/i,                                     // Windows RT
-            /(windows\sphone(?:\sos)*)[\s\/]?([\d\.\s\w]*)/i,                   // Windows Phone
-            /(windows\smobile|windows)[\s\/]?([ntce\d\.\s]+\w)/i
-            ], [NAME, [VERSION, mapper.str, maps.os.windows.version]], [
-            /(win(?=3|9|n)|win\s9x\s)([nt\d\.]+)/i
-            ], [[NAME, 'Windows'], [VERSION, mapper.str, maps.os.windows.version]], [
-
-            // Mobile/Embedded OS
-            /\((bb)(10);/i                                                      // BlackBerry 10
-            ], [[NAME, 'BlackBerry'], VERSION], [
-            /(blackberry)\w*\/?([\w\.]*)/i,                                     // Blackberry
-            /(tizen|kaios)[\/\s]([\w\.]+)/i,                                    // Tizen/KaiOS
-            /(android|webos|palm\sos|qnx|bada|rim\stablet\sos|meego|sailfish|contiki)[\/\s-]?([\w\.]*)/i
-                                                                                // Android/WebOS/Palm/QNX/Bada/RIM/MeeGo/Contiki/Sailfish OS
-            ], [NAME, VERSION], [
-            /(symbian\s?os|symbos|s60(?=;))[\/\s-]?([\w\.]*)/i                  // Symbian
-            ], [[NAME, 'Symbian'], VERSION], [
-            /\((series40);/i                                                    // Series 40
-            ], [NAME], [
-            /mozilla.+\(mobile;.+gecko.+firefox/i                               // Firefox OS
-            ], [[NAME, 'Firefox OS'], VERSION], [
-
-            // Google Chromecast
-            /crkey\/([\d\.]+)/i                                                 // Google Chromecast
-            ], [VERSION, [NAME, 'Chromecast']], [
-
-            // Console
-            /(nintendo|playstation)\s([wids34portablevu]+)/i,                   // Nintendo/Playstation
-
-            // GNU/Linux based
-            /(mint)[\/\s\(]?(\w*)/i,                                            // Mint
-            /(mageia|vectorlinux)[;\s]/i,                                       // Mageia/VectorLinux
-            /(joli|[kxln]?ubuntu|debian|suse|opensuse|gentoo|(?=\s)arch|slackware|fedora|mandriva|centos|pclinuxos|redhat|zenwalk|linpus)[\/\s-]?(?!chrom)([\w\.-]*)/i,
-                                                                                // Joli/Ubuntu/Debian/SUSE/Gentoo/Arch/Slackware
-                                                                                // Fedora/Mandriva/CentOS/PCLinuxOS/RedHat/Zenwalk/Linpus
-            /(hurd|linux)\s?([\w\.]*)/i,                                        // Hurd/Linux
-            /(gnu)\s?([\w\.]*)/i                                                // GNU
-            ], [NAME, VERSION], [
-
-            /(cros)\s[\w]+\s([\w\.]+\w)/i                                       // Chromium OS
-            ], [[NAME, 'Chromium OS'], VERSION],[
-
-            // Solaris
-            /(sunos)\s?([\w\.\d]*)/i                                            // Solaris
-            ], [[NAME, 'Solaris'], VERSION], [
-
-            // BSD based
-            /\s([frentopc-]{0,4}bsd|dragonfly)\s?([\w\.]*)/i                    // FreeBSD/NetBSD/OpenBSD/PC-BSD/DragonFly
-            ], [NAME, VERSION],[
-
-            /(haiku)\s(\w+)/i                                                   // Haiku
-            ], [NAME, VERSION],[
-
-            /cfnetwork\/.+darwin/i,
-            /ip[honead]{2,4}(?:.*os\s([\w]+)\slike\smac|;\sopera)/i             // iOS
-            ], [[VERSION, /_/g, '.'], [NAME, 'iOS']], [
-
-            /(mac\sos\sx)\s?([\w\s\.]*)/i,
-            /(macintosh|mac(?=_powerpc)\s)/i                                    // Mac OS
-            ], [[NAME, 'Mac OS'], [VERSION, /_/g, '.']], [
-
-            // Other
-            /((?:open)?solaris)[\/\s-]?([\w\.]*)/i,                             // Solaris
-            /(aix)\s((\d)(?=\.|\)|\s)[\w\.])*/i,                                // AIX
-            /(plan\s9|minix|beos|os\/2|amigaos|morphos|risc\sos|openvms|fuchsia)/i,
-                                                                                // Plan9/Minix/BeOS/OS2/AmigaOS/MorphOS/RISCOS/OpenVMS/Fuchsia
-            /(unix)\s?([\w\.]*)/i                                               // UNIX
-            ], [NAME, VERSION]
-        ]
-    };
-
-
-    /////////////////
-    // Constructor
-    ////////////////
-    var UAParser = function (uastring, extensions) {
-
-        if (typeof uastring === 'object') {
-            extensions = uastring;
-            uastring = undefined;
-        }
-
-        if (!(this instanceof UAParser)) {
-            return new UAParser(uastring, extensions).getResult();
-        }
-
-        var ua = uastring || ((window && window.navigator && window.navigator.userAgent) ? window.navigator.userAgent : EMPTY);
-        var rgxmap = extensions ? util.extend(regexes, extensions) : regexes;
-
-        this.getBrowser = function () {
-            var browser = { name: undefined, version: undefined };
-            mapper.rgx.call(browser, ua, rgxmap.browser);
-            browser.major = util.major(browser.version); // deprecated
-            return browser;
-        };
-        this.getCPU = function () {
-            var cpu = { architecture: undefined };
-            mapper.rgx.call(cpu, ua, rgxmap.cpu);
-            return cpu;
-        };
-        this.getDevice = function () {
-            var device = { vendor: undefined, model: undefined, type: undefined };
-            mapper.rgx.call(device, ua, rgxmap.device);
-            return device;
-        };
-        this.getEngine = function () {
-            var engine = { name: undefined, version: undefined };
-            mapper.rgx.call(engine, ua, rgxmap.engine);
-            return engine;
-        };
-        this.getOS = function () {
-            var os = { name: undefined, version: undefined };
-            mapper.rgx.call(os, ua, rgxmap.os);
-            return os;
-        };
-        this.getResult = function () {
-            return {
-                ua      : this.getUA(),
-                browser : this.getBrowser(),
-                engine  : this.getEngine(),
-                os      : this.getOS(),
-                device  : this.getDevice(),
-                cpu     : this.getCPU()
-            };
-        };
-        this.getUA = function () {
-            return ua;
-        };
-        this.setUA = function (uastring) {
-            ua = uastring;
-            return this;
-        };
-        return this;
-    };
-
-    UAParser.VERSION = LIBVERSION;
-    UAParser.BROWSER = {
-        NAME    : NAME,
-        MAJOR   : MAJOR, // deprecated
-        VERSION : VERSION
-    };
-    UAParser.CPU = {
-        ARCHITECTURE : ARCHITECTURE
-    };
-    UAParser.DEVICE = {
-        MODEL   : MODEL,
-        VENDOR  : VENDOR,
-        TYPE    : TYPE,
-        CONSOLE : CONSOLE,
-        MOBILE  : MOBILE,
-        SMARTTV : SMARTTV,
-        TABLET  : TABLET,
-        WEARABLE: WEARABLE,
-        EMBEDDED: EMBEDDED
-    };
-    UAParser.ENGINE = {
-        NAME    : NAME,
-        VERSION : VERSION
-    };
-    UAParser.OS = {
-        NAME    : NAME,
-        VERSION : VERSION
-    };
-
-    ///////////
-    // Export
-    //////////
-
-
-    // check js environment
-    if (typeof(exports) !== UNDEF_TYPE) {
-        // nodejs env
-        if (typeof module !== UNDEF_TYPE && module.exports) {
-            exports = module.exports = UAParser;
-        }
-        exports.UAParser = UAParser;
-    } else {
-        // requirejs env (optional)
-        if (typeof(define) === 'function' && define.amd) {
-            define(function () {
-                return UAParser;
-            });
-        } else if (window) {
-            // browser env
-            window.UAParser = UAParser;
-        }
-    }
-
-    // jQuery/Zepto specific (optional)
-    // Note:
-    //   In AMD env the global scope should be kept clean, but jQuery is an exception.
-    //   jQuery always exports to global scope, unless jQuery.noConflict(true) is used,
-    //   and we should catch that.
-    var $ = window && (window.jQuery || window.Zepto);
-    if ($ && !$.ua) {
-        var parser = new UAParser();
-        $.ua = parser.getResult();
-        $.ua.get = function () {
-            return parser.getUA();
-        };
-        $.ua.set = function (uastring) {
-            parser.setUA(uastring);
-            var result = parser.getResult();
-            for (var prop in result) {
-                $.ua[prop] = result[prop];
-            }
-        };
-    }
-
-})(typeof window === 'object' ? window : this);
-
-},{}],270:[function(require,module,exports){
+},{"buffer":79,"dup":77}],252:[function(require,module,exports){
 (function (global){(function (){
 
 /**
@@ -44629,259 +40682,7 @@ function config (name) {
 }
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],271:[function(require,module,exports){
-/**
- * Convert array of 16 byte values to UUID string format of the form:
- * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
- */
-var byteToHex = [];
-for (var i = 0; i < 256; ++i) {
-  byteToHex[i] = (i + 0x100).toString(16).substr(1);
-}
-
-function bytesToUuid(buf, offset) {
-  var i = offset || 0;
-  var bth = byteToHex;
-  // join used to fix memory issue caused by concatenation: https://bugs.chromium.org/p/v8/issues/detail?id=3175#c4
-  return ([
-    bth[buf[i++]], bth[buf[i++]],
-    bth[buf[i++]], bth[buf[i++]], '-',
-    bth[buf[i++]], bth[buf[i++]], '-',
-    bth[buf[i++]], bth[buf[i++]], '-',
-    bth[buf[i++]], bth[buf[i++]], '-',
-    bth[buf[i++]], bth[buf[i++]],
-    bth[buf[i++]], bth[buf[i++]],
-    bth[buf[i++]], bth[buf[i++]]
-  ]).join('');
-}
-
-module.exports = bytesToUuid;
-
-},{}],272:[function(require,module,exports){
-// Unique ID creation requires a high quality random # generator.  In the
-// browser this is a little complicated due to unknown quality of Math.random()
-// and inconsistent support for the `crypto` API.  We do the best we can via
-// feature-detection
-
-// getRandomValues needs to be invoked in a context where "this" is a Crypto
-// implementation. Also, find the complete implementation of crypto on IE11.
-var getRandomValues = (typeof(crypto) != 'undefined' && crypto.getRandomValues && crypto.getRandomValues.bind(crypto)) ||
-                      (typeof(msCrypto) != 'undefined' && typeof window.msCrypto.getRandomValues == 'function' && msCrypto.getRandomValues.bind(msCrypto));
-
-if (getRandomValues) {
-  // WHATWG crypto RNG - http://wiki.whatwg.org/wiki/Crypto
-  var rnds8 = new Uint8Array(16); // eslint-disable-line no-undef
-
-  module.exports = function whatwgRNG() {
-    getRandomValues(rnds8);
-    return rnds8;
-  };
-} else {
-  // Math.random()-based (RNG)
-  //
-  // If all else fails, use Math.random().  It's fast, but is of unspecified
-  // quality.
-  var rnds = new Array(16);
-
-  module.exports = function mathRNG() {
-    for (var i = 0, r; i < 16; i++) {
-      if ((i & 0x03) === 0) r = Math.random() * 0x100000000;
-      rnds[i] = r >>> ((i & 0x03) << 3) & 0xff;
-    }
-
-    return rnds;
-  };
-}
-
-},{}],273:[function(require,module,exports){
-var rng = require('./lib/rng');
-var bytesToUuid = require('./lib/bytesToUuid');
-
-function v4(options, buf, offset) {
-  var i = buf && offset || 0;
-
-  if (typeof(options) == 'string') {
-    buf = options === 'binary' ? new Array(16) : null;
-    options = null;
-  }
-  options = options || {};
-
-  var rnds = options.random || (options.rng || rng)();
-
-  // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
-  rnds[6] = (rnds[6] & 0x0f) | 0x40;
-  rnds[8] = (rnds[8] & 0x3f) | 0x80;
-
-  // Copy bytes to buffer, if provided
-  if (buf) {
-    for (var ii = 0; ii < 16; ++ii) {
-      buf[i + ii] = rnds[ii];
-    }
-  }
-
-  return buf || bytesToUuid(rnds);
-}
-
-module.exports = v4;
-
-},{"./lib/bytesToUuid":271,"./lib/rng":272}],274:[function(require,module,exports){
-/*
-WildEmitter.js is a slim little event emitter by @henrikjoreteg largely based
-on @visionmedia's Emitter from UI Kit.
-
-Why? I wanted it standalone.
-
-I also wanted support for wildcard emitters like this:
-
-emitter.on('*', function (eventName, other, event, payloads) {
-
-});
-
-emitter.on('somenamespace*', function (eventName, payloads) {
-
-});
-
-Please note that callbacks triggered by wildcard registered events also get
-the event name as the first argument.
-*/
-
-module.exports = WildEmitter;
-
-function WildEmitter() { }
-
-WildEmitter.mixin = function (constructor) {
-    var prototype = constructor.prototype || constructor;
-
-    prototype.isWildEmitter= true;
-
-    // Listen on the given `event` with `fn`. Store a group name if present.
-    prototype.on = function (event, groupName, fn) {
-        this.callbacks = this.callbacks || {};
-        var hasGroup = (arguments.length === 3),
-            group = hasGroup ? arguments[1] : undefined,
-            func = hasGroup ? arguments[2] : arguments[1];
-        func._groupName = group;
-        (this.callbacks[event] = this.callbacks[event] || []).push(func);
-        return this;
-    };
-
-    // Adds an `event` listener that will be invoked a single
-    // time then automatically removed.
-    prototype.once = function (event, groupName, fn) {
-        var self = this,
-            hasGroup = (arguments.length === 3),
-            group = hasGroup ? arguments[1] : undefined,
-            func = hasGroup ? arguments[2] : arguments[1];
-        function on() {
-            self.off(event, on);
-            func.apply(this, arguments);
-        }
-        this.on(event, group, on);
-        return this;
-    };
-
-    // Unbinds an entire group
-    prototype.releaseGroup = function (groupName) {
-        this.callbacks = this.callbacks || {};
-        var item, i, len, handlers;
-        for (item in this.callbacks) {
-            handlers = this.callbacks[item];
-            for (i = 0, len = handlers.length; i < len; i++) {
-                if (handlers[i]._groupName === groupName) {
-                    //console.log('removing');
-                    // remove it and shorten the array we're looping through
-                    handlers.splice(i, 1);
-                    i--;
-                    len--;
-                }
-            }
-        }
-        return this;
-    };
-
-    // Remove the given callback for `event` or all
-    // registered callbacks.
-    prototype.off = function (event, fn) {
-        this.callbacks = this.callbacks || {};
-        var callbacks = this.callbacks[event],
-            i;
-
-        if (!callbacks) return this;
-
-        // remove all handlers
-        if (arguments.length === 1) {
-            delete this.callbacks[event];
-            return this;
-        }
-
-        // remove specific handler
-        i = callbacks.indexOf(fn);
-        if (i !== -1) {
-            callbacks.splice(i, 1);
-            if (callbacks.length === 0) {
-                delete this.callbacks[event];
-            }
-        }
-        return this;
-    };
-
-    /// Emit `event` with the given args.
-    // also calls any `*` handlers
-    prototype.emit = function (event) {
-        this.callbacks = this.callbacks || {};
-        var args = [].slice.call(arguments, 1),
-            callbacks = this.callbacks[event],
-            specialCallbacks = this.getWildcardCallbacks(event),
-            i,
-            len,
-            item,
-            listeners;
-
-        if (callbacks) {
-            listeners = callbacks.slice();
-            for (i = 0, len = listeners.length; i < len; ++i) {
-                if (!listeners[i]) {
-                    break;
-                }
-                listeners[i].apply(this, args);
-            }
-        }
-
-        if (specialCallbacks) {
-            len = specialCallbacks.length;
-            listeners = specialCallbacks.slice();
-            for (i = 0, len = listeners.length; i < len; ++i) {
-                if (!listeners[i]) {
-                    break;
-                }
-                listeners[i].apply(this, [event].concat(args));
-            }
-        }
-
-        return this;
-    };
-
-    // Helper for for finding special wildcard event handlers that match the event
-    prototype.getWildcardCallbacks = function (eventName) {
-        this.callbacks = this.callbacks || {};
-        var item,
-            split,
-            result = [];
-
-        for (item in this.callbacks) {
-            split = item.split('*');
-            if (item === '*' || (split.length === 2 && eventName.slice(0, split[0].length) === split[0])) {
-                result = result.concat(this.callbacks[item]);
-            }
-        }
-        return result;
-    };
-
-};
-
-WildEmitter.mixin(WildEmitter);
-
-},{}],275:[function(require,module,exports){
+},{}],253:[function(require,module,exports){
 /**
  * default settings
  *
@@ -45342,7 +41143,7 @@ exports.stripBlankChar = stripBlankChar;
 exports.cssFilter = defaultCSSFilter;
 exports.getDefaultCSSWhiteList = getDefaultCSSWhiteList;
 
-},{"./util":278,"cssfilter":124}],276:[function(require,module,exports){
+},{"./util":256,"cssfilter":124}],254:[function(require,module,exports){
 /**
  * xss
  *
@@ -45395,7 +41196,7 @@ if (isWorkerEnv()) {
   self.filterXSS = module.exports;
 }
 
-},{"./default":275,"./parser":277,"./xss":279}],277:[function(require,module,exports){
+},{"./default":253,"./parser":255,"./xss":257}],255:[function(require,module,exports){
 /**
  * Simple HTML Parser
  *
@@ -45654,7 +41455,7 @@ function stripQuoteWrap(text) {
 exports.parseTag = parseTag;
 exports.parseAttr = parseAttr;
 
-},{"./util":278}],278:[function(require,module,exports){
+},{"./util":256}],256:[function(require,module,exports){
 module.exports = {
   indexOf: function (arr, item) {
     var i, j;
@@ -45690,7 +41491,7 @@ module.exports = {
   },
 };
 
-},{}],279:[function(require,module,exports){
+},{}],257:[function(require,module,exports){
 /**
  * filter xss
  *
@@ -45921,9 +41722,9 @@ FilterXSS.prototype.process = function (html) {
 
 module.exports = FilterXSS;
 
-},{"./default":275,"./parser":277,"./util":278,"cssfilter":124}],280:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.47","date":"۱۴۰۲/۸/۱۵","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
-},{}],281:[function(require,module,exports){
+},{"./default":253,"./parser":255,"./util":256,"cssfilter":124}],258:[function(require,module,exports){
+module.exports={"version":"12.9.7-snapshot.47","date":"۱۴۰۲/۸/۱۷","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+},{}],259:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -45947,29 +41748,17 @@ var _typeof2 = _interopRequireDefault(require("@babel/runtime/helpers/typeof"));
 
 var _constants = require("./lib/constants");
 
-var _kurentoUtils = _interopRequireDefault(require("kurento-utils"));
-
 var _utility = _interopRequireDefault(require("./utility/utility"));
-
-var _eventsModule = require("./events.module.js");
 
 var _errorHandler = _interopRequireWildcard(require("./lib/errorHandler"));
 
-var _sdkParams = require("./lib/sdkParams");
-
-var _callServerManager = require("./lib/call/callServerManager");
-
-var _callsList = require("./lib/call/callsList");
-
-var _sharedData = require("./lib/call/sharedData");
-
-var _store = require("./lib/store");
-
-var _messaging = require("./messaging.module");
+var _callsList = _interopRequireDefault(require("./lib/call/callsList"));
 
 var _deviceManager = require("./lib/call/deviceManager2");
 
-var requestBlocker = _interopRequireWildcard(require("./lib/requestBlocker"));
+var _call = _interopRequireDefault(require("./lib/call/call"));
+
+var _callServerManager = _interopRequireDefault(require("./lib/call/callServerManager"));
 
 function _getRequireWildcardCache(nodeInterop) {
   if (typeof WeakMap !== "function") return null;
@@ -46047,12 +41836,15 @@ function _objectSpread(target) {
   return target;
 }
 
-function ChatCall(params) {
-  var _sdkParams$callOption, _sdkParams$callOption2;
+function ChatCall(app, params) {
+  var _app$sdkParams$callOp, _app$sdkParams$callOp2;
 
+  app.call = new _call["default"](app);
+  app.callsManager = new _callsList["default"](app);
+  var callServerController = new _callServerManager["default"](app);
   var //Utility = params.Utility,
   currentModuleInstance = this,
-      //chatEvents = params.chatEvents,
+      //app.chatEvents = params.app.chatEvents,
   callRequestController = {
     imCallOwner: false,
     callRequestReceived: false,
@@ -46061,19 +41853,19 @@ function ChatCall(params) {
     iRequestedCall: false,
     iAcceptedCall: false,
     canProcessStartCall: function canProcessStartCall(callId) {
-      _sdkParams.sdkParams.consoleLogging && console.log("[SDK] canProcessStartCall:", {
+      app.sdkParams.consoleLogging && console.log("[SDK] canProcessStartCall:", {
         callId: callId
       }, {
-        acceptedCallId: _sharedData.sharedVariables.acceptedCallId
-      }, callRequestController.iAcceptedCall, callRequestController.iAcceptedCall && _sharedData.sharedVariables.acceptedCallId == callId);
-      if (callRequestController.iAcceptedCall && _sharedData.sharedVariables.acceptedCallId == callId || callRequestController.iRequestedCall && _sharedData.sharedVariables.requestedCallId == callId) return true;
+        acceptedCallId: app.call.sharedVariables.acceptedCallId
+      }, callRequestController.iAcceptedCall, callRequestController.iAcceptedCall && app.call.sharedVariables.acceptedCallId == callId);
+      if (callRequestController.iAcceptedCall && app.call.sharedVariables.acceptedCallId == callId || callRequestController.iRequestedCall && app.call.sharedVariables.requestedCallId == callId) return true;
       return false;
     }
   },
       // generalTypeCode = params.typeCode,
   currentCallParams = {},
       latestCallRequestId = null,
-      screenShareInfo = new screenShareStateManager(),
+      screenShareInfo = new screenShareStateManager(app),
       //shouldReconnectCallTimeout = null,
   screenShareState = {
     started: false,
@@ -46083,28 +41875,28 @@ function ChatCall(params) {
       //callServerManager(),
   //callTopicHealthChecker = new peersHealthChecker(),
   //messageTtl = params.messageTtl || 10000,
-  callOptions = _sdkParams.sdkParams.callOptions,
+  callOptions = app.sdkParams.callOptions,
       config = {
     getHistoryCount: 25
   };
-  _sharedData.sharedVariables.useInternalTurnAddress = !!(callOptions && callOptions.useInternalTurnAddress);
-  _sharedData.sharedVariables.globalCallRequestTimeout = _sdkParams.sdkParams.callRequestTimeout;
-  _sharedData.sharedVariables.callTurnIp = callOptions && callOptions.hasOwnProperty('callTurnIp') && typeof callOptions.callTurnIp === 'string' ? callOptions.callTurnIp : '46.32.6.188';
-  _sharedData.sharedVariables.callDivId = callOptions && callOptions.hasOwnProperty('callDivId') && typeof callOptions.callDivId === 'string' ? callOptions.callDivId : 'call-div';
-  _sharedData.sharedVariables.callAudioTagClassName = callOptions && callOptions.hasOwnProperty('callAudioTagClassName') && typeof callOptions.callAudioTagClassName === 'string' ? callOptions.callAudioTagClassName : '';
-  _sharedData.sharedVariables.callVideoTagClassName = callOptions && callOptions.hasOwnProperty('callVideoTagClassName') && typeof callOptions.callVideoTagClassName === 'string' ? callOptions.callVideoTagClassName : '';
-  _sharedData.sharedVariables.callVideoMinWidth = callOptions && callOptions.hasOwnProperty('callVideo') && (0, _typeof2["default"])(callOptions.callVideo) === 'object' && callOptions.callVideo.hasOwnProperty('minWidth') ? callOptions.callVideo.minWidth : 320;
-  _sharedData.sharedVariables.callVideoMinHeight = callOptions && callOptions.hasOwnProperty('callVideo') && (0, _typeof2["default"])(callOptions.callVideo) === 'object' && callOptions.callVideo.hasOwnProperty('minHeight') ? callOptions.callVideo.minHeight : 180;
-  _sharedData.sharedVariables.callNoAnswerTimeout = ((_sdkParams$callOption = _sdkParams.sdkParams.callOptions) === null || _sdkParams$callOption === void 0 ? void 0 : _sdkParams$callOption.callNoAnswerTimeout) || 0;
-  _sharedData.sharedVariables.callStreamCloseTimeout = ((_sdkParams$callOption2 = _sdkParams.sdkParams.callOptions) === null || _sdkParams$callOption2 === void 0 ? void 0 : _sdkParams$callOption2.streamCloseTimeout) || 10000;
+  app.call.sharedVariables.useInternalTurnAddress = !!(callOptions && callOptions.useInternalTurnAddress);
+  app.call.sharedVariables.globalCallRequestTimeout = app.sdkParams.callRequestTimeout;
+  app.call.sharedVariables.callTurnIp = callOptions && callOptions.hasOwnProperty('callTurnIp') && typeof callOptions.callTurnIp === 'string' ? callOptions.callTurnIp : '46.32.6.188';
+  app.call.sharedVariables.callDivId = callOptions && callOptions.hasOwnProperty('callDivId') && typeof callOptions.callDivId === 'string' ? callOptions.callDivId : 'call-div';
+  app.call.sharedVariables.callAudioTagClassName = callOptions && callOptions.hasOwnProperty('callAudioTagClassName') && typeof callOptions.callAudioTagClassName === 'string' ? callOptions.callAudioTagClassName : '';
+  app.call.sharedVariables.callVideoTagClassName = callOptions && callOptions.hasOwnProperty('callVideoTagClassName') && typeof callOptions.callVideoTagClassName === 'string' ? callOptions.callVideoTagClassName : '';
+  app.call.sharedVariables.callVideoMinWidth = callOptions && callOptions.hasOwnProperty('callVideo') && (0, _typeof2["default"])(callOptions.callVideo) === 'object' && callOptions.callVideo.hasOwnProperty('minWidth') ? callOptions.callVideo.minWidth : 320;
+  app.call.sharedVariables.callVideoMinHeight = callOptions && callOptions.hasOwnProperty('callVideo') && (0, _typeof2["default"])(callOptions.callVideo) === 'object' && callOptions.callVideo.hasOwnProperty('minHeight') ? callOptions.callVideo.minHeight : 180;
+  app.call.sharedVariables.callNoAnswerTimeout = ((_app$sdkParams$callOp = app.sdkParams.callOptions) === null || _app$sdkParams$callOp === void 0 ? void 0 : _app$sdkParams$callOp.callNoAnswerTimeout) || 0;
+  app.call.sharedVariables.callStreamCloseTimeout = ((_app$sdkParams$callOp2 = app.sdkParams.callOptions) === null || _app$sdkParams$callOp2 === void 0 ? void 0 : _app$sdkParams$callOp2.streamCloseTimeout) || 10000;
 
-  function screenShareStateManager() {
+  function screenShareStateManager(app) {
     var config = {
       ownerId: 0,
       imOwner: false,
       isStarted: false,
-      width: _sharedData.sharedVariables.callVideoMinWidth,
-      height: _sharedData.sharedVariables.callVideoMinHeight
+      width: app.call.sharedVariables.callVideoMinWidth,
+      height: app.call.sharedVariables.callVideoMinHeight
     };
     return {
       setOwner: function setOwner(ownerId) {
@@ -46117,7 +41909,7 @@ function ChatCall(params) {
         return config.isStarted;
       },
       iAmOwner: function iAmOwner() {
-        return config.ownerId === _store.store.user().id;
+        return config.ownerId === app.store.user.get().id;
       },
       setWidth: function setWidth(width) {
         config.width = width;
@@ -46139,8 +41931,8 @@ function ChatCall(params) {
           screenShareInfo.setHeight(dimension.height);
           screenShareInfo.setWidth(dimension.width);
         } else {
-          screenShareInfo.setHeight(_sharedData.sharedVariables.callVideoMinHeight);
-          screenShareInfo.setWidth(_sharedData.sharedVariables.callVideoMinWidth);
+          screenShareInfo.setHeight(app.call.sharedVariables.callVideoMinHeight);
+          screenShareInfo.setWidth(app.call.sharedVariables.callVideoMinWidth);
         }
       }
     };
@@ -46175,7 +41967,7 @@ function ChatCall(params) {
       },
       changeServer: function changeServer() {
         if (this.canChangeServer()) {
-          _sdkParams.sdkParams.consoleLogging && console.debug('[SDK][changeServer] Changing kurento server...');
+          app.sdkParams.consoleLogging && console.debug('[SDK][changeServer] Changing kurento server...');
           config.currentServerIndex++;
         }
       }
@@ -46184,7 +41976,7 @@ function ChatCall(params) {
 
   var init = function init() {},
       raiseCallError = function raiseCallError(errorObject, callBack, fireEvent) {
-    (0, _errorHandler.raiseError)(errorObject, callBack, fireEvent, {
+    app.errorHandler.raiseError(errorObject, callBack, fireEvent, {
       eventName: 'callEvents',
       eventType: 'CALL_ERROR',
       environmentDetails: getSDKCallDetails()
@@ -46195,7 +41987,7 @@ function ChatCall(params) {
         timeoutTime = _ref$timeoutTime === void 0 ? 0 : _ref$timeoutTime,
         _ref$timeoutRetriesCo = _ref.timeoutRetriesCount,
         timeoutRetriesCount = _ref$timeoutRetriesCo === void 0 ? 0 : _ref$timeoutRetriesCo;
-    message.token = _sdkParams.sdkParams.token;
+    message.token = app.sdkParams.token;
     var uniqueId;
 
     if (!message.uniqueId) {
@@ -46203,41 +41995,41 @@ function ChatCall(params) {
     } // message.uniqueId = uniqueId;
 
 
-    message.chatId = (0, _callsList.callsManager)().currentCallId;
+    message.chatId = app.callsManager.currentCallId;
     var data = {
       type: 3,
       content: {
-        peerName: _callServerManager.callServerController.getCurrentServer(),
+        peerName: callServerController.getCurrentServer(),
         // callServerName,
         priority: 1,
         content: JSON.stringify(message),
-        ttl: _sdkParams.sdkParams.messageTtl
+        ttl: app.sdkParams.messageTtl
       }
     };
 
     if (typeof callback == 'function') {
-      _store.store.messagesCallbacks[message.uniqueId] = callback;
+      app.store.messagesCallbacks[message.uniqueId] = callback;
     }
 
-    _sharedData.sharedVariables.asyncClient.send(data, function (res) {
+    app.call.sharedVariables.asyncClient.send(data, function (res) {
       if (!res.hasError && callback) {// if (typeof callback == 'function') {
         //     callback(res);
         // }
-        // if (store.messagesCallbacks[uniqueId]) {
-        //     delete store.messagesCallbacks[uniqueId];
+        // if (app.store.messagesCallbacks[uniqueId]) {
+        //     delete app.store.messagesCallbacks[uniqueId];
         // }
       }
     });
 
-    if (timeoutTime || _sharedData.sharedVariables.globalCallRequestTimeout > 0) {
-      _store.store.asyncRequestTimeouts[message.uniqueId] && clearTimeout(_store.store.asyncRequestTimeouts[message.uniqueId]);
-      _store.store.asyncRequestTimeouts[message.uniqueId] = setTimeout(function () {
-        if (_store.store.messagesCallbacks[message.uniqueId]) {
-          delete _store.store.messagesCallbacks[message.uniqueId];
+    if (timeoutTime || app.call.sharedVariables.globalCallRequestTimeout > 0) {
+      app.store.asyncRequestTimeouts[message.uniqueId] && clearTimeout(app.store.asyncRequestTimeouts[message.uniqueId]);
+      app.store.asyncRequestTimeouts[message.uniqueId] = setTimeout(function () {
+        if (app.store.messagesCallbacks[message.uniqueId]) {
+          delete app.store.messagesCallbacks[message.uniqueId];
         }
 
         if (timeoutRetriesCount) {
-          _sdkParams.sdkParams.consoleLogging && console.log("[SDK][sendCallMessage] Retrying call request. uniqueId :" + message.uniqueId, {
+          app.sdkParams.consoleLogging && console.log("[SDK][sendCallMessage] Retrying call request. uniqueId :" + message.uniqueId, {
             message: message
           }); //timeoutCallback();
 
@@ -46253,11 +42045,11 @@ function ChatCall(params) {
             done: 'SKIP'
           });
         }
-        /*  if (store.messagesCallbacks[uniqueId]) {
-              delete store.messagesCallbacks[uniqueId];
+        /*  if (app.store.messagesCallbacks[uniqueId]) {
+              delete app.store.messagesCallbacks[uniqueId];
           }*/
 
-      }, timeoutTime || _sharedData.sharedVariables.globalCallRequestTimeout);
+      }, timeoutTime || app.call.sharedVariables.globalCallRequestTimeout);
     }
   },
 
@@ -46386,18 +42178,18 @@ function ChatCall(params) {
       callReceived = function callReceived(params, callback) {
     var receiveCallData = {
       chatMessageVOType: _constants.chatMessageVOTypes.RECEIVE_CALL_REQUEST,
-      typeCode: _sdkParams.sdkParams.generalTypeCode,
+      typeCode: app.sdkParams.generalTypeCode,
       //params.typeCode,
       pushMsgType: 3,
-      token: _sdkParams.sdkParams.token
+      token: app.sdkParams.token
     };
 
     if (params) {
       if (typeof +params.callId === 'number' && params.callId > 0) {
         receiveCallData.subjectId = +params.callId;
       } else {
-        (0, _errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID, callback, true, {});
-        /* chatEvents.fireEvent('error', {
+        app.errorHandler.raiseError(_errorHandler.errorList.INVALID_CALLID, callback, true, {});
+        /* app.chatEvents.fireEvent('error', {
             code: 999,
             message: 'Invalid call id!'
         }); */
@@ -46405,15 +42197,14 @@ function ChatCall(params) {
         return;
       }
     } else {
-      _eventsModule.chatEvents.fireEvent('error', {
+      app.chatEvents.fireEvent('error', {
         code: 999,
         message: 'No params have been sent to ReceiveCall()'
       });
-
       return;
     }
 
-    return (0, _messaging.messenger)().sendMessage(receiveCallData, {
+    return app.messenger.sendMessage(receiveCallData, {
       onResult: function onResult(result) {
         callback && callback(result);
       }
@@ -46428,21 +42219,21 @@ function ChatCall(params) {
     sendCallMessage({
       id: 'SENDMETADATA',
       message: JSON.stringify(message),
-      chatId: (0, _callsList.callsManager)().currentCallId
+      chatId: app.callsManager.currentCallId
     }, null, {});
   },
       getSDKCallDetails = function getSDKCallDetails(customData) {
     return {
-      currentUser: _store.store.user(),
+      currentUser: app.store.user.get(),
       currentServers: {
-        callTurnIp: _sharedData.sharedVariables.callTurnIp
+        callTurnIp: app.call.sharedVariables.callTurnIp
       },
-      isJanus: (0, _callsList.callsManager)().currentCallId && _callServerManager.callServerController.isJanus(),
+      isJanus: app.callsManager.currentCallId && callServerController.isJanus(),
       screenShareInfo: {
         isStarted: screenShareInfo.isStarted(),
         iAmOwner: screenShareInfo.iAmOwner()
       },
-      callId: (0, _callsList.callsManager)().currentCallId,
+      callId: app.callsManager.currentCallId,
       startCallInfo: currentCallParams,
       customData: customData
     };
@@ -46452,21 +42243,20 @@ function ChatCall(params) {
     var jsonMessage = typeof callMessage.content === 'string' && _utility["default"].isValidJson(callMessage.content) ? JSON.parse(callMessage.content) : callMessage.content;
 
     if (jsonMessage.chatId) {
-      (0, _callsList.callsManager)().routeCallMessage(jsonMessage.chatId, jsonMessage);
+      app.callsManager.routeCallMessage(jsonMessage.chatId, jsonMessage);
     } else {
-      _sdkParams.sdkParams.consoleLogging && console.warn("[SDK] Skipping call message, no chatId is available. ", {
+      app.sdkParams.consoleLogging && console.warn("[SDK] Skipping call message, no chatId is available. ", {
         jsonMessage: jsonMessage
       });
     }
   };
 
   this.asyncInitialized = function (async) {
-    _sharedData.sharedVariables.asyncClient = async;
-
-    _sharedData.sharedVariables.asyncClient.on('asyncReady', function () {
+    app.call.sharedVariables.asyncClient = async;
+    app.call.sharedVariables.asyncClient.on('asyncReady', function () {
       // callStateController.maybeReconnectAllTopics();
-      if ((0, _callsList.callsManager)().currentCallId) {
-        (0, _callsList.callsManager)().get((0, _callsList.callsManager)().currentCallId).onChatConnectionReconnect();
+      if (app.callsManager.currentCallId) {
+        app.callsManager.get(app.callsManager.currentCallId).onChatConnectionReconnect();
       }
     });
   };
@@ -46483,7 +42273,7 @@ function ChatCall(params) {
     var restrictedMessageTypes = [_constants.chatMessageVOTypes.MUTE_CALL_PARTICIPANT, _constants.chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT, _constants.chatMessageVOTypes.CALL_PARTICIPANT_JOINED, _constants.chatMessageVOTypes.REMOVE_CALL_PARTICIPANT, _constants.chatMessageVOTypes.RECONNECT, _constants.chatMessageVOTypes.TURN_OFF_VIDEO_CALL, _constants.chatMessageVOTypes.TURN_ON_VIDEO_CALL, _constants.chatMessageVOTypes.DESTINED_RECORD_CALL, _constants.chatMessageVOTypes.RECORD_CALL, _constants.chatMessageVOTypes.RECORD_CALL_STARTED, _constants.chatMessageVOTypes.END_RECORD_CALL, _constants.chatMessageVOTypes.TERMINATE_CALL, _constants.chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE, _constants.chatMessageVOTypes.CALL_RECORDING_FAILED // chatMessageVOTypes.END_CALL
     ];
 
-    if (!_sharedData.callStopQueue.callStarted && restrictedMessageTypes.includes(type)) {
+    if (!app.call.callStopQueue.callStarted && restrictedMessageTypes.includes(type)) {
       return true;
     } else {
       return false;
@@ -46491,7 +42281,7 @@ function ChatCall(params) {
   }
 
   this.handleChatMessages = function (type, messageContent, contentCount, threadId, uniqueId) {
-    _sdkParams.sdkParams.consoleLogging && console.debug("[SDK][CALL_MODULE][handleChatMessages]", "type:", type, "threadId:", threadId, "currentCallId:", (0, _callsList.callsManager)().currentCallId, "latestCallRequestId:", latestCallRequestId, "shouldNotProcessChatMessage:", shouldNotProcessChatMessage(type, threadId));
+    app.sdkParams.consoleLogging && console.debug("[SDK][CALL_MODULE][handleChatMessages]", "type:", type, "threadId:", threadId, "currentCallId:", app.callsManager.currentCallId, "latestCallRequestId:", latestCallRequestId, "shouldNotProcessChatMessage:", shouldNotProcessChatMessage(type, threadId));
 
     if (shouldNotProcessChatMessage(type, threadId)) {
       return;
@@ -46507,13 +42297,12 @@ function ChatCall(params) {
           callId: messageContent.callId
         }, function (r) {});
 
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         messageContent.threadId = threadId;
-
-        _eventsModule.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'RECEIVE_CALL',
           result: messageContent
         });
@@ -46522,7 +42311,7 @@ function ChatCall(params) {
           // if(!currentCallId ) {
           latestCallRequestId = messageContent.callId; // }
         } else {
-          _eventsModule.chatEvents.fireEvent('callEvents', {
+          app.chatEvents.fireEvent('callEvents', {
             type: 'PARTNER_RECEIVED_YOUR_CALL',
             result: messageContent
           });
@@ -46535,15 +42324,14 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.ACCEPT_CALL:
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
-        _eventsModule.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'ACCEPT_CALL',
           result: messageContent
         });
-
         break;
 
       /**
@@ -46551,17 +42339,15 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.REJECT_CALL:
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         messageContent.callId = threadId;
-
-        _eventsModule.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'REJECT_CALL',
           result: messageContent
         });
-
         break;
 
       /**
@@ -46569,20 +42355,19 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.RECEIVE_CALL_REQUEST:
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         if (messageContent.callId > 0) {
-          _eventsModule.chatEvents.fireEvent('callEvents', {
+          app.chatEvents.fireEvent('callEvents', {
             type: 'RECEIVE_CALL',
             result: messageContent
           }); // if(!currentCallId ) {
 
-
           latestCallRequestId = messageContent.callId; // }
         } else if (callRequestController.iRequestedCall) {
-          _eventsModule.chatEvents.fireEvent('callEvents', {
+          app.chatEvents.fireEvent('callEvents', {
             type: 'PARTNER_RECEIVED_YOUR_CALL',
             result: messageContent
           });
@@ -46596,17 +42381,16 @@ function ChatCall(params) {
 
       case _constants.chatMessageVOTypes.START_CALL:
         if (!callRequestController.canProcessStartCall(threadId)) {
-          _eventsModule.chatEvents.fireEvent('callEvents', {
+          app.chatEvents.fireEvent('callEvents', {
             type: 'CALL_STARTED_ELSEWHERE',
             message: 'Call already started somewhere else..., aborting...'
           });
-
           return;
         }
 
         callRequestController.iRequestedCall = false;
         callRequestController.iAcceptedCall = false;
-        (0, _callsList.callsManager)().currentCallId = threadId;
+        app.callsManager.currentCallId = threadId;
         processChatStartCallEvent(type, messageContent, contentCount, threadId, uniqueId); // if(callsManager().currentCallId) {
         //     endCall({callId: callsManager().currentCallId});
         //     // callStop( true, false);
@@ -46626,16 +42410,15 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.END_CALL_REQUEST:
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
-        _eventsModule.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'END_CALL',
           result: messageContent
         });
-
-        (0, _callsList.callsManager)().removeItem(threadId); // callStop();
+        app.callsManager.removeItem(threadId); // callStop();
 
         break;
 
@@ -46644,17 +42427,17 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.END_CALL:
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
-        _eventsModule.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_ENDED',
           callId: threadId
         });
 
-        if (threadId === (0, _callsList.callsManager)().currentCallId && _sharedData.callStopQueue.callStarted) {
-          (0, _callsList.callsManager)().removeItem(threadId); // callStop();
+        if (threadId === app.callsManager.currentCallId && app.call.callStopQueue.callStarted) {
+          app.callsManager.removeItem(threadId); // callStop();
         }
 
         break;
@@ -46664,8 +42447,8 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.GET_CALLS:
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         break;
@@ -46675,17 +42458,15 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.RECONNECT:
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         messageContent.uniqueId = uniqueId;
-
-        _eventsModule.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_PARTICIPANT_RECONNECTING',
           result: messageContent
         });
-
         break;
 
       /**
@@ -46693,19 +42474,19 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.CONNECT:
-        if (!(0, _callsList.callsManager)().currentCallId) return;
+        if (!app.callsManager.currentCallId) return;
 
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
-        _eventsModule.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_PARTICIPANT_CONNECTED',
           result: messageContent
         });
 
-        if (callUsers && callUsers[_store.store.user().id] && callUsers[_store.store.user().id].video) {
-          (0, _sharedData.currentCall)().users().get(_store.store.user().id).videoTopicManager().restartMediaOnKeyFrame(_store.store.user().id, [2000, 4000, 8000, 12000]);
+        if (callUsers && callUsers[app.store.user.get().id] && callUsers[app.store.user().id].video) {
+          app.call.currentCall().users().get(app.store.user.get().id).videoTopicManager().restartMediaOnKeyFrame(app.store.user.get().id, [2000, 4000, 8000, 12000]);
         } // if(callUsers && callUsers['screenShare']
         //     && screenShareInfo.isStarted()
         //     && screenShareInfo.iAmOwner()
@@ -46721,11 +42502,10 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.CONTACT_SYNCED:
-        _eventsModule.chatEvents.fireEvent('contactEvents', {
+        app.chatEvents.fireEvent('contactEvents', {
           type: 'CONTACTS_SYNCED',
           result: messageContent
         });
-
         break;
 
       /**
@@ -46738,8 +42518,8 @@ function ChatCall(params) {
           callId: messageContent.callId
         }, function (r) {});
 
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         if (messageContent.callId > 0) {
@@ -46747,11 +42527,10 @@ function ChatCall(params) {
           latestCallRequestId = messageContent.callId; // }
         }
 
-        _eventsModule.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'RECEIVE_CALL',
           result: messageContent
         }); //currentCallId = messageContent.callId;
-
 
         break;
 
@@ -46762,8 +42541,8 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.LEAVE_CALL:
-        if ((0, _callsList.callsManager)().currentCallId != threadId) return;
-        (0, _callsList.callsManager)().get(threadId).handleParticipantLeft(messageContent, threadId);
+        if (app.callsManager.currentCallId != threadId) return;
+        app.callsManager.get(threadId).handleParticipantLeft(messageContent, threadId);
         break;
 
       /**
@@ -46771,8 +42550,8 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.ADD_CALL_PARTICIPANT:
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         break;
@@ -46782,8 +42561,8 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.CALL_PARTICIPANT_JOINED:
-        if ((0, _callsList.callsManager)().currentCallId != threadId) return;
-        (0, _callsList.callsManager)().get(threadId).handleParticipantJoin(messageContent);
+        if (app.callsManager.currentCallId != threadId) return;
+        app.callsManager.get(threadId).handleParticipantJoin(messageContent);
         break;
 
       /**
@@ -46791,15 +42570,14 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.REMOVE_CALL_PARTICIPANT:
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
-        _eventsModule.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_PARTICIPANT_REMOVED',
           result: messageContent
         });
-
         break;
 
       /**
@@ -46807,17 +42585,17 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.TERMINATE_CALL:
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
-        _eventsModule.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'TERMINATE_CALL',
           result: messageContent
         });
 
-        if (threadId === (0, _callsList.callsManager)().currentCallId) {
-          (0, _callsList.callsManager)().removeItem(threadId);
+        if (threadId === app.callsManager.currentCallId) {
+          app.callsManager.removeItem(threadId);
         }
 
         break;
@@ -46827,12 +42605,12 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.MUTE_CALL_PARTICIPANT:
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
-        if (!(0, _callsList.callsManager)().currentCallId) return;
-        (0, _callsList.callsManager)().get(threadId).handleParticipantMute(messageContent);
+        if (!app.callsManager.currentCallId) return;
+        app.callsManager.get(threadId).handleParticipantMute(messageContent);
         break;
 
       /**
@@ -46840,11 +42618,11 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT:
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
-        (0, _callsList.callsManager)().get(threadId).handleParticipantUnMute(messageContent);
+        app.callsManager.get(threadId).handleParticipantUnMute(messageContent);
         break;
 
       /**
@@ -46852,17 +42630,15 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.CANCEL_GROUP_CALL:
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         messageContent.callId = threadId;
-
-        _eventsModule.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'REJECT_GROUP_CALL',
           result: messageContent
         });
-
         break;
 
       /**
@@ -46870,8 +42646,8 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.ACTIVE_CALL_PARTICIPANTS:
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         break;
@@ -46884,13 +42660,12 @@ function ChatCall(params) {
         // if(!callRequestController.callEstablishedInMySide)
         //     return;
         if (callRequestController.iRequestedCall) {
-          _eventsModule.chatEvents.fireEvent('callEvents', {
+          app.chatEvents.fireEvent('callEvents', {
             type: 'CALL_SESSION_CREATED',
             result: messageContent
           }); // if(!requestedCallId) {
 
-
-          _sharedData.sharedVariables.requestedCallId = messageContent.callId;
+          app.call.sharedVariables.requestedCallId = messageContent.callId;
         } // }
 
 
@@ -46901,12 +42676,12 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.TURN_ON_VIDEO_CALL:
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
-        if (!(0, _callsList.callsManager)().currentCallId) return;
-        (0, _callsList.callsManager)().get(threadId).handleParticipantVideoOn(messageContent);
+        if (!app.callsManager.currentCallId) return;
+        app.callsManager.get(threadId).handleParticipantVideoOn(messageContent);
         break;
 
       /**
@@ -46914,12 +42689,12 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.TURN_OFF_VIDEO_CALL:
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
-        if (!(0, _callsList.callsManager)().currentCallId) return;
-        (0, _callsList.callsManager)().get(threadId).handleParticipantVideoOff(messageContent);
+        if (!app.callsManager.currentCallId) return;
+        app.callsManager.get(threadId).handleParticipantVideoOff(messageContent);
         break;
 
       /**
@@ -46927,22 +42702,19 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.RECORD_CALL:
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
-        if (!(0, _sharedData.currentCall)()) {
+        if (!app.call.currentCall()) {
           return;
         }
 
-        _eventsModule.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'START_RECORDING_CALL',
           result: messageContent
-        }); // if(currentCallMyUser() && currentCallMyUser().videoTopicManager())
-        //     currentCallMyUser().videoTopicManager().restartMediaOnKeyFrame(store.user().id, [4000,8000,12000,25000]);
-
-
-        if ((0, _sharedData.currentCall)().users().get("screenShare")) (0, _sharedData.currentCall)().users().get("screenShare").videoTopicManager().restartMediaOnKeyFrame("screenShare", [4000, 8000, 12000, 25000]);
+        });
+        if (app.call.currentCall().users().get("screenShare")) app.call.currentCall().users().get("screenShare").videoTopicManager().restartMediaOnKeyFrame("screenShare", [4000, 8000, 12000, 25000]);
         break;
 
       /**
@@ -46950,15 +42722,14 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.END_RECORD_CALL:
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
-        _eventsModule.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'STOP_RECORDING_CALL',
           result: messageContent
         });
-
         break;
 
       /**
@@ -46966,11 +42737,11 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.START_SCREEN_SHARE:
-        if (!(0, _callsList.callsManager)().currentCallId) return;
-        (0, _callsList.callsManager)().get(threadId).handleStartScreenShare(messageContent);
+        if (!app.callsManager.currentCallId) return;
+        app.callsManager.get(threadId).handleStartScreenShare(messageContent);
 
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         break;
@@ -46981,7 +42752,7 @@ function ChatCall(params) {
 
       case _constants.chatMessageVOTypes.END_SCREEN_SHARE:
         // screenShareInfo.setIAmOwner(false);
-        if ((0, _callsList.callsManager)().currentCallId) (0, _callsList.callsManager)().get(threadId).handleEndScreenShare(messageContent);
+        if (app.callsManager.currentCallId) app.callsManager.get(threadId).handleEndScreenShare(messageContent);
         break;
 
       /**
@@ -46989,15 +42760,14 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.DELETE_FROM_CALL_HISTORY:
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent));
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent));
         }
 
-        _eventsModule.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'DELETE_FROM_CALL_LIST',
           result: messageContent
         });
-
         break;
 
       /**
@@ -47005,19 +42775,17 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.DESTINED_RECORD_CALL:
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
-        if (!(0, _sharedData.currentCall)()) return;
-
-        _eventsModule.chatEvents.fireEvent('callEvents', {
+        if (!app.call.currentCall()) return;
+        app.chatEvents.fireEvent('callEvents', {
           type: 'START_RECORDING_CALL',
           result: messageContent
         });
-
-        (0, _sharedData.currentCallMyUser)().videoTopicManager().restartMediaOnKeyFrame(_store.store.user().id, [4000, 8000, 12000, 25000]);
-        (0, _sharedData.currentCallMyUser)().videoTopicManager().restartMediaOnKeyFrame("screenShare", [4000, 8000, 12000, 25000]);
+        app.call.currentCallMyUser().videoTopicManager().restartMediaOnKeyFrame(app.store.user.get().id, [4000, 8000, 12000, 25000]);
+        app.call.currentCallMyUser().videoTopicManager().restartMediaOnKeyFrame("screenShare", [4000, 8000, 12000, 25000]);
         break;
 
       /**
@@ -47025,8 +42793,8 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.GET_CALLS_TO_JOIN:
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
         break;
@@ -47036,12 +42804,11 @@ function ChatCall(params) {
       */
 
       case _constants.chatMessageVOTypes.SWITCH_TO_GROUP_CALL_REQUEST:
-        _eventsModule.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'SWITCH_TO_GROUP_CALL',
           result: messageContent //contains: isGroup, callId, threadId
 
         });
-
         break;
 
       /**
@@ -47049,15 +42816,14 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.RECORD_CALL_STARTED:
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
-        _eventsModule.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_RECORDING_STARTED',
           result: messageContent
         });
-
         break;
 
       /**
@@ -47065,15 +42831,14 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE:
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
         }
 
-        _eventsModule.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_STICKER',
           result: messageContent
         });
-
         break;
 
       /**
@@ -47081,8 +42846,8 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.RECALL_THREAD_PARTICIPANT:
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
         }
 
         break;
@@ -47092,8 +42857,8 @@ function ChatCall(params) {
       */
 
       case _constants.chatMessageVOTypes.INQUIRY_CALL:
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
         }
 
         break;
@@ -47103,28 +42868,26 @@ function ChatCall(params) {
        */
 
       case _constants.chatMessageVOTypes.CALL_RECORDING_FAILED:
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
         }
 
-        _eventsModule.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_RECORDING_FAILED',
           result: messageContent
         });
-
         break;
     }
   };
 
   function processChatStartCallEvent(type, messageContent, contentCount, threadId, uniqueId) {
-    if (_store.store.messagesCallbacks[uniqueId]) {
-      _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
+    if (app.store.messagesCallbacks[uniqueId]) {
+      app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));
     }
 
-    _sharedData.callStopQueue.callStarted = true;
+    app.call.callStopQueue.callStarted = true;
     messageContent.callId = threadId;
-
-    _eventsModule.chatEvents.fireEvent('callEvents', {
+    app.chatEvents.fireEvent('callEvents', {
       type: 'CALL_STARTED',
       result: messageContent
     });
@@ -47144,11 +42907,11 @@ function ChatCall(params) {
         screenShareOwner: +messageContent.chatDataDto.screenShareUser,
         recordingOwner: +messageContent.chatDataDto.recordingUser,
         kurentoAddress: messageContent.chatDataDto.kurentoAddress.split(','),
-        cameraPaused: _sharedData.joinCallParams.cameraPaused
+        cameraPaused: app.call.joinCallParams.cameraPaused
       };
-      (0, _callsList.callsManager)().addItem(threadId, options);
+      app.callsManager.addItem(threadId, options);
     } else {
-      _eventsModule.chatEvents.fireEvent('callEvents', {
+      app.chatEvents.fireEvent('callEvents', {
         type: 'CALL_ERROR',
         message: 'Chat Data DTO is not present!',
         environmentDetails: getSDKCallDetails()
@@ -47165,10 +42928,10 @@ function ChatCall(params) {
             case 0:
               startCallData = {
                 chatMessageVOType: _constants.chatMessageVOTypes.CALL_REQUEST,
-                typeCode: _sdkParams.sdkParams.generalTypeCode,
+                typeCode: app.sdkParams.generalTypeCode,
                 //params.typeCode,
                 pushMsgType: 3,
-                token: _sdkParams.sdkParams.token
+                token: app.sdkParams.token
               }, content = {
                 creatorClientDto: {}
               };
@@ -47178,8 +42941,8 @@ function ChatCall(params) {
                 break;
               }
 
-              if (typeof params.type === 'string' && _sharedData.callTypes.hasOwnProperty(params.type.toUpperCase())) {
-                content.type = _sharedData.callTypes[params.type.toUpperCase()];
+              if (typeof params.type === 'string' && app.call.callTypes.hasOwnProperty(params.type.toUpperCase())) {
+                content.type = app.call.callTypes[params.type.toUpperCase()];
               } else {
                 content.type = 0x0; // Defaults to AUDIO Call
               }
@@ -47187,10 +42950,10 @@ function ChatCall(params) {
               content.creatorClientDto.mute = params.mute && typeof params.mute === 'boolean' ? params.mute : false;
               content.mute = params.mute && typeof params.mute === 'boolean' ? params.mute : false;
 
-              if (params.clientType && typeof params.clientType === 'string' && _sharedData.callClientType[params.clientType.toUpperCase()] > 0) {
-                content.creatorClientDto.clientType = _sharedData.callClientType[params.clientType.toUpperCase()];
+              if (params.clientType && typeof params.clientType === 'string' && app.call.callClientType[params.clientType.toUpperCase()] > 0) {
+                content.creatorClientDto.clientType = app.call.callClientType[params.clientType.toUpperCase()];
               } else {
-                content.creatorClientDto.clientType = _sharedData.callClientType.WEB;
+                content.creatorClientDto.clientType = app.call.callClientType.WEB;
               }
 
               if (!(typeof +params.threadId === 'number' && +params.threadId > 0)) {
@@ -47223,11 +42986,10 @@ function ChatCall(params) {
               break;
 
             case 15:
-              _eventsModule.chatEvents.fireEvent('error', {
+              app.chatEvents.fireEvent('error', {
                 code: 999,
                 message: 'Invitees list is empty! Send an array of invitees to start a call with, Or send a Thread Id to start a call with current participants'
               });
-
               return _context.abrupt("return");
 
             case 17:
@@ -47240,19 +43002,17 @@ function ChatCall(params) {
               break;
 
             case 21:
-              _eventsModule.chatEvents.fireEvent('error', {
+              app.chatEvents.fireEvent('error', {
                 code: 999,
                 message: 'No params have been sent to start call!'
               });
-
               return _context.abrupt("return");
 
             case 23:
-              _sharedData.joinCallParams.cameraPaused = typeof params.cameraPaused === 'boolean' ? params.cameraPaused : false;
+              app.call.joinCallParams.cameraPaused = typeof params.cameraPaused === 'boolean' ? params.cameraPaused : false;
               callRequestController.iRequestedCall = true;
-              if (!_sharedData.sharedVariables.deviceManager) _sharedData.sharedVariables.deviceManager = new _deviceManager.DeviceManager();
-
-              _sharedData.sharedVariables.deviceManager.grantUserMediaDevicesPermissions({
+              if (!app.call.sharedVariables.deviceManager) app.call.sharedVariables.deviceManager = new _deviceManager.DeviceManager(app);
+              app.call.sharedVariables.deviceManager.grantUserMediaDevicesPermissions({
                 video: params.type == 'video',
                 audio: !params.mute,
                 closeStream: true
@@ -47266,27 +43026,26 @@ function ChatCall(params) {
                   return;
                 }
 
-                if (_sharedData.sharedVariables.callNoAnswerTimeout) {
+                if (app.call.sharedVariables.callNoAnswerTimeout) {
                   callRequestController.callRequestTimeout = setTimeout(function (metaData) {
                     //Reject the call if participant didn't answer
-                    if (!_sharedData.callStopQueue.callStarted) {
-                      _eventsModule.chatEvents.fireEvent("callEvents", {
+                    if (!app.call.callStopQueue.callStarted) {
+                      app.chatEvents.fireEvent("callEvents", {
                         type: "CALL_NO_ANSWER_TIMEOUT",
                         message: "[CALL_SESSION_CREATED] Call request timed out, No answer"
                       });
-
                       metaData.callInstance.rejectCall({
                         callId: metaData.currentCallId
                       });
                     }
-                  }, _sharedData.sharedVariables.callNoAnswerTimeout, {
+                  }, app.call.sharedVariables.callNoAnswerTimeout, {
                     callInstance: currentModuleInstance,
-                    currentCallId: (0, _callsList.callsManager)().currentCallId
+                    currentCallId: app.callsManager.currentCallId
                   });
                 }
 
-                (0, _callsList.callsManager)().destroyAllCalls();
-                (0, _messaging.messenger)().sendMessage(startCallData, {
+                app.callsManager.destroyAllCalls();
+                app.messenger.sendMessage(startCallData, {
                   onResult: function onResult(result) {
                     callback && callback(result);
                   }
@@ -47315,10 +43074,10 @@ function ChatCall(params) {
             case 0:
               startCallData = {
                 chatMessageVOType: _constants.chatMessageVOTypes.GROUP_CALL_REQUEST,
-                typeCode: _sdkParams.sdkParams.generalTypeCode,
+                typeCode: app.sdkParams.generalTypeCode,
                 //params.typeCode,
                 pushMsgType: 3,
-                token: _sdkParams.sdkParams.token
+                token: app.sdkParams.token
               }, content = {
                 creatorClientDto: {}
               };
@@ -47328,18 +43087,18 @@ function ChatCall(params) {
                 break;
               }
 
-              if (typeof params.type === 'string' && _sharedData.callTypes.hasOwnProperty(params.type.toUpperCase())) {
-                content.type = _sharedData.callTypes[params.type.toUpperCase()];
+              if (typeof params.type === 'string' && app.call.callTypes.hasOwnProperty(params.type.toUpperCase())) {
+                content.type = app.call.callTypes[params.type.toUpperCase()];
               } else {
                 content.type = 0x0; // Defaults to AUDIO Call
               }
 
               content.creatorClientDto.mute = typeof params.mute === 'boolean' ? params.mute : false;
 
-              if (params.clientType && typeof params.clientType === 'string' && _sharedData.callClientType[params.clientType.toUpperCase()] > 0) {
-                content.creatorClientDto.clientType = _sharedData.callClientType[params.clientType.toUpperCase()];
+              if (params.clientType && typeof params.clientType === 'string' && app.call.callClientType[params.clientType.toUpperCase()] > 0) {
+                content.creatorClientDto.clientType = app.call.callClientType[params.clientType.toUpperCase()];
               } else {
-                content.creatorClientDto.clientType = _sharedData.callClientType.WEB;
+                content.creatorClientDto.clientType = app.call.callClientType.WEB;
               }
 
               if (!(typeof +params.threadId === 'number' && params.threadId > 0)) {
@@ -47372,11 +43131,10 @@ function ChatCall(params) {
               break;
 
             case 14:
-              _eventsModule.chatEvents.fireEvent('error', {
+              app.chatEvents.fireEvent('error', {
                 code: 999,
                 message: 'Invitees list is empty! Send an array of invitees to start a call with, Or send a Thread Id to start a call with current participants'
               });
-
               return _context2.abrupt("return");
 
             case 16:
@@ -47389,19 +43147,17 @@ function ChatCall(params) {
               break;
 
             case 20:
-              _eventsModule.chatEvents.fireEvent('error', {
+              app.chatEvents.fireEvent('error', {
                 code: 999,
                 message: 'No params have been sent to start call!'
               });
-
               return _context2.abrupt("return");
 
             case 22:
-              _sharedData.joinCallParams.cameraPaused = typeof params.cameraPaused === 'boolean' ? params.cameraPaused : false;
+              app.call.joinCallParams.cameraPaused = typeof params.cameraPaused === 'boolean' ? params.cameraPaused : false;
               callRequestController.iRequestedCall = true;
-              if (!_sharedData.sharedVariables.deviceManager) _sharedData.sharedVariables.deviceManager = new _deviceManager.DeviceManager();
-
-              _sharedData.sharedVariables.deviceManager.grantUserMediaDevicesPermissions({
+              if (!app.call.sharedVariables.deviceManager) app.call.sharedVariables.deviceManager = new _deviceManager.DeviceManager(app);
+              app.call.sharedVariables.deviceManager.grantUserMediaDevicesPermissions({
                 video: params.type == 'video',
                 audio: !params.mute,
                 closeStream: true
@@ -47415,26 +43171,25 @@ function ChatCall(params) {
                   return;
                 }
 
-                if (_sharedData.sharedVariables.callNoAnswerTimeout) {
+                if (app.call.sharedVariables.callNoAnswerTimeout) {
                   callRequestController.callRequestTimeout = setTimeout(function (metaData) {
                     //Reject the call if participant didn't answer
-                    if (!_sharedData.callStopQueue.callStarted) {
-                      _eventsModule.chatEvents.fireEvent("callEvents", {
+                    if (!app.call.callStopQueue.callStarted) {
+                      app.chatEvents.fireEvent("callEvents", {
                         type: "CALL_NO_ANSWER_TIMEOUT",
                         message: "[CALL_SESSION_CREATED] Call request timed out, No answer"
                       });
-
                       metaData.callInstance.rejectCall({
                         callId: metaData.currentCallId
                       });
                     }
-                  }, _sharedData.sharedVariables.callNoAnswerTimeout, {
+                  }, app.call.sharedVariables.callNoAnswerTimeout, {
                     callInstance: currentModuleInstance,
-                    currentCallId: (0, _callsList.callsManager)().currentCallId
+                    currentCallId: app.callsManager.currentCallId
                   });
                 }
 
-                (0, _messaging.messenger)().sendMessage(startCallData, {
+                app.messenger.sendMessage(startCallData, {
                   onResult: function onResult(result) {
                     callback && callback(result);
                   }
@@ -47457,7 +43212,7 @@ function ChatCall(params) {
   this.sendCallMetaData = function (params) {
     sendCallMetaData({
       id: _constants.callMetaDataTypes.CUSTOMUSERMETADATA,
-      userid: _store.store.user().id,
+      userid: app.store.user.get().id,
       content: params.content
     });
   };
@@ -47467,10 +43222,10 @@ function ChatCall(params) {
   this.terminateCall = function (params, callback) {
     var terminateCallData = {
       chatMessageVOType: _constants.chatMessageVOTypes.TERMINATE_CALL,
-      typeCode: _sdkParams.sdkParams.generalTypeCode,
+      typeCode: app.sdkParams.generalTypeCode,
       //params.typeCode,
       pushMsgType: 3,
-      token: _sdkParams.sdkParams.token
+      token: app.sdkParams.token
     },
         content = {};
 
@@ -47478,21 +43233,20 @@ function ChatCall(params) {
       if (typeof +params.callId === 'number' && params.callId > 0) {
         terminateCallData.subjectId = +params.callId;
       } else {
-        (0, _errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID, callback, true, {});
+        app.errorHandler.raiseError(_errorHandler.errorList.INVALID_CALLID, callback, true, {});
         return;
       }
 
       terminateCallData.content = JSON.stringify(content);
     } else {
-      _eventsModule.chatEvents.fireEvent('error', {
+      app.chatEvents.fireEvent('error', {
         code: 999,
         message: 'No params have been sent to terminate the call!'
       });
-
       return;
     }
 
-    return (0, _messaging.messenger)().sendMessage(terminateCallData, {
+    return app.messenger.sendMessage(terminateCallData, {
       onResult: function onResult(result) {
         callback && callback(result);
       }
@@ -47508,10 +43262,10 @@ function ChatCall(params) {
             case 0:
               acceptCallData = {
                 chatMessageVOType: _constants.chatMessageVOTypes.ACCEPT_CALL,
-                typeCode: _sdkParams.sdkParams.generalTypeCode,
+                typeCode: app.sdkParams.generalTypeCode,
                 //params.typeCode,
                 pushMsgType: 3,
-                token: _sdkParams.sdkParams.token
+                token: app.sdkParams.token
               }, content = {};
 
               if (!params) {
@@ -47529,19 +43283,19 @@ function ChatCall(params) {
               break;
 
             case 6:
-              (0, _errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID, callback, true, {});
+              app.errorHandler.raiseError(_errorHandler.errorList.INVALID_CALLID, callback, true, {});
               return _context3.abrupt("return");
 
             case 8:
               content.mute = typeof params.mute === 'boolean' ? params.mute : false;
               content.video = typeof params.video === 'boolean' ? params.video : false;
               content.videoCall = content.video;
-              _sharedData.joinCallParams.cameraPaused = typeof params.cameraPaused === 'boolean' ? params.cameraPaused : callRequestController.cameraPaused;
+              app.call.joinCallParams.cameraPaused = typeof params.cameraPaused === 'boolean' ? params.cameraPaused : callRequestController.cameraPaused;
 
-              if (params.clientType && typeof params.clientType === 'string' && _sharedData.callClientType[params.clientType.toUpperCase()] > 0) {
-                content.clientType = _sharedData.callClientType[params.clientType.toUpperCase()];
+              if (params.clientType && typeof params.clientType === 'string' && app.call.callClientType[params.clientType.toUpperCase()] > 0) {
+                content.clientType = app.call.callClientType[params.clientType.toUpperCase()];
               } else {
-                content.clientType = _sharedData.callClientType.WEB;
+                content.clientType = app.call.callClientType.WEB;
               }
 
               acceptCallData.content = JSON.stringify(content);
@@ -47549,19 +43303,17 @@ function ChatCall(params) {
               break;
 
             case 16:
-              _eventsModule.chatEvents.fireEvent('error', {
+              app.chatEvents.fireEvent('error', {
                 code: 999,
                 message: 'No params have been sent to accept the call!'
               });
-
               return _context3.abrupt("return");
 
             case 18:
-              _sharedData.sharedVariables.acceptedCallId = parseInt(params.callId);
+              app.call.sharedVariables.acceptedCallId = parseInt(params.callId);
               callRequestController.iAcceptedCall = true;
-              if (!_sharedData.sharedVariables.deviceManager) _sharedData.sharedVariables.deviceManager = new _deviceManager.DeviceManager();
-
-              _sharedData.sharedVariables.deviceManager.grantUserMediaDevicesPermissions({
+              if (!app.call.sharedVariables.deviceManager) app.call.sharedVariables.deviceManager = new _deviceManager.DeviceManager(app);
+              app.call.sharedVariables.deviceManager.grantUserMediaDevicesPermissions({
                 video: params.video,
                 audio: !params.mute,
                 closeStream: true
@@ -47575,7 +43327,7 @@ function ChatCall(params) {
                   return;
                 }
 
-                (0, _messaging.messenger)().sendMessage(acceptCallData, {
+                app.messenger.sendMessage(acceptCallData, {
                   onResult: function onResult(result) {
                     callback && callback(result);
                   }
@@ -47598,44 +43350,43 @@ function ChatCall(params) {
   this.rejectCall = this.cancelCall = function (params, callback) {
     var rejectCallData = {
       chatMessageVOType: _constants.chatMessageVOTypes.REJECT_CALL,
-      typeCode: _sdkParams.sdkParams.generalTypeCode,
+      typeCode: app.sdkParams.generalTypeCode,
       //params.typeCode,
       pushMsgType: 3,
-      token: _sdkParams.sdkParams.token
+      token: app.sdkParams.token
     };
 
     if (params) {
       if (typeof +params.callId === 'number' && params.callId > 0) {
         rejectCallData.subjectId = +params.callId;
       } else {
-        (0, _errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID, callback, true, {});
+        app.errorHandler.raiseError(_errorHandler.errorList.INVALID_CALLID, callback, true, {});
         return;
       }
     } else {
-      _eventsModule.chatEvents.fireEvent('error', {
+      app.chatEvents.fireEvent('error', {
         code: 999,
         message: 'No params have been sent to reject the call!'
       });
-
       return;
     }
 
-    return (0, _messaging.messenger)().sendMessage(rejectCallData, {
+    return app.messenger.sendMessage(rejectCallData, {
       onResult: function onResult(result) {
         callback && callback(result);
       }
     });
   };
 
-  this.endCall = _sharedData.endCall;
+  this.endCall = app.call.endCall;
 
   this.startRecordingCall = function (params, callback) {
     var recordCallData = {
       chatMessageVOType: _constants.chatMessageVOTypes.RECORD_CALL,
-      typeCode: _sdkParams.sdkParams.generalTypeCode,
+      typeCode: app.sdkParams.generalTypeCode,
       //params.typeCode,
       pushMsgType: 3,
-      token: _sdkParams.sdkParams.token,
+      token: app.sdkParams.token,
       content: {}
     };
 
@@ -47643,7 +43394,7 @@ function ChatCall(params) {
       if (typeof +params.callId === 'number' && params.callId > 0) {
         recordCallData.subjectId = +params.callId;
       } else {
-        (0, _errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID, callback, true, {});
+        app.errorHandler.raiseError(_errorHandler.errorList.INVALID_CALLID, callback, true, {});
         return;
       }
 
@@ -47654,17 +43405,16 @@ function ChatCall(params) {
         recordCallData.content.threadId = typeof +params.threadId === 'number' ? params.threadId : null;
       }
     } else {
-      _eventsModule.chatEvents.fireEvent('error', {
+      app.chatEvents.fireEvent('error', {
         code: 999,
         message: 'No params have been sent to Record call!'
       });
-
       return;
     }
 
-    return (0, _messaging.messenger)().sendMessage(recordCallData, {
+    return app.messenger.sendMessage(recordCallData, {
       onResult: function onResult(result) {
-        if ((0, _sharedData.currentCall)().users().get(_store.store.user().id) && (0, _sharedData.currentCall)().users().get(_store.store.user().id).videoTopicManager()) (0, _sharedData.currentCall)().users().get(_store.store.user().id).videoTopicManager().restartMediaOnKeyFrame(_store.store.user().id, [100]);
+        if (app.call.currentCall().users().get(app.store.user.get().id) && app.call.currentCall().users().get(app.store.user.get().id).videoTopicManager()) app.call.currentCall().users().get(app.store.user.get().id).videoTopicManager().restartMediaOnKeyFrame(app.store.user.get().id, [100]);
         callback && callback(result);
       }
     });
@@ -47673,29 +43423,28 @@ function ChatCall(params) {
   this.stopRecordingCall = function (params, callback) {
     var stopRecordingCallData = {
       chatMessageVOType: _constants.chatMessageVOTypes.END_RECORD_CALL,
-      typeCode: _sdkParams.sdkParams.generalTypeCode,
+      typeCode: app.sdkParams.generalTypeCode,
       //params.typeCode,
       pushMsgType: 3,
-      token: _sdkParams.sdkParams.token
+      token: app.sdkParams.token
     };
 
     if (params) {
       if (typeof +params.callId === 'number' && params.callId > 0) {
         stopRecordingCallData.subjectId = +params.callId;
       } else {
-        (0, _errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID, callback, true, {});
+        app.errorHandler.raiseError(_errorHandler.errorList.INVALID_CALLID, callback, true, {});
         return;
       }
     } else {
-      _eventsModule.chatEvents.fireEvent('error', {
+      app.chatEvents.fireEvent('error', {
         code: 999,
         message: 'No params have been sent to Stop Recording the call!'
       });
-
       return;
     }
 
-    return (0, _messaging.messenger)().sendMessage(stopRecordingCallData, {
+    return app.messenger.sendMessage(stopRecordingCallData, {
       onResult: function onResult(result) {
         callback && callback(result);
       }
@@ -47705,11 +43454,11 @@ function ChatCall(params) {
   this.startScreenShare = function (params, callback) {
     var sendData = {
       chatMessageVOType: _constants.chatMessageVOTypes.START_SCREEN_SHARE,
-      typeCode: _sdkParams.sdkParams.generalTypeCode,
+      typeCode: app.sdkParams.generalTypeCode,
       //params.typeCode,
       pushMsgType: 3,
-      subjectId: (0, _callsList.callsManager)().currentCallId,
-      token: _sdkParams.sdkParams.token
+      subjectId: app.callsManager.currentCallId,
+      token: app.sdkParams.token
     };
 
     if (!sendData.subjectId) {
@@ -47723,10 +43472,10 @@ function ChatCall(params) {
     }
 
     if (params.quality) {
-      _sharedData.sharedVariables.startScreenSharetParams.quality = params.quality;
+      app.call.sharedVariables.startScreenSharetParams.quality = params.quality;
     }
 
-    (0, _sharedData.currentCall)().deviceManager().grantScreenSharePermission({
+    app.call.currentCall().deviceManager().grantScreenSharePermission({
       video: params.video,
       audio: !params.mute,
       closeStream: false
@@ -47740,16 +43489,16 @@ function ChatCall(params) {
         return;
       }
 
-      return (0, _messaging.messenger)().sendMessage(sendData, function (result) {
+      return app.messenger.sendMessage(sendData, function (result) {
         callback && callback(result);
       });
     });
   };
 
-  this.endScreenShare = _sharedData.endScreenShare;
+  this.endScreenShare = app.call.endScreenShare;
 
   this.resizeScreenShare = function (params, callback) {
-    var cCall = (0, _callsList.callsManager)().get((0, _callsList.callsManager)().currentCallId);
+    var cCall = app.callsManager.get(app.callsManager.currentCallId);
     var result = {};
 
     if (!cCall) {
@@ -47759,7 +43508,7 @@ function ChatCall(params) {
     }
 
     if (cCall.screenShareInfo.isStarted() && cCall.screenShareInfo.iAmOwner()) {
-      var qualityObj = (0, _sharedData.calculateScreenSize)({
+      var qualityObj = app.call.calculateScreenSize({
         quality: params.quality
       });
       screenShareInfo.setWidth(qualityObj.width);
@@ -47768,7 +43517,7 @@ function ChatCall(params) {
       cCall.users().get("screenShare").videoTopicManager().restartMediaOnKeyFrame('screenShare', [10, 1000, 2000]);
       cCall.sendCallMetaData({
         id: _constants.callMetaDataTypes.SCREENSHAREMETADATA,
-        userid: _store.store.user().id,
+        userid: app.store.user.get().id,
         content: {
           dimension: {
             width: cCall.screenShareInfo.getWidth(),
@@ -47788,10 +43537,10 @@ function ChatCall(params) {
   this.getCallsList = function (params, callback) {
     var getCallListData = {
       chatMessageVOType: _constants.chatMessageVOTypes.GET_CALLS,
-      typeCode: _sdkParams.sdkParams.generalTypeCode,
+      typeCode: app.sdkParams.generalTypeCode,
       //params.typeCode,
       pushMsgType: 3,
-      token: _sdkParams.sdkParams.token
+      token: app.sdkParams.token
     },
         content = {};
 
@@ -47820,8 +43569,8 @@ function ChatCall(params) {
         content.name = params.name;
       }
 
-      if (typeof params.type === 'string' && _sharedData.callTypes.hasOwnProperty(params.type.toUpperCase())) {
-        content.type = _sharedData.callTypes[params.type.toUpperCase()];
+      if (typeof params.type === 'string' && app.call.callTypes.hasOwnProperty(params.type.toUpperCase())) {
+        content.type = app.call.callTypes[params.type.toUpperCase()];
       }
 
       if (Array.isArray(params.callIds)) {
@@ -47842,15 +43591,14 @@ function ChatCall(params) {
 
       getCallListData.content = JSON.stringify(content);
     } else {
-      _eventsModule.chatEvents.fireEvent('error', {
+      app.chatEvents.fireEvent('error', {
         code: 999,
         message: 'No params have been sent to End the call!'
       });
-
       return;
     }
 
-    return (0, _messaging.messenger)().sendMessage(getCallListData, {
+    return app.messenger.sendMessage(getCallListData, {
       onResult: function onResult(result) {
         callback && callback(result);
       }
@@ -47861,7 +43609,7 @@ function ChatCall(params) {
     var getCallListData = {
       chatMessageVOType: _constants.chatMessageVOTypes.GET_CALLS_TO_JOIN,
       pushMsgType: 3,
-      token: _sdkParams.sdkParams.token
+      token: app.sdkParams.token
     },
         content = {};
 
@@ -47886,8 +43634,8 @@ function ChatCall(params) {
         content.name = params.name;
       }
 
-      if (typeof params.type === 'string' && _sharedData.callTypes.hasOwnProperty(params.type.toUpperCase())) {
-        content.type = _sharedData.callTypes[params.type.toUpperCase()];
+      if (typeof params.type === 'string' && app.call.callTypes.hasOwnProperty(params.type.toUpperCase())) {
+        content.type = app.call.callTypes[params.type.toUpperCase()];
       }
 
       if (Array.isArray(params.threadIds)) {
@@ -47900,15 +43648,14 @@ function ChatCall(params) {
 
       getCallListData.content = JSON.stringify(content);
     } else {
-      _eventsModule.chatEvents.fireEvent('error', {
+      app.chatEvents.fireEvent('error', {
         code: 999,
         message: 'Invalid params'
       });
-
       return;
     }
 
-    return (0, _messaging.messenger)().sendMessage(getCallListData, {
+    return app.messenger.sendMessage(getCallListData, {
       onResult: function onResult(result) {
         callback && callback(result);
       }
@@ -47918,7 +43665,7 @@ function ChatCall(params) {
   this.deleteFromCallList = function (params, callback) {
     var sendData = {
       chatMessageVOType: _constants.chatMessageVOTypes.DELETE_FROM_CALL_HISTORY,
-      typeCode: _sdkParams.sdkParams.generalTypeCode,
+      typeCode: app.sdkParams.generalTypeCode,
       //params.typeCode,
       content: []
     };
@@ -47927,11 +43674,10 @@ function ChatCall(params) {
       if (typeof params.contactType === 'string' && params.contactType.length) {
         sendData.content.contactType = params.contactType;
       } else {
-        _eventsModule.chatEvents.fireEvent('error', {
+        app.chatEvents.fireEvent('error', {
           code: 999,
           message: 'You should enter a contactType!'
         });
-
         return;
       }
 
@@ -47939,15 +43685,14 @@ function ChatCall(params) {
         sendData.content = params.callIds;
       }
     } else {
-      _eventsModule.chatEvents.fireEvent('error', {
+      app.chatEvents.fireEvent('error', {
         code: 999,
         message: 'No params have been sent to Delete a call from Call History!'
       });
-
       return;
     }
 
-    return (0, _messaging.messenger)().sendMessage(sendData, {
+    return app.messenger.sendMessage(sendData, {
       onResult: function onResult(result) {
         var returnData = {
           hasError: result.hasError,
@@ -47969,18 +43714,17 @@ function ChatCall(params) {
   this.getCallParticipants = function (params, callback) {
     var sendMessageParams = {
       chatMessageVOType: _constants.chatMessageVOTypes.ACTIVE_CALL_PARTICIPANTS,
-      typeCode: _sdkParams.sdkParams.generalTypeCode,
+      typeCode: app.sdkParams.generalTypeCode,
       //params.typeCode,
       content: {}
     };
 
     if (params) {
       if (isNaN(params.callId)) {
-        _eventsModule.chatEvents.fireEvent('error', {
+        app.chatEvents.fireEvent('error', {
           code: 999,
           message: 'Call Id should be a valid number!'
         });
-
         return;
       } else {
         var callId = +params.callId;
@@ -47989,7 +43733,7 @@ function ChatCall(params) {
             count = parseInt(params.count) > 0 ? parseInt(params.count) : config.getHistoryCount;
         sendMessageParams.content.count = count;
         sendMessageParams.content.offset = offset;
-        return (0, _messaging.messenger)().sendMessage(sendMessageParams, {
+        return app.messenger.sendMessage(sendMessageParams, {
           onResult: function onResult(result) {
             var returnData = {
               hasError: result.hasError,
@@ -48019,7 +43763,7 @@ function ChatCall(params) {
             callback = undefined;
 
             if (!returnData.hasError) {
-              _eventsModule.chatEvents.fireEvent('callEvents', {
+              app.chatEvents.fireEvent('callEvents', {
                 type: 'CALL_PARTICIPANTS_LIST_CHANGE',
                 threadId: callId,
                 result: returnData.result
@@ -48029,11 +43773,10 @@ function ChatCall(params) {
         });
       }
     } else {
-      _eventsModule.chatEvents.fireEvent('error', {
+      app.chatEvents.fireEvent('error', {
         code: 999,
         message: 'No params have been sent to Get Call Participants!'
       });
-
       return;
     }
   };
@@ -48046,12 +43789,12 @@ function ChatCall(params) {
     (0, _objectDestructuringEmpty2["default"])(_ref5);
     var sendMessageParams = {
       chatMessageVOType: _constants.chatMessageVOTypes.INQUIRY_CALL,
-      typeCode: _sdkParams.sdkParams.generalTypeCode,
+      typeCode: app.sdkParams.generalTypeCode,
       //params.typeCode,
-      subjectId: (0, _callsList.callsManager)().currentCallId,
+      subjectId: app.callsManager.currentCallId,
       content: {}
     };
-    return (0, _messaging.messenger)().sendMessage(sendMessageParams, {
+    return app.messenger.sendMessage(sendMessageParams, {
       onResult: function onResult(result) {
         var returnData = {
           hasError: result.hasError,
@@ -48077,10 +43820,10 @@ function ChatCall(params) {
          */
 
         callback = undefined;
-        returnData.result.callId = (0, _callsList.callsManager)().currentCallId;
+        returnData.result.callId = app.callsManager.currentCallId;
 
         if (!returnData.hasError) {
-          _eventsModule.chatEvents.fireEvent('callEvents', {
+          app.chatEvents.fireEvent('callEvents', {
             type: 'ACTIVE_CALL_PARTICIPANTS',
             result: returnData.result
           });
@@ -48098,7 +43841,7 @@ function ChatCall(params) {
      */
     var sendMessageParams = {
       chatMessageVOType: _constants.chatMessageVOTypes.ADD_CALL_PARTICIPANT,
-      typeCode: _sdkParams.sdkParams.generalTypeCode,
+      typeCode: app.sdkParams.generalTypeCode,
       //params.typeCode,
       content: []
     };
@@ -48135,7 +43878,7 @@ function ChatCall(params) {
       }
     }
 
-    return (0, _messaging.messenger)().sendMessage(sendMessageParams, {
+    return app.messenger.sendMessage(sendMessageParams, {
       onResult: function onResult(result) {
         var returnData = {
           hasError: result.hasError,
@@ -48162,7 +43905,7 @@ function ChatCall(params) {
      */
     var sendMessageParams = {
       chatMessageVOType: _constants.chatMessageVOTypes.REMOVE_CALL_PARTICIPANT,
-      typeCode: _sdkParams.sdkParams.generalTypeCode,
+      typeCode: app.sdkParams.generalTypeCode,
       //params.typeCode,
       content: []
     };
@@ -48177,7 +43920,7 @@ function ChatCall(params) {
       }
     }
 
-    return (0, _messaging.messenger)().sendMessage(sendMessageParams, {
+    return app.messenger.sendMessage(sendMessageParams, {
       onResult: function onResult(result) {
         var returnData = {
           hasError: result.hasError,
@@ -48197,9 +43940,9 @@ function ChatCall(params) {
   };
 
   this.muteCallParticipants = function (params, callback) {
-    if (requestBlocker.isKeyBlocked(requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE)) {
-      (0, _errorHandler.raiseError)((0, _errorHandler.getFilledErrorObject)(_objectSpread(_objectSpread({}, _errorHandler.errorList.REQUEST_BLOCKED), {}, {
-        replacements: ['muteCallParticipants', requestBlocker.getRemainingTime(requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE)]
+    if (app.requestBlocker.isKeyBlocked(app.requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE)) {
+      app.errorHandler.raiseError(app.errorHandler.getFilledErrorObject(_objectSpread(_objectSpread({}, _errorHandler.errorList.REQUEST_BLOCKED), {}, {
+        replacements: ['muteCallParticipants', app.requestBlocker.getRemainingTime(app.requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE)]
       })), callback, true, {});
       return;
     }
@@ -48212,7 +43955,7 @@ function ChatCall(params) {
 
     var sendMessageParams = {
       chatMessageVOType: _constants.chatMessageVOTypes.MUTE_CALL_PARTICIPANT,
-      typeCode: _sdkParams.sdkParams.generalTypeCode,
+      typeCode: app.sdkParams.generalTypeCode,
       //params.typeCode,
       content: [],
       uniqueId: _utility["default"].generateUUID()
@@ -48228,11 +43971,11 @@ function ChatCall(params) {
       }
     }
 
-    requestBlocker.add({
-      key: requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE,
+    app.requestBlocker.add({
+      key: app.requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE,
       uniqueId: sendMessageParams.uniqueId
     });
-    return (0, _messaging.messenger)().sendMessage(sendMessageParams, {
+    return app.messenger.sendMessage(sendMessageParams, {
       onResult: function onResult(result) {
         var returnData = {
           hasError: result.hasError,
@@ -48252,9 +43995,9 @@ function ChatCall(params) {
   };
 
   this.unMuteCallParticipants = function (params, callback) {
-    if (requestBlocker.isKeyBlocked(requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE)) {
-      (0, _errorHandler.raiseError)((0, _errorHandler.getFilledErrorObject)(_objectSpread(_objectSpread({}, _errorHandler.errorList.REQUEST_BLOCKED), {}, {
-        replacements: ['unMuteCallParticipants', requestBlocker.getRemainingTime(requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE)]
+    if (app.requestBlocker.isKeyBlocked(app.requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE)) {
+      app.errorHandler.raiseError(app.errorHandler.getFilledErrorObject(_objectSpread(_objectSpread({}, _errorHandler.errorList.REQUEST_BLOCKED), {}, {
+        replacements: ['unMuteCallParticipants', app.requestBlocker.getRemainingTime(app.requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE)]
       })), callback, true, {});
       return;
     }
@@ -48267,7 +44010,7 @@ function ChatCall(params) {
 
     var sendMessageParams = {
       chatMessageVOType: _constants.chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT,
-      typeCode: _sdkParams.sdkParams.generalTypeCode,
+      typeCode: app.sdkParams.generalTypeCode,
       //params.typeCode,
       content: [],
       uniqueId: _utility["default"].generateUUID()
@@ -48283,11 +44026,11 @@ function ChatCall(params) {
       }
     }
 
-    requestBlocker.add({
-      key: requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE,
+    app.requestBlocker.add({
+      key: app.requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE,
       uniqueId: sendMessageParams.uniqueId
     });
-    return (0, _messaging.messenger)().sendMessage(sendMessageParams, {
+    return app.messenger.sendMessage(sendMessageParams, {
       onResult: function onResult(result) {
         var returnData = {
           hasError: result.hasError,
@@ -48307,19 +44050,19 @@ function ChatCall(params) {
   };
 
   this.turnOnVideoCall = function (params, callback) {
-    if (requestBlocker.isKeyBlocked(requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE)) {
-      (0, _errorHandler.raiseError)((0, _errorHandler.getFilledErrorObject)(_objectSpread(_objectSpread({}, _errorHandler.errorList.REQUEST_BLOCKED), {}, {
-        replacements: ['turnOnVideoCall', requestBlocker.getRemainingTime(requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE)]
+    if (app.requestBlocker.isKeyBlocked(app.requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE)) {
+      app.errorHandler.raiseError(app.errorHandler.getFilledErrorObject(_objectSpread(_objectSpread({}, _errorHandler.errorList.REQUEST_BLOCKED), {}, {
+        replacements: ['turnOnVideoCall', app.requestBlocker.getRemainingTime(app.requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE)]
       })), callback, true, {});
       return;
     }
 
     var turnOnVideoData = {
       chatMessageVOType: _constants.chatMessageVOTypes.TURN_ON_VIDEO_CALL,
-      typeCode: _sdkParams.sdkParams.generalTypeCode,
+      typeCode: app.sdkParams.generalTypeCode,
       //params.typeCode,
       pushMsgType: 3,
-      token: _sdkParams.sdkParams.token,
+      token: app.sdkParams.token,
       uniqueId: _utility["default"].generateUUID()
     };
 
@@ -48327,45 +44070,42 @@ function ChatCall(params) {
       if (typeof +params.callId === 'number' && params.callId > 0) {
         turnOnVideoData.subjectId = +params.callId;
       } else {
-        (0, _errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID, callback, true, {});
+        app.errorHandler.raiseError(_errorHandler.errorList.INVALID_CALLID, callback, true, {});
         return;
       }
     } else {
-      _eventsModule.chatEvents.fireEvent('error', {
+      app.chatEvents.fireEvent('error', {
         code: 999,
         message: 'No params have been sent to turn on the video call!'
       });
-
       return;
     }
 
-    var call = (0, _callsList.callsManager)().get((0, _callsList.callsManager)().currentCallId);
+    var call = app.callsManager.get(app.callsManager.currentCallId);
 
     if (!call) {
-      _eventsModule.chatEvents.fireEvent('error', {
+      app.chatEvents.fireEvent('error', {
         code: 999,
         message: 'Call not exists'
       });
-
       return;
     }
 
-    var user = call.users().get(_store.store.user().id); //callUsers[store.user().id];
+    var user = call.users().get(app.store.user.get().id); //callUsers[store.user().id];
 
     if (user && user.videoTopicManager() && user.videoTopicManager().getPeer()) {
-      _eventsModule.chatEvents.fireEvent('error', {
+      app.chatEvents.fireEvent('error', {
         code: 999,
         message: 'Video stream is already open!'
       });
-
       return;
     }
 
-    requestBlocker.add({
-      key: requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE,
+    app.requestBlocker.add({
+      key: app.requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE,
       uniqueId: turnOnVideoData.uniqueId
     });
-    return (0, _messaging.messenger)().sendMessage(turnOnVideoData, {
+    return app.messenger.sendMessage(turnOnVideoData, {
       onResult: function onResult(result) {
         callback && callback(result);
       }
@@ -48373,19 +44113,19 @@ function ChatCall(params) {
   };
 
   this.turnOffVideoCall = function (params, callback) {
-    if (requestBlocker.isKeyBlocked(requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE)) {
-      (0, _errorHandler.raiseError)((0, _errorHandler.getFilledErrorObject)(_objectSpread(_objectSpread({}, _errorHandler.errorList.REQUEST_BLOCKED), {}, {
-        replacements: ['turnOffVideoCall', requestBlocker.getRemainingTime(requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE)]
+    if (app.requestBlocker.isKeyBlocked(app.requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE)) {
+      app.errorHandler.raiseError(app.errorHandler.getFilledErrorObject(_objectSpread(_objectSpread({}, _errorHandler.errorList.REQUEST_BLOCKED), {}, {
+        replacements: ['turnOffVideoCall', app.requestBlocker.getRemainingTime(app.requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE)]
       })), callback, true, {});
       return;
     }
 
     var turnOffVideoData = {
       chatMessageVOType: _constants.chatMessageVOTypes.TURN_OFF_VIDEO_CALL,
-      typeCode: _sdkParams.sdkParams.generalTypeCode,
+      typeCode: app.sdkParams.generalTypeCode,
       //params.typeCode,
       pushMsgType: 3,
-      token: _sdkParams.sdkParams.token,
+      token: app.sdkParams.token,
       uniqueId: _utility["default"].generateUUID()
     };
 
@@ -48393,45 +44133,42 @@ function ChatCall(params) {
       if (typeof +params.callId === 'number' && params.callId > 0) {
         turnOffVideoData.subjectId = +params.callId;
       } else {
-        (0, _errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID, callback, true, {});
+        app.errorHandler.raiseError(_errorHandler.errorList.INVALID_CALLID, callback, true, {});
         return;
       }
     } else {
-      _eventsModule.chatEvents.fireEvent('error', {
+      app.chatEvents.fireEvent('error', {
         code: 999,
         message: 'No params have been sent to turn off the video call!'
       });
-
       return;
     }
 
-    var call = (0, _sharedData.currentCall)();
+    var call = app.call.currentCall();
 
     if (!call) {
-      _eventsModule.chatEvents.fireEvent('error', {
+      app.chatEvents.fireEvent('error', {
         code: 999,
         message: 'Call not exists'
       });
-
       return;
     }
 
-    var user = call.users().get(_store.store.user().id); //callUsers[store.user().id];
+    var user = call.users().get(app.store.user.get().id); //callUsers[store.user().id];
 
     if (user && user.videoTopicManager() && user.videoTopicManager().getPeer() && (user.videoTopicManager().isPeerConnecting() || user.videoTopicManager().isPeerFailed() || user.videoTopicManager().isPeerDisconnected())) {
-      _eventsModule.chatEvents.fireEvent('error', {
+      app.chatEvents.fireEvent('error', {
         code: 999,
         message: 'Can not stop stream in current state'
       });
-
       return;
     }
 
-    requestBlocker.add({
-      key: requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE,
+    app.requestBlocker.add({
+      key: app.requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE,
       uniqueId: turnOffVideoData.uniqueId
     });
-    return (0, _messaging.messenger)().sendMessage(turnOffVideoData, {
+    return app.messenger.sendMessage(turnOffVideoData, {
       onResult: function onResult(result) {
         callback && callback(result);
       }
@@ -48442,7 +44179,7 @@ function ChatCall(params) {
     if (params) {
       if (Array.isArray(params.userIds) && params.userIds.length) {
         for (var i in params.userIds) {
-          var user = (0, _sharedData.currentCall)().users().get(params.userIds[i]);
+          var user = app.call.currentCall().users().get(params.userIds[i]);
 
           if (user.user().id != "screenShare") {
             user.destroyVideo();
@@ -48459,11 +44196,10 @@ function ChatCall(params) {
         });
       }
     } else {
-      _eventsModule.chatEvents.fireEvent('error', {
+      app.chatEvents.fireEvent('error', {
         code: 999,
         message: 'No params have been sent to closeOthersVideoReceive'
       });
-
       return;
     }
   };
@@ -48472,7 +44208,7 @@ function ChatCall(params) {
     if (params) {
       if (Array.isArray(params.userIds) && params.userIds.length) {
         for (var i in params.userIds) {
-          var user = (0, _sharedData.currentCall)().users().get(params.userIds[i]);
+          var user = app.call.currentCall().users().get(params.userIds[i]);
           if (!user || !user.user().video) continue;
           user.startVideo(user.user().topicSend);
         }
@@ -48482,7 +44218,7 @@ function ChatCall(params) {
         });
       }
     } else {
-      _eventsModule.chatEvents.fireEvent('error', {
+      app.chatEvents.fireEvent('error', {
         code: 999,
         message: 'No params have been sent to closeOthersVideoReceive'
       });
@@ -48497,9 +44233,9 @@ function ChatCall(params) {
 
   this.pauseCamera = function (params, callback) {
     // let me = callUsers[store.user().id];
-    // let currentCall = callsManager().get(callsManager().currentCallId);
-    if (!(0, _sharedData.currentCall)()) return;
-    var me = (0, _sharedData.currentCall)().users().get(_store.store.user().id);
+    // let currentCall = app.callsManager.get(callsManager().currentCallId);
+    if (!app.call.currentCall()) return;
+    var me = app.call.currentCall().users().get(app.store.user.get().id);
     if (!me || !me.user().video || !me.videoTopicManager().getPeer()) return;
     me.videoTopicManager().pauseSendStream();
     callback && callback();
@@ -48507,8 +44243,8 @@ function ChatCall(params) {
 
   this.resumeCamera = function (params, callback) {
     // let currentCall = callsManager().get(callsManager().currentCallId);
-    if (!(0, _sharedData.currentCall)()) return;
-    var me = (0, _sharedData.currentCall)().users().get(_store.store.user().id);
+    if (!app.call.currentCall()) return;
+    var me = app.call.currentCall().users().get(app.store.user.get().id);
     if (!me || !me.user().videoTopicName || !me.videoTopicManager().getPeer()) //!me.peers[me.videoTopicName]
       return;
     me.videoTopicManager().resumeSendStream();
@@ -48522,16 +44258,16 @@ function ChatCall(params) {
 
 
   this.pauseMice = function (params, callback) {
-    var me = (0, _sharedData.currentCall)().users().get(_store.store.user().id);
-    if (!(0, _sharedData.currentCall)() || !me || !me.user().audioTopicName || !me.audioTopicManager().getPeer()) //!me.peers[me.videoTopicName]
+    var me = app.call.currentCall().users().get(app.store.user.get().id);
+    if (!app.call.currentCall() || !me || !me.user().audioTopicName || !me.audioTopicManager().getPeer()) //!me.peers[me.videoTopicName]
       return;
     me.audioTopicManager().pauseSendStream();
     callback && callback();
   };
 
   this.resumeMice = function (params, callback) {
-    var me = (0, _sharedData.currentCall)().users().get(_store.store.user().id);
-    if (!_sharedData.currentCall || !me || !me.user().audioTopicName || !me.audioTopicManager().getPeer()) //!me.peers[me.videoTopicName]
+    var me = app.call.currentCall().users().get(app.store.user.get().id);
+    if (!app.call.currentCall || !me || !me.user().audioTopicName || !me.audioTopicManager().getPeer()) //!me.peers[me.videoTopicName]
       return;
     me.audioTopicManager().resumeSendStream();
     callback && callback();
@@ -48540,40 +44276,38 @@ function ChatCall(params) {
   this.resizeCallVideo = function (params, callback) {
     if (params) {
       if (!!params.width && +params.width > 0) {
-        _sharedData.sharedVariables.callVideoMinWidth = +params.width;
+        app.call.sharedVariables.callVideoMinWidth = +params.width;
       }
 
       if (!!params.height && +params.height > 0) {
-        _sharedData.sharedVariables.callVideoMinHeight = +params.height;
+        app.call.sharedVariables.callVideoMinHeight = +params.height;
       }
 
-      if (!callUsers[_store.store.user().id]) {
-        _sdkParams.sdkParams.consoleLogging && console.log("Error in resizeCallVideo(), call not started ");
+      if (!callUsers[app.store.user.get().id]) {
+        app.sdkParams.consoleLogging && console.log("Error in resizeCallVideo(), call not started ");
         return;
       }
 
-      var userObject = callUsers[_store.store.user().id]; //userObject.peers[userObject.videoTopicName]
-
+      var userObject = callUsers[app.store.user.get().id]; //userObject.peers[userObject.videoTopicName]
 
       userObject.videoTopicManager.getPeer().getLocalStream().getTracks()[0].applyConstraints({
-        "width": _sharedData.sharedVariables.callVideoMinWidth,
-        "height": _sharedData.sharedVariables.callVideoMinHeight
+        "width": app.call.sharedVariables.callVideoMinWidth,
+        "height": app.call.sharedVariables.callVideoMinHeight
       }).then(function (res) {
-        userObject.htmlElements[userObject.videoTopicName].style.width = _sharedData.sharedVariables.callVideoMinWidth + 'px';
-        userObject.htmlElements[userObject.videoTopicName].style.height = _sharedData.sharedVariables.callVideoMinHeight + 'px';
+        userObject.htmlElements[userObject.videoTopicName].style.width = app.call.sharedVariables.callVideoMinWidth + 'px';
+        userObject.htmlElements[userObject.videoTopicName].style.height = app.call.sharedVariables.callVideoMinHeight + 'px';
         callback && callback();
       })["catch"](function (e) {
-        _eventsModule.chatEvents.fireEvent('error', {
+        app.chatEvents.fireEvent('error', {
           code: 999,
           message: e
         });
       });
     } else {
-      _eventsModule.chatEvents.fireEvent('error', {
+      app.chatEvents.fireEvent('error', {
         code: 999,
         message: 'No params have been sent to resize the video call! Send an object like {width: 640, height: 480}'
       });
-
       return;
     }
   };
@@ -48583,14 +44317,14 @@ function ChatCall(params) {
         sticker = _ref6$sticker === void 0 ? _constants.callStickerTypes.RAISE_HAND : _ref6$sticker;
     var sendMessageParams = {
       chatMessageVOType: _constants.chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE,
-      typeCode: _sdkParams.sdkParams.generalTypeCode,
+      typeCode: app.sdkParams.generalTypeCode,
       //params.typeCode,
       content: [sticker],
-      subjectId: (0, _callsList.callsManager)().currentCallId
+      subjectId: app.callsManager.currentCallId
     };
 
     if (!sendMessageParams.subjectId) {
-      (0, _errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID, callback, true, {});
+      app.errorHandler.raiseError(_errorHandler.errorList.INVALID_CALLID, callback, true, {});
       return;
     }
 
@@ -48599,7 +44333,7 @@ function ChatCall(params) {
       return;
     }
 
-    return (0, _messaging.messenger)().sendMessage(sendMessageParams, {
+    return app.messenger.sendMessage(sendMessageParams, {
       onResult: function onResult(result) {
         callback && callback(result);
       }
@@ -48610,10 +44344,10 @@ function ChatCall(params) {
     var invitees = _ref7.invitees;
     var sendData = {
       chatMessageVOType: _constants.chatMessageVOTypes.RECALL_THREAD_PARTICIPANT,
-      typeCode: _sdkParams.sdkParams.generalTypeCode,
+      typeCode: app.sdkParams.generalTypeCode,
       //params.typeCode,
       content: null,
-      subjectId: (0, _callsList.callsManager)().currentCallId
+      subjectId: app.callsManager.currentCallId
     };
 
     if (!invitees || !Array.isArray(invitees) || !invitees.length) {
@@ -48627,14 +44361,14 @@ function ChatCall(params) {
       item.idType = _constants.inviteeVOidTypes[item.idType];
       sendData.content.push(item);
     });
-    return (0, _messaging.messenger)().sendMessage(sendData, {
+    return app.messenger.sendMessage(sendData, {
       onResult: function onResult(result) {
         callback && callback(result);
       }
     });
   };
 
-  this.deviceManager = _sharedData.sharedVariables.deviceManager ? _sharedData.sharedVariables.deviceManager : (0, _sharedData.currentCall)() ? (0, _sharedData.currentCall)().deviceManager() : null;
+  this.deviceManager = app.call.sharedVariables.deviceManager ? app.call.sharedVariables.deviceManager : app.call.currentCall() ? currentCall().deviceManager() : null;
 
   this.resetCallStream = /*#__PURE__*/function () {
     var _ref9 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(_ref8, callback) {
@@ -48646,7 +44380,7 @@ function ChatCall(params) {
             case 0:
               userId = _ref8.userId, _ref8$streamType = _ref8.streamType, streamType = _ref8$streamType === void 0 ? 'audio' : _ref8$streamType;
 
-              if ((0, _sharedData.currentCall)()) {
+              if (app.call.currentCall()) {
                 _context4.next = 4;
                 break;
               }
@@ -48657,7 +44391,7 @@ function ChatCall(params) {
               return _context4.abrupt("return");
 
             case 4:
-              user = (0, _sharedData.currentCall)().users().get(userId);
+              user = app.call.currentCall().users().get(userId);
 
               if (user) {
                 _context4.next = 8;
@@ -48692,19 +44426,19 @@ function ChatCall(params) {
   }();
 
   this.resetAudioSendStream = function (callback) {
-    if (!(0, _sharedData.currentCall)()) {
+    if (!app.call.currentCall()) {
       callback && callback({
         hasError: true
       });
       return;
     }
 
-    (0, _sharedData.currentCall)().deviceManager().mediaStreams.stopAudioInput();
-    (0, _sharedData.currentCall)().deviceManager().grantUserMediaDevicesPermissions({
+    app.call.currentCall().deviceManager().mediaStreams.stopAudioInput();
+    app.call.currentCall().deviceManager().grantUserMediaDevicesPermissions({
       audio: true
     }).then(function () {
-      var user = (0, _sharedData.currentCall)().users().get(_store.store.user().id);
-      user.audioTopicManager().updateStream((0, _sharedData.currentCall)().deviceManager().mediaStreams.getAudioInput());
+      var user = app.call.currentCall().users().get(app.store.user.get().id);
+      user.audioTopicManager().updateStream(app.call.currentCall().deviceManager().mediaStreams.getAudioInput());
       callback && callback({
         hasError: false
       });
@@ -48712,19 +44446,19 @@ function ChatCall(params) {
   };
 
   this.resetVideoSendStream = function (callback) {
-    if (!(0, _sharedData.currentCall)()) {
+    if (!app.call.currentCall()) {
       callback && callback({
         hasError: true
       });
       return;
     }
 
-    (0, _sharedData.currentCall)().deviceManager().mediaStreams.setVideoInput();
-    (0, _sharedData.currentCall)().deviceManager().grantUserMediaDevicesPermissions({
+    app.call.currentCall().deviceManager().mediaStreams.setVideoInput();
+    app.call.currentCall().deviceManager().grantUserMediaDevicesPermissions({
       audio: true
     }).then(function () {
-      var user = (0, _sharedData.currentCall)().users().get(_store.store.user().id);
-      user.videoTopicManager().updateStream((0, _sharedData.currentCall)().deviceManager().mediaStreams.getVideoInput());
+      var user = app.call.currentCall().users().get(app.store.user.get().id);
+      user.videoTopicManager().updateStream(app.call.currentCall().deviceManager().mediaStreams.getVideoInput());
       callback && callback({
         hasError: false
       });
@@ -48736,11 +44470,11 @@ function ChatCall(params) {
 
     switch (mediaType) {
       case 'audio':
-        (0, _sharedData.currentCall)().users().get(callUserId).audioTopicManager().startStatusPrint();
+        app.call.currentCall().users().get(callUserId).audioTopicManager().startStatusPrint();
         break;
 
       case 'video':
-        (0, _sharedData.currentCall)().users().get(callUserId).videoTopicManager().startStatusPrint();
+        app.call.currentCall().users().get(callUserId).videoTopicManager().startStatusPrint();
     } // currentCall().users().get(callUserId)[mediaType + 'TopicManager']().startStatusPrint();
 
   };
@@ -48748,11 +44482,11 @@ function ChatCall(params) {
   this.stopPrintStatus = function (callUserId, mediaType) {
     switch (mediaType) {
       case 'audio':
-        (0, _sharedData.currentCall)().users().get(callUserId).audioTopicManager().stopStatusPrint();
+        app.call.currentCall().users().get(callUserId).audioTopicManager().stopStatusPrint();
         break;
 
       case 'video':
-        (0, _sharedData.currentCall)().users().get(callUserId).videoTopicManager().stopStatusPrint();
+        app.call.currentCall().users().get(callUserId).videoTopicManager().stopStatusPrint();
     } // currentCall().users().get(callUserId)[mediaType + 'TopicManager']().stopStatusPrint();
 
   };
@@ -48761,14 +44495,14 @@ function ChatCall(params) {
 var _default = ChatCall;
 exports["default"] = _default;
 
-},{"./events.module.js":284,"./lib/call/callServerManager":286,"./lib/call/callsList":290,"./lib/call/deviceManager2":292,"./lib/call/sharedData":294,"./lib/constants":299,"./lib/errorHandler":300,"./lib/requestBlocker":301,"./lib/sdkParams":302,"./lib/store":304,"./messaging.module":309,"./utility/utility":310,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/objectDestructuringEmpty":10,"@babel/runtime/helpers/typeof":13,"@babel/runtime/regenerator":15,"kurento-utils":199}],282:[function(require,module,exports){
-'use strict';var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");var _typeof3=require("@babel/runtime/helpers/typeof");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _podasyncWsOnly=_interopRequireDefault(require("podasync-ws-only"));var _utility=_interopRequireDefault(require("./utility/utility"));var _call=_interopRequireDefault(require("./call.module"));var _sdkParams=require("./lib/sdkParams");var _events=_interopRequireWildcard(require("./events.module"));var _messaging=require("./messaging.module");var _buildConfig=_interopRequireDefault(require("./buildConfig.json"));var _deprecateMethods=require("./deprecateMethods");var _xss=_interopRequireDefault(require("xss"));var _threadParticipantsMethods=require("./lib/chat/threadParticipantsMethods");var _constants=require("./lib/constants");var _deviceManager=_interopRequireDefault(require("./lib/call/deviceManager.js"));var _store=require("./lib/store");var _user=require("./lib/store/user");var _reactionsMethods=require("./lib/chat/reactionsMethods");function _getRequireWildcardCache(nodeInterop){if(typeof WeakMap!=="function")return null;var cacheBabelInterop=new WeakMap();var cacheNodeInterop=new WeakMap();return(_getRequireWildcardCache=function _getRequireWildcardCache(nodeInterop){return nodeInterop?cacheNodeInterop:cacheBabelInterop;})(nodeInterop);}function _interopRequireWildcard(obj,nodeInterop){if(!nodeInterop&&obj&&obj.__esModule){return obj;}if(obj===null||_typeof3(obj)!=="object"&&typeof obj!=="function"){return{"default":obj};}var cache=_getRequireWildcardCache(nodeInterop);if(cache&&cache.has(obj)){return cache.get(obj);}var newObj={};var hasPropertyDescriptor=Object.defineProperty&&Object.getOwnPropertyDescriptor;for(var key in obj){if(key!=="default"&&Object.prototype.hasOwnProperty.call(obj,key)){var desc=hasPropertyDescriptor?Object.getOwnPropertyDescriptor(obj,key):null;if(desc&&(desc.get||desc.set)){Object.defineProperty(newObj,key,desc);}else{newObj[key]=obj[key];}}}newObj["default"]=obj;if(cache){cache.set(obj,newObj);}return newObj;}function Chat(params){/*******************************************************
+},{"./lib/call/call":264,"./lib/call/callServerManager":266,"./lib/call/callsList":270,"./lib/call/deviceManager2":271,"./lib/constants":277,"./lib/errorHandler":278,"./utility/utility":288,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/objectDestructuringEmpty":10,"@babel/runtime/helpers/typeof":13,"@babel/runtime/regenerator":15}],260:[function(require,module,exports){
+'use strict';var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _app=_interopRequireDefault(require("./lib/app"));var _podasyncWsOnly=_interopRequireDefault(require("podasync-ws-only"));var _utility=_interopRequireDefault(require("./utility/utility"));var _call=_interopRequireDefault(require("./call.module"));var _messaging=_interopRequireDefault(require("./messaging.module"));var _buildConfig=_interopRequireDefault(require("./buildConfig.json"));var _deprecateMethods=require("./deprecateMethods");var _xss=_interopRequireDefault(require("xss"));var _threadParticipantsMethods=_interopRequireDefault(require("./lib/chat/threadParticipantsMethods"));var _constants=require("./lib/constants");var _reactionsMethods=_interopRequireDefault(require("./lib/chat/reactionsMethods"));function Chat(params){/*******************************************************
    *          P R I V A T E   V A R I A B L E S          *
-   *******************************************************/_sdkParams.sdkParams.appId=params.appId;_sdkParams.sdkParams.token=params.token||"111";_sdkParams.sdkParams.generalTypeCode=params.typeCode||'default';_sdkParams.sdkParams.typeCodeOwnerId=params.typeCodeOwnerId||null;_sdkParams.sdkParams.mapApiKey=params.mapApiKey||'8b77db18704aa646ee5aaea13e7370f4f88b9e8c';_sdkParams.sdkParams.productEnv=typeof navigator!='undefined'?navigator.product:'undefined';_sdkParams.sdkParams.forceWaitQueueInMemory=params.forceWaitQueueInMemory&&typeof params.forceWaitQueueInMemory==='boolean'?params.forceWaitQueueInMemory:false;_sdkParams.sdkParams.grantDeviceIdFromSSO=params.grantDeviceIdFromSSO&&typeof params.grantDeviceIdFromSSO==='boolean'?params.grantDeviceIdFromSSO:false;_sdkParams.sdkParams.deliveryIntervalPitch=params.deliveryIntervalPitch||2000;_sdkParams.sdkParams.seenIntervalPitch=params.seenIntervalPitch||2000;_sdkParams.sdkParams.systemMessageIntervalPitch=params.systemMessageIntervalPitch||1000;_sdkParams.sdkParams.socketAddress=params.socketAddress;_sdkParams.sdkParams.serverName=params.serverName;_sdkParams.sdkParams.wsConnectionWaitTime=params.wsConnectionWaitTime;_sdkParams.sdkParams.connectionRetryInterval=params.connectionRetryInterval;_sdkParams.sdkParams.msgPriority=params.msgPriority;_sdkParams.sdkParams.messageTtl=params.messageTtl||10000;_sdkParams.sdkParams.reconnectOnClose=params.reconnectOnClose;_sdkParams.sdkParams.asyncLogging=params.asyncLogging;_sdkParams.sdkParams.connectionCheckTimeout=params.connectionCheckTimeout;_sdkParams.sdkParams.httpRequestTimeout=params.httpRequestTimeout>=0?params.httpRequestTimeout:0;_sdkParams.sdkParams.asyncRequestTimeout=typeof params.asyncRequestTimeout==='number'&&params.asyncRequestTimeout>=0?params.asyncRequestTimeout:0;_sdkParams.sdkParams.connectionCheckTimeoutThreshold=params.connectionCheckTimeoutThreshold;_sdkParams.sdkParams.httpUploadRequestTimeout=params.httpUploadRequestTimeout>=0?params.httpUploadRequestTimeout:0;_sdkParams.sdkParams.actualTimingLog=params.asyncLogging.actualTiming&&typeof params.asyncLogging.actualTiming==='boolean'?params.asyncLogging.actualTiming:false;_sdkParams.sdkParams.consoleLogging=params.asyncLogging.consoleLogging&&typeof params.asyncLogging.consoleLogging==='boolean'?params.asyncLogging.consoleLogging:false;_sdkParams.sdkParams.fullResponseObject=params.fullResponseObject||false;_sdkParams.sdkParams.webrtcConfig=params.webrtcConfig?params.webrtcConfig:null;_sdkParams.sdkParams.chatPingMessageInterval=params.chatPingMessageInterval;_sdkParams.sdkParams.protocol=params.protocol;_sdkParams.sdkParams.callRequestTimeout=typeof params.callRequestTimeout==='number'&&params.callRequestTimeout>=0?params.callRequestTimeout:10000;_sdkParams.sdkParams.callOptions=params.callOptions;var asyncClient,peerId,oldPeerId,//deviceId,
+   *******************************************************/var app=new _app["default"]();var reactionsMethods=new _reactionsMethods["default"](app);var threadParticipantsMethods=new _threadParticipantsMethods["default"](app);app.sdkParams.appId=params.appId;app.sdkParams.token=params.token||"111";app.sdkParams.generalTypeCode=params.typeCode||'default';app.sdkParams.typeCodeOwnerId=params.typeCodeOwnerId||null;app.sdkParams.mapApiKey=params.mapApiKey||'8b77db18704aa646ee5aaea13e7370f4f88b9e8c';app.sdkParams.productEnv=typeof navigator!='undefined'?navigator.product:'undefined';app.sdkParams.forceWaitQueueInMemory=params.forceWaitQueueInMemory&&typeof params.forceWaitQueueInMemory==='boolean'?params.forceWaitQueueInMemory:false;app.sdkParams.grantDeviceIdFromSSO=params.grantDeviceIdFromSSO&&typeof params.grantDeviceIdFromSSO==='boolean'?params.grantDeviceIdFromSSO:false;app.sdkParams.deliveryIntervalPitch=params.deliveryIntervalPitch||2000;app.sdkParams.seenIntervalPitch=params.seenIntervalPitch||2000;app.sdkParams.systemMessageIntervalPitch=params.systemMessageIntervalPitch||1000;app.sdkParams.socketAddress=params.socketAddress;app.sdkParams.serverName=params.serverName;app.sdkParams.wsConnectionWaitTime=params.wsConnectionWaitTime;app.sdkParams.connectionRetryInterval=params.connectionRetryInterval;app.sdkParams.msgPriority=params.msgPriority;app.sdkParams.messageTtl=params.messageTtl||10000;app.sdkParams.reconnectOnClose=params.reconnectOnClose;app.sdkParams.asyncLogging=params.asyncLogging;app.sdkParams.connectionCheckTimeout=params.connectionCheckTimeout;app.sdkParams.httpRequestTimeout=params.httpRequestTimeout>=0?params.httpRequestTimeout:0;app.sdkParams.asyncRequestTimeout=typeof params.asyncRequestTimeout==='number'&&params.asyncRequestTimeout>=0?params.asyncRequestTimeout:0;app.sdkParams.connectionCheckTimeoutThreshold=params.connectionCheckTimeoutThreshold;app.sdkParams.httpUploadRequestTimeout=params.httpUploadRequestTimeout>=0?params.httpUploadRequestTimeout:0;app.sdkParams.actualTimingLog=params.asyncLogging.actualTiming&&typeof params.asyncLogging.actualTiming==='boolean'?params.asyncLogging.actualTiming:false;app.sdkParams.consoleLogging=params.asyncLogging.consoleLogging&&typeof params.asyncLogging.consoleLogging==='boolean'?params.asyncLogging.consoleLogging:false;app.sdkParams.fullResponseObject=params.fullResponseObject||false;app.sdkParams.webrtcConfig=params.webrtcConfig?params.webrtcConfig:null;app.sdkParams.chatPingMessageInterval=params.chatPingMessageInterval;app.sdkParams.protocol=params.protocol;app.sdkParams.callRequestTimeout=typeof params.callRequestTimeout==='number'&&params.callRequestTimeout>=0?params.callRequestTimeout:10000;app.sdkParams.callOptions=params.callOptions;var asyncClient,peerId,oldPeerId,localDeviceId,//deviceId,
 //db,
 //queueDb,
-//hasCache = sdkParams.productEnv !== 'ReactNative' && typeof Dexie != 'undefined',
-cacheInMemory=_sdkParams.sdkParams.forceWaitQueueInMemory?true:false,//!hasCache,
+//hasCache = app.sdkParams.productEnv !== 'ReactNative' && typeof Dexie != 'undefined',
+cacheInMemory=app.sdkParams.forceWaitQueueInMemory?true:false,//!hasCache,
 //enableCache = (params.enableCache && typeof params.enableCache === 'boolean') ? params.enableCache : false,
 //canUseCache = hasCache && enableCache,
 //isCacheReady = false,
@@ -48825,21 +44559,25 @@ REVERSE:'/reverse',SEARCH:'/search',ROUTING:'/routing',STATIC_IMAGE:'/static'},C
 // actualTimingLog = (params.asyncLogging.actualTiming && typeof params.asyncLogging.actualTiming === 'boolean')
 //     ? params.asyncLogging.actualTiming
 //     : false,
-// consoleLogging = (sdkParams.asyncLogging.consoleLogging && typeof sdkParams.asyncLogging.consoleLogging === 'boolean')
+// consoleLogging = (app.sdkParams.asyncLogging.consoleLogging && typeof app.sdkParams.asyncLogging.consoleLogging === 'boolean')
 //     ? params.asyncLogging.consoleLogging
 //     : false,
-minIntegerValue=Number.MAX_SAFE_INTEGER*-1,maxIntegerValue=Number.MAX_SAFE_INTEGER,chatSendQueue=[],chatWaitQueue=[],chatUploadQueue=[],protocolSwitching=params.protocolSwitching,protocolManager=new ProtocolManager({protocol:_sdkParams.sdkParams.protocol}),asyncLogCallback=typeof params.asyncLogCallback=="function"?params.asyncLogCallback:null,msgLogCallback=typeof params.msgLogCallback=="function"?params.msgLogCallback:null;//fullResponseObject = params.fullResponseObject || false,
+minIntegerValue=Number.MAX_SAFE_INTEGER*-1,maxIntegerValue=Number.MAX_SAFE_INTEGER,chatSendQueue=[],chatWaitQueue=[],chatUploadQueue=[],protocolSwitching=params.protocolSwitching,protocolManager=new ProtocolManager({protocol:app.sdkParams.protocol}),asyncLogCallback=typeof params.asyncLogCallback=="function"?params.asyncLogCallback:null,msgLogCallback=typeof params.msgLogCallback=="function"?params.msgLogCallback:null;//fullResponseObject = params.fullResponseObject || false,
 //webrtcConfig = (params.webrtcConfig ? params.webrtcConfig : null);
-if(!_sdkParams.sdkParams.consoleLogging){/**
+if(!app.sdkParams.consoleLogging){/**
      * Disable kurento-utils logs
-     */window.Logger={error:function error(){},log:function log(){},debug:function debug(){}};}(0,_events.initEventHandler)();(0,_messaging.initChatMessaging)(Object.assign(params,{asyncClient:asyncClient}));var callModule=new _call["default"](Object.assign(params,{asyncClient:asyncClient}));function ProtocolManager(_ref){var _ref$protocol=_ref.protocol,protocol=_ref$protocol===void 0?'auto':_ref$protocol;var config={switchingEnabled:protocol=="auto",currentProtocol:protocol=="auto"?'websocket':protocol,failOverProtocol:protocol=="auto"||protocol=="websocket"?'webrtc':'websocket',retries:0,allowedRetries:{websocket:protocolSwitching&&typeof protocolSwitching.websocket!=="undefined"?protocolSwitching.websocket:1,webrtc:protocolSwitching&&typeof protocolSwitching.webrtc!=="undefined"?protocolSwitching.webrtc:1},currentWaitTime:0};function canRetry(){return config.retries<=config.allowedRetries[config.currentProtocol];}function _switchProtocol(protocol){var canResetRetries=arguments.length>1&&arguments[1]!==undefined?arguments[1]:true;asyncClient.logout().then(function(){var current;if(protocol){current=protocol.toLowerCase();config.failOverProtocol=current=="webrtc"?"websocket":"webrtc";config.currentProtocol=current;}else{current=config.currentProtocol;config.currentProtocol=config.failOverProtocol;config.failOverProtocol=current;}_sdkParams.sdkParams.consoleLogging&&console.log("[SDK]|/| switchProtocol: ","config.currentProtocol: ",config.currentProtocol,"config.currentWaitTime: ",config.currentWaitTime);_events.chatEvents.fireEvent("autoSwitchAsyncProtocol",{current:config.currentProtocol,previous:config.failOverProtocol});if(canResetRetries)config.retries=1;initAsync();});}function _resetRetries(){config.retries=0;}var publics={switchProtocol:function switchProtocol(protocol){if(protocol=='auto'){config.switchingEnabled=true;_switchProtocol("websocket");}else{config.switchingEnabled=false;_switchProtocol(protocol);}},increaseRetries:function increaseRetries(){config.retries+=1;},canRetry:canRetry,getCurrentProtocol:function getCurrentProtocol(){return config.currentProtocol;},resetRetries:function resetRetries(){_resetRetries();},resetTimerTime:function resetTimerTime(time){config.currentWaitTime=typeof time!="undefined"?time:0;},onAsyncIsReconnecting:function onAsyncIsReconnecting(event){_sdkParams.sdkParams.consoleLogging&&console.log("[SDK]|/| onAsyncIsReconnecting: ","config.currentProtocol: ",config.currentProtocol,"config.currentWaitTime: ",config.currentWaitTime);publics.increaseRetries();if(config.currentWaitTime<64){config.currentWaitTime+=3;}if(!canRetry()&&config.switchingEnabled){_switchProtocol();}},getRetryStepTimerTime:function getRetryStepTimerTime(){return config.currentWaitTime;},reconnectAsync:function reconnectAsync(){publics.resetTimerTime();if(config.switchingEnabled){if(canRetry()){publics.increaseRetries();_switchProtocol(config.currentProtocol,false);// asyncClient.reconnectSocket();
+     */window.Logger={error:function error(){},log:function log(){},debug:function debug(){}};}app.messenger=new _messaging["default"](app,Object.assign(params,{asyncClient:asyncClient}));// initChatMessaging(Object.assign(params, {
+//     asyncClient: asyncClient,
+//     app
+// }));
+var callModule=new _call["default"](app,Object.assign(params,{asyncClient:asyncClient}));function ProtocolManager(_ref){var _ref$protocol=_ref.protocol,protocol=_ref$protocol===void 0?'auto':_ref$protocol;var config={switchingEnabled:protocol=="auto",currentProtocol:protocol=="auto"?'websocket':protocol,failOverProtocol:protocol=="auto"||protocol=="websocket"?'webrtc':'websocket',retries:0,allowedRetries:{websocket:protocolSwitching&&typeof protocolSwitching.websocket!=="undefined"?protocolSwitching.websocket:1,webrtc:protocolSwitching&&typeof protocolSwitching.webrtc!=="undefined"?protocolSwitching.webrtc:1},currentWaitTime:0};function canRetry(){return config.retries<=config.allowedRetries[config.currentProtocol];}function _switchProtocol(protocol){var canResetRetries=arguments.length>1&&arguments[1]!==undefined?arguments[1]:true;asyncClient.logout().then(function(){var current;if(protocol){current=protocol.toLowerCase();config.failOverProtocol=current=="webrtc"?"websocket":"webrtc";config.currentProtocol=current;}else{current=config.currentProtocol;config.currentProtocol=config.failOverProtocol;config.failOverProtocol=current;}app.sdkParams.consoleLogging&&console.log("[SDK]|/| switchProtocol: ","config.currentProtocol: ",config.currentProtocol,"config.currentWaitTime: ",config.currentWaitTime);app.chatEvents.fireEvent("autoSwitchAsyncProtocol",{current:config.currentProtocol,previous:config.failOverProtocol});if(canResetRetries)config.retries=1;initAsync();});}function _resetRetries(){config.retries=0;}var publics={switchProtocol:function switchProtocol(protocol){if(protocol=='auto'){config.switchingEnabled=true;_switchProtocol("websocket");}else{config.switchingEnabled=false;_switchProtocol(protocol);}},increaseRetries:function increaseRetries(){config.retries+=1;},canRetry:canRetry,getCurrentProtocol:function getCurrentProtocol(){return config.currentProtocol;},resetRetries:function resetRetries(){_resetRetries();},resetTimerTime:function resetTimerTime(time){config.currentWaitTime=typeof time!="undefined"?time:0;},onAsyncIsReconnecting:function onAsyncIsReconnecting(event){app.sdkParams.consoleLogging&&console.log("[SDK]|/| onAsyncIsReconnecting: ","config.currentProtocol: ",config.currentProtocol,"config.currentWaitTime: ",config.currentWaitTime);publics.increaseRetries();if(config.currentWaitTime<64){config.currentWaitTime+=3;}if(!canRetry()&&config.switchingEnabled){_switchProtocol();}},getRetryStepTimerTime:function getRetryStepTimerTime(){return config.currentWaitTime;},reconnectAsync:function reconnectAsync(){publics.resetTimerTime();if(config.switchingEnabled){if(canRetry()){publics.increaseRetries();_switchProtocol(config.currentProtocol,false);// asyncClient.reconnectSocket();
 }else{_switchProtocol();}}else{// switchProtocol(config.currentProtocol);
 asyncClient.reconnectSocket();}}};return publics;}/*******************************************************
    *            P R I V A T E   M E T H O D S            *
    *******************************************************/var init=function init(){/**
      * Initialize Cache Databases
      */ //startCacheDatabases(function () {
-if(_sdkParams.sdkParams.grantDeviceIdFromSSO){var getDeviceIdWithTokenTime=new Date().getTime();getDeviceIdWithToken(function(retrievedDeviceId){if(_sdkParams.sdkParams.actualTimingLog){_utility["default"].chatStepLogger('Get Device ID ',new Date().getTime()-getDeviceIdWithTokenTime);}_sdkParams.sdkParams.deviceId=retrievedDeviceId;initAsync();});}else{initAsync();}//});
+if(app.sdkParams.grantDeviceIdFromSSO){var getDeviceIdWithTokenTime=new Date().getTime();getDeviceIdWithToken(function(retrievedDeviceId){if(app.sdkParams.actualTimingLog){_utility["default"].chatStepLogger('Get Device ID ',new Date().getTime()-getDeviceIdWithTokenTime);}localDeviceId=retrievedDeviceId;initAsync();});}else{initAsync();}//});
 },/**
    * Initialize Async
    *
@@ -48849,29 +44587,30 @@ if(_sdkParams.sdkParams.grantDeviceIdFromSSO){var getDeviceIdWithTokenTime=new D
    *
    * @return {undefined}
    * @return {undefined}
-   */initAsync=function initAsync(){var asyncGetReadyTime=new Date().getTime();asyncClient=new _podasyncWsOnly["default"]({appId:_sdkParams.sdkParams.appId,protocol:protocolManager.getCurrentProtocol(),queueHost:queueHost,queuePort:queuePort,queueUsername:queueUsername,queuePassword:queuePassword,queueReceive:queueReceive,queueSend:queueSend,queueConnectionTimeout:queueConnectionTimeout,socketAddress:_sdkParams.sdkParams.socketAddress,serverName:_sdkParams.sdkParams.serverName,deviceId:_sdkParams.sdkParams.deviceId,wsConnectionWaitTime:_sdkParams.sdkParams.wsConnectionWaitTime,connectionRetryInterval:_sdkParams.sdkParams.connectionRetryInterval,connectionCheckTimeout:_sdkParams.sdkParams.connectionCheckTimeout,connectionCheckTimeoutThreshold:_sdkParams.sdkParams.connectionCheckTimeoutThreshold,messageTtl:_sdkParams.sdkParams.messageTtl,reconnectOnClose:_sdkParams.sdkParams.reconnectOnClose,asyncLogging:_sdkParams.sdkParams.asyncLogging,logLevel:_sdkParams.sdkParams.consoleLogging?3:1,webrtcConfig:_sdkParams.sdkParams.webrtcConfig,retryStepTimerTime:protocolManager.getRetryStepTimerTime(),onStartWithRetryStepGreaterThanZero:onStateChange,msgLogCallback:msgLogCallback||null,asyncLogCallback:asyncLogCallback||null,onDeviceId:onDeviceId});function onDeviceId(deviceId){if(!_sdkParams.sdkParams.deviceId){_sdkParams.sdkParams.deviceId=deviceId;}asyncClient.registerDevice(_sdkParams.sdkParams.deviceId);}callModule.asyncInitialized(asyncClient);(0,_messaging.messenger)().asyncInitialized(asyncClient);asyncClient.on('asyncReady',function(){if(_sdkParams.sdkParams.actualTimingLog){_utility["default"].chatStepLogger('Async Connection ',new Date().getTime()-asyncGetReadyTime);}peerId=asyncClient.getPeerId();// store.reactionSummaries.removeAllMessages();
-if(!_store.store.user()){getUserAndUpdateSDKState();}else if(_store.store.user().id>0){(0,_messaging.messenger)().chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();}_sdkParams.sdkParams.deliveryInterval&&clearInterval(_sdkParams.sdkParams.deliveryInterval);_sdkParams.sdkParams.deliveryInterval=setInterval(function(){if(Object.keys(_sdkParams.sdkParams.messagesDelivery).length){messagesDeliveryQueueHandler();}},_sdkParams.sdkParams.deliveryIntervalPitch);_sdkParams.sdkParams.seenInterval&&clearInterval(_sdkParams.sdkParams.seenInterval);_sdkParams.sdkParams.seenInterval=setInterval(function(){if(Object.keys(_sdkParams.sdkParams.messagesSeen).length){messagesSeenQueueHandler();}},_sdkParams.sdkParams.seenIntervalPitch);//shouldReconnectCall();
-});asyncClient.on('stateChange',onStateChange);function onStateChange(state){_events.chatEvents.fireEvent('chatState',state);chatFullStateObject=state;switch(state.socketState){case 1:// CONNECTED
-protocolManager.resetRetries();protocolManager.resetTimerTime();if(state.deviceRegister&&state.serverRegister){// messenger().chatState = true;
-// messenger().ping();
-(0,_messaging.messenger)().startChatPing();}break;case 0:// CONNECTING
-(0,_messaging.messenger)().chatState=false;(0,_messaging.messenger)().stopChatPing();break;case 2:// CLOSING
-(0,_messaging.messenger)().chatState=false;(0,_messaging.messenger)().stopChatPing();break;case 3:// CLOSED
-_store.store.reactionSummaries.removeAllMessages();_store.store.reactionsList.removeAllMessages();// store.reactionsList.invalidateCache();
-(0,_messaging.messenger)().chatState=false;(0,_messaging.messenger)().stopChatPing();// TODO: Check if this is OK or not?!
-//messenger().sendPingTimeout && clearTimeout(messenger().sendPingTimeout);
-break;}}asyncClient.on('connect',function(newPeerId){asyncGetReadyTime=new Date().getTime();peerId=newPeerId;_events.chatEvents.fireEvent('connect');(0,_messaging.messenger)().ping();});asyncClient.on('disconnect',function(event){oldPeerId=peerId;peerId=undefined;_events.chatEvents.fireEvent('disconnect',event);// chatEvents.fireEvent('callEvents', {
+   */initAsync=function initAsync(){var asyncGetReadyTime=new Date().getTime();asyncClient=new _podasyncWsOnly["default"]({appId:app.sdkParams.appId,protocol:protocolManager.getCurrentProtocol(),queueHost:queueHost,queuePort:queuePort,queueUsername:queueUsername,queuePassword:queuePassword,queueReceive:queueReceive,queueSend:queueSend,queueConnectionTimeout:queueConnectionTimeout,socketAddress:app.sdkParams.socketAddress,serverName:app.sdkParams.serverName,deviceId:localDeviceId,wsConnectionWaitTime:app.sdkParams.wsConnectionWaitTime,connectionRetryInterval:app.sdkParams.connectionRetryInterval,connectionCheckTimeout:app.sdkParams.connectionCheckTimeout,connectionCheckTimeoutThreshold:app.sdkParams.connectionCheckTimeoutThreshold,messageTtl:app.sdkParams.messageTtl,reconnectOnClose:app.sdkParams.reconnectOnClose,asyncLogging:app.sdkParams.asyncLogging,logLevel:app.sdkParams.consoleLogging?3:1,webrtcConfig:app.sdkParams.webrtcConfig,retryStepTimerTime:protocolManager.getRetryStepTimerTime(),onStartWithRetryStepGreaterThanZero:onStateChange,msgLogCallback:msgLogCallback||null,asyncLogCallback:asyncLogCallback||null,onDeviceId:onDeviceId});function onDeviceId(deviceId){if(!localDeviceId){localDeviceId=deviceId;}asyncClient.registerDevice(localDeviceId);}callModule.asyncInitialized(asyncClient);app.messenger.asyncInitialized(asyncClient);asyncClient.on('asyncReady',function(){if(app.sdkParams.actualTimingLog){_utility["default"].chatStepLogger('Async Connection ',new Date().getTime()-asyncGetReadyTime);}peerId=asyncClient.getPeerId();// store.reactionSummaries.removeAllMessages();
+if(!app.store.user.get()){getUserAndUpdateSDKState();}else if(app.store.user.get().id>0){app.messenger.chatState=true;app.chatEvents.fireEvent('chatReady');chatSendQueueHandler();}app.sdkParams.deliveryInterval&&clearInterval(app.sdkParams.deliveryInterval);app.sdkParams.deliveryInterval=setInterval(function(){if(Object.keys(app.sdkParams.messagesDelivery).length){messagesDeliveryQueueHandler();}},app.sdkParams.deliveryIntervalPitch);app.sdkParams.seenInterval&&clearInterval(app.sdkParams.seenInterval);app.sdkParams.seenInterval=setInterval(function(){if(Object.keys(app.sdkParams.messagesSeen).length){messagesSeenQueueHandler();}},app.sdkParams.seenIntervalPitch);//shouldReconnectCall();
+});asyncClient.on('stateChange',onStateChange);function onStateChange(state){app.chatEvents.fireEvent('chatState',state);chatFullStateObject=state;switch(state.socketState){case 1:// CONNECTED
+protocolManager.resetRetries();protocolManager.resetTimerTime();if(state.deviceRegister&&state.serverRegister){// app.messenger.chatState = true;
+// app.messenger.ping();
+app.messenger.startChatPing();}break;case 0:// CONNECTING
+app.messenger.chatState=false;app.messenger.stopChatPing();break;case 2:// CLOSING
+app.messenger.chatState=false;app.messenger.stopChatPing();break;case 3:// CLOSED
+app.store.reactionSummaries.removeAllMessages();app.store.reactionsList.removeAllMessages();// store.reactionsList.invalidateCache();
+app.messenger.chatState=false;app.messenger.stopChatPing();// TODO: Check if this is OK or not?!
+//app.messenger.sendPingTimeout && clearTimeout(app.messenger.sendPingTimeout);
+break;}}asyncClient.on('connect',function(newPeerId){asyncGetReadyTime=new Date().getTime();peerId=newPeerId;app.chatEvents.fireEvent('connect');app.messenger.ping();});asyncClient.on('disconnect',function(event){oldPeerId=peerId;peerId=undefined;app.chatEvents.fireEvent('disconnect',event);// app.chatEvents.fireEvent('callEvents', {
 //     type: 'CALL_ERROR',
 //     code: 7000,
 //     message: 'Call Socket is closed!',
 //     error: event
 // });
-});asyncClient.on('reconnect',function(newPeerId){peerId=newPeerId;_events.chatEvents.fireEvent('reconnect');});asyncClient.on('reconnecting',function(event){_sdkParams.sdkParams.consoleLogging&&console.log("[SDK][event: asyncClient.reconnecting]");protocolManager.onAsyncIsReconnecting(event);});asyncClient.on('message',function(params,ack){receivedAsyncMessageHandler(params);ack&&ack();});asyncClient.on('error',function(error){_events.chatEvents.fireEvent('error',{code:error.errorCode,message:error.errorMessage,error:error.errorEvent});});},getUserAndUpdateSDKState=function getUserAndUpdateSDKState(){var getUserInfoTime=new Date().getTime();getUserInfo(function(userInfoResult){if(_sdkParams.sdkParams.actualTimingLog){_utility["default"].chatStepLogger('Get User Info ',new Date().getTime()-getUserInfoTime);}if(!userInfoResult.hasError){(0,_user.setSDKUser)(userInfoResult.result.user);// messenger().userInfo = userInfoResult.result.user;
+});asyncClient.on('reconnect',function(newPeerId){peerId=newPeerId;app.chatEvents.fireEvent('reconnect');});asyncClient.on('reconnecting',function(event){app.sdkParams.consoleLogging&&console.log("[SDK][event: asyncClient.reconnecting]");protocolManager.onAsyncIsReconnecting(event);});asyncClient.on('message',function(params,ack){receivedAsyncMessageHandler(params);ack&&ack();});asyncClient.on('error',function(error){app.chatEvents.fireEvent('error',{code:error.errorCode,message:error.errorMessage,error:error.errorEvent});});},getUserAndUpdateSDKState=function getUserAndUpdateSDKState(){var getUserInfoTime=new Date().getTime();getUserInfo(function(userInfoResult){if(app.sdkParams.actualTimingLog){_utility["default"].chatStepLogger('Get User Info ',new Date().getTime()-getUserInfoTime);}if(!userInfoResult.hasError){app.store.user.setUser(userInfoResult.result.user);// setSDKUser(userInfoResult.result.user);
+// app.messenger.userInfo = userInfoResult.result.user;
 // getAllThreads({
 //     summary: true,
 //     cache: false
 // });
-(0,_messaging.messenger)().chatState=true;_events.chatEvents.fireEvent('chatReady');chatSendQueueHandler();}});},/**
+app.messenger.chatState=true;app.chatEvents.fireEvent('chatReady');chatSendQueueHandler();}});},/**
    * Get Device Id With Token
    *
    * If ssoGrantDevicesAddress set as TRUE, chat agent gets Device ID
@@ -48882,7 +44621,7 @@ break;}}asyncClient.on('connect',function(newPeerId){asyncGetReadyTime=new Date(
    * @param {function}  callback    The callback function to run after getting Device Id
    *
    * @return {undefined}
-   */getDeviceIdWithToken=function getDeviceIdWithToken(callback){var deviceId;var params={url:SERVICE_ADDRESSES.SSO_ADDRESS+SERVICES_PATH.SSO_DEVICES,method:'GET',headers:{'Authorization':'Bearer '+_sdkParams.sdkParams.token}};httpRequest(params,function(result){if(!result.hasError){var devices=JSON.parse(result.result.responseText).devices;if(devices&&devices.length>0){for(var i=0;i<devices.length;i++){if(devices[i].current){deviceId=devices[i].uid;break;}}if(!deviceId){_events.chatEvents.fireEvent('error',{code:6000,message:CHAT_ERRORS[6000],error:null});}else{callback(deviceId);}}else{_events.chatEvents.fireEvent('error',{code:6001,message:CHAT_ERRORS[6001],error:null});}}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});},/**
+   */getDeviceIdWithToken=function getDeviceIdWithToken(callback){var deviceId;var params={url:SERVICE_ADDRESSES.SSO_ADDRESS+SERVICES_PATH.SSO_DEVICES,method:'GET',headers:{'Authorization':'Bearer '+app.sdkParams.token}};httpRequest(params,function(result){if(!result.hasError){var devices=JSON.parse(result.result.responseText).devices;if(devices&&devices.length>0){for(var i=0;i<devices.length;i++){if(devices[i].current){deviceId=devices[i].uid;break;}}if(!deviceId){app.chatEvents.fireEvent('error',{code:6000,message:CHAT_ERRORS[6000],error:null});}else{callback(deviceId);}}else{app.chatEvents.fireEvent('error',{code:6001,message:CHAT_ERRORS[6001],error:null});}}else{app.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});},/**
    * Handshake with SSO to get user's keys
    *
    * In order to Encrypt and Decrypt cache we need a key.
@@ -48897,7 +44636,7 @@ break;}}asyncClient.on('connect',function(newPeerId){asyncGetReadyTime=new Date(
    *
    * @return {undefined}
    */generateEncryptionKey=function generateEncryptionKey(params,callback){var data={validity:10*365*24*60*60,// 10 Years
-renew:false,keyAlgorithm:'aes',keySize:256};if(params){if(params.keyAlgorithm!==undefined){data.keyAlgorithm=params.keyAlgorithm;}if(parseInt(params.keySize)>0){data.keySize=params.keySize;}}var httpRequestParams={url:SERVICE_ADDRESSES.SSO_ADDRESS+SERVICES_PATH.SSO_GENERATE_KEY,method:'POST',data:data,headers:{'Authorization':'Bearer '+_sdkParams.sdkParams.token}};httpRequest(httpRequestParams,function(result){if(!result.hasError){try{var response=JSON.parse(result.result.responseText);}catch(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);}}else{_events.chatEvents.fireEvent('error',{code:result.error,message:result.error_description,error:result});}});},/**
+renew:false,keyAlgorithm:'aes',keySize:256};if(params){if(params.keyAlgorithm!==undefined){data.keyAlgorithm=params.keyAlgorithm;}if(parseInt(params.keySize)>0){data.keySize=params.keySize;}}var httpRequestParams={url:SERVICE_ADDRESSES.SSO_ADDRESS+SERVICES_PATH.SSO_GENERATE_KEY,method:'POST',data:data,headers:{'Authorization':'Bearer '+app.sdkParams.token}};httpRequest(httpRequestParams,function(result){if(!result.hasError){try{var response=JSON.parse(result.result.responseText);}catch(e){app.sdkParams.consoleLogging&&console.log(e);}}else{app.chatEvents.fireEvent('error',{code:result.error,message:result.error_description,error:result});}});},/**
    * Get Encryption Keys by KeyId
    *
    * In order to Encrypt and Decrypt cache we need a key.
@@ -48910,7 +44649,7 @@ renew:false,keyAlgorithm:'aes',keySize:256};if(params){if(params.keyAlgorithm!==
    * @param {function}  callback    The callback function to run after getting Keys
    *
    * @return {undefined}
-   */getEncryptionKey=function getEncryptionKey(params,callback){var keyId;if(params){if(typeof params.keyId!=='undefined'){keyId=params.keyId;var httpRequestParams={url:SERVICE_ADDRESSES.SSO_ADDRESS+SERVICES_PATH.SSO_GET_KEY+keyId,method:'GET',headers:{'Authorization':'Bearer '+_sdkParams.sdkParams.token}};httpRequest(httpRequestParams,function(result){if(!result.hasError){try{var response=JSON.parse(result.result.responseText);}catch(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);}callback&&callback({hasError:false,secretKey:response.secretKey});}else{callback&&callback({hasError:true,code:result.errorCode,message:result.errorMessage});_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});}}},/**
+   */getEncryptionKey=function getEncryptionKey(params,callback){var keyId;if(params){if(typeof params.keyId!=='undefined'){keyId=params.keyId;var httpRequestParams={url:SERVICE_ADDRESSES.SSO_ADDRESS+SERVICES_PATH.SSO_GET_KEY+keyId,method:'GET',headers:{'Authorization':'Bearer '+app.sdkParams.token}};httpRequest(httpRequestParams,function(result){if(!result.hasError){try{var response=JSON.parse(result.result.responseText);}catch(e){app.sdkParams.consoleLogging&&console.log(e);}callback&&callback({hasError:false,secretKey:response.secretKey});}else{callback&&callback({hasError:true,code:result.errorCode,message:result.errorMessage});app.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});}}},/**
    * HTTP Request class
    *
    * Manages all HTTP Requests
@@ -48921,7 +44660,7 @@ renew:false,keyAlgorithm:'aes',keySize:256};if(params){if(params.keyAlgorithm!==
    * @param {function}  callback    The callback function to run after
    *
    * @return {undefined}
-   */httpRequest=function httpRequest(params,callback){var url=params.url,xhrResponseType=params.responseType||'text',fileSize,originalFileName,threadId,fileUniqueId,fileObject,data=params.data,method=typeof params.method=='string'?params.method:'GET',fileUploadUniqueId=typeof params.uniqueId=='string'?params.uniqueId:'uniqueId',hasError=false;if(!url){callback({hasError:true,errorCode:6201,errorMessage:CHAT_ERRORS[6201]});return;}var hasFile=false;httpRequestObject[eval('fileUploadUniqueId')]=new XMLHttpRequest();var settings=params.settings;httpRequestObject[eval('fileUploadUniqueId')].responseType=xhrResponseType;if(data&&(0,_typeof2["default"])(data)==='object'&&(data.hasOwnProperty('image')||data.hasOwnProperty('file'))){httpRequestObject[eval('fileUploadUniqueId')].timeout=settings&&(0,_typeof2["default"])(parseInt(settings.uploadTimeout))>0&&settings.uploadTimeout>0?settings.uploadTimeout:_sdkParams.sdkParams.httpUploadRequestTimeout;}else{httpRequestObject[eval('fileUploadUniqueId')].timeout=settings&&(0,_typeof2["default"])(parseInt(settings.timeout))>0&&settings.timeout>0?settings.timeout:_sdkParams.sdkParams.httpRequestTimeout;}httpRequestObject[eval('fileUploadUniqueId')].addEventListener('error',function(event){if(callback&&method==='POST'){if(hasFile){hasError=true;_events.chatEvents.fireEvent('fileUploadEvents',{threadId:threadId,uniqueId:fileUniqueId,state:'UPLOAD_ERROR',progress:0,fileInfo:{fileName:originalFileName,fileSize:fileSize},fileObject:fileObject,errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (XMLHttpRequest Error Event Listener)'});}callback({hasError:true,errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (XMLHttpRequest Error Event Listener)'});}else{if(callback){callback({hasError:true,errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (XMLHttpRequest Error Event Listener)'});}if(params.enableDownloadProgressEvents){_events.chatEvents.fireEvent('fileDownloadEvents',{hashCode:params.hashCode,state:'DOWNLOAD_ERROR',errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (XMLHttpRequest Error Event Listener)'});}}},false);if(params.enableDownloadProgressEvents){httpRequestObject[eval('fileUploadUniqueId')].onprogress=function(event){_events.chatEvents.fireEvent('fileDownloadEvents',{hashCode:params.hashCode,state:'DOWNLOADING',progress:Math.round(event.loaded/event.total*100)});};}httpRequestObject[eval('fileUploadUniqueId')].addEventListener('abort',function(event){if(callback){if(hasFile){hasError=true;_events.chatEvents.fireEvent('fileUploadEvents',{threadId:threadId,uniqueId:fileUniqueId,state:'UPLOAD_CANCELED',progress:0,fileInfo:{fileName:originalFileName,fileSize:fileSize},fileObject:fileObject,errorCode:6303,errorMessage:CHAT_ERRORS[6303]});}callback({hasError:true,errorCode:6303,errorMessage:CHAT_ERRORS[6303]});}},false);try{if(method==='GET'){if((0,_typeof2["default"])(data)==='object'&&data!==null){var keys=Object.keys(data);if(keys.length>0){url+='?';for(var i=0;i<keys.length;i++){var key=keys[i];url+=key+'='+data[key];if(i<keys.length-1){url+='&';}}}}else if(typeof data==='string'){url+='?'+data;}httpRequestObject[eval('fileUploadUniqueId')].open(method,url,true);if((0,_typeof2["default"])(params.headers)==='object'){for(var key in params.headers){if(params.headers.hasOwnProperty(key))httpRequestObject[eval('fileUploadUniqueId')].setRequestHeader(key,params.headers[key]);}}httpRequestObject[eval('fileUploadUniqueId')].send();}if(method==='POST'&&data){httpRequestObject[eval('fileUploadUniqueId')].open(method,url,true);if((0,_typeof2["default"])(params.headers)==='object'){for(var key in params.headers){if(params.headers.hasOwnProperty(key))httpRequestObject[eval('fileUploadUniqueId')].setRequestHeader(key,params.headers[key]);}}if((0,_typeof2["default"])(data)=='object'){if(data.hasOwnProperty('image')||data.hasOwnProperty('file')){hasFile=true;var formData=new FormData();for(var key in data){if(data.hasOwnProperty(key))formData.append(key,data[key]);}fileSize=data.fileSize;originalFileName=data.originalFileName;threadId=data.threadId;fileUniqueId=data.uniqueId;fileObject=data['image']?data['image']:data['file'];httpRequestObject[eval('fileUploadUniqueId')].upload.onprogress=function(event){if(event.lengthComputable&&!hasError){_events.chatEvents.fireEvent('fileUploadEvents',{threadId:threadId,uniqueId:fileUniqueId,state:'UPLOADING',progress:Math.round(event.loaded/event.total*100),fileInfo:{fileName:originalFileName,fileSize:fileSize},fileObject:fileObject});}};httpRequestObject[eval('fileUploadUniqueId')].send(formData);}else{httpRequestObject[eval('fileUploadUniqueId')].setRequestHeader('Content-Type','application/x-www-form-urlencoded');var keys=Object.keys(data);if(keys.length>0){var sendData='';for(var i=0;i<keys.length;i++){var key=keys[i];sendData+=key+'='+data[key];if(i<keys.length-1){sendData+='&';}}}httpRequestObject[eval('fileUploadUniqueId')].send(sendData);}}else{httpRequestObject[eval('fileUploadUniqueId')].send(data);}}}catch(e){callback&&callback({hasError:true,cache:false,errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (Request Catch Error)'+e});}httpRequestObject[eval('fileUploadUniqueId')].onreadystatechange=function(){if(httpRequestObject[eval('fileUploadUniqueId')].readyState===4){if(httpRequestObject[eval('fileUploadUniqueId')].status===200){if(hasFile){hasError=false;var fileHashCode='';try{var fileUploadResult=JSON.parse(httpRequestObject[eval('fileUploadUniqueId')].response);if(!!fileUploadResult&&fileUploadResult.hasOwnProperty('result')){fileHashCode=fileUploadResult.result.hashCode;}}catch(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);}_events.chatEvents.fireEvent('fileUploadEvents',{threadId:threadId,uniqueId:fileUniqueId,fileHash:fileHashCode,state:'UPLOADED',progress:100,fileInfo:{fileName:originalFileName,fileSize:fileSize},fileObject:fileObject});}callback&&callback({hasError:false,cache:false,result:{response:httpRequestObject[eval('fileUploadUniqueId')].response,responseText:xhrResponseType==='text'?httpRequestObject[eval('fileUploadUniqueId')].responseText:'',responseHeaders:httpRequestObject[eval('fileUploadUniqueId')].getAllResponseHeaders(),responseContentType:httpRequestObject[eval('fileUploadUniqueId')].getResponseHeader('content-type')}});}else{if(hasFile){hasError=true;_events.chatEvents.fireEvent('fileUploadEvents',{threadId:threadId,uniqueId:fileUniqueId,state:'UPLOAD_ERROR',progress:0,fileInfo:{fileName:originalFileName,fileSize:fileSize},fileObject:fileObject,errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (Request Status != 200)',statusCode:httpRequestObject[eval('fileUploadUniqueId')].status});}callback&&callback({hasError:true,errorMessage:xhrResponseType==='text'?httpRequestObject[eval('fileUploadUniqueId')].responseText:'ُAn error accoured!',errorCode:httpRequestObject[eval('fileUploadUniqueId')].status});}}};},/**
+   */httpRequest=function httpRequest(params,callback){var url=params.url,xhrResponseType=params.responseType||'text',fileSize,originalFileName,threadId,fileUniqueId,fileObject,data=params.data,method=typeof params.method=='string'?params.method:'GET',fileUploadUniqueId=typeof params.uniqueId=='string'?params.uniqueId:'uniqueId',hasError=false;if(!url){callback({hasError:true,errorCode:6201,errorMessage:CHAT_ERRORS[6201]});return;}var hasFile=false;httpRequestObject[eval('fileUploadUniqueId')]=new XMLHttpRequest();var settings=params.settings;httpRequestObject[eval('fileUploadUniqueId')].responseType=xhrResponseType;if(data&&(0,_typeof2["default"])(data)==='object'&&(data.hasOwnProperty('image')||data.hasOwnProperty('file'))){httpRequestObject[eval('fileUploadUniqueId')].timeout=settings&&(0,_typeof2["default"])(parseInt(settings.uploadTimeout))>0&&settings.uploadTimeout>0?settings.uploadTimeout:app.sdkParams.httpUploadRequestTimeout;}else{httpRequestObject[eval('fileUploadUniqueId')].timeout=settings&&(0,_typeof2["default"])(parseInt(settings.timeout))>0&&settings.timeout>0?settings.timeout:app.sdkParams.httpRequestTimeout;}httpRequestObject[eval('fileUploadUniqueId')].addEventListener('error',function(event){if(callback&&method==='POST'){if(hasFile){hasError=true;app.chatEvents.fireEvent('fileUploadEvents',{threadId:threadId,uniqueId:fileUniqueId,state:'UPLOAD_ERROR',progress:0,fileInfo:{fileName:originalFileName,fileSize:fileSize},fileObject:fileObject,errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (XMLHttpRequest Error Event Listener)'});}callback({hasError:true,errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (XMLHttpRequest Error Event Listener)'});}else{if(callback){callback({hasError:true,errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (XMLHttpRequest Error Event Listener)'});}if(params.enableDownloadProgressEvents){app.chatEvents.fireEvent('fileDownloadEvents',{hashCode:params.hashCode,state:'DOWNLOAD_ERROR',errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (XMLHttpRequest Error Event Listener)'});}}},false);if(params.enableDownloadProgressEvents){httpRequestObject[eval('fileUploadUniqueId')].onprogress=function(event){app.chatEvents.fireEvent('fileDownloadEvents',{hashCode:params.hashCode,state:'DOWNLOADING',progress:Math.round(event.loaded/event.total*100)});};}httpRequestObject[eval('fileUploadUniqueId')].addEventListener('abort',function(event){if(callback){if(hasFile){hasError=true;app.chatEvents.fireEvent('fileUploadEvents',{threadId:threadId,uniqueId:fileUniqueId,state:'UPLOAD_CANCELED',progress:0,fileInfo:{fileName:originalFileName,fileSize:fileSize},fileObject:fileObject,errorCode:6303,errorMessage:CHAT_ERRORS[6303]});}callback({hasError:true,errorCode:6303,errorMessage:CHAT_ERRORS[6303]});}},false);try{if(method==='GET'){if((0,_typeof2["default"])(data)==='object'&&data!==null){var keys=Object.keys(data);if(keys.length>0){url+='?';for(var i=0;i<keys.length;i++){var key=keys[i];url+=key+'='+data[key];if(i<keys.length-1){url+='&';}}}}else if(typeof data==='string'){url+='?'+data;}httpRequestObject[eval('fileUploadUniqueId')].open(method,url,true);if((0,_typeof2["default"])(params.headers)==='object'){for(var key in params.headers){if(params.headers.hasOwnProperty(key))httpRequestObject[eval('fileUploadUniqueId')].setRequestHeader(key,params.headers[key]);}}httpRequestObject[eval('fileUploadUniqueId')].send();}if(method==='POST'&&data){httpRequestObject[eval('fileUploadUniqueId')].open(method,url,true);if((0,_typeof2["default"])(params.headers)==='object'){for(var key in params.headers){if(params.headers.hasOwnProperty(key))httpRequestObject[eval('fileUploadUniqueId')].setRequestHeader(key,params.headers[key]);}}if((0,_typeof2["default"])(data)=='object'){if(data.hasOwnProperty('image')||data.hasOwnProperty('file')){hasFile=true;var formData=new FormData();for(var key in data){if(data.hasOwnProperty(key))formData.append(key,data[key]);}fileSize=data.fileSize;originalFileName=data.originalFileName;threadId=data.threadId;fileUniqueId=data.uniqueId;fileObject=data['image']?data['image']:data['file'];httpRequestObject[eval('fileUploadUniqueId')].upload.onprogress=function(event){if(event.lengthComputable&&!hasError){app.chatEvents.fireEvent('fileUploadEvents',{threadId:threadId,uniqueId:fileUniqueId,state:'UPLOADING',progress:Math.round(event.loaded/event.total*100),fileInfo:{fileName:originalFileName,fileSize:fileSize},fileObject:fileObject});}};httpRequestObject[eval('fileUploadUniqueId')].send(formData);}else{httpRequestObject[eval('fileUploadUniqueId')].setRequestHeader('Content-Type','application/x-www-form-urlencoded');var keys=Object.keys(data);if(keys.length>0){var sendData='';for(var i=0;i<keys.length;i++){var key=keys[i];sendData+=key+'='+data[key];if(i<keys.length-1){sendData+='&';}}}httpRequestObject[eval('fileUploadUniqueId')].send(sendData);}}else{httpRequestObject[eval('fileUploadUniqueId')].send(data);}}}catch(e){callback&&callback({hasError:true,cache:false,errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (Request Catch Error)'+e});}httpRequestObject[eval('fileUploadUniqueId')].onreadystatechange=function(){if(httpRequestObject[eval('fileUploadUniqueId')].readyState===4){if(httpRequestObject[eval('fileUploadUniqueId')].status===200){if(hasFile){hasError=false;var fileHashCode='';try{var fileUploadResult=JSON.parse(httpRequestObject[eval('fileUploadUniqueId')].response);if(!!fileUploadResult&&fileUploadResult.hasOwnProperty('result')){fileHashCode=fileUploadResult.result.hashCode;}}catch(e){app.sdkParams.consoleLogging&&console.log(e);}app.chatEvents.fireEvent('fileUploadEvents',{threadId:threadId,uniqueId:fileUniqueId,fileHash:fileHashCode,state:'UPLOADED',progress:100,fileInfo:{fileName:originalFileName,fileSize:fileSize},fileObject:fileObject});}callback&&callback({hasError:false,cache:false,result:{response:httpRequestObject[eval('fileUploadUniqueId')].response,responseText:xhrResponseType==='text'?httpRequestObject[eval('fileUploadUniqueId')].responseText:'',responseHeaders:httpRequestObject[eval('fileUploadUniqueId')].getAllResponseHeaders(),responseContentType:httpRequestObject[eval('fileUploadUniqueId')].getResponseHeader('content-type')}});}else{if(hasFile){hasError=true;app.chatEvents.fireEvent('fileUploadEvents',{threadId:threadId,uniqueId:fileUniqueId,state:'UPLOAD_ERROR',progress:0,fileInfo:{fileName:originalFileName,fileSize:fileSize},fileObject:fileObject,errorCode:6200,errorMessage:CHAT_ERRORS[6200]+' (Request Status != 200)',statusCode:httpRequestObject[eval('fileUploadUniqueId')].status});}callback&&callback({hasError:true,errorMessage:xhrResponseType==='text'?httpRequestObject[eval('fileUploadUniqueId')].responseText:'ُAn error accoured!',errorCode:httpRequestObject[eval('fileUploadUniqueId')].status});}}};},/**
    * Get User Info
    *
    * This functions gets user info from chat serverName.
@@ -48934,11 +44673,11 @@ renew:false,keyAlgorithm:'aes',keySize:256};if(params){if(params.keyAlgorithm!==
    * @param {function}    callback    The callback function to call after
    *
    * @return {object} Instant function return
-   */getUserInfo=function getUserInfoRecursive(callback){getUserInfoRetryCount++;if(getUserInfoRetryCount>getUserInfoRetry){_sdkParams.sdkParams.getUserInfoTimeout&&clearTimeout(_sdkParams.sdkParams.getUserInfoTimeout);getUserInfoRetryCount=0;_events.chatEvents.fireEvent('error',{code:6101,message:CHAT_ERRORS[6101],error:null});}else{_sdkParams.sdkParams.getUserInfoTimeout&&clearTimeout(_sdkParams.sdkParams.getUserInfoTimeout);_sdkParams.sdkParams.getUserInfoTimeout=setTimeout(function(){getUserInfoRecursive(callback);},getUserInfoRetryCount*10000);return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.USER_INFO,typeCode:_sdkParams.sdkParams.generalTypeCode//params.typeCode
-},{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){_sdkParams.sdkParams.getUserInfoTimeout&&clearTimeout(_sdkParams.sdkParams.getUserInfoTimeout);var messageContent=result.result;var currentUser=formatDataToMakeUser(messageContent);returnData.result={user:currentUser};getUserInfoRetryCount=0;callback&&callback(returnData);/**
+   */getUserInfo=function getUserInfoRecursive(callback){getUserInfoRetryCount++;if(getUserInfoRetryCount>getUserInfoRetry){app.sdkParams.getUserInfoTimeout&&clearTimeout(app.sdkParams.getUserInfoTimeout);getUserInfoRetryCount=0;app.chatEvents.fireEvent('error',{code:6101,message:CHAT_ERRORS[6101],error:null});}else{app.sdkParams.getUserInfoTimeout&&clearTimeout(app.sdkParams.getUserInfoTimeout);app.sdkParams.getUserInfoTimeout=setTimeout(function(){getUserInfoRecursive(callback);},getUserInfoRetryCount*10000);return app.messenger.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.USER_INFO,typeCode:app.sdkParams.generalTypeCode//params.typeCode
+},{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){app.sdkParams.getUserInfoTimeout&&clearTimeout(app.sdkParams.getUserInfoTimeout);var messageContent=result.result;var currentUser=formatDataToMakeUser(messageContent);returnData.result={user:currentUser};getUserInfoRetryCount=0;callback&&callback(returnData);/**
              * Delete callback so if server pushes response
              * before cache, cache won't send data again
-             */callback=undefined;}}});}},sendSystemMessage=function sendSystemMessage(params){return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.SYSTEM_MESSAGE,subjectId:params.threadId,content:params.content,uniqueId:params.uniqueId,pushMsgType:3});},/**
+             */callback=undefined;}}});}},sendSystemMessage=function sendSystemMessage(params){return app.messenger.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.SYSTEM_MESSAGE,subjectId:params.threadId,content:params.content,uniqueId:params.uniqueId,pushMsgType:3});},/**
    * Chat Send Message Queue Handler
    *
    * Whenever something pushes into cahtSendQueue
@@ -48952,7 +44691,7 @@ renew:false,keyAlgorithm:'aes',keySize:256};if(params){if(params.keyAlgorithm!==
        * Getting chatSendQueue from either cache or
        * memory and scrolling through the send queue
        * to send all the messages which are waiting
-       * for messenger().chatState to become TRUE
+       * for app.messenger.chatState to become TRUE
        *
        * There is a small possibility that a Message
        * wouldn't make it through network, so it Will
@@ -48965,7 +44704,7 @@ renew:false,keyAlgorithm:'aes',keySize:256};if(params){if(params.keyAlgorithm!==
        * by user later. When user calls getHistory(), they
        * will have failed messages alongside with typical
        * messages history.
-       */if((0,_messaging.messenger)().chatState){getChatSendQueue(0,function(chatSendQueue){deleteFromChatSentQueue(messageToBeSend,function(){(0,_messaging.messenger)().sendMessage(messageToBeSend.message,messageToBeSend.callbacks,function(){if(chatSendQueue.length){chatSendQueueHandler();}});});});}}},putInMessagesDeliveryQueue=function putInMessagesDeliveryQueue(threadId,messageId){if(_sdkParams.sdkParams.messagesDelivery.hasOwnProperty(threadId)&&typeof _sdkParams.sdkParams.messagesDelivery[threadId]==='number'&&!!_sdkParams.sdkParams.messagesDelivery[threadId]){if(_sdkParams.sdkParams.messagesDelivery[threadId]<messageId){_sdkParams.sdkParams.messagesDelivery[threadId]=messageId;}}else{_sdkParams.sdkParams.messagesDelivery[threadId]=messageId;}},putInMessagesSeenQueue=function putInMessagesSeenQueue(threadId,messageId){if(_sdkParams.sdkParams.messagesSeen.hasOwnProperty(threadId)&&typeof _sdkParams.sdkParams.messagesSeen[threadId]==='number'&&!!_sdkParams.sdkParams.messagesSeen[threadId]){if(_sdkParams.sdkParams.messagesSeen[threadId]<messageId){_sdkParams.sdkParams.messagesSeen[threadId]=messageId;}}else{_sdkParams.sdkParams.messagesSeen[threadId]=messageId;}},/**
+       */if(app.messenger.chatState){getChatSendQueue(0,function(chatSendQueue){deleteFromChatSentQueue(messageToBeSend,function(){app.messenger.sendMessage(messageToBeSend.message,messageToBeSend.callbacks,function(){if(chatSendQueue.length){chatSendQueueHandler();}});});});}}},putInMessagesDeliveryQueue=function putInMessagesDeliveryQueue(threadId,messageId){if(app.sdkParams.messagesDelivery.hasOwnProperty(threadId)&&typeof app.sdkParams.messagesDelivery[threadId]==='number'&&!!app.sdkParams.messagesDelivery[threadId]){if(app.sdkParams.messagesDelivery[threadId]<messageId){app.sdkParams.messagesDelivery[threadId]=messageId;}}else{app.sdkParams.messagesDelivery[threadId]=messageId;}},putInMessagesSeenQueue=function putInMessagesSeenQueue(threadId,messageId){if(app.sdkParams.messagesSeen.hasOwnProperty(threadId)&&typeof app.sdkParams.messagesSeen[threadId]==='number'&&!!app.sdkParams.messagesSeen[threadId]){if(app.sdkParams.messagesSeen[threadId]<messageId){app.sdkParams.messagesSeen[threadId]=messageId;}}else{app.sdkParams.messagesSeen[threadId]=messageId;}},/**
    * Messages Delivery Queue Handler
    *
    * Whenever something pushes into messagesDelivery
@@ -48975,7 +44714,7 @@ renew:false,keyAlgorithm:'aes',keySize:256};if(params){if(params.keyAlgorithm!==
    * @access private
    *
    * @return {undefined}
-   */messagesDeliveryQueueHandler=function messagesDeliveryQueueHandler(){if(Object.keys(_sdkParams.sdkParams.messagesDelivery).length){if((0,_messaging.messenger)().chatState){for(var key in _sdkParams.sdkParams.messagesDelivery){deliver({messageId:_sdkParams.sdkParams.messagesDelivery[key]});delete _sdkParams.sdkParams.messagesDelivery[key];}}}},/**
+   */messagesDeliveryQueueHandler=function messagesDeliveryQueueHandler(){if(Object.keys(app.sdkParams.messagesDelivery).length){if(app.messenger.chatState){for(var key in app.sdkParams.messagesDelivery){deliver({messageId:app.sdkParams.messagesDelivery[key]});delete app.sdkParams.messagesDelivery[key];}}}},/**
    * Messages Seen Queue Handler
    *
    * Whenever something pushes into messagesSeen
@@ -48985,7 +44724,7 @@ renew:false,keyAlgorithm:'aes',keySize:256};if(params){if(params.keyAlgorithm!==
    * @access private
    *
    * @return {undefined}
-   */messagesSeenQueueHandler=function messagesSeenQueueHandler(){if(Object.keys(_sdkParams.sdkParams.messagesSeen).length){if((0,_messaging.messenger)().chatState){for(var key in _sdkParams.sdkParams.messagesSeen){seen({messageId:_sdkParams.sdkParams.messagesSeen[key]});delete _sdkParams.sdkParams.messagesSeen[key];}}}},/**
+   */messagesSeenQueueHandler=function messagesSeenQueueHandler(){if(Object.keys(app.sdkParams.messagesSeen).length){if(app.messenger.chatState){for(var key in app.sdkParams.messagesSeen){seen({messageId:app.sdkParams.messagesSeen[key]});delete app.sdkParams.messagesSeen[key];}}}},/**
    * Clear Cache
    *
    * Clears Async queue so that all the remained messages will be
@@ -48994,7 +44733,7 @@ renew:false,keyAlgorithm:'aes',keySize:256};if(params){if(params.keyAlgorithm!==
    * @access private
    *
    * @return {undefined}
-   */clearChatServerCaches=function clearChatServerCaches(){(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.LOGOUT,pushMsgType:3});},/**
+   */clearChatServerCaches=function clearChatServerCaches(){app.messenger.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.LOGOUT,pushMsgType:3});},/**
    * Received Async Message Handler
    *
    * This functions parses received message from async
@@ -49012,7 +44751,7 @@ renew:false,keyAlgorithm:'aes',keySize:256};if(params){if(params.keyAlgorithm!==
      *    - senderId                      {int}
      *    - type                          {int}
      *    - content                       {string}
-     */if(asyncMessage.senderName===_sdkParams.sdkParams.serverName){var content=JSON.parse(asyncMessage.content);chatMessageHandler(content);}else{callModule.callMessageHandler(asyncMessage);}},/**
+     */if(asyncMessage.senderName===app.sdkParams.serverName){var content=JSON.parse(asyncMessage.content);chatMessageHandler(content);}else{callModule.callMessageHandler(asyncMessage);}},/**
    * Chat Message Handler
    *
    * Manages received chat messages and do the job
@@ -49022,15 +44761,15 @@ renew:false,keyAlgorithm:'aes',keySize:256};if(params){if(params.keyAlgorithm!==
    * @param {object}    chatMessage     Content of Async Message which is considered as Chat Message
    *
    * @return {undefined}
-   */chatMessageHandler=function chatMessageHandler(chatMessage){if(chatMessage.typeCode&&chatMessage.typeCode!==_sdkParams.sdkParams.generalTypeCode){return;}var threadId=chatMessage.subjectId,type=chatMessage.type,messageContent=typeof chatMessage.content==='string'&&_utility["default"].isValidJson(chatMessage.content)?JSON.parse(chatMessage.content):chatMessage.content,contentCount=chatMessage.contentCount,uniqueId=chatMessage.uniqueId,time=chatMessage.time;_store.store.asyncRequestTimeouts[uniqueId]&&clearTimeout(_store.store.asyncRequestTimeouts[uniqueId]);switch(type){/**
+   */chatMessageHandler=function chatMessageHandler(chatMessage){if(chatMessage.typeCode&&chatMessage.typeCode!==app.sdkParams.generalTypeCode){return;}var threadId=chatMessage.subjectId,type=chatMessage.type,messageContent=typeof chatMessage.content==='string'&&_utility["default"].isValidJson(chatMessage.content)?JSON.parse(chatMessage.content):chatMessage.content,contentCount=chatMessage.contentCount,uniqueId=chatMessage.uniqueId,time=chatMessage.time;app.store.asyncRequestTimeouts[uniqueId]&&clearTimeout(app.store.asyncRequestTimeouts[uniqueId]);switch(type){/**
        * Type 1    Get Threads
-       */case _constants.chatMessageVOTypes.CREATE_THREAD:messageContent.uniqueId=uniqueId;if(_store.store.messagesCallbacks[uniqueId]){createThread(messageContent,true,true);_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}else{createThread(messageContent,true,false);}break;/**
+       */case _constants.chatMessageVOTypes.CREATE_THREAD:messageContent.uniqueId=uniqueId;if(app.store.messagesCallbacks[uniqueId]){createThread(messageContent,true,true);app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}else{createThread(messageContent,true,false);}break;/**
        * Type 2    Message
        */case _constants.chatMessageVOTypes.MESSAGE:newMessageHandler(threadId,messageContent);break;/**
        * Type 3    Message Sent
-       */case _constants.chatMessageVOTypes.SENT:if(_store.store.sendMessageCallbacks[uniqueId]&&_store.store.sendMessageCallbacks[uniqueId].onSent){_store.store.sendMessageCallbacks[uniqueId].onSent({uniqueId:uniqueId,messageId:messageContent});delete _store.store.sendMessageCallbacks[uniqueId].onSent;if(_store.store.threadCallbacks[threadId]&&_store.store.threadCallbacks[threadId][uniqueId])_store.store.threadCallbacks[threadId][uniqueId].onSent=true;}break;/**
+       */case _constants.chatMessageVOTypes.SENT:if(app.store.sendMessageCallbacks[uniqueId]&&app.store.sendMessageCallbacks[uniqueId].onSent){app.store.sendMessageCallbacks[uniqueId].onSent({uniqueId:uniqueId,messageId:messageContent});delete app.store.sendMessageCallbacks[uniqueId].onSent;if(app.store.threadCallbacks[threadId]&&app.store.threadCallbacks[threadId][uniqueId])app.store.threadCallbacks[threadId][uniqueId].onSent=true;}break;/**
        * Type 4    Message Delivery
-       */case _constants.chatMessageVOTypes.DELIVERY:var threadObject={id:messageContent.conversationId,lastSeenMessageId:messageContent.messageId,lastSeenMessageTime:messageContent.messageTime,lastParticipantId:messageContent.participantId};_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadObject}});// if (fullResponseObject) {
+       */case _constants.chatMessageVOTypes.DELIVERY:var threadObject={id:messageContent.conversationId,lastSeenMessageId:messageContent.messageId,lastSeenMessageTime:messageContent.messageTime,lastParticipantId:messageContent.participantId};app.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadObject}});// if (fullResponseObject) {
 //     getHistory({
 //         offset: 0,
 //         threadId: threadId,
@@ -49038,7 +44777,7 @@ renew:false,keyAlgorithm:'aes',keySize:256};if(params){if(params.keyAlgorithm!==
 //         cache: false
 //     }, function (result) {
 //         if (!result.hasError) {
-//             chatEvents.fireEvent('messageEvents', {
+//             app.chatEvents.fireEvent('messageEvents', {
 //                 type: 'MESSAGE_DELIVERY',
 //                 result: {
 //                     message: result.result.history[0],
@@ -49049,7 +44788,7 @@ renew:false,keyAlgorithm:'aes',keySize:256};if(params){if(params.keyAlgorithm!==
 //         }
 //     });
 // } else {
-//     chatEvents.fireEvent('messageEvents', {
+//     app.chatEvents.fireEvent('messageEvents', {
 //         type: 'MESSAGE_DELIVERY',
 //         result: {
 //             message: messageContent.messageId,
@@ -49060,45 +44799,45 @@ renew:false,keyAlgorithm:'aes',keySize:256};if(params){if(params.keyAlgorithm!==
 // }
 sendMessageCallbacksHandler(_constants.chatMessageVOTypes.DELIVERY,threadId,uniqueId);break;/**
        * Type 5    Message Seen
-       */case _constants.chatMessageVOTypes.SEEN:var threadObject={id:messageContent.conversationId,lastSeenMessageId:messageContent.messageId,lastSeenMessageTime:messageContent.messageTime,lastParticipantId:messageContent.participantId};_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadObject}});_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_SEEN',result:{message:messageContent.messageId,threadId:threadId,senderId:messageContent.participantId}});sendMessageCallbacksHandler(_constants.chatMessageVOTypes.SEEN,threadId,uniqueId);break;/**
+       */case _constants.chatMessageVOTypes.SEEN:var threadObject={id:messageContent.conversationId,lastSeenMessageId:messageContent.messageId,lastSeenMessageTime:messageContent.messageTime,lastParticipantId:messageContent.participantId};app.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadObject}});app.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_SEEN',result:{message:messageContent.messageId,threadId:threadId,senderId:messageContent.participantId}});sendMessageCallbacksHandler(_constants.chatMessageVOTypes.SEEN,threadId,uniqueId);break;/**
        * Type 6    Chat Ping
        */case _constants.chatMessageVOTypes.PING:break;/**
        * Type 7    Block Contact
-       */case _constants.chatMessageVOTypes.BLOCK:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
+       */case _constants.chatMessageVOTypes.BLOCK:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
        * Type 8    Unblock Blocked User
-       */case _constants.chatMessageVOTypes.UNBLOCK:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
+       */case _constants.chatMessageVOTypes.UNBLOCK:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
        * Type 9   Leave Thread
-       */case _constants.chatMessageVOTypes.LEAVE_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){if(!threadsResult.cache){var threads=threadsResult.result.threads;if(threads.length>0){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LEAVE_PARTICIPANT',result:{thread:threads[0],participant:(0,_threadParticipantsMethods.formatDataToMakeParticipant)(messageContent,threadId)}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0]}});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LEAVE_PARTICIPANT',result:{threadId:threadId,participant:(0,_threadParticipantsMethods.formatDataToMakeParticipant)(messageContent,threadId)}});}}});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LEAVE_PARTICIPANT',result:{thread:threadId,participant:(0,_threadParticipantsMethods.formatDataToMakeParticipant)(messageContent,threadId)}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId}});}break;/**
+       */case _constants.chatMessageVOTypes.LEAVE_THREAD:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(app.sdkParams.fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){if(!threadsResult.cache){var threads=threadsResult.result.threads;if(threads.length>0){app.chatEvents.fireEvent('threadEvents',{type:'THREAD_LEAVE_PARTICIPANT',result:{thread:threads[0],participant:threadParticipantsMethods.formatDataToMakeParticipant(messageContent,threadId)}});app.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0]}});}else{app.chatEvents.fireEvent('threadEvents',{type:'THREAD_LEAVE_PARTICIPANT',result:{threadId:threadId,participant:threadParticipantsMethods.formatDataToMakeParticipant(messageContent,threadId)}});}}});}else{app.chatEvents.fireEvent('threadEvents',{type:'THREAD_LEAVE_PARTICIPANT',result:{thread:threadId,participant:threadParticipantsMethods.formatDataToMakeParticipant(messageContent,threadId)}});app.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId}});}break;/**
        * Type 11    Add Participant to Thread
-       */case _constants.chatMessageVOTypes.ADD_PARTICIPANT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_ADD_PARTICIPANTS',result:{thread:threads[0]}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0]}});}});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_ADD_PARTICIPANTS',result:{thread:messageContent}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:messageContent}});}break;/**
+       */case _constants.chatMessageVOTypes.ADD_PARTICIPANT:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(app.sdkParams.fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){app.chatEvents.fireEvent('threadEvents',{type:'THREAD_ADD_PARTICIPANTS',result:{thread:threads[0]}});app.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0]}});}});}else{app.chatEvents.fireEvent('threadEvents',{type:'THREAD_ADD_PARTICIPANTS',result:{thread:messageContent}});app.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:messageContent}});}break;/**
        * Type 13    Get Contacts List
-       */case _constants.chatMessageVOTypes.GET_CONTACTS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       */case _constants.chatMessageVOTypes.GET_CONTACTS:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
        * Type 14    Get Threads List
-       */case _constants.chatMessageVOTypes.GET_THREADS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+       */case _constants.chatMessageVOTypes.GET_THREADS:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
        * Type 15    Get Message History of an Thread
-       */case _constants.chatMessageVOTypes.GET_HISTORY:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       */case _constants.chatMessageVOTypes.GET_HISTORY:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
        * Type 17    Remove sb from thread
-       */case _constants.chatMessageVOTypes.REMOVED_FROM_THREAD:_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVED_FROM',result:{thread:threadId}});break;/**
+       */case _constants.chatMessageVOTypes.REMOVED_FROM_THREAD:app.chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVED_FROM',result:{thread:threadId}});break;/**
        * Type 18    Remove a participant from Thread
-       */case _constants.chatMessageVOTypes.REMOVE_PARTICIPANT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVE_PARTICIPANTS',result:{thread:threads[0]}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0]}});}});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVE_PARTICIPANTS',result:{thread:threadId}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId}});}break;/**
+       */case _constants.chatMessageVOTypes.REMOVE_PARTICIPANT:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}if(app.sdkParams.fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){app.chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVE_PARTICIPANTS',result:{thread:threads[0]}});app.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0]}});}});}else{app.chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVE_PARTICIPANTS',result:{thread:threadId}});app.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId}});}break;/**
        * Type 19    Mute Thread
-       */case _constants.chatMessageVOTypes.MUTE_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var thread=threadsResult.result.threads[0];thread.mute=true;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_MUTE',result:{thread:thread}});});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_MUTE',result:{thread:threadId}});}break;/**
+       */case _constants.chatMessageVOTypes.MUTE_THREAD:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(app.sdkParams.fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var thread=threadsResult.result.threads[0];thread.mute=true;app.chatEvents.fireEvent('threadEvents',{type:'THREAD_MUTE',result:{thread:thread}});});}else{app.chatEvents.fireEvent('threadEvents',{type:'THREAD_MUTE',result:{thread:threadId}});}break;/**
        * Type 20    Unmute muted Thread
-       */case _constants.chatMessageVOTypes.UNMUTE_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var thread=threadsResult.result.threads[0];thread.mute=false;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNMUTE',result:{thread:thread}});});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNMUTE',result:{thread:threadId}});}break;/**
+       */case _constants.chatMessageVOTypes.UNMUTE_THREAD:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(app.sdkParams.fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var thread=threadsResult.result.threads[0];thread.mute=false;app.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNMUTE',result:{thread:thread}});});}else{app.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNMUTE',result:{thread:threadId}});}break;/**
        * Type 21    Update Thread Info
-       */case _constants.chatMessageVOTypes.UPDATE_THREAD_INFO:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[messageContent.id],cache:false},function(threadsResult){var thread=formatDataToMakeConversation(threadsResult.result.threads[0]);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:thread}});});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:messageContent}});}break;/**
+       */case _constants.chatMessageVOTypes.UPDATE_THREAD_INFO:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(app.sdkParams.fullResponseObject){getThreads({threadIds:[messageContent.id],cache:false},function(threadsResult){var thread=formatDataToMakeConversation(threadsResult.result.threads[0]);app.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:thread}});});}else{app.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:messageContent}});}break;/**
        * Type 22    Forward Multiple Messages
        */case _constants.chatMessageVOTypes.FORWARD_MESSAGE:newMessageHandler(threadId,messageContent);break;/**
        * Type 23    User Info
-       */case _constants.chatMessageVOTypes.USER_INFO:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('systemEvents',{type:'SERVER_TIME',result:{time:time}});break;/**
+       */case _constants.chatMessageVOTypes.USER_INFO:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}app.chatEvents.fireEvent('systemEvents',{type:'SERVER_TIME',result:{time:time}});break;/**
        * Type 25    Get Blocked List
-       */case _constants.chatMessageVOTypes.GET_BLOCKED:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       */case _constants.chatMessageVOTypes.GET_BLOCKED:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
        * Type 27    Thread Participants List
-       */case _constants.chatMessageVOTypes.THREAD_PARTICIPANTS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       */case _constants.chatMessageVOTypes.THREAD_PARTICIPANTS:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
        * Type 28    Edit Message
-       */case _constants.chatMessageVOTypes.EDIT_MESSAGE:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}chatEditMessageHandler(threadId,messageContent);break;/**
+       */case _constants.chatMessageVOTypes.EDIT_MESSAGE:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}chatEditMessageHandler(threadId,messageContent);break;/**
        * Type 29    Delete Message
-       */case _constants.chatMessageVOTypes.DELETE_MESSAGE:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}var msgTime=parseInt(parseInt(messageContent.time)/1000)*1000000000+parseInt(messageContent.timeNanos);if(_store.store.threads.get(threadId))_store.store.threads.get(threadId).unreadCount.decrease(msgTime);if(messageContent.pinned){unPinMessage({messageId:messageContent.id,notifyAll:true});}if(_sdkParams.sdkParams.fullResponseObject){var time,timeMiliSeconds;if(messageContent.time.toString().length>14){time=messageContent.time;timeMiliSeconds=parseInt(messageContent.time/1000000);}else{time=messageContent.timeNanos?parseInt(parseInt(messageContent.time)/1000)*1000000000+parseInt(messageContent.timeNanos):parseInt(pushMessageVO.time);timeMiliSeconds=parseInt(messageContent.time);}getThreads({threadIds:[threadId]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_DELETE',result:{message:{id:messageContent.id,pinned:messageContent.pinned,threadId:threadId,time:time,timeMiliSeconds:timeMiliSeconds,timeNanos:messageContent.timeNanos}}});if(messageContent.pinned){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0]}});}}});}else{_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_DELETE',result:{message:{id:messageContent.id,pinned:messageContent.pinned,threadId:threadId,time:time,timeMiliSeconds:timeMiliSeconds,timeNanos:messageContent.timeNanos}}});if(messageContent.pinned){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId}});}}break;/**
+       */case _constants.chatMessageVOTypes.DELETE_MESSAGE:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}var msgTime=parseInt(parseInt(messageContent.time)/1000)*1000000000+parseInt(messageContent.timeNanos);if(app.store.threads.get(threadId))app.store.threads.get(threadId).unreadCount.decrease(msgTime);if(messageContent.pinned){unPinMessage({messageId:messageContent.id,notifyAll:true});}if(app.sdkParams.fullResponseObject){var time,timeMiliSeconds;if(messageContent.time.toString().length>14){time=messageContent.time;timeMiliSeconds=parseInt(messageContent.time/1000000);}else{time=messageContent.timeNanos?parseInt(parseInt(messageContent.time)/1000)*1000000000+parseInt(messageContent.timeNanos):parseInt(pushMessageVO.time);timeMiliSeconds=parseInt(messageContent.time);}getThreads({threadIds:[threadId]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){app.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_DELETE',result:{message:{id:messageContent.id,pinned:messageContent.pinned,threadId:threadId,time:time,timeMiliSeconds:timeMiliSeconds,timeNanos:messageContent.timeNanos}}});if(messageContent.pinned){app.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0]}});}}});}else{app.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_DELETE',result:{message:{id:messageContent.id,pinned:messageContent.pinned,threadId:threadId,time:time,timeMiliSeconds:timeMiliSeconds,timeNanos:messageContent.timeNanos}}});if(messageContent.pinned){app.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId}});}}break;/**
        * Type 30    Thread Info Updated
        */case _constants.chatMessageVOTypes.THREAD_INFO_UPDATED:// TODO: Check this line again
 // if (!messageContent.conversation && !messageContent.conversation.id) {
@@ -49106,16 +44845,16 @@ sendMessageCallbacksHandler(_constants.chatMessageVOTypes.DELIVERY,threadId,uniq
 // }
 //
 // var thread = formatDataToMakeConversation(messageContent.conversation);
-var thread=formatDataToMakeConversation(messageContent);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:thread}});break;/**
+var thread=formatDataToMakeConversation(messageContent);app.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:thread}});break;/**
        * Type 31    Thread Last Seen Updated
-       */case _constants.chatMessageVOTypes.LAST_SEEN_UPDATED:var threadObject=messageContent;threadObject.unreadCount=messageContent.unreadCount?messageContent.unreadCount:0;threadObject.lastSeenMessageTime=messageContent.lastSeenMessageNanos?parseInt(parseInt(messageContent.lastSeenMessageTime)/1000)*1000000000+parseInt(messageContent.lastSeenMessageNanos):parseInt(messageContent.lastSeenMessageTime);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNREAD_COUNT_UPDATED',result:{thread:threadObject,unreadCount:messageContent.unreadCount?messageContent.unreadCount:0}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_SEEN_UPDATED',result:{thread:threadObject,unreadCount:messageContent.unreadCount?messageContent.unreadCount:0}});if(_store.store.threads.get(threadId)&&(!_store.store.threads.get(threadId).lastSeenMessageTime.get()||_store.store.threads.get(threadId).lastSeenMessageTime.get()&&threadObject.lastSeenMessageTime>_store.store.threads.get(threadId).lastSeenMessageTime.get()&&threadObject.unreadCount<_store.store.threads.get(threadId).unreadCount.get())){var localThreadLastSeenUpdated=JSON.parse(JSON.stringify(messageContent));_store.store.threads.save(localThreadLastSeenUpdated);_store.store.threads.get(threadId).lastSeenMessageTime.set(threadObject.lastSeenMessageTime);_store.store.threads.get(threadId).unreadCount.set(messageContent.unreadCount);}// if (fullResponseObject) {
+       */case _constants.chatMessageVOTypes.LAST_SEEN_UPDATED:var threadObject=messageContent;threadObject.unreadCount=messageContent.unreadCount?messageContent.unreadCount:0;threadObject.lastSeenMessageTime=messageContent.lastSeenMessageNanos?parseInt(parseInt(messageContent.lastSeenMessageTime)/1000)*1000000000+parseInt(messageContent.lastSeenMessageNanos):parseInt(messageContent.lastSeenMessageTime);app.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNREAD_COUNT_UPDATED',result:{thread:threadObject,unreadCount:messageContent.unreadCount?messageContent.unreadCount:0}});app.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_SEEN_UPDATED',result:{thread:threadObject,unreadCount:messageContent.unreadCount?messageContent.unreadCount:0}});if(app.store.threads.get(threadId)&&(!app.store.threads.get(threadId).lastSeenMessageTime.get()||app.store.threads.get(threadId).lastSeenMessageTime.get()&&threadObject.lastSeenMessageTime>app.store.threads.get(threadId).lastSeenMessageTime.get()&&threadObject.unreadCount<app.store.threads.get(threadId).unreadCount.get())){var localThreadLastSeenUpdated=JSON.parse(JSON.stringify(messageContent));app.store.threads.save(localThreadLastSeenUpdated);app.store.threads.get(threadId).lastSeenMessageTime.set(threadObject.lastSeenMessageTime);app.store.threads.get(threadId).unreadCount.set(messageContent.unreadCount);}// if (fullResponseObject) {
 //     getThreads({
 //         threadIds: [messageContent.id]
 //     }, function (threadsResult) {
 //         var threads = threadsResult.result.threads;
 //
 //         if (!threadsResult.cache) {
-//             chatEvents.fireEvent('threadEvents', {
+//             app.chatEvents.fireEvent('threadEvents', {
 //                 type: 'THREAD_UNREAD_COUNT_UPDATED',
 //                 result: {
 //                     thread: threads[0],
@@ -49123,7 +44862,7 @@ var thread=formatDataToMakeConversation(messageContent);_events.chatEvents.fireE
 //                 }
 //             });
 //
-//             chatEvents.fireEvent('threadEvents', {
+//             app.chatEvents.fireEvent('threadEvents', {
 //                 type: 'THREAD_LAST_ACTIVITY_TIME',
 //                 result: {
 //                     thread: threads[0]
@@ -49132,7 +44871,7 @@ var thread=formatDataToMakeConversation(messageContent);_events.chatEvents.fireE
 //         }
 //     });
 // } else {
-//     chatEvents.fireEvent('threadEvents', {
+//     app.chatEvents.fireEvent('threadEvents', {
 //         type: 'THREAD_UNREAD_COUNT_UPDATED',
 //         result: {
 //             thread: threadId,
@@ -49140,7 +44879,7 @@ var thread=formatDataToMakeConversation(messageContent);_events.chatEvents.fireE
 //         }
 //     });
 //
-//     chatEvents.fireEvent('threadEvents', {
+//     app.chatEvents.fireEvent('threadEvents', {
 //         type: 'THREAD_LAST_ACTIVITY_TIME',
 //         result: {
 //             thread: threadId
@@ -49149,148 +44888,148 @@ var thread=formatDataToMakeConversation(messageContent);_events.chatEvents.fireE
 // }
 break;/**
        * Type 32    Get Message Delivered List
-       */case _constants.chatMessageVOTypes.GET_MESSAGE_DELIVERY_PARTICIPANTS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       */case _constants.chatMessageVOTypes.GET_MESSAGE_DELIVERY_PARTICIPANTS:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
        * Type 33    Get Message Seen List
-       */case _constants.chatMessageVOTypes.GET_MESSAGE_SEEN_PARTICIPANTS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       */case _constants.chatMessageVOTypes.GET_MESSAGE_SEEN_PARTICIPANTS:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
        * Type 34    Is Public Group Name Available?
-       */case _constants.chatMessageVOTypes.IS_NAME_AVAILABLE:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       */case _constants.chatMessageVOTypes.IS_NAME_AVAILABLE:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
        * Type 39    Join Public Group or Channel
-       */case _constants.chatMessageVOTypes.JOIN_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       */case _constants.chatMessageVOTypes.JOIN_THREAD:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
        * Type 40    Bot Messages
-       */case _constants.chatMessageVOTypes.BOT_MESSAGE:_events.chatEvents.fireEvent('botEvents',{type:'BOT_MESSAGE',result:{bot:messageContent}});break;/**
+       */case _constants.chatMessageVOTypes.BOT_MESSAGE:app.chatEvents.fireEvent('botEvents',{type:'BOT_MESSAGE',result:{bot:messageContent}});break;/**
        * Type 41    Spam P2P Thread
-       */case _constants.chatMessageVOTypes.SPAM_PV_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
+       */case _constants.chatMessageVOTypes.SPAM_PV_THREAD:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
        * Type 42    Set Role To User
-       */case _constants.chatMessageVOTypes.SET_ROLE_TO_USER:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_ADD_ADMIN',result:{thread:threads[0],admin:messageContent}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0],admin:messageContent}});}});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_ADD_ADMIN',result:{thread:threadId,admin:messageContent}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId,admin:messageContent}});}break;/**
+       */case _constants.chatMessageVOTypes.SET_ROLE_TO_USER:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(app.sdkParams.fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){app.chatEvents.fireEvent('threadEvents',{type:'THREAD_ADD_ADMIN',result:{thread:threads[0],admin:messageContent}});app.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0],admin:messageContent}});}});}else{app.chatEvents.fireEvent('threadEvents',{type:'THREAD_ADD_ADMIN',result:{thread:threadId,admin:messageContent}});app.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId,admin:messageContent}});}break;/**
        * Type 43    Remove Role From User
-       */case _constants.chatMessageVOTypes.REMOVE_ROLE_FROM_USER:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVE_ADMIN',result:{thread:threads[0],admin:messageContent}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0],admin:messageContent}});}});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVE_ADMIN',result:{thread:threadId,admin:messageContent}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId,admin:messageContent}});}break;/**
+       */case _constants.chatMessageVOTypes.REMOVE_ROLE_FROM_USER:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(app.sdkParams.fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){app.chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVE_ADMIN',result:{thread:threads[0],admin:messageContent}});app.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0],admin:messageContent}});}});}else{app.chatEvents.fireEvent('threadEvents',{type:'THREAD_REMOVE_ADMIN',result:{thread:threadId,admin:messageContent}});app.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId,admin:messageContent}});}break;/**
        * Type 44    Clear History
-       */case _constants.chatMessageVOTypes.CLEAR_HISTORY:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
+       */case _constants.chatMessageVOTypes.CLEAR_HISTORY:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
        * Type 46    System Messages
-       */case _constants.chatMessageVOTypes.SYSTEM_MESSAGE:_events.chatEvents.fireEvent('systemEvents',{type:'IS_TYPING',result:{thread:threadId,user:messageContent}});break;/**
+       */case _constants.chatMessageVOTypes.SYSTEM_MESSAGE:app.chatEvents.fireEvent('systemEvents',{type:'IS_TYPING',result:{thread:threadId,user:messageContent}});break;/**
        * Type 47    Get Not Seen Duration
-       */case _constants.chatMessageVOTypes.GET_NOT_SEEN_DURATION:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
+       */case _constants.chatMessageVOTypes.GET_NOT_SEEN_DURATION:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}break;/**
        * Type 48    Pin Thread
-       */case _constants.chatMessageVOTypes.PIN_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var thread=threadsResult.result.threads[0];_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_PIN',result:{thread:thread}});});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_PIN',result:{thread:threadId}});}break;/**
+       */case _constants.chatMessageVOTypes.PIN_THREAD:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(app.sdkParams.fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var thread=threadsResult.result.threads[0];app.chatEvents.fireEvent('threadEvents',{type:'THREAD_PIN',result:{thread:thread}});});}else{app.chatEvents.fireEvent('threadEvents',{type:'THREAD_PIN',result:{thread:threadId}});}break;/**
        * Type 49    UnPin Thread
-       */case _constants.chatMessageVOTypes.UNPIN_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var thread=threadsResult.result.threads[0];_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNPIN',result:{thread:thread}});});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNPIN',result:{thread:threadId}});}break;/**
+       */case _constants.chatMessageVOTypes.UNPIN_THREAD:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(app.sdkParams.fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var thread=threadsResult.result.threads[0];app.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNPIN',result:{thread:thread}});});}else{app.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNPIN',result:{thread:threadId}});}break;/**
        * Type 50    Pin Message
-       */case _constants.chatMessageVOTypes.PIN_MESSAGE:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'MESSAGE_PIN',result:{thread:threadId,pinMessage:formatDataToMakePinMessage(threadId,messageContent)}});break;/**
+       */case _constants.chatMessageVOTypes.PIN_MESSAGE:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}app.chatEvents.fireEvent('threadEvents',{type:'MESSAGE_PIN',result:{thread:threadId,pinMessage:formatDataToMakePinMessage(threadId,messageContent)}});break;/**
        * Type 51    UnPin Message
-       */case _constants.chatMessageVOTypes.UNPIN_MESSAGE:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'MESSAGE_UNPIN',result:{thread:threadId,pinMessage:formatDataToMakePinMessage(threadId,messageContent)}});break;/**
+       */case _constants.chatMessageVOTypes.UNPIN_MESSAGE:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}app.chatEvents.fireEvent('threadEvents',{type:'MESSAGE_UNPIN',result:{thread:threadId,pinMessage:formatDataToMakePinMessage(threadId,messageContent)}});break;/**
        * Type 52    Update Chat Profile
-       */case _constants.chatMessageVOTypes.UPDATE_CHAT_PROFILE:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('userEvents',{type:'CHAT_PROFILE_UPDATED',result:{user:messageContent}});break;/**
+       */case _constants.chatMessageVOTypes.UPDATE_CHAT_PROFILE:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}app.chatEvents.fireEvent('userEvents',{type:'CHAT_PROFILE_UPDATED',result:{user:messageContent}});break;/**
        * Type 53    Change Thread Privacy
-       */case _constants.chatMessageVOTypes.CHANGE_THREAD_PRIVACY:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_PRIVACY_CHANGED',result:{thread:messageContent}});break;/**
+       */case _constants.chatMessageVOTypes.CHANGE_THREAD_PRIVACY:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}app.chatEvents.fireEvent('threadEvents',{type:'THREAD_PRIVACY_CHANGED',result:{thread:messageContent}});break;/**
        * Type 54    Get Participant Roles
-       */case _constants.chatMessageVOTypes.GET_PARTICIPANT_ROLES:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('userEvents',{type:'GET_PARTICIPANT_ROLES',result:{roles:messageContent}});break;/**
+       */case _constants.chatMessageVOTypes.GET_PARTICIPANT_ROLES:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}app.chatEvents.fireEvent('userEvents',{type:'GET_PARTICIPANT_ROLES',result:{roles:messageContent}});break;/**
        * Type 60    Get Contact Not Seen Duration
-       */case _constants.chatMessageVOTypes.GET_CONTACT_NOT_SEEN_DURATION:_events.chatEvents.fireEvent('contactEvents',{type:'CONTACTS_LAST_SEEN',result:messageContent});break;/**
+       */case _constants.chatMessageVOTypes.GET_CONTACT_NOT_SEEN_DURATION:app.chatEvents.fireEvent('contactEvents',{type:'CONTACTS_LAST_SEEN',result:messageContent});break;/**
        * Type 61      Get All Unread Message Count
-       */case _constants.chatMessageVOTypes.ALL_UNREAD_MESSAGE_COUNT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('systemEvents',{type:'ALL_UNREAD_MESSAGES_COUNT',result:messageContent});break;/**
+       */case _constants.chatMessageVOTypes.ALL_UNREAD_MESSAGE_COUNT:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}app.chatEvents.fireEvent('systemEvents',{type:'ALL_UNREAD_MESSAGES_COUNT',result:messageContent});break;/**
        * Type 62    Create Bot
-       */case _constants.chatMessageVOTypes.CREATE_BOT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       */case _constants.chatMessageVOTypes.CREATE_BOT:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
        * Type 63    Define Bot Commands
-       */case _constants.chatMessageVOTypes.DEFINE_BOT_COMMAND:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       */case _constants.chatMessageVOTypes.DEFINE_BOT_COMMAND:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
        * Type 64    Start Bot
-       */case _constants.chatMessageVOTypes.START_BOT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       */case _constants.chatMessageVOTypes.START_BOT:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
        * Type 65    Stop Bot
-       */case _constants.chatMessageVOTypes.STOP_BOT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       */case _constants.chatMessageVOTypes.STOP_BOT:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
        * Type 66    Last Message Deleted
-       */case _constants.chatMessageVOTypes.LAST_MESSAGE_DELETED:delete messageContent.unreadCount;var threadOfDeletedMessage=formatDataToMakeConversation(messageContent);_store.store.threads.save(threadOfDeletedMessage);new Promise(function(resolve,reject){if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){resolve(threads[0]);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:threads[0]}});}});}else{var thread=formatDataToMakeConversation(messageContent);resolve(thread);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:thread}});}}).then(function(thread){if(typeof messageContent.unreadCount!=="undefined"){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNREAD_COUNT_UPDATED',result:{thread:thread,unreadCount:messageContent.unreadCount?messageContent.unreadCount:0}});}});break;/**
+       */case _constants.chatMessageVOTypes.LAST_MESSAGE_DELETED:delete messageContent.unreadCount;var threadOfDeletedMessage=formatDataToMakeConversation(messageContent);app.store.threads.save(threadOfDeletedMessage);new Promise(function(resolve,reject){if(app.sdkParams.fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){resolve(threads[0]);app.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:threads[0]}});}});}else{var thread=formatDataToMakeConversation(messageContent);resolve(thread);app.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:thread}});}}).then(function(thread){if(typeof messageContent.unreadCount!=="undefined"){app.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNREAD_COUNT_UPDATED',result:{thread:thread,unreadCount:messageContent.unreadCount?messageContent.unreadCount:0}});}});break;/**
        * Type 67    Last Message Edited
-       */case _constants.chatMessageVOTypes.LAST_MESSAGE_EDITED:if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:threads[0]}});}});}else{var thread=formatDataToMakeConversation(messageContent);_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:thread}});}break;/**
+       */case _constants.chatMessageVOTypes.LAST_MESSAGE_EDITED:if(app.sdkParams.fullResponseObject){getThreads({threadIds:[messageContent.id]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){app.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:threads[0]}});}});}else{var thread=formatDataToMakeConversation(messageContent);app.chatEvents.fireEvent('threadEvents',{type:'THREAD_INFO_UPDATED',result:{thread:thread}});}break;/**
        * Type 68    Get Bot Commands List
-       */case _constants.chatMessageVOTypes.BOT_COMMANDS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       */case _constants.chatMessageVOTypes.BOT_COMMANDS:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
        * Type 69    Get Thread All Bots
-       */case _constants.chatMessageVOTypes.THREAD_ALL_BOTS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       */case _constants.chatMessageVOTypes.THREAD_ALL_BOTS:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
        * Type 70    Send Call Request
        */case _constants.chatMessageVOTypes.CALL_REQUEST:case _constants.chatMessageVOTypes.ACCEPT_CALL:case _constants.chatMessageVOTypes.REJECT_CALL:case _constants.chatMessageVOTypes.RECEIVE_CALL_REQUEST:case _constants.chatMessageVOTypes.START_CALL:case _constants.chatMessageVOTypes.END_CALL_REQUEST:case _constants.chatMessageVOTypes.END_CALL:case _constants.chatMessageVOTypes.GET_CALLS:case _constants.chatMessageVOTypes.RECONNECT:case _constants.chatMessageVOTypes.CONNECT:case _constants.chatMessageVOTypes.GROUP_CALL_REQUEST:case _constants.chatMessageVOTypes.LEAVE_CALL:case _constants.chatMessageVOTypes.ADD_CALL_PARTICIPANT:case _constants.chatMessageVOTypes.CALL_PARTICIPANT_JOINED:case _constants.chatMessageVOTypes.REMOVE_CALL_PARTICIPANT:case _constants.chatMessageVOTypes.TERMINATE_CALL:case _constants.chatMessageVOTypes.MUTE_CALL_PARTICIPANT:case _constants.chatMessageVOTypes.UNMUTE_CALL_PARTICIPANT:case _constants.chatMessageVOTypes.RECORD_CALL:case _constants.chatMessageVOTypes.RECORD_CALL_STARTED:case _constants.chatMessageVOTypes.END_RECORD_CALL:case _constants.chatMessageVOTypes.START_SCREEN_SHARE:case _constants.chatMessageVOTypes.END_SCREEN_SHARE:case _constants.chatMessageVOTypes.DELETE_FROM_CALL_HISTORY:case _constants.chatMessageVOTypes.TURN_ON_VIDEO_CALL:case _constants.chatMessageVOTypes.TURN_OFF_VIDEO_CALL:case _constants.chatMessageVOTypes.ACTIVE_CALL_PARTICIPANTS:case _constants.chatMessageVOTypes.CALL_SESSION_CREATED:case _constants.chatMessageVOTypes.CANCEL_GROUP_CALL:case _constants.chatMessageVOTypes.DESTINED_RECORD_CALL:case _constants.chatMessageVOTypes.GET_CALLS_TO_JOIN:case _constants.chatMessageVOTypes.SWITCH_TO_GROUP_CALL_REQUEST:case _constants.chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE:case _constants.chatMessageVOTypes.INQUIRY_CALL:case _constants.chatMessageVOTypes.CALL_RECORDING_FAILED:callModule.handleChatMessages(type,messageContent,contentCount,threadId,uniqueId);break;/**
        * Type 90    Contacts Synced
-       */case _constants.chatMessageVOTypes.CONTACT_SYNCED:_events.chatEvents.fireEvent('contactEvents',{type:'CONTACTS_SYNCED',result:messageContent});break;/**
+       */case _constants.chatMessageVOTypes.CONTACT_SYNCED:app.chatEvents.fireEvent('contactEvents',{type:'CONTACTS_SYNCED',result:messageContent});break;/**
        * Type 101    Location Ping
-       */case _constants.chatMessageVOTypes.LOCATION_PING:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('systemEvents',{type:'LOCATION_PING',result:messageContent});break;/**
+       */case _constants.chatMessageVOTypes.LOCATION_PING:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}app.chatEvents.fireEvent('systemEvents',{type:'LOCATION_PING',result:messageContent});break;/**
        * Type 102    Close Thread
-       */case _constants.chatMessageVOTypes.CLOSE_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var thread=threadsResult.result.threads[0];thread.mute=true;_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_CLOSE',result:{thread:thread}});});}else{_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_CLOSE',result:{thread:threadId}});}break;/**
+       */case _constants.chatMessageVOTypes.CLOSE_THREAD:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(app.sdkParams.fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var thread=threadsResult.result.threads[0];thread.mute=true;app.chatEvents.fireEvent('threadEvents',{type:'THREAD_CLOSE',result:{thread:thread}});});}else{app.chatEvents.fireEvent('threadEvents',{type:'THREAD_CLOSE',result:{thread:threadId}});}break;/**
        * Type 104    Remove Bot Commands
-       */case _constants.chatMessageVOTypes.REMOVE_BOT_COMMANDS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
+       */case _constants.chatMessageVOTypes.REMOVE_BOT_COMMANDS:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}break;/**
        * Type 107    Register Assistant
-       */case _constants.chatMessageVOTypes.REGISTER_ASSISTANT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANT_REGISTER',result:messageContent});break;/**
+       */case _constants.chatMessageVOTypes.REGISTER_ASSISTANT:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}app.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANT_REGISTER',result:messageContent});break;/**
        * Type 108    Deactivate Assistant
-       */case _constants.chatMessageVOTypes.DEACTIVATE_ASSISTANT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANT_DEACTIVATE',result:messageContent});break;/**
+       */case _constants.chatMessageVOTypes.DEACTIVATE_ASSISTANT:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}app.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANT_DEACTIVATE',result:messageContent});break;/**
        * Type 109    Get Assistants List
-       */case _constants.chatMessageVOTypes.GET_ASSISTANTS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANTS_LIST',result:messageContent});break;/**
+       */case _constants.chatMessageVOTypes.GET_ASSISTANTS:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}app.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANTS_LIST',result:messageContent});break;/**
        * Type 115    Get Assistants History
-       */case _constants.chatMessageVOTypes.ASSISTANT_HISTORY:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANTS_HSITORY',result:messageContent});break;/**
+       */case _constants.chatMessageVOTypes.ASSISTANT_HISTORY:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}app.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANTS_HSITORY',result:messageContent});break;/**
        * Type 116    Block Assistants
-       */case _constants.chatMessageVOTypes.BLOCK_ASSISTANT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANT_BLOCK',result:messageContent});break;/**
+       */case _constants.chatMessageVOTypes.BLOCK_ASSISTANT:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}app.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANT_BLOCK',result:messageContent});break;/**
        * Type 117    UnBlock Assistant
-       */case _constants.chatMessageVOTypes.UNBLOCK_ASSISTANT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANT_UNBLOCK',result:messageContent});break;/**
+       */case _constants.chatMessageVOTypes.UNBLOCK_ASSISTANT:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}app.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANT_UNBLOCK',result:messageContent});break;/**
        * Type 118    Blocked Assistants List
-       */case _constants.chatMessageVOTypes.BLOCKED_ASSISTANTS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}_events.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANTS_BLOCKED_LIST',result:messageContent});break;/**
+       */case _constants.chatMessageVOTypes.BLOCKED_ASSISTANTS:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}app.chatEvents.fireEvent('assistantEvents',{type:'ASSISTANTS_BLOCKED_LIST',result:messageContent});break;/**
        * Type 130    Mutual Groups
-       */case _constants.chatMessageVOTypes.MUTUAL_GROUPS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}_events.chatEvents.fireEvent('threadEvents',{type:'MUTUAL_GROUPS',result:messageContent});break;/**
+       */case _constants.chatMessageVOTypes.MUTUAL_GROUPS:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount));}app.chatEvents.fireEvent('threadEvents',{type:'MUTUAL_GROUPS',result:messageContent});break;/**
        * Type 140    Create Tag
-       */case _constants.chatMessageVOTypes.CREATE_TAG:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'NEW_TAG',result:messageContent});break;/**
+       */case _constants.chatMessageVOTypes.CREATE_TAG:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}app.chatEvents.fireEvent('threadEvents',{type:'NEW_TAG',result:messageContent});break;/**
        * Type 141    Edit Tag
-       */case _constants.chatMessageVOTypes.EDIT_TAG:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'EDIT_TAG',result:messageContent});break;/**
+       */case _constants.chatMessageVOTypes.EDIT_TAG:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}app.chatEvents.fireEvent('threadEvents',{type:'EDIT_TAG',result:messageContent});break;/**
        * Type 142    Delete Tag
-       */case _constants.chatMessageVOTypes.DELETE_TAG:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'DELETE_TAG',result:messageContent});break;/**
+       */case _constants.chatMessageVOTypes.DELETE_TAG:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}app.chatEvents.fireEvent('threadEvents',{type:'DELETE_TAG',result:messageContent});break;/**
        * Type 143    Delete Tag
-       */case _constants.chatMessageVOTypes.ADD_TAG_PARTICIPANT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'ADD_TAG_PARTICIPANT',result:messageContent});break;/**
+       */case _constants.chatMessageVOTypes.ADD_TAG_PARTICIPANT:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}app.chatEvents.fireEvent('threadEvents',{type:'ADD_TAG_PARTICIPANT',result:messageContent});break;/**
        * Type 144    Delete Tag
-       */case _constants.chatMessageVOTypes.REMOVE_TAG_PARTICIPANT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'REMOVE_TAG_PARTICIPANT',result:messageContent});break;/**
+       */case _constants.chatMessageVOTypes.REMOVE_TAG_PARTICIPANT:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}app.chatEvents.fireEvent('threadEvents',{type:'REMOVE_TAG_PARTICIPANT',result:messageContent});break;/**
        * Type 145    Delete Tag
-       */case _constants.chatMessageVOTypes.GET_TAG_LIST:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}_events.chatEvents.fireEvent('threadEvents',{type:'TAG_LIST',result:messageContent});break;/**
+       */case _constants.chatMessageVOTypes.GET_TAG_LIST:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}app.chatEvents.fireEvent('threadEvents',{type:'TAG_LIST',result:messageContent});break;/**
        * Type 151    Delete Message Thread
-       */case _constants.chatMessageVOTypes.DELETE_MESSAGE_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(!messageContent){messageContent={};}messageContent.threadId=threadId;_events.chatEvents.fireEvent('threadEvents',{type:'DELETE_THREAD',result:messageContent});break;/**
+       */case _constants.chatMessageVOTypes.DELETE_MESSAGE_THREAD:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent));}if(!messageContent){messageContent={};}messageContent.threadId=threadId;app.chatEvents.fireEvent('threadEvents',{type:'DELETE_THREAD',result:messageContent});break;/**
        * Type 152    Gives us a json to export for user
-       */case _constants.chatMessageVOTypes.EXPORT_CHAT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+       */case _constants.chatMessageVOTypes.EXPORT_CHAT:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
        * Type 200    Adding a user to contacts list
-       */case _constants.chatMessageVOTypes.ADD_CONTACTS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+       */case _constants.chatMessageVOTypes.ADD_CONTACTS:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
        * Type 201    Remove contacts result
-       */case _constants.chatMessageVOTypes.REMOVE_CONTACTS:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+       */case _constants.chatMessageVOTypes.REMOVE_CONTACTS:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
        * Type 220    Adding a user to contacts list
-       */case _constants.chatMessageVOTypes.CONTACT_THREAD_UPDATE:messageContent.threadId=threadId;_events.chatEvents.fireEvent('threadEvents',{type:'CONTACT_THREAD_UPDATE',result:messageContent});break;/**
+       */case _constants.chatMessageVOTypes.CONTACT_THREAD_UPDATE:messageContent.threadId=threadId;app.chatEvents.fireEvent('threadEvents',{type:'CONTACT_THREAD_UPDATE',result:messageContent});break;/**
        /**
        * Type 223    ARCHIVE_THREAD
-       */case _constants.chatMessageVOTypes.ARCHIVE_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+       */case _constants.chatMessageVOTypes.ARCHIVE_THREAD:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
        /**
        * Type 224    UNARCHIVE_THREAD
-       */case _constants.chatMessageVOTypes.UNARCHIVE_THREAD:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+       */case _constants.chatMessageVOTypes.UNARCHIVE_THREAD:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
         * Type 226    CUSTOMER_INFO
-        */case _constants.chatMessageVOTypes.CUSTOMER_INFO:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+        */case _constants.chatMessageVOTypes.CUSTOMER_INFO:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
        * Type 234    LAST_MESSAGE_INFO
-       */case _constants.chatMessageVOTypes.LAST_MESSAGE_INFO:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+       */case _constants.chatMessageVOTypes.LAST_MESSAGE_INFO:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
        * Type 236    GET PIN MESSAGE
-       */case _constants.chatMessageVOTypes.GET_PIN_MESSAGE:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+       */case _constants.chatMessageVOTypes.GET_PIN_MESSAGE:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
        * Type 237    GET_THREAD_LIGHT
-       */case _constants.chatMessageVOTypes.GET_THREAD_LIGHT:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+       */case _constants.chatMessageVOTypes.GET_THREAD_LIGHT:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
        * Type 238    REPLY_PRIVATELY
-       */case _constants.chatMessageVOTypes.REPLY_PRIVATELY:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+       */case _constants.chatMessageVOTypes.REPLY_PRIVATELY:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
        * Type 239    ADD_REACTION
-       */case _constants.chatMessageVOTypes.ADD_REACTION:(0,_reactionsMethods.onAddReaction)(uniqueId,messageContent,contentCount);break;/**
+       */case _constants.chatMessageVOTypes.ADD_REACTION:reactionsMethods.onAddReaction(uniqueId,messageContent,contentCount);break;/**
        * Type 240    REPLACE_REACTION
-       */case _constants.chatMessageVOTypes.REPLACE_REACTION:(0,_reactionsMethods.onReplaceReaction)(uniqueId,messageContent,contentCount);break;/**
+       */case _constants.chatMessageVOTypes.REPLACE_REACTION:reactionsMethods.onReplaceReaction(uniqueId,messageContent,contentCount);break;/**
        * Type 241    REMOVE_REACTION
-       */case _constants.chatMessageVOTypes.REMOVE_REACTION:(0,_reactionsMethods.onRemoveReaction)(uniqueId,messageContent,contentCount);break;/**
+       */case _constants.chatMessageVOTypes.REMOVE_REACTION:reactionsMethods.onRemoveReaction(uniqueId,messageContent,contentCount);break;/**
        * Type 242    REACTION_LIST
-       */case _constants.chatMessageVOTypes.REACTION_LIST:(0,_reactionsMethods.onReactionList)(uniqueId,messageContent);break;/**
+       */case _constants.chatMessageVOTypes.REACTION_LIST:reactionsMethods.onReactionList(uniqueId,messageContent);break;/**
        * Type 243   Get My Reaction
-       */case _constants.chatMessageVOTypes.GET_MY_REACTION:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+       */case _constants.chatMessageVOTypes.GET_MY_REACTION:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
        Type 244   REACTION_COUNT
-       */case _constants.chatMessageVOTypes.REACTION_COUNT:(0,_reactionsMethods.onReactionSummaries)(uniqueId,messageContent);break;/**
+       */case _constants.chatMessageVOTypes.REACTION_COUNT:reactionsMethods.onReactionSummaries(uniqueId,messageContent);break;/**
        * Type 999   All unknown errors
-       */case _constants.chatMessageVOTypes.ERROR:if(_store.store.messagesCallbacks[uniqueId]){_store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(true,messageContent.message,messageContent.code,messageContent,0));}/**
+       */case _constants.chatMessageVOTypes.ERROR:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(true,messageContent.message,messageContent.code,messageContent,0));}/**
          * If error code is 21, Token is invalid &
          * user should logged out
          */if(messageContent.code===21){// TODO: Temporarily removed due to unknown side-effects
-// messenger().chatState = false;
+// app.messenger.chatState = false;
 // asyncClient.logout();
 // clearChatServerCaches();
 }/* If the error code is 208, so the user
          * has been blocked cause of spam activity
-         */if(messageContent.code===208){if(_store.store.sendMessageCallbacks[uniqueId]){getItemFromChatWaitQueue(uniqueId,function(message){_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_FAILED',cache:false,result:{message:message}});});}}_events.chatEvents.fireEvent('error',{code:messageContent.code,message:messageContent.message,error:messageContent,uniqueId:uniqueId});break;}},/**
+         */if(messageContent.code===208){if(app.store.sendMessageCallbacks[uniqueId]){getItemFromChatWaitQueue(uniqueId,function(message){app.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_FAILED',cache:false,result:{message:message}});});}}app.chatEvents.fireEvent('error',{code:messageContent.code,message:messageContent.message,error:messageContent,uniqueId:uniqueId});break;}},/**
    * Send Message Callbacks Handler
    *
    * When you send Delivery or Seen Acknowledgements of a message
@@ -49305,7 +45044,7 @@ break;/**
    * @param {string}  uniqueId        uniqueId of message
    *
    * @return {undefined}
-   */sendMessageCallbacksHandler=function sendMessageCallbacksHandler(actionType,threadId,uniqueId){switch(actionType){case _constants.chatMessageVOTypes.DELIVERY:if(_store.store.threadCallbacks[threadId]){var lastThreadCallbackIndex=Object.keys(_store.store.threadCallbacks[threadId]).indexOf(uniqueId);if(typeof lastThreadCallbackIndex!=='undefined'){while(lastThreadCallbackIndex>-1){var tempUniqueId=Object.entries(_store.store.threadCallbacks[threadId])[lastThreadCallbackIndex][0];if(_store.store.sendMessageCallbacks[tempUniqueId]&&_store.store.sendMessageCallbacks[tempUniqueId].onDeliver){if(_store.store.threadCallbacks[threadId][tempUniqueId]&&_store.store.threadCallbacks[threadId][tempUniqueId].onSent){_store.store.sendMessageCallbacks[tempUniqueId].onDeliver({uniqueId:tempUniqueId});delete _store.store.sendMessageCallbacks[tempUniqueId].onDeliver;_store.store.threadCallbacks[threadId][tempUniqueId].onDeliver=true;}}lastThreadCallbackIndex-=1;}}}break;case _constants.chatMessageVOTypes.SEEN:if(_store.store.threadCallbacks[threadId]){var lastThreadCallbackIndex=Object.keys(_store.store.threadCallbacks[threadId]).indexOf(uniqueId);if(typeof lastThreadCallbackIndex!=='undefined'){while(lastThreadCallbackIndex>-1){var tempUniqueId=Object.entries(_store.store.threadCallbacks[threadId])[lastThreadCallbackIndex][0];if(_store.store.sendMessageCallbacks[tempUniqueId]&&_store.store.sendMessageCallbacks[tempUniqueId].onSeen){if(_store.store.threadCallbacks[threadId][tempUniqueId]&&_store.store.threadCallbacks[threadId][tempUniqueId].onSent){if(!_store.store.threadCallbacks[threadId][tempUniqueId].onDeliver){_store.store.sendMessageCallbacks[tempUniqueId].onDeliver({uniqueId:tempUniqueId});delete _store.store.sendMessageCallbacks[tempUniqueId].onDeliver;_store.store.threadCallbacks[threadId][tempUniqueId].onDeliver=true;}_store.store.sendMessageCallbacks[tempUniqueId].onSeen({uniqueId:tempUniqueId});delete _store.store.sendMessageCallbacks[tempUniqueId].onSeen;_store.store.threadCallbacks[threadId][tempUniqueId].onSeen=true;if(_store.store.threadCallbacks[threadId][tempUniqueId].onSent&&_store.store.threadCallbacks[threadId][tempUniqueId].onDeliver&&_store.store.threadCallbacks[threadId][tempUniqueId].onSeen){delete _store.store.threadCallbacks[threadId][tempUniqueId];delete _store.store.sendMessageCallbacks[tempUniqueId];}}}lastThreadCallbackIndex-=1;}}}break;default:break;}},/**
+   */sendMessageCallbacksHandler=function sendMessageCallbacksHandler(actionType,threadId,uniqueId){switch(actionType){case _constants.chatMessageVOTypes.DELIVERY:if(app.store.threadCallbacks[threadId]){var lastThreadCallbackIndex=Object.keys(app.store.threadCallbacks[threadId]).indexOf(uniqueId);if(typeof lastThreadCallbackIndex!=='undefined'){while(lastThreadCallbackIndex>-1){var tempUniqueId=Object.entries(app.store.threadCallbacks[threadId])[lastThreadCallbackIndex][0];if(app.store.sendMessageCallbacks[tempUniqueId]&&app.store.sendMessageCallbacks[tempUniqueId].onDeliver){if(app.store.threadCallbacks[threadId][tempUniqueId]&&app.store.threadCallbacks[threadId][tempUniqueId].onSent){app.store.sendMessageCallbacks[tempUniqueId].onDeliver({uniqueId:tempUniqueId});delete app.store.sendMessageCallbacks[tempUniqueId].onDeliver;app.store.threadCallbacks[threadId][tempUniqueId].onDeliver=true;}}lastThreadCallbackIndex-=1;}}}break;case _constants.chatMessageVOTypes.SEEN:if(app.store.threadCallbacks[threadId]){var lastThreadCallbackIndex=Object.keys(app.store.threadCallbacks[threadId]).indexOf(uniqueId);if(typeof lastThreadCallbackIndex!=='undefined'){while(lastThreadCallbackIndex>-1){var tempUniqueId=Object.entries(app.store.threadCallbacks[threadId])[lastThreadCallbackIndex][0];if(app.store.sendMessageCallbacks[tempUniqueId]&&app.store.sendMessageCallbacks[tempUniqueId].onSeen){if(app.store.threadCallbacks[threadId][tempUniqueId]&&app.store.threadCallbacks[threadId][tempUniqueId].onSent){if(!app.store.threadCallbacks[threadId][tempUniqueId].onDeliver){app.store.sendMessageCallbacks[tempUniqueId].onDeliver({uniqueId:tempUniqueId});delete app.store.sendMessageCallbacks[tempUniqueId].onDeliver;app.store.threadCallbacks[threadId][tempUniqueId].onDeliver=true;}app.store.sendMessageCallbacks[tempUniqueId].onSeen({uniqueId:tempUniqueId});delete app.store.sendMessageCallbacks[tempUniqueId].onSeen;app.store.threadCallbacks[threadId][tempUniqueId].onSeen=true;if(app.store.threadCallbacks[threadId][tempUniqueId].onSent&&app.store.threadCallbacks[threadId][tempUniqueId].onDeliver&&app.store.threadCallbacks[threadId][tempUniqueId].onSeen){delete app.store.threadCallbacks[threadId][tempUniqueId];delete app.store.sendMessageCallbacks[tempUniqueId];}}}lastThreadCallbackIndex-=1;}}}break;default:break;}},/**
    * New Message Handler
    *
    * Handles Event Emitter of a newly received Chat Message
@@ -49316,9 +45055,9 @@ break;/**
    * @param {object}  messageContent   Json Content of the message
    *
    * @return {undefined}
-   */newMessageHandler=function newMessageHandler(threadId,messageContent){var message=formatDataToMakeMessage(threadId,messageContent);var threadObject=message.conversation;var lastMessageVoCopy=Object.assign({},message);lastMessageVoCopy.conversation&&delete lastMessageVoCopy.conversation;threadObject.lastParticipantImage=!!message.participant&&message.participant.hasOwnProperty('image')?message.participant.image:'';threadObject.lastMessageVO=lastMessageVoCopy;threadObject.lastParticipantName=!!message.participant&&message.participant.hasOwnProperty('name')?message.participant.name:'';threadObject.lastMessage=message.hasOwnProperty('message')?message.message:'';var stringMsg=JSON.parse(JSON.stringify(message));stringMsg.conversation=JSON.parse(JSON.stringify(threadObject));_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_NEW',cache:false,result:{message:stringMsg}});_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNREAD_COUNT_UPDATED',result:{thread:threadObject,unreadCount:threadObject.unreadCount?threadObject.unreadCount:0}});var storeThread=_store.store.threads.get(threadObject.id);if(!storeThread){_store.store.threads.save(threadObject);storeThread=_store.store.threads.get(threadObject.id);}// let unreadCount = message.conversation.unreadCount;
-// store.threads.get(threadObject.id).unreadCount.set();
-if(message.ownerId!=_store.store.user().id){if(!storeThread.unreadCount.get())storeThread.unreadCount.set(1);else storeThread.unreadCount.increase();// if(unreadCount) {
+   */newMessageHandler=function newMessageHandler(threadId,messageContent){var message=formatDataToMakeMessage(threadId,messageContent);var threadObject=message.conversation;var lastMessageVoCopy=Object.assign({},message);lastMessageVoCopy.conversation&&delete lastMessageVoCopy.conversation;threadObject.lastParticipantImage=!!message.participant&&message.participant.hasOwnProperty('image')?message.participant.image:'';threadObject.lastMessageVO=lastMessageVoCopy;threadObject.lastParticipantName=!!message.participant&&message.participant.hasOwnProperty('name')?message.participant.name:'';threadObject.lastMessage=message.hasOwnProperty('message')?message.message:'';var stringMsg=JSON.parse(JSON.stringify(message));stringMsg.conversation=JSON.parse(JSON.stringify(threadObject));app.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_NEW',cache:false,result:{message:stringMsg}});app.chatEvents.fireEvent('threadEvents',{type:'THREAD_UNREAD_COUNT_UPDATED',result:{thread:threadObject,unreadCount:threadObject.unreadCount?threadObject.unreadCount:0}});var storeThread=app.store.threads.get(threadObject.id);if(!storeThread){app.store.threads.save(threadObject);storeThread=app.store.threads.get(threadObject.id);}// let unreadCount = message.conversation.unreadCount;
+// app.store.threads.get(threadObject.id).unreadCount.set();
+if(message.ownerId!=app.store.user.get().id){if(!storeThread.unreadCount.get())storeThread.unreadCount.set(1);else storeThread.unreadCount.increase();// if(unreadCount) {
 //     storeThread.unreadCount.set(unreadCount);
 // } else {
 //     if(!storeThread.unreadCount.get())
@@ -49326,13 +45065,13 @@ if(message.ownerId!=_store.store.user().id){if(!storeThread.unreadCount.get())st
 //     else
 //         storeThread.unreadCount.increase();
 // }
-}else{storeThread.unreadCount.set(0);}_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadObject}});// if (fullResponseObject) {
+}else{storeThread.unreadCount.set(0);}app.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadObject}});// if (fullResponseObject) {
 //     getThreads({
 //         threadIds: [threadId]
 //     }, function (threadsResult) {
 //         var threads = threadsResult.result.threads;
 //
-//         chatEvents.fireEvent('threadEvents', {
+//         app.chatEvents.fireEvent('threadEvents', {
 //             type: 'THREAD_UNREAD_COUNT_UPDATED',
 //             result: {
 //                 thread: threads[0],
@@ -49340,7 +45079,7 @@ if(message.ownerId!=_store.store.user().id){if(!storeThread.unreadCount.get())st
 //             }
 //         });
 //
-//         chatEvents.fireEvent('threadEvents', {
+//         app.chatEvents.fireEvent('threadEvents', {
 //             type: 'THREAD_LAST_ACTIVITY_TIME',
 //             result: {
 //                 thread: threads[0]
@@ -49349,14 +45088,14 @@ if(message.ownerId!=_store.store.user().id){if(!storeThread.unreadCount.get())st
 //
 //     });
 // } else {
-//     chatEvents.fireEvent('threadEvents', {
+//     app.chatEvents.fireEvent('threadEvents', {
 //         type: 'THREAD_LAST_ACTIVITY_TIME',
 //         result: {
 //             thread: threadId
 //         }
 //     });
 //
-//     chatEvents.fireEvent('threadEvents', {
+//     app.chatEvents.fireEvent('threadEvents', {
 //         type: 'THREAD_UNREAD_COUNT_UPDATED',
 //         result: {
 //             thread: messageContent.id,
@@ -49377,7 +45116,7 @@ if(message.ownerId!=_store.store.user().id){if(!storeThread.unreadCount.get())st
    * @param {object}  messageContent   Json Content of the message
    *
    * @return {undefined}
-   */chatEditMessageHandler=function chatEditMessageHandler(threadId,messageContent){var message=formatDataToMakeMessage(threadId,messageContent);if(_sdkParams.sdkParams.fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_EDIT',result:{message:message}});if(message.pinned){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0]}});}}});}else{_events.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_EDIT',result:{message:message}});if(message.pinned){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId}});}}},/**
+   */chatEditMessageHandler=function chatEditMessageHandler(threadId,messageContent){var message=formatDataToMakeMessage(threadId,messageContent);if(app.sdkParams.fullResponseObject){getThreads({threadIds:[threadId]},function(threadsResult){var threads=threadsResult.result.threads;if(!threadsResult.cache){app.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_EDIT',result:{message:message}});if(message.pinned){app.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threads[0]}});}}});}else{app.chatEvents.fireEvent('messageEvents',{type:'MESSAGE_EDIT',result:{message:message}});if(message.pinned){app.chatEvents.fireEvent('threadEvents',{type:'THREAD_LAST_ACTIVITY_TIME',result:{thread:threadId}});}}},/**
    * Create Thread
    *
    * Makes formatted Thread Object out of given contentCount,
@@ -49391,7 +45130,7 @@ if(message.ownerId!=_store.store.user().id){if(!storeThread.unreadCount.get())st
    *
    * @param showThread
    * @return {object} Formatted Thread Object
-   */createThread=function createThread(messageContent,addFromService,showThread){var threadData=formatDataToMakeConversation(messageContent);var redirectToThread=showThread===true?showThread:false;if(addFromService){_events.chatEvents.fireEvent('threadEvents',{type:'THREAD_NEW',redirectToThread:redirectToThread,result:{thread:threadData}});}return threadData;},/**
+   */createThread=function createThread(messageContent,addFromService,showThread){var threadData=formatDataToMakeConversation(messageContent);var redirectToThread=showThread===true?showThread:false;if(addFromService){app.chatEvents.fireEvent('threadEvents',{type:'THREAD_NEW',redirectToThread:redirectToThread,result:{thread:threadData}});}return threadData;},/**
    * Format Data To Make Linked User
    *
    * This functions re-formats given JSON to proper Object
@@ -49546,8 +45285,8 @@ return JSON.parse(JSON.stringify(assistant));},formatDataToMakeAssistantHistoryL
      *    - leftWithHistory                     {boolean}
      *    - closed                              {boolean}
      */var conversation={id:messageContent.id,joinDate:messageContent.joinDate,title:messageContent.title,inviter:undefined,participants:undefined,time:messageContent.time,lastMessage:messageContent.lastMessage,lastParticipantName:messageContent.lastParticipantName,group:messageContent.group,partner:messageContent.partner,lastParticipantImage:messageContent.lastParticipantImage,image:messageContent.image,description:messageContent.description,unreadCount:messageContent.unreadCount,lastSeenMessageId:messageContent.lastSeenMessageId,lastSeenMessageTime:messageContent.lastSeenMessageNanos?parseInt(parseInt(messageContent.lastSeenMessageTime)/1000)*1000000000+parseInt(messageContent.lastSeenMessageNanos):parseInt(messageContent.lastSeenMessageTime),lastMessageVO:undefined,pinMessageVO:undefined,partnerLastSeenMessageId:messageContent.partnerLastSeenMessageId,partnerLastSeenMessageTime:messageContent.partnerLastSeenMessageNanos?parseInt(parseInt(messageContent.partnerLastSeenMessageTime)/1000)*1000000000+parseInt(messageContent.partnerLastSeenMessageNanos):parseInt(messageContent.partnerLastSeenMessageTime),partnerLastDeliveredMessageId:messageContent.partnerLastDeliveredMessageId,partnerLastDeliveredMessageTime:messageContent.partnerLastDeliveredMessageNanos?parseInt(parseInt(messageContent.partnerLastDeliveredMessageTime)/1000)*1000000000+parseInt(messageContent.partnerLastDeliveredMessageNanos):parseInt(messageContent.partnerLastDeliveredMessageTime),archiveThread:messageContent.archiveThread,type:messageContent.type,metadata:messageContent.metadata,mute:messageContent.mute,participantCount:messageContent.participantCount,canEditInfo:messageContent.canEditInfo,canSpam:messageContent.canSpam,admin:messageContent.admin,mentioned:messageContent.mentioned,pin:messageContent.pin,uniqueName:messageContent.uniqueName,userGroupHash:messageContent.userGroupHash,leftWithHistory:messageContent.leftWithHistory,closed:messageContent.closed,seenByAnyAssistant:messageContent.seenByAnyAssistant};// Add inviter if exist
-if(messageContent.inviter){conversation.inviter=(0,_threadParticipantsMethods.formatDataToMakeParticipant)(messageContent.inviter,messageContent.id);}// Add participants list if exist
-if(messageContent.participants&&Array.isArray(messageContent.participants)){conversation.participants=[];for(var i=0;i<messageContent.participants.length;i++){var participantData=(0,_threadParticipantsMethods.formatDataToMakeParticipant)(messageContent.participants[i],messageContent.id);if(participantData){conversation.participants.push(participantData);}}}// Add lastMessageVO if exist
+if(messageContent.inviter){conversation.inviter=threadParticipantsMethods.formatDataToMakeParticipant(messageContent.inviter,messageContent.id);}// Add participants list if exist
+if(messageContent.participants&&Array.isArray(messageContent.participants)){conversation.participants=[];for(var i=0;i<messageContent.participants.length;i++){var participantData=threadParticipantsMethods.formatDataToMakeParticipant(messageContent.participants[i],messageContent.id);if(participantData){conversation.participants.push(participantData);}}}// Add lastMessageVO if exist
 if(messageContent.lastMessageVO){conversation.lastMessageVO=formatDataToMakeMessage(messageContent.id,messageContent.lastMessageVO);}// Add pinMessageVO if exist
 if(messageContent.pinMessageVO){conversation.pinMessageVO=formatDataToMakePinMessage(messageContent.id,messageContent.pinMessageVO);}// return conversation;
 return JSON.parse(JSON.stringify(conversation));},/**
@@ -49572,7 +45311,7 @@ return JSON.parse(JSON.stringify(conversation));},/**
      *   - messageType                {int}
      *   - metadata                   {string}
      *   - systemMetadata             {string}
-     */var replyInfo={participant:undefined,repliedToMessageId:messageContent.repliedToMessageId,repliedToMessageTime:messageContent.repliedToMessageNanos?parseInt(parseInt(messageContent.repliedToMessageTime)/1000)*1000000000+parseInt(messageContent.repliedToMessageNanos):parseInt(messageContent.repliedToMessageTime),repliedToMessageTimeMiliSeconds:parseInt(messageContent.repliedToMessageTime),repliedToMessageTimeNanos:parseInt(messageContent.repliedToMessageNanos),message:messageContent.message,deleted:messageContent.deleted,messageType:messageContent.messageType,metadata:messageContent.metadata,systemMetadata:messageContent.systemMetadata};if(messageContent.participant){replyInfo.participant=(0,_threadParticipantsMethods.formatDataToMakeParticipant)(messageContent.participant,threadId);}if(messageContent.replyPrivatelyInfoVO){replyInfo.replyPrivatelyInfoVO=messageContent.replyPrivatelyInfoVO;}// return replyInfo;
+     */var replyInfo={participant:undefined,repliedToMessageId:messageContent.repliedToMessageId,repliedToMessageTime:messageContent.repliedToMessageNanos?parseInt(parseInt(messageContent.repliedToMessageTime)/1000)*1000000000+parseInt(messageContent.repliedToMessageNanos):parseInt(messageContent.repliedToMessageTime),repliedToMessageTimeMiliSeconds:parseInt(messageContent.repliedToMessageTime),repliedToMessageTimeNanos:parseInt(messageContent.repliedToMessageNanos),message:messageContent.message,deleted:messageContent.deleted,messageType:messageContent.messageType,metadata:messageContent.metadata,systemMetadata:messageContent.systemMetadata};if(messageContent.participant){replyInfo.participant=threadParticipantsMethods.formatDataToMakeParticipant(messageContent.participant,threadId);}if(messageContent.replyPrivatelyInfoVO){replyInfo.replyPrivatelyInfoVO=messageContent.replyPrivatelyInfoVO;}// return replyInfo;
 return JSON.parse(JSON.stringify(replyInfo));},/**
    * Format Data To Make Forward Info
    *
@@ -49588,7 +45327,7 @@ return JSON.parse(JSON.stringify(replyInfo));},/**
      * + forwardInfo                  {object : forwardInfoVO}
      *   - participant                {object : ParticipantVO}
      *   - conversation               {object : ConversationSummary}
-     */var forwardInfo={participant:undefined,conversation:undefined};if(messageContent.conversation){forwardInfo.conversation=formatDataToMakeConversation(messageContent.conversation);}if(messageContent.participant){forwardInfo.participant=(0,_threadParticipantsMethods.formatDataToMakeParticipant)(messageContent.participant,threadId);}// return forwardInfo;
+     */var forwardInfo={participant:undefined,conversation:undefined};if(messageContent.conversation){forwardInfo.conversation=formatDataToMakeConversation(messageContent.conversation);}if(messageContent.participant){forwardInfo.participant=threadParticipantsMethods.formatDataToMakeParticipant(messageContent.participant,threadId);}// return forwardInfo;
 return JSON.parse(JSON.stringify(forwardInfo));},/**
    * Format Data To Make Message
    *
@@ -49625,7 +45364,7 @@ return JSON.parse(JSON.stringify(forwardInfo));},/**
      *    - systemMetadata               {string}
      *    - time                         {int}
      *    - timeNanos                    {int}
-     */if(fromCache||pushMessageVO.time.toString().length>14){var time=pushMessageVO.time,timeMiliSeconds=parseInt(pushMessageVO.time/1000000);}else{var time=pushMessageVO.timeNanos?parseInt(parseInt(pushMessageVO.time)/1000)*1000000000+parseInt(pushMessageVO.timeNanos):parseInt(pushMessageVO.time),timeMiliSeconds=parseInt(pushMessageVO.time);}var message={id:pushMessageVO.id,threadId:threadId,ownerId:pushMessageVO.ownerId?pushMessageVO.ownerId:undefined,uniqueId:pushMessageVO.uniqueId,previousId:pushMessageVO.previousId,message:filterXSS(pushMessageVO.message),messageType:pushMessageVO.messageType,edited:pushMessageVO.edited,editable:pushMessageVO.editable,deletable:pushMessageVO.deletable,delivered:pushMessageVO.delivered,seen:pushMessageVO.seen,mentioned:pushMessageVO.mentioned,pinned:pushMessageVO.pinned,participant:undefined,conversation:undefined,replyInfo:undefined,forwardInfo:undefined,metadata:pushMessageVO.metadata,systemMetadata:pushMessageVO.systemMetadata,time:time,timeMiliSeconds:timeMiliSeconds,timeNanos:parseInt(pushMessageVO.timeNanos),callHistory:pushMessageVO.callHistoryVO};if(pushMessageVO.participant){message.ownerId=pushMessageVO.participant.id;}else if(pushMessageVO.participantVO){message.ownerId=pushMessageVO.participantVO.id;}if(pushMessageVO.conversation){message.conversation=formatDataToMakeConversation(pushMessageVO.conversation);message.threadId=pushMessageVO.conversation.id;}if(pushMessageVO.replyInfoVO||pushMessageVO.replyInfo){message.replyInfo=pushMessageVO.replyInfoVO?formatDataToMakeReplyInfo(pushMessageVO.replyInfoVO,threadId):formatDataToMakeReplyInfo(pushMessageVO.replyInfo,threadId);}if(pushMessageVO.forwardInfo){message.forwardInfo=formatDataToMakeForwardInfo(pushMessageVO.forwardInfo,threadId);}if(pushMessageVO.participant){message.participant=(0,_threadParticipantsMethods.formatDataToMakeParticipant)(pushMessageVO.participant,threadId);}// return message;
+     */if(fromCache||pushMessageVO.time.toString().length>14){var time=pushMessageVO.time,timeMiliSeconds=parseInt(pushMessageVO.time/1000000);}else{var time=pushMessageVO.timeNanos?parseInt(parseInt(pushMessageVO.time)/1000)*1000000000+parseInt(pushMessageVO.timeNanos):parseInt(pushMessageVO.time),timeMiliSeconds=parseInt(pushMessageVO.time);}var message={id:pushMessageVO.id,threadId:threadId,ownerId:pushMessageVO.ownerId?pushMessageVO.ownerId:undefined,uniqueId:pushMessageVO.uniqueId,previousId:pushMessageVO.previousId,message:filterXSS(pushMessageVO.message),messageType:pushMessageVO.messageType,edited:pushMessageVO.edited,editable:pushMessageVO.editable,deletable:pushMessageVO.deletable,delivered:pushMessageVO.delivered,seen:pushMessageVO.seen,mentioned:pushMessageVO.mentioned,pinned:pushMessageVO.pinned,participant:undefined,conversation:undefined,replyInfo:undefined,forwardInfo:undefined,metadata:pushMessageVO.metadata,systemMetadata:pushMessageVO.systemMetadata,time:time,timeMiliSeconds:timeMiliSeconds,timeNanos:parseInt(pushMessageVO.timeNanos),callHistory:pushMessageVO.callHistoryVO};if(pushMessageVO.participant){message.ownerId=pushMessageVO.participant.id;}else if(pushMessageVO.participantVO){message.ownerId=pushMessageVO.participantVO.id;}if(pushMessageVO.conversation){message.conversation=formatDataToMakeConversation(pushMessageVO.conversation);message.threadId=pushMessageVO.conversation.id;}if(pushMessageVO.replyInfoVO||pushMessageVO.replyInfo){message.replyInfo=pushMessageVO.replyInfoVO?formatDataToMakeReplyInfo(pushMessageVO.replyInfoVO,threadId):formatDataToMakeReplyInfo(pushMessageVO.replyInfo,threadId);}if(pushMessageVO.forwardInfo){message.forwardInfo=formatDataToMakeForwardInfo(pushMessageVO.forwardInfo,threadId);}if(pushMessageVO.participant){message.participant=threadParticipantsMethods.formatDataToMakeParticipant(pushMessageVO.participant,threadId);}// return message;
 return JSON.parse(JSON.stringify(message));},/**
    * Format Data To Make Pin Message
    *
@@ -49697,15 +45436,15 @@ return JSON.parse(JSON.stringify(pinMessage));},/**
    * @param {function}  callback              The callback function to call after
    *
    * @return {object} Instant sendMessage result
-   */getThreads=function getThreads(params,callback){var count=25,offset=0,content={},returnCache=false;if(params){if(parseInt(params.count)>0){count=params.count;}if(parseInt(params.offset)>0){offset=params.offset;}if(typeof params.threadName==='string'){content.name=params.threadName;}if(typeof params.username==='string'){content.username=params.username;}if(typeof params.cellphoneNumber==='string'){content.cellphoneNumber=params.cellphoneNumber;}if(Array.isArray(params.threadIds)){content.threadIds=params.threadIds;}if(typeof params["new"]==='boolean'){content["new"]=params["new"];}if(parseInt(params.creatorCoreUserId)>0){content.creatorCoreUserId=params.creatorCoreUserId;}if(parseInt(params.partnerCoreUserId)>0){content.partnerCoreUserId=params.partnerCoreUserId;}if(parseInt(params.partnerCoreContactId)>0){content.partnerCoreContactId=params.partnerCoreContactId;}if(parseInt(params.fromTime)>0&&parseInt(params.fromTime)<9999999999999){content.fromTime=parseInt(params.fromTime);}if(parseInt(params.toTime)>0&&parseInt(params.toTime)<9999999999999){content.toTime=parseInt(params.toTime);}var functionLevelCache=typeof params.cache=='boolean'?params.cache:true;if(typeof params.isGroup==='boolean'){content.isGroup=params.isGroup;}if(typeof params.type==='number'){content.type=params.type;}}content.count=count;content.offset=offset;var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.GET_THREADS,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
+   */getThreads=function getThreads(params,callback){var count=25,offset=0,content={},returnCache=false;if(params){if(parseInt(params.count)>0){count=params.count;}if(parseInt(params.offset)>0){offset=params.offset;}if(typeof params.threadName==='string'){content.name=params.threadName;}if(typeof params.username==='string'){content.username=params.username;}if(typeof params.cellphoneNumber==='string'){content.cellphoneNumber=params.cellphoneNumber;}if(Array.isArray(params.threadIds)){content.threadIds=params.threadIds;}if(typeof params["new"]==='boolean'){content["new"]=params["new"];}if(parseInt(params.creatorCoreUserId)>0){content.creatorCoreUserId=params.creatorCoreUserId;}if(parseInt(params.partnerCoreUserId)>0){content.partnerCoreUserId=params.partnerCoreUserId;}if(parseInt(params.partnerCoreContactId)>0){content.partnerCoreContactId=params.partnerCoreContactId;}if(parseInt(params.fromTime)>0&&parseInt(params.fromTime)<9999999999999){content.fromTime=parseInt(params.fromTime);}if(parseInt(params.toTime)>0&&parseInt(params.toTime)<9999999999999){content.toTime=parseInt(params.toTime);}var functionLevelCache=typeof params.cache=='boolean'?params.cache:true;if(typeof params.isGroup==='boolean'){content.isGroup=params.isGroup;}if(typeof params.type==='number'){content.type=params.type;}}content.count=count;content.offset=offset;var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.GET_THREADS,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
 content:content};/**
      * Retrive get threads response from server
-     */return(0,_messaging.messenger)().sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode,uniqueId:result.uniqueId};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={threads:[],contentCount:result.contentCount,hasNext:messageContent&&!(messageLength<count),//(offset + count < result.contentCount && messageLength > 0),
-nextOffset:offset*1+messageLength*1},threadData;for(var i=0;i<messageLength;i++){threadData=createThread(messageContent[i],false);if(threadData){resultData.threads.push(threadData);}}_store.store.threads.saveMany(resultData.threads);returnData.result=resultData;}callback&&callback(returnData);/**
+     */return app.messenger.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode,uniqueId:result.uniqueId};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={threads:[],contentCount:result.contentCount,hasNext:messageContent&&!(messageLength<count),//(offset + count < result.contentCount && messageLength > 0),
+nextOffset:offset*1+messageLength*1},threadData;for(var i=0;i<messageLength;i++){threadData=createThread(messageContent[i],false);if(threadData){resultData.threads.push(threadData);}}app.store.threads.saveMany(resultData.threads);returnData.result=resultData;}callback&&callback(returnData);/**
          * Delete callback so if server pushes response before
          * cache, cache won't send data again
-         */callback=undefined;if(!returnData.hasError&&returnCache){_events.chatEvents.fireEvent('threadEvents',{type:'THREADS_LIST_CHANGE',result:returnData.result});}}});},getAllThreads=function getAllThreads(params,callback){var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.GET_THREADS,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:{}};sendMessageParams.content.summary=params.summary;return(0,_messaging.messenger)().sendMessage(sendMessageParams,{onResult:function onResult(result){callback&&callback(result);}});},/**
+         */callback=undefined;if(!returnData.hasError&&returnCache){app.chatEvents.fireEvent('threadEvents',{type:'THREADS_LIST_CHANGE',result:returnData.result});}}});},getAllThreads=function getAllThreads(params,callback){var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.GET_THREADS,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:{}};sendMessageParams.content.summary=params.summary;return app.messenger.sendMessage(sendMessageParams,{onResult:function onResult(result){callback&&callback(result);}});},/**
    * Get History.
    *
    * This functions gets history of a thread
@@ -49730,15 +45469,15 @@ content:{}};sendMessageParams.content.summary=params.summary;return(0,_messaging
    * @param {function}  callback          The callback function to call after
    *
    * @return {object} Instant result of sendMessage
-   */getHistory=function getHistory(params,callback){if(parseInt(params.threadId)>0){var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.GET_HISTORY,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:{},subjectId:params.threadId},offset=parseInt(params.offset)>0?parseInt(params.offset):0,count=parseInt(params.count)>0?parseInt(params.count):config.getHistoryCount,order=typeof params.order!='undefined'?params.order.toLowerCase():'desc',functionLevelCache=typeof params.cache=='boolean'?params.cache:true,cacheResult={},serverResult={},cacheFirstMessage,cacheLastMessage,messages,returnCache,cacheReady=false,dynamicHistoryCount=params.dynamicHistoryCount&&typeof params.dynamicHistoryCount==='boolean'?params.dynamicHistoryCount:false,sendingQueue=params.queues&&typeof params.queues.sending==='boolean'?params.queues.sending:true,failedQueue=params.queues&&typeof params.queues.failed==='boolean'?params.queues.failed:true,uploadingQueue=params.queues&&typeof params.queues.uploading==='boolean'?params.queues.uploading:true,sendingQueueMessages=[],failedQueueMessages=[],uploadingQueueMessages=[];if(sendingQueue){getChatSendQueue(parseInt(params.threadId),function(sendQueueMessages){for(var i=0;i<sendQueueMessages.length;i++){var time=new Date().getTime();sendingQueueMessages.push(formatDataToMakeMessage(sendQueueMessages[i].threadId,{uniqueId:sendQueueMessages[i].uniqueId,ownerId:_store.store.user().id,message:sendQueueMessages[i].content,metadata:sendQueueMessages[i].metadata,systemMetadata:sendQueueMessages[i].systemMetadata,replyInfo:sendQueueMessages[i].replyInfo,forwardInfo:sendQueueMessages[i].forwardInfo,time:time,timeNanos:time%1000*1000000}));}});}if(uploadingQueue){getChatUploadQueue(parseInt(params.threadId),function(uploadQueueMessages){for(var i=0;i<uploadQueueMessages.length;i++){uploadQueueMessages[i].message.participant=_store.store.user();var time=new Date().getTime();uploadQueueMessages[i].message.time=time;uploadQueueMessages[i].message.timeNanos=time%1000*1000000;uploadingQueueMessages.push(formatDataToMakeMessage(params.threadId,uploadQueueMessages[i].message,false));}});}getChatWaitQueue(parseInt(params.threadId),failedQueue,function(waitQueueMessages){if(cacheSecret.length>0){for(var i=0;i<waitQueueMessages.length;i++){var decryptedEnqueuedMessage={};if(cacheInMemory){decryptedEnqueuedMessage=waitQueueMessages[i];}else{decryptedEnqueuedMessage=_utility["default"].jsonParser(chatDecrypt(waitQueueMessages[i].message,cacheSecret));}var time=new Date().getTime();failedQueueMessages[i]=formatDataToMakeMessage(waitQueueMessages[i].threadId,{uniqueId:decryptedEnqueuedMessage.uniqueId,ownerId:_store.store.user().id,message:decryptedEnqueuedMessage.content,metadata:decryptedEnqueuedMessage.metadata,systemMetadata:decryptedEnqueuedMessage.systemMetadata,replyInfo:decryptedEnqueuedMessage.replyInfo,forwardInfo:decryptedEnqueuedMessage.forwardInfo,participant:_store.store.user(),time:time,timeNanos:time%1000*1000000});}}else{failedQueueMessages=[];}if(dynamicHistoryCount){var tempCount=count-(sendingQueueMessages.length+failedQueueMessages.length+uploadingQueueMessages.length);sendMessageParams.content.count=tempCount>0?tempCount:0;}else{sendMessageParams.content.count=count;}sendMessageParams.content.offset=offset;sendMessageParams.content.order=order;if(parseInt(params.messageId)>0){sendMessageParams.content.id=params.messageId;}if(Array.isArray(params.uniqueIds)){sendMessageParams.content.uniqueIds=params.uniqueIds;}if(parseInt(params.fromTimeFull)>0&&params.fromTimeFull.toString().length===19){sendMessageParams.content.fromTime=parseInt(params.fromTimeFull.toString().substring(0,13));sendMessageParams.content.fromTimeNanos=parseInt(params.fromTimeFull.toString().substring(10,19));}else{if(parseInt(params.fromTime)>0&&parseInt(params.fromTime)<9999999999999){sendMessageParams.content.fromTime=parseInt(params.fromTime);}if(parseInt(params.fromTimeNanos)>0&&parseInt(params.fromTimeNanos)<999999999){sendMessageParams.content.fromTimeNanos=parseInt(params.fromTimeNanos);}}if(parseInt(params.toTimeFull)>0&&params.toTimeFull.toString().length===19){sendMessageParams.content.toTime=parseInt(params.toTimeFull.toString().substring(0,13));sendMessageParams.content.toTimeNanos=parseInt(params.toTimeFull.toString().substring(10,19));}else{if(parseInt(params.toTime)>0&&parseInt(params.toTime)<9999999999999){sendMessageParams.content.toTime=parseInt(params.toTime);}if(parseInt(params.toTimeNanos)>0&&parseInt(params.toTimeNanos)<999999999){sendMessageParams.content.toTimeNanos=parseInt(params.toTimeNanos);}}if(typeof params.query!='undefined'){sendMessageParams.content.query=params.query;}if(params.allMentioned&&typeof params.allMentioned=='boolean'){sendMessageParams.content.allMentioned=params.allMentioned;}if(params.unreadMentioned&&typeof params.unreadMentioned=='boolean'){sendMessageParams.content.unreadMentioned=params.unreadMentioned;}if(params.messageType&&typeof params.messageType.toUpperCase()!=='undefined'&&_constants.chatMessageTypes[params.messageType.toUpperCase()]>0){sendMessageParams.content.messageType=_constants.chatMessageTypes[params.messageType.toUpperCase()];}if((0,_typeof2["default"])(params.metadataCriteria)=='object'&&params.metadataCriteria.hasOwnProperty('field')){sendMessageParams.content.metadataCriteria=params.metadataCriteria;}if(typeof params.onlyNewMessages==="boolean"){sendMessageParams.content.newMessages=params.onlyNewMessages;}/**
+   */getHistory=function getHistory(params,callback){if(parseInt(params.threadId)>0){var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.GET_HISTORY,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:{},subjectId:params.threadId},offset=parseInt(params.offset)>0?parseInt(params.offset):0,count=parseInt(params.count)>0?parseInt(params.count):config.getHistoryCount,order=typeof params.order!='undefined'?params.order.toLowerCase():'desc',functionLevelCache=typeof params.cache=='boolean'?params.cache:true,cacheResult={},serverResult={},cacheFirstMessage,cacheLastMessage,messages,returnCache,cacheReady=false,dynamicHistoryCount=params.dynamicHistoryCount&&typeof params.dynamicHistoryCount==='boolean'?params.dynamicHistoryCount:false,sendingQueue=params.queues&&typeof params.queues.sending==='boolean'?params.queues.sending:true,failedQueue=params.queues&&typeof params.queues.failed==='boolean'?params.queues.failed:true,uploadingQueue=params.queues&&typeof params.queues.uploading==='boolean'?params.queues.uploading:true,sendingQueueMessages=[],failedQueueMessages=[],uploadingQueueMessages=[];if(sendingQueue){getChatSendQueue(parseInt(params.threadId),function(sendQueueMessages){for(var i=0;i<sendQueueMessages.length;i++){var time=new Date().getTime();sendingQueueMessages.push(formatDataToMakeMessage(sendQueueMessages[i].threadId,{uniqueId:sendQueueMessages[i].uniqueId,ownerId:app.store.user.get().id,message:sendQueueMessages[i].content,metadata:sendQueueMessages[i].metadata,systemMetadata:sendQueueMessages[i].systemMetadata,replyInfo:sendQueueMessages[i].replyInfo,forwardInfo:sendQueueMessages[i].forwardInfo,time:time,timeNanos:time%1000*1000000}));}});}if(uploadingQueue){getChatUploadQueue(parseInt(params.threadId),function(uploadQueueMessages){for(var i=0;i<uploadQueueMessages.length;i++){uploadQueueMessages[i].message.participant=app.store.user.get();var time=new Date().getTime();uploadQueueMessages[i].message.time=time;uploadQueueMessages[i].message.timeNanos=time%1000*1000000;uploadingQueueMessages.push(formatDataToMakeMessage(params.threadId,uploadQueueMessages[i].message,false));}});}getChatWaitQueue(parseInt(params.threadId),failedQueue,function(waitQueueMessages){if(cacheSecret.length>0){for(var i=0;i<waitQueueMessages.length;i++){var decryptedEnqueuedMessage={};if(cacheInMemory){decryptedEnqueuedMessage=waitQueueMessages[i];}else{decryptedEnqueuedMessage=_utility["default"].jsonParser(chatDecrypt(waitQueueMessages[i].message,cacheSecret));}var time=new Date().getTime();failedQueueMessages[i]=formatDataToMakeMessage(waitQueueMessages[i].threadId,{uniqueId:decryptedEnqueuedMessage.uniqueId,ownerId:app.store.user.get().id,message:decryptedEnqueuedMessage.content,metadata:decryptedEnqueuedMessage.metadata,systemMetadata:decryptedEnqueuedMessage.systemMetadata,replyInfo:decryptedEnqueuedMessage.replyInfo,forwardInfo:decryptedEnqueuedMessage.forwardInfo,participant:app.store.user.get(),time:time,timeNanos:time%1000*1000000});}}else{failedQueueMessages=[];}if(dynamicHistoryCount){var tempCount=count-(sendingQueueMessages.length+failedQueueMessages.length+uploadingQueueMessages.length);sendMessageParams.content.count=tempCount>0?tempCount:0;}else{sendMessageParams.content.count=count;}sendMessageParams.content.offset=offset;sendMessageParams.content.order=order;if(parseInt(params.messageId)>0){sendMessageParams.content.id=params.messageId;}if(Array.isArray(params.uniqueIds)){sendMessageParams.content.uniqueIds=params.uniqueIds;}if(parseInt(params.fromTimeFull)>0&&params.fromTimeFull.toString().length===19){sendMessageParams.content.fromTime=parseInt(params.fromTimeFull.toString().substring(0,13));sendMessageParams.content.fromTimeNanos=parseInt(params.fromTimeFull.toString().substring(10,19));}else{if(parseInt(params.fromTime)>0&&parseInt(params.fromTime)<9999999999999){sendMessageParams.content.fromTime=parseInt(params.fromTime);}if(parseInt(params.fromTimeNanos)>0&&parseInt(params.fromTimeNanos)<999999999){sendMessageParams.content.fromTimeNanos=parseInt(params.fromTimeNanos);}}if(parseInt(params.toTimeFull)>0&&params.toTimeFull.toString().length===19){sendMessageParams.content.toTime=parseInt(params.toTimeFull.toString().substring(0,13));sendMessageParams.content.toTimeNanos=parseInt(params.toTimeFull.toString().substring(10,19));}else{if(parseInt(params.toTime)>0&&parseInt(params.toTime)<9999999999999){sendMessageParams.content.toTime=parseInt(params.toTime);}if(parseInt(params.toTimeNanos)>0&&parseInt(params.toTimeNanos)<999999999){sendMessageParams.content.toTimeNanos=parseInt(params.toTimeNanos);}}if(typeof params.query!='undefined'){sendMessageParams.content.query=params.query;}if(params.allMentioned&&typeof params.allMentioned=='boolean'){sendMessageParams.content.allMentioned=params.allMentioned;}if(params.unreadMentioned&&typeof params.unreadMentioned=='boolean'){sendMessageParams.content.unreadMentioned=params.unreadMentioned;}if(params.messageType&&typeof params.messageType.toUpperCase()!=='undefined'&&_constants.chatMessageTypes[params.messageType.toUpperCase()]>0){sendMessageParams.content.messageType=_constants.chatMessageTypes[params.messageType.toUpperCase()];}if((0,_typeof2["default"])(params.metadataCriteria)=='object'&&params.metadataCriteria.hasOwnProperty('field')){sendMessageParams.content.metadataCriteria=params.metadataCriteria;}if(typeof params.onlyNewMessages==="boolean"){sendMessageParams.content.newMessages=params.onlyNewMessages;}/**
          * Get Thread Messages From Server
-         */return(0,_messaging.messenger)().sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode},resultMessagesId=[];if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length;var history=reformatThreadHistory(params.threadId,messageContent);if(messageLength>0){/**
+         */return app.messenger.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode},resultMessagesId=[];if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length;var history=reformatThreadHistory(params.threadId,messageContent);if(messageLength>0){/**
                  * Calculating First and Last Messages of result
                  */var lastMessage=history[messageContent.length-1],firstMessage=history[0];/**
                  * Sending Delivery for Last Message of Thread
-                 */if(_store.store.user().id!==firstMessage.participant.id&&!firstMessage.delivered){putInMessagesDeliveryQueue(params.threadId,firstMessage.id);}}returnData.result={history:history,contentCount:result.contentCount,hasNext:result.result&&!(result.result.length<sendMessageParams.content.count),//(sendMessageParams.content.offset + sendMessageParams.content.count < result.contentCount && messageLength > 0),
-nextOffset:sendMessageParams.content.offset*1+messageLength*1};if(sendingQueue){returnData.result.sending=sendingQueueMessages;}if(uploadingQueue){returnData.result.uploading=uploadingQueueMessages;}if(failedQueue){returnData.result.failed=failedQueueMessages;}callback&&callback(returnData);callback=undefined;}}});});}else{_events.chatEvents.fireEvent('error',{code:999,message:'Thread ID is required for Getting history!'});}},/**
+                 */if(app.store.user.get().id!==firstMessage.participant.id&&!firstMessage.delivered){putInMessagesDeliveryQueue(params.threadId,firstMessage.id);}}returnData.result={history:history,contentCount:result.contentCount,hasNext:result.result&&!(result.result.length<sendMessageParams.content.count),//(sendMessageParams.content.offset + sendMessageParams.content.count < result.contentCount && messageLength > 0),
+nextOffset:sendMessageParams.content.offset*1+messageLength*1};if(sendingQueue){returnData.result.sending=sendingQueueMessages;}if(uploadingQueue){returnData.result.uploading=uploadingQueueMessages;}if(failedQueue){returnData.result.failed=failedQueueMessages;}callback&&callback(returnData);callback=undefined;}}});});}else{app.chatEvents.fireEvent('error',{code:999,message:'Thread ID is required for Getting history!'});}},/**
    * Update Thread Info
    *
    * This functions updates metadata of thread
@@ -49753,11 +45492,11 @@ nextOffset:sendMessageParams.content.offset*1+messageLength*1};if(sendingQueue){
    * @param {function}  callback      The callback function to call after
    *
    * @return {object} Instant sendMessage result
-   */updateThreadInfo=function updateThreadInfo(params,callback){var updateThreadInfoData={chatMessageVOType:_constants.chatMessageVOTypes.UPDATE_THREAD_INFO,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:{},pushMsgType:3,token:_sdkParams.sdkParams.token},threadInfoContent={},fileUploadParams={},metadata={file:{}},threadId,fileUniqueId=_utility["default"].generateUUID();if(params){if(!params.userGroupHash||params.userGroupHash.length===0||typeof params.userGroupHash!=='string'){_events.chatEvents.fireEvent('error',{code:6304,message:CHAT_ERRORS[6304]});return;}else{fileUploadParams.userGroupHash=params.userGroupHash;}if(parseInt(params.threadId)>0){threadId=parseInt(params.threadId);updateThreadInfoData.subjectId=threadId;}else{_events.chatEvents.fireEvent('error',{code:999,message:'Thread ID is required for Updating thread info!'});}if(typeof params.description=='string'){threadInfoContent.description=params.description;}if(typeof params.title=='string'){threadInfoContent.name=params.title;}if((0,_typeof2["default"])(params.metadata)=='object'){threadInfoContent.metadata=JSON.parse(JSON.stringify(params.metadata));}else if(typeof params.metadata=='string'){try{threadInfoContent.metadata=JSON.parse(params.metadata);}catch(e){threadInfoContent.metadata={};}}else{threadInfoContent.metadata={};}updateThreadInfoData.content=threadInfoContent;if((0,_typeof2["default"])(params.image)=='object'&&params.image.size>0){return chatUploadHandler({threadId:threadId,file:params.image,fileUniqueId:fileUniqueId},function(uploadHandlerResult,uploadHandlerMetadata,fileType,fileExtension){fileUploadParams=Object.assign(fileUploadParams,uploadHandlerResult);threadInfoContent.metadata=JSON.stringify(Object.assign(threadInfoContent.metadata,uploadHandlerMetadata));putInChatUploadQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.UPDATE_THREAD_INFO,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-subjectId:threadId,content:threadInfoContent,metadata:threadInfoContent.metadata,uniqueId:fileUniqueId,pushMsgType:3,token:_sdkParams.sdkParams.token},callbacks:callback},function(){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){uploadImageToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){metadata['name']=result.result.name;metadata['fileHash']=result.result.hash;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;metadata['file']['actualHeight']=result.result.actualHeight;metadata['file']['actualWidth']=result.result.actualWidth;metadata['file']['link']="".concat(SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS,"/api/images/").concat(result.result.hash,"?checkUserGroupAccess=true");transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}else{_events.chatEvents.fireEvent('error',{code:999,message:'Thread picture can be a image type only!'});}});});}else if(typeof params.image=='string'&&params.image.length>5){threadInfoContent.metadata=JSON.stringify(Object.assign(threadInfoContent.metadata,{fileHash:params.image}));getImageDownloadLinkFromPodspaceNew({hashCode:params.image},function(result){if(!result.hasError){threadInfoContent.image=result.downloadUrl;}});return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.UPDATE_THREAD_INFO,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-subjectId:threadId,content:threadInfoContent,metadata:threadInfoContent.metadata,uniqueId:fileUniqueId,pushMsgType:3,token:_sdkParams.sdkParams.token},{onResult:function onResult(result){callback&&callback(result);}});}else{if(Object.keys(threadInfoContent.metadata).length===0){delete threadInfoContent.metadata;}return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.UPDATE_THREAD_INFO,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-subjectId:threadId,content:threadInfoContent,metadata:threadInfoContent.metadata,uniqueId:fileUniqueId,pushMsgType:3,token:_sdkParams.sdkParams.token},{onResult:function onResult(result){callback&&callback(result);}});}}},/**
+   */updateThreadInfo=function updateThreadInfo(params,callback){var updateThreadInfoData={chatMessageVOType:_constants.chatMessageVOTypes.UPDATE_THREAD_INFO,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:{},pushMsgType:3,token:app.sdkParams.token},threadInfoContent={},fileUploadParams={},metadata={file:{}},threadId,fileUniqueId=_utility["default"].generateUUID();if(params){if(!params.userGroupHash||params.userGroupHash.length===0||typeof params.userGroupHash!=='string'){app.chatEvents.fireEvent('error',{code:6304,message:CHAT_ERRORS[6304]});return;}else{fileUploadParams.userGroupHash=params.userGroupHash;}if(parseInt(params.threadId)>0){threadId=parseInt(params.threadId);updateThreadInfoData.subjectId=threadId;}else{app.chatEvents.fireEvent('error',{code:999,message:'Thread ID is required for Updating thread info!'});}if(typeof params.description=='string'){threadInfoContent.description=params.description;}if(typeof params.title=='string'){threadInfoContent.name=params.title;}if((0,_typeof2["default"])(params.metadata)=='object'){threadInfoContent.metadata=JSON.parse(JSON.stringify(params.metadata));}else if(typeof params.metadata=='string'){try{threadInfoContent.metadata=JSON.parse(params.metadata);}catch(e){threadInfoContent.metadata={};}}else{threadInfoContent.metadata={};}updateThreadInfoData.content=threadInfoContent;if((0,_typeof2["default"])(params.image)=='object'&&params.image.size>0){return chatUploadHandler({threadId:threadId,file:params.image,fileUniqueId:fileUniqueId},function(uploadHandlerResult,uploadHandlerMetadata,fileType,fileExtension){fileUploadParams=Object.assign(fileUploadParams,uploadHandlerResult);threadInfoContent.metadata=JSON.stringify(Object.assign(threadInfoContent.metadata,uploadHandlerMetadata));putInChatUploadQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.UPDATE_THREAD_INFO,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+subjectId:threadId,content:threadInfoContent,metadata:threadInfoContent.metadata,uniqueId:fileUniqueId,pushMsgType:3,token:app.sdkParams.token},callbacks:callback},function(){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){uploadImageToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){metadata['name']=result.result.name;metadata['fileHash']=result.result.hash;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;metadata['file']['actualHeight']=result.result.actualHeight;metadata['file']['actualWidth']=result.result.actualWidth;metadata['file']['link']="".concat(SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS,"/api/images/").concat(result.result.hash,"?checkUserGroupAccess=true");transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}else{app.chatEvents.fireEvent('error',{code:999,message:'Thread picture can be a image type only!'});}});});}else if(typeof params.image=='string'&&params.image.length>5){threadInfoContent.metadata=JSON.stringify(Object.assign(threadInfoContent.metadata,{fileHash:params.image}));getImageDownloadLinkFromPodspaceNew({hashCode:params.image},function(result){if(!result.hasError){threadInfoContent.image=result.downloadUrl;}});return app.messenger.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.UPDATE_THREAD_INFO,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+subjectId:threadId,content:threadInfoContent,metadata:threadInfoContent.metadata,uniqueId:fileUniqueId,pushMsgType:3,token:app.sdkParams.token},{onResult:function onResult(result){callback&&callback(result);}});}else{if(Object.keys(threadInfoContent.metadata).length===0){delete threadInfoContent.metadata;}return app.messenger.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.UPDATE_THREAD_INFO,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+subjectId:threadId,content:threadInfoContent,metadata:threadInfoContent.metadata,uniqueId:fileUniqueId,pushMsgType:3,token:app.sdkParams.token},{onResult:function onResult(result){callback&&callback(result);}});}}},/**
    * Update Chat Profile
    *
    * This functions updates metadata of thread
@@ -49772,7 +45511,7 @@ subjectId:threadId,content:threadInfoContent,metadata:threadInfoContent.metadata
    * @param {function}  callback      The callback function to call after
    *
    * @return {object} Instant sendMessage result
-   */updateChatProfile=function updateChatProfile(params,callback){var updateChatProfileData={chatMessageVOType:_constants.chatMessageVOTypes.UPDATE_CHAT_PROFILE,content:{},pushMsgType:3,token:_sdkParams.sdkParams.token};if(params){if(typeof params.bio=='string'){updateChatProfileData.content.bio=params.bio;}if((0,_typeof2["default"])(params.metadata)=='object'){updateChatProfileData.content.metadata=JSON.stringify(params.metadata);}else if(typeof params.metadata=='string'){updateChatProfileData.content.metadata=params.metadata;}}return(0,_messaging.messenger)().sendMessage(updateChatProfileData,{onResult:function onResult(result){callback&&callback(result);}});},/**
+   */updateChatProfile=function updateChatProfile(params,callback){var updateChatProfileData={chatMessageVOType:_constants.chatMessageVOTypes.UPDATE_CHAT_PROFILE,content:{},pushMsgType:3,token:app.sdkParams.token};if(params){if(typeof params.bio=='string'){updateChatProfileData.content.bio=params.bio;}if((0,_typeof2["default"])(params.metadata)=='object'){updateChatProfileData.content.metadata=JSON.stringify(params.metadata);}else if(typeof params.metadata=='string'){updateChatProfileData.content.metadata=params.metadata;}}return app.messenger.sendMessage(updateChatProfileData,{onResult:function onResult(result){callback&&callback(result);}});},/**
    * Get Participant Roles
    *
    * This functions retrieves roles of an user if they are
@@ -49784,7 +45523,7 @@ subjectId:threadId,content:threadInfoContent,metadata:threadInfoContent.metadata
    * @param {function}  callback      The callback function to call after
    *
    * @return {object} Instant sendMessage result
-   */getCurrentUserRoles=function getCurrentUserRoles(params,callback){var updateChatProfileData={chatMessageVOType:_constants.chatMessageVOTypes.GET_PARTICIPANT_ROLES,pushMsgType:3,subjectId:params.threadId,token:_sdkParams.sdkParams.token};return(0,_messaging.messenger)().sendMessage(updateChatProfileData,{onResult:function onResult(result){callback&&callback(result);}});},/**
+   */getCurrentUserRoles=function getCurrentUserRoles(params,callback){var updateChatProfileData={chatMessageVOType:_constants.chatMessageVOTypes.GET_PARTICIPANT_ROLES,pushMsgType:3,subjectId:params.threadId,token:app.sdkParams.token};return app.messenger.sendMessage(updateChatProfileData,{onResult:function onResult(result){callback&&callback(result);}});},/**
    * Deliver
    *
    * This functions sends delivery messages for a message
@@ -49794,7 +45533,7 @@ subjectId:threadId,content:threadInfoContent,metadata:threadInfoContent.metadata
    * @param {int}   messageId  Id of Message
    *
    * @return {object} Instant sendMessage result
-   */deliver=function deliver(params){return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.DELIVERY,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
+   */deliver=function deliver(params){return app.messenger.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.DELIVERY,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
 content:params.messageId,pushMsgType:3});},/**
    * Seen
    *
@@ -49805,7 +45544,7 @@ content:params.messageId,pushMsgType:3});},/**
    * @param {int}   messageId  Id of Message
    *
    * @return {object} Instant sendMessage result
-   */seen=function seen(params){return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.SEEN,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
+   */seen=function seen(params){return app.messenger.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.SEEN,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
 content:params.messageId,pushMsgType:3});},/**
    * Get Image.
    *
@@ -49848,8 +45587,8 @@ content:params.messageId,pushMsgType:3});},/**
    * @param {string}  hashCode        HashCode of uploaded file
    *
    * @return {object} File Object
-   */getFileFromPodspace=function getFileFromPodspace(params,callback){var downloadUniqueId=_utility["default"].generateUUID(),getFileData={};if(params){if(params.hashCode&&typeof params.hashCode=='string'){getFileData.hash=params.hashCode;}else{callback({hasError:true,error:'Enter a file hash to get'});return;}}if(params.responseType==='link'){var returnLink=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE+"?hash=".concat(params.hashCode,"&_token_=").concat(_sdkParams.sdkParams.token,"&_token_issuer_=1");callback({hasError:false,type:'link',result:returnLink});}else{httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE,method:'GET',responseType:'blob',uniqueId:downloadUniqueId,headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1// 'Range': 'bytes=100-200'
-},data:getFileData},function(result){if(!result.hasError){callback({hasError:result.hasError,result:result.result.response,type:'blob'});}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){_sdkParams.sdkParams.consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - File download has been canceled!"));});}};}},/**
+   */getFileFromPodspace=function getFileFromPodspace(params,callback){var downloadUniqueId=_utility["default"].generateUUID(),getFileData={};if(params){if(params.hashCode&&typeof params.hashCode=='string'){getFileData.hash=params.hashCode;}else{callback({hasError:true,error:'Enter a file hash to get'});return;}}if(params.responseType==='link'){var returnLink=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE+"?hash=".concat(params.hashCode,"&_token_=").concat(app.sdkParams.token,"&_token_issuer_=1");callback({hasError:false,type:'link',result:returnLink});}else{httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE,method:'GET',responseType:'blob',uniqueId:downloadUniqueId,headers:{'_token_':app.sdkParams.token,'_token_issuer_':1// 'Range': 'bytes=100-200'
+},data:getFileData},function(result){if(!result.hasError){callback({hasError:result.hasError,result:result.result.response,type:'blob'});}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){app.sdkParams.consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - File download has been canceled!"));});}};}},/**
    * Get File From PodSpace New
    *
    * This functions gets an uploaded file from Pod Space File Server.
@@ -49860,8 +45599,8 @@ content:params.messageId,pushMsgType:3});},/**
    * @param {string}  hashCode        HashCode of uploaded file
    *
    * @return {object} File Object
-   */getFileFromPodspaceNew=function getFileFromPodspaceNew(params,callback){var downloadUniqueId=_utility["default"].generateUUID(),getFileData={};if(params){if(params.hashCode&&typeof params.hashCode=='string'){getFileData.hash=params.hashCode;}else{callback({hasError:true,error:'Enter a file hash to get'});return;}if(params.checkUserGroupAccess){getFileData.checkUserGroupAccess=true;}}if(params.responseType==='link'){var returnLink=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true";callback({hasError:false,type:'link',result:returnLink});}else{httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true",method:'GET',responseType:'blob',uniqueId:downloadUniqueId,headers:{'Authorization':'Bearer '+_sdkParams.sdkParams.token},enableDownloadProgressEvents:params.enableDownloadProgressEvents,hashCode:params.hashCode//data: getFileData
-},function(result){if(!result.hasError){callback({hasError:result.hasError,result:result.result.response,type:'blob'});}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){_sdkParams.sdkParams.consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - File download has been canceled!"));});}};}},/**
+   */getFileFromPodspaceNew=function getFileFromPodspaceNew(params,callback){var downloadUniqueId=_utility["default"].generateUUID(),getFileData={};if(params){if(params.hashCode&&typeof params.hashCode=='string'){getFileData.hash=params.hashCode;}else{callback({hasError:true,error:'Enter a file hash to get'});return;}if(params.checkUserGroupAccess){getFileData.checkUserGroupAccess=true;}}if(params.responseType==='link'){var returnLink=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true";callback({hasError:false,type:'link',result:returnLink});}else{httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_FILE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true",method:'GET',responseType:'blob',uniqueId:downloadUniqueId,headers:{'Authorization':'Bearer '+app.sdkParams.token},enableDownloadProgressEvents:params.enableDownloadProgressEvents,hashCode:params.hashCode//data: getFileData
+},function(result){if(!result.hasError){callback({hasError:result.hasError,result:result.result.response,type:'blob'});}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){app.sdkParams.consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - File download has been canceled!"));});}};}},/**
    * Deprecated
    *
    * Get Image From PodSpace
@@ -49876,7 +45615,7 @@ content:params.messageId,pushMsgType:3});},/**
    * @param {string}  quality         Image quality betwenn 0.0 anf 1.0
    *
    * @return {object} File Object
-   */getImageFromPodspace=function getImageFromPodspace(params,callback){var downloadUniqueId=_utility["default"].generateUUID(),getImageData={size:params.size,quality:params.quality,crop:params.crop};if(params){if(params.hashCode&&typeof params.hashCode=='string'){getImageData.hash=params.hashCode;}else{callback({hasError:true,error:'Enter a file hash to get'});return;}if(params.responseType==='link'){var returnLink=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE+"?hash=".concat(params.hashCode,"&_token_=").concat(_sdkParams.sdkParams.token,"&_token_issuer_=1&size=").concat(params.size,"&quality=").concat(params.quality,"&crop=").concat(params.crop);callback({hasError:false,type:'link',result:returnLink});}else if(params.responseType==='base64'){httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE,method:'GET',uniqueId:downloadUniqueId,responseType:'blob',headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1},data:getImageData},function(result){if(!result.hasError){var fr=new FileReader();fr.onloadend=function(){callback({hasError:result.hasError,type:'base64',result:fr.result});};fr.readAsDataURL(result.result.response);}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){_sdkParams.sdkParams.consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - Image download has been canceled!"));});}};}else{httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE,method:'GET',responseType:'blob',uniqueId:downloadUniqueId,headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1},data:getImageData},function(result){if(!result.hasError){callback({hasError:result.hasError,type:'blob',result:result.result.response});}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){_sdkParams.sdkParams.consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - Image download has been canceled!"));});}};}}},/**
+   */getImageFromPodspace=function getImageFromPodspace(params,callback){var downloadUniqueId=_utility["default"].generateUUID(),getImageData={size:params.size,quality:params.quality,crop:params.crop};if(params){if(params.hashCode&&typeof params.hashCode=='string'){getImageData.hash=params.hashCode;}else{callback({hasError:true,error:'Enter a file hash to get'});return;}if(params.responseType==='link'){var returnLink=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE+"?hash=".concat(params.hashCode,"&_token_=").concat(app.sdkParams.token,"&_token_issuer_=1&size=").concat(params.size,"&quality=").concat(params.quality,"&crop=").concat(params.crop);callback({hasError:false,type:'link',result:returnLink});}else if(params.responseType==='base64'){httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE,method:'GET',uniqueId:downloadUniqueId,responseType:'blob',headers:{'_token_':app.sdkParams.token,'_token_issuer_':1},data:getImageData},function(result){if(!result.hasError){var fr=new FileReader();fr.onloadend=function(){callback({hasError:result.hasError,type:'base64',result:fr.result});};fr.readAsDataURL(result.result.response);}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){app.sdkParams.consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - Image download has been canceled!"));});}};}else{httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE,method:'GET',responseType:'blob',uniqueId:downloadUniqueId,headers:{'_token_':app.sdkParams.token,'_token_issuer_':1},data:getImageData},function(result){if(!result.hasError){callback({hasError:result.hasError,type:'blob',result:result.result.response});}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){app.sdkParams.consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - Image download has been canceled!"));});}};}}},/**
    * Get Image From PodSpace New
    *
    * This functions gets an uploaded image from Pod Space File Server.
@@ -49890,9 +45629,9 @@ content:params.messageId,pushMsgType:3});},/**
    *
    * @return {object} File Object
    */getImageFromPodspaceNew=function getImageFromPodspaceNew(params,callback){var downloadUniqueId=_utility["default"].generateUUID(),getImageData={size:params.size,quality:params.quality,crop:params.crop};if(params){if(params.hashCode&&typeof params.hashCode=='string'){getImageData.hash=params.hashCode;}else{callback({hasError:true,error:'Enter a file hash to get'});return;}if(params.responseType==='link'){var returnLink=SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true&size=".concat(params.size,"&quality=").concat(params.quality,"&crop=").concat(params.crop);//+ SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE + `?hash=${params.hashCode}&_token_=${token}&_token_issuer_=1&size=${params.size}&quality=${params.quality}&crop=${params.crop}`;
-callback({hasError:false,type:'link',result:returnLink});}else if(params.responseType==='base64'){httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true&size=".concat(params.size,"&quality=").concat(params.quality,"&crop=").concat(params.crop),method:'GET',uniqueId:downloadUniqueId,responseType:'blob',headers:{'Authorization':'Bearer '+_sdkParams.sdkParams.token},enableDownloadProgressEvents:params.enableDownloadProgressEvents,hashCode:params.hashCode//data: getImageData
-},function(result){if(!result.hasError){var fr=new FileReader();fr.onloadend=function(){callback({hasError:result.hasError,type:'base64',result:fr.result});};fr.readAsDataURL(result.result.response);}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){_sdkParams.sdkParams.consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - Image download has been canceled!"));});}};}else{httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true&size=".concat(params.size,"&quality=").concat(params.quality,"&crop=").concat(params.crop),method:'GET',responseType:'blob',uniqueId:downloadUniqueId,headers:{'Authorization':'Bearer '+_sdkParams.sdkParams.token},enableDownloadProgressEvents:params.enableDownloadProgressEvents,hashCode:params.hashCode//data: getImageData
-},function(result){if(!result.hasError){callback({hasError:result.hasError,type:'blob',result:result.result.response});}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){_sdkParams.sdkParams.consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - Image download has been canceled!"));});}};}}},/**
+callback({hasError:false,type:'link',result:returnLink});}else if(params.responseType==='base64'){httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true&size=".concat(params.size,"&quality=").concat(params.quality,"&crop=").concat(params.crop),method:'GET',uniqueId:downloadUniqueId,responseType:'blob',headers:{'Authorization':'Bearer '+app.sdkParams.token},enableDownloadProgressEvents:params.enableDownloadProgressEvents,hashCode:params.hashCode//data: getImageData
+},function(result){if(!result.hasError){var fr=new FileReader();fr.onloadend=function(){callback({hasError:result.hasError,type:'base64',result:fr.result});};fr.readAsDataURL(result.result.response);}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){app.sdkParams.consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - Image download has been canceled!"));});}};}else{httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE_NEW.replace('{fileHash}',params.hashCode)+"?checkUserGroupAccess=true&size=".concat(params.size,"&quality=").concat(params.quality,"&crop=").concat(params.crop),method:'GET',responseType:'blob',uniqueId:downloadUniqueId,headers:{'Authorization':'Bearer '+app.sdkParams.token},enableDownloadProgressEvents:params.enableDownloadProgressEvents,hashCode:params.hashCode//data: getImageData
+},function(result){if(!result.hasError){callback({hasError:result.hasError,type:'blob',result:result.result.response});}else{callback({hasError:true});}});return{uniqueId:downloadUniqueId,cancel:function cancel(){cancelFileDownload({uniqueId:downloadUniqueId},function(){app.sdkParams.consoleLogging&&console.log("\"".concat(downloadUniqueId,"\" - Image download has been canceled!"));});}};}}},/**
    * Deprecated
    *
    * Get Image Download Link From PodSpace
@@ -49942,7 +45681,7 @@ callback&&callback({hasError:false,downloadUrl:downloadUrl});return downloadUrl;
    * @link http://docs.pod.land/v1.0.8.0/Developer/CustomPost/605/File
    *
    * @return {object} Uploaded File Object
-   */uploadFile=function uploadFile(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.file.name;fileType=params.file.type;fileSize=params.file.size;fileExtension=params.file.name.split('.').pop();var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFileData.file=params.file;}if(params.randomFileName){uploadFileData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadFileData.fileName=fileName;}uploadFileData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadFileData.threadId=params.threadId;}else{uploadThreadId=0;uploadFileData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadFileData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadFileData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadFileData.originalFileName=params.originalFileName;}else{uploadFileData.originalFileName=fileName;}}httpRequest({url:SERVICE_ADDRESSES.FILESERVER_ADDRESS+SERVICES_PATH.UPLOAD_FILE,method:'POST',headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result'});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:_store.store.user(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},/**
+   */uploadFile=function uploadFile(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.file.name;fileType=params.file.type;fileSize=params.file.size;fileExtension=params.file.name.split('.').pop();var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFileData.file=params.file;}if(params.randomFileName){uploadFileData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadFileData.fileName=fileName;}uploadFileData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadFileData.threadId=params.threadId;}else{uploadThreadId=0;uploadFileData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadFileData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadFileData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadFileData.originalFileName=params.originalFileName;}else{uploadFileData.originalFileName=fileName;}}httpRequest({url:SERVICE_ADDRESSES.FILESERVER_ADDRESS+SERVICES_PATH.UPLOAD_FILE,method:'POST',headers:{'_token_':app.sdkParams.token,'_token_issuer_':1},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result'});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:app.store.user.get(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},/**
    * Upload File To Pod Space
    *
    * Upload files to Pod Space Server
@@ -49960,7 +45699,7 @@ callback&&callback({hasError:false,downloadUrl:downloadUrl});return downloadUrl;
       *
       * @return {object} Uploaded File Object
    */uploadFileToPodspace=function uploadFileToPodspace(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.file.name;fileType=params.file.type;fileSize=params.file.size;fileExtension=params.file.name.split('.').pop();var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFileData.file=params.file;}if(params.randomFileName){uploadFileData.filename=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadFileData.filename=fileName;}uploadFileData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadFileData.threadId=params.threadId;}else{uploadThreadId=0;uploadFileData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadFileData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadFileData.uniqueId=uploadUniqueId;}if(typeof params.userGroupHash=='string'){//userGroupHash = params.userGroupHash;
-uploadFileData.userGroupHash=params.userGroupHash;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to enter a userGroupHash to be able to upload on PodSpace!'});return;}if(typeof params.originalFileName=='string'){uploadFileData.originalFileName=params.originalFileName;}else{uploadFileData.originalFileName=fileName;}}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_FILE_TO_USERGROUP,method:'POST',headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result'});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:_store.store.user(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},uploadFileToPodspaceNew=function uploadFileToPodspaceNew(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.file.name;fileType=params.file.type;fileSize=params.file.size;fileExtension=params.file.name.split('.').pop();var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFileData.file=params.file;}if(params.randomFileName){uploadFileData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadFileData.fileName=fileName;}uploadFileData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadFileData.threadId=params.threadId;}else{uploadThreadId=0;uploadFileData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadFileData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadFileData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadFileData.originalFileName=params.originalFileName;}else{uploadFileData.originalFileName=fileName;}}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_FILE_NEW,method:'POST',headers:{'Authorization':'Bearer '+_sdkParams.sdkParams.token},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result'});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:_store.store.user(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},/**
+uploadFileData.userGroupHash=params.userGroupHash;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to enter a userGroupHash to be able to upload on PodSpace!'});return;}if(typeof params.originalFileName=='string'){uploadFileData.originalFileName=params.originalFileName;}else{uploadFileData.originalFileName=fileName;}}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_FILE_TO_USERGROUP,method:'POST',headers:{'_token_':app.sdkParams.token,'_token_issuer_':1},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result'});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:app.store.user.get(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},uploadFileToPodspaceNew=function uploadFileToPodspaceNew(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.file.name;fileType=params.file.type;fileSize=params.file.size;fileExtension=params.file.name.split('.').pop();var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFileData.file=params.file;}if(params.randomFileName){uploadFileData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadFileData.fileName=fileName;}uploadFileData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadFileData.threadId=params.threadId;}else{uploadThreadId=0;uploadFileData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadFileData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadFileData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadFileData.originalFileName=params.originalFileName;}else{uploadFileData.originalFileName=fileName;}}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_FILE_NEW,method:'POST',headers:{'Authorization':'Bearer '+app.sdkParams.token},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result'});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:app.store.user.get(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},/**
    * Upload File To Pod Space
    *
    * Upload files to Pod Space Server
@@ -49979,7 +45718,7 @@ uploadFileData.userGroupHash=params.userGroupHash;}else{callback({hasError:true,
 fileSize,//fileExtension,
 uploadUniqueId,uploadThreadId;fileName=params.file.name;//fileType = params.file.type;
 fileSize=params.file.size;//fileExtension = params.file.name.split('.').pop();
-var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFileData.file=params.file;}if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadFileData.threadId=params.threadId;}else{uploadThreadId=0;uploadFileData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadFileData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadFileData.uniqueId=uploadUniqueId;}if(typeof params.userGroupHash=='string'){uploadFileData.userGroupHash=params.userGroupHash;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to enter a userGroupHash to be able to upload on PodSpace!'});return;}if(typeof params.originalFileName=='string'){uploadFileData.originalFileName=params.originalFileName;}else{uploadFileData.originalFileName=fileName;}}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_FILE_TO_USERGROUP_NEW.replace('{userGroupHash}',uploadFileData.userGroupHash),method:'POST',headers:{'Authorization':'Bearer '+_sdkParams.sdkParams.token},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result'});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:_store.store.user(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},/**
+var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFileData.file=params.file;}if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadFileData.threadId=params.threadId;}else{uploadThreadId=0;uploadFileData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadFileData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadFileData.uniqueId=uploadUniqueId;}if(typeof params.userGroupHash=='string'){uploadFileData.userGroupHash=params.userGroupHash;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to enter a userGroupHash to be able to upload on PodSpace!'});return;}if(typeof params.originalFileName=='string'){uploadFileData.originalFileName=params.originalFileName;}else{uploadFileData.originalFileName=fileName;}}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_FILE_TO_USERGROUP_NEW.replace('{userGroupHash}',uploadFileData.userGroupHash),method:'POST',headers:{'Authorization':'Bearer '+app.sdkParams.token},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result'});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:app.store.user.get(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},/**
    * Upload File
    *
    * Upload files to File Server
@@ -49993,7 +45732,7 @@ var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFile
    * @link http://docs.pod.land/v1.0.8.0/Developer/CustomPost/605/File
    *
    * @return {object} Uploaded File Object
-   */uploadFileFromUrl=function uploadFileFromUrl(params,callback){var uploadUniqueId,uploadThreadId;var uploadFileData={},fileExtension;if(params){if(typeof params.fileUrl!=='undefined'){uploadFileData.url=params.fileUrl;}if(typeof params.fileExtension!=='undefined'){fileExtension=params.fileExtension;}else{fileExtension='png';}if(typeof params.fileName=='string'){uploadFileData.filename=params.fileName;}else{uploadFileData.filename=_utility["default"].generateUUID()+'.'+fileExtension;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();}if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;}else{uploadThreadId=0;}uploadFileData.isPublic=true;}httpRequest({url:SERVICE_ADDRESSES.POD_DRIVE_ADDRESS+SERVICES_PATH.DRIVE_UPLOAD_FILE_FROM_URL,method:'POST',headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result',error:e});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:_store.store.user(),content:{file:{uniqueId:uploadUniqueId,fileUrl:params.fileUrl}}};},/**
+   */uploadFileFromUrl=function uploadFileFromUrl(params,callback){var uploadUniqueId,uploadThreadId;var uploadFileData={},fileExtension;if(params){if(typeof params.fileUrl!=='undefined'){uploadFileData.url=params.fileUrl;}if(typeof params.fileExtension!=='undefined'){fileExtension=params.fileExtension;}else{fileExtension='png';}if(typeof params.fileName=='string'){uploadFileData.filename=params.fileName;}else{uploadFileData.filename=_utility["default"].generateUUID()+'.'+fileExtension;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();}if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;}else{uploadThreadId=0;}uploadFileData.isPublic=true;}httpRequest({url:SERVICE_ADDRESSES.POD_DRIVE_ADDRESS+SERVICES_PATH.DRIVE_UPLOAD_FILE_FROM_URL,method:'POST',headers:{'_token_':app.sdkParams.token,'_token_issuer_':1},data:uploadFileData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;callback({hasError:response.hasError,result:response.result});}catch(e){callback({hasError:true,errorCode:999,errorMessage:'Problem in Parsing result',error:e});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:app.store.user.get(),content:{file:{uniqueId:uploadUniqueId,fileUrl:params.fileUrl}}};},/**
    * Upload Image
    *
    * Upload images to Image Server
@@ -50011,7 +45750,7 @@ var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFile
    * @link http://docs.pod.land/v1.0.8.0/Developer/CustomPost/215/UploadImage
    *
    * @return {object} Uploaded Image Object
-   */uploadImage=function uploadImage(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.image=params.image;uploadImageData.file=params.image;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.fileName=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}if(parseInt(params.xC)>0){uploadImageData.xC=params.xC;}if(parseInt(params.yC)>0){uploadImageData.yC=params.yC;}if(parseInt(params.hC)>0){uploadImageData.hC=params.hC;}if(parseInt(params.wC)>0){uploadImageData.wC=params.wC;}}httpRequest({url:SERVICE_ADDRESSES.FILESERVER_ADDRESS+SERVICES_PATH.UPLOAD_IMAGE,method:'POST',headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(typeof response.hasError!=='undefined'&&!response.hasError){callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:_store.store.user(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}},/**
+   */uploadImage=function uploadImage(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.image=params.image;uploadImageData.file=params.image;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.fileName=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}if(parseInt(params.xC)>0){uploadImageData.xC=params.xC;}if(parseInt(params.yC)>0){uploadImageData.yC=params.yC;}if(parseInt(params.hC)>0){uploadImageData.hC=params.hC;}if(parseInt(params.wC)>0){uploadImageData.wC=params.wC;}}httpRequest({url:SERVICE_ADDRESSES.FILESERVER_ADDRESS+SERVICES_PATH.UPLOAD_IMAGE,method:'POST',headers:{'_token_':app.sdkParams.token,'_token_issuer_':1},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(typeof response.hasError!=='undefined'&&!response.hasError){callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:app.store.user.get(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}},/**
    * Upload Image To Pod Space Publically
    *
    * Upload images to Pod Space Image Server
@@ -50031,7 +45770,7 @@ var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFile
    * @link https://podspace.pod.ir/apidocs/?srv=/nzh/drive/uploadImage
    *
    * @return {object} Uploaded Image Object
-   */uploadImageToPodspace=function uploadImageToPodspace(params,callback){var fileName,fileType,fileSize,fileWidth=0,fileHeight=0,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();var reader=new FileReader();reader.onload=function(e){var image=new Image();image.onload=function(){fileWidth=this.width;fileHeight=this.height;continueImageUpload(params);};image.src=e.target.result;};reader.readAsDataURL(params.image);var continueImageUpload=function continueImageUpload(params){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.file=params.image;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to send a image file!'});return;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.filename=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}uploadImageData.xC=parseInt(params.xC)||0;uploadImageData.yC=parseInt(params.yC)||0;uploadImageData.hC=parseInt(params.hC)||fileHeight;uploadImageData.wC=parseInt(params.wC)||fileWidth;}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_IMAGE,method:'POST',headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(typeof response.hasError!=='undefined'&&!response.hasError){callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:_store.store.user(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}};},uploadImageToPodspaceNew=function uploadImageToPodspaceNew(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.image=params.image;uploadImageData.file=params.image;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.fileName=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}if(parseInt(params.xC)>0){uploadImageData.xC=params.xC;}if(parseInt(params.yC)>0){uploadImageData.yC=params.yC;}if(parseInt(params.hC)>0){uploadImageData.hC=params.hC;}if(parseInt(params.wC)>0){uploadImageData.wC=params.wC;}}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_IMAGE_NEW,method:'POST',headers:{'Authorization':'Bearer '+_sdkParams.sdkParams.token},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(!response.hasError){callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:_store.store.user(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}},/**
+   */uploadImageToPodspace=function uploadImageToPodspace(params,callback){var fileName,fileType,fileSize,fileWidth=0,fileHeight=0,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();var reader=new FileReader();reader.onload=function(e){var image=new Image();image.onload=function(){fileWidth=this.width;fileHeight=this.height;continueImageUpload(params);};image.src=e.target.result;};reader.readAsDataURL(params.image);var continueImageUpload=function continueImageUpload(params){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.file=params.image;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to send a image file!'});return;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.filename=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}uploadImageData.xC=parseInt(params.xC)||0;uploadImageData.yC=parseInt(params.yC)||0;uploadImageData.hC=parseInt(params.hC)||fileHeight;uploadImageData.wC=parseInt(params.wC)||fileWidth;}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_IMAGE,method:'POST',headers:{'_token_':app.sdkParams.token,'_token_issuer_':1},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(typeof response.hasError!=='undefined'&&!response.hasError){callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){app.sdkParams.consoleLogging&&console.log(e);callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:app.store.user.get(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}};},uploadImageToPodspaceNew=function uploadImageToPodspaceNew(params,callback){var fileName,fileType,fileSize,fileExtension,uploadUniqueId,uploadThreadId;fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.image=params.image;uploadImageData.file=params.image;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.fileName=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}if(parseInt(params.xC)>0){uploadImageData.xC=params.xC;}if(parseInt(params.yC)>0){uploadImageData.yC=params.yC;}if(parseInt(params.hC)>0){uploadImageData.hC=params.hC;}if(parseInt(params.wC)>0){uploadImageData.wC=params.wC;}}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_IMAGE_NEW,method:'POST',headers:{'Authorization':'Bearer '+app.sdkParams.token},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(!response.hasError){callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:app.store.user.get(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}},/**
    * Deprecated
    *
    * Upload Image To Pod Space
@@ -50055,7 +45794,7 @@ var uploadFileData={};if(params){if(typeof params.file!=='undefined'){uploadFile
    *
    * @return {object} Uploaded Image Object
    */uploadImageToPodspaceUserGroup=function uploadImageToPodspaceUserGroup(params,callback){var fileName,fileType,fileSize,fileWidth=0,fileHeight=0,fileExtension,uploadUniqueId,uploadThreadId;var continueImageUpload=function continueImageUpload(params){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.file=params.image;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to send a image file!'});return;}if(typeof params.userGroupHash=='string'){// userGroupHash = params.userGroupHash;
-uploadImageData.userGroupHash=params.userGroupHash;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to enter a userGroupHash to be able to upload on PodSpace!'});return;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.filename=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}uploadImageData.xC=parseInt(params.xC)||0;uploadImageData.yC=parseInt(params.yC)||0;uploadImageData.hC=parseInt(params.hC)||fileHeight;uploadImageData.wC=parseInt(params.wC)||fileWidth;}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_IMAGE_TO_USERGROUP,method:'POST',headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(typeof response.hasError!=='undefined'&&!response.hasError){response.result.actualHeight=fileHeight;response.result.actualWidth=fileWidth;callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:_store.store.user(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}};fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();var reader=new FileReader();reader.onload=function(e){var image=new Image();image.onload=function(){fileWidth=this.width;fileHeight=this.height;continueImageUpload(params);};image.src=e.target.result;};reader.readAsDataURL(params.image);},/**
+uploadImageData.userGroupHash=params.userGroupHash;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to enter a userGroupHash to be able to upload on PodSpace!'});return;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.filename=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}uploadImageData.xC=parseInt(params.xC)||0;uploadImageData.yC=parseInt(params.yC)||0;uploadImageData.hC=parseInt(params.hC)||fileHeight;uploadImageData.wC=parseInt(params.wC)||fileWidth;}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_IMAGE_TO_USERGROUP,method:'POST',headers:{'_token_':app.sdkParams.token,'_token_issuer_':1},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(typeof response.hasError!=='undefined'&&!response.hasError){response.result.actualHeight=fileHeight;response.result.actualWidth=fileWidth;callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){app.sdkParams.consoleLogging&&console.log(e);callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:app.store.user.get(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}};fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();var reader=new FileReader();reader.onload=function(e){var image=new Image();image.onload=function(){fileWidth=this.width;fileHeight=this.height;continueImageUpload(params);};image.src=e.target.result;};reader.readAsDataURL(params.image);},/**
    * Upload Image To Podspace User Group
    *
    * Upload images to Pod Space Image Server
@@ -50076,7 +45815,7 @@ uploadImageData.userGroupHash=params.userGroupHash;}else{callback({hasError:true
    * @link https://podspace.pod.ir/apidocs/?srv=/userGroup/uploadImage/
    *
    * @return {object} Uploaded Image Object
-   */uploadImageToPodspaceUserGroupNew=function uploadImageToPodspaceUserGroupNew(params,callback){var fileName,fileType,fileSize,fileWidth=0,fileHeight=0,fileExtension,uploadUniqueId,uploadThreadId;var continueImageUpload=function continueImageUpload(params){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.file=params.image;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to send a image file!'});return;}if(typeof params.userGroupHash=='string'){uploadImageData.userGroupHash=params.userGroupHash;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to enter a userGroupHash to be able to upload on PodSpace!'});return;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.filename=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}uploadImageData.x=parseInt(params.xC)||0;uploadImageData.y=parseInt(params.yC)||0;uploadImageData.height=parseInt(params.hC)||fileHeight;uploadImageData.weight=parseInt(params.wC)||fileWidth;}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_IMAGE_TO_USERGROUP_NEW.replace('{userGroupHash}',uploadImageData.userGroupHash),method:'POST',headers:{'Authorization':'Bearer '+_sdkParams.sdkParams.token},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(response.status<400){response.result.actualHeight=fileHeight;response.result.actualWidth=fileWidth;callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:_store.store.user(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}};fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();var reader=new FileReader();reader.onload=function(e){var image=new Image();image.onload=function(){fileWidth=this.width;fileHeight=this.height;continueImageUpload(params);};image.src=e.target.result;};reader.readAsDataURL(params.image);},sendFileMessage=function sendFileMessage(params,callbacks){var metadata={file:{}},fileUploadParams={},fileUniqueId=typeof params.fileUniqueId=='string'&&params.fileUniqueId.length>0?params.fileUniqueId:_utility["default"].generateUUID();if(params){if(!params.userGroupHash||params.userGroupHash.length===0||typeof params.userGroupHash!=='string'){_events.chatEvents.fireEvent('error',{code:6304,message:CHAT_ERRORS[6304]});return;}else{fileUploadParams.userGroupHash=params.userGroupHash;}return chatUploadHandler({threadId:params.threadId,file:params.file,fileUniqueId:fileUniqueId},function(uploadHandlerResult,uploadHandlerMetadata,fileType,fileExtension){fileUploadParams=Object.assign(fileUploadParams,uploadHandlerResult);putInChatUploadQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
+   */uploadImageToPodspaceUserGroupNew=function uploadImageToPodspaceUserGroupNew(params,callback){var fileName,fileType,fileSize,fileWidth=0,fileHeight=0,fileExtension,uploadUniqueId,uploadThreadId;var continueImageUpload=function continueImageUpload(params){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){var uploadImageData={};if(params){if(typeof params.image!=='undefined'){uploadImageData.file=params.image;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to send a image file!'});return;}if(typeof params.userGroupHash=='string'){uploadImageData.userGroupHash=params.userGroupHash;}else{callback({hasError:true,errorCode:999,errorMessage:'You need to enter a userGroupHash to be able to upload on PodSpace!'});return;}if(params.randomFileName){uploadImageData.fileName=_utility["default"].generateUUID()+'.'+fileExtension;}else{uploadImageData.filename=fileName;}uploadImageData.fileSize=fileSize;if(parseInt(params.threadId)>0){uploadThreadId=params.threadId;uploadImageData.threadId=params.threadId;}else{uploadThreadId=0;uploadImageData.threadId=0;}if(typeof params.uniqueId=='string'){uploadUniqueId=params.uniqueId;uploadImageData.uniqueId=params.uniqueId;}else{uploadUniqueId=_utility["default"].generateUUID();uploadImageData.uniqueId=uploadUniqueId;}if(typeof params.originalFileName=='string'){uploadImageData.originalFileName=params.originalFileName;}else{uploadImageData.originalFileName=fileName;}uploadImageData.x=parseInt(params.xC)||0;uploadImageData.y=parseInt(params.yC)||0;uploadImageData.height=parseInt(params.hC)||fileHeight;uploadImageData.weight=parseInt(params.wC)||fileWidth;}httpRequest({url:SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS+SERVICES_PATH.PODSPACE_UPLOAD_IMAGE_TO_USERGROUP_NEW.replace('{userGroupHash}',uploadImageData.userGroupHash),method:'POST',headers:{'Authorization':'Bearer '+app.sdkParams.token},data:uploadImageData,uniqueId:uploadUniqueId},function(result){if(!result.hasError){try{var response=typeof result.result.responseText=='string'?JSON.parse(result.result.responseText):result.result.responseText;if(response.status<400){response.result.actualHeight=fileHeight;response.result.actualWidth=fileWidth;callback({hasError:response.hasError,result:response.result});}else{callback({hasError:true,errorCode:response.errorCode,errorMessage:response.message});}}catch(e){app.sdkParams.consoleLogging&&console.log(e);callback({hasError:true,errorCode:6300,errorMessage:CHAT_ERRORS[6300]});}}else{callback({hasError:true,errorCode:result.errorCode,errorMessage:result.errorMessage});}});return{uniqueId:uploadUniqueId,threadId:uploadThreadId,participant:app.store.user.get(),content:{caption:params.content,file:{uniqueId:uploadUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};}else{callback({hasError:true,errorCode:6301,errorMessage:CHAT_ERRORS[6301]});}};fileName=params.image.name;fileType=params.image.type;fileSize=params.image.size;fileExtension=params.image.name.split('.').pop();var reader=new FileReader();reader.onload=function(e){var image=new Image();image.onload=function(){fileWidth=this.width;fileHeight=this.height;continueImageUpload(params);};image.src=e.target.result;};reader.readAsDataURL(params.image);},sendFileMessage=function sendFileMessage(params,callbacks){var metadata={file:{}},fileUploadParams={},fileUniqueId=typeof params.fileUniqueId=='string'&&params.fileUniqueId.length>0?params.fileUniqueId:_utility["default"].generateUUID();if(params){if(!params.userGroupHash||params.userGroupHash.length===0||typeof params.userGroupHash!=='string'){app.chatEvents.fireEvent('error',{code:6304,message:CHAT_ERRORS[6304]});return;}else{fileUploadParams.userGroupHash=params.userGroupHash;}return chatUploadHandler({threadId:params.threadId,file:params.file,fileUniqueId:fileUniqueId},function(uploadHandlerResult,uploadHandlerMetadata,fileType,fileExtension){fileUploadParams=Object.assign(fileUploadParams,uploadHandlerResult);putInChatUploadQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.MESSAGE,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
 messageType:params.messageType&&typeof params.messageType.toUpperCase()!=='undefined'&&_constants.chatMessageTypes[params.messageType.toUpperCase()]>0?_constants.chatMessageTypes[params.messageType.toUpperCase()]:1,subjectId:params.threadId,repliedTo:params.repliedTo,content:filterXSS(params.content),metadata:JSON.stringify(objectDeepMerger(uploadHandlerMetadata,params.metadata)),systemMetadata:JSON.stringify(params.systemMetadata),uniqueId:fileUniqueId,pushMsgType:3},callbacks:callbacks},function(){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){uploadImageToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){// Send onFileUpload callback result
 if((0,_typeof2["default"])(callbacks)==='object'&&callbacks.hasOwnProperty('onFileUpload')){callbacks.onFileUpload&&callbacks.onFileUpload({name:result.result.name,hashCode:result.result.hash,parentHash:result.result.parentHash,size:result.result.size,actualHeight:result.result.actualHeight,actualWidth:result.result.actualWidth,link:"".concat(SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS,"/api/images/").concat(result.result.hash,"?checkUserGroupAccess=true")});}metadata['name']=result.result.name;metadata['fileHash']=result.result.hash;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;metadata['file']['actualHeight']=result.result.actualHeight;metadata['file']['actualWidth']=result.result.actualWidth;metadata['file']['link']="".concat(SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS,"/api/images/").concat(result.result.hash,"?checkUserGroupAccess=true");transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}else{uploadFileToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){metadata['fileHash']=result.result.hash;metadata['name']=result.result.name;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}});});}},/**
    * Delete Cache Database
@@ -50130,35 +45869,35 @@ if((0,_typeof2["default"])(callbacks)==='object'&&callbacks.hasOwnProperty('onFi
 //     cacheDeletingInProgress = true;
 //     db.threads
 //         .where('owner')
-//         .equals(parseInt(store.user().id))
+//         .equals(parseInt(app.store.user.get().id))
 //         .delete()
 //         .then(function () {
 //             consoleLogging && console.log('Threads table deleted');
 //
 //             db.contacts
 //                 .where('owner')
-//                 .equals(parseInt(store.user().id))
+//                 .equals(parseInt(app.store.user.get().id))
 //                 .delete()
 //                 .then(function () {
 //                     consoleLogging && console.log('Contacts table deleted');
 //
 //                     db.messages
 //                         .where('owner')
-//                         .equals(parseInt(store.user().id))
+//                         .equals(parseInt(app.store.user.get().id))
 //                         .delete()
 //                         .then(function () {
 //                             consoleLogging && console.log('Messages table deleted');
 //
 //                             db.participants
 //                                 .where('owner')
-//                                 .equals(parseInt(store.user().id))
+//                                 .equals(parseInt(app.store.user.get().id))
 //                                 .delete()
 //                                 .then(function () {
 //                                     consoleLogging && console.log('Participants table deleted');
 //
 //                                     db.messageGaps
 //                                         .where('owner')
-//                                         .equals(parseInt(store.user().id))
+//                                         .equals(parseInt(app.store.user.get().id))
 //                                         .delete()
 //                                         .then(function () {
 //                                             consoleLogging && console.log('MessageGaps table deleted');
@@ -50170,7 +45909,7 @@ if((0,_typeof2["default"])(callbacks)==='object'&&callbacks.hasOwnProperty('onFi
 //                 });
 //         })
 //         .catch(function (error) {
-//             chatEvents.fireEvent('error', {
+//             app.chatEvents.fireEvent('error', {
 //                 code: error.code,
 //                 message: error.message,
 //                 error: error
@@ -50261,7 +46000,7 @@ if((0,_typeof2["default"])(callbacks)==='object'&&callbacks.hasOwnProperty('onFi
 //     }
 //
 //     if (uniqueIds.length) {
-//         messenger().sendMessage({
+//         app.messenger.sendMessage({
 //             chatMessageVOType: chatMessageVOTypes.GET_HISTORY,
 //             content: {
 //                 uniqueIds: uniqueIds
@@ -50349,7 +46088,7 @@ if((0,_typeof2["default"])(callbacks)==='object'&&callbacks.hasOwnProperty('onFi
    * @access private
    *
    * @return {undefined}
-   */putInChatWaitQueue=function putInChatWaitQueue(item,callback){if(item.uniqueId!==''){var waitQueueUniqueId=typeof item.uniqueId=='string'?item.uniqueId:Array.isArray(item.uniqueId)?item.uniqueId[0]:null;if(waitQueueUniqueId!=null){_sdkParams.sdkParams.consoleLogging&&console.log('Forced to use in memory cache');item.uniqueId=waitQueueUniqueId;chatWaitQueue.push(item);callback&&callback();}}},getItemFromChatWaitQueue=function getItemFromChatWaitQueue(uniqueId,callback){for(var i=0;i<chatWaitQueue.length;i++){if(chatWaitQueue[i].uniqueId===uniqueId){var decryptedEnqueuedMessage=chatWaitQueue[i];var time=new Date().getTime();var message=formatDataToMakeMessage(decryptedEnqueuedMessage.threadId,{uniqueId:decryptedEnqueuedMessage.uniqueId,ownerId:_store.store.user().id,message:decryptedEnqueuedMessage.content,metadata:decryptedEnqueuedMessage.metadata,systemMetadata:decryptedEnqueuedMessage.systemMetadata,replyInfo:decryptedEnqueuedMessage.replyInfo,forwardInfo:decryptedEnqueuedMessage.forwardInfo,participant:_store.store.user(),time:time,timeNanos:time%1000*1000000});callback&&callback(message);break;}}},/**
+   */putInChatWaitQueue=function putInChatWaitQueue(item,callback){if(item.uniqueId!==''){var waitQueueUniqueId=typeof item.uniqueId=='string'?item.uniqueId:Array.isArray(item.uniqueId)?item.uniqueId[0]:null;if(waitQueueUniqueId!=null){app.sdkParams.consoleLogging&&console.log('Forced to use in memory cache');item.uniqueId=waitQueueUniqueId;chatWaitQueue.push(item);callback&&callback();}}},getItemFromChatWaitQueue=function getItemFromChatWaitQueue(uniqueId,callback){for(var i=0;i<chatWaitQueue.length;i++){if(chatWaitQueue[i].uniqueId===uniqueId){var decryptedEnqueuedMessage=chatWaitQueue[i];var time=new Date().getTime();var message=formatDataToMakeMessage(decryptedEnqueuedMessage.threadId,{uniqueId:decryptedEnqueuedMessage.uniqueId,ownerId:app.store.user.get().id,message:decryptedEnqueuedMessage.content,metadata:decryptedEnqueuedMessage.metadata,systemMetadata:decryptedEnqueuedMessage.systemMetadata,replyInfo:decryptedEnqueuedMessage.replyInfo,forwardInfo:decryptedEnqueuedMessage.forwardInfo,participant:app.store.user.get(),time:time,timeNanos:time%1000*1000000});callback&&callback(message);break;}}},/**
    * Put an Item inside Chat Upload Queue
    *
    * This function takes an item and puts it
@@ -50369,7 +46108,7 @@ if((0,_typeof2["default"])(callbacks)==='object'&&callbacks.hasOwnProperty('onFi
    * @access private
    *
    * @return {undefined}
-   */transferFromUploadQToSendQ=function transferFromUploadQToSendQ(threadId,uniqueId,metadata,callback){getChatUploadQueue(threadId,function(uploadQueue){for(var i=0;i<uploadQueue.length;i++){if(uploadQueue[i].message.uniqueId===uniqueId){try{var message=uploadQueue[i].message,callbacks=uploadQueue[i].callbacks;var oldMetadata=JSON.parse(message.metadata),newMetadata=JSON.parse(metadata);var finalMetaData=objectDeepMerger(newMetadata,oldMetadata);if(typeof message!=='undefined'&&message&&typeof message.content!=='undefined'&&message.content&&message.content.hasOwnProperty('message')){message.content.message['metadata']=JSON.stringify(finalMetaData);}if(typeof message!=='undefined'&&message&&typeof message.content!=='undefined'&&message.content&&message.content.hasOwnProperty('metadata')){message.content['metadata']=JSON.stringify(finalMetaData);}if(message.chatMessageVOType===21){getImageDownloadLinkFromPodspace({hashCode:finalMetaData.fileHash},function(result){if(!result.hasError){message.content.image=result.downloadUrl;}});}message.metadata=JSON.stringify(finalMetaData);}catch(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);}deleteFromChatUploadQueue(uploadQueue[i],function(){putInChatSendQueue({message:message,callbacks:callbacks},function(){callback&&callback();},true);});break;}}});},/**
+   */transferFromUploadQToSendQ=function transferFromUploadQToSendQ(threadId,uniqueId,metadata,callback){getChatUploadQueue(threadId,function(uploadQueue){for(var i=0;i<uploadQueue.length;i++){if(uploadQueue[i].message.uniqueId===uniqueId){try{var message=uploadQueue[i].message,callbacks=uploadQueue[i].callbacks;var oldMetadata=JSON.parse(message.metadata),newMetadata=JSON.parse(metadata);var finalMetaData=objectDeepMerger(newMetadata,oldMetadata);if(typeof message!=='undefined'&&message&&typeof message.content!=='undefined'&&message.content&&message.content.hasOwnProperty('message')){message.content.message['metadata']=JSON.stringify(finalMetaData);}if(typeof message!=='undefined'&&message&&typeof message.content!=='undefined'&&message.content&&message.content.hasOwnProperty('metadata')){message.content['metadata']=JSON.stringify(finalMetaData);}if(message.chatMessageVOType===21){getImageDownloadLinkFromPodspace({hashCode:finalMetaData.fileHash},function(result){if(!result.hasError){message.content.image=result.downloadUrl;}});}message.metadata=JSON.stringify(finalMetaData);}catch(e){app.sdkParams.consoleLogging&&console.log(e);}deleteFromChatUploadQueue(uploadQueue[i],function(){putInChatSendQueue({message:message,callbacks:callbacks},function(){callback&&callback();},true);});break;}}});},/**
    * Decrypt Encrypted strings using secret key and salt
    *
    * @param string    String to get decrypted
@@ -50388,19 +46127,19 @@ if((0,_typeof2["default"])(callbacks)==='object'&&callbacks.hasOwnProperty('onFi
        * and is ready. If so, and cache is still not decryptable,
        * there is definitely something wrong with the key; so we are
        * good to go and delete cache databases.
-       */if(typeof secret!=='undefined'&&secret!==''){if(db){db.threads.where('owner').equals(parseInt(_store.store.user().id)).count().then(function(threadsCount){if(threadsCount>0){clearCacheDatabasesOfUser(function(){_sdkParams.sdkParams.consoleLogging&&console.log('All cache databases have been cleared.');});}})["catch"](function(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);});}}return'{}';}},objectDeepMerger=function objectDeepMerger(){var target={};var merger=function merger(obj){for(var prop in obj){if(obj.hasOwnProperty(prop)){if(Object.prototype.toString.call(obj[prop])==='[object Object]'){target[prop]=objectDeepMerger(target[prop],obj[prop]);}else{target[prop]=obj[prop];}}}};for(var i=0;i<arguments.length;i++){merger(i<0||arguments.length<=i?undefined:arguments[i]);}return target;},setRoleToUser=function setRoleToUser(params,callback){var setRoleData={chatMessageVOType:_constants.chatMessageVOTypes.SET_ROLE_TO_USER,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:[],pushMsgType:3,token:_sdkParams.sdkParams.token};if(params){if(parseInt(params.threadId)>0){setRoleData.subjectId=params.threadId;}if(params.admins&&Array.isArray(params.admins)){for(var i=0;i<params.admins.length;i++){var temp={};if(parseInt(params.admins[i].userId)>0){temp.userId=params.admins[i].userId;}if(Array.isArray(params.admins[i].roles)){temp.roles=params.admins[i].roles;}setRoleData.content.push(temp);}setRoleData.content=JSON.stringify(setRoleData.content);}}return(0,_messaging.messenger)().sendMessage(setRoleData,{onResult:function onResult(result){callback&&callback(result);}});},removeRoleFromUser=function removeRoleFromUser(params,callback){var setAdminData={chatMessageVOType:_constants.chatMessageVOTypes.REMOVE_ROLE_FROM_USER,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:[],pushMsgType:3,token:_sdkParams.sdkParams.token};if(params){if(parseInt(params.threadId)>0){setAdminData.subjectId=params.threadId;}if(params.admins&&Array.isArray(params.admins)){for(var i=0;i<params.admins.length;i++){var temp={};if(parseInt(params.admins[i].userId)>0){temp.userId=params.admins[i].userId;}if(Array.isArray(params.admins[i].roles)){temp.roles=params.admins[i].roles;}setAdminData.content.push(temp);}setAdminData.content=JSON.stringify(setAdminData.content);}}return(0,_messaging.messenger)().sendMessage(setAdminData,{onResult:function onResult(result){callback&&callback(result);}});},unPinMessage=function unPinMessage(params,callback){return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.UNPIN_MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-subjectId:params.messageId,content:JSON.stringify({'notifyAll':typeof params.notifyAll==='boolean'?params.notifyAll:false}),pushMsgType:3,token:_sdkParams.sdkParams.token},{onResult:function onResult(result){callback&&callback(result);}});},chatUploadHandler=function chatUploadHandler(params,callbacks){if(typeof params.file!=='undefined'){var fileName,fileType,fileSize,fileExtension,chatUploadHandlerResult={},metadata={file:{}},fileUniqueId=params.fileUniqueId;fileName=params.file.name;fileType=params.file.type;fileSize=params.file.size;fileExtension=params.file.name.split('.').pop();_events.chatEvents.fireEvent('fileUploadEvents',{threadId:params.threadId,uniqueId:fileUniqueId,state:'NOT_STARTED',progress:0,fileInfo:{fileName:fileName,fileSize:fileSize},fileObject:params.file});/**
+       */if(typeof secret!=='undefined'&&secret!==''){if(db){db.threads.where('owner').equals(parseInt(app.store.user.get().id)).count().then(function(threadsCount){if(threadsCount>0){clearCacheDatabasesOfUser(function(){app.sdkParams.consoleLogging&&console.log('All cache databases have been cleared.');});}})["catch"](function(e){app.sdkParams.consoleLogging&&console.log(e);});}}return'{}';}},objectDeepMerger=function objectDeepMerger(){var target={};var merger=function merger(obj){for(var prop in obj){if(obj.hasOwnProperty(prop)){if(Object.prototype.toString.call(obj[prop])==='[object Object]'){target[prop]=objectDeepMerger(target[prop],obj[prop]);}else{target[prop]=obj[prop];}}}};for(var i=0;i<arguments.length;i++){merger(i<0||arguments.length<=i?undefined:arguments[i]);}return target;},setRoleToUser=function setRoleToUser(params,callback){var setRoleData={chatMessageVOType:_constants.chatMessageVOTypes.SET_ROLE_TO_USER,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:[],pushMsgType:3,token:app.sdkParams.token};if(params){if(parseInt(params.threadId)>0){setRoleData.subjectId=params.threadId;}if(params.admins&&Array.isArray(params.admins)){for(var i=0;i<params.admins.length;i++){var temp={};if(parseInt(params.admins[i].userId)>0){temp.userId=params.admins[i].userId;}if(Array.isArray(params.admins[i].roles)){temp.roles=params.admins[i].roles;}setRoleData.content.push(temp);}setRoleData.content=JSON.stringify(setRoleData.content);}}return app.messenger.sendMessage(setRoleData,{onResult:function onResult(result){callback&&callback(result);}});},removeRoleFromUser=function removeRoleFromUser(params,callback){var setAdminData={chatMessageVOType:_constants.chatMessageVOTypes.REMOVE_ROLE_FROM_USER,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:[],pushMsgType:3,token:app.sdkParams.token};if(params){if(parseInt(params.threadId)>0){setAdminData.subjectId=params.threadId;}if(params.admins&&Array.isArray(params.admins)){for(var i=0;i<params.admins.length;i++){var temp={};if(parseInt(params.admins[i].userId)>0){temp.userId=params.admins[i].userId;}if(Array.isArray(params.admins[i].roles)){temp.roles=params.admins[i].roles;}setAdminData.content.push(temp);}setAdminData.content=JSON.stringify(setAdminData.content);}}return app.messenger.sendMessage(setAdminData,{onResult:function onResult(result){callback&&callback(result);}});},unPinMessage=function unPinMessage(params,callback){return app.messenger.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.UNPIN_MESSAGE,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+subjectId:params.messageId,content:JSON.stringify({'notifyAll':typeof params.notifyAll==='boolean'?params.notifyAll:false}),pushMsgType:3,token:app.sdkParams.token},{onResult:function onResult(result){callback&&callback(result);}});},chatUploadHandler=function chatUploadHandler(params,callbacks){if(typeof params.file!=='undefined'){var fileName,fileType,fileSize,fileExtension,chatUploadHandlerResult={},metadata={file:{}},fileUniqueId=params.fileUniqueId;fileName=params.file.name;fileType=params.file.type;fileSize=params.file.size;fileExtension=params.file.name.split('.').pop();app.chatEvents.fireEvent('fileUploadEvents',{threadId:params.threadId,uniqueId:fileUniqueId,state:'NOT_STARTED',progress:0,fileInfo:{fileName:fileName,fileSize:fileSize},fileObject:params.file});/**
        * File is a valid Image
        * Should upload to image server
-       */if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){chatUploadHandlerResult.image=params.file;if(params.xC>=0){fileUploadParams.xC=params.xC;}if(params.yC>=0){fileUploadParams.yC=params.yC;}if(params.hC>0){fileUploadParams.hC=params.hC;}if(params.wC>0){fileUploadParams.wC=params.wC;}}else{chatUploadHandlerResult.file=params.file;}metadata['file']['originalName']=fileName;metadata['file']['mimeType']=fileType;metadata['file']['size']=fileSize;chatUploadHandlerResult.threadId=params.threadId;chatUploadHandlerResult.uniqueId=fileUniqueId;chatUploadHandlerResult.fileObject=params.file;chatUploadHandlerResult.originalFileName=fileName;callbacks&&callbacks(chatUploadHandlerResult,metadata,fileType,fileExtension);}else{_events.chatEvents.fireEvent('error',{code:6302,message:CHAT_ERRORS[6302]});}return{uniqueId:fileUniqueId,threadId:params.threadId,participant:_store.store.user(),content:{caption:params.content,file:{uniqueId:fileUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},cancelFileDownload=function cancelFileDownload(params,callback){if(params){if(typeof params.uniqueId=='string'){var uniqueId=params.uniqueId;httpRequestObject[eval('uniqueId')]&&httpRequestObject[eval('uniqueId')].abort();httpRequestObject[eval('uniqueId')]&&delete httpRequestObject[eval('uniqueId')];callback&&callback(uniqueId);}}},cancelFileUpload=function cancelFileUpload(params,callback){if(params){if(typeof params.uniqueId=='string'){var uniqueId=params.uniqueId;httpRequestObject[eval('uniqueId')]&&httpRequestObject[eval('uniqueId')].abort();httpRequestObject[eval('uniqueId')]&&delete httpRequestObject[eval('uniqueId')];deleteFromChatUploadQueue({message:{uniqueId:uniqueId}},callback);}}},cancelMessage=function cancelMessage(uniqueId,callback){deleteFromChatSentQueue({message:{uniqueId:uniqueId}},function(){deleteFromChatWaitQueue({uniqueId:uniqueId},callback);});},mapReverse=function mapReverse(params,callback){var data={};if(params){if(parseFloat(params.lat)>0){data.lat=params.lat;}if(parseFloat(params.lng)>0){data.lng=params.lng;}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.REVERSE,method:'GET',data:data,headers:{'Api-Key':_sdkParams.sdkParams.mapApiKey}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:result.hasError,cache:result.cache,errorMessage:result.message,errorCode:result.errorCode,result:responseData};callback&&callback(returnData);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});},mapSearch=function mapSearch(params,callback){var data={};if(params){if(typeof params.term==='string'){data.term=params.term;}if(parseFloat(params.lat)>0){data.lat=params.lat;}if(parseFloat(params.lng)>0){data.lng=params.lng;}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.SEARCH,method:'GET',data:data,headers:{'Api-Key':_sdkParams.sdkParams.mapApiKey}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:result.hasError,cache:result.cache,errorMessage:result.message,errorCode:result.errorCode,result:responseData};callback&&callback(returnData);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});},mapRouting=function mapRouting(params,callback){var data={};if(params){if(typeof params.alternative==='boolean'){data.alternative=params.alternative;}else{data.alternative=true;}if((0,_typeof2["default"])(params.origin)==='object'){if(parseFloat(params.origin.lat)>0&&parseFloat(params.origin.lng)){data.origin=params.origin.lat+','+parseFloat(params.origin.lng);}else{_sdkParams.sdkParams.consoleLogging&&console.log('No origin has been selected!');}}if((0,_typeof2["default"])(params.destination)==='object'){if(parseFloat(params.destination.lat)>0&&parseFloat(params.destination.lng)){data.destination=params.destination.lat+','+parseFloat(params.destination.lng);}else{_sdkParams.sdkParams.consoleLogging&&console.log('No destination has been selected!');}}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.ROUTING,method:'GET',data:data,headers:{'Api-Key':_sdkParams.sdkParams.mapApiKey}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:result.hasError,cache:result.cache,errorMessage:result.message,errorCode:result.errorCode,result:responseData};callback&&callback(returnData);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});},mapStaticImage=function mapStaticImage(params,callback){var data={},url=SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.STATIC_IMAGE,hasError=false;if(params){if(typeof params.type==='string'){data.type=params.type;}else{data.type='standard-night';}if(parseInt(params.zoom)>0){data.zoom=params.zoom;}else{data.zoom=15;}if(parseInt(params.width)>0){data.width=params.width;}else{data.width=800;}if(parseInt(params.height)>0){data.height=params.height;}else{data.height=600;}if((0,_typeof2["default"])(params.center)==='object'){if(parseFloat(params.center.lat)>0&&parseFloat(params.center.lng)){data.center=params.center.lat+','+parseFloat(params.center.lng);}else{hasError=true;_events.chatEvents.fireEvent('error',{code:6700,message:CHAT_ERRORS[6700],error:undefined});}}else{hasError=true;_events.chatEvents.fireEvent('error',{code:6700,message:CHAT_ERRORS[6700],error:undefined});}data.key=_sdkParams.sdkParams.mapApiKey;}var keys=Object.keys(data);if(keys.length>0){url+='?';for(var i=0;i<keys.length;i++){var key=keys[i];url+=key+'='+data[key];if(i<keys.length-1){url+='&';}}}var returnData={hasError:hasError,cache:false,errorMessage:hasError?CHAT_ERRORS[6700]:'',errorCode:hasError?6700:undefined,result:{link:!hasError?url:''}};callback&&callback(returnData);},//TODO Change Node Version
-getImageFormUrl=function getImageFormUrl(url,uniqueId,callback){_sdkParams.sdkParams.getImageFromLinkObjects[uniqueId]=new Image();_sdkParams.sdkParams.getImageFromLinkObjects[uniqueId].setAttribute('crossOrigin','anonymous');_sdkParams.sdkParams.getImageFromLinkObjects[uniqueId].onload=function(){var canvas=document.createElement("canvas");canvas.width=this.width;canvas.height=this.height;var ctx=canvas.getContext("2d");ctx.drawImage(this,0,0);var dataURI=canvas.toDataURL("image/jpg");var byteString;if(dataURI.split(',')[0].indexOf('base64')>=0)byteString=atob(dataURI.split(',')[1]);else byteString=unescape(dataURI.split(',')[1]);var mimeString=dataURI.split(',')[0].split(':')[1].split(';')[0];var ia=new Uint8Array(byteString.length);for(var i=0;i<byteString.length;i++){ia[i]=byteString.charCodeAt(i);}delete _sdkParams.sdkParams.getImageFromLinkObjects[uniqueId];return callback(new Blob([ia],{type:mimeString}));};_sdkParams.sdkParams.getImageFromLinkObjects[uniqueId].src=url;};/******************************************************
+       */if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){chatUploadHandlerResult.image=params.file;if(params.xC>=0){fileUploadParams.xC=params.xC;}if(params.yC>=0){fileUploadParams.yC=params.yC;}if(params.hC>0){fileUploadParams.hC=params.hC;}if(params.wC>0){fileUploadParams.wC=params.wC;}}else{chatUploadHandlerResult.file=params.file;}metadata['file']['originalName']=fileName;metadata['file']['mimeType']=fileType;metadata['file']['size']=fileSize;chatUploadHandlerResult.threadId=params.threadId;chatUploadHandlerResult.uniqueId=fileUniqueId;chatUploadHandlerResult.fileObject=params.file;chatUploadHandlerResult.originalFileName=fileName;callbacks&&callbacks(chatUploadHandlerResult,metadata,fileType,fileExtension);}else{app.chatEvents.fireEvent('error',{code:6302,message:CHAT_ERRORS[6302]});}return{uniqueId:fileUniqueId,threadId:params.threadId,participant:app.store.user.get(),content:{caption:params.content,file:{uniqueId:fileUniqueId,fileName:fileName,fileSize:fileSize,fileObject:params.file}}};},cancelFileDownload=function cancelFileDownload(params,callback){if(params){if(typeof params.uniqueId=='string'){var uniqueId=params.uniqueId;httpRequestObject[eval('uniqueId')]&&httpRequestObject[eval('uniqueId')].abort();httpRequestObject[eval('uniqueId')]&&delete httpRequestObject[eval('uniqueId')];callback&&callback(uniqueId);}}},cancelFileUpload=function cancelFileUpload(params,callback){if(params){if(typeof params.uniqueId=='string'){var uniqueId=params.uniqueId;httpRequestObject[eval('uniqueId')]&&httpRequestObject[eval('uniqueId')].abort();httpRequestObject[eval('uniqueId')]&&delete httpRequestObject[eval('uniqueId')];deleteFromChatUploadQueue({message:{uniqueId:uniqueId}},callback);}}},cancelMessage=function cancelMessage(uniqueId,callback){deleteFromChatSentQueue({message:{uniqueId:uniqueId}},function(){deleteFromChatWaitQueue({uniqueId:uniqueId},callback);});},mapReverse=function mapReverse(params,callback){var data={};if(params){if(parseFloat(params.lat)>0){data.lat=params.lat;}if(parseFloat(params.lng)>0){data.lng=params.lng;}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.REVERSE,method:'GET',data:data,headers:{'Api-Key':app.sdkParams.mapApiKey}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:result.hasError,cache:result.cache,errorMessage:result.message,errorCode:result.errorCode,result:responseData};callback&&callback(returnData);}else{app.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});},mapSearch=function mapSearch(params,callback){var data={};if(params){if(typeof params.term==='string'){data.term=params.term;}if(parseFloat(params.lat)>0){data.lat=params.lat;}if(parseFloat(params.lng)>0){data.lng=params.lng;}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.SEARCH,method:'GET',data:data,headers:{'Api-Key':app.sdkParams.mapApiKey}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:result.hasError,cache:result.cache,errorMessage:result.message,errorCode:result.errorCode,result:responseData};callback&&callback(returnData);}else{app.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});},mapRouting=function mapRouting(params,callback){var data={};if(params){if(typeof params.alternative==='boolean'){data.alternative=params.alternative;}else{data.alternative=true;}if((0,_typeof2["default"])(params.origin)==='object'){if(parseFloat(params.origin.lat)>0&&parseFloat(params.origin.lng)){data.origin=params.origin.lat+','+parseFloat(params.origin.lng);}else{app.sdkParams.consoleLogging&&console.log('No origin has been selected!');}}if((0,_typeof2["default"])(params.destination)==='object'){if(parseFloat(params.destination.lat)>0&&parseFloat(params.destination.lng)){data.destination=params.destination.lat+','+parseFloat(params.destination.lng);}else{app.sdkParams.consoleLogging&&console.log('No destination has been selected!');}}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.ROUTING,method:'GET',data:data,headers:{'Api-Key':app.sdkParams.mapApiKey}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:result.hasError,cache:result.cache,errorMessage:result.message,errorCode:result.errorCode,result:responseData};callback&&callback(returnData);}else{app.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});},mapStaticImage=function mapStaticImage(params,callback){var data={},url=SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.STATIC_IMAGE,hasError=false;if(params){if(typeof params.type==='string'){data.type=params.type;}else{data.type='standard-night';}if(parseInt(params.zoom)>0){data.zoom=params.zoom;}else{data.zoom=15;}if(parseInt(params.width)>0){data.width=params.width;}else{data.width=800;}if(parseInt(params.height)>0){data.height=params.height;}else{data.height=600;}if((0,_typeof2["default"])(params.center)==='object'){if(parseFloat(params.center.lat)>0&&parseFloat(params.center.lng)){data.center=params.center.lat+','+parseFloat(params.center.lng);}else{hasError=true;app.chatEvents.fireEvent('error',{code:6700,message:CHAT_ERRORS[6700],error:undefined});}}else{hasError=true;app.chatEvents.fireEvent('error',{code:6700,message:CHAT_ERRORS[6700],error:undefined});}data.key=app.sdkParams.mapApiKey;}var keys=Object.keys(data);if(keys.length>0){url+='?';for(var i=0;i<keys.length;i++){var key=keys[i];url+=key+'='+data[key];if(i<keys.length-1){url+='&';}}}var returnData={hasError:hasError,cache:false,errorMessage:hasError?CHAT_ERRORS[6700]:'',errorCode:hasError?6700:undefined,result:{link:!hasError?url:''}};callback&&callback(returnData);},//TODO Change Node Version
+getImageFormUrl=function getImageFormUrl(url,uniqueId,callback){app.sdkParams.getImageFromLinkObjects[uniqueId]=new Image();app.sdkParams.getImageFromLinkObjects[uniqueId].setAttribute('crossOrigin','anonymous');app.sdkParams.getImageFromLinkObjects[uniqueId].onload=function(){var canvas=document.createElement("canvas");canvas.width=this.width;canvas.height=this.height;var ctx=canvas.getContext("2d");ctx.drawImage(this,0,0);var dataURI=canvas.toDataURL("image/jpg");var byteString;if(dataURI.split(',')[0].indexOf('base64')>=0)byteString=atob(dataURI.split(',')[1]);else byteString=unescape(dataURI.split(',')[1]);var mimeString=dataURI.split(',')[0].split(':')[1].split(';')[0];var ia=new Uint8Array(byteString.length);for(var i=0;i<byteString.length;i++){ia[i]=byteString.charCodeAt(i);}delete app.sdkParams.getImageFromLinkObjects[uniqueId];return callback(new Blob([ia],{type:mimeString}));};app.sdkParams.getImageFromLinkObjects[uniqueId].src=url;};/******************************************************
    *             P U B L I C   M E T H O D S            *
-   ******************************************************/var publicized={};publicized.on=_events.chatEvents.on;publicized.off=_events.chatEvents.off;publicized.getPeerId=function(){return peerId;};publicized.getCurrentUser=function(){return _store.store.user();};publicized.getUserInfo=function(callback){return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.USER_INFO,typeCode:_sdkParams.sdkParams.generalTypeCode},{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;var currentUser=formatDataToMakeUser(messageContent);returnData.result={user:currentUser};callback&&callback(returnData);}}});};publicized.getThreads=getThreads;publicized.getAllThreads=getAllThreads;publicized.getHistory=getHistory;publicized.getAllMentionedMessages=function(params,callback){return getHistory({threadId:params.threadId,allMentioned:true,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-count:params.count||25,offset:params.offset||0,cache:false,queues:{uploading:false,sending:false}},callback);};publicized.getUnreadMentionedMessages=function(params,callback){return getHistory({threadId:params.threadId,unreadMentioned:true,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-count:params.count||25,offset:params.offset||0,cache:false,queues:{uploading:false,sending:false}},callback);};publicized.getAllUnreadMessagesCount=function(params,callback){return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.ALL_UNREAD_MESSAGE_COUNT,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:JSON.stringify({'mute':typeof params.countMuteThreads==='boolean'?params.countMuteThreads:false}),pushMsgType:3,token:_sdkParams.sdkParams.token},{onResult:function onResult(result){callback&&callback(result);}});};/**
+   ******************************************************/var publicized={};publicized.on=app.chatEvents.on;publicized.off=app.chatEvents.off;publicized.getPeerId=function(){return peerId;};publicized.getCurrentUser=function(){return app.store.user.get();};publicized.getUserInfo=function(callback){return app.messenger.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.USER_INFO,typeCode:app.sdkParams.generalTypeCode},{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;var currentUser=formatDataToMakeUser(messageContent);returnData.result={user:currentUser};callback&&callback(returnData);}}});};publicized.getThreads=getThreads;publicized.getAllThreads=getAllThreads;publicized.getHistory=getHistory;publicized.getAllMentionedMessages=function(params,callback){return getHistory({threadId:params.threadId,allMentioned:true,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+count:params.count||25,offset:params.offset||0,cache:false,queues:{uploading:false,sending:false}},callback);};publicized.getUnreadMentionedMessages=function(params,callback){return getHistory({threadId:params.threadId,unreadMentioned:true,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+count:params.count||25,offset:params.offset||0,cache:false,queues:{uploading:false,sending:false}},callback);};publicized.getAllUnreadMessagesCount=function(params,callback){return app.messenger.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.ALL_UNREAD_MESSAGE_COUNT,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:JSON.stringify({'mute':typeof params.countMuteThreads==='boolean'?params.countMuteThreads:false}),pushMsgType:3,token:app.sdkParams.token},{onResult:function onResult(result){callback&&callback(result);}});};/**
    * Get Contacts
    *
    * Gets contacts list from chat server
@@ -50412,13 +46151,13 @@ content:JSON.stringify({'mute':typeof params.countMuteThreads==='boolean'?params
    * @param {string}  query           Search in contacts list to get (search LIKE firstName, lastName, email)
    *
    * @return {object} Instant Response
-   */publicized.getContacts=function(params,callback){var count=25,offset=0,content={},returnCache=false;if(params){if(parseInt(params.count)>0){count=parseInt(params.count);}if(parseInt(params.offset)>0){offset=parseInt(params.offset);}if(typeof params.query==='string'){content.query=params.query;}if(typeof params.email==='string'){content.email=params.email;}if(typeof params.cellphoneNumber==='string'){content.cellphoneNumber=params.cellphoneNumber;}if(parseInt(params.contactId)>0){content.id=params.contactId;}if(typeof params.uniqueId==='string'){content.uniqueId=params.uniqueId;}if(typeof params.username==='string'){content.username=params.username;}if(typeof params.coreUserId!=="undefined"){content.coreUserId=params.coreUserId;}var functionLevelCache=typeof params.cache=='boolean'?params.cache:true;}content.size=count;content.offset=offset;var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.GET_CONTACTS,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
+   */publicized.getContacts=function(params,callback){var count=25,offset=0,content={},returnCache=false;if(params){if(parseInt(params.count)>0){count=parseInt(params.count);}if(parseInt(params.offset)>0){offset=parseInt(params.offset);}if(typeof params.query==='string'){content.query=params.query;}if(typeof params.email==='string'){content.email=params.email;}if(typeof params.cellphoneNumber==='string'){content.cellphoneNumber=params.cellphoneNumber;}if(parseInt(params.contactId)>0){content.id=params.contactId;}if(typeof params.uniqueId==='string'){content.uniqueId=params.uniqueId;}if(typeof params.username==='string'){content.username=params.username;}if(typeof params.coreUserId!=="undefined"){content.coreUserId=params.coreUserId;}var functionLevelCache=typeof params.cache=='boolean'?params.cache:true;}content.size=count;content.offset=offset;var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.GET_CONTACTS,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
 content:content};/**
      * Retrieve Contacts from server
-     */return(0,_messaging.messenger)().sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={contacts:[],contentCount:result.contentCount,hasNext:offset+count<result.contentCount&&messageLength>0,nextOffset:offset*1+messageLength*1},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;}callback&&callback(returnData);/**
+     */return app.messenger.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={contacts:[],contentCount:result.contentCount,hasNext:offset+count<result.contentCount&&messageLength>0,nextOffset:offset*1+messageLength*1},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;}callback&&callback(returnData);/**
          * Delete callback so if server pushes response before
          * cache, cache won't send data again
-         */callback=undefined;if(!returnData.hasError&&returnCache){_events.chatEvents.fireEvent('contactEvents',{type:'CONTACTS_LIST_CHANGE',result:returnData.result});}}});};publicized.getThreadParticipants=_threadParticipantsMethods.getThreadParticipants;/**
+         */callback=undefined;if(!returnData.hasError&&returnCache){app.chatEvents.fireEvent('contactEvents',{type:'CONTACTS_LIST_CHANGE',result:returnData.result});}}});};publicized.getThreadParticipants=threadParticipantsMethods.getThreadParticipants;/**
    * Get Thread Admins
    *
    * Gets admins list of given thread
@@ -50428,25 +46167,25 @@ content:content};/**
    * @param {int}     threadId        Id of thread which you want to get admins of
    *
    * @return {object} Instant Response
-   */publicized.getThreadAdmins=function(params,callback){(0,_threadParticipantsMethods.getThreadParticipants)({threadId:params.threadId,admin:true,cache:false},callback);};publicized.addParticipants=function(params,callback){/**
+   */publicized.getThreadAdmins=function(params,callback){threadParticipantsMethods.getThreadParticipants({threadId:params.threadId,admin:true,cache:false},callback);};publicized.addParticipants=function(params,callback){/**
      * + AddParticipantsRequest   {object}
      *    - subjectId             {int}
      *    + content               {list} List of CONTACT IDs or inviteeVO Objects
      *    - uniqueId              {string}
-     */var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.ADD_PARTICIPANT,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:[]};if(params){if(parseInt(params.threadId)>0){sendMessageParams.subjectId=params.threadId;}if(Array.isArray(params.contactIds)){sendMessageParams.content=params.contactIds;}if(Array.isArray(params.usernames)){sendMessageParams.content=[];for(var i=0;i<params.usernames.length;i++){sendMessageParams.content.push({id:params.usernames[i],idType:_constants.inviteeVOidTypes.TO_BE_USER_USERNAME});}}if(Array.isArray(params.coreUserids)){sendMessageParams.content=[];for(var i=0;i<params.coreUserids.length;i++){sendMessageParams.content.push({id:params.coreUserids[i],idType:_constants.inviteeVOidTypes.TO_BE_CORE_USER_ID});}}}return(0,_messaging.messenger)().sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}callback&&callback(returnData);}});};publicized.removeParticipants=function(params,callback){/**
+     */var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.ADD_PARTICIPANT,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:[]};if(params){if(parseInt(params.threadId)>0){sendMessageParams.subjectId=params.threadId;}if(Array.isArray(params.contactIds)){sendMessageParams.content=params.contactIds;}if(Array.isArray(params.usernames)){sendMessageParams.content=[];for(var i=0;i<params.usernames.length;i++){sendMessageParams.content.push({id:params.usernames[i],idType:_constants.inviteeVOidTypes.TO_BE_USER_USERNAME});}}if(Array.isArray(params.coreUserids)){sendMessageParams.content=[];for(var i=0;i<params.coreUserids.length;i++){sendMessageParams.content.push({id:params.coreUserids[i],idType:_constants.inviteeVOidTypes.TO_BE_CORE_USER_ID});}}}return app.messenger.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}callback&&callback(returnData);}});};publicized.removeParticipants=function(params,callback){/**
      * + RemoveParticipantsRequest    {object}
      *    - subjectId                 {int}
      *    + content                   {list} List of PARTICIPANT IDs from Thread's Participants object
      *       -id                      {int}
      *    - uniqueId                  {string}
-     */var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.REMOVE_PARTICIPANT,typeCode:_sdkParams.sdkParams.generalTypeCode//params.typeCode
-};if(params){if(parseInt(params.threadId)>0){sendMessageParams.subjectId=params.threadId;}if(Array.isArray(params.usernames)){sendMessageParams.content=[];for(var i=0;i<params.usernames.length;i++){sendMessageParams.content.push({id:params.usernames[i],idType:_constants.inviteeVOidTypes.TO_BE_USER_USERNAME});}}if(Array.isArray(params.participantIds)){sendMessageParams.content=params.participantIds;}}return(0,_messaging.messenger)().sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}callback&&callback(returnData);}});};publicized.getCurrentUserRoles=getCurrentUserRoles;publicized.leaveThread=function(params,callback){/**
+     */var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.REMOVE_PARTICIPANT,typeCode:app.sdkParams.generalTypeCode//params.typeCode
+};if(params){if(parseInt(params.threadId)>0){sendMessageParams.subjectId=params.threadId;}if(Array.isArray(params.usernames)){sendMessageParams.content=[];for(var i=0;i<params.usernames.length;i++){sendMessageParams.content.push({id:params.usernames[i],idType:_constants.inviteeVOidTypes.TO_BE_USER_USERNAME});}}if(Array.isArray(params.participantIds)){sendMessageParams.content=params.participantIds;}}return app.messenger.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}callback&&callback(returnData);}});};publicized.getCurrentUserRoles=getCurrentUserRoles;publicized.leaveThread=function(params,callback){/**
      * + LeaveThreadRequest    {object}
      *    - subjectId          {int}
      *    - uniqueId           {string}
-     */var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.LEAVE_THREAD,typeCode:_sdkParams.sdkParams.generalTypeCode//params.typeCode
-};if(params){if(parseInt(params.threadId)>0){sendMessageParams.subjectId=params.threadId;}if(typeof params.clearHistory==='boolean'){sendMessageParams.content={clearHistory:params.clearHistory};}else{sendMessageParams.content={clearHistory:true};}}return(0,_messaging.messenger)().sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}callback&&callback(returnData);}});};publicized.createThread=function(params,callback){/**
+     */var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.LEAVE_THREAD,typeCode:app.sdkParams.generalTypeCode//params.typeCode
+};if(params){if(parseInt(params.threadId)>0){sendMessageParams.subjectId=params.threadId;}if(typeof params.clearHistory==='boolean'){sendMessageParams.content={clearHistory:params.clearHistory};}else{sendMessageParams.content={clearHistory:true};}}return app.messenger.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}callback&&callback(returnData);}});};publicized.createThread=function(params,callback){/**
      * + CreateThreadRequest      {object}
      *    + invitees              {object}
      *       -id                  {string}
@@ -50466,10 +46205,10 @@ content:[]};if(params){if(parseInt(params.threadId)>0){sendMessageParams.subject
      *       -systemMetadata      {string}
      *       -forwardedMessageIds {string}
      *       -forwardedUniqueIds  {string}
-     */var content={};if(params){if(typeof params.title==='string'){content.title=params.title;}if(typeof params.type==='string'){var threadType=params.type;content.type=_constants.createThreadTypes[threadType];}if(typeof params.uniqueName==='string'){content.uniqueName=params.uniqueName;}if(Array.isArray(params.invitees)){content.invitees=[];for(var i=0;i<params.invitees.length;i++){var tempInvitee=formatDataToMakeInvitee(params.invitees[i]);if(tempInvitee){content.invitees.push(tempInvitee);}}}if(typeof params.image==='string'){content.image=params.image;}if(typeof params.description==='string'){content.description=params.description;}if(typeof params.metadata==='string'){content.metadata=params.metadata;}else if((0,_typeof2["default"])(params.metadata)==='object'){try{content.metadata=JSON.stringify(params.metadata);}catch(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);}}if((0,_typeof2["default"])(params.message)=='object'){content.message={};if(typeof params.message.text==='string'){content.message.text=params.message.text;}if(typeof params.message.uniqueId==='string'){content.message.uniqueId=params.message.uniqueId;}if(params.message.type>0){content.message.messageType=params.message.type;}if(params.message.repliedTo>0){content.message.repliedTo=params.message.repliedTo;}if(typeof params.message.metadata==='string'){content.message.metadata=params.message.metadata;}else if((0,_typeof2["default"])(params.message.metadata)==='object'){content.message.metadata=JSON.stringify(params.message.metadata);}if(typeof params.message.systemMetadata==='string'){content.message.systemMetadata=params.message.systemMetadata;}else if((0,_typeof2["default"])(params.message.systemMetadata)==='object'){content.message.systemMetadata=JSON.stringify(params.message.systemMetadata);}if(Array.isArray(params.message.forwardedMessageIds)){content.message.forwardedMessageIds=params.message.forwardedMessageIds;content.message.forwardedUniqueIds=[];for(var i=0;i<params.message.forwardedMessageIds.length;i++){content.message.forwardedUniqueIds.push(_utility["default"].generateUUID());}}}}var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.CREATE_THREAD,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:content};return(0,_messaging.messenger)().sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}callback&&callback(returnData);}});};publicized.createSelfThread=function(params,callback){var content={type:_constants.createThreadTypes['SELF']};if(params){if(typeof params.description==='string'){content.description=params.description;}if(typeof params.metadata==='string'){content.metadata=params.metadata;}else if((0,_typeof2["default"])(params.metadata)==='object'){try{content.metadata=JSON.stringify(params.metadata);}catch(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);}}if((0,_typeof2["default"])(params.message)=='object'){content.message={};if(typeof params.message.text==='string'){content.message.text=params.message.text;}if(typeof params.message.uniqueId==='string'){content.message.uniqueId=params.message.uniqueId;}if(params.message.type>0){content.message.messageType=params.message.type;}if(params.message.repliedTo>0){content.message.repliedTo=params.message.repliedTo;}if(typeof params.message.metadata==='string'){content.message.metadata=params.message.metadata;}else if((0,_typeof2["default"])(params.message.metadata)==='object'){content.message.metadata=JSON.stringify(params.message.metadata);}if(typeof params.message.systemMetadata==='string'){content.message.systemMetadata=params.message.systemMetadata;}else if((0,_typeof2["default"])(params.message.systemMetadata)==='object'){content.message.systemMetadata=JSON.stringify(params.message.systemMetadata);}if(Array.isArray(params.message.forwardedMessageIds)){content.message.forwardedMessageIds=params.message.forwardedMessageIds;content.message.forwardedUniqueIds=[];for(var i=0;i<params.message.forwardedMessageIds.length;i++){content.message.forwardedUniqueIds.push(_utility["default"].generateUUID());}}}}var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.CREATE_THREAD,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:content};return(0,_messaging.messenger)().sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}callback&&callback(returnData);}});};publicized.replyTextMessagePrivately=function(params,callbacks){var metadata={},uniqueId;if(typeof params.uniqueId!=='undefined'){uniqueId=params.uniqueId;}else{uniqueId=_utility["default"].generateUUID();}var sendContentParams={text:filterXSS(params.textMessage)};if(typeof params.invitees!=='undefined'&&params.invitees){sendContentParams.invitees=params.invitees;}if(typeof params.targetThreadId!=='undefined'&&params.targetThreadId){sendContentParams.targetThreadId=params.targetThreadId;}putInChatSendQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.REPLY_PRIVATELY,typeCode:_sdkParams.sdkParams.generalTypeCode,messageType:1,subjectId:params.threadId,repliedTo:params.repliedTo,content:sendContentParams,uniqueId:uniqueId,systemMetadata:JSON.stringify(params.systemMetadata),metadata:JSON.stringify(params.metadata)},callbacks:callbacks},function(){chatSendQueueHandler();},true);return{uniqueId:uniqueId,threadId:params.threadId,participant:_store.store.user(),content:sendContentParams};};publicized.sendTextMessage=function(params,callbacks){var metadata={},uniqueId;if(typeof params.uniqueId!=='undefined'){uniqueId=params.uniqueId;}else{uniqueId=_utility["default"].generateUUID();}putInChatSendQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-messageType:params.messageType&&typeof params.messageType.toUpperCase()!=='undefined'&&_constants.chatMessageTypes[params.messageType.toUpperCase()]>0?_constants.chatMessageTypes[params.messageType.toUpperCase()]:_constants.chatMessageTypes.TEXT,subjectId:params.threadId,repliedTo:params.repliedTo,content:filterXSS(params.textMessage),uniqueId:uniqueId,systemMetadata:JSON.stringify(params.systemMetadata),metadata:JSON.stringify(metadata),pushMsgType:3},callbacks:callbacks},function(){chatSendQueueHandler();});return{uniqueId:uniqueId,threadId:params.threadId,participant:_store.store.user(),content:params.content};};publicized.sendBotMessage=function(params,callbacks){var metadata={};return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.BOT_MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
+     */var content={};if(params){if(typeof params.title==='string'){content.title=params.title;}if(typeof params.type==='string'){var threadType=params.type;content.type=_constants.createThreadTypes[threadType];}if(typeof params.uniqueName==='string'){content.uniqueName=params.uniqueName;}if(Array.isArray(params.invitees)){content.invitees=[];for(var i=0;i<params.invitees.length;i++){var tempInvitee=formatDataToMakeInvitee(params.invitees[i]);if(tempInvitee){content.invitees.push(tempInvitee);}}}if(typeof params.image==='string'){content.image=params.image;}if(typeof params.description==='string'){content.description=params.description;}if(typeof params.metadata==='string'){content.metadata=params.metadata;}else if((0,_typeof2["default"])(params.metadata)==='object'){try{content.metadata=JSON.stringify(params.metadata);}catch(e){app.sdkParams.consoleLogging&&console.log(e);}}if((0,_typeof2["default"])(params.message)=='object'){content.message={};if(typeof params.message.text==='string'){content.message.text=params.message.text;}if(typeof params.message.uniqueId==='string'){content.message.uniqueId=params.message.uniqueId;}if(params.message.type>0){content.message.messageType=params.message.type;}if(params.message.repliedTo>0){content.message.repliedTo=params.message.repliedTo;}if(typeof params.message.metadata==='string'){content.message.metadata=params.message.metadata;}else if((0,_typeof2["default"])(params.message.metadata)==='object'){content.message.metadata=JSON.stringify(params.message.metadata);}if(typeof params.message.systemMetadata==='string'){content.message.systemMetadata=params.message.systemMetadata;}else if((0,_typeof2["default"])(params.message.systemMetadata)==='object'){content.message.systemMetadata=JSON.stringify(params.message.systemMetadata);}if(Array.isArray(params.message.forwardedMessageIds)){content.message.forwardedMessageIds=params.message.forwardedMessageIds;content.message.forwardedUniqueIds=[];for(var i=0;i<params.message.forwardedMessageIds.length;i++){content.message.forwardedUniqueIds.push(_utility["default"].generateUUID());}}}}var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.CREATE_THREAD,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:content};return app.messenger.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}callback&&callback(returnData);}});};publicized.createSelfThread=function(params,callback){var content={type:_constants.createThreadTypes['SELF']};if(params){if(typeof params.description==='string'){content.description=params.description;}if(typeof params.metadata==='string'){content.metadata=params.metadata;}else if((0,_typeof2["default"])(params.metadata)==='object'){try{content.metadata=JSON.stringify(params.metadata);}catch(e){app.sdkParams.consoleLogging&&console.log(e);}}if((0,_typeof2["default"])(params.message)=='object'){content.message={};if(typeof params.message.text==='string'){content.message.text=params.message.text;}if(typeof params.message.uniqueId==='string'){content.message.uniqueId=params.message.uniqueId;}if(params.message.type>0){content.message.messageType=params.message.type;}if(params.message.repliedTo>0){content.message.repliedTo=params.message.repliedTo;}if(typeof params.message.metadata==='string'){content.message.metadata=params.message.metadata;}else if((0,_typeof2["default"])(params.message.metadata)==='object'){content.message.metadata=JSON.stringify(params.message.metadata);}if(typeof params.message.systemMetadata==='string'){content.message.systemMetadata=params.message.systemMetadata;}else if((0,_typeof2["default"])(params.message.systemMetadata)==='object'){content.message.systemMetadata=JSON.stringify(params.message.systemMetadata);}if(Array.isArray(params.message.forwardedMessageIds)){content.message.forwardedMessageIds=params.message.forwardedMessageIds;content.message.forwardedUniqueIds=[];for(var i=0;i<params.message.forwardedMessageIds.length;i++){content.message.forwardedUniqueIds.push(_utility["default"].generateUUID());}}}}var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.CREATE_THREAD,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:content};return app.messenger.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}callback&&callback(returnData);}});};publicized.replyTextMessagePrivately=function(params,callbacks){var metadata={},uniqueId;if(typeof params.uniqueId!=='undefined'){uniqueId=params.uniqueId;}else{uniqueId=_utility["default"].generateUUID();}var sendContentParams={text:filterXSS(params.textMessage)};if(typeof params.invitees!=='undefined'&&params.invitees){sendContentParams.invitees=params.invitees;}if(typeof params.targetThreadId!=='undefined'&&params.targetThreadId){sendContentParams.targetThreadId=params.targetThreadId;}putInChatSendQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.REPLY_PRIVATELY,typeCode:app.sdkParams.generalTypeCode,messageType:1,subjectId:params.threadId,repliedTo:params.repliedTo,content:sendContentParams,uniqueId:uniqueId,systemMetadata:JSON.stringify(params.systemMetadata),metadata:JSON.stringify(params.metadata)},callbacks:callbacks},function(){chatSendQueueHandler();},true);return{uniqueId:uniqueId,threadId:params.threadId,participant:app.store.user.get(),content:sendContentParams};};publicized.sendTextMessage=function(params,callbacks){var metadata={},uniqueId;if(typeof params.uniqueId!=='undefined'){uniqueId=params.uniqueId;}else{uniqueId=_utility["default"].generateUUID();}putInChatSendQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.MESSAGE,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+messageType:params.messageType&&typeof params.messageType.toUpperCase()!=='undefined'&&_constants.chatMessageTypes[params.messageType.toUpperCase()]>0?_constants.chatMessageTypes[params.messageType.toUpperCase()]:_constants.chatMessageTypes.TEXT,subjectId:params.threadId,repliedTo:params.repliedTo,content:filterXSS(params.textMessage),uniqueId:uniqueId,systemMetadata:JSON.stringify(params.systemMetadata),metadata:JSON.stringify(metadata),pushMsgType:3},callbacks:callbacks},function(){chatSendQueueHandler();});return{uniqueId:uniqueId,threadId:params.threadId,participant:app.store.user.get(),content:params.content};};publicized.sendBotMessage=function(params,callbacks){var metadata={};return app.messenger.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.BOT_MESSAGE,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
 subjectId:params.messageId,content:params.content,uniqueId:params.uniqueId,metadata:metadata,pushMsgType:3},callbacks);};publicized.sendFileMessage=sendFileMessage;publicized.createThreadWithFileMessage=function(params,createThreadCallback,sendFileMessageCallback){/**
      * + CreateThreadRequest      {object}
      *    + invitees              {object}
@@ -50490,39 +46229,39 @@ subjectId:params.messageId,content:params.content,uniqueId:params.uniqueId,metad
      *       -systemMetadata      {string}
      *       -forwardedMessageIds {string}
      *       -forwardedUniqueIds  {string}
-     */var content={};if(params){if(typeof params.title==='string'){content.title=params.title;}if(typeof params.type==='string'){var threadType=params.type;content.type=_constants.createThreadTypes[threadType];}if(Array.isArray(params.invitees)){content.invitees=[];for(var i=0;i<params.invitees.length;i++){var tempInvitee=formatDataToMakeInvitee(params.invitees[i]);if(tempInvitee){content.invitees.push(tempInvitee);}}}if(typeof params.description==='string'){content.description=params.description;}if(typeof params.content==='string'){content.content=params.content;}if(typeof params.metadata==='string'){content.metadata=params.metadata;}else if((0,_typeof2["default"])(params.metadata)==='object'){try{content.metadata=JSON.stringify(params.metadata);}catch(e){_sdkParams.sdkParams.consoleLogging&&console.log(e);}}}var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.CREATE_THREAD,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:content};return(0,_messaging.messenger)().sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}createThreadCallback&&createThreadCallback(returnData);sendFileMessage({threadId:returnData.result.thread.id,file:params.file,content:params.caption,messageType:params.messageType,userGroupHash:returnData.result.thread.userGroupHash},sendFileMessageCallback);}});};publicized.sendLocationMessage=function(params,callbacks){var data={},url=SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.STATIC_IMAGE,hasError=false,fileUniqueId=_utility["default"].generateUUID();if(params){if(typeof params.mapType==='string'){data.type=params.mapType;}else{data.type='standard-night';}if(parseInt(params.mapZoom)>0){data.zoom=params.mapZoom;}else{data.zoom=15;}if(parseInt(params.mapWidth)>0){data.width=params.mapWidth;}else{data.width=800;}if(parseInt(params.mapHeight)>0){data.height=params.mapHeight;}else{data.height=600;}if((0,_typeof2["default"])(params.mapCenter)==='object'){if(parseFloat(params.mapCenter.lat)>0&&parseFloat(params.mapCenter.lng)){data.center=params.mapCenter.lat+','+parseFloat(params.mapCenter.lng);}else{hasError=true;_events.chatEvents.fireEvent('error',{code:6700,message:CHAT_ERRORS[6700],error:undefined});}}else{hasError=true;_events.chatEvents.fireEvent('error',{code:6700,message:CHAT_ERRORS[6700],error:undefined});}data.key=_sdkParams.sdkParams.mapApiKey;data.marker='red';}var keys=Object.keys(data);if(keys.length>0){url+='?';for(var i=0;i<keys.length;i++){var key=keys[i];url+=key+'='+data[key];if(i<keys.length-1){url+='&';}}}if(!hasError){mapReverse({lng:parseFloat(params.mapCenter.lng),lat:parseFloat(params.mapCenter.lat)},function(address){getImageFormUrl(url,fileUniqueId,function(blobImage){sendFileMessage({threadId:params.threadId,fileUniqueId:fileUniqueId,file:new File([blobImage],"location.png",{type:"image/png",lastModified:new Date()}),content:address.result.formatted_address,messageType:'POD_SPACE_PICTURE',userGroupHash:params.userGroupHash,metadata:{mapLink:"https://maps.neshan.org/@".concat(data.center,",").concat(data.zoom,"z"),address:address}},callbacks);});});}return{uniqueId:fileUniqueId,threadId:params.threadId,participant:_store.store.user(),cancel:function cancel(){if(typeof _sdkParams.sdkParams.getImageFromLinkObjects!=='undefined'&&_sdkParams.sdkParams.getImageFromLinkObjects.hasOwnProperty(fileUniqueId)){_sdkParams.sdkParams.getImageFromLinkObjects[fileUniqueId].onload=function(){};delete _sdkParams.sdkParams.getImageFromLinkObjects[fileUniqueId];_sdkParams.sdkParams.consoleLogging&&console.log("\"".concat(fileUniqueId,"\" - Downloading Location Map has been canceled!"));}cancelFileUpload({uniqueId:fileUniqueId},function(){_sdkParams.sdkParams.consoleLogging&&console.log("\"".concat(fileUniqueId,"\" - Sending Location Message has been canceled!"));});}};};publicized.resendMessage=function(uniqueId,callbacks){for(var i=0;i<chatWaitQueue.length;i++){if(chatWaitQueue[i].uniqueId===uniqueId){putInChatSendQueue({message:chatWaitQueue[i],callbacks:callbacks},function(){chatSendQueueHandler();},true);// break;
+     */var content={};if(params){if(typeof params.title==='string'){content.title=params.title;}if(typeof params.type==='string'){var threadType=params.type;content.type=_constants.createThreadTypes[threadType];}if(Array.isArray(params.invitees)){content.invitees=[];for(var i=0;i<params.invitees.length;i++){var tempInvitee=formatDataToMakeInvitee(params.invitees[i]);if(tempInvitee){content.invitees.push(tempInvitee);}}}if(typeof params.description==='string'){content.description=params.description;}if(typeof params.content==='string'){content.content=params.content;}if(typeof params.metadata==='string'){content.metadata=params.metadata;}else if((0,_typeof2["default"])(params.metadata)==='object'){try{content.metadata=JSON.stringify(params.metadata);}catch(e){app.sdkParams.consoleLogging&&console.log(e);}}}var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.CREATE_THREAD,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:content};return app.messenger.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result={thread:createThread(messageContent)};}createThreadCallback&&createThreadCallback(returnData);sendFileMessage({threadId:returnData.result.thread.id,file:params.file,content:params.caption,messageType:params.messageType,userGroupHash:returnData.result.thread.userGroupHash},sendFileMessageCallback);}});};publicized.sendLocationMessage=function(params,callbacks){var data={},url=SERVICE_ADDRESSES.MAP_ADDRESS+SERVICES_PATH.STATIC_IMAGE,hasError=false,fileUniqueId=_utility["default"].generateUUID();if(params){if(typeof params.mapType==='string'){data.type=params.mapType;}else{data.type='standard-night';}if(parseInt(params.mapZoom)>0){data.zoom=params.mapZoom;}else{data.zoom=15;}if(parseInt(params.mapWidth)>0){data.width=params.mapWidth;}else{data.width=800;}if(parseInt(params.mapHeight)>0){data.height=params.mapHeight;}else{data.height=600;}if((0,_typeof2["default"])(params.mapCenter)==='object'){if(parseFloat(params.mapCenter.lat)>0&&parseFloat(params.mapCenter.lng)){data.center=params.mapCenter.lat+','+parseFloat(params.mapCenter.lng);}else{hasError=true;app.chatEvents.fireEvent('error',{code:6700,message:CHAT_ERRORS[6700],error:undefined});}}else{hasError=true;app.chatEvents.fireEvent('error',{code:6700,message:CHAT_ERRORS[6700],error:undefined});}data.key=app.sdkParams.mapApiKey;data.marker='red';}var keys=Object.keys(data);if(keys.length>0){url+='?';for(var i=0;i<keys.length;i++){var key=keys[i];url+=key+'='+data[key];if(i<keys.length-1){url+='&';}}}if(!hasError){mapReverse({lng:parseFloat(params.mapCenter.lng),lat:parseFloat(params.mapCenter.lat)},function(address){getImageFormUrl(url,fileUniqueId,function(blobImage){sendFileMessage({threadId:params.threadId,fileUniqueId:fileUniqueId,file:new File([blobImage],"location.png",{type:"image/png",lastModified:new Date()}),content:address.result.formatted_address,messageType:'POD_SPACE_PICTURE',userGroupHash:params.userGroupHash,metadata:{mapLink:"https://maps.neshan.org/@".concat(data.center,",").concat(data.zoom,"z"),address:address}},callbacks);});});}return{uniqueId:fileUniqueId,threadId:params.threadId,participant:app.store.user.get(),cancel:function cancel(){if(typeof app.sdkParams.getImageFromLinkObjects!=='undefined'&&app.sdkParams.getImageFromLinkObjects.hasOwnProperty(fileUniqueId)){app.sdkParams.getImageFromLinkObjects[fileUniqueId].onload=function(){};delete app.sdkParams.getImageFromLinkObjects[fileUniqueId];app.sdkParams.consoleLogging&&console.log("\"".concat(fileUniqueId,"\" - Downloading Location Map has been canceled!"));}cancelFileUpload({uniqueId:fileUniqueId},function(){app.sdkParams.consoleLogging&&console.log("\"".concat(fileUniqueId,"\" - Sending Location Message has been canceled!"));});}};};publicized.resendMessage=function(uniqueId,callbacks){for(var i=0;i<chatWaitQueue.length;i++){if(chatWaitQueue[i].uniqueId===uniqueId){putInChatSendQueue({message:chatWaitQueue[i],callbacks:callbacks},function(){chatSendQueueHandler();},true);// break;
 }}};publicized.cancelMessage=cancelMessage;publicized.clearHistory=function(params,callback){/**
      * + Clear History Request Object    {object}
      *    - subjectId                    {int}
-     */var clearHistoryParams={chatMessageVOType:_constants.chatMessageVOTypes.CLEAR_HISTORY,typeCode:_sdkParams.sdkParams.generalTypeCode//params.typeCode
-};if(params){if(parseInt(params.threadId)>0){clearHistoryParams.subjectId=params.threadId;}}return(0,_messaging.messenger)().sendMessage(clearHistoryParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){returnData.result={thread:result.result};}callback&&callback(returnData);}});};publicized.getImage=getImage;publicized.getFile=getFile;publicized.getFileFromPodspace=getFileFromPodspaceNew;//getFileFromPodspace;
+     */var clearHistoryParams={chatMessageVOType:_constants.chatMessageVOTypes.CLEAR_HISTORY,typeCode:app.sdkParams.generalTypeCode//params.typeCode
+};if(params){if(parseInt(params.threadId)>0){clearHistoryParams.subjectId=params.threadId;}}return app.messenger.sendMessage(clearHistoryParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){returnData.result={thread:result.result};}callback&&callback(returnData);}});};publicized.getImage=getImage;publicized.getFile=getFile;publicized.getFileFromPodspace=getFileFromPodspaceNew;//getFileFromPodspace;
 publicized.getImageFromPodspace=getImageFromPodspaceNew;//getImageFromPodspace;
-publicized.uploadFile=uploadFile;publicized.uploadImage=uploadImage;publicized.uploadFileToPodspace=uploadFileToPodspaceNew;publicized.uploadImageToPodspace=uploadImageToPodspaceNew;publicized.cancelFileUpload=cancelFileUpload;publicized.cancelFileDownload=cancelFileDownload;publicized.editMessage=function(params,callback){return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.EDIT_MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-messageType:params.messageType,subjectId:params.messageId,repliedTo:params.repliedTo,content:filterXSS(params.content),uniqueId:params.uniqueId,metadata:params.metadata,systemMetadata:params.systemMetadata,pushMsgType:3},{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result,resultData={editedMessage:formatDataToMakeMessage(undefined,messageContent)};returnData.result=resultData;}callback&&callback(returnData);}});};publicized.deleteMessage=function(params,callback){return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.DELETE_MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-subjectId:params.messageId,uniqueId:params.uniqueId,content:JSON.stringify({'deleteForAll':typeof params.deleteForAll==='boolean'?params.deleteForAll:false}),pushMsgType:3},{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){returnData.result={deletedMessage:{id:result.result.id,pinned:result.result.pinned,mentioned:result.result.mentioned,messageType:result.result.messageType,edited:result.result.edited,editable:result.result.editable,deletable:result.result.deletable}};}callback&&callback(returnData);}});};publicized.deleteMultipleMessages=function(params,callback){var messageIdsList=params.messageIds,uniqueIdsList=[];for(var i in messageIdsList){var uniqueId=_utility["default"].generateUUID();uniqueIdsList.push(uniqueId);_store.store.messagesCallbacks[uniqueId]=function(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){returnData.result={deletedMessage:{id:result.result.id,pinned:result.result.pinned,mentioned:result.result.mentioned,messageType:result.result.messageType,edited:result.result.edited,editable:result.result.editable,deletable:result.result.deletable}};}callback&&callback(returnData);};}return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.DELETE_MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:{uniqueIds:uniqueIdsList,ids:messageIdsList,deleteForAll:typeof params.deleteForAll==='boolean'?params.deleteForAll:false},pushMsgType:3});};publicized.replyTextMessage=function(params,callbacks){var uniqueId;if(typeof params.uniqueId!=='undefined'){uniqueId=params.uniqueId;}else{uniqueId=_utility["default"].generateUUID();}putInChatSendQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-messageType:1,subjectId:params.threadId,repliedTo:params.repliedTo,content:filterXSS(params.textMessage),uniqueId:uniqueId,systemMetadata:JSON.stringify(params.systemMetadata),metadata:JSON.stringify(params.metadata),pushMsgType:3},callbacks:callbacks},function(){chatSendQueueHandler();});return{uniqueId:uniqueId,threadId:params.threadId,participant:_store.store.user(),content:params.content};};publicized.replyFileMessage=function(params,callbacks){var metadata={file:{}},fileUploadParams={},fileUniqueId=_utility["default"].generateUUID();if(!params.userGroupHash||params.userGroupHash.length===0||typeof params.userGroupHash!=='string'){_events.chatEvents.fireEvent('error',{code:6304,message:CHAT_ERRORS[6304]});return;}else{fileUploadParams.userGroupHash=params.userGroupHash;}return chatUploadHandler({threadId:params.threadId,file:params.file,fileUniqueId:fileUniqueId},function(uploadHandlerResult,uploadHandlerMetadata,fileType,fileExtension){fileUploadParams=Object.assign(fileUploadParams,uploadHandlerResult);putInChatUploadQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-messageType:params.messageType&&typeof params.messageType.toUpperCase()!=='undefined'&&_constants.chatMessageTypes[params.messageType.toUpperCase()]>0?_constants.chatMessageTypes[params.messageType.toUpperCase()]:1,subjectId:params.threadId,repliedTo:params.repliedTo,content:filterXSS(params.content),metadata:JSON.stringify(uploadHandlerMetadata),systemMetadata:JSON.stringify(params.systemMetadata),uniqueId:fileUniqueId,pushMsgType:3},callbacks:callbacks},function(){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){uploadImageToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){metadata['name']=result.result.name;metadata['fileHash']=result.result.hash;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['actualHeight']=result.result.actualHeight;metadata['file']['actualWidth']=result.result.actualWidth;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;metadata['file']['link']="".concat(SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS,"/api/images/").concat(result.result.hash,"?checkUserGroupAccess=true");transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}else{uploadFileToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){metadata['fileHash']=result.result.hash;metadata['name']=result.result.name;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}});});};publicized.replyFileMessagePrivately=function(params,callbacks){var metadata={file:{}},fileUploadParams={},fileUniqueId=_utility["default"].generateUUID();if(!params.userGroupHash||params.userGroupHash.length===0||typeof params.userGroupHash!=='string'){_events.chatEvents.fireEvent('error',{code:6304,message:CHAT_ERRORS[6304]});return;}else{fileUploadParams.userGroupHash=params.userGroupHash;}return chatUploadHandler({threadId:params.threadId,file:params.file,fileUniqueId:fileUniqueId},function(uploadHandlerResult,uploadHandlerMetadata,fileType,fileExtension){fileUploadParams=Object.assign(fileUploadParams,uploadHandlerResult);var sendContentParams={text:filterXSS(params.textMessage)};if(typeof params.invitees!=='undefined'&&params.invitees){sendContentParams.invitees=params.invitees;}if(typeof params.targetThreadId!=='undefined'&&params.targetThreadId){sendContentParams.targetThreadId=params.targetThreadId;}putInChatUploadQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.REPLY_PRIVATELY,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-messageType:params.messageType&&typeof params.messageType.toUpperCase()!=='undefined'&&_constants.chatMessageTypes[params.messageType.toUpperCase()]>0?_constants.chatMessageTypes[params.messageType.toUpperCase()]:1,subjectId:params.threadId,repliedTo:params.repliedTo,content:sendContentParams,metadata:JSON.stringify(uploadHandlerMetadata),systemMetadata:JSON.stringify(params.systemMetadata),uniqueId:fileUniqueId,pushMsgType:3},callbacks:callbacks},function(){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){uploadImageToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){metadata['name']=result.result.name;metadata['fileHash']=result.result.hash;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['actualHeight']=result.result.actualHeight;metadata['file']['actualWidth']=result.result.actualWidth;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;metadata['file']['link']="".concat(SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS,"/api/images/").concat(result.result.hash,"?checkUserGroupAccess=true");transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}else{uploadFileToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){metadata['fileHash']=result.result.hash;metadata['name']=result.result.name;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}});});};publicized.forwardMessage=function(params,callbacks){var threadId=params.threadId,messageIdsList=params.messageIds,uniqueIdsList=[];for(var i in messageIdsList){if(!_store.store.threadCallbacks[threadId]){_store.store.threadCallbacks[threadId]={};}var uniqueId=_utility["default"].generateUUID();uniqueIdsList.push(uniqueId);_store.store.threadCallbacks[threadId][uniqueId]={};_store.store.sendMessageCallbacks[uniqueId]={};if(callbacks.onSent){_store.store.sendMessageCallbacks[uniqueId].onSent=callbacks.onSent;_store.store.threadCallbacks[threadId][uniqueId].onSent=false;_store.store.threadCallbacks[threadId][uniqueId].uniqueId=uniqueId;}if(callbacks.onSeen){_store.store.sendMessageCallbacks[uniqueId].onSeen=callbacks.onSeen;_store.store.threadCallbacks[threadId][uniqueId].onSeen=false;}if(callbacks.onDeliver){_store.store.sendMessageCallbacks[uniqueId].onDeliver=callbacks.onDeliver;_store.store.threadCallbacks[threadId][uniqueId].onDeliver=false;}}putInChatSendQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.FORWARD_MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-subjectId:params.threadId,repliedTo:params.repliedTo,content:messageIdsList,uniqueId:uniqueIdsList,metadata:JSON.stringify(params.metadata),pushMsgType:3},callbacks:callbacks},function(){chatSendQueueHandler();},true);};publicized.deliver=function(params){return putInMessagesDeliveryQueue(params.threadId,params.messageId);};publicized.seen=function(params){return putInMessagesSeenQueue(params.threadId,params.messageId);};publicized.startTyping=function(params){var uniqueId=_utility["default"].generateUUID();if(parseInt(params.threadId)>0){var threadId=params.threadId;}_sdkParams.sdkParams.isTypingInterval&&clearInterval(_sdkParams.sdkParams.isTypingInterval);_sdkParams.sdkParams.isTypingInterval=setInterval(function(){sendSystemMessage({content:JSON.stringify({type:_constants.systemMessageTypes.IS_TYPING}),threadId:threadId,uniqueId:uniqueId});},_sdkParams.sdkParams.systemMessageIntervalPitch);};publicized.stopTyping=function(){_sdkParams.sdkParams.isTypingInterval&&clearInterval(_sdkParams.sdkParams.isTypingInterval);};publicized.getMessageDeliveredList=function(params,callback){var deliveryListData={chatMessageVOType:_constants.chatMessageVOTypes.GET_MESSAGE_DELIVERY_PARTICIPANTS,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:{},pushMsgType:3,token:_sdkParams.sdkParams.token,timeout:params.timeout};if(params){if(parseInt(params.messageId)>0){deliveryListData.content.messageId=params.messageId;}}return(0,_messaging.messenger)().sendMessage(deliveryListData,{onResult:function onResult(result){if((0,_typeof2["default"])(result.result)=='object'){for(var i=0;i<result.result.length;i++){result.result[i]=formatDataToMakeUser(result.result[i]);}}callback&&callback(result);}});};publicized.getMessageSeenList=function(params,callback){var seenListData={chatMessageVOType:_constants.chatMessageVOTypes.GET_MESSAGE_SEEN_PARTICIPANTS,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:{},pushMsgType:3,token:_sdkParams.sdkParams.token,timeout:params.timeout};if(params){if(parseInt(params.messageId)>0){seenListData.content.messageId=params.messageId;}if(parseInt(params.count)>0){seenListData.content.count=parseInt(params.count);}if(parseInt(params.offset)>0){seenListData.content.offset=parseInt(params.offset);}}return(0,_messaging.messenger)().sendMessage(seenListData,{onResult:function onResult(result){if((0,_typeof2["default"])(result.result)=='object'){for(var i=0;i<result.result.length;i++){result.result[i]=formatDataToMakeUser(result.result[i]);}}callback&&callback(result);}});};publicized.updateThreadInfo=updateThreadInfo;publicized.updateChatProfile=updateChatProfile;publicized.muteThread=function(params,callback){return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.MUTE_THREAD,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-subjectId:params.threadId,content:{},pushMsgType:3,token:_sdkParams.sdkParams.token},{onResult:function onResult(result){callback&&callback(result);}});};publicized.unMuteThread=function(params,callback){return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.UNMUTE_THREAD,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-subjectId:params.threadId,content:{},pushMsgType:3,token:_sdkParams.sdkParams.token},{onResult:function onResult(result){callback&&callback(result);}});};publicized.closeThread=function(params,callback){return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.CLOSE_THREAD,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-subjectId:params.threadId,content:{},pushMsgType:3,token:_sdkParams.sdkParams.token},{onResult:function onResult(result){callback&&callback(result);}});};publicized.joinPublicThread=function(params,callback){var joinThreadData={chatMessageVOType:_constants.chatMessageVOTypes.JOIN_THREAD,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:'',pushMsgType:3,token:_sdkParams.sdkParams.token};if(params){if(typeof params.uniqueName==='string'&&params.uniqueName.length>0){joinThreadData.content=params.uniqueName;}}return(0,_messaging.messenger)().sendMessage(joinThreadData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.isPublicThreadNameAvailable=function(params,callback){var isNameAvailableData={chatMessageVOType:_constants.chatMessageVOTypes.IS_NAME_AVAILABLE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:'',pushMsgType:3,token:_sdkParams.sdkParams.token};if(params){if(typeof params.uniqueName==='string'&&params.uniqueName.length>0){isNameAvailableData.content=params.uniqueName;}}return(0,_messaging.messenger)().sendMessage(isNameAvailableData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.changeThreadPrivacy=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.CHANGE_THREAD_PRIVACY,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-pushMsgType:3,content:{},token:_sdkParams.sdkParams.token,timeout:params.timeout};if(params){if(parseInt(params.threadId)>0){sendData.subjectId=+params.threadId;}else{_events.chatEvents.fireEvent('error',{code:999,message:"No Thread Id has been sent!"});return;}if(typeof params.threadType==='string'&&_constants.createThreadTypes.hasOwnProperty(params.threadType.toUpperCase())){if(params.threadType.toUpperCase()==='PUBLIC_GROUP'||params.threadType.toUpperCase()==='PUBLIC_CHANNEL'){if(typeof params.uniqueName==='string'&&params.uniqueName.length>0){sendData.content.uniqueName=params.uniqueName;}else{_events.chatEvents.fireEvent('error',{code:999,message:"Public Threads need a unique name! One must enter a unique name for this thread."});return;}}sendData.content.type=_constants.createThreadTypes[params.threadType.toUpperCase()];}else{_events.chatEvents.fireEvent('error',{code:999,message:"No thread type has been declared! Possible inputs are (".concat(Object.keys(_constants.createThreadTypes).join(','),")")});return;}}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Change thread Privacy!'});return;}return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.pinThread=function(params,callback){return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.PIN_THREAD,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-subjectId:params.threadId,content:{},pushMsgType:3,token:_sdkParams.sdkParams.token},{onResult:function onResult(result){callback&&callback(result);}});};publicized.unPinThread=function(params,callback){return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.UNPIN_THREAD,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-subjectId:params.threadId,content:{},pushMsgType:3,token:_sdkParams.sdkParams.token},{onResult:function onResult(result){callback&&callback(result);}});};publicized.deleteThread=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.DELETE_MESSAGE_THREAD,typeCode:_sdkParams.sdkParams.generalTypeCode//params.typeCode
-};if(params){if(+params.threadId>0){sendData.subjectId=+params.threadId;}}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Delete Thread!'});return;}return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result=messageContent;}callback&&callback(returnData);}});};publicized.pinMessage=function(params,callback){return(0,_messaging.messenger)().sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.PIN_MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-subjectId:params.messageId,content:JSON.stringify({'notifyAll':typeof params.notifyAll==='boolean'?params.notifyAll:false}),pushMsgType:3,token:_sdkParams.sdkParams.token},{onResult:function onResult(result){callback&&callback(result);}});};publicized.unPinMessage=unPinMessage;publicized.spamPrivateThread=function(params,callback){var spamData={chatMessageVOType:_constants.chatMessageVOTypes.SPAM_PV_THREAD,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-pushMsgType:3,token:_sdkParams.sdkParams.token,timeout:params.timeout};if(params){if(parseInt(params.threadId)>0){spamData.subjectId=params.threadId;}}return(0,_messaging.messenger)().sendMessage(spamData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.block=function(params,callback){var blockData={chatMessageVOType:_constants.chatMessageVOTypes.BLOCK,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:{},pushMsgType:3,token:_sdkParams.sdkParams.token,timeout:params.timeout};if(params){if(parseInt(params.contactId)>0){blockData.content.contactId=params.contactId;}if(parseInt(params.threadId)>0){blockData.content.threadId=params.threadId;}if(parseInt(params.userId)>0){blockData.content.userId=params.userId;}}return(0,_messaging.messenger)().sendMessage(blockData,{onResult:function onResult(result){if((0,_typeof2["default"])(result.result)=='object'){result.result=formatDataToMakeBlockedUser(result.result);}callback&&callback(result);}});};publicized.unblock=function(params,callback){var unblockData={chatMessageVOType:_constants.chatMessageVOTypes.UNBLOCK,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-pushMsgType:3,token:_sdkParams.sdkParams.token,content:{},timeout:params.timeout};if(params){if(parseInt(params.blockId)>0){unblockData.subjectId=params.blockId;}if(parseInt(params.contactId)>0){unblockData.content.contactId=params.contactId;}if(parseInt(params.threadId)>0){unblockData.content.threadId=params.threadId;}if(parseInt(params.userId)>0){unblockData.content.userId=params.userId;}}return(0,_messaging.messenger)().sendMessage(unblockData,{onResult:function onResult(result){if((0,_typeof2["default"])(result.result)=='object'){result.result=formatDataToMakeBlockedUser(result.result);}callback&&callback(result);}});};publicized.getBlockedList=function(params,callback){var count=25,offset=0,content={};if(params){if(parseInt(params.count)>0){count=params.count;}if(parseInt(params.offset)>0){offset=params.offset;}}content.count=count;content.offset=offset;var getBlockedData={chatMessageVOType:_constants.chatMessageVOTypes.GET_BLOCKED,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:content,pushMsgType:3,token:_sdkParams.sdkParams.token,timeout:params.timeout};return(0,_messaging.messenger)().sendMessage(getBlockedData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={blockedUsers:[],contentCount:result.contentCount,hasNext:offset+count<result.contentCount&&messageLength>0,nextOffset:offset*1+messageLength*1},blockedUser;for(var i=0;i<messageLength;i++){blockedUser=formatDataToMakeBlockedUser(messageContent[i]);if(blockedUser){resultData.blockedUsers.push(blockedUser);}}returnData.result=resultData;}callback&&callback(returnData);}});};publicized.getUserNotSeenDuration=function(params,callback){var content={};if(params){if(Array.isArray(params.userIds)){content.userIds=params.userIds;}}var getNotSeenDurationData={chatMessageVOType:_constants.chatMessageVOTypes.GET_NOT_SEEN_DURATION,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:content,pushMsgType:3,token:_sdkParams.sdkParams.token,timeout:params.timeout};return(0,_messaging.messenger)().sendMessage(getNotSeenDurationData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){returnData.result=result.result;}callback&&callback(returnData);}});};publicized.addContacts=function(params,callback){var data={};if(params){if(typeof params.firstName==='string'){data.firstName=params.firstName;}else{data.firstName='';}if(typeof params.lastName==='string'){data.lastName=params.lastName;}else{data.lastName='';}if(typeof params.typeCode==='string'){data.typeCode=params.typeCode;}else if(_sdkParams.sdkParams.generalTypeCode){data.typeCode=_sdkParams.sdkParams.generalTypeCode;}data.ownerId=_sdkParams.sdkParams.typeCodeOwnerId?_sdkParams.sdkParams.typeCodeOwnerId:params.ownerId?params.ownerId:undefined;if(typeof params.cellphoneNumber==='string'){data.cellphoneNumber=params.cellphoneNumber;}else{data.cellphoneNumber='';}if(typeof params.email==='string'){data.email=params.email;}else{data.email='';}if(typeof params.username==='string'){data.username=params.username;}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.ADD_CONTACTS,method:'POST',data:data,headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if(!responseData.hasError){var messageContent=responseData.result,messageLength=responseData.result.length,resultData={contacts:[],contentCount:messageLength},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;}callback&&callback(returnData);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});};publicized.newAddContacts=function(params,callback){var addContactsData={chatMessageVOType:_constants.chatMessageVOTypes.ADD_CONTACTS,content:{},pushMsgType:3,token:_sdkParams.sdkParams.token,typeCode:_sdkParams.sdkParams.generalTypeCode},AddContactVO={},firstNameList=[],lastNameList=[],cellPhoneNumberList=[],emailList=[],userNameList=[],uniqueIdList=[];if(params){//for(var item in params.contacts) {
+publicized.uploadFile=uploadFile;publicized.uploadImage=uploadImage;publicized.uploadFileToPodspace=uploadFileToPodspaceNew;publicized.uploadImageToPodspace=uploadImageToPodspaceNew;publicized.cancelFileUpload=cancelFileUpload;publicized.cancelFileDownload=cancelFileDownload;publicized.editMessage=function(params,callback){return app.messenger.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.EDIT_MESSAGE,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+messageType:params.messageType,subjectId:params.messageId,repliedTo:params.repliedTo,content:filterXSS(params.content),uniqueId:params.uniqueId,metadata:params.metadata,systemMetadata:params.systemMetadata,pushMsgType:3},{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result,resultData={editedMessage:formatDataToMakeMessage(undefined,messageContent)};returnData.result=resultData;}callback&&callback(returnData);}});};publicized.deleteMessage=function(params,callback){return app.messenger.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.DELETE_MESSAGE,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+subjectId:params.messageId,uniqueId:params.uniqueId,content:JSON.stringify({'deleteForAll':typeof params.deleteForAll==='boolean'?params.deleteForAll:false}),pushMsgType:3},{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){returnData.result={deletedMessage:{id:result.result.id,pinned:result.result.pinned,mentioned:result.result.mentioned,messageType:result.result.messageType,edited:result.result.edited,editable:result.result.editable,deletable:result.result.deletable}};}callback&&callback(returnData);}});};publicized.deleteMultipleMessages=function(params,callback){var messageIdsList=params.messageIds,uniqueIdsList=[];for(var i in messageIdsList){var uniqueId=_utility["default"].generateUUID();uniqueIdsList.push(uniqueId);app.store.messagesCallbacks[uniqueId]=function(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){returnData.result={deletedMessage:{id:result.result.id,pinned:result.result.pinned,mentioned:result.result.mentioned,messageType:result.result.messageType,edited:result.result.edited,editable:result.result.editable,deletable:result.result.deletable}};}callback&&callback(returnData);};}return app.messenger.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.DELETE_MESSAGE,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:{uniqueIds:uniqueIdsList,ids:messageIdsList,deleteForAll:typeof params.deleteForAll==='boolean'?params.deleteForAll:false},pushMsgType:3});};publicized.replyTextMessage=function(params,callbacks){var uniqueId;if(typeof params.uniqueId!=='undefined'){uniqueId=params.uniqueId;}else{uniqueId=_utility["default"].generateUUID();}putInChatSendQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.MESSAGE,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+messageType:1,subjectId:params.threadId,repliedTo:params.repliedTo,content:filterXSS(params.textMessage),uniqueId:uniqueId,systemMetadata:JSON.stringify(params.systemMetadata),metadata:JSON.stringify(params.metadata),pushMsgType:3},callbacks:callbacks},function(){chatSendQueueHandler();});return{uniqueId:uniqueId,threadId:params.threadId,participant:app.store.user.get(),content:params.content};};publicized.replyFileMessage=function(params,callbacks){var metadata={file:{}},fileUploadParams={},fileUniqueId=_utility["default"].generateUUID();if(!params.userGroupHash||params.userGroupHash.length===0||typeof params.userGroupHash!=='string'){app.chatEvents.fireEvent('error',{code:6304,message:CHAT_ERRORS[6304]});return;}else{fileUploadParams.userGroupHash=params.userGroupHash;}return chatUploadHandler({threadId:params.threadId,file:params.file,fileUniqueId:fileUniqueId},function(uploadHandlerResult,uploadHandlerMetadata,fileType,fileExtension){fileUploadParams=Object.assign(fileUploadParams,uploadHandlerResult);putInChatUploadQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.MESSAGE,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+messageType:params.messageType&&typeof params.messageType.toUpperCase()!=='undefined'&&_constants.chatMessageTypes[params.messageType.toUpperCase()]>0?_constants.chatMessageTypes[params.messageType.toUpperCase()]:1,subjectId:params.threadId,repliedTo:params.repliedTo,content:filterXSS(params.content),metadata:JSON.stringify(uploadHandlerMetadata),systemMetadata:JSON.stringify(params.systemMetadata),uniqueId:fileUniqueId,pushMsgType:3},callbacks:callbacks},function(){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){uploadImageToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){metadata['name']=result.result.name;metadata['fileHash']=result.result.hash;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['actualHeight']=result.result.actualHeight;metadata['file']['actualWidth']=result.result.actualWidth;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;metadata['file']['link']="".concat(SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS,"/api/images/").concat(result.result.hash,"?checkUserGroupAccess=true");transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}else{uploadFileToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){metadata['fileHash']=result.result.hash;metadata['name']=result.result.name;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}});});};publicized.replyFileMessagePrivately=function(params,callbacks){var metadata={file:{}},fileUploadParams={},fileUniqueId=_utility["default"].generateUUID();if(!params.userGroupHash||params.userGroupHash.length===0||typeof params.userGroupHash!=='string'){app.chatEvents.fireEvent('error',{code:6304,message:CHAT_ERRORS[6304]});return;}else{fileUploadParams.userGroupHash=params.userGroupHash;}return chatUploadHandler({threadId:params.threadId,file:params.file,fileUniqueId:fileUniqueId},function(uploadHandlerResult,uploadHandlerMetadata,fileType,fileExtension){fileUploadParams=Object.assign(fileUploadParams,uploadHandlerResult);var sendContentParams={text:filterXSS(params.textMessage)};if(typeof params.invitees!=='undefined'&&params.invitees){sendContentParams.invitees=params.invitees;}if(typeof params.targetThreadId!=='undefined'&&params.targetThreadId){sendContentParams.targetThreadId=params.targetThreadId;}putInChatUploadQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.REPLY_PRIVATELY,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+messageType:params.messageType&&typeof params.messageType.toUpperCase()!=='undefined'&&_constants.chatMessageTypes[params.messageType.toUpperCase()]>0?_constants.chatMessageTypes[params.messageType.toUpperCase()]:1,subjectId:params.threadId,repliedTo:params.repliedTo,content:sendContentParams,metadata:JSON.stringify(uploadHandlerMetadata),systemMetadata:JSON.stringify(params.systemMetadata),uniqueId:fileUniqueId,pushMsgType:3},callbacks:callbacks},function(){if(_constants.imageMimeTypes.indexOf(fileType)>=0||_constants.imageExtentions.indexOf(fileExtension)>=0){uploadImageToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){metadata['name']=result.result.name;metadata['fileHash']=result.result.hash;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['actualHeight']=result.result.actualHeight;metadata['file']['actualWidth']=result.result.actualWidth;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;metadata['file']['link']="".concat(SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS,"/api/images/").concat(result.result.hash,"?checkUserGroupAccess=true");transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}else{uploadFileToPodspaceUserGroupNew(fileUploadParams,function(result){if(!result.hasError){metadata['fileHash']=result.result.hash;metadata['name']=result.result.name;metadata['file']['name']=result.result.name;metadata['file']['fileHash']=result.result.hash;metadata['file']['hashCode']=result.result.hash;metadata['file']['parentHash']=result.result.parentHash;metadata['file']['size']=result.result.size;transferFromUploadQToSendQ(parseInt(params.threadId),fileUniqueId,JSON.stringify(metadata),function(){chatSendQueueHandler();});}else{deleteFromChatUploadQueue({message:{uniqueId:fileUniqueId}});}});}});});};publicized.forwardMessage=function(params,callbacks){var threadId=params.threadId,messageIdsList=params.messageIds,uniqueIdsList=[];for(var i in messageIdsList){if(!app.store.threadCallbacks[threadId]){app.store.threadCallbacks[threadId]={};}var uniqueId=_utility["default"].generateUUID();uniqueIdsList.push(uniqueId);app.store.threadCallbacks[threadId][uniqueId]={};app.store.sendMessageCallbacks[uniqueId]={};if(callbacks.onSent){app.store.sendMessageCallbacks[uniqueId].onSent=callbacks.onSent;app.store.threadCallbacks[threadId][uniqueId].onSent=false;app.store.threadCallbacks[threadId][uniqueId].uniqueId=uniqueId;}if(callbacks.onSeen){app.store.sendMessageCallbacks[uniqueId].onSeen=callbacks.onSeen;app.store.threadCallbacks[threadId][uniqueId].onSeen=false;}if(callbacks.onDeliver){app.store.sendMessageCallbacks[uniqueId].onDeliver=callbacks.onDeliver;app.store.threadCallbacks[threadId][uniqueId].onDeliver=false;}}putInChatSendQueue({message:{chatMessageVOType:_constants.chatMessageVOTypes.FORWARD_MESSAGE,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+subjectId:params.threadId,repliedTo:params.repliedTo,content:messageIdsList,uniqueId:uniqueIdsList,metadata:JSON.stringify(params.metadata),pushMsgType:3},callbacks:callbacks},function(){chatSendQueueHandler();},true);};publicized.deliver=function(params){return putInMessagesDeliveryQueue(params.threadId,params.messageId);};publicized.seen=function(params){return putInMessagesSeenQueue(params.threadId,params.messageId);};publicized.startTyping=function(params){var uniqueId=_utility["default"].generateUUID();if(parseInt(params.threadId)>0){var threadId=params.threadId;}app.sdkParams.isTypingInterval&&clearInterval(app.sdkParams.isTypingInterval);app.sdkParams.isTypingInterval=setInterval(function(){sendSystemMessage({content:JSON.stringify({type:_constants.systemMessageTypes.IS_TYPING}),threadId:threadId,uniqueId:uniqueId});},app.sdkParams.systemMessageIntervalPitch);};publicized.stopTyping=function(){app.sdkParams.isTypingInterval&&clearInterval(app.sdkParams.isTypingInterval);};publicized.getMessageDeliveredList=function(params,callback){var deliveryListData={chatMessageVOType:_constants.chatMessageVOTypes.GET_MESSAGE_DELIVERY_PARTICIPANTS,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:{},pushMsgType:3,token:app.sdkParams.token,timeout:params.timeout};if(params){if(parseInt(params.messageId)>0){deliveryListData.content.messageId=params.messageId;}}return app.messenger.sendMessage(deliveryListData,{onResult:function onResult(result){if((0,_typeof2["default"])(result.result)=='object'){for(var i=0;i<result.result.length;i++){result.result[i]=formatDataToMakeUser(result.result[i]);}}callback&&callback(result);}});};publicized.getMessageSeenList=function(params,callback){var seenListData={chatMessageVOType:_constants.chatMessageVOTypes.GET_MESSAGE_SEEN_PARTICIPANTS,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:{},pushMsgType:3,token:app.sdkParams.token,timeout:params.timeout};if(params){if(parseInt(params.messageId)>0){seenListData.content.messageId=params.messageId;}if(parseInt(params.count)>0){seenListData.content.count=parseInt(params.count);}if(parseInt(params.offset)>0){seenListData.content.offset=parseInt(params.offset);}}return app.messenger.sendMessage(seenListData,{onResult:function onResult(result){if((0,_typeof2["default"])(result.result)=='object'){for(var i=0;i<result.result.length;i++){result.result[i]=formatDataToMakeUser(result.result[i]);}}callback&&callback(result);}});};publicized.updateThreadInfo=updateThreadInfo;publicized.updateChatProfile=updateChatProfile;publicized.muteThread=function(params,callback){return app.messenger.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.MUTE_THREAD,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+subjectId:params.threadId,content:{},pushMsgType:3,token:app.sdkParams.token},{onResult:function onResult(result){callback&&callback(result);}});};publicized.unMuteThread=function(params,callback){return app.messenger.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.UNMUTE_THREAD,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+subjectId:params.threadId,content:{},pushMsgType:3,token:app.sdkParams.token},{onResult:function onResult(result){callback&&callback(result);}});};publicized.closeThread=function(params,callback){return app.messenger.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.CLOSE_THREAD,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+subjectId:params.threadId,content:{},pushMsgType:3,token:app.sdkParams.token},{onResult:function onResult(result){callback&&callback(result);}});};publicized.joinPublicThread=function(params,callback){var joinThreadData={chatMessageVOType:_constants.chatMessageVOTypes.JOIN_THREAD,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:'',pushMsgType:3,token:app.sdkParams.token};if(params){if(typeof params.uniqueName==='string'&&params.uniqueName.length>0){joinThreadData.content=params.uniqueName;}}return app.messenger.sendMessage(joinThreadData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.isPublicThreadNameAvailable=function(params,callback){var isNameAvailableData={chatMessageVOType:_constants.chatMessageVOTypes.IS_NAME_AVAILABLE,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:'',pushMsgType:3,token:app.sdkParams.token};if(params){if(typeof params.uniqueName==='string'&&params.uniqueName.length>0){isNameAvailableData.content=params.uniqueName;}}return app.messenger.sendMessage(isNameAvailableData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.changeThreadPrivacy=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.CHANGE_THREAD_PRIVACY,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+pushMsgType:3,content:{},token:app.sdkParams.token,timeout:params.timeout};if(params){if(parseInt(params.threadId)>0){sendData.subjectId=+params.threadId;}else{app.chatEvents.fireEvent('error',{code:999,message:"No Thread Id has been sent!"});return;}if(typeof params.threadType==='string'&&_constants.createThreadTypes.hasOwnProperty(params.threadType.toUpperCase())){if(params.threadType.toUpperCase()==='PUBLIC_GROUP'||params.threadType.toUpperCase()==='PUBLIC_CHANNEL'){if(typeof params.uniqueName==='string'&&params.uniqueName.length>0){sendData.content.uniqueName=params.uniqueName;}else{app.chatEvents.fireEvent('error',{code:999,message:"Public Threads need a unique name! One must enter a unique name for this thread."});return;}}sendData.content.type=_constants.createThreadTypes[params.threadType.toUpperCase()];}else{app.chatEvents.fireEvent('error',{code:999,message:"No thread type has been declared! Possible inputs are (".concat(Object.keys(_constants.createThreadTypes).join(','),")")});return;}}else{app.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Change thread Privacy!'});return;}return app.messenger.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.pinThread=function(params,callback){return app.messenger.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.PIN_THREAD,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+subjectId:params.threadId,content:{},pushMsgType:3,token:app.sdkParams.token},{onResult:function onResult(result){callback&&callback(result);}});};publicized.unPinThread=function(params,callback){return app.messenger.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.UNPIN_THREAD,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+subjectId:params.threadId,content:{},pushMsgType:3,token:app.sdkParams.token},{onResult:function onResult(result){callback&&callback(result);}});};publicized.deleteThread=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.DELETE_MESSAGE_THREAD,typeCode:app.sdkParams.generalTypeCode//params.typeCode
+};if(params){if(+params.threadId>0){sendData.subjectId=+params.threadId;}}else{app.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Delete Thread!'});return;}return app.messenger.sendMessage(sendData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result=messageContent;}callback&&callback(returnData);}});};publicized.pinMessage=function(params,callback){return app.messenger.sendMessage({chatMessageVOType:_constants.chatMessageVOTypes.PIN_MESSAGE,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+subjectId:params.messageId,content:JSON.stringify({'notifyAll':typeof params.notifyAll==='boolean'?params.notifyAll:false}),pushMsgType:3,token:app.sdkParams.token},{onResult:function onResult(result){callback&&callback(result);}});};publicized.unPinMessage=unPinMessage;publicized.spamPrivateThread=function(params,callback){var spamData={chatMessageVOType:_constants.chatMessageVOTypes.SPAM_PV_THREAD,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+pushMsgType:3,token:app.sdkParams.token,timeout:params.timeout};if(params){if(parseInt(params.threadId)>0){spamData.subjectId=params.threadId;}}return app.messenger.sendMessage(spamData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.block=function(params,callback){var blockData={chatMessageVOType:_constants.chatMessageVOTypes.BLOCK,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:{},pushMsgType:3,token:app.sdkParams.token,timeout:params.timeout};if(params){if(parseInt(params.contactId)>0){blockData.content.contactId=params.contactId;}if(parseInt(params.threadId)>0){blockData.content.threadId=params.threadId;}if(parseInt(params.userId)>0){blockData.content.userId=params.userId;}}return app.messenger.sendMessage(blockData,{onResult:function onResult(result){if((0,_typeof2["default"])(result.result)=='object'){result.result=formatDataToMakeBlockedUser(result.result);}callback&&callback(result);}});};publicized.unblock=function(params,callback){var unblockData={chatMessageVOType:_constants.chatMessageVOTypes.UNBLOCK,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+pushMsgType:3,token:app.sdkParams.token,content:{},timeout:params.timeout};if(params){if(parseInt(params.blockId)>0){unblockData.subjectId=params.blockId;}if(parseInt(params.contactId)>0){unblockData.content.contactId=params.contactId;}if(parseInt(params.threadId)>0){unblockData.content.threadId=params.threadId;}if(parseInt(params.userId)>0){unblockData.content.userId=params.userId;}}return app.messenger.sendMessage(unblockData,{onResult:function onResult(result){if((0,_typeof2["default"])(result.result)=='object'){result.result=formatDataToMakeBlockedUser(result.result);}callback&&callback(result);}});};publicized.getBlockedList=function(params,callback){var count=25,offset=0,content={};if(params){if(parseInt(params.count)>0){count=params.count;}if(parseInt(params.offset)>0){offset=params.offset;}}content.count=count;content.offset=offset;var getBlockedData={chatMessageVOType:_constants.chatMessageVOTypes.GET_BLOCKED,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:content,pushMsgType:3,token:app.sdkParams.token,timeout:params.timeout};return app.messenger.sendMessage(getBlockedData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={blockedUsers:[],contentCount:result.contentCount,hasNext:offset+count<result.contentCount&&messageLength>0,nextOffset:offset*1+messageLength*1},blockedUser;for(var i=0;i<messageLength;i++){blockedUser=formatDataToMakeBlockedUser(messageContent[i]);if(blockedUser){resultData.blockedUsers.push(blockedUser);}}returnData.result=resultData;}callback&&callback(returnData);}});};publicized.getUserNotSeenDuration=function(params,callback){var content={};if(params){if(Array.isArray(params.userIds)){content.userIds=params.userIds;}}var getNotSeenDurationData={chatMessageVOType:_constants.chatMessageVOTypes.GET_NOT_SEEN_DURATION,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:content,pushMsgType:3,token:app.sdkParams.token,timeout:params.timeout};return app.messenger.sendMessage(getNotSeenDurationData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){returnData.result=result.result;}callback&&callback(returnData);}});};publicized.addContacts=function(params,callback){var data={};if(params){if(typeof params.firstName==='string'){data.firstName=params.firstName;}else{data.firstName='';}if(typeof params.lastName==='string'){data.lastName=params.lastName;}else{data.lastName='';}if(typeof params.typeCode==='string'){data.typeCode=params.typeCode;}else if(app.sdkParams.generalTypeCode){data.typeCode=app.sdkParams.generalTypeCode;}data.ownerId=app.sdkParams.typeCodeOwnerId?app.sdkParams.typeCodeOwnerId:params.ownerId?params.ownerId:undefined;if(typeof params.cellphoneNumber==='string'){data.cellphoneNumber=params.cellphoneNumber;}else{data.cellphoneNumber='';}if(typeof params.email==='string'){data.email=params.email;}else{data.email='';}if(typeof params.username==='string'){data.username=params.username;}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.ADD_CONTACTS,method:'POST',data:data,headers:{'_token_':app.sdkParams.token,'_token_issuer_':1}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if(!responseData.hasError){var messageContent=responseData.result,messageLength=responseData.result.length,resultData={contacts:[],contentCount:messageLength},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;}callback&&callback(returnData);}else{app.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});};publicized.newAddContacts=function(params,callback){var addContactsData={chatMessageVOType:_constants.chatMessageVOTypes.ADD_CONTACTS,content:{},pushMsgType:3,token:app.sdkParams.token,typeCode:app.sdkParams.generalTypeCode},AddContactVO={},firstNameList=[],lastNameList=[],cellPhoneNumberList=[],emailList=[],userNameList=[],uniqueIdList=[];if(params){//for(var item in params.contacts) {
 if(typeof params.firstName==='string'){firstNameList.push(params.firstName);}else{firstNameList.push('');}if(typeof params.lastName==='string'){lastNameList.push(params.lastName);}else{lastNameList.push('');}if(typeof params.cellphoneNumber==='string'){cellPhoneNumberList.push(params.cellphoneNumber);// data.cellphoneNumber = params.cellphoneNumber;
 }else{cellPhoneNumberList.push('');// data.cellphoneNumber = '';
 }if(typeof params.email==='string'){emailList.push(params.email);// data.email = params.email;
@@ -50530,7 +46269,7 @@ if(typeof params.firstName==='string'){firstNameList.push(params.firstName);}els
 }if(typeof params.username==='string'){userNameList.push(params.username);// data.username = params.username;
 }uniqueIdList.push(_utility["default"].generateUUID());// data.uniqueId = Utility.generateUUID();
 //}
-AddContactVO={uniqueIdList:uniqueIdList,emailList:emailList,userNameList:userNameList,firstNameList:firstNameList,lastNameList:lastNameList,cellphoneNumberList:cellPhoneNumberList};}addContactsData.content=AddContactVO;return(0,_messaging.messenger)().sendMessage(addContactsData,{onResult:function onResult(result){// var responseData = JSON.parse(result.result.responseText);
+AddContactVO={uniqueIdList:uniqueIdList,emailList:emailList,userNameList:userNameList,firstNameList:firstNameList,lastNameList:lastNameList,cellphoneNumberList:cellPhoneNumberList};}addContactsData.content=AddContactVO;return app.messenger.sendMessage(addContactsData,{onResult:function onResult(result){// var responseData = JSON.parse(result.result.responseText);
 var returnData={hasError:result.hasError,cache:false,errorMessage:result.message,errorCode:result.errorCode};if((0,_typeof2["default"])(result.result)=='object'){var _result$result,_result$result2,_result$result2$resul;var messageContent=result===null||result===void 0?void 0:(_result$result=result.result)===null||_result$result===void 0?void 0:_result$result.result,messageLength=result===null||result===void 0?void 0:(_result$result2=result.result)===null||_result$result2===void 0?void 0:(_result$result2$resul=_result$result2.result)===null||_result$result2$resul===void 0?void 0:_result$result2$resul.length,resultData={contacts:[],contentCount:messageLength},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;// }
 callback&&callback(returnData);}//callback && callback(result);
 }});/* var requestParams = {
@@ -50551,7 +46290,7 @@ callback&&callback(returnData);}//callback && callback(result);
                 errorCode: responseData.errorCode
             };
               if (!responseData.hasError) {*/ //} else {
-/*  chatEvents.fireEvent('error', {
+/*  app.chatEvents.fireEvent('error', {
           code: result.errorCode,
           message: result.errorMessage,
           error: result
@@ -50572,7 +46311,7 @@ callback&&callback(returnData);}//callback && callback(result);
   
   
               if(!id) {
-                  chatEvents.fireEvent('error', {
+                  app.chatEvents.fireEvent('error', {
                       code: 999,
                       message: 'ID is required for Deleting Contact!',
                       error: undefined
@@ -50580,7 +46319,7 @@ callback&&callback(returnData);}//callback && callback(result);
               }
   
   
-          return messenger().sendMessage(data, {
+          return app.messenger.sendMessage(data, {
               onResult: function (result) {
               if (!result.hasError) {
                   // var responseData = JSON.parse(result.result.responseText);
@@ -50607,14 +46346,14 @@ callback&&callback(returnData);}//callback && callback(result);
                               .equals(parseInt(params.id))
                               .delete()
                               .catch(function (error) {
-                                  chatEvents.fireEvent('error', {
+                                  app.chatEvents.fireEvent('error', {
                                       code: 6602,
                                       message: CHAT_ERRORS[6602],
                                       error: error
                                   });
                               });
                       } else {
-                          chatEvents.fireEvent('error', {
+                          app.chatEvents.fireEvent('error', {
                               code: 6601,
                               message: CHAT_ERRORS[6601],
                               error: null
@@ -50625,7 +46364,7 @@ callback&&callback(returnData);}//callback && callback(result);
                   result.result.uniqueId = result.uniqueId;
                   callback && callback(result.result);
               } else {
-                  chatEvents.fireEvent('error', {
+                  app.chatEvents.fireEvent('error', {
                       code: result.errorCode,
                       message: result.errorMessage,
                       error: result
@@ -50633,48 +46372,48 @@ callback&&callback(returnData);}//callback && callback(result);
               }
           }});
       };
-  */publicized.updateContacts=function(params,callback){var data={};if(params){if(parseInt(params.id)>0){data.id=parseInt(params.id);}else{_events.chatEvents.fireEvent('error',{code:999,message:'ID is required for Updating Contact!',error:undefined});}if(typeof params.firstName==='string'){data.firstName=params.firstName;}else{_events.chatEvents.fireEvent('error',{code:999,message:'firstName is required for Updating Contact!'});}if(typeof params.lastName==='string'){data.lastName=params.lastName;}else{_events.chatEvents.fireEvent('error',{code:999,message:'lastName is required for Updating Contact!'});}if(typeof params.cellphoneNumber==='string'){data.cellphoneNumber=params.cellphoneNumber;}else{_events.chatEvents.fireEvent('error',{code:999,message:'cellphoneNumber is required for Updating Contact!'});}if(typeof params.email==='string'){data.email=params.email;}else{_events.chatEvents.fireEvent('error',{code:999,message:'email is required for Updating Contact!'});}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.UPDATE_CONTACTS,method:'GET',data:data,headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if(!responseData.hasError){var messageContent=responseData.result,messageLength=responseData.result.length,resultData={contacts:[],contentCount:messageLength},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;}callback&&callback(returnData);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});};publicized.removeContacts=function(params,callback){var data={};if(params){if(parseInt(params.id)>0){data.id=parseInt(params.id);}else{_events.chatEvents.fireEvent('error',{code:999,message:'ID is required for Deleting Contact!',error:undefined});}}data.ownerId=_sdkParams.sdkParams.typeCodeOwnerId?_sdkParams.sdkParams.typeCodeOwnerId:params.ownerId?params.ownerId:undefined;var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.REMOVE_CONTACTS,method:'POST',data:data,headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if(!responseData.hasError){returnData.result=responseData.result;}callback&&callback(returnData);}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});};publicized.searchContacts=function(params,callback){var data={size:50,offset:0},returnCache=false;if(params){if(typeof params.firstName==='string'){data.firstName=params.firstName;}if(typeof params.lastName==='string'){data.lastName=params.lastName;}if(parseInt(params.cellphoneNumber)>0){data.cellphoneNumber=params.cellphoneNumber;}if(typeof params.email==='string'){data.email=params.email;}if(typeof params.query==='string'){data.q=params.query;}if(typeof params.uniqueId==='string'){data.uniqueId=params.uniqueId;}if(parseInt(params.id)>0){data.id=params.id;}if(parseInt(params.typeCode)>0){data.typeCode=params.typeCode;}if(parseInt(params.size)>0){data.size=params.size;}if(parseInt(params.offset)>0){data.offset=params.offset;}var functionLevelCache=typeof params.cache=='boolean'?params.cache:true;}var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.SEARCH_CONTACTS,method:'POST',data:data,headers:{'_token_':_sdkParams.sdkParams.token,'_token_issuer_':1}};/**
+  */publicized.updateContacts=function(params,callback){var data={};if(params){if(parseInt(params.id)>0){data.id=parseInt(params.id);}else{app.chatEvents.fireEvent('error',{code:999,message:'ID is required for Updating Contact!',error:undefined});}if(typeof params.firstName==='string'){data.firstName=params.firstName;}else{app.chatEvents.fireEvent('error',{code:999,message:'firstName is required for Updating Contact!'});}if(typeof params.lastName==='string'){data.lastName=params.lastName;}else{app.chatEvents.fireEvent('error',{code:999,message:'lastName is required for Updating Contact!'});}if(typeof params.cellphoneNumber==='string'){data.cellphoneNumber=params.cellphoneNumber;}else{app.chatEvents.fireEvent('error',{code:999,message:'cellphoneNumber is required for Updating Contact!'});}if(typeof params.email==='string'){data.email=params.email;}else{app.chatEvents.fireEvent('error',{code:999,message:'email is required for Updating Contact!'});}data.uniqueId=_utility["default"].generateUUID();}var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.UPDATE_CONTACTS,method:'GET',data:data,headers:{'_token_':app.sdkParams.token,'_token_issuer_':1}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if(!responseData.hasError){var messageContent=responseData.result,messageLength=responseData.result.length,resultData={contacts:[],contentCount:messageLength},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;}callback&&callback(returnData);}else{app.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});};publicized.removeContacts=function(params,callback){var data={};if(params){if(parseInt(params.id)>0){data.id=parseInt(params.id);}else{app.chatEvents.fireEvent('error',{code:999,message:'ID is required for Deleting Contact!',error:undefined});}}data.ownerId=app.sdkParams.typeCodeOwnerId?app.sdkParams.typeCodeOwnerId:params.ownerId?params.ownerId:undefined;var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.REMOVE_CONTACTS,method:'POST',data:data,headers:{'_token_':app.sdkParams.token,'_token_issuer_':1}};httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if(!responseData.hasError){returnData.result=responseData.result;}callback&&callback(returnData);}else{app.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});};publicized.searchContacts=function(params,callback){var data={size:50,offset:0},returnCache=false;if(params){if(typeof params.firstName==='string'){data.firstName=params.firstName;}if(typeof params.lastName==='string'){data.lastName=params.lastName;}if(parseInt(params.cellphoneNumber)>0){data.cellphoneNumber=params.cellphoneNumber;}if(typeof params.email==='string'){data.email=params.email;}if(typeof params.query==='string'){data.q=params.query;}if(typeof params.uniqueId==='string'){data.uniqueId=params.uniqueId;}if(parseInt(params.id)>0){data.id=params.id;}if(parseInt(params.typeCode)>0){data.typeCode=params.typeCode;}if(parseInt(params.size)>0){data.size=params.size;}if(parseInt(params.offset)>0){data.offset=params.offset;}var functionLevelCache=typeof params.cache=='boolean'?params.cache:true;}var requestParams={url:SERVICE_ADDRESSES.PLATFORM_ADDRESS+SERVICES_PATH.SEARCH_CONTACTS,method:'POST',data:data,headers:{'_token_':app.sdkParams.token,'_token_issuer_':1}};/**
      * Get Search Contacts Result From Server
      */httpRequest(requestParams,function(result){if(!result.hasError){var responseData=JSON.parse(result.result.responseText);var returnData={hasError:responseData.hasError,cache:false,errorMessage:responseData.message,errorCode:responseData.errorCode};if(!responseData.hasError){var messageContent=responseData.result,messageLength=responseData.result.length,resultData={contacts:[],contentCount:messageLength},contactData;for(var i=0;i<messageLength;i++){contactData=formatDataToMakeContact(messageContent[i]);if(contactData){resultData.contacts.push(contactData);}}returnData.result=resultData;}callback&&callback(returnData);/**
          * Delete callback so if server pushes response before
          * cache, cache won't send data again
-         */callback=undefined;if(!returnData.hasError&&returnCache){_events.chatEvents.fireEvent('contactEvents',{type:'CONTACTS_SEARCH_RESULT_CHANGE',result:returnData.result});}}else{_events.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});};publicized.createBot=function(params,callback){var createBotData={chatMessageVOType:_constants.chatMessageVOTypes.CREATE_BOT,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:'',pushMsgType:3,token:_sdkParams.sdkParams.token};if(params){if(typeof params.botName==='string'&&params.botName.length>0){if(params.botName.substr(-3)==="BOT"){createBotData.content=params.botName;}else{_events.chatEvents.fireEvent('error',{code:999,message:'Bot name should end in "BOT", ex. "testBOT"'});return;}}else{_events.chatEvents.fireEvent('error',{code:999,message:'Insert a bot name to create one!'});return;}}else{_events.chatEvents.fireEvent('error',{code:999,message:'Insert a bot name to create one!'});return;}return(0,_messaging.messenger)().sendMessage(createBotData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.defineBotCommand=function(params,callback){var defineBotCommandData={chatMessageVOType:_constants.chatMessageVOTypes.DEFINE_BOT_COMMAND,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:{},pushMsgType:3,token:_sdkParams.sdkParams.token},commandList=[];if(params){if(typeof params.botName!=='string'||params.botName.length===0){_events.chatEvents.fireEvent('error',{code:999,message:'You need to insert a botName!'});return;}if(!Array.isArray(params.commandList)||!params.commandList.length){_events.chatEvents.fireEvent('error',{code:999,message:'Bot Commands List has to be an array of strings.'});return;}else{for(var i=0;i<params.commandList.length;i++){commandList.push('/'+params.commandList[i].trim());}}defineBotCommandData.content={botName:params.botName.trim(),commandList:commandList};}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to create bot commands'});return;}return(0,_messaging.messenger)().sendMessage(defineBotCommandData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.removeBotCommand=function(params,callback){var defineBotCommandData={chatMessageVOType:_constants.chatMessageVOTypes.REMOVE_BOT_COMMANDS,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:{},pushMsgType:3,token:_sdkParams.sdkParams.token},commandList=[];if(params){if(typeof params.botName!=='string'||params.botName.length===0){_events.chatEvents.fireEvent('error',{code:999,message:'You need to insert a botName!'});return;}if(!Array.isArray(params.commandList)||!params.commandList.length){_events.chatEvents.fireEvent('error',{code:999,message:'Bot Commands List has to be an array of strings.'});return;}else{for(var i=0;i<params.commandList.length;i++){commandList.push('/'+params.commandList[i].trim());}}defineBotCommandData.content={botName:params.botName.trim(),commandList:commandList};}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to remove bot commands'});return;}return(0,_messaging.messenger)().sendMessage(defineBotCommandData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.startBot=function(params,callback){var startBotData={chatMessageVOType:_constants.chatMessageVOTypes.START_BOT,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:{},pushMsgType:3,token:_sdkParams.sdkParams.token};if(params){if(typeof+params.threadId!=='number'||params.threadId<0){_events.chatEvents.fireEvent('error',{code:999,message:'Enter a valid Thread Id for Bot to start in!'});return;}if(typeof params.botName!=='string'||params.botName.length===0){_events.chatEvents.fireEvent('error',{code:999,message:'You need to insert a botName!'});return;}startBotData.subjectId=+params.threadId;startBotData.content=JSON.stringify({botName:params.botName.trim()});}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to create bot commands'});return;}return(0,_messaging.messenger)().sendMessage(startBotData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.stopBot=function(params,callback){var stopBotData={chatMessageVOType:_constants.chatMessageVOTypes.STOP_BOT,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:{},pushMsgType:3,token:_sdkParams.sdkParams.token};if(params){if(typeof+params.threadId!=='number'||params.threadId<0){_events.chatEvents.fireEvent('error',{code:999,message:'Enter a valid Thread Id for Bot to stop on!'});return;}if(typeof params.botName!=='string'||params.botName.length===0){_events.chatEvents.fireEvent('error',{code:999,message:'You need to insert a botName!'});return;}stopBotData.subjectId=+params.threadId;stopBotData.content=JSON.stringify({botName:params.botName.trim()});}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to create bot commands'});return;}return(0,_messaging.messenger)().sendMessage(stopBotData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.getBotCommandsList=function(params,callback){var getBotCommandsListData={chatMessageVOType:_constants.chatMessageVOTypes.BOT_COMMANDS,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:{},pushMsgType:3,token:_sdkParams.sdkParams.token};if(params){if(typeof params.botName!=='string'||params.botName.length===0){_events.chatEvents.fireEvent('error',{code:999,message:'You need to insert a botName!'});return;}getBotCommandsListData.content=JSON.stringify({botName:params.botName.trim()});}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to get bot commands'});return;}return(0,_messaging.messenger)().sendMessage(getBotCommandsListData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.getThreadAllBots=function(params,callback){var getThreadBotsData={chatMessageVOType:_constants.chatMessageVOTypes.THREAD_ALL_BOTS,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:{},pushMsgType:3,token:_sdkParams.sdkParams.token};if(params){if(typeof+params.threadId!=='number'||params.threadId<0){_events.chatEvents.fireEvent('error',{code:999,message:'Enter a valid Thread Id to get all Bots List!'});return;}getThreadBotsData.subjectId=+params.threadId;}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to get thread\' bots list!'});return;}return(0,_messaging.messenger)().sendMessage(getThreadBotsData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.createTag=function(params,callback){var createTagData={chatMessageVOType:_constants.chatMessageVOTypes.CREATE_TAG,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:{},pushMsgType:3,token:_sdkParams.sdkParams.token};if(params){if(typeof params.tagName==='string'&&params.tagName.length>0){createTagData.content.name=params.tagName;}else{_events.chatEvents.fireEvent('error',{code:999,message:"No tag name has been declared!"});return;}}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Create New Tag!'});return;}return(0,_messaging.messenger)().sendMessage(createTagData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.editTag=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.EDIT_TAG,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:{},pushMsgType:3,token:_sdkParams.sdkParams.token};if(params){if(parseInt(params.tagId)>0){sendData.subjectId=+params.tagId;}else{_events.chatEvents.fireEvent('error',{code:999,message:"No Tag Id has been sent!"});return;}if(typeof params.tagName==='string'&&params.tagName.length>0){sendData.content.name=params.tagName;}else{_events.chatEvents.fireEvent('error',{code:999,message:"No tag name has been declared!"});return;}}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Edit Tag!'});return;}return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.deleteTag=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.DELETE_TAG,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:{},pushMsgType:3,token:_sdkParams.sdkParams.token};if(params){if(parseInt(params.tagId)>0){sendData.subjectId=+params.tagId;}else{_events.chatEvents.fireEvent('error',{code:999,message:"No Tag Id has been sent!"});return;}}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Delete Tag!'});return;}return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.getTagList=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.GET_TAG_LIST,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:{},pushMsgType:3,token:_sdkParams.sdkParams.token};return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.addTagParticipants=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.ADD_TAG_PARTICIPANT,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:[]};if(params){if(+params.tagId>0){sendData.subjectId=+params.tagId;}if(Array.isArray(params.threadIds)){sendData.content=params.threadIds;}}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Add Tag PArticipants!'});return;}return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result=messageContent;}callback&&callback(returnData);}});};publicized.removeTagParticipants=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.REMOVE_TAG_PARTICIPANT,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:[]};if(params){if(+params.tagId>0){sendData.subjectId=+params.tagId;}if(Array.isArray(params.threadIds)){sendData.content=params.threadIds;}}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Remove Tag Participants!'});return;}return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result=messageContent;}callback&&callback(returnData);}});};publicized.registerAssistant=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.REGISTER_ASSISTANT,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:[]};if(params){if(Array.isArray(params.assistants)&&(0,_typeof2["default"])(params.assistants[0])==='object'){for(var i=0;i<params.assistants.length;i++){if((0,_typeof2["default"])(params.assistants[i])==='object'&&params.assistants[i].hasOwnProperty('contactType')&&!!params.assistants[i].contactType&&params.assistants[i].hasOwnProperty('roleTypes')&&Array.isArray(params.assistants[i].roleTypes)&&params.assistants[i].roleTypes.length&&params.assistants[i].hasOwnProperty('assistant')&&params.assistants[i].assistant.hasOwnProperty('id')&&params.assistants[i].assistant.hasOwnProperty('idType')&&params.assistants[i].assistant.id.length&&_constants.inviteeVOidTypes[params.assistants[i].assistant.idType]>0){sendData.content.push({contactType:params.assistants[i].contactType,roleTypes:params.assistants[i].roleTypes,assistant:{id:params.assistants[i].assistant.id,idType:+_constants.inviteeVOidTypes[params.assistants[i].assistant.idType]}});}else{_events.chatEvents.fireEvent('error',{code:999,message:'You should send an array of Assistant Objects each containing of contactType, roleTypes and assistant itself!'});return;}}}else{_events.chatEvents.fireEvent('error',{code:999,message:'You should send an array of Assistant Objects each containing of contactType, roleTypes and assistant itself!'});return;}}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Create Assistants!'});return;}return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result=messageContent;}callback&&callback(returnData);}});};publicized.deactivateAssistant=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.DEACTIVATE_ASSISTANT,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:[]};if(params){if(Array.isArray(params.assistants)&&(0,_typeof2["default"])(params.assistants[0])==='object'){for(var i=0;i<params.assistants.length;i++){if((0,_typeof2["default"])(params.assistants[i])==='object'&&params.assistants[i].hasOwnProperty('assistant')&&params.assistants[i].assistant.hasOwnProperty('id')&&params.assistants[i].assistant.hasOwnProperty('idType')&&params.assistants[i].assistant.id.length&&_constants.inviteeVOidTypes[params.assistants[i].assistant.idType]>0){sendData.content.push({assistant:{id:params.assistants[i].assistant.id,idType:+_constants.inviteeVOidTypes[params.assistants[i].assistant.idType]}});}else{_events.chatEvents.fireEvent('error',{code:999,message:'You should send an array of Assistant Objects each containing of an assistant!'});return;}}}else{_events.chatEvents.fireEvent('error',{code:999,message:'You should send an array of Assistant Objects each containing of an assistant!'});return;}}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Deactivate Assistants!'});return;}return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result=messageContent;}callback&&callback(returnData);}});};publicized.blockAssistant=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.BLOCK_ASSISTANT,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:[]};if(params){if(Array.isArray(params.assistants)&&(0,_typeof2["default"])(params.assistants[0])==='object'){for(var i=0;i<params.assistants.length;i++){if((0,_typeof2["default"])(params.assistants[i])==='object'&&params.assistants[i].hasOwnProperty('assistant')&&params.assistants[i].assistant.hasOwnProperty('id')&&params.assistants[i].assistant.hasOwnProperty('idType')&&params.assistants[i].assistant.id.length&&_constants.inviteeVOidTypes[params.assistants[i].assistant.idType]>0){sendData.content.push({assistant:{id:params.assistants[i].assistant.id,idType:+_constants.inviteeVOidTypes[params.assistants[i].assistant.idType]}});}else{_events.chatEvents.fireEvent('error',{code:999,message:'You should send an array of Assistant Objects each containing of an assistant!'});return;}}}else{_events.chatEvents.fireEvent('error',{code:999,message:'You should send an array of Assistant Objects each containing of an assistant!'});return;}}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Block Assistants!'});return;}return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result=messageContent;}callback&&callback(returnData);}});};publicized.unblockAssistant=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.UNBLOCK_ASSISTANT,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:[]};if(params){if(Array.isArray(params.assistants)&&(0,_typeof2["default"])(params.assistants[0])==='object'){for(var i=0;i<params.assistants.length;i++){if((0,_typeof2["default"])(params.assistants[i])==='object'&&params.assistants[i].hasOwnProperty('assistant')&&params.assistants[i].assistant.hasOwnProperty('id')&&params.assistants[i].assistant.hasOwnProperty('idType')&&params.assistants[i].assistant.id.length&&_constants.inviteeVOidTypes[params.assistants[i].assistant.idType]>0){sendData.content.push({assistant:{id:params.assistants[i].assistant.id,idType:+_constants.inviteeVOidTypes[params.assistants[i].assistant.idType]}});}else{_events.chatEvents.fireEvent('error',{code:999,message:'You should send an array of Assistant Objects each containing of an assistant!'});return;}}}else{_events.chatEvents.fireEvent('error',{code:999,message:'You should send an array of Assistant Objects each containing of an assistant!'});return;}}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Unblock Assistants!'});return;}return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result=messageContent;}callback&&callback(returnData);}});};publicized.getAssistantsList=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.GET_ASSISTANTS,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:{},pushMsgType:3,token:_sdkParams.sdkParams.token};if(params){if(typeof params.contactType==='string'&&params.contactType.length){sendData.content.contactType=params.contactType;}else{_events.chatEvents.fireEvent('error',{code:999,message:'Enter a ContactType to get all related Assistants!'});return;}sendData.content.count=!!params.count?+params.count:25;sendData.content.offset=!!params.offset?+params.offset:0;}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to get Assistants list!'});return;}return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.getBlockedAssistantsList=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.BLOCKED_ASSISTANTS,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:{},pushMsgType:3,token:_sdkParams.sdkParams.token};if(params){if(typeof params.contactType==='string'&&params.contactType.length){sendData.content.contactType=params.contactType;}else{_events.chatEvents.fireEvent('error',{code:999,message:'Enter a ContactType to get all Blocked Assistants!'});return;}sendData.content.count=!!params.count?+params.count:25;sendData.content.offset=!!params.offset?+params.offset:0;}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to get Blocked Assistants list!'});return;}return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.getAssistantsHistory=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.ASSISTANT_HISTORY,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:{offset:+params.offset>0?+params.offset:0,count:+params.count>0?+params.count:config.getHistoryCount}};if(+params.fromTime>0&&+params.fromTime<9999999999999){sendData.content.fromTime=+params.fromTime;}if(+params.toTime>0&&+params.toTime<9999999999999){sendData.content.toTime=+params.toTime;}if(!!params.actionType&&_constants.assistantActionTypes.hasOwnProperty(params.actionType.toUpperCase())){sendData.content.actionType=_constants.assistantActionTypes[params.actionType.toUpperCase()];}return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={participants:formatDataToMakeAssistantHistoryList(messageContent),contentCount:result.contentCount,hasNext:sendData.content.offset+sendData.content.count<result.contentCount&&messageLength>0,nextOffset:sendData.content.offset*1+messageLength*1};returnData.result=resultData;}callback&&callback(returnData);callback=undefined;}});};publicized.mapReverse=mapReverse;publicized.mapSearch=mapSearch;publicized.mapRouting=mapRouting;publicized.mapStaticImage=mapStaticImage;publicized.setAdmin=function(params,callback){setRoleToUser(params,callback);};publicized.removeAdmin=function(params,callback){removeRoleFromUser(params,callback);};publicized.setAuditor=function(params,callback){setRoleToUser(params,callback);};publicized.removeAuditor=function(params,callback){removeRoleFromUser(params,callback);};function requestExportChat(stackArr,wantedCount,stepCount,offset,sendData){sendData.content.offset=offset;sendData.content.count=stepCount;return new Promise(function(resolve,reject){return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){/* for(var i in result.result) {
+         */callback=undefined;if(!returnData.hasError&&returnCache){app.chatEvents.fireEvent('contactEvents',{type:'CONTACTS_SEARCH_RESULT_CHANGE',result:returnData.result});}}else{app.chatEvents.fireEvent('error',{code:result.errorCode,message:result.errorMessage,error:result});}});};publicized.createBot=function(params,callback){var createBotData={chatMessageVOType:_constants.chatMessageVOTypes.CREATE_BOT,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:'',pushMsgType:3,token:app.sdkParams.token};if(params){if(typeof params.botName==='string'&&params.botName.length>0){if(params.botName.substr(-3)==="BOT"){createBotData.content=params.botName;}else{app.chatEvents.fireEvent('error',{code:999,message:'Bot name should end in "BOT", ex. "testBOT"'});return;}}else{app.chatEvents.fireEvent('error',{code:999,message:'Insert a bot name to create one!'});return;}}else{app.chatEvents.fireEvent('error',{code:999,message:'Insert a bot name to create one!'});return;}return app.messenger.sendMessage(createBotData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.defineBotCommand=function(params,callback){var defineBotCommandData={chatMessageVOType:_constants.chatMessageVOTypes.DEFINE_BOT_COMMAND,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:{},pushMsgType:3,token:app.sdkParams.token},commandList=[];if(params){if(typeof params.botName!=='string'||params.botName.length===0){app.chatEvents.fireEvent('error',{code:999,message:'You need to insert a botName!'});return;}if(!Array.isArray(params.commandList)||!params.commandList.length){app.chatEvents.fireEvent('error',{code:999,message:'Bot Commands List has to be an array of strings.'});return;}else{for(var i=0;i<params.commandList.length;i++){commandList.push('/'+params.commandList[i].trim());}}defineBotCommandData.content={botName:params.botName.trim(),commandList:commandList};}else{app.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to create bot commands'});return;}return app.messenger.sendMessage(defineBotCommandData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.removeBotCommand=function(params,callback){var defineBotCommandData={chatMessageVOType:_constants.chatMessageVOTypes.REMOVE_BOT_COMMANDS,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:{},pushMsgType:3,token:app.sdkParams.token},commandList=[];if(params){if(typeof params.botName!=='string'||params.botName.length===0){app.chatEvents.fireEvent('error',{code:999,message:'You need to insert a botName!'});return;}if(!Array.isArray(params.commandList)||!params.commandList.length){app.chatEvents.fireEvent('error',{code:999,message:'Bot Commands List has to be an array of strings.'});return;}else{for(var i=0;i<params.commandList.length;i++){commandList.push('/'+params.commandList[i].trim());}}defineBotCommandData.content={botName:params.botName.trim(),commandList:commandList};}else{app.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to remove bot commands'});return;}return app.messenger.sendMessage(defineBotCommandData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.startBot=function(params,callback){var startBotData={chatMessageVOType:_constants.chatMessageVOTypes.START_BOT,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:{},pushMsgType:3,token:app.sdkParams.token};if(params){if(typeof+params.threadId!=='number'||params.threadId<0){app.chatEvents.fireEvent('error',{code:999,message:'Enter a valid Thread Id for Bot to start in!'});return;}if(typeof params.botName!=='string'||params.botName.length===0){app.chatEvents.fireEvent('error',{code:999,message:'You need to insert a botName!'});return;}startBotData.subjectId=+params.threadId;startBotData.content=JSON.stringify({botName:params.botName.trim()});}else{app.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to create bot commands'});return;}return app.messenger.sendMessage(startBotData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.stopBot=function(params,callback){var stopBotData={chatMessageVOType:_constants.chatMessageVOTypes.STOP_BOT,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:{},pushMsgType:3,token:app.sdkParams.token};if(params){if(typeof+params.threadId!=='number'||params.threadId<0){app.chatEvents.fireEvent('error',{code:999,message:'Enter a valid Thread Id for Bot to stop on!'});return;}if(typeof params.botName!=='string'||params.botName.length===0){app.chatEvents.fireEvent('error',{code:999,message:'You need to insert a botName!'});return;}stopBotData.subjectId=+params.threadId;stopBotData.content=JSON.stringify({botName:params.botName.trim()});}else{app.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to create bot commands'});return;}return app.messenger.sendMessage(stopBotData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.getBotCommandsList=function(params,callback){var getBotCommandsListData={chatMessageVOType:_constants.chatMessageVOTypes.BOT_COMMANDS,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:{},pushMsgType:3,token:app.sdkParams.token};if(params){if(typeof params.botName!=='string'||params.botName.length===0){app.chatEvents.fireEvent('error',{code:999,message:'You need to insert a botName!'});return;}getBotCommandsListData.content=JSON.stringify({botName:params.botName.trim()});}else{app.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to get bot commands'});return;}return app.messenger.sendMessage(getBotCommandsListData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.getThreadAllBots=function(params,callback){var getThreadBotsData={chatMessageVOType:_constants.chatMessageVOTypes.THREAD_ALL_BOTS,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:{},pushMsgType:3,token:app.sdkParams.token};if(params){if(typeof+params.threadId!=='number'||params.threadId<0){app.chatEvents.fireEvent('error',{code:999,message:'Enter a valid Thread Id to get all Bots List!'});return;}getThreadBotsData.subjectId=+params.threadId;}else{app.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to get thread\' bots list!'});return;}return app.messenger.sendMessage(getThreadBotsData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.createTag=function(params,callback){var createTagData={chatMessageVOType:_constants.chatMessageVOTypes.CREATE_TAG,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:{},pushMsgType:3,token:app.sdkParams.token};if(params){if(typeof params.tagName==='string'&&params.tagName.length>0){createTagData.content.name=params.tagName;}else{app.chatEvents.fireEvent('error',{code:999,message:"No tag name has been declared!"});return;}}else{app.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Create New Tag!'});return;}return app.messenger.sendMessage(createTagData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.editTag=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.EDIT_TAG,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:{},pushMsgType:3,token:app.sdkParams.token};if(params){if(parseInt(params.tagId)>0){sendData.subjectId=+params.tagId;}else{app.chatEvents.fireEvent('error',{code:999,message:"No Tag Id has been sent!"});return;}if(typeof params.tagName==='string'&&params.tagName.length>0){sendData.content.name=params.tagName;}else{app.chatEvents.fireEvent('error',{code:999,message:"No tag name has been declared!"});return;}}else{app.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Edit Tag!'});return;}return app.messenger.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.deleteTag=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.DELETE_TAG,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:{},pushMsgType:3,token:app.sdkParams.token};if(params){if(parseInt(params.tagId)>0){sendData.subjectId=+params.tagId;}else{app.chatEvents.fireEvent('error',{code:999,message:"No Tag Id has been sent!"});return;}}else{app.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Delete Tag!'});return;}return app.messenger.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.getTagList=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.GET_TAG_LIST,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:{},pushMsgType:3,token:app.sdkParams.token};return app.messenger.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.addTagParticipants=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.ADD_TAG_PARTICIPANT,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:[]};if(params){if(+params.tagId>0){sendData.subjectId=+params.tagId;}if(Array.isArray(params.threadIds)){sendData.content=params.threadIds;}}else{app.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Add Tag PArticipants!'});return;}return app.messenger.sendMessage(sendData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result=messageContent;}callback&&callback(returnData);}});};publicized.removeTagParticipants=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.REMOVE_TAG_PARTICIPANT,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:[]};if(params){if(+params.tagId>0){sendData.subjectId=+params.tagId;}if(Array.isArray(params.threadIds)){sendData.content=params.threadIds;}}else{app.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Remove Tag Participants!'});return;}return app.messenger.sendMessage(sendData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result=messageContent;}callback&&callback(returnData);}});};publicized.registerAssistant=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.REGISTER_ASSISTANT,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:[]};if(params){if(Array.isArray(params.assistants)&&(0,_typeof2["default"])(params.assistants[0])==='object'){for(var i=0;i<params.assistants.length;i++){if((0,_typeof2["default"])(params.assistants[i])==='object'&&params.assistants[i].hasOwnProperty('contactType')&&!!params.assistants[i].contactType&&params.assistants[i].hasOwnProperty('roleTypes')&&Array.isArray(params.assistants[i].roleTypes)&&params.assistants[i].roleTypes.length&&params.assistants[i].hasOwnProperty('assistant')&&params.assistants[i].assistant.hasOwnProperty('id')&&params.assistants[i].assistant.hasOwnProperty('idType')&&params.assistants[i].assistant.id.length&&_constants.inviteeVOidTypes[params.assistants[i].assistant.idType]>0){sendData.content.push({contactType:params.assistants[i].contactType,roleTypes:params.assistants[i].roleTypes,assistant:{id:params.assistants[i].assistant.id,idType:+_constants.inviteeVOidTypes[params.assistants[i].assistant.idType]}});}else{app.chatEvents.fireEvent('error',{code:999,message:'You should send an array of Assistant Objects each containing of contactType, roleTypes and assistant itself!'});return;}}}else{app.chatEvents.fireEvent('error',{code:999,message:'You should send an array of Assistant Objects each containing of contactType, roleTypes and assistant itself!'});return;}}else{app.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Create Assistants!'});return;}return app.messenger.sendMessage(sendData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result=messageContent;}callback&&callback(returnData);}});};publicized.deactivateAssistant=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.DEACTIVATE_ASSISTANT,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:[]};if(params){if(Array.isArray(params.assistants)&&(0,_typeof2["default"])(params.assistants[0])==='object'){for(var i=0;i<params.assistants.length;i++){if((0,_typeof2["default"])(params.assistants[i])==='object'&&params.assistants[i].hasOwnProperty('assistant')&&params.assistants[i].assistant.hasOwnProperty('id')&&params.assistants[i].assistant.hasOwnProperty('idType')&&params.assistants[i].assistant.id.length&&_constants.inviteeVOidTypes[params.assistants[i].assistant.idType]>0){sendData.content.push({assistant:{id:params.assistants[i].assistant.id,idType:+_constants.inviteeVOidTypes[params.assistants[i].assistant.idType]}});}else{app.chatEvents.fireEvent('error',{code:999,message:'You should send an array of Assistant Objects each containing of an assistant!'});return;}}}else{app.chatEvents.fireEvent('error',{code:999,message:'You should send an array of Assistant Objects each containing of an assistant!'});return;}}else{app.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Deactivate Assistants!'});return;}return app.messenger.sendMessage(sendData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result=messageContent;}callback&&callback(returnData);}});};publicized.blockAssistant=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.BLOCK_ASSISTANT,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:[]};if(params){if(Array.isArray(params.assistants)&&(0,_typeof2["default"])(params.assistants[0])==='object'){for(var i=0;i<params.assistants.length;i++){if((0,_typeof2["default"])(params.assistants[i])==='object'&&params.assistants[i].hasOwnProperty('assistant')&&params.assistants[i].assistant.hasOwnProperty('id')&&params.assistants[i].assistant.hasOwnProperty('idType')&&params.assistants[i].assistant.id.length&&_constants.inviteeVOidTypes[params.assistants[i].assistant.idType]>0){sendData.content.push({assistant:{id:params.assistants[i].assistant.id,idType:+_constants.inviteeVOidTypes[params.assistants[i].assistant.idType]}});}else{app.chatEvents.fireEvent('error',{code:999,message:'You should send an array of Assistant Objects each containing of an assistant!'});return;}}}else{app.chatEvents.fireEvent('error',{code:999,message:'You should send an array of Assistant Objects each containing of an assistant!'});return;}}else{app.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Block Assistants!'});return;}return app.messenger.sendMessage(sendData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result=messageContent;}callback&&callback(returnData);}});};publicized.unblockAssistant=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.UNBLOCK_ASSISTANT,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:[]};if(params){if(Array.isArray(params.assistants)&&(0,_typeof2["default"])(params.assistants[0])==='object'){for(var i=0;i<params.assistants.length;i++){if((0,_typeof2["default"])(params.assistants[i])==='object'&&params.assistants[i].hasOwnProperty('assistant')&&params.assistants[i].assistant.hasOwnProperty('id')&&params.assistants[i].assistant.hasOwnProperty('idType')&&params.assistants[i].assistant.id.length&&_constants.inviteeVOidTypes[params.assistants[i].assistant.idType]>0){sendData.content.push({assistant:{id:params.assistants[i].assistant.id,idType:+_constants.inviteeVOidTypes[params.assistants[i].assistant.idType]}});}else{app.chatEvents.fireEvent('error',{code:999,message:'You should send an array of Assistant Objects each containing of an assistant!'});return;}}}else{app.chatEvents.fireEvent('error',{code:999,message:'You should send an array of Assistant Objects each containing of an assistant!'});return;}}else{app.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Unblock Assistants!'});return;}return app.messenger.sendMessage(sendData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result;returnData.result=messageContent;}callback&&callback(returnData);}});};publicized.getAssistantsList=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.GET_ASSISTANTS,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:{},pushMsgType:3,token:app.sdkParams.token};if(params){if(typeof params.contactType==='string'&&params.contactType.length){sendData.content.contactType=params.contactType;}else{app.chatEvents.fireEvent('error',{code:999,message:'Enter a ContactType to get all related Assistants!'});return;}sendData.content.count=!!params.count?+params.count:25;sendData.content.offset=!!params.offset?+params.offset:0;}else{app.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to get Assistants list!'});return;}return app.messenger.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.getBlockedAssistantsList=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.BLOCKED_ASSISTANTS,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:{},pushMsgType:3,token:app.sdkParams.token};if(params){if(typeof params.contactType==='string'&&params.contactType.length){sendData.content.contactType=params.contactType;}else{app.chatEvents.fireEvent('error',{code:999,message:'Enter a ContactType to get all Blocked Assistants!'});return;}sendData.content.count=!!params.count?+params.count:25;sendData.content.offset=!!params.offset?+params.offset:0;}else{app.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to get Blocked Assistants list!'});return;}return app.messenger.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.getAssistantsHistory=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.ASSISTANT_HISTORY,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:{offset:+params.offset>0?+params.offset:0,count:+params.count>0?+params.count:config.getHistoryCount}};if(+params.fromTime>0&&+params.fromTime<9999999999999){sendData.content.fromTime=+params.fromTime;}if(+params.toTime>0&&+params.toTime<9999999999999){sendData.content.toTime=+params.toTime;}if(!!params.actionType&&_constants.assistantActionTypes.hasOwnProperty(params.actionType.toUpperCase())){sendData.content.actionType=_constants.assistantActionTypes[params.actionType.toUpperCase()];}return app.messenger.sendMessage(sendData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={participants:formatDataToMakeAssistantHistoryList(messageContent),contentCount:result.contentCount,hasNext:sendData.content.offset+sendData.content.count<result.contentCount&&messageLength>0,nextOffset:sendData.content.offset*1+messageLength*1};returnData.result=resultData;}callback&&callback(returnData);callback=undefined;}});};publicized.mapReverse=mapReverse;publicized.mapSearch=mapSearch;publicized.mapRouting=mapRouting;publicized.mapStaticImage=mapStaticImage;publicized.setAdmin=function(params,callback){setRoleToUser(params,callback);};publicized.removeAdmin=function(params,callback){removeRoleFromUser(params,callback);};publicized.setAuditor=function(params,callback){setRoleToUser(params,callback);};publicized.removeAuditor=function(params,callback){removeRoleFromUser(params,callback);};function requestExportChat(stackArr,wantedCount,stepCount,offset,sendData){sendData.content.offset=offset;sendData.content.count=stepCount;return new Promise(function(resolve,reject){return app.messenger.sendMessage(sendData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode};if(!returnData.hasError){/* for(var i in result.result) {
                 stackArr.push(result.result[i]);
-            } */stackArr.push.apply(stackArr,(0,_toConsumableArray2["default"])(result.result));_sdkParams.sdkParams.consoleLogging&&console.log("[SDK][exportChat] a step passed...");// wantedCount = wantedCount > result.contentCount ? result.contentCount : wantedCount;
-if(result.result.length<stepCount){wantedCount=stackArr.length;}setTimeout(function(){_events.chatEvents.fireEvent('threadEvents',{type:'EXPORT_CHAT',subType:'IN_PROGRESS',threadId:sendData.subjectId,percent:Math.floor(stackArr.length/wantedCount*100)});if(stackArr.length<wantedCount){stepCount=wantedCount-stackArr.length<stepCount?wantedCount-stackArr.length:stepCount;//setTimeout(function () {
+            } */stackArr.push.apply(stackArr,(0,_toConsumableArray2["default"])(result.result));app.sdkParams.consoleLogging&&console.log("[SDK][exportChat] a step passed...");// wantedCount = wantedCount > result.contentCount ? result.contentCount : wantedCount;
+if(result.result.length<stepCount){wantedCount=stackArr.length;}setTimeout(function(){app.chatEvents.fireEvent('threadEvents',{type:'EXPORT_CHAT',subType:'IN_PROGRESS',threadId:sendData.subjectId,percent:Math.floor(stackArr.length/wantedCount*100)});if(stackArr.length<wantedCount){stepCount=wantedCount-stackArr.length<stepCount?wantedCount-stackArr.length:stepCount;//setTimeout(function () {
 resolve(requestExportChat(stackArr,wantedCount,stepCount,stackArr.length,sendData));//}, 1000)
-}else{resolve(stackArr);}});}else{if(result.errorCode!==21){_sdkParams.sdkParams.consoleLogging&&console.log("[SDK][exportChat] Problem in one step... . Rerunning the request.",wantedCount,stepCount,stackArr.length,sendData,result);setTimeout(function(){resolve(requestExportChat(stackArr,wantedCount,stepCount,stackArr.length,sendData));},2000);}else{reject(result);}}}});});}publicized.exportChat=function(params,callback){var stackArr=[],wantedCount=10000,stepCount=500,offset=0;var sendData={chatMessageVOType:_constants.chatMessageVOTypes.EXPORT_CHAT,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
+}else{resolve(stackArr);}});}else{if(result.errorCode!==21){app.sdkParams.consoleLogging&&console.log("[SDK][exportChat] Problem in one step... . Rerunning the request.",wantedCount,stepCount,stackArr.length,sendData,result);setTimeout(function(){resolve(requestExportChat(stackArr,wantedCount,stepCount,stackArr.length,sendData));},2000);}else{reject(result);}}}});});}publicized.exportChat=function(params,callback){var stackArr=[],wantedCount=10000,stepCount=500,offset=0;var sendData={chatMessageVOType:_constants.chatMessageVOTypes.EXPORT_CHAT,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
 content:{offset:+params.offset>0?+params.offset:offset,count:+params.count>0?+params.count:wantedCount//config.getHistoryCount,
 },subjectId:params.threadId};if(+params.fromTime>0&&+params.fromTime<9999999999999){sendData.content.fromTime=+params.fromTime;}if(+params.toTime>0&&+params.toTime<9999999999999){sendData.content.toTime=+params.toTime;}if(+params.wantedCount>0){wantedCount=params.wantedCount;}if(+params.stepCount>0){stepCount=params.stepCount;}if(+params.offset>0){offset=params.offset;}// if (params.messageType && typeof params.messageType.toUpperCase() !== 'undefined' && chatMessageTypes[params.messageType.toUpperCase()] > 0) {
 //     sendData.content.messageType = chatMessageTypes[params.messageType.toUpperCase()];
 // }
-sendData.content.messageType=1;if(wantedCount<stepCount)stepCount=wantedCount;_sdkParams.sdkParams.consoleLogging&&console.log("[SDK][exportChat] Starting...");requestExportChat(stackArr,wantedCount,stepCount,offset,sendData).then(function(result){_sdkParams.sdkParams.consoleLogging&&console.log("[SDK][exportChat] Export done..., Now converting...");var exportedFilename=(params.fileName||'export-'+params.threadId)+'.csv',responseType=params.responseType!==null?params.responseType:"blob",autoStartDownload=params.autoStartDownload!==null?params.autoStartDownload:true;var str='',universalBOM="\uFEFF";str+="\u062A\u0627\u0631\u06CC\u062E "+',';//tarikh
+sendData.content.messageType=1;if(wantedCount<stepCount)stepCount=wantedCount;app.sdkParams.consoleLogging&&console.log("[SDK][exportChat] Starting...");requestExportChat(stackArr,wantedCount,stepCount,offset,sendData).then(function(result){app.sdkParams.consoleLogging&&console.log("[SDK][exportChat] Export done..., Now converting...");var exportedFilename=(params.fileName||'export-'+params.threadId)+'.csv',responseType=params.responseType!==null?params.responseType:"blob",autoStartDownload=params.autoStartDownload!==null?params.autoStartDownload:true;var str='',universalBOM="\uFEFF";str+="\u062A\u0627\u0631\u06CC\u062E "+',';//tarikh
 str+=" \u0633\u0627\u0639\u062A "+',';//saat
 str+="\u0646\u0627\u0645 \u0641\u0631\u0633\u062A\u0646\u062F\u0647"+',';//name ferestande
 str+="\u0646\u0627\u0645 \u06A9\u0627\u0631\u0628\u0631\u06CC \u0641\u0631\u0633\u062A\u0646\u062F\u0647"+',';//name karbariye ferestande
 str+="\u0645\u062A\u0646 \u067E\u06CC\u0627\u0645"+',';//matne payam
 str+='\r\n';var line='',radif=1;for(var i=0;i<result.length;i++){line='';if(result[i].messageType!==1){continue;}var sender='';if(result[i].participant.contactName){sender=result[i].participant.contactName+',';}else{if(result[i].participant.firstName){sender=result[i].participant.firstName+' ';}if(result[i].participant.lastName){sender+=result[i].participant.lastName;}sender+=',';}line+=new Date(result[i].time).toLocaleDateString('fa-IR')+',';line+=new Date(result[i].time).toLocaleTimeString('fa-IR')+',';line+=sender;line+=result[i].participant.username+',';line+='"'+result[i].message.replaceAll(",","،").replaceAll('"','”')+'",';// line += result[i].message.replaceAll(",", ".").replace(/(\r\n|\n|\r)/gm, " ") + ',';
-str+=line+'\r\n';radif++;}var blob=new Blob([str],{type:'text/csv;charset=utf-8;'});_events.chatEvents.fireEvent('threadEvents',{type:'EXPORT_CHAT',subType:'DONE',threadId:sendData.subjectId,result:blob});/*if (navigator.msSaveBlob) { // IE 10+
+str+=line+'\r\n';radif++;}var blob=new Blob([str],{type:'text/csv;charset=utf-8;'});app.chatEvents.fireEvent('threadEvents',{type:'EXPORT_CHAT',subType:'DONE',threadId:sendData.subjectId,result:blob});/*if (navigator.msSaveBlob) { // IE 10+
           if(params.autoStartDownload) {
               navigator.msSaveBlob(blob, exportedFilename);
           }
@@ -50691,16 +46430,16 @@ callback=undefined;});/*.catch(function (result) {
       consoleLogging && console.log(result);
     });*/};publicized.startCall=callModule.startCall;publicized.startGroupCall=callModule.startGroupCall;publicized.callReceived=callModule.callReceived;publicized.terminateCall=callModule.terminateCall;publicized.acceptCall=callModule.acceptCall;publicized.rejectCall=publicized.cancelCall=callModule.rejectCall;publicized.endCall=callModule.endCall;publicized.startRecordingCall=callModule.startRecordingCall;publicized.stopRecordingCall=callModule.stopRecordingCall;publicized.startScreenShare=callModule.startScreenShare;publicized.resizeScreenShare=callModule.resizeScreenShare;publicized.endScreenShare=callModule.endScreenShare;publicized.getCallsList=callModule.getCallsList;publicized.getCallsToJoin=callModule.getCallsToJoin;publicized.deleteFromCallList=callModule.deleteFromCallList;publicized.getCallParticipants=callModule.getCallParticipants;publicized.addCallParticipants=callModule.addCallParticipants;publicized.removeCallParticipants=callModule.removeCallParticipants;publicized.muteCallParticipants=callModule.muteCallParticipants;publicized.unMuteCallParticipants=callModule.unMuteCallParticipants;publicized.turnOnVideoCall=callModule.turnOnVideoCall;publicized.turnOffVideoCall=callModule.turnOffVideoCall;publicized.disableParticipantsVideoReceive=callModule.disableParticipantsVideoReceive;publicized.enableParticipantsVideoReceive=callModule.enableParticipantsVideoReceive;publicized.pauseCamera=callModule.pauseCamera;publicized.resumeCamera=callModule.resumeCamera;publicized.pauseMice=callModule.pauseMice;publicized.resumeMice=callModule.resumeMice;publicized.resizeCallVideo=callModule.resizeCallVideo;// publicized.restartMedia = callModule.restartMedia;
 // publicized.callStop = callModule.callStop;
-publicized.sendCallMetaData=callModule.sendCallMetaData;publicized.sendCallSticker=callModule.sendCallSticker;publicized.callStickerTypes=_constants.callStickerTypes;publicized.recallThreadParticipant=callModule.recallThreadParticipant;publicized.deviceManager=callModule.deviceManager;publicized.inquiryCallParticipants=callModule.inquiryCallParticipants;publicized.resetCallStream=callModule.resetCallStream;publicized.getMutualGroups=function(params,callback){var count=+params.count?+params.count:25,offset=+params.offset?+params.offset:0;var sendData={chatMessageVOType:_constants.chatMessageVOTypes.MUTUAL_GROUPS,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:{count:count,offset:offset}};if(params){if((0,_typeof2["default"])(params.user)==='object'&&params.user.hasOwnProperty('id')&&params.user.hasOwnProperty('idType')&&params.user.id.length&&_constants.inviteeVOidTypes[params.user.idType]>0){sendData.content.toBeUserVO={id:params.user.id,idType:+_constants.inviteeVOidTypes[params.user.idType]};}else{_events.chatEvents.fireEvent('error',{code:999,message:'You should send an user object like {id: 92, idType: "TO_BE_USER_CONTACT_ID"}'});return;}}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Get Mutual Groups!'});return;}return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode,uniqueId:result.uniqueId};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={threads:[],contentCount:result.contentCount,hasNext:offset+count<result.contentCount&&messageLength>0,nextOffset:offset*1+messageLength*1},threadData;for(var i=0;i<messageLength;i++){threadData=createThread(messageContent[i],false);if(threadData){resultData.threads.push(threadData);}}returnData.result=resultData;}callback&&callback(returnData);/**
+publicized.sendCallMetaData=callModule.sendCallMetaData;publicized.sendCallSticker=callModule.sendCallSticker;publicized.callStickerTypes=_constants.callStickerTypes;publicized.recallThreadParticipant=callModule.recallThreadParticipant;publicized.deviceManager=function(){return app.call.currentCall().deviceManager;};publicized.inquiryCallParticipants=callModule.inquiryCallParticipants;publicized.resetCallStream=callModule.resetCallStream;publicized.getMutualGroups=function(params,callback){var count=+params.count?+params.count:25,offset=+params.offset?+params.offset:0;var sendData={chatMessageVOType:_constants.chatMessageVOTypes.MUTUAL_GROUPS,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:{count:count,offset:offset}};if(params){if((0,_typeof2["default"])(params.user)==='object'&&params.user.hasOwnProperty('id')&&params.user.hasOwnProperty('idType')&&params.user.id.length&&_constants.inviteeVOidTypes[params.user.idType]>0){sendData.content.toBeUserVO={id:params.user.id,idType:+_constants.inviteeVOidTypes[params.user.idType]};}else{app.chatEvents.fireEvent('error',{code:999,message:'You should send an user object like {id: 92, idType: "TO_BE_USER_CONTACT_ID"}'});return;}}else{app.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to Get Mutual Groups!'});return;}return app.messenger.sendMessage(sendData,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode,uniqueId:result.uniqueId};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={threads:[],contentCount:result.contentCount,hasNext:offset+count<result.contentCount&&messageLength>0,nextOffset:offset*1+messageLength*1},threadData;for(var i=0;i<messageLength;i++){threadData=createThread(messageContent[i],false);if(threadData){resultData.threads.push(threadData);}}returnData.result=resultData;}callback&&callback(returnData);/**
          * Delete callback so if server pushes response before
          * cache, cache won't send data again
          */callback=undefined;}});};publicized.sendLocationPing=function(params,callback){/**
      * + locationPingRequest     {object}
      *    + content              {list} A map of { location: string, locationId: int }
-     */var locationPingData={chatMessageVOType:_constants.chatMessageVOTypes.LOCATION_PING,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-pushMsgType:3,token:_sdkParams.sdkParams.token},content={};if(params){if(typeof params.location==='string'&&_sdkParams.sdkParams.locationPingTypes.hasOwnProperty(params.location.toUpperCase())){content.location=_sdkParams.sdkParams.locationPingTypes[params.location.toUpperCase()];if(params.location.toUpperCase()==='THREAD'){if(typeof params.threadId==='number'&&params.threadId>0){content.locationId=+params.threadId;}else{_events.chatEvents.fireEvent('error',{code:999,message:'You set the location to be a thread, you have to send a valid ThreadId'});return;}}}else{_events.chatEvents.fireEvent('error',{code:999,message:'Send a valid location type (CHAT / THREAD / CONTACTS)'});return;}locationPingData.content=JSON.stringify(content);}else{_events.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to LocationPing!'});return;}return(0,_messaging.messenger)().sendMessage(locationPingData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.clearChatServerCaches=clearChatServerCaches;publicized.deleteCacheDatabases=deleteCacheDatabases;publicized.clearCacheDatabasesOfUser=clearCacheDatabasesOfUser;publicized.getChatState=function(){return chatFullStateObject;};publicized.reconnect=function(){asyncClient.reconnectSocket();};publicized.setToken=function(newToken){if(typeof newToken!=='undefined'){_sdkParams.sdkParams.token=newToken;if(!_store.store.user()||!_store.store.user().id){getUserAndUpdateSDKState();}}};publicized.generateUUID=_utility["default"].generateUUID;publicized.logout=function(){// clearChatServerCaches();
-_events.chatEvents.clearEventCallbacks();_store.store.messagesCallbacks={};_store.store.sendMessageCallbacks={};_store.store.threadCallbacks={};(0,_messaging.messenger)().stopChatPing();asyncClient.logout();};publicized.inviteeIdTypes=_constants.inviteeVOidTypes;/**
+     */var locationPingData={chatMessageVOType:_constants.chatMessageVOTypes.LOCATION_PING,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+pushMsgType:3,token:app.sdkParams.token},content={};if(params){if(typeof params.location==='string'&&app.sdkParams.locationPingTypes.hasOwnProperty(params.location.toUpperCase())){content.location=app.sdkParams.locationPingTypes[params.location.toUpperCase()];if(params.location.toUpperCase()==='THREAD'){if(typeof params.threadId==='number'&&params.threadId>0){content.locationId=+params.threadId;}else{app.chatEvents.fireEvent('error',{code:999,message:'You set the location to be a thread, you have to send a valid ThreadId'});return;}}}else{app.chatEvents.fireEvent('error',{code:999,message:'Send a valid location type (CHAT / THREAD / CONTACTS)'});return;}locationPingData.content=JSON.stringify(content);}else{app.chatEvents.fireEvent('error',{code:999,message:'No params have been sent to LocationPing!'});return;}return app.messenger.sendMessage(locationPingData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.clearChatServerCaches=clearChatServerCaches;publicized.deleteCacheDatabases=deleteCacheDatabases;publicized.clearCacheDatabasesOfUser=clearCacheDatabasesOfUser;publicized.getChatState=function(){return chatFullStateObject;};publicized.reconnect=function(){asyncClient.reconnectSocket();};publicized.setToken=function(newToken){if(typeof newToken!=='undefined'){app.sdkParams.token=newToken;if(!app.store.user.get()||!app.store.user.get().id){getUserAndUpdateSDKState();}}};publicized.generateUUID=_utility["default"].generateUUID;publicized.logout=function(){// clearChatServerCaches();
+app.chatEvents.clearEventCallbacks();app.store.messagesCallbacks={};app.store.sendMessageCallbacks={};app.store.threadCallbacks={};app.messenger.stopChatPing();asyncClient.logout();};publicized.inviteeIdTypes=_constants.inviteeVOidTypes;/**
    * Check a turn server availability
    *
    * @param turnIp
@@ -50715,21 +46454,21 @@ _events.chatEvents.clearEventCallbacks();_store.store.messagesCallbacks={};_stor
 pc.createOffer(function(sdp){if(sdp.sdp.indexOf('typ relay')>-1){// sometimes sdp contains the ice candidates...
 promiseResolved=true;resolve(true);}pc.setLocalDescription(sdp,noop,noop);},noop);// create offer and set local description
 pc.onicecandidate=function(ice){//listen for candidate events
-if(promiseResolved||!ice||!ice.candidate||!ice.candidate.candidate||!(ice.candidate.candidate.indexOf('typ relay')>-1))return;promiseResolved=true;resolve(true);};});};publicized.getCustomerInfo=function(params,callback){var userId=params.userId||_store.store.user().id,sendData={chatMessageVOType:_constants.chatMessageVOTypes.CUSTOMER_INFO,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:[userId],token:_sdkParams.sdkParams.token};return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.getThreadsLight=function(params,callback){var count=25,offset=0,content={};if(params){if(parseInt(params.count)>0){count=params.count;}if(parseInt(params.offset)>0){offset=params.offset;}if(typeof params.threadName==='string'){content.name=params.threadName;}if(typeof params.username==='string'){content.username=params.username;}if(typeof params.cellphoneNumber==='string'){content.cellphoneNumber=params.cellphoneNumber;}if(Array.isArray(params.threadIds)){content.threadIds=params.threadIds;}if(typeof params["new"]==='boolean'){content["new"]=params["new"];}if(parseInt(params.creatorCoreUserId)>0){content.creatorCoreUserId=params.creatorCoreUserId;}if(parseInt(params.partnerCoreUserId)>0){content.partnerCoreUserId=params.partnerCoreUserId;}if(parseInt(params.partnerCoreContactId)>0){content.partnerCoreContactId=params.partnerCoreContactId;}if(parseInt(params.fromTime)>0&&parseInt(params.fromTime)<9999999999999){content.fromTime=parseInt(params.fromTime);}if(parseInt(params.toTime)>0&&parseInt(params.toTime)<9999999999999){content.toTime=parseInt(params.toTime);}var functionLevelCache=typeof params.cache=='boolean'?params.cache:true;if(typeof params.isGroup==='boolean'){content.isGroup=params.isGroup;}if(typeof params.type==='number'){content.type=params.type;}}content.count=count;content.offset=offset;var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.GET_THREAD_LIGHT,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-content:content};return(0,_messaging.messenger)().sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode,uniqueId:result.uniqueId};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={threads:[],contentCount:result.contentCount,hasNext:messageContent&&!(messageLength<count),//(offset + count < result.contentCount && messageLength > 0),
-nextOffset:offset*1+messageLength*1},threadData;for(var i=0;i<messageLength;i++){threadData=createThread(messageContent[i],false);if(threadData){resultData.threads.push(threadData);}}_store.store.threads.saveMany(resultData.threads);returnData.result=resultData;}callback&&callback(returnData);}});};publicized.archiveThread=function(_ref2,callback){var threadId=_ref2.threadId;var sendData={chatMessageVOType:_constants.chatMessageVOTypes.ARCHIVE_THREAD,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-token:_sdkParams.sdkParams.token,subjectId:threadId};return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.unArchiveThread=function(_ref3,callback){var threadId=_ref3.threadId;var sendData={chatMessageVOType:_constants.chatMessageVOTypes.UNARCHIVE_THREAD,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-token:_sdkParams.sdkParams.token,subjectId:threadId};return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.chatStickerTypes=_constants.chatStickerTypes;publicized.addReaction=_reactionsMethods.addReaction;publicized.getMyReaction=_reactionsMethods.getMyReaction;publicized.replaceReaction=_reactionsMethods.replaceReaction;publicized.removeReaction=_reactionsMethods.removeReaction;publicized.getReactionList=_reactionsMethods.getReactionList;publicized.getReactionsSummaries=_reactionsMethods.getReactionsSummaries;publicized.version=function(){console.log("%c[SDK] Version: podchat-browser@"+_buildConfig["default"].version,"color:green; font-size:13px");console.log("%c[SDK] Build date:"+_buildConfig["default"].date,"color:green;font-size:13px");console.log("%c[SDK] Additional info: "+_buildConfig["default"].VersionInfo,"color:green;font-size:13px");return _buildConfig["default"];};publicized.changeProtocol=function(){var proto=arguments.length>0&&arguments[0]!==undefined?arguments[0]:"websocket";if(["webrtc","websocket","auto"].includes(proto)){if(proto!=protocolManager.getCurrentProtocol()){protocolManager.switchProtocol(proto.toLowerCase());// sdkParams.protocol = protocolSwitching.getCurrentProtocol();
+if(promiseResolved||!ice||!ice.candidate||!ice.candidate.candidate||!(ice.candidate.candidate.indexOf('typ relay')>-1))return;promiseResolved=true;resolve(true);};});};publicized.getCustomerInfo=function(params,callback){var userId=params.userId||app.store.user.get().id,sendData={chatMessageVOType:_constants.chatMessageVOTypes.CUSTOMER_INFO,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:[userId],token:app.sdkParams.token};return app.messenger.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.getThreadsLight=function(params,callback){var count=25,offset=0,content={};if(params){if(parseInt(params.count)>0){count=params.count;}if(parseInt(params.offset)>0){offset=params.offset;}if(typeof params.threadName==='string'){content.name=params.threadName;}if(typeof params.username==='string'){content.username=params.username;}if(typeof params.cellphoneNumber==='string'){content.cellphoneNumber=params.cellphoneNumber;}if(Array.isArray(params.threadIds)){content.threadIds=params.threadIds;}if(typeof params["new"]==='boolean'){content["new"]=params["new"];}if(parseInt(params.creatorCoreUserId)>0){content.creatorCoreUserId=params.creatorCoreUserId;}if(parseInt(params.partnerCoreUserId)>0){content.partnerCoreUserId=params.partnerCoreUserId;}if(parseInt(params.partnerCoreContactId)>0){content.partnerCoreContactId=params.partnerCoreContactId;}if(parseInt(params.fromTime)>0&&parseInt(params.fromTime)<9999999999999){content.fromTime=parseInt(params.fromTime);}if(parseInt(params.toTime)>0&&parseInt(params.toTime)<9999999999999){content.toTime=parseInt(params.toTime);}var functionLevelCache=typeof params.cache=='boolean'?params.cache:true;if(typeof params.isGroup==='boolean'){content.isGroup=params.isGroup;}if(typeof params.type==='number'){content.type=params.type;}}content.count=count;content.offset=offset;var sendMessageParams={chatMessageVOType:_constants.chatMessageVOTypes.GET_THREAD_LIGHT,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+content:content};return app.messenger.sendMessage(sendMessageParams,{onResult:function onResult(result){var returnData={hasError:result.hasError,cache:false,errorMessage:result.errorMessage,errorCode:result.errorCode,uniqueId:result.uniqueId};if(!returnData.hasError){var messageContent=result.result,messageLength=messageContent.length,resultData={threads:[],contentCount:result.contentCount,hasNext:messageContent&&!(messageLength<count),//(offset + count < result.contentCount && messageLength > 0),
+nextOffset:offset*1+messageLength*1},threadData;for(var i=0;i<messageLength;i++){threadData=createThread(messageContent[i],false);if(threadData){resultData.threads.push(threadData);}}app.store.threads.saveMany(resultData.threads);returnData.result=resultData;}callback&&callback(returnData);}});};publicized.archiveThread=function(_ref2,callback){var threadId=_ref2.threadId;var sendData={chatMessageVOType:_constants.chatMessageVOTypes.ARCHIVE_THREAD,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+token:app.sdkParams.token,subjectId:threadId};return app.messenger.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.unArchiveThread=function(_ref3,callback){var threadId=_ref3.threadId;var sendData={chatMessageVOType:_constants.chatMessageVOTypes.UNARCHIVE_THREAD,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+token:app.sdkParams.token,subjectId:threadId};return app.messenger.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.chatStickerTypes=_constants.chatStickerTypes;publicized.addReaction=reactionsMethods.addReaction;publicized.getMyReaction=reactionsMethods.getMyReaction;publicized.replaceReaction=reactionsMethods.replaceReaction;publicized.removeReaction=reactionsMethods.removeReaction;publicized.getReactionList=reactionsMethods.getReactionList;publicized.getReactionsSummaries=reactionsMethods.getReactionsSummaries;publicized.version=function(){console.log("%c[SDK] Version: podchat-browser@"+_buildConfig["default"].version,"color:green; font-size:13px");console.log("%c[SDK] Build date:"+_buildConfig["default"].date,"color:green;font-size:13px");console.log("%c[SDK] Additional info: "+_buildConfig["default"].VersionInfo,"color:green;font-size:13px");return _buildConfig["default"];};publicized.changeProtocol=function(){var proto=arguments.length>0&&arguments[0]!==undefined?arguments[0]:"websocket";if(["webrtc","websocket","auto"].includes(proto)){if(proto!=protocolManager.getCurrentProtocol()){protocolManager.switchProtocol(proto.toLowerCase());// app.sdkParams.protocol = protocolSwitching.getCurrentProtocol();
 // asyncClient.logout();
 // initAsync();
-}else{console.warn("SDK is currently using the ".concat(proto," protocol. Nothing to do."));}}else{console.error("Protocol ".concat(proto," is not supported in SDK. Valid protocols: \"webrtc\", \"websocket\""));}};publicized.getPinMessages=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.GET_PIN_MESSAGE,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-token:_sdkParams.sdkParams.token,content:params.content};return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.lastMessageInfo=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.LAST_MESSAGE_INFO,typeCode:_sdkParams.sdkParams.generalTypeCode,//params.typeCode,
-token:_sdkParams.sdkParams.token,content:params.content};return(0,_messaging.messenger)().sendMessage(sendData,{onResult:function onResult(result){if(!result.hasError){var formattedData={};if(result.result&&Object.values(result.result).length){Object.entries(result.result).forEach(function(item){formattedData[item[0]]=formatDataToMakeMessage(item[0],item[1]);});result.result=formattedData;}}callback&&callback(result);}});};publicized.resetAudioSendStream=callModule.resetAudioSendStream;publicized.resetVideoSendStream=callModule.resetVideoSendStream;publicized.stopPrintStatus=callModule.stopPrintStatus;publicized.startPrintStatus=callModule.startPrintStatus;_store.store.events.on(_store.store.threads.eventsList.UNREAD_COUNT_UPDATED,function(thread){_events.chatEvents.fireEvent('threadEvents',{type:'UNREAD_COUNT_UPDATED',result:{threadId:thread.id,unreadCount:thread.unreadCount||0,lastSeenMessageTime:thread.lastSeenMessageTime||undefined}});});init();return publicized;}if(typeof window!="undefined"){if(!window.POD){window.POD={};}window.POD.Chat=Chat;//For backward compatibility
+}else{console.warn("SDK is currently using the ".concat(proto," protocol. Nothing to do."));}}else{console.error("Protocol ".concat(proto," is not supported in SDK. Valid protocols: \"webrtc\", \"websocket\""));}};publicized.getPinMessages=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.GET_PIN_MESSAGE,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+token:app.sdkParams.token,content:params.content};return app.messenger.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.lastMessageInfo=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.LAST_MESSAGE_INFO,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+token:app.sdkParams.token,content:params.content};return app.messenger.sendMessage(sendData,{onResult:function onResult(result){if(!result.hasError){var formattedData={};if(result.result&&Object.values(result.result).length){Object.entries(result.result).forEach(function(item){formattedData[item[0]]=formatDataToMakeMessage(item[0],item[1]);});result.result=formattedData;}}callback&&callback(result);}});};publicized.resetAudioSendStream=callModule.resetAudioSendStream;publicized.resetVideoSendStream=callModule.resetVideoSendStream;publicized.stopPrintStatus=callModule.stopPrintStatus;publicized.startPrintStatus=callModule.startPrintStatus;app.store.events.on(app.store.threads.eventsList.UNREAD_COUNT_UPDATED,function(thread){app.chatEvents.fireEvent('threadEvents',{type:'UNREAD_COUNT_UPDATED',result:{threadId:thread.id,unreadCount:thread.unreadCount||0,lastSeenMessageTime:thread.lastSeenMessageTime||undefined}});});init();return publicized;}if(typeof window!="undefined"){if(!window.POD){window.POD={};}window.POD.Chat=Chat;//For backward compatibility
 window.PodChat=Chat;}var _default=Chat;// })();
 exports["default"]=_default;
 
-},{"./buildConfig.json":280,"./call.module":281,"./deprecateMethods":283,"./events.module":284,"./lib/call/deviceManager.js":291,"./lib/chat/reactionsMethods":297,"./lib/chat/threadParticipantsMethods":298,"./lib/constants":299,"./lib/sdkParams":302,"./lib/store":304,"./lib/store/user":308,"./messaging.module":309,"./utility/utility":310,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/toConsumableArray":12,"@babel/runtime/helpers/typeof":13,"podasync-ws-only":218,"xss":276}],283:[function(require,module,exports){
+},{"./buildConfig.json":258,"./call.module":259,"./deprecateMethods":261,"./lib/app":263,"./lib/chat/reactionsMethods":275,"./lib/chat/threadParticipantsMethods":276,"./lib/constants":277,"./messaging.module":287,"./utility/utility":288,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/toConsumableArray":12,"@babel/runtime/helpers/typeof":13,"podasync-ws-only":209,"xss":254}],261:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -50800,7 +46539,7 @@ function printIsDeprecate(key) {
   console.warn("||| Method: " + deprecatedString[key].methodName + " is deprecated! " + (deprecatedString[key].replacementString ? " use " + deprecatedString[key].replacementString + "instead. " : "") + (deprecatedString[key].deprecationDate ? " Deprecation Date: " + deprecatedString[key].deprecationDate : ""));
 }
 
-},{}],284:[function(require,module,exports){
+},{}],262:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -50808,17 +46547,11 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports["default"] = exports.chatEvents = void 0;
-exports.initEventHandler = initEventHandler;
+exports["default"] = void 0;
 
 var _utility = _interopRequireDefault(require("./utility/utility"));
 
-var _sdkParams = require("./lib/sdkParams");
-
-var chatEvents = new ChatEvents();
-exports.chatEvents = chatEvents;
-
-function ChatEvents() {
+function ChatEvents(app) {
   var eventCallbacks = {
     connect: {},
     disconnect: {},
@@ -50843,7 +46576,7 @@ function ChatEvents() {
     this.code = error.error ? error.error.code : error.code;
     this.message = error.error ? error.error.message : error.message;
     this.uniqueId = error.uniqueId ? error.uniqueId : '';
-    this.token = _sdkParams.sdkParams.token;
+    this.token = app.sdkParams.token;
     this.error = JSON.stringify(error.error ? error.error : error);
     this.environmentDetails = error.environmentDetails;
   };
@@ -50864,9 +46597,9 @@ function ChatEvents() {
   this.fireEvent = function (eventName, param) {
     if (eventName === "chatReady") {
       if (typeof navigator === "undefined") {
-        _sdkParams.sdkParams.consoleLogging && console.log("\x1b[90m    ☰ \x1b[0m\x1b[90m%s\x1b[0m", "Chat is Ready 😉");
+        app.sdkParams.consoleLogging && console.log("\x1b[90m    ☰ \x1b[0m\x1b[90m%s\x1b[0m", "Chat is Ready 😉");
       } else {
-        _sdkParams.sdkParams.consoleLogging && console.log("%c   Chat is Ready 😉", 'border-left: solid #666 10px; color: #666;');
+        app.sdkParams.consoleLogging && console.log("%c   Chat is Ready 😉", 'border-left: solid #666 10px; color: #666;');
       }
     }
 
@@ -50909,18 +46642,75 @@ function ChatEvents() {
   };
 }
 
-function initEventHandler() {
-  if (!chatEvents) {
-    exports.chatEvents = chatEvents = new ChatEvents();
-  }
-
-  return chatEvents;
-}
-
 var _default = ChatEvents;
 exports["default"] = _default;
 
-},{"./lib/sdkParams":302,"./utility/utility":310,"@babel/runtime/helpers/interopRequireDefault":7}],285:[function(require,module,exports){
+},{"./utility/utility":288,"@babel/runtime/helpers/interopRequireDefault":7}],263:[function(require,module,exports){
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+
+var _store = require("./store");
+
+var _sdkParams = require("./sdkParams");
+
+var _events = _interopRequireDefault(require("../events.module"));
+
+var _requestBlocker = _interopRequireDefault(require("./requestBlocker"));
+
+var _errorHandler = _interopRequireDefault(require("./errorHandler"));
+
+function App() {
+  var app = {};
+  app.store = new _store.Store(app);
+  app.sdkParams = new _sdkParams.SDKParams();
+  app.chatEvents = new _events["default"](app);
+  app.requestBlocker = new _requestBlocker["default"](app);
+  app.errorHandler = new _errorHandler["default"](app);
+  return app;
+}
+
+var _default = App;
+exports["default"] = _default;
+
+},{"../events.module":262,"./errorHandler":278,"./requestBlocker":279,"./sdkParams":280,"./store":282,"@babel/runtime/helpers/interopRequireDefault":7}],264:[function(require,module,exports){
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+
+var _sharedData = _interopRequireDefault(require("./sharedData"));
+
+function Call(app) {
+  var call = {};
+  var sharedData = new _sharedData["default"](app);
+  call.currentCall = sharedData.currentCall;
+  call.callStopQueue = sharedData.callStopQueue;
+  call.calculateScreenSize = sharedData.calculateScreenSize;
+  call.sharedVariables = sharedData.sharedVariables;
+  call.callClientType = sharedData.callClientType;
+  call.callTypes = sharedData.callTypes;
+  call.joinCallParams = sharedData.joinCallParams;
+  call.endScreenShare = sharedData.endScreenShare;
+  call.currentCall = sharedData.currentCall;
+  call.endCall = sharedData.endCall;
+  call.audioCtx = sharedData.audioCtx;
+  return call;
+}
+
+var _default = Call;
+exports["default"] = _default;
+
+},{"./sharedData":272,"@babel/runtime/helpers/interopRequireDefault":7}],265:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -50938,23 +46728,13 @@ var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/
 
 var _callUsers = require("./callUsers");
 
-var _events = require("../../events.module");
-
-var _sdkParams = require("../sdkParams");
-
-var _store = require("../store");
-
-var _sharedData = require("./sharedData");
-
 var _utility = _interopRequireDefault(require("../../utility/utility"));
 
-var _callServerManager = require("./callServerManager");
+var _callServerManager = _interopRequireDefault(require("./callServerManager"));
 
 var _constants = require("../constants");
 
 var _errorHandler = require("../errorHandler");
-
-var _callsList = require("./callsList");
 
 function ownKeys(object, enumerableOnly) {
   var keys = Object.keys(object);
@@ -50983,28 +46763,30 @@ function _objectSpread(target) {
 }
 
 function CallManager(_ref) {
-  var callId = _ref.callId,
+  var app = _ref.app,
+      callId = _ref.callId,
       callConfig = _ref.callConfig;
   var config = {
     callId: callId,
     callConfig: callConfig,
     users: new _callUsers.CallUsers({
+      app: app,
       callId: callId
     }),
-    callServerController: new _callServerManager.CallServerManager(),
-    screenShareInfo: new ScreenShareStateManager(),
+    callServerController: new _callServerManager["default"](app),
+    screenShareInfo: new ScreenShareStateManager(app),
     deviceManager: null
   };
 
   function startCallWebRTCFunctions(callConfig) {
     config.callServerController.setServers(callConfig.kurentoAddress);
 
-    if (_sharedData.sharedVariables.callDivId) {
+    if (app.call.sharedVariables.callDivId) {
       new Promise(function (resolve) {
         var callVideo = typeof callConfig.video === 'boolean' ? callConfig.video : true,
             callMute = typeof callConfig.mute === 'boolean' ? callConfig.mute : false;
-        config.deviceManager = _sharedData.sharedVariables.deviceManager;
-        _sharedData.sharedVariables.deviceManager = null;
+        config.deviceManager = app.call.sharedVariables.deviceManager;
+        app.call.sharedVariables.deviceManager = null;
 
         if (callConfig.selfData) {
           callConfig.selfData.callId = config.callId;
@@ -51016,7 +46798,7 @@ function CallManager(_ref) {
         config.screenShareInfo.setIsStarted(!!callConfig.screenShareOwner);
 
         if (callConfig.recordingOwner) {
-          _events.chatEvents.fireEvent('callEvents', {
+          app.chatEvents.fireEvent('callEvents', {
             type: 'CALL_RECORDING_STARTED',
             result: {
               id: callConfig.recordingOwner
@@ -51026,7 +46808,7 @@ function CallManager(_ref) {
 
         if (callConfig.clientsList && callConfig.clientsList.length) {
           for (var i in callConfig.clientsList) {
-            if (callConfig.clientsList[i].userId !== _store.store.user().id) {
+            if (callConfig.clientsList[i].userId !== app.store.user.get().id) {
               callConfig.clientsList[i].callId = config.callId;
               callConfig.clientsList[i].cameraPaused = false;
               config.users.addItem(callConfig.clientsList[i]);
@@ -51052,18 +46834,18 @@ function CallManager(_ref) {
         createSessionInChat();
         resolve();
       }).then(function () {
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_DIVS',
           result: config.users.generateCallUIList()
         });
       });
     } else {
-      _sdkParams.sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
+      app.sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
     }
   }
 
   function createSessionInChat() {
-    _sharedData.callStopQueue.callStarted = true;
+    app.call.callStopQueue.callStarted = true;
 
     var message = {
       id: 'CREATE_SESSION',
@@ -51072,9 +46854,9 @@ function CallManager(_ref) {
     },
         onResultCallback = function onResultCallback(res) {
       if (res.done === 'TRUE') {
-        _sharedData.callStopQueue.callStarted = true; // callController.startCall(params);
+        app.call.callStopQueue.callStarted = true; // callController.startCall(params);
       } else {
-        (0, _callsList.callsManager)().removeItem(config.callId); // endCall({callId: config.callId});
+        app.callsManager.removeItem(config.callId); // endCall({callId: config.callId});
         // callStop(true, true);
       }
     };
@@ -51104,14 +46886,14 @@ function CallManager(_ref) {
               return config.users.destroy();
 
             case 4:
-              if (_sharedData.callStopQueue.callStarted) {
+              if (app.call.callStopQueue.callStarted) {
                 sendCallMessage({
                   id: 'CLOSE'
                 }, null, {});
-                _sharedData.callStopQueue.callStarted = false;
+                app.call.callStopQueue.callStarted = false;
               }
 
-              if (resetCameraPaused) _sharedData.joinCallParams.cameraPaused = false;
+              if (resetCameraPaused) app.call.joinCallParams.cameraPaused = false;
               clearTimeout(config.callRequestTimeout);
               config.callConfig = {};
               if (resetCurrentCallId) config.callId = null;
@@ -51131,7 +46913,7 @@ function CallManager(_ref) {
         timeoutTime = _ref2$timeoutTime === void 0 ? 0 : _ref2$timeoutTime,
         _ref2$timeoutRetriesC = _ref2.timeoutRetriesCount,
         timeoutRetriesCount = _ref2$timeoutRetriesC === void 0 ? 0 : _ref2$timeoutRetriesC;
-    message.token = _sdkParams.sdkParams.token; // let uniqueId;
+    message.token = app.sdkParams.token; // let uniqueId;
 
     if (!message.uniqueId) {
       message.uniqueId = _utility["default"].generateUUID();
@@ -51146,25 +46928,25 @@ function CallManager(_ref) {
         // callServerName,
         priority: 1,
         content: JSON.stringify(message),
-        ttl: _sdkParams.sdkParams.messageTtl
+        ttl: app.sdkParams.messageTtl
       }
     };
 
     if (typeof callback == 'function') {
-      _store.store.messagesCallbacks[message.uniqueId] = callback;
+      app.store.messagesCallbacks[message.uniqueId] = callback;
     }
 
-    _sharedData.sharedVariables.asyncClient.send(data, function (res) {});
+    app.call.sharedVariables.asyncClient.send(data, function (res) {});
 
-    if (timeoutTime || _sharedData.sharedVariables.globalCallRequestTimeout > 0) {
-      _store.store.asyncRequestTimeouts[message.uniqueId] && clearTimeout(_store.store.asyncRequestTimeouts[message.uniqueId]);
-      _store.store.asyncRequestTimeouts[message.uniqueId] = setTimeout(function () {
-        if (_store.store.messagesCallbacks[message.uniqueId]) {
-          delete _store.store.messagesCallbacks[message.uniqueId];
+    if (timeoutTime || app.call.sharedVariables.globalCallRequestTimeout > 0) {
+      app.store.asyncRequestTimeouts[message.uniqueId] && clearTimeout(app.store.asyncRequestTimeouts[message.uniqueId]);
+      app.store.asyncRequestTimeouts[message.uniqueId] = setTimeout(function () {
+        if (app.store.messagesCallbacks[message.uniqueId]) {
+          delete app.store.messagesCallbacks[message.uniqueId];
         }
 
         if (timeoutRetriesCount) {
-          _sdkParams.sdkParams.consoleLogging && console.log("[SDK][sendCallMessage] Retrying call request. uniqueId :" + message.uniqueId, {
+          app.sdkParams.consoleLogging && console.log("[SDK][sendCallMessage] Retrying call request. uniqueId :" + message.uniqueId, {
             message: message
           }); //timeoutCallback();
 
@@ -51180,7 +46962,7 @@ function CallManager(_ref) {
             done: 'SKIP'
           });
         }
-      }, timeoutTime || _sharedData.sharedVariables.globalCallRequestTimeout);
+      }, timeoutTime || app.call.sharedVariables.globalCallRequestTimeout);
     }
   }
 
@@ -51277,36 +47059,33 @@ function CallManager(_ref) {
     peer = topicManager.getPeer();
 
     if (peer == null) {
-      _events.chatEvents.fireEvent('callEvents', {
+      app.chatEvents.fireEvent('callEvents', {
         type: 'CALL_ERROR',
         code: 7000,
         message: "[handleProcessSdpAnswer] Skip, no WebRTC Peer",
         error: peer,
         environmentDetails: getCallDetails()
       });
-
       return;
     }
 
     peer.processAnswer(jsonMessage.sdpAnswer, function (err) {
       if (err) {
         sendCallSocketError("[handleProcessSdpAnswer] Error: " + err);
-
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_ERROR',
           code: 7000,
           message: "[handleProcessSdpAnswer] Error: " + err,
           environmentDetails: getCallDetails()
         });
-
         return;
       }
 
-      _sdkParams.sdkParams.consoleLogging && console.log("[SDK][handleProcessSdpAnswer]", jsonMessage, jsonMessage.topic, topicManager.metadata().isIceCandidateIntervalSet().toString());
+      app.sdkParams.consoleLogging && console.log("[SDK][handleProcessSdpAnswer]", jsonMessage, jsonMessage.topic, topicManager.metadata().isIceCandidateIntervalSet().toString());
 
       if (topicManager.metadata().isIceCandidateIntervalSet()) {
         topicManager.topicMetaData().sdpAnswerReceived = true; // topicManager.startMedia()
-        // if (userId == 'screenShare' || userId == store.user().id) {
+        // if (userId == 'screenShare' || userId == app.store.user.get().id) {
         //     topicManager.restartMediaOnKeyFrame(userId, [2000, 4000, 8000, 12000, 20000]);
         // }
       }
@@ -51335,29 +47114,26 @@ function CallManager(_ref) {
     peer = peer.getPeer();
 
     if (peer == null) {
-      _events.chatEvents.fireEvent('callEvents', {
+      app.chatEvents.fireEvent('callEvents', {
         type: 'CALL_ERROR',
         code: 7000,
         message: "[handleAddIceCandidate] Skip, no WebRTC Peer",
         error: JSON.stringify(peer),
         environmentDetails: getCallDetails()
       });
-
       return;
     }
 
     peer.addIceCandidate(jsonMessage.candidate, function (err) {
       if (err) {
         console.error("[handleAddIceCandidate] " + err);
-
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_ERROR',
           code: 7000,
           message: "[handleAddIceCandidate] " + err,
           error: JSON.stringify(jsonMessage.candidate),
           environmentDetails: getCallDetails()
         });
-
         return;
       }
     });
@@ -51365,9 +47141,9 @@ function CallManager(_ref) {
 
   function getCallDetails(customData) {
     return _objectSpread({
-      currentUser: _store.store.user,
+      currentUser: app.store.user.get(),
       currentServers: {
-        callTurnIp: _sharedData.sharedVariables.callTurnIp
+        callTurnIp: app.call.sharedVariables.callTurnIp
       },
       isJanus: config.callId && config.callServerController.isJanus(),
       screenShareInfo: {
@@ -51380,13 +47156,12 @@ function CallManager(_ref) {
   }
 
   function sendCallSocketError(message) {
-    _events.chatEvents.fireEvent('callEvents', {
+    app.chatEvents.fireEvent('callEvents', {
       type: 'CALL_ERROR',
       code: 7000,
       message: message,
       environmentDetails: getCallDetails()
     });
-
     sendCallMessage({
       id: 'ERROR',
       message: message
@@ -51413,7 +47188,7 @@ function CallManager(_ref) {
     var jMessage = JSON.parse(jsonMessage.message);
     var id = jMessage.id;
 
-    if (!id || typeof id === "undefined" || jsonMessage.userid == _store.store.user().id) {
+    if (!id || typeof id === "undefined" || jsonMessage.userid == app.store.user.get().id) {
       return;
     }
 
@@ -51440,16 +47215,15 @@ function CallManager(_ref) {
         break;
 
       case _constants.callMetaDataTypes.CUSTOMUSERMETADATA:
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          _store.store.messagesCallbacks[uniqueId](jsonMessage);
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](jsonMessage);
         }
 
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CUSTOM_USER_METADATA',
           userId: jMessage.userid,
           content: jMessage.content
         });
-
         break;
 
       case _constants.callMetaDataTypes.SCREENSHAREMETADATA:
@@ -51463,7 +47237,7 @@ function CallManager(_ref) {
             }, 2500);
           }
 
-          _events.chatEvents.fireEvent("callEvents", {
+          app.chatEvents.fireEvent("callEvents", {
             type: 'SCREENSHARE_METADATA',
             userId: jMessage.userid,
             content: jMessage.content
@@ -51489,8 +47263,7 @@ function CallManager(_ref) {
 
   function handleError(jsonMessage, sendingTopic, receiveTopic) {
     var errMessage = jsonMessage.message;
-
-    _events.chatEvents.fireEvent('callEvents', {
+    app.chatEvents.fireEvent('callEvents', {
       type: 'CALL_ERROR',
       code: 7000,
       message: "Kurento error: " + errMessage,
@@ -51506,7 +47279,7 @@ function CallManager(_ref) {
       return config.callConfig;
     },
     callStop: callStop,
-    endCall: _sharedData.endCall,
+    endCall: app.call.endCall,
     users: function users() {
       return config.users;
     },
@@ -51514,14 +47287,14 @@ function CallManager(_ref) {
       return config.deviceManager;
     },
     sendCallDivs: function sendCallDivs() {
-      _events.chatEvents.fireEvent('callEvents', {
+      app.chatEvents.fireEvent('callEvents', {
         type: 'CALL_DIVS',
         result: config.users.generateCallUIList()
       });
     },
     screenShareInfo: config.screenShareInfo,
     raiseCallError: function raiseCallError(errorObject, callBack, fireEvent) {
-      (0, _errorHandler.raiseError)(errorObject, callBack, fireEvent, {
+      app.errorHandler.raiseError(errorObject, callBack, fireEvent, {
         eventName: 'callEvents',
         eventType: 'CALL_ERROR',
         environmentDetails: getCallDetails()
@@ -51530,8 +47303,8 @@ function CallManager(_ref) {
     getCallDetails: getCallDetails,
     sendCallMessage: sendCallMessage,
     getTurnServer: function getTurnServer(params) {
-      if (!!params.turnAddress && params.turnAddress.length > 0 || _sharedData.sharedVariables.useInternalTurnAddress && !!params.internalTurnAddress && params.turnAddress.length > 0) {
-        var serversTemp = _sharedData.sharedVariables.useInternalTurnAddress ? params.internalTurnAddress.split(',') : params.turnAddress.split(','),
+      if (!!params.turnAddress && params.turnAddress.length > 0 || app.call.sharedVariables.useInternalTurnAddress && !!params.internalTurnAddress && params.turnAddress.length > 0) {
+        var serversTemp = app.call.sharedVariables.useInternalTurnAddress ? params.internalTurnAddress.split(',') : params.turnAddress.split(','),
             turnsList = [];
 
         for (var i in serversTemp) {
@@ -51545,7 +47318,7 @@ function CallManager(_ref) {
         return turnsList;
       } else {
         return [{
-          "urls": "turn:" + _sharedData.sharedVariables.callTurnIp + ":3478",
+          "urls": "turn:" + app.call.sharedVariables.callTurnIp + ":3478",
           "username": "mkhorrami",
           "credential": "mkh_123456"
         }];
@@ -51564,7 +47337,7 @@ function CallManager(_ref) {
 
       if (mediaType === 'video') {
         //TODO: Deprecated!
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: isResolved ? 'POOR_VIDEO_CONNECTION_RESOLVED' : 'POOR_VIDEO_CONNECTION',
           subType: isResolved ? undefined : isLongTime ? 'LONG_TIME' : 'SHORT_TIME',
           message: 'Poor connection resolved',
@@ -51576,7 +47349,7 @@ function CallManager(_ref) {
         });
       }
 
-      _events.chatEvents.fireEvent('callEvents', {
+      app.chatEvents.fireEvent('callEvents', {
         type: isResolved ? 'POOR_CONNECTION_RESOLVED' : 'POOR_CONNECTION',
         subType: isResolved ? undefined : isLongTime ? 'LONG_TIME' : 'SHORT_TIME',
         message: "Poor connection ".concat(isResolved ? 'resolved' : ''),
@@ -51603,9 +47376,9 @@ function CallManager(_ref) {
       var uniqueId = message.uniqueId;
 
       if (message.done !== 'FALSE' || message.done === 'FALSE' && message.desc === 'duplicated') {
-        _store.store.asyncRequestTimeouts[uniqueId] && clearTimeout(_store.store.asyncRequestTimeouts[uniqueId]);
+        app.store.asyncRequestTimeouts[uniqueId] && clearTimeout(app.store.asyncRequestTimeouts[uniqueId]);
       } else if (message.done === 'FALSE') {
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_ERROR',
           code: 7000,
           message: "Kurento error: " + (message.desc ? message.desc : message.message),
@@ -51633,7 +47406,7 @@ function CallManager(_ref) {
           break;
 
         case 'GET_KEY_FRAME':
-          var user = config.users.get(_store.store.user().id);
+          var user = config.users.get(app.store.user.get().id);
 
           if (user && user.user().video) {
             user.videoTopicManager().restartMediaOnKeyFrame([2000, 4000, 8000, 12000]);
@@ -51652,35 +47425,35 @@ function CallManager(_ref) {
           break;
 
         /*case 'STOPALL':
-            if (store.messagesCallbacks[uniqueId]) {
-                store.messagesCallbacks[uniqueId](jsonMessage);
+            if (app.store.messagesCallbacks[uniqueId]) {
+                app.store.messagesCallbacks[uniqueId](jsonMessage);
             }
             break;*/
 
         case 'STOP':
-          if (_store.store.messagesCallbacks[uniqueId]) {
-            _store.store.messagesCallbacks[uniqueId](message);
+          if (app.store.messagesCallbacks[uniqueId]) {
+            app.store.messagesCallbacks[uniqueId](message);
           }
 
           break;
 
         case 'CLOSE':
-          if (_store.store.messagesCallbacks[uniqueId]) {
-            _store.store.messagesCallbacks[uniqueId](message);
+          if (app.store.messagesCallbacks[uniqueId]) {
+            app.store.messagesCallbacks[uniqueId](message);
           }
 
           break;
 
         case 'SESSION_NEW_CREATED':
-          if (_store.store.messagesCallbacks[uniqueId]) {
-            _store.store.messagesCallbacks[uniqueId](message);
+          if (app.store.messagesCallbacks[uniqueId]) {
+            app.store.messagesCallbacks[uniqueId](message);
           }
 
           break;
 
         case 'SESSION_REFRESH':
-          if (_store.store.messagesCallbacks[uniqueId]) {
-            _store.store.messagesCallbacks[uniqueId](message);
+          if (app.store.messagesCallbacks[uniqueId]) {
+            app.store.messagesCallbacks[uniqueId](message);
           }
 
           break;
@@ -51690,7 +47463,7 @@ function CallManager(_ref) {
           break;
 
         case 'ERROR':
-          publicized.raiseCallError((0, _errorHandler.getFilledErrorObject)(_objectSpread(_objectSpread({}, _errorHandler.errorList.CALL_SERVER_ERROR), {}, {
+          publicized.raiseCallError(app.errorHandler.getFilledErrorObject(_objectSpread(_objectSpread({}, _errorHandler.errorList.CALL_SERVER_ERROR), {}, {
             replacements: [JSON.stringify(message)]
           })), null, true);
           break;
@@ -51711,7 +47484,7 @@ function CallManager(_ref) {
           break;
       }
 
-      _store.store.messagesCallbacks[uniqueId] && delete _store.store.messagesCallbacks[uniqueId];
+      app.store.messagesCallbacks[uniqueId] && delete app.store.messagesCallbacks[uniqueId];
     },
     handleParticipantJoin: function handleParticipantJoin(messageContent) {
       if (Array.isArray(messageContent)) {
@@ -51731,7 +47504,7 @@ function CallManager(_ref) {
               config.users.addItem(correctedData);
               resolve();
             }).then(function () {
-              _events.chatEvents.fireEvent('callEvents', {
+              app.chatEvents.fireEvent('callEvents', {
                 type: 'CALL_DIVS',
                 result: config.users.generateCallUIList()
               });
@@ -51742,7 +47515,7 @@ function CallManager(_ref) {
               config.users.addItem(correctedData);
               resolve();
             }).then(function () {
-              _events.chatEvents.fireEvent('callEvents', {
+              app.chatEvents.fireEvent('callEvents', {
                 type: 'CALL_DIVS',
                 result: config.users.generateCallUIList()
               });
@@ -51755,19 +47528,19 @@ function CallManager(_ref) {
         }
       }
 
-      _events.chatEvents.fireEvent('callEvents', {
+      app.chatEvents.fireEvent('callEvents', {
         type: 'CALL_PARTICIPANT_JOINED',
         result: messageContent
       });
 
-      if (config.users.get(_store.store.user().id).video) {
-        config.users.get(_store.store.user().id).videoTopicManager().restartMediaOnKeyFrame(_store.store.user().id, [2000, 4000, 8000, 12000, 16000, 24000]);
+      if (config.users.get(app.store.user.get().id).video) {
+        config.users.get(app.store.user.get().id).videoTopicManager().restartMediaOnKeyFrame(app.store.user().id, [2000, 4000, 8000, 12000, 16000, 24000]);
       }
 
       if (config.screenShareInfo.isStarted() && config.screenShareInfo.iAmOwner()) {
         sendCallMetaData({
           id: _constants.callMetaDataTypes.SCREENSHAREMETADATA,
-          userid: _store.store.user().id,
+          userid: app.store.user.get().id,
           content: {
             dimension: {
               width: config.screenShareInfo.getWidth(),
@@ -51783,24 +47556,22 @@ function CallManager(_ref) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                _events.chatEvents.fireEvent('callEvents', {
+                app.chatEvents.fireEvent('callEvents', {
                   type: 'CALL_PARTICIPANT_LEFT',
                   callId: threadId,
                   result: messageContent
                 }); //If I'm the only call participant, stop the call
-
 
                 if (!(Object.values(config.users.getAll()).length < 2)) {
                   _context.next = 5;
                   break;
                 }
 
-                _events.chatEvents.fireEvent('callEvents', {
+                app.chatEvents.fireEvent('callEvents', {
                   type: 'CALL_ENDED',
                   callId: config.callId
                 });
-
-                (0, _callsList.callsManager)().removeItem(config.callId);
+                app.callsManager.removeItem(config.callId);
                 return _context.abrupt("return");
 
               case 5:
@@ -51809,13 +47580,13 @@ function CallManager(_ref) {
                   break;
                 }
 
-                if (!(messageContent[0].userId == _store.store.user().id)) {
+                if (!(messageContent[0].userId == app.store.user.get().id)) {
                   _context.next = 10;
                   break;
                 } // await callStop();
 
 
-                (0, _callsList.callsManager)().removeItem(config.callId);
+                app.callsManager.removeItem(config.callId);
                 _context.next = 13;
                 break;
 
@@ -51850,13 +47621,12 @@ function CallManager(_ref) {
       }
 
       setTimeout(function () {
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_DIVS',
           result: config.users.generateCallUIList()
         });
       });
-
-      _events.chatEvents.fireEvent('callEvents', {
+      app.chatEvents.fireEvent('callEvents', {
         type: 'CALL_PARTICIPANT_MUTE',
         result: messageContent
       });
@@ -51924,13 +47694,12 @@ function CallManager(_ref) {
 
               case 8:
                 setTimeout(function () {
-                  _events.chatEvents.fireEvent('callEvents', {
+                  app.chatEvents.fireEvent('callEvents', {
                     type: 'CALL_DIVS',
                     result: config.users.generateCallUIList()
                   });
                 });
-
-                _events.chatEvents.fireEvent('callEvents', {
+                app.chatEvents.fireEvent('callEvents', {
                   type: 'CALL_PARTICIPANT_UNMUTE',
                   result: messageContent
                 });
@@ -51988,13 +47757,12 @@ function CallManager(_ref) {
 
               case 12:
                 setTimeout(function () {
-                  _events.chatEvents.fireEvent('callEvents', {
+                  app.chatEvents.fireEvent('callEvents', {
                     type: 'CALL_DIVS',
                     result: config.users.generateCallUIList()
                   });
                 });
-
-                _events.chatEvents.fireEvent('callEvents', {
+                app.chatEvents.fireEvent('callEvents', {
                   type: 'TURN_ON_VIDEO_CALL',
                   result: messageContent
                 });
@@ -52016,19 +47784,18 @@ function CallManager(_ref) {
       }
 
       setTimeout(function () {
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_DIVS',
           result: config.users.generateCallUIList()
         });
       });
-
-      _events.chatEvents.fireEvent('callEvents', {
+      app.chatEvents.fireEvent('callEvents', {
         type: 'TURN_OFF_VIDEO_CALL',
         result: messageContent
       });
     },
     handleStartScreenShare: function handleStartScreenShare(messageContent) {
-      _sdkParams.sdkParams.consoleLogging && console.log("[sdk][startScreenShare][onResult]: ", messageContent);
+      app.sdkParams.consoleLogging && console.log("[sdk][startScreenShare][onResult]: ", messageContent);
 
       var result = _utility["default"].createReturnData(false, '', 0, messageContent, null);
 
@@ -52049,14 +47816,14 @@ function CallManager(_ref) {
       }
 
       if (config.screenShareInfo.isStarted() && config.screenShareInfo.iAmOwner()) {
-        var qualityObject = (0, _sharedData.calculateScreenSize)({
-          quality: _sharedData.sharedVariables.startScreenSharetParams.quality
+        var qualityObject = app.call.calculateScreenSize({
+          quality: app.call.sharedVariables.startScreenSharetParams.quality
         });
         config.screenShareInfo.setWidth(qualityObject.width);
         config.screenShareInfo.setHeight(qualityObject.height);
         sendCallMetaData({
           id: _constants.callMetaDataTypes.SCREENSHAREMETADATA,
-          userid: _store.store.user().id,
+          userid: app.store.user.get().id,
           content: {
             dimension: {
               width: config.screenShareInfo.getWidth(),
@@ -52080,8 +47847,7 @@ function CallManager(_ref) {
         callConfig.screenShareObject.cameraPaused = false;
         callConfig.screenShareObject.userId = "screenShare";
         config.users.addItem(callConfig.screenShareObject, "screenShare");
-
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'START_SCREEN_SHARE',
           result: messageContent
         });
@@ -52103,12 +47869,11 @@ function CallManager(_ref) {
                 return config.deviceManager.mediaStreams.stopScreenShareInput();
 
               case 6:
-                _events.chatEvents.fireEvent('callEvents', {
+                app.chatEvents.fireEvent('callEvents', {
                   type: 'END_SCREEN_SHARE',
                   result: messageContent
                 });
-
-                _events.chatEvents.fireEvent('callEvents', {
+                app.chatEvents.fireEvent('callEvents', {
                   type: 'CALL_DIVS',
                   result: config.users.generateCallUIList()
                 });
@@ -52200,13 +47965,13 @@ function CallManager(_ref) {
   return publicized;
 }
 
-function ScreenShareStateManager() {
+function ScreenShareStateManager(app) {
   var config = {
     ownerId: 0,
     imOwner: false,
     isStarted: false,
-    width: _sharedData.sharedVariables.callVideoMinWidth,
-    height: _sharedData.sharedVariables.callVideoMinHeight
+    width: app.call.sharedVariables.callVideoMinWidth,
+    height: app.call.sharedVariables.callVideoMinHeight
   };
   return {
     setOwner: function setOwner(ownerId) {
@@ -52219,7 +47984,7 @@ function ScreenShareStateManager() {
       return config.isStarted;
     },
     iAmOwner: function iAmOwner() {
-      return config.ownerId === _store.store.user().id;
+      return config.ownerId === app.store.user.get().id;
     },
     setWidth: function setWidth(width) {
       config.width = width;
@@ -52241,25 +48006,22 @@ function ScreenShareStateManager() {
         config.screenShareInfo.setHeight(dimension.height);
         config.screenShareInfo.setWidth(dimension.width);
       } else {
-        config.screenShareInfo.setHeight(_sharedData.sharedVariables.callVideoMinHeight);
-        config.screenShareInfo.setWidth(_sharedData.sharedVariables.callVideoMinWidth);
+        config.screenShareInfo.setHeight(app.call.sharedVariables.callVideoMinHeight);
+        config.screenShareInfo.setWidth(app.call.sharedVariables.callVideoMinWidth);
       }
     }
   };
 }
 
-},{"../../events.module":284,"../../utility/utility":310,"../constants":299,"../errorHandler":300,"../sdkParams":302,"../store":304,"./callServerManager":286,"./callUsers":289,"./callsList":290,"./sharedData":294,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15}],286:[function(require,module,exports){
+},{"../../utility/utility":288,"../constants":277,"../errorHandler":278,"./callServerManager":266,"./callUsers":269,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15}],266:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.CallServerManager = CallServerManager;
-exports.callServerController = void 0;
+exports["default"] = void 0;
 
-var _sdkParams = require("../sdkParams");
-
-function CallServerManager() {
+function CallServerManager(app) {
   var config = {
     servers: [],
     currentServerIndex: 0
@@ -52280,17 +48042,17 @@ function CallServerManager() {
     },
     changeServer: function changeServer() {
       if (this.canChangeServer()) {
-        _sdkParams.sdkParams.consoleLogging && console.debug('[SDK][changeServer] Changing kurento server...');
+        app.sdkParams.consoleLogging && console.debug('[SDK][changeServer] Changing kurento server...');
         config.currentServerIndex++;
       }
     }
   };
 }
 
-var callServerController = new CallServerManager();
-exports.callServerController = callServerController;
+var _default = CallServerManager;
+exports["default"] = _default;
 
-},{"../sdkParams":302}],287:[function(require,module,exports){
+},{}],267:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -52308,24 +48070,15 @@ var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers
 
 var _errorHandler = require("../errorHandler");
 
-var _sdkParams = require("../sdkParams");
-
-var _events = require("../../events.module");
-
 var _topicMetaDataManager = require("./topicMetaDataManager");
-
-var _sharedData = require("./sharedData");
-
-var _messaging = require("../../messaging.module");
-
-var _callsList = require("./callsList");
 
 var _webrtcPeer = require("./webrtcPeer");
 
 var _utility = _interopRequireDefault(require("../../utility/utility"));
 
 function CallTopicManager(_ref) {
-  var callId = _ref.callId,
+  var app = _ref.app,
+      callId = _ref.callId,
       userId = _ref.userId,
       user = _ref.user,
       topic = _ref.topic,
@@ -52419,13 +48172,13 @@ function CallTopicManager(_ref) {
         config.htmlElement = document.createElement('video');
         var el = config.htmlElement;
         el.setAttribute('id', 'callUserVideo-' + config.user.videoTopicName);
-        el.setAttribute('class', _sharedData.sharedVariables.callVideoTagClassName);
+        el.setAttribute('class', app.call.sharedVariables.callVideoTagClassName);
         el.setAttribute('playsinline', '');
         el.setAttribute('muted', '');
         el.setAttribute('autoplay', '');
         el.setAttribute('data-uniqueId', elementUniqueId);
-        el.setAttribute('width', _sharedData.sharedVariables.callVideoMinWidth + 'px');
-        el.setAttribute('height', _sharedData.sharedVariables.callVideoMinHeight + 'px'); // el.setAttribute('controls', '');
+        el.setAttribute('width', app.call.sharedVariables.callVideoMinWidth + 'px');
+        el.setAttribute('height', app.call.sharedVariables.callVideoMinHeight + 'px'); // el.setAttribute('controls', '');
       }
 
       return config.htmlElement;
@@ -52466,7 +48219,7 @@ function CallTopicManager(_ref) {
 
       publicized.resumeSendStream();
       this.generateSdpOfferOptions().then(function (options) {
-        _sdkParams.sdkParams.consoleLogging && console.debug("[SDK][generateSdpOfferOptions] Options for this request have been resolved: ", {
+        app.sdkParams.consoleLogging && console.debug("[SDK][generateSdpOfferOptions] Options for this request have been resolved: ", {
           options: options
         }, "userId: ", config.userId, "topic: ", config.topic, "direction: ", config.direction);
         manager.establishPeerConnection(options);
@@ -52484,8 +48237,8 @@ function CallTopicManager(_ref) {
 
         if (config.direction === 'send' && config.mediaType === 'video') {
           mediaConstraints.video = {
-            width: _sharedData.sharedVariables.callVideoMinWidth,
-            height: _sharedData.sharedVariables.callVideoMinHeight,
+            width: app.call.sharedVariables.callVideoMinWidth,
+            height: app.call.sharedVariables.callVideoMinHeight,
             framerate: 15
           };
         }
@@ -52497,14 +48250,14 @@ function CallTopicManager(_ref) {
           //     topicManager.watchForIceCandidates(candidate)
           // },
           configuration: {
-            iceServers: (0, _sharedData.currentCall)().getTurnServer((0, _sharedData.currentCall)().callConfig())
+            iceServers: app.call.currentCall().getTurnServer(app.call.currentCall().callConfig())
           }
         };
 
         if (config.direction === 'send') {
           if (config.mediaType === 'video') {
             if (config.isScreenShare) {
-              (0, _sharedData.currentCall)().deviceManager().grantScreenSharePermission({
+              app.call.currentCall().deviceManager().grantScreenSharePermission({
                 closeStream: false
               }).then(function (stream) {
                 // let stream = currentCall().deviceManager().mediaStreams.getScreenShareInput();
@@ -52517,7 +48270,7 @@ function CallTopicManager(_ref) {
                     stream.getVideoTracks()[0].removeEventListener("ended", onScreenShareEndCallback);
 
                     if (!publicized.isDestroyed() && config.peer) {
-                      (0, _sharedData.endScreenShare)({
+                      app.call.endScreenShare({
                         callId: config.callId
                       });
                     }
@@ -52531,29 +48284,29 @@ function CallTopicManager(_ref) {
               })["catch"](function (error) {
                 var errorString = "[SDK][grantScreenSharePermission][catch] " + JSON.stringify(error);
                 console.error(errorString);
-                (0, _sharedData.currentCall)().raiseCallError(_errorHandler.errorList.SCREENSHARE_PERMISSION_ERROR, null, true);
+                app.call.currentCall().raiseCallError(_errorHandler.errorList.SCREENSHARE_PERMISSION_ERROR, null, true);
                 publicized.explainUserMediaError(error, 'video', 'screen'); //resolve(options);
 
-                (0, _sharedData.endScreenShare)({
+                app.call.endScreenShare({
                   callId: config.callId
                 });
               });
             } else {
-              (0, _sharedData.currentCall)().deviceManager().grantUserMediaDevicesPermissions({
+              app.call.currentCall().deviceManager().grantUserMediaDevicesPermissions({
                 video: true
               }).then(function () {
-                options.stream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getVideoInput();
+                options.stream = app.call.currentCall().deviceManager().mediaStreams.getVideoInput();
                 resolve(options);
               })["catch"](function (error) {
                 reject(error);
               });
             }
           } else if (config.mediaType === 'audio') {
-            (0, _sharedData.currentCall)().deviceManager().grantUserMediaDevicesPermissions({
+            app.call.currentCall().deviceManager().grantUserMediaDevicesPermissions({
               audio: true
             }).then(function () {
-              var audioInput = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getAudioInput();
-              (0, _sharedData.currentCall)().deviceManager().watchAudioInputStream((0, _sharedData.currentCall)().raiseCallError);
+              var audioInput = app.call.currentCall().deviceManager().mediaStreams.getAudioInput();
+              app.call.currentCall().deviceManager().watchAudioInputStream(app.call.currentCall().raiseCallError);
               options.stream = audioInput;
               resolve(options);
             })["catch"](function (error) {
@@ -52564,7 +48317,7 @@ function CallTopicManager(_ref) {
           resolve(options);
         }
 
-        _sdkParams.sdkParams.consoleLogging && console.log("[SDK][getSdpOfferOptions] ", "topic: ", config.topic, "mediaType: ", config.mediaType, "direction: ", config.direction, "options: ", options);
+        app.sdkParams.consoleLogging && console.log("[SDK][getSdpOfferOptions] ", "topic: ", config.topic, "mediaType: ", config.mediaType, "direction: ", config.direction, "options: ", options);
       });
     },
     establishPeerConnection: function establishPeerConnection(options) {
@@ -52583,38 +48336,36 @@ function CallTopicManager(_ref) {
         iceConnectionStateChange: publicized.onIceConnectionStateChange,
         onTrackCallback: addStreamTrackToElement
       }, function (err) {
-        _sdkParams.sdkParams.consoleLogging && console.debug("[SDK][establishPeerConnection][KurentoUtils.WebRtcPeer][WebRtcFunction]: ", {
+        app.sdkParams.consoleLogging && console.debug("[SDK][establishPeerConnection][KurentoUtils.WebRtcPeer][WebRtcFunction]: ", {
           options: options
         }, "userId: ", config.userId, "topic: ", config.topic, "direction: ", config.direction);
 
         if (err) {
           var errorString = "[SDK][start/webRtc " + config.direction + "  " + config.mediaType + " Peer] Error: " + publicized.explainUserMediaError(err, config.mediaType);
           console.error(errorString);
-
-          _events.chatEvents.fireEvent('callEvents', {
+          app.chatEvents.fireEvent('callEvents', {
             type: 'CALL_ERROR',
             code: 7000,
             message: errorString,
-            environmentDetails: (0, _sharedData.currentCall)().getCallDetails()
+            environmentDetails: app.call.currentCall().getCallDetails()
           });
-
           return;
         }
 
         if (config.direction === 'send') {
           //publicized.startMedia();
-          if ((0, _sharedData.currentCall)().users().get(config.userId).user().cameraPaused) {
+          if (app.call.currentCall().users().get(config.userId).user().cameraPaused) {
             publicized.pauseSendStream();
           }
         }
 
-        if ((0, _sharedData.currentCall)().callServerController().isJanus() && config.direction === 'receive') {
+        if (app.call.currentCall().callServerController().isJanus() && config.direction === 'receive') {
           var msgParams = {
             id: 'REGISTER_RECV_NOTIFICATION',
             topic: config.topic,
             mediaType: config.mediaType === 'video' ? 2 : 1
           };
-          (0, _sharedData.currentCall)().sendCallMessage(msgParams, null, {
+          app.call.currentCall().sendCallMessage(msgParams, null, {
             timeoutTime: 4000,
             timeoutRetriesCount: 5 // timeoutCallback(){
             //     sendCallMessage(msgParams, null, {});
@@ -52623,19 +48374,17 @@ function CallTopicManager(_ref) {
           });
         } else {
           config.peer.generateOffer(function (err, sdpOffer) {
-            // sdkParams.consoleLogging && console.debug("[SDK][establishPeerConnection][generateOffer] GenerateOffer:: ", " sdpOffer: ", sdpOffer, " err: ", err);
+            // app.sdkParams.consoleLogging && console.debug("[SDK][establishPeerConnection][generateOffer] GenerateOffer:: ", " sdpOffer: ", sdpOffer, " err: ", err);
             if (err) {
               var _errorString = "[SDK][start/WebRc " + config.direction + "  " + config.mediaType + " Peer/generateOffer] " + err;
 
               console.error(_errorString);
-
-              _events.chatEvents.fireEvent('callEvents', {
+              app.chatEvents.fireEvent('callEvents', {
                 type: 'CALL_ERROR',
                 code: 7000,
                 message: _errorString,
-                environmentDetails: (0, _sharedData.currentCall)().getCallDetails()
+                environmentDetails: app.call.currentCall().getCallDetails()
               });
-
               return;
             }
 
@@ -52648,7 +48397,7 @@ function CallTopicManager(_ref) {
       });
     },
     onConnectionStateChange: function onConnectionStateChange() {
-      _events.chatEvents.fireEvent("callStreamEvents", {
+      app.chatEvents.fireEvent("callStreamEvents", {
         type: 'WEBRTC_CONNECTION_STATE_CHANGE',
         callId: config.callId,
         userId: config.userId,
@@ -52662,7 +48411,7 @@ function CallTopicManager(_ref) {
         return; //avoid log errors
       }
 
-      _sdkParams.sdkParams.consoleLogging && console.log("[SDK][peerConnection.onconnectionstatechange] ", "peer: ", config.topic, " peerConnection.connectionState: ", config.peer.peerConnection.connectionState);
+      app.sdkParams.consoleLogging && console.log("[SDK][peerConnection.onconnectionstatechange] ", "peer: ", config.topic, " peerConnection.connectionState: ", config.peer.peerConnection.connectionState);
 
       if (config.peer.peerConnection.connectionState === 'disconnected') {
         publicized.removeConnectionQualityInterval();
@@ -52672,15 +48421,14 @@ function CallTopicManager(_ref) {
       if (config.peer.peerConnection.connectionState === "failed") {
         if (publicized.isPeerFailed()) return;
         config.state = peerStates.FAILED;
-
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_STATUS',
           errorCode: 7000,
           errorMessage: "Call Peer (".concat(config.topic, ") has failed!"),
           errorInfo: config.peer
         });
 
-        if ((0, _messaging.messenger)().chatState) {
+        if (app.messenger.chatState) {
           publicized.shouldReconnectTopic();
         }
       }
@@ -52700,33 +48448,30 @@ function CallTopicManager(_ref) {
         return; //avoid log errors
       }
 
-      _sdkParams.sdkParams.consoleLogging && console.log("[SDK][oniceconnectionstatechange] ", "peer: ", config.topic, " peerConnection.connectionState: ", config.peer.peerConnection.iceConnectionState);
+      app.sdkParams.consoleLogging && console.log("[SDK][oniceconnectionstatechange] ", "peer: ", config.topic, " peerConnection.connectionState: ", config.peer.peerConnection.iceConnectionState);
 
       if (config.peer.peerConnection.iceConnectionState === 'disconnected') {
         config.state = peerStates.DISCONNECTED;
-
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_STATUS',
           errorCode: 7000,
           errorMessage: "Call Peer (".concat(config.topic, ") is disconnected!"),
           errorInfo: config.peer
         });
-
-        _sdkParams.sdkParams.consoleLogging && console.log('[SDK][oniceconnectionstatechange]:[disconnected] Internet connection failed, Reconnect your call, topic:', config.topic);
+        app.sdkParams.consoleLogging && console.log('[SDK][oniceconnectionstatechange]:[disconnected] Internet connection failed, Reconnect your call, topic:', config.topic);
       }
 
       if (config.peer.peerConnection.iceConnectionState === "failed") {
         if (publicized.isPeerFailed()) return;
         config.state = peerStates.FAILED;
-
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_STATUS',
           errorCode: 7000,
           errorMessage: "Call Peer (".concat(config.topic, ") has failed!"),
           errorInfo: config.peer
         });
 
-        if ((0, _messaging.messenger)().chatState) {
+        if (app.messenger.chatState) {
           publicized.shouldReconnectTopic();
         }
       }
@@ -52742,7 +48487,7 @@ function CallTopicManager(_ref) {
 
         if (config.mediaType === 'video') {
           if (config.direction === 'receive') {
-            _events.chatEvents.fireEvent("callEvents", {
+            app.chatEvents.fireEvent("callEvents", {
               type: "RECEIVE_VIDEO_CONNECTION_ESTABLISHED",
               userId: config.userId
             });
@@ -52751,7 +48496,7 @@ function CallTopicManager(_ref) {
 
         config.state = peerStates.CONNECTED; // callRequestController.callEstablishedInMySide = true;
 
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_STATUS',
           errorCode: 7000,
           errorMessage: "Call Peer (".concat(config.topic, ") has connected!"),
@@ -52760,7 +48505,7 @@ function CallTopicManager(_ref) {
       }
     },
     sendSDPOfferRequestMessage: function sendSDPOfferRequestMessage(sdpOffer, retries) {
-      (0, _sharedData.currentCall)().sendCallMessage({
+      app.call.currentCall().sendCallMessage({
         id: config.direction === 'send' ? 'SEND_SDP_OFFER' : 'RECIVE_SDP_OFFER',
         sdpOffer: sdpOffer,
         useComedia: true,
@@ -52782,10 +48527,10 @@ function CallTopicManager(_ref) {
       var user = config.user,
           topicMetadata = config.topicMetaData; // Create and configure the audio pipeline
 
-      var analyzer = (0, _sharedData.audioCtx)().createAnalyser();
+      var analyzer = app.call.audioCtx().createAnalyser();
       analyzer.fftSize = 512;
       analyzer.smoothingTimeConstant = 0.1;
-      var sourceNode = (0, _sharedData.audioCtx)().createMediaStreamSource(stream);
+      var sourceNode = app.call.audioCtx().createMediaStreamSource(stream);
       sourceNode.connect(analyzer); // Analyze the sound
 
       topicMetadata.audioLevelInterval = setInterval(function () {
@@ -52805,7 +48550,7 @@ function CallTopicManager(_ref) {
         var audioMeter = Math.sqrt(sum / frequencyRangeData.length); //console.log({audioMeter}, {audioPeakDB});
 
         if (audioPeakDB > -50 && audioMeter > 0) {
-          _events.chatEvents.fireEvent('callStreamEvents', {
+          app.chatEvents.fireEvent('callStreamEvents', {
             type: 'USER_SPEAKING',
             userId: config.userId,
             audioLevel: convertToAudioLevel(audioPeakDB),
@@ -52813,7 +48558,7 @@ function CallTopicManager(_ref) {
             isMute: false
           });
         } else if (audioPeakDB !== -Infinity && audioPeakDB < -60 && audioMeter > 0) {
-          _events.chatEvents.fireEvent('callStreamEvents', {
+          app.chatEvents.fireEvent('callStreamEvents', {
             type: 'USER_SPEAKING',
             userId: config.userId,
             audioLevel: 0,
@@ -52821,7 +48566,7 @@ function CallTopicManager(_ref) {
             isMute: false
           });
         } else if (audioPeakDB === -Infinity && audioMeter == 0) {
-          _events.chatEvents.fireEvent('callStreamEvents', {
+          app.chatEvents.fireEvent('callStreamEvents', {
             type: 'USER_SPEAKING',
             userId: config.userId,
             audioLevel: 0,
@@ -52846,7 +48591,7 @@ function CallTopicManager(_ref) {
       }
     },
     checkConnectionQuality: function checkConnectionQuality() {
-      if (!(0, _sharedData.currentCall)() || !(0, _sharedData.currentCall)().users().get(config.userId) || !config.peer || !config.peer.peerConnection) {
+      if (!app.call.currentCall() || !app.call.currentCall().users().get(config.userId) || !config.peer || !config.peer.peerConnection) {
         this.removeConnectionQualityInterval();
         this.removeAudioWatcherInterval();
         return;
@@ -52865,7 +48610,7 @@ function CallTopicManager(_ref) {
             // sorted to the top above
             if (!report['roundTripTime'] || report['roundTripTime'] > 1) {
               if (topicMetadata.poorConnectionCount === 10) {
-                (0, _sharedData.currentCall)().sendQualityCheckEvent({
+                app.call.currentCall().sendQualityCheckEvent({
                   userId: config.userId,
                   topic: config.topic,
                   mediaType: config.mediaType,
@@ -52874,8 +48619,8 @@ function CallTopicManager(_ref) {
               }
 
               if (topicMetadata.poorConnectionCount > 3 && !topicMetadata.isConnectionPoor) {
-                _sdkParams.sdkParams.consoleLogging && console.log('[SDK][checkConnectionQuality] Poor connection detected...');
-                (0, _sharedData.currentCall)().sendQualityCheckEvent({
+                app.sdkParams.consoleLogging && console.log('[SDK][checkConnectionQuality] Poor connection detected...');
+                app.call.currentCall().sendQualityCheckEvent({
                   userId: config.userId,
                   topic: config.topic,
                   mediaType: config.mediaType
@@ -52891,7 +48636,7 @@ function CallTopicManager(_ref) {
                 topicMetadata.poorConnectionResolvedCount = 0;
                 topicMetadata.poorConnectionCount = 0;
                 topicMetadata.isConnectionPoor = false;
-                (0, _sharedData.currentCall)().sendQualityCheckEvent({
+                app.call.currentCall().sendQualityCheckEvent({
                   userId: config.userId,
                   topic: config.topic,
                   mediaType: config.mediaType,
@@ -52926,19 +48671,18 @@ function CallTopicManager(_ref) {
 
       if (!publicized.isDestroyed()) {
         if (config.peer && iceConnectionState != 'connected') {
-          _events.chatEvents.fireEvent('callEvents', {
+          app.chatEvents.fireEvent('callEvents', {
             type: 'CALL_STATUS',
             errorCode: 7000,
             errorMessage: "Call Peer (".concat(config.topic, ") is not in connected state, reconnecting peer ...!"),
             errorInfo: config.peer
           });
-
-          (0, _sharedData.currentCall)().users().get(config.userId).reconnectTopic(config.mediaType);
+          app.call.currentCall().users().get(config.userId).reconnectTopic(config.mediaType);
         }
       }
     },
     explainUserMediaError: function explainUserMediaError(err, deviceType, deviceSource) {
-      /*chatEvents.fireEvent('callEvents', {
+      /*app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_ERROR',
           code: 7000,
           message: err,
@@ -52947,68 +48691,62 @@ function CallTopicManager(_ref) {
       var n = err.name;
 
       if (n === 'NotFoundError' || n === 'DevicesNotFoundError') {
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_ERROR',
           code: 7000,
           message: "Missing " + (deviceType === 'video' ? 'webcam' : 'mice') + " for required tracks",
-          environmentDetails: (0, _sharedData.currentCall)().getCallDetails()
+          environmentDetails: app.call.currentCall().getCallDetails()
         });
-
         alert("Missing " + (deviceType === 'video' ? 'webcam' : 'mice') + " for required tracks");
         return "Missing " + (deviceType === 'video' ? 'webcam' : 'mice') + " for required tracks";
       } else if (n === 'NotReadableError' || n === 'TrackStartError') {
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_ERROR',
           code: 7000,
           message: (deviceType === 'video' ? 'Webcam' : 'Mice') + " is already in use",
-          environmentDetails: (0, _sharedData.currentCall)().getCallDetails()
+          environmentDetails: app.call.currentCall().getCallDetails()
         });
-
         alert((deviceType === 'video' ? 'Webcam' : 'Mice') + " is already in use");
         return (deviceType === 'video' ? 'Webcam' : 'Mice') + " is already in use";
       } else if (n === 'OverconstrainedError' || n === 'ConstraintNotSatisfiedError') {
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_ERROR',
           code: 7000,
           message: (deviceType === 'video' ? 'Webcam' : 'Mice') + " doesn't provide required tracks",
-          environmentDetails: (0, _sharedData.currentCall)().getCallDetails()
+          environmentDetails: app.call.currentCall().getCallDetails()
         });
-
         alert((deviceType === 'video' ? 'Webcam' : 'Mice') + " doesn't provide required tracks");
         return (deviceType === 'video' ? 'Webcam' : 'Mice') + " doesn't provide required tracks";
       } else if (n === 'NotAllowedError' || n === 'PermissionDeniedError') {
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_ERROR',
           code: 7000,
           message: (deviceType === 'video' ? deviceSource === 'screen' ? 'ScreenShare' : 'Webcam' : 'Mice') + " permission has been denied by the user",
-          environmentDetails: (0, _sharedData.currentCall)().getCallDetails()
+          environmentDetails: app.call.currentCall().getCallDetails()
         });
-
         alert((deviceType === 'video' ? deviceSource === 'screen' ? 'ScreenShare' : 'Webcam' : 'Mice') + " permission has been denied by the user");
         return (deviceType === 'video' ? deviceSource === 'screen' ? 'ScreenShare' : 'Webcam' : 'Mice') + " permission has been denied by the user";
       } else if (n === 'TypeError') {
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_ERROR',
           code: 7000,
           message: "No media tracks have been requested",
-          environmentDetails: (0, _sharedData.currentCall)().getCallDetails()
+          environmentDetails: app.call.currentCall().getCallDetails()
         });
-
         return "No media tracks have been requested";
       } else {
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_ERROR',
           code: 7000,
           message: "Unknown error: " + err,
-          environmentDetails: (0, _sharedData.currentCall)().getCallDetails()
+          environmentDetails: app.call.currentCall().getCallDetails()
         });
-
         return "Unknown error: " + err;
       }
     },
     stopTopicOnServer: function stopTopicOnServer() {
       return new Promise(function (resolve) {
-        (0, _callsList.callsManager)().get(config.callId).sendCallMessage({
+        app.callsManager.get(config.callId).sendCallMessage({
           id: 'STOP',
           topic: config.topic
         }, function (result) {
@@ -53068,14 +48806,14 @@ function CallTopicManager(_ref) {
 
       switch (config.mediaType) {
         case 'audio':
-          localStream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getAudioInput();
+          localStream = app.call.currentCall().deviceManager().mediaStreams.getAudioInput();
           break;
 
         case 'video':
           if (config.isScreenShare) {
-            localStream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getScreenShareInput();
+            localStream = app.call.currentCall().deviceManager().mediaStreams.getScreenShareInput();
           } else {
-            localStream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getVideoInput();
+            localStream = app.call.currentCall().deviceManager().mediaStreams.getVideoInput();
           }
 
       }
@@ -53087,14 +48825,14 @@ function CallTopicManager(_ref) {
 
       switch (config.mediaType) {
         case 'audio':
-          localStream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getAudioInput();
+          localStream = app.call.currentCall().deviceManager().mediaStreams.getAudioInput();
           break;
 
         case 'video':
           if (config.isScreenShare) {
-            localStream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getScreenShareInput();
+            localStream = app.call.currentCall().deviceManager().mediaStreams.getScreenShareInput();
           } else {
-            localStream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getVideoInput();
+            localStream = app.call.currentCall().deviceManager().mediaStreams.getVideoInput();
           }
 
       }
@@ -53103,21 +48841,21 @@ function CallTopicManager(_ref) {
       //     config.peer.getLocalStream().getTracks()[0].enabled = true;
     },
     startMedia: function startMedia() {
-      _sdkParams.sdkParams.consoleLogging && console.log("[SDK][startMedia] called with: ", config.htmlElement);
+      app.sdkParams.consoleLogging && console.log("[SDK][startMedia] called with: ", config.htmlElement);
       if (!config.htmlElement) return;
       config.htmlElement.play()["catch"](function (err) {
         if (err.name === 'NotAllowedError') {
-          _events.chatEvents.fireEvent('callEvents', {
+          app.chatEvents.fireEvent('callEvents', {
             type: 'CALL_ERROR',
             code: 7000,
             message: "[startMedia] Browser doesn't allow playing media: " + err,
-            environmentDetails: (0, _sharedData.currentCall)().getCallDetails()
+            environmentDetails: app.call.currentCall().getCallDetails()
           });
         }
       });
     },
     restartMediaOnKeyFrame: function restartMediaOnKeyFrame(userId, timeouts) {
-      if ((0, _sharedData.currentCall)().callServerController().isJanus()) return;
+      if (app.call.currentCall().callServerController().isJanus()) return;
 
       for (var i = 0; i < timeouts.length; i++) {
         setTimeout(function () {
@@ -53126,8 +48864,8 @@ function CallTopicManager(_ref) {
       }
     },
     restartMedia: function restartMedia() {
-      if (!publicized.isDestroyed() && !(0, _sharedData.currentCall)().users().get(config.userId).user().cameraPaused && config.mediaType == 'video') {
-        _sdkParams.sdkParams.consoleLogging && console.log('[SDK] Sending Key Frame ...');
+      if (!publicized.isDestroyed() && !app.call.currentCall().users().get(config.userId).user().cameraPaused && config.mediaType == 'video') {
+        app.sdkParams.consoleLogging && console.log('[SDK] Sending Key Frame ...');
         var el = document.getElementById('callUserVideo-' + config.user.videoTopicName);
         if (!el.srcObject) el.srcObject = config.dataStream;
         var videoElement = el;
@@ -53141,8 +48879,8 @@ function CallTopicManager(_ref) {
         }, 1500);
 
         if (videoElement) {
-          var width = config.isScreenShare ? (0, _sharedData.currentCall)().screenShareInfo.getWidth() : _sharedData.sharedVariables.callVideoMinWidth,
-              height = config.isScreenShare ? (0, _sharedData.currentCall)().screenShareInfo.getHeight() : _sharedData.sharedVariables.callVideoMinHeight,
+          var width = config.isScreenShare ? app.call.currentCall().screenShareInfo.getWidth() : app.call.sharedVariables.callVideoMinWidth,
+              height = config.isScreenShare ? app.call.currentCall().screenShareInfo.getHeight() : app.call.sharedVariables.callVideoMinHeight,
               rand = Math.random(),
               newWidth = width - 5,
               newHeight = height - 5;
@@ -53174,7 +48912,7 @@ function CallTopicManager(_ref) {
                 });
               }, 1500);
             })["catch"](function (e) {
-              return _sdkParams.sdkParams.consoleLogging && console.log(e);
+              return app.sdkParams.consoleLogging && console.log(e);
             });
           } else {
             videoTrack.applyConstraints({
@@ -53184,7 +48922,7 @@ function CallTopicManager(_ref) {
                 aspectRatio: 1.777
               }]
             }).then(function (res) {})["catch"](function (e) {
-              return _sdkParams.sdkParams.consoleLogging && console.log(e);
+              return app.sdkParams.consoleLogging && console.log(e);
             });
             setTimeout(function () {
               videoTrack.applyConstraints({
@@ -53264,7 +49002,7 @@ function CallTopicManager(_ref) {
   return publicized;
 }
 
-},{"../../events.module":284,"../../messaging.module":309,"../../utility/utility":310,"../errorHandler":300,"../sdkParams":302,"./callsList":290,"./sharedData":294,"./topicMetaDataManager":295,"./webrtcPeer":296,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/toConsumableArray":12,"@babel/runtime/regenerator":15}],288:[function(require,module,exports){
+},{"../../utility/utility":288,"../errorHandler":278,"./topicMetaDataManager":273,"./webrtcPeer":274,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/toConsumableArray":12,"@babel/runtime/regenerator":15}],268:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -53279,24 +49017,14 @@ var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"))
 
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 
-var _sdkParams = require("../sdkParams");
-
-var _deviceStartStopManager = require("./deviceStartStopManager");
-
 var _callTopicManager = require("./callTopicManager");
 
-var _sharedData = require("./sharedData");
-
-var _callsList = require("./callsList");
-
-var _store = require("../store");
-
-function CallUser(user) {
+function CallUser(app, user) {
   var config = {
     callId: user.callId,
     userId: user.userId,
     user: user,
-    isMe: user.userId == _store.store.user().id,
+    isMe: user.userId == app.store.user.get().id,
     containerTag: null,
     htmlElements: {},
     videoTopicManager: null,
@@ -53304,7 +49032,7 @@ function CallUser(user) {
   };
   var publicized = {
     isMe: function isMe() {
-      return config.userId == _store.store.user().id;
+      return config.userId == app.store.user.get().id;
     },
     isScreenShare: function isScreenShare() {
       return false;
@@ -53316,13 +49044,13 @@ function CallUser(user) {
       return config.htmlElements;
     },
     appendAudioToCallDiv: function appendAudioToCallDiv() {
-      if (!_sharedData.sharedVariables.callDivId) {
-        _sdkParams.sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
+      if (!app.call.sharedVariables.callDivId) {
+        app.sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
         return;
       }
 
       var user = config.user,
-          callParentDiv = document.getElementById(_sharedData.sharedVariables.callDivId),
+          callParentDiv = document.getElementById(app.call.sharedVariables.callDivId),
           userContainer = document.getElementById("callParticipantWrapper-" + config.userId);
 
       if (!userContainer) {
@@ -53339,13 +49067,13 @@ function CallUser(user) {
       }
     },
     appendVideoToCallDiv: function appendVideoToCallDiv() {
-      if (!_sharedData.sharedVariables.callDivId) {
-        _sdkParams.sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
+      if (!app.call.sharedVariables.callDivId) {
+        app.sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
         return;
       }
 
       var user = config.user,
-          callParentDiv = document.getElementById(_sharedData.sharedVariables.callDivId),
+          callParentDiv = document.getElementById(app.call.sharedVariables.callDivId),
           userContainer = document.getElementById("callParticipantWrapper-" + config.userId);
 
       if (!userContainer) {
@@ -53360,7 +49088,7 @@ function CallUser(user) {
         }
       }
 
-      (0, _sharedData.currentCall)().sendCallDivs();
+      app.call.currentCall().sendCallDivs();
     },
     videoTopicManager: function videoTopicManager() {
       return config.videoTopicManager;
@@ -53385,11 +49113,12 @@ function CallUser(user) {
                 config.user.audioTopicName = 'Vo-' + sendTopic;
                 config.user.mute = false;
                 config.audioTopicManager = new _callTopicManager.CallTopicManager({
+                  app: app,
                   callId: config.user.callId,
                   userId: config.user.userId,
                   topic: 'Vo-' + config.user.topicSend,
                   mediaType: 'audio',
-                  direction: config.user.userId === _store.store.user().id ? 'send' : 'receive',
+                  direction: config.user.userId === app.store.user.get().id ? 'send' : 'receive',
                   user: config.user,
                   onHTMLElement: function onHTMLElement(el) {
                     config.htmlElements[config.user.audioTopicName] = el;
@@ -53423,11 +49152,12 @@ function CallUser(user) {
                 config.user.videoTopicName = 'Vi-' + sendTopic;
                 config.user.video = true;
                 config.videoTopicManager = new _callTopicManager.CallTopicManager({
+                  app: app,
                   callId: config.user.callId,
                   userId: config.user.userId,
                   topic: 'Vi-' + config.user.topicSend,
                   mediaType: 'video',
-                  direction: config.user.userId === _store.store.user().id ? 'send' : 'receive',
+                  direction: config.user.userId === app.store.user.get().id ? 'send' : 'receive',
                   user: config.user,
                   onHTMLElement: function onHTMLElement(el) {
                     config.htmlElements[config.user.videoTopicName] = el;
@@ -53636,7 +49366,7 @@ function CallUser(user) {
     //     callId: config.callId,
     //     userId: config.user.userId,
     //     mediaType: 'audio',
-    //     timeout: sdkParams.callOptions?.streamCloseTimeout || 10000
+    //     timeout: app.sdkParams.callOptions?.streamCloseTimeout || 10000
     // });
     // if (config.user.mute) {
     //     config.user.audioStopManager.pauseStream();
@@ -53646,7 +49376,7 @@ function CallUser(user) {
     //     callId: config.callId,
     //     userId: config.user.userId,
     //     mediaType: 'video',
-    //     timeout: sdkParams.callOptions?.streamCloseTimeout || 10000
+    //     timeout: app.sdkParams.callOptions?.streamCloseTimeout || 10000
     // });
     // if (!config.user.video) {
     // config.user.videoStopManager.pauseStream();
@@ -53677,11 +49407,11 @@ function CallUser(user) {
   return publicized;
 }
 
-function CallScreenShare(user) {
+function CallScreenShare(app, user) {
   var config = {
     callId: user.callId,
     userId: user.userId,
-    isMe: user.userId == _store.store.user().id,
+    isMe: user.userId == app.store.user.get().id,
     user: user,
     type: "screenShare",
     containerTag: null,
@@ -53704,13 +49434,13 @@ function CallScreenShare(user) {
     appendVideoToCallDiv: function appendVideoToCallDiv() {
       var _config$videoTopicMan;
 
-      if (!_sharedData.sharedVariables.callDivId) {
-        _sdkParams.sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
+      if (!app.call.sharedVariables.callDivId) {
+        app.sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
         return;
       }
 
       var user = config.user,
-          callParentDiv = document.getElementById(_sharedData.sharedVariables.callDivId),
+          callParentDiv = document.getElementById(app.call.sharedVariables.callDivId),
           userContainer = document.getElementById("callParticipantWrapper-" + config.userId);
 
       if (!userContainer) {
@@ -53730,7 +49460,7 @@ function CallScreenShare(user) {
       //     config.videoTopicManager?.restartMediaOnKeyFrame("screenShare", [1000, 3000, 6000]);
       // }
 
-      (0, _sharedData.currentCall)().sendCallDivs();
+      app.call.currentCall().sendCallDivs();
     },
     videoTopicManager: function videoTopicManager() {
       return config.videoTopicManager;
@@ -53748,11 +49478,12 @@ function CallScreenShare(user) {
       config.user.videoTopicName = sendTopic;
       config.user.video = true;
       config.videoTopicManager = new _callTopicManager.CallTopicManager({
+        app: app,
         callId: config.user.callId,
         userId: config.user.userId,
         topic: config.user.videoTopicName,
         mediaType: 'video',
-        direction: (0, _callsList.callsManager)().get(config.callId).screenShareInfo.iAmOwner() ? 'send' : 'receive',
+        direction: app.callsManager.get(config.callId).screenShareInfo.iAmOwner() ? 'send' : 'receive',
         user: config.user,
         isScreenShare: true,
         onHTMLElement: function onHTMLElement(el) {
@@ -53844,7 +49575,7 @@ function CallScreenShare(user) {
   };
 
   function setup(user) {
-    var iAmOwner = (0, _callsList.callsManager)().get(config.callId).screenShareInfo.iAmOwner();
+    var iAmOwner = app.callsManager.get(config.callId).screenShareInfo.iAmOwner();
     var obj = {
       video: true,
       callId: user.callId,
@@ -53884,7 +49615,7 @@ function CallScreenShare(user) {
   return publicized;
 }
 
-},{"../sdkParams":302,"../store":304,"./callTopicManager":287,"./callsList":290,"./deviceStartStopManager":293,"./sharedData":294,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15}],289:[function(require,module,exports){
+},{"./callTopicManager":267,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15}],269:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -53900,18 +49631,9 @@ var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/
 
 var _callUser = require("./callUser");
 
-var _events = require("../../events.module");
-
-var _callsList = require("./callsList");
-
-var _messaging = require("../../messaging.module");
-
-var _store = require("../store");
-
-var _sharedData = require("./sharedData");
-
 function CallUsers(_ref) {
-  var callId = _ref.callId;
+  var app = _ref.app,
+      callId = _ref.callId;
   var config = {
     list: {},
     callId: callId
@@ -53930,8 +49652,8 @@ function CallUsers(_ref) {
   var publicized = {
     addItem: function addItem(memberObject) {
       var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "user";
-      if (type == 'user') config.list[memberObject.userId] = new _callUser.CallUser(memberObject);else if (type == 'screenShare') {
-        config.list[memberObject.userId] = new _callUser.CallScreenShare(memberObject);
+      if (type == 'user') config.list[memberObject.userId] = new _callUser.CallUser(app, memberObject);else if (type == 'screenShare') {
+        config.list[memberObject.userId] = new _callUser.CallScreenShare(app, memberObject);
       }
     },
     removeItem: function removeItem(userId) {
@@ -53965,10 +49687,9 @@ function CallUsers(_ref) {
     },
     getHTMLElements: getHTMLElements,
     generateCallUIList: function generateCallUIList() {
-      var me = _store.store.user().id,
+      var me = app.store.user.get().id,
           callUIElements = {};
-
-      if (!(0, _callsList.callsManager)().get(config.callId)) return;
+      if (!app.callsManager.get(config.callId)) return;
 
       for (var i in config.list) {
         var tags = {};
@@ -53979,7 +49700,7 @@ function CallUsers(_ref) {
 
         if (config.list[i] && HTMLElements) {
           tags.container = HTMLElements.container;
-          if (i === 'screenShare' && (0, _sharedData.currentCall)().screenShareInfo.isStarted() || i != 'screenShare' && config.list[i].user().video && HTMLElements[config.list[i].user().videoTopicName]) tags.video = HTMLElements[config.list[i].user().videoTopicName]; // if (!config.list[i].mute && config.list[i].getHTMLElements()[config.list[i].user().audioTopicName])
+          if (i === 'screenShare' && app.call.currentCall().screenShareInfo.isStarted() || i != 'screenShare' && config.list[i].user().video && HTMLElements[config.list[i].user().videoTopicName]) tags.video = HTMLElements[config.list[i].user().videoTopicName]; // if (!config.list[i].mute && config.list[i].getHTMLElements()[config.list[i].user().audioTopicName])
           //     tags.audio = config.list[i].getHTMLElements()[config.list[i].user().audioTopicName];
 
           callUIElements[i] = tags;
@@ -54023,7 +49744,7 @@ function CallUsers(_ref) {
   return publicized;
 }
 
-},{"../../events.module":284,"../../messaging.module":309,"../store":304,"./callUser":288,"./callsList":290,"./sharedData":294,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15}],290:[function(require,module,exports){
+},{"./callUser":268,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15}],270:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -54031,7 +49752,7 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.callsManager = callsManager;
+exports["default"] = void 0;
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
@@ -54039,11 +49760,7 @@ var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/
 
 var _callManager = require("./callManager");
 
-var _sdkParams = require("../sdkParams");
-
-var _sharedData = require("./sharedData");
-
-function CallsList() {
+function CallsList(app) {
   var config = {
     list: {},
     currentCallId: null
@@ -54066,8 +49783,9 @@ function CallsList() {
                 return publicized.destroyAllCalls();
 
               case 3:
-                callsManager().currentCallId = callId;
+                app.callsManager.currentCallId = callId;
                 config.list[callId] = new _callManager.CallManager({
+                  app: app,
                   callId: callId,
                   callConfig: callConfig
                 });
@@ -54098,7 +49816,7 @@ function CallsList() {
                 delete config.list[callId];
 
               case 4:
-                callsManager().currentCallId = null;
+                app.callsManager.currentCallId = null;
 
               case 5:
               case "end":
@@ -54112,7 +49830,7 @@ function CallsList() {
       return config.list[id];
     },
     routeCallMessage: function routeCallMessage(callId, message) {
-      if (config.list[callId]) config.list[callId].processCallMessage(message);else _sdkParams.sdkParams.consoleLogging && console.warn("[SDK] Skipping call message, call not exists. uniqueId: ", {
+      if (config.list[callId]) config.list[callId].processCallMessage(message);else app.sdkParams.consoleLogging && console.warn("[SDK] Skipping call message, call not exists. uniqueId: ", {
         message: message
       });
     },
@@ -54122,7 +49840,7 @@ function CallsList() {
 
         for (var i in config.list) {
           console.log("destroyAllCalls()", i);
-          (0, _sharedData.endCall)({
+          app.call.endCall({
             callId: i
           });
           allPromises.push(publicized.removeItem(i));
@@ -54137,383 +49855,13 @@ function CallsList() {
   return publicized;
 }
 
-var callsMgr = new CallsList();
-
-function callsManager() {
-  return callsMgr;
-}
-
-},{"../sdkParams":302,"./callManager":285,"./sharedData":294,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15}],291:[function(require,module,exports){
-"use strict";
-
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-
-var _typeof = require("@babel/runtime/helpers/typeof");
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports["default"] = void 0;
-
-var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
-
-var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
-
-require("../constants.js");
-
-var _eventsModule = require("../../events.module.js");
-
-var _errorHandler = _interopRequireWildcard(require("../errorHandler.js"));
-
-function _getRequireWildcardCache(nodeInterop) {
-  if (typeof WeakMap !== "function") return null;
-  var cacheBabelInterop = new WeakMap();
-  var cacheNodeInterop = new WeakMap();
-  return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) {
-    return nodeInterop ? cacheNodeInterop : cacheBabelInterop;
-  })(nodeInterop);
-}
-
-function _interopRequireWildcard(obj, nodeInterop) {
-  if (!nodeInterop && obj && obj.__esModule) {
-    return obj;
-  }
-
-  if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") {
-    return {
-      "default": obj
-    };
-  }
-
-  var cache = _getRequireWildcardCache(nodeInterop);
-
-  if (cache && cache.has(obj)) {
-    return cache.get(obj);
-  }
-
-  var newObj = {};
-  var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
-
-  for (var key in obj) {
-    if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) {
-      var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
-
-      if (desc && (desc.get || desc.set)) {
-        Object.defineProperty(newObj, key, desc);
-      } else {
-        newObj[key] = obj[key];
-      }
-    }
-  }
-
-  newObj["default"] = obj;
-
-  if (cache) {
-    cache.set(obj, newObj);
-  }
-
-  return newObj;
-}
-
-var deviceList = {
-  audioIn: [],
-  audioOut: [],
-  videoIn: []
-};
-var streamsMetada = {
-  audioInWatcherId: null
-};
-var deviceStreams = {
-  videoIn: null,
-  audioIn: null,
-  audioOut: null,
-  screenShare: null
-};
-var _mediaStreams = {
-  setAudioInput: function setAudioInput(stream) {
-    deviceStreams.audioIn = stream;
-  },
-  setVideoInput: function setVideoInput(stream) {
-    deviceStreams.videoIn = stream;
-  },
-  setScreenShareInput: function setScreenShareInput(stream) {
-    deviceStreams.screenShare = stream;
-  },
-  getVideoInput: function getVideoInput() {
-    return deviceStreams.videoIn;
-  },
-  getAudioInput: function getAudioInput() {
-    return deviceStreams.audioIn;
-  },
-  getScreenShareInput: function getScreenShareInput() {
-    return deviceStreams.screenShare;
-  },
-  stopAudioInput: function stopAudioInput() {
-    if (!deviceStreams.audioIn) return;
-    deviceStreams.audioIn.getTracks().forEach(function (track) {
-      if (!!track) {
-        track.stop();
-      }
-    });
-    deviceStreams.audioIn = null;
-  },
-  stopVideoInput: function stopVideoInput() {
-    if (!deviceStreams.videoIn) return;
-    deviceStreams.videoIn.getTracks().forEach(function (track) {
-      track.stop();
-    });
-    deviceStreams.videoIn = null;
-  },
-  stopScreenShareInput: function stopScreenShareInput() {
-    if (!deviceStreams.screenShare) return;
-    deviceStreams.screenShare.getTracks().forEach(function (track) {
-      track.stop();
-    });
-    deviceStreams.screenShare = null;
-  }
-};
-var deviceManager = {
-  // getAvailableDevices() {
-  //     // deviceManager.changeAudioOutputDevice();
-  //     navigator.mediaDevices.enumerateDevices()
-  //         .then(function(devices) {
-  //             devices.forEach(function(device) {
-  //                 console.log(device)
-  //                 console.log(device.kind + ": " + device.label +
-  //                     " id = " + device.deviceId);
-  //             });
-  //         })
-  //         .catch(function(err) {
-  //             console.log(err.name + ": " + err.message);
-  //         });
-  // },
-  canChooseAudioOutputDevice: function canChooseAudioOutputDevice() {
-    return !!navigator.mediaDevices.selectAudioOutput;
-  },
-  changeAudioOutputDevice: function changeAudioOutputDevice() {
-    if (!navigator.mediaDevices.selectAudioOutput) {
-      console.warn("selectAudioOutput() not supported.");
-      return;
-    } //Display prompt and log selected device or error
-
-
-    navigator.mediaDevices.selectAudioOutput().then(function (device) {
-      console.log(device.kind + ": " + device.label + " id = " + device.deviceId);
-    })["catch"](function (err) {
-      console.log(err.name + ": " + err.message);
-    });
-  },
-  grantScreenSharePermission: function grantScreenSharePermission(_ref) {
-    var _ref$closeStream = _ref.closeStream,
-        closeStream = _ref$closeStream === void 0 ? false : _ref$closeStream;
-    var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-    return new Promise(function (resolve, reject) {
-      if (_mediaStreams.getScreenShareInput()) {
-        if (!_mediaStreams.getScreenShareInput().active) {
-          _mediaStreams.stopScreenShareInput();
-        } else {
-          // console.log("exists resolving")
-          resolve(_mediaStreams.getScreenShareInput());
-          return;
-        }
-      }
-
-      navigator.mediaDevices.getDisplayMedia({
-        audio: false,
-        video: true
-      }).then(function (stream) {
-        _mediaStreams.setScreenShareInput(stream);
-
-        if (closeStream) {
-          _mediaStreams.stopScreenShareInput();
-        }
-
-        callback && callback({
-          hasError: false
-        });
-        resolve(stream);
-      })["catch"](function (e) {
-        var error = (0, _errorHandler.raiseError)(_errorHandler.errorList.SCREENSHARE_PERMISSION_ERROR, callback, true, {
-          eventName: 'callEvents',
-          eventType: 'CALL_ERROR'
-        });
-        reject(error);
-      });
-    });
-  },
-  grantUserMediaDevicesPermissions: function grantUserMediaDevicesPermissions(_ref2) {
-    var _ref2$video = _ref2.video,
-        video = _ref2$video === void 0 ? false : _ref2$video,
-        _ref2$audio = _ref2.audio,
-        audio = _ref2$audio === void 0 ? false : _ref2$audio,
-        _ref2$closeStream = _ref2.closeStream,
-        closeStream = _ref2$closeStream === void 0 ? false : _ref2$closeStream;
-    var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-    return new Promise( /*#__PURE__*/function () {
-      var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(resolve, reject) {
-        var parsedError;
-        return _regenerator["default"].wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                _context.prev = 0;
-
-                if (!audio) {
-                  _context.next = 4;
-                  break;
-                }
-
-                _context.next = 4;
-                return deviceManager.getInputDevicePermission({
-                  audio: true
-                });
-
-              case 4:
-                if (!video) {
-                  _context.next = 7;
-                  break;
-                }
-
-                _context.next = 7;
-                return deviceManager.getInputDevicePermission({
-                  video: {
-                    width: 320,
-                    framerate: 10
-                  }
-                });
-
-              case 7:
-                if (closeStream) {
-                  if (audio) _mediaStreams.stopAudioInput();
-                  if (video) _mediaStreams.stopVideoInput();
-                }
-
-                if (callback) callback({
-                  hasError: false
-                });
-                resolve({
-                  hasError: false
-                });
-                _context.next = 17;
-                break;
-
-              case 12:
-                _context.prev = 12;
-                _context.t0 = _context["catch"](0);
-                parsedError = {
-                  hasError: true,
-                  errorCode: _context.t0.code,
-                  errorMessage: _context.t0.message
-                };
-                if (callback) callback(parsedError);
-                reject(parsedError);
-
-              case 17:
-              case "end":
-                return _context.stop();
-            }
-          }
-        }, _callee, null, [[0, 12]]);
-      }));
-
-      return function (_x, _x2) {
-        return _ref3.apply(this, arguments);
-      };
-    }());
-  },
-  getInputDevicePermission: function getInputDevicePermission(_ref4) {
-    var _ref4$audio = _ref4.audio,
-        audio = _ref4$audio === void 0 ? false : _ref4$audio,
-        _ref4$video = _ref4.video,
-        video = _ref4$video === void 0 ? false : _ref4$video;
-    return new Promise(function (resolve, reject) {
-      if (video && _mediaStreams.getVideoInput()) {
-        resolve(_mediaStreams.getVideoInput());
-        return;
-      }
-
-      if (audio && _mediaStreams.getAudioInput()) {
-        resolve(_mediaStreams.getAudioInput());
-        return;
-      }
-
-      navigator.mediaDevices.getUserMedia({
-        audio: audio,
-        video: video
-      }).then(function (stream) {
-        if (audio) _mediaStreams.setAudioInput(stream);
-        if (video) _mediaStreams.setVideoInput(stream);
-        resolve(stream);
-      })["catch"](function (error) {
-        _eventsModule.chatEvents.fireEvent('callEvents', {
-          type: 'CALL_ERROR',
-          code: audio ? 12400 : 12401,
-          message: error // environmentDetails: getSDKCallDetails()
-
-        });
-
-        reject((0, _errorHandler["default"])(audio ? 12400 : 12401));
-      });
-    });
-  },
-  mediaStreams: function mediaStreams() {
-    return _mediaStreams;
-  },
-  watchAudioInputStream: function watchAudioInputStream(callErrorHandler) {
-    streamsMetada.audioInWatcherId = setInterval(function () {
-      var _deviceManager$mediaS;
-
-      if (!deviceManager.mediaStreams().getAudioInput()) {
-        clearInterval(streamsMetada.audioInWatcherId);
-        return;
-      }
-
-      var audioTracks = (_deviceManager$mediaS = deviceManager.mediaStreams().getAudioInput()) === null || _deviceManager$mediaS === void 0 ? void 0 : _deviceManager$mediaS.getAudioTracks();
-
-      if (audioTracks.length === 0) {
-        callErrorHandler(_errorHandler.errorList.NO_AUDIO_TRACKS_AVAILABLE, null, true, {});
-        clearInterval(streamsMetada.audioInWatcherId); // No audio from microphone has been captured
-
-        return;
-      } // We asked for the microphone so one track
-
-
-      var track = audioTracks[0];
-
-      if (track.muted) {
-        // Track is muted which means that the track is unable to provide media data.
-        // When muted, a track can't be unmuted.
-        // This track will no more provide data...
-        callErrorHandler(_errorHandler.errorList.AUDIO_TRACK_MUTED, null, true, {});
-        clearInterval(streamsMetada.audioInWatcherId);
-      }
-
-      if (!track.enabled) {
-        // Track is disabled (muted for telephonist) which means that the track provides silence instead of real data.
-        // When disabled, a track can be enabled again.
-        // When in that case, user can't be heard until track is enabled again.
-        callErrorHandler(_errorHandler.errorList.AUDIO_TRACK_DISABLED, null, true, {});
-      }
-
-      if (track.readyState === "ended") {
-        // Possibly a disconnection of the device
-        // When ended, a track can't be active again
-        // This track will no more provide data
-        callErrorHandler(_errorHandler.errorList.AUDIO_TRACK_ENDED, null, true, {});
-        clearInterval(streamsMetada.audioInWatcherId);
-      }
-    }, 10000);
-  }
-};
-var _default = deviceManager;
+var _default = CallsList;
 exports["default"] = _default;
 
-},{"../../events.module.js":284,"../constants.js":299,"../errorHandler.js":300,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/typeof":13,"@babel/runtime/regenerator":15}],292:[function(require,module,exports){
+},{"./callManager":265,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15}],271:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-
-var _typeof = require("@babel/runtime/helpers/typeof");
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -54526,59 +49874,7 @@ var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/
 
 require("../constants.js");
 
-var _eventsModule = require("../../events.module.js");
-
-var _errorHandler = _interopRequireWildcard(require("../errorHandler.js"));
-
-function _getRequireWildcardCache(nodeInterop) {
-  if (typeof WeakMap !== "function") return null;
-  var cacheBabelInterop = new WeakMap();
-  var cacheNodeInterop = new WeakMap();
-  return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) {
-    return nodeInterop ? cacheNodeInterop : cacheBabelInterop;
-  })(nodeInterop);
-}
-
-function _interopRequireWildcard(obj, nodeInterop) {
-  if (!nodeInterop && obj && obj.__esModule) {
-    return obj;
-  }
-
-  if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") {
-    return {
-      "default": obj
-    };
-  }
-
-  var cache = _getRequireWildcardCache(nodeInterop);
-
-  if (cache && cache.has(obj)) {
-    return cache.get(obj);
-  }
-
-  var newObj = {};
-  var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
-
-  for (var key in obj) {
-    if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) {
-      var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
-
-      if (desc && (desc.get || desc.set)) {
-        Object.defineProperty(newObj, key, desc);
-      } else {
-        newObj[key] = obj[key];
-      }
-    }
-  }
-
-  newObj["default"] = obj;
-
-  if (cache) {
-    cache.set(obj, newObj);
-  }
-
-  return newObj;
-}
+var _errorHandler = require("../errorHandler.js");
 
 function MediaStreamManager() {
   var deviceStreams = {
@@ -54692,7 +49988,7 @@ function MediaStreamManager() {
   };
 }
 
-function DeviceManager() {
+function DeviceManager(app) {
   var config = {
     mediaStreams: new MediaStreamManager(),
     streamsMetada: {
@@ -54724,14 +50020,13 @@ function DeviceManager() {
           if (video) config.mediaStreams.setVideoInput(stream);
           resolve(stream);
         })["catch"](function (error) {
-          _eventsModule.chatEvents.fireEvent('callEvents', {
+          app.chatEvents.fireEvent('callEvents', {
             type: 'CALL_ERROR',
             code: audio ? 12400 : 12401,
             message: error // environmentDetails: getSDKCallDetails()
 
           });
-
-          reject((0, _errorHandler["default"])(audio ? 12400 : 12401));
+          reject(app.errorHandler.handleError(audio ? 12400 : 12401));
         });
       });
     },
@@ -54781,7 +50076,7 @@ function DeviceManager() {
           });
           resolve(stream);
         })["catch"](function (e) {
-          var error = (0, _errorHandler.raiseError)(_errorHandler.errorList.SCREENSHARE_PERMISSION_ERROR, callback, true, {
+          var error = app.errorHandler.raiseError(_errorHandler.errorList.SCREENSHARE_PERMISSION_ERROR, callback, true, {
             eventName: 'callEvents',
             eventType: 'CALL_ERROR'
           });
@@ -54922,266 +50217,184 @@ function DeviceManager() {
 
 ;
 
-},{"../../events.module.js":284,"../constants.js":299,"../errorHandler.js":300,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/typeof":13,"@babel/runtime/regenerator":15}],293:[function(require,module,exports){
+},{"../constants.js":277,"../errorHandler.js":278,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15}],272:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.DevicePauseStopManager = DevicePauseStopManager;
-
-var _store = require("../store");
-
-var _callsList = require("./callsList");
-
-function DevicePauseStopManager(_ref) {
-  var userId = _ref.userId,
-      mediaType = _ref.mediaType,
-      timeout = _ref.timeout,
-      callId = _ref.callId;
-  var config = {
-    callId: callId,
-    userId: userId,
-    mediaType: mediaType,
-    // 'video' || 'audio'
-    paused: false,
-    stopped: false,
-    timeoutHandler: null,
-    timeout: timeout
-  };
-  var privateFunctions = {
-    setTimeout: function setTimeout() {
-      if (config.timeoutHandler) {
-        this.removeTimeout();
-      }
-      /**
-       * Temporarily disable timeout feature
-       */
-      //config.timeoutHandler = setTimeout(function () {
-
-
-      if (config.paused) {
-        config.stopped = true;
-        (0, _callsList.callsManager)().get(callId).users.get(userId).destroyAudio(); //     .deactivateParticipantStream(
-        //     config.userId,
-        //     config.mediaType,
-        //     (config.mediaType === 'video' ? 'video' : 'mute')
-        // );
-      } //}, config.timeout);
-
-    },
-    removeTimeout: function removeTimeout() {
-      clearTimeout(config.timeoutHandler);
-    }
-  };
-  return {
-    pauseStream: function pauseStream() {
-      config.paused = true;
-    },
-    stopStream: function stopStream() {
-      config.stopped = true;
-    },
-    isStreamPaused: function isStreamPaused() {
-      return config.paused;
-    },
-    isStreamStopped: function isStreamStopped() {
-      return config.stopped;
-    },
-    disableStream: function disableStream() {
-      //if(pause)
-      this.pauseStream();
-      privateFunctions.setTimeout();
-    },
-    reset: function reset() {
-      config.paused = false;
-      config.stopped = false;
-      privateFunctions.removeTimeout();
-    }
-  };
-}
-
-},{"../store":304,"./callsList":290}],294:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.audioCtx = audioCtx;
-exports.calculateScreenSize = calculateScreenSize;
-exports.callTypes = exports.callStopQueue = exports.callClientType = void 0;
-exports.currentCall = currentCall;
-exports.currentCallMyUser = currentCallMyUser;
-exports.endCall = endCall;
-exports.endScreenShare = endScreenShare;
-exports.sharedVariables = exports.joinCallParams = void 0;
-
-var _sdkParams = require("../sdkParams");
+exports["default"] = void 0;
 
 var _errorHandler = require("../errorHandler");
 
 var _constants = require("../constants");
 
-var _events = require("../../events.module");
-
-var _messaging = require("../../messaging.module");
-
-var _callsList = require("./callsList");
-
-var _store = require("../store");
-
-var callStopQueue = {
-  callStarted: false
-},
-    callClientType = {
-  WEB: 1,
-  ANDROID: 2,
-  DESKTOP: 3
-},
-    callTypes = {
-  'VOICE': 0x0,
-  'VIDEO': 0x1
-},
-    joinCallParams = {
-  cameraPaused: false
-};
-exports.joinCallParams = joinCallParams;
-exports.callTypes = callTypes;
-exports.callClientType = callClientType;
-exports.callStopQueue = callStopQueue;
-var sharedVariables = {
-  globalCallRequestTimeout: null,
-  callTurnIp: null,
-  useInternalTurnAddress: null,
-  callDivId: null,
-  callAudioTagClassName: null,
-  callVideoTagClassName: null,
-  callVideoMinWidth: null,
-  callVideoMinHeight: null,
-  requestedCallId: null,
-  acceptedCallId: null,
-  currentCallId: null,
-  callNoAnswerTimeout: null,
-  callStreamCloseTimeout: null,
-  asyncClient: null,
-  callOptions: null,
-  startScreenSharetParams: {
-    quality: 3
+function SharedData(app) {
+  var callStopQueue = {
+    callStarted: false
   },
-  deviceManager: null,
-  audioCtx: null
-};
-exports.sharedVariables = sharedVariables;
-
-function audioCtx() {
-  if (!sharedVariables.audioCtx) sharedVariables.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  return sharedVariables.audioCtx;
-}
-
-function endCall(params, callback) {
-  _sdkParams.sdkParams.consoleLogging && console.log('[SDK][endCall] called...');
-  var endCallData = {
-    chatMessageVOType: _constants.chatMessageVOTypes.END_CALL_REQUEST,
-    typeCode: _sdkParams.sdkParams.generalTypeCode,
-    //params.typeCode,
-    pushMsgType: 3,
-    token: _sdkParams.sdkParams.token
+      callClientType = {
+    WEB: 1,
+    ANDROID: 2,
+    DESKTOP: 3
+  },
+      callTypes = {
+    'VOICE': 0x0,
+    'VIDEO': 0x1
+  },
+      joinCallParams = {
+    cameraPaused: false
+  };
+  var sharedVariables = {
+    globalCallRequestTimeout: null,
+    callTurnIp: null,
+    useInternalTurnAddress: null,
+    callDivId: null,
+    callAudioTagClassName: null,
+    callVideoTagClassName: null,
+    callVideoMinWidth: null,
+    callVideoMinHeight: null,
+    requestedCallId: null,
+    acceptedCallId: null,
+    currentCallId: null,
+    callNoAnswerTimeout: null,
+    callStreamCloseTimeout: null,
+    asyncClient: null,
+    callOptions: null,
+    startScreenSharetParams: {
+      quality: 3
+    },
+    deviceManager: null,
+    audioCtx: null
   };
 
-  if (params) {
-    if (typeof +params.callId === 'number' && params.callId > 0) {
-      endCallData.subjectId = +params.callId;
+  function audioCtx() {
+    if (!sharedVariables.audioCtx) sharedVariables.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    return sharedVariables.audioCtx;
+  }
+
+  function endCall(params, callback) {
+    app.sdkParams.consoleLogging && console.log('[SDK][endCall] called...');
+    var endCallData = {
+      chatMessageVOType: _constants.chatMessageVOTypes.END_CALL_REQUEST,
+      typeCode: app.sdkParams.generalTypeCode,
+      //params.typeCode,
+      pushMsgType: 3,
+      token: app.sdkParams.token
+    };
+
+    if (params) {
+      if (typeof +params.callId === 'number' && params.callId > 0) {
+        endCallData.subjectId = +params.callId;
+      } else {
+        app.errorHandler.raiseError(_errorHandler.errorList.INVALID_CALLID, callback, true, {});
+        return;
+      }
     } else {
-      (0, _errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID, callback, true, {});
+      app.chatEvents.fireEvent('error', {
+        code: 999,
+        message: 'No params have been sent to End the call!'
+      });
       return;
     }
-  } else {
-    _events.chatEvents.fireEvent('error', {
-      code: 999,
-      message: 'No params have been sent to End the call!'
+
+    return app.messenger.sendMessage(endCallData, {
+      onResult: function onResult(result) {
+        callback && callback(result);
+      }
     });
-
-    return;
   }
 
-  return (0, _messaging.messenger)().sendMessage(endCallData, {
-    onResult: function onResult(result) {
-      callback && callback(result);
+  function endScreenShare(params, callback) {
+    var cCall = app.callsManager.get(app.callsManager.currentCallId);
+
+    if (!cCall) {
+      app.errorHandler.raiseError(_errorHandler.errorList.INVALID_CALLID, callback, true, {});
+      return;
     }
-  });
-}
 
-function endScreenShare(params, callback) {
-  var cCall = (0, _callsList.callsManager)().get((0, _callsList.callsManager)().currentCallId);
+    var sendData = {
+      chatMessageVOType: _constants.chatMessageVOTypes.END_SCREEN_SHARE,
+      typeCode: app.sdkParams.generalTypeCode,
+      //params.typeCode,
+      pushMsgType: 3,
+      token: app.sdkParams.token,
+      subjectId: app.callsManager.currentCallId
+    };
 
-  if (!cCall) {
-    (0, _errorHandler.raiseError)(_errorHandler.errorList.INVALID_CALLID, callback, true, {});
-    return;
+    if (!sendData.subjectId) {
+      cCall.raiseCallError(_errorHandler.errorList.INVALID_CALLID, callback, true, {});
+      return;
+    }
+
+    if (!cCall.screenShareInfo.isStarted()) {
+      cCall.raiseCallError(_errorHandler.errorList.SCREENSHARE_NOT_STARTED, callback, true);
+      return;
+    } else {
+      cCall.users().removeItem("screenShare");
+    }
+
+    if (!cCall.screenShareInfo.iAmOwner()) {
+      cCall.raiseCallError(_errorHandler.errorList.NOT_SCREENSHARE_OWNER, callback, true);
+      return;
+    }
+
+    return app.messenger.sendMessage(sendData, {
+      onResult: function onResult(result) {
+        callback && callback(result);
+      }
+    });
   }
 
-  var sendData = {
-    chatMessageVOType: _constants.chatMessageVOTypes.END_SCREEN_SHARE,
-    typeCode: _sdkParams.sdkParams.generalTypeCode,
-    //params.typeCode,
-    pushMsgType: 3,
-    token: _sdkParams.sdkParams.token,
-    subjectId: (0, _callsList.callsManager)().currentCallId
+  function calculateScreenSize(_ref) {
+    var _ref$quality = _ref.quality,
+        quality = _ref$quality === void 0 ? 3 : _ref$quality;
+    var screenSize = window.screen,
+        qualities = [{
+      width: Math.round(screenSize.width / 3),
+      height: Math.round(window.screen.height / 3)
+    }, {
+      width: Math.round(screenSize.width / 2),
+      height: Math.round(screenSize.height / 2)
+    }, {
+      width: screenSize.width,
+      height: screenSize.height
+    }, {
+      width: Math.round(screenSize.width * 1.6),
+      height: Math.round(screenSize.height * 1.6)
+    }],
+        selectedQuality = quality ? +quality - 1 : 3,
+        qualityObj = qualities[selectedQuality];
+    return qualityObj;
+  }
+
+  function currentCall() {
+    return app.callsManager.get(app.callsManager.currentCallId);
+  }
+
+  function currentCallMyUser() {
+    return currentCall().users().get(app.store.user.get().id);
+  }
+
+  return {
+    calculateScreenSize: calculateScreenSize,
+    currentCallMyUser: currentCallMyUser,
+    callStopQueue: callStopQueue,
+    sharedVariables: sharedVariables,
+    callClientType: callClientType,
+    callTypes: callTypes,
+    joinCallParams: joinCallParams,
+    endScreenShare: endScreenShare,
+    currentCall: currentCall,
+    endCall: endCall,
+    audioCtx: audioCtx
   };
-
-  if (!sendData.subjectId) {
-    cCall.raiseCallError(_errorHandler.errorList.INVALID_CALLID, callback, true, {});
-    return;
-  }
-
-  if (!cCall.screenShareInfo.isStarted()) {
-    cCall.raiseCallError(_errorHandler.errorList.SCREENSHARE_NOT_STARTED, callback, true);
-    return;
-  } else {
-    cCall.users().removeItem("screenShare");
-  }
-
-  if (!cCall.screenShareInfo.iAmOwner()) {
-    cCall.raiseCallError(_errorHandler.errorList.NOT_SCREENSHARE_OWNER, callback, true);
-    return;
-  }
-
-  return (0, _messaging.messenger)().sendMessage(sendData, {
-    onResult: function onResult(result) {
-      callback && callback(result);
-    }
-  });
 }
 
-function calculateScreenSize(_ref) {
-  var _ref$quality = _ref.quality,
-      quality = _ref$quality === void 0 ? 3 : _ref$quality;
-  var screenSize = window.screen,
-      qualities = [{
-    width: Math.round(screenSize.width / 3),
-    height: Math.round(window.screen.height / 3)
-  }, {
-    width: Math.round(screenSize.width / 2),
-    height: Math.round(screenSize.height / 2)
-  }, {
-    width: screenSize.width,
-    height: screenSize.height
-  }, {
-    width: Math.round(screenSize.width * 1.6),
-    height: Math.round(screenSize.height * 1.6)
-  }],
-      selectedQuality = quality ? +quality - 1 : 3,
-      qualityObj = qualities[selectedQuality];
-  return qualityObj;
-}
+var _default = SharedData;
+exports["default"] = _default;
 
-function currentCall() {
-  return (0, _callsList.callsManager)().get((0, _callsList.callsManager)().currentCallId);
-}
-
-function currentCallMyUser() {
-  return currentCall().users().get(_store.store.user().id);
-}
-
-},{"../../events.module":284,"../../messaging.module":309,"../constants":299,"../errorHandler":300,"../sdkParams":302,"../store":304,"./callsList":290}],295:[function(require,module,exports){
+},{"../constants":277,"../errorHandler":278}],273:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -55225,7 +50438,7 @@ function topicMetaDataManager(params) {
   };
 }
 
-},{}],296:[function(require,module,exports){
+},{}],274:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -55545,7 +50758,7 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
   };
 }
 
-},{"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15}],297:[function(require,module,exports){
+},{"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15}],275:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -55553,506 +50766,491 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.addReaction = addReaction;
-exports.getMyReaction = getMyReaction;
-exports.getReactionList = getReactionList;
-exports.getReactionsSummaries = getReactionsSummaries;
-exports.onAddReaction = onAddReaction;
-exports.onReactionList = onReactionList;
-exports.onReactionSummaries = onReactionSummaries;
-exports.onRemoveReaction = onRemoveReaction;
-exports.onReplaceReaction = onReplaceReaction;
-exports.removeReaction = removeReaction;
-exports.replaceReaction = replaceReaction;
+exports["default"] = void 0;
 
 var _constants = require("../constants");
 
-var _sdkParams = require("../sdkParams");
-
 var _messaging = require("../../messaging.module");
-
-var _store = require("../store");
 
 var _utility = _interopRequireDefault(require("../../utility/utility"));
 
-var _events = require("../../events.module");
+function ReactionsMethods(app) {
+  var reactionsListRequestsParams = {};
+  var reactionSummariesRequests = {};
 
-var reactionsListRequestsParams = {};
-var reactionSummariesRequests = {};
-
-function addReaction(params, callback) {
-  var sendData = {
-    chatMessageVOType: _constants.chatMessageVOTypes.ADD_REACTION,
-    subjectId: params.threadId,
-    typeCode: _sdkParams.sdkParams.generalTypeCode,
-    //params.typeCode,
-    content: {
-      messageId: params.messageId,
-      reaction: params.reaction
-    },
-    token: _sdkParams.sdkParams.token
-  };
-  return (0, _messaging.messenger)().sendMessage(sendData);
-}
-
-function getMyReaction(params, callback) {
-  var sendData = {
-    chatMessageVOType: _constants.chatMessageVOTypes.GET_MY_REACTION,
-    subjectId: params.threadId,
-    typeCode: _sdkParams.sdkParams.generalTypeCode,
-    //params.typeCode,
-    content: {
-      messageId: params.messageId
-    },
-    token: _sdkParams.sdkParams.token
-  };
-  return (0, _messaging.messenger)().sendMessage(sendData, {
-    onResult: function onResult(result) {
-      callback && callback(result);
-    }
-  });
-}
-
-function replaceReaction(params, callback) {
-  var sendData = {
-    chatMessageVOType: _constants.chatMessageVOTypes.REPLACE_REACTION,
-    subjectId: params.threadId,
-    typeCode: _sdkParams.sdkParams.generalTypeCode,
-    //params.typeCode,
-    content: {
-      reactionId: params.reactionId,
-      reaction: params.reaction
-    },
-    token: _sdkParams.sdkParams.token
-  };
-  return (0, _messaging.messenger)().sendMessage(sendData, {
-    onResult: function onResult(result) {
-      callback && callback(result);
-    }
-  });
-}
-
-function removeReaction(params, callback) {
-  var sendData = {
-    chatMessageVOType: _constants.chatMessageVOTypes.REMOVE_REACTION,
-    subjectId: params.threadId,
-    typeCode: _sdkParams.sdkParams.generalTypeCode,
-    //params.typeCode,
-    content: {
-      reactionId: params.reactionId
-    },
-    token: _sdkParams.sdkParams.token
-  };
-  return (0, _messaging.messenger)().sendMessage(sendData, {
-    onResult: function onResult(result) {
-      callback && callback(result);
-    }
-  });
-}
-
-function getReactionList(_ref) {
-  var threadId = _ref.threadId,
-      messageId = _ref.messageId,
-      _ref$count = _ref.count,
-      count = _ref$count === void 0 ? 20 : _ref$count,
-      _ref$offset = _ref.offset,
-      offset = _ref$offset === void 0 ? 0 : _ref$offset,
-      _ref$sticker = _ref.sticker,
-      sticker = _ref$sticker === void 0 ? null : _ref$sticker,
-      _ref$uniqueId = _ref.uniqueId,
-      uniqueId = _ref$uniqueId === void 0 ? null : _ref$uniqueId;
-  var sendData = {
-    chatMessageVOType: _constants.chatMessageVOTypes.REACTION_LIST,
-    subjectId: threadId,
-    typeCode: _sdkParams.sdkParams.generalTypeCode,
-    //params.typeCode,
-    content: {
-      messageId: messageId,
-      count: count,
-      offset: offset
-    },
-    token: _sdkParams.sdkParams.token,
-    uniqueId: uniqueId
-  };
-
-  if (sticker && sticker != 'null') {
-    sendData.content.sticker = sticker;
+  function addReaction(params, callback) {
+    var sendData = {
+      chatMessageVOType: _constants.chatMessageVOTypes.ADD_REACTION,
+      subjectId: params.threadId,
+      typeCode: app.sdkParams.generalTypeCode,
+      //params.typeCode,
+      content: {
+        messageId: params.messageId,
+        reaction: params.reaction
+      },
+      token: app.sdkParams.token
+    };
+    return app.messenger.sendMessage(sendData);
   }
 
-  if (!sendData.uniqueId) sendData.uniqueId = _utility["default"].generateUUID();
-  reactionsListRequestsParams[sendData.uniqueId] = sendData.content;
-
-  var cachedResult = _store.store.reactionsList.getItem(messageId, sticker, count, offset);
-
-  if (cachedResult) {
-    cachedResult = JSON.parse(JSON.stringify(cachedResult));
-
-    _events.chatEvents.fireEvent('messageEvents', {
-      type: 'REACTIONS_LIST',
-      uniqueId: sendData.uniqueId,
-      messageId: messageId,
-      result: cachedResult
+  function getMyReaction(params, callback) {
+    var sendData = {
+      chatMessageVOType: _constants.chatMessageVOTypes.GET_MY_REACTION,
+      subjectId: params.threadId,
+      typeCode: app.sdkParams.generalTypeCode,
+      //params.typeCode,
+      content: {
+        messageId: params.messageId
+      },
+      token: app.sdkParams.token
+    };
+    return app.messenger.sendMessage(sendData, {
+      onResult: function onResult(result) {
+        callback && callback(result);
+      }
     });
   }
 
-  if (!cachedResult) {
-    return (0, _messaging.messenger)().sendMessage(sendData);
+  function replaceReaction(params, callback) {
+    var sendData = {
+      chatMessageVOType: _constants.chatMessageVOTypes.REPLACE_REACTION,
+      subjectId: params.threadId,
+      typeCode: app.sdkParams.generalTypeCode,
+      //params.typeCode,
+      content: {
+        reactionId: params.reactionId,
+        reaction: params.reaction
+      },
+      token: app.sdkParams.token
+    };
+    return app.messenger.sendMessage(sendData, {
+      onResult: function onResult(result) {
+        callback && callback(result);
+      }
+    });
   }
-}
 
-function getReactionsSummaries(params) {
-  var sendData = {
-    chatMessageVOType: _constants.chatMessageVOTypes.REACTION_COUNT,
-    typeCode: _sdkParams.sdkParams.generalTypeCode,
-    //params.typeCode,
-    token: _sdkParams.sdkParams.token,
-    subjectId: params.threadId,
-    uniqueId: params.uniqueId ? params.uniqueId : _utility["default"].generateUUID()
-  },
-      cachedIds = _store.store.reactionSummaries.filterExists(params.messageIds);
+  function removeReaction(params, callback) {
+    var sendData = {
+      chatMessageVOType: _constants.chatMessageVOTypes.REMOVE_REACTION,
+      subjectId: params.threadId,
+      typeCode: app.sdkParams.generalTypeCode,
+      //params.typeCode,
+      content: {
+        reactionId: params.reactionId
+      },
+      token: app.sdkParams.token
+    };
+    return app.messenger.sendMessage(sendData, {
+      onResult: function onResult(result) {
+        callback && callback(result);
+      }
+    });
+  }
 
-  reactionSummariesRequests[sendData.uniqueId] = params.messageIds;
-  var difference = params.messageIds.reduce(function (result, element) {
-    if (cachedIds.indexOf(element) === -1) {
-      result.push(element);
+  function getReactionList(_ref) {
+    var threadId = _ref.threadId,
+        messageId = _ref.messageId,
+        _ref$count = _ref.count,
+        count = _ref$count === void 0 ? 20 : _ref$count,
+        _ref$offset = _ref.offset,
+        offset = _ref$offset === void 0 ? 0 : _ref$offset,
+        _ref$sticker = _ref.sticker,
+        sticker = _ref$sticker === void 0 ? null : _ref$sticker,
+        _ref$uniqueId = _ref.uniqueId,
+        uniqueId = _ref$uniqueId === void 0 ? null : _ref$uniqueId;
+    var sendData = {
+      chatMessageVOType: _constants.chatMessageVOTypes.REACTION_LIST,
+      subjectId: threadId,
+      typeCode: app.sdkParams.generalTypeCode,
+      //params.typeCode,
+      content: {
+        messageId: messageId,
+        count: count,
+        offset: offset
+      },
+      token: app.sdkParams.token,
+      uniqueId: uniqueId
+    };
+
+    if (sticker && sticker != 'null') {
+      sendData.content.sticker = sticker;
     }
 
-    return result;
-  }, []);
+    if (!sendData.uniqueId) sendData.uniqueId = _utility["default"].generateUUID();
+    reactionsListRequestsParams[sendData.uniqueId] = sendData.content;
+    var cachedResult = app.store.reactionsList.getItem(messageId, sticker, count, offset);
 
-  if (difference.length) {
-    sendData.content = difference;
-    var res = (0, _messaging.messenger)().sendMessage(sendData);
+    if (cachedResult) {
+      cachedResult = JSON.parse(JSON.stringify(cachedResult));
+      app.chatEvents.fireEvent('messageEvents', {
+        type: 'REACTIONS_LIST',
+        uniqueId: sendData.uniqueId,
+        messageId: messageId,
+        result: cachedResult
+      });
+    }
+
+    if (!cachedResult) {
+      return app.messenger.sendMessage(sendData);
+    }
   }
 
-  if (cachedIds && cachedIds.length) {
-    setTimeout(function () {
-      var messageContent = _store.store.reactionSummaries.getMany(cachedIds);
+  function getReactionsSummaries(params) {
+    var sendData = {
+      chatMessageVOType: _constants.chatMessageVOTypes.REACTION_COUNT,
+      typeCode: app.sdkParams.generalTypeCode,
+      //params.typeCode,
+      token: app.sdkParams.token,
+      subjectId: params.threadId,
+      uniqueId: params.uniqueId ? params.uniqueId : _utility["default"].generateUUID()
+    },
+        cachedIds = app.store.reactionSummaries.filterExists(params.messageIds);
+    reactionSummariesRequests[sendData.uniqueId] = params.messageIds;
+    var difference = params.messageIds.reduce(function (result, element) {
+      if (cachedIds.indexOf(element) === -1) {
+        result.push(element);
+      }
 
-      messageContent = JSON.parse(JSON.stringify(messageContent));
+      return result;
+    }, []);
 
-      _events.chatEvents.fireEvent('messageEvents', {
-        type: 'REACTION_SUMMARIES',
-        uniqueId: sendData.uniqueId,
-        result: messageContent
+    if (difference.length) {
+      sendData.content = difference;
+      var res = app.messenger.sendMessage(sendData);
+    }
+
+    if (cachedIds && cachedIds.length) {
+      setTimeout(function () {
+        var messageContent = app.store.reactionSummaries.getMany(cachedIds);
+        messageContent = JSON.parse(JSON.stringify(messageContent));
+        app.chatEvents.fireEvent('messageEvents', {
+          type: 'REACTION_SUMMARIES',
+          uniqueId: sendData.uniqueId,
+          result: messageContent
+        });
+      }, 100);
+    }
+
+    return {
+      uniqueId: sendData.uniqueId
+    };
+  }
+
+  function onReactionSummaries(uniqueId, messageContent) {
+    var msgContent = JSON.parse(JSON.stringify(messageContent));
+    app.store.reactionSummaries.addMany(messageContent);
+
+    if (reactionSummariesRequests[uniqueId] && reactionSummariesRequests[uniqueId].length) {
+      reactionSummariesRequests[uniqueId].forEach(function (item) {
+        app.store.reactionSummaries.initItem(item, {});
       });
-    }, 100);
+    } // params.messageIds.forEach(item=>{
+    //     store.reactionSummaries.initItem(item, {});
+    // });
+
+
+    app.chatEvents.fireEvent('messageEvents', {
+      type: 'REACTION_SUMMARIES',
+      uniqueId: uniqueId,
+      result: msgContent
+    });
+  }
+
+  function onReactionList(uniqueId, messageContent) {
+    if (!reactionsListRequestsParams[uniqueId]) {
+      return;
+    }
+
+    var rq = reactionsListRequestsParams[uniqueId];
+    app.store.reactionsList.save(reactionsListRequestsParams[uniqueId], messageContent);
+    var cachedResult = app.store.reactionsList.getItem(rq.messageId, rq.sticker, rq.count, rq.offset);
+
+    if (cachedResult) {
+      cachedResult = JSON.parse(JSON.stringify(cachedResult));
+    }
+
+    app.chatEvents.fireEvent('messageEvents', {
+      type: 'REACTIONS_LIST',
+      uniqueId: uniqueId,
+      messageId: rq.messageId,
+      result: cachedResult
+    });
+    delete reactionsListRequestsParams[uniqueId];
+  }
+
+  function onRemoveReaction(uniqueId, messageContent, contentCount) {
+    if (app.store.messagesCallbacks[uniqueId]) {
+      app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+    }
+
+    app.store.reactionSummaries.decreaseCount(messageContent.messageId, messageContent.reactionVO.reaction);
+    if (app.store.user.get().isMe(messageContent.reactionVO.participantVO.id)) app.store.reactionSummaries.removeMyReaction(messageContent.messageId);
+    app.store.reactionsList.removeCachedData(messageContent.messageId, messageContent.reactionVO.reaction); // app.store.reactionsList.removeReactionCache(messageContent.messageId, messageContent.reactionVO.reaction);
+
+    app.chatEvents.fireEvent('messageEvents', {
+      type: 'REMOVE_REACTION',
+      result: messageContent
+    });
+  }
+
+  function onReplaceReaction(uniqueId, messageContent, contentCount) {
+    if (app.store.messagesCallbacks[uniqueId]) {
+      app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+    }
+
+    app.store.reactionSummaries.decreaseCount(messageContent.messageId, messageContent.oldSticker);
+    app.store.reactionSummaries.increaseCount(messageContent.messageId, messageContent.reactionVO.reaction);
+    app.store.reactionSummaries.maybeUpdateMyReaction(messageContent.messageId, messageContent.reactionVO.id, messageContent.reactionVO.reaction, messageContent.reactionVO.participantVO.id, messageContent.reactionVO.time);
+    app.store.reactionsList.removeCachedData(messageContent.messageId, messageContent.oldSticker);
+    app.store.reactionsList.removeCachedData(messageContent.messageId, messageContent.reactionVO.reaction);
+    app.chatEvents.fireEvent('messageEvents', {
+      type: 'REPLACE_REACTION',
+      result: messageContent
+    });
+  }
+
+  function onAddReaction(uniqueId, messageContent, contentCount) {
+    if (app.store.messagesCallbacks[uniqueId]) {
+      app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+    }
+
+    var msgContent = JSON.parse(JSON.stringify(messageContent));
+    app.store.reactionSummaries.increaseCount(messageContent.messageId, messageContent.reactionVO.reaction);
+    app.store.reactionSummaries.maybeUpdateMyReaction(messageContent.messageId, messageContent.reactionVO.id, messageContent.reactionVO.reaction, messageContent.reactionVO.participantVO.id, messageContent.reactionVO.time);
+    app.store.reactionsList.removeCachedData(messageContent.messageId, messageContent.reactionVO.reaction);
+    app.chatEvents.fireEvent('messageEvents', {
+      type: 'ADD_REACTION',
+      result: msgContent
+    });
   }
 
   return {
-    uniqueId: sendData.uniqueId
+    getReactionsSummaries: getReactionsSummaries,
+    getReactionList: getReactionList,
+    removeReaction: removeReaction,
+    replaceReaction: replaceReaction,
+    getMyReaction: getMyReaction,
+    addReaction: addReaction,
+    onReactionSummaries: onReactionSummaries,
+    onReactionList: onReactionList,
+    onRemoveReaction: onRemoveReaction,
+    onReplaceReaction: onReplaceReaction,
+    onAddReaction: onAddReaction
   };
 }
 
-function onReactionSummaries(uniqueId, messageContent) {
-  var msgContent = JSON.parse(JSON.stringify(messageContent));
+var _default = ReactionsMethods;
+exports["default"] = _default;
 
-  _store.store.reactionSummaries.addMany(messageContent);
-
-  if (reactionSummariesRequests[uniqueId] && reactionSummariesRequests[uniqueId].length) {
-    reactionSummariesRequests[uniqueId].forEach(function (item) {
-      _store.store.reactionSummaries.initItem(item, {});
-    });
-  } // params.messageIds.forEach(item=>{
-  //     store.reactionSummaries.initItem(item, {});
-  // });
-
-
-  _events.chatEvents.fireEvent('messageEvents', {
-    type: 'REACTION_SUMMARIES',
-    uniqueId: uniqueId,
-    result: msgContent
-  });
-}
-
-function onReactionList(uniqueId, messageContent) {
-  if (!reactionsListRequestsParams[uniqueId]) {
-    return;
-  }
-
-  var rq = reactionsListRequestsParams[uniqueId];
-
-  _store.store.reactionsList.save(reactionsListRequestsParams[uniqueId], messageContent);
-
-  var cachedResult = _store.store.reactionsList.getItem(rq.messageId, rq.sticker, rq.count, rq.offset);
-
-  if (cachedResult) {
-    cachedResult = JSON.parse(JSON.stringify(cachedResult));
-  }
-
-  _events.chatEvents.fireEvent('messageEvents', {
-    type: 'REACTIONS_LIST',
-    uniqueId: uniqueId,
-    messageId: rq.messageId,
-    result: cachedResult
-  });
-
-  delete reactionsListRequestsParams[uniqueId];
-}
-
-function onRemoveReaction(uniqueId, messageContent, contentCount) {
-  if (_store.store.messagesCallbacks[uniqueId]) {
-    _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
-  }
-
-  _store.store.reactionSummaries.decreaseCount(messageContent.messageId, messageContent.reactionVO.reaction);
-
-  if (_store.store.user().isMe(messageContent.reactionVO.participantVO.id)) _store.store.reactionSummaries.removeMyReaction(messageContent.messageId);
-
-  _store.store.reactionsList.removeCachedData(messageContent.messageId, messageContent.reactionVO.reaction); // store.reactionsList.removeReactionCache(messageContent.messageId, messageContent.reactionVO.reaction);
-
-
-  _events.chatEvents.fireEvent('messageEvents', {
-    type: 'REMOVE_REACTION',
-    result: messageContent
-  });
-}
-
-function onReplaceReaction(uniqueId, messageContent, contentCount) {
-  if (_store.store.messagesCallbacks[uniqueId]) {
-    _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
-  }
-
-  _store.store.reactionSummaries.decreaseCount(messageContent.messageId, messageContent.oldSticker);
-
-  _store.store.reactionSummaries.increaseCount(messageContent.messageId, messageContent.reactionVO.reaction);
-
-  _store.store.reactionSummaries.maybeUpdateMyReaction(messageContent.messageId, messageContent.reactionVO.id, messageContent.reactionVO.reaction, messageContent.reactionVO.participantVO.id, messageContent.reactionVO.time);
-
-  _store.store.reactionsList.removeCachedData(messageContent.messageId, messageContent.oldSticker);
-
-  _store.store.reactionsList.removeCachedData(messageContent.messageId, messageContent.reactionVO.reaction);
-
-  _events.chatEvents.fireEvent('messageEvents', {
-    type: 'REPLACE_REACTION',
-    result: messageContent
-  });
-}
-
-function onAddReaction(uniqueId, messageContent, contentCount) {
-  if (_store.store.messagesCallbacks[uniqueId]) {
-    _store.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
-  }
-
-  var msgContent = JSON.parse(JSON.stringify(messageContent));
-
-  _store.store.reactionSummaries.increaseCount(messageContent.messageId, messageContent.reactionVO.reaction);
-
-  _store.store.reactionSummaries.maybeUpdateMyReaction(messageContent.messageId, messageContent.reactionVO.id, messageContent.reactionVO.reaction, messageContent.reactionVO.participantVO.id, messageContent.reactionVO.time);
-
-  _store.store.reactionsList.removeCachedData(messageContent.messageId, messageContent.reactionVO.reaction);
-
-  _events.chatEvents.fireEvent('messageEvents', {
-    type: 'ADD_REACTION',
-    result: msgContent
-  });
-}
-
-},{"../../events.module":284,"../../messaging.module":309,"../../utility/utility":310,"../constants":299,"../sdkParams":302,"../store":304,"@babel/runtime/helpers/interopRequireDefault":7}],298:[function(require,module,exports){
+},{"../../messaging.module":287,"../../utility/utility":288,"../constants":277,"@babel/runtime/helpers/interopRequireDefault":7}],276:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.formatDataToMakeParticipant = formatDataToMakeParticipant;
-exports.getThreadParticipants = getThreadParticipants;
-exports.reformatThreadParticipants = reformatThreadParticipants;
+exports["default"] = void 0;
 
 var _constants = require("../constants");
 
-var _sdkParams = require("../sdkParams");
-
-var _events = require("../../events.module");
-
 var _messaging = require("../../messaging.module");
-/**
- * Get Thread Participants
- *
- * Gets participants list of given thread
- *
- * @access pubic
- *
- * @param {int}     threadId        Id of thread which you want to get participants of
- * @param {int}     count           Count of objects to get
- * @param {int}     offset          Offset of select Query
- * @param {string}  name            Search in Participants list (LIKE in name, contactName, email)
- *
- * @return {object} Instant Response
- */
 
-
-function getThreadParticipants(params, callback) {
-  var sendMessageParams = {
-    chatMessageVOType: _constants.chatMessageVOTypes.THREAD_PARTICIPANTS,
-    typeCode: _sdkParams.sdkParams.generalTypeCode,
-    //params.typeCode,
-    content: {},
-    subjectId: params.threadId
-  },
-      returnCache = false;
-  var offset = parseInt(params.offset) > 0 ? parseInt(params.offset) : 0,
-      count = parseInt(params.count) > 0 ? parseInt(params.count) : 20;
-  sendMessageParams.content.count = count;
-  sendMessageParams.content.offset = offset;
-
-  if (typeof params.name === 'string') {
-    sendMessageParams.content.name = params.name;
-  }
-
-  if (typeof params.username === 'string') {
-    sendMessageParams.content.username = params.username;
-  }
-
-  if (typeof params.cellphoneNumber === 'string') {
-    sendMessageParams.content.cellphoneNumber = params.cellphoneNumber;
-  }
-
-  if (typeof params.admin === 'boolean') {
-    sendMessageParams.content.admin = params.admin;
-  }
-
-  return (0, _messaging.messenger)().sendMessage(sendMessageParams, {
-    onResult: function onResult(result) {
-      var returnData = {
-        hasError: result.hasError,
-        cache: false,
-        errorMessage: result.errorMessage,
-        errorCode: result.errorCode
-      };
-
-      if (!returnData.hasError) {
-        var messageContent = result.result,
-            messageLength = messageContent.length,
-            resultData = {
-          participants: reformatThreadParticipants(messageContent, params.threadId),
-          contentCount: result.contentCount,
-          hasNext: sendMessageParams.content.offset + sendMessageParams.content.count < result.contentCount && messageLength > 0,
-          nextOffset: sendMessageParams.content.offset * 1 + messageLength * 1
-        };
-        returnData.result = resultData;
-      }
-
-      callback && callback(returnData);
-      /**
-       * Delete callback so if server pushes response before
-       * cache, cache won't send data again
-       */
-
-      callback = undefined;
-
-      if (!returnData.hasError && returnCache) {
-        _events.chatEvents.fireEvent('threadEvents', {
-          type: 'THREAD_PARTICIPANTS_LIST_CHANGE',
-          threadId: params.threadId,
-          result: returnData.result
-        });
-      }
-    }
-  });
-}
-/**
- * Reformat Thread Participants
- *
- * This functions reformats given Array of thread Participants
- * into proper thread participant
- *
- * @access private
- *
- * @param {object}  participantsContent   Array of Thread Participant Objects
- * @param {int}    threadId              Id of Thread
- *
- * @return {object} Formatted Thread Participant Array
- */
-
-
-function reformatThreadParticipants(participantsContent, threadId) {
-  var returnData = [];
-
-  for (var i = 0; i < participantsContent.length; i++) {
-    returnData.push(formatDataToMakeParticipant(participantsContent[i], threadId));
-  }
-
-  return returnData;
-}
-/**
- * Format Data To Make Participant
- *
- * This functions reformats given JSON to proper Object
- *
- * @access private
- *
- * @param {object}  messageContent    Json object of thread taken from chat server
- *
- * @param threadId
- * @return {object} participant Object
- */
-
-
-function formatDataToMakeParticipant(messageContent, threadId) {
+function ThreadParticipantsMethods(app) {
   /**
-   * + ParticipantVO                   {object}
-   *    - id                           {int}
-   *    - coreUserId                   {int}
-   *    - threadId                     {int}
-   *    - sendEnable                   {boolean}
-   *    - receiveEnable                {boolean}
-   *    - firstName                    {string}
-   *    - lastName                     {string}
-   *    - name                         {string}
-   *    - cellphoneNumber              {string}
-   *    - email                        {string}
-   *    - image                        {string}
-   *    - chatProfileVO                {object}
-   *    - myFriend                     {boolean}
-   *    - online                       {boolean}
-   *    - notSeenDuration              {int}
-   *    - contactId                    {int}
-   *    - contactName                  {string}
-   *    - contactFirstName             {string}
-   *    - contactLastName              {string}
-   *    - blocked                      {boolean}
-   *    - admin                        {boolean}
-   *    - auditor                      {boolean}
-   *    - keyId                        {string}
-   *    - roles                        {list:string}
-   *    - username                     {string}
+   * Get Thread Participants
+   *
+   * Gets participants list of given thread
+   *
+   * @access pubic
+   *
+   * @param {int}     threadId        Id of thread which you want to get participants of
+   * @param {int}     count           Count of objects to get
+   * @param {int}     offset          Offset of select Query
+   * @param {string}  name            Search in Participants list (LIKE in name, contactName, email)
+   *
+   * @return {object} Instant Response
    */
-  var participant = {
-    id: messageContent.id,
-    coreUserId: messageContent.coreUserId,
-    threadId: parseInt(threadId),
-    sendEnable: messageContent.sendEnable,
-    receiveEnable: messageContent.receiveEnable,
-    firstName: messageContent.firstName,
-    lastName: messageContent.lastName,
-    name: messageContent.name,
-    cellphoneNumber: messageContent.cellphoneNumber,
-    email: messageContent.email,
-    image: messageContent.image,
-    myFriend: messageContent.myFriend,
-    online: messageContent.online,
-    notSeenDuration: messageContent.notSeenDuration,
-    contactId: messageContent.contactId,
-    contactName: messageContent.contactName,
-    contactFirstName: messageContent.contactFirstName,
-    contactLastName: messageContent.contactLastName,
-    blocked: messageContent.blocked,
-    admin: messageContent.admin,
-    auditor: messageContent.auditor,
-    keyId: messageContent.keyId,
-    roles: messageContent.roles,
-    username: messageContent.username
-  }; // Add chatProfileVO if exist
+  function getThreadParticipants(params, callback) {
+    var sendMessageParams = {
+      chatMessageVOType: _constants.chatMessageVOTypes.THREAD_PARTICIPANTS,
+      typeCode: app.sdkParams.generalTypeCode,
+      //params.typeCode,
+      content: {},
+      subjectId: params.threadId
+    },
+        returnCache = false;
+    var offset = parseInt(params.offset) > 0 ? parseInt(params.offset) : 0,
+        count = parseInt(params.count) > 0 ? parseInt(params.count) : 20;
+    sendMessageParams.content.count = count;
+    sendMessageParams.content.offset = offset;
 
-  if (messageContent.chatProfileVO) {
-    participant.chatProfileVO = messageContent.chatProfileVO;
-  } // return participant;
+    if (typeof params.name === 'string') {
+      sendMessageParams.content.name = params.name;
+    }
+
+    if (typeof params.username === 'string') {
+      sendMessageParams.content.username = params.username;
+    }
+
+    if (typeof params.cellphoneNumber === 'string') {
+      sendMessageParams.content.cellphoneNumber = params.cellphoneNumber;
+    }
+
+    if (typeof params.admin === 'boolean') {
+      sendMessageParams.content.admin = params.admin;
+    }
+
+    return app.messenger.sendMessage(sendMessageParams, {
+      onResult: function onResult(result) {
+        var returnData = {
+          hasError: result.hasError,
+          cache: false,
+          errorMessage: result.errorMessage,
+          errorCode: result.errorCode
+        };
+
+        if (!returnData.hasError) {
+          var messageContent = result.result,
+              messageLength = messageContent.length,
+              resultData = {
+            participants: reformatThreadParticipants(messageContent, params.threadId),
+            contentCount: result.contentCount,
+            hasNext: sendMessageParams.content.offset + sendMessageParams.content.count < result.contentCount && messageLength > 0,
+            nextOffset: sendMessageParams.content.offset * 1 + messageLength * 1
+          };
+          returnData.result = resultData;
+        }
+
+        callback && callback(returnData);
+        /**
+         * Delete callback so if server pushes response before
+         * cache, cache won't send data again
+         */
+
+        callback = undefined;
+
+        if (!returnData.hasError && returnCache) {
+          app.chatEvents.fireEvent('threadEvents', {
+            type: 'THREAD_PARTICIPANTS_LIST_CHANGE',
+            threadId: params.threadId,
+            result: returnData.result
+          });
+        }
+      }
+    });
+  }
+  /**
+   * Reformat Thread Participants
+   *
+   * This functions reformats given Array of thread Participants
+   * into proper thread participant
+   *
+   * @access private
+   *
+   * @param {object}  participantsContent   Array of Thread Participant Objects
+   * @param {int}    threadId              Id of Thread
+   *
+   * @return {object} Formatted Thread Participant Array
+   */
 
 
-  return JSON.parse(JSON.stringify(participant));
+  function reformatThreadParticipants(participantsContent, threadId) {
+    var returnData = [];
+
+    for (var i = 0; i < participantsContent.length; i++) {
+      returnData.push(formatDataToMakeParticipant(participantsContent[i], threadId));
+    }
+
+    return returnData;
+  }
+  /**
+   * Format Data To Make Participant
+   *
+   * This functions reformats given JSON to proper Object
+   *
+   * @access private
+   *
+   * @param {object}  messageContent    Json object of thread taken from chat server
+   *
+   * @param threadId
+   * @return {object} participant Object
+   */
+
+
+  function formatDataToMakeParticipant(messageContent, threadId) {
+    /**
+     * + ParticipantVO                   {object}
+     *    - id                           {int}
+     *    - coreUserId                   {int}
+     *    - threadId                     {int}
+     *    - sendEnable                   {boolean}
+     *    - receiveEnable                {boolean}
+     *    - firstName                    {string}
+     *    - lastName                     {string}
+     *    - name                         {string}
+     *    - cellphoneNumber              {string}
+     *    - email                        {string}
+     *    - image                        {string}
+     *    - chatProfileVO                {object}
+     *    - myFriend                     {boolean}
+     *    - online                       {boolean}
+     *    - notSeenDuration              {int}
+     *    - contactId                    {int}
+     *    - contactName                  {string}
+     *    - contactFirstName             {string}
+     *    - contactLastName              {string}
+     *    - blocked                      {boolean}
+     *    - admin                        {boolean}
+     *    - auditor                      {boolean}
+     *    - keyId                        {string}
+     *    - roles                        {list:string}
+     *    - username                     {string}
+     */
+    var participant = {
+      id: messageContent.id,
+      coreUserId: messageContent.coreUserId,
+      threadId: parseInt(threadId),
+      sendEnable: messageContent.sendEnable,
+      receiveEnable: messageContent.receiveEnable,
+      firstName: messageContent.firstName,
+      lastName: messageContent.lastName,
+      name: messageContent.name,
+      cellphoneNumber: messageContent.cellphoneNumber,
+      email: messageContent.email,
+      image: messageContent.image,
+      myFriend: messageContent.myFriend,
+      online: messageContent.online,
+      notSeenDuration: messageContent.notSeenDuration,
+      contactId: messageContent.contactId,
+      contactName: messageContent.contactName,
+      contactFirstName: messageContent.contactFirstName,
+      contactLastName: messageContent.contactLastName,
+      blocked: messageContent.blocked,
+      admin: messageContent.admin,
+      auditor: messageContent.auditor,
+      keyId: messageContent.keyId,
+      roles: messageContent.roles,
+      username: messageContent.username
+    }; // Add chatProfileVO if exist
+
+    if (messageContent.chatProfileVO) {
+      participant.chatProfileVO = messageContent.chatProfileVO;
+    } // return participant;
+
+
+    return JSON.parse(JSON.stringify(participant));
+  }
+
+  return {
+    getThreadParticipants: getThreadParticipants,
+    formatDataToMakeParticipant: formatDataToMakeParticipant
+  };
 }
 
-},{"../../events.module":284,"../../messaging.module":309,"../constants":299,"../sdkParams":302}],299:[function(require,module,exports){
+var _default = ThreadParticipantsMethods;
+exports["default"] = _default;
+
+},{"../../messaging.module":287,"../constants":277}],277:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -56288,7 +51486,7 @@ var callMetaDataTypes = {
 };
 exports.callMetaDataTypes = callMetaDataTypes;
 
-},{}],300:[function(require,module,exports){
+},{}],278:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -56297,12 +51495,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.errorList = exports["default"] = void 0;
-exports.getFilledErrorObject = getFilledErrorObject;
-exports.raiseError = void 0;
 
 var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
-
-var _events = require("../events.module");
 
 function ownKeys(object, enumerableOnly) {
   var keys = Object.keys(object);
@@ -56424,206 +51618,224 @@ var errorList = {
 };
 exports.errorList = errorList;
 
-var handleError = function handleError(error) {
-  var item = Object.values(errorList).filter(function (item) {
-    return item.code == error;
-  });
-  if (!item.length) return {};
-  return item[0];
-};
-
-function getFilledErrorObject(errorObject) {
-  for (var i in errorObject.variables) {
-    errorObject.message = errorObject.message.replace(errorObject.variables[i], errorObject.replacements[i]);
+function ErrorHandler(app) {
+  function handleError(error) {
+    var item = Object.values(errorList).filter(function (item) {
+      return item.code == error;
+    });
+    if (!item.length) return {};
+    return item[0];
   }
 
-  return errorObject;
+  function getFilledErrorObject(errorObject) {
+    for (var i in errorObject.variables) {
+      errorObject.message = errorObject.message.replace(errorObject.variables[i], errorObject.replacements[i]);
+    }
+
+    return errorObject;
+  }
+
+  function raiseError(errorObject, callback) {
+    var fireEvent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+    var _ref = arguments.length > 3 ? arguments[3] : undefined,
+        _ref$eventName = _ref.eventName,
+        eventName = _ref$eventName === void 0 ? 'error' : _ref$eventName,
+        _ref$eventType = _ref.eventType,
+        eventType = _ref$eventType === void 0 ? null : _ref$eventType,
+        _ref$environmentDetai = _ref.environmentDetails,
+        environmentDetails = _ref$environmentDetai === void 0 ? null : _ref$environmentDetai;
+
+    callback && callback({
+      hasError: true,
+      errorCode: errorObject.code,
+      errorMessage: errorObject.message
+    });
+    fireEvent && app.chatEvents.fireEvent(eventName, {
+      type: eventType,
+      code: errorObject.code,
+      message: errorObject.message,
+      environmentDetails: environmentDetails
+    });
+    return _objectSpread({
+      hasError: true
+    }, errorObject);
+  }
+
+  return {
+    handleError: handleError,
+    raiseError: raiseError,
+    getFilledErrorObject: getFilledErrorObject
+  };
 }
 
-var raiseError = function raiseError(errorObject, callback) {
-  var fireEvent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
-  var _ref = arguments.length > 3 ? arguments[3] : undefined,
-      _ref$eventName = _ref.eventName,
-      eventName = _ref$eventName === void 0 ? 'error' : _ref$eventName,
-      _ref$eventType = _ref.eventType,
-      eventType = _ref$eventType === void 0 ? null : _ref$eventType,
-      _ref$environmentDetai = _ref.environmentDetails,
-      environmentDetails = _ref$environmentDetai === void 0 ? null : _ref$environmentDetai;
-
-  callback && callback({
-    hasError: true,
-    errorCode: errorObject.code,
-    errorMessage: errorObject.message
-  });
-  fireEvent && _events.chatEvents.fireEvent(eventName, {
-    type: eventType,
-    code: errorObject.code,
-    message: errorObject.message,
-    environmentDetails: environmentDetails
-  });
-  return _objectSpread({
-    hasError: true
-  }, errorObject);
-};
-
-exports.raiseError = raiseError;
-var _default = handleError;
+var _default = ErrorHandler;
 exports["default"] = _default;
 
-},{"../events.module":284,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7}],301:[function(require,module,exports){
+},{"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7}],279:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.add = add;
-exports.getRemainingTime = getRemainingTime;
-exports.isKeyBlocked = isKeyBlocked;
-exports.limitedTypes = void 0;
-exports.remove = remove;
-var requestsList = [];
-var limitedTypes = {
-  START_STOP_CALL: "START_STOP_CALL",
-  START_STOP_VIDEO_VOICE: 'START_STOP_VIDEO_VOICE'
-};
-exports.limitedTypes = limitedTypes;
+exports["default"] = void 0;
 
-function find(key) {
-  return requestsList.find(function (item) {
-    return item && item.key == key;
-  });
-}
+function RequestBlocker() {
+  var requestsList = [];
+  var limitedTypes = {
+    START_STOP_CALL: "START_STOP_CALL",
+    START_STOP_VIDEO_VOICE: 'START_STOP_VIDEO_VOICE'
+  };
 
-function add(_ref) {
-  var uniqueId = _ref.uniqueId,
-      _ref$time = _ref.time,
-      time = _ref$time === void 0 ? null : _ref$time,
-      key = _ref.key,
-      _ref$blockTimeSeconds = _ref.blockTimeSeconds,
-      blockTimeSeconds = _ref$blockTimeSeconds === void 0 ? 1 : _ref$blockTimeSeconds; // if(!uniqueId)
-  //     uniqueId = Utility.generateUUID();
+  function find(key) {
+    return requestsList.find(function (item) {
+      return item && item.key == key;
+    });
+  }
 
-  if (!time) time = new Date().getTime(); // chatEvents.fireEvent("requestBlocker", {
-  //     type: "REQUESTS_BLOCKED",
-  //     key: key
-  // });
+  function add(_ref) {
+    var uniqueId = _ref.uniqueId,
+        _ref$time = _ref.time,
+        time = _ref$time === void 0 ? null : _ref$time,
+        key = _ref.key,
+        _ref$blockTimeSeconds = _ref.blockTimeSeconds,
+        blockTimeSeconds = _ref$blockTimeSeconds === void 0 ? 1 : _ref$blockTimeSeconds; // if(!uniqueId)
+    //     uniqueId = Utility.generateUUID();
 
-  blockTimeSeconds *= 1000;
-  requestsList.push({
-    uniqueId: uniqueId,
-    time: time,
-    key: key,
-    blockTimeSeconds: blockTimeSeconds,
-    timeout: setTimeout(function () {
-      remove(uniqueId);
-    }, blockTimeSeconds)
-  });
-}
+    if (!time) time = new Date().getTime(); // app.chatEvents.fireEvent("requestBlocker", {
+    //     type: "REQUESTS_BLOCKED",
+    //     key: key
+    // });
 
-function isKeyBlocked(key) {
-  var filteredRequest = find(key);
+    blockTimeSeconds *= 1000;
+    requestsList.push({
+      uniqueId: uniqueId,
+      time: time,
+      key: key,
+      blockTimeSeconds: blockTimeSeconds,
+      timeout: setTimeout(function () {
+        remove(uniqueId);
+      }, blockTimeSeconds)
+    });
+  }
 
-  if (!filteredRequest) {
+  function isKeyBlocked(key) {
+    var filteredRequest = find(key);
+
+    if (!filteredRequest) {
+      return false;
+    }
+
+    var cTime = new Date().getTime();
+
+    if (filteredRequest.time + filteredRequest.blockTimeSeconds > cTime) {
+      // alert(`Request Blocked
+      // \nSDK Prevents fast calls to specific apis. Please prevent this in your UI.
+      // \nCurrent api can be requested after at least ${filteredRequests[i].blockTimeSeconds} seconds.`);
+      return true;
+    } else {
+      remove(filteredRequest.uniqueId);
+    }
+
     return false;
   }
 
-  var cTime = new Date().getTime();
+  function remove(uniqueId) {
+    var index = requestsList.findIndex(function (item) {
+      return item && item.uniqueId == uniqueId;
+    });
 
-  if (filteredRequest.time + filteredRequest.blockTimeSeconds > cTime) {
-    // alert(`Request Blocked
-    // \nSDK Prevents fast calls to specific apis. Please prevent this in your UI.
-    // \nCurrent api can be requested after at least ${filteredRequests[i].blockTimeSeconds} seconds.`);
-    return true;
-  } else {
-    remove(filteredRequest.uniqueId);
+    if (index > -1) {
+      // if(requestsList[index].time + 8000 < new Date().getTime()) {
+      clearTimeout(requestsList[index].timeout);
+      delete requestsList[index]; // }
+    }
   }
 
-  return false;
-}
+  function getRemainingTime(key) {
+    var filteredRequest = find(key);
 
-function remove(uniqueId) {
-  var index = requestsList.findIndex(function (item) {
-    return item && item.uniqueId == uniqueId;
-  });
+    if (!filteredRequest) {
+      return 0;
+    }
 
-  if (index > -1) {
-    // if(requestsList[index].time + 8000 < new Date().getTime()) {
-    clearTimeout(requestsList[index].timeout);
-    delete requestsList[index]; // }
-  }
-}
-
-function getRemainingTime(key) {
-  var filteredRequest = find(key);
-
-  if (!filteredRequest) {
-    return 0;
+    var cTime = new Date().getTime();
+    console.log({
+      filteredRequest: filteredRequest
+    }, filteredRequest.time + filteredRequest.blockTimeSeconds - cTime);
+    return new Date(filteredRequest.time + filteredRequest.blockTimeSeconds - cTime).getSeconds();
   }
 
-  var cTime = new Date().getTime();
-  console.log({
-    filteredRequest: filteredRequest
-  }, filteredRequest.time + filteredRequest.blockTimeSeconds - cTime);
-  return new Date(filteredRequest.time + filteredRequest.blockTimeSeconds - cTime).getSeconds();
+  return {
+    add: add,
+    remove: remove,
+    isKeyBlocked: isKeyBlocked,
+    limitedTypes: limitedTypes,
+    getRemainingTime: getRemainingTime
+  };
 }
 
-},{}],302:[function(require,module,exports){
+var _default = RequestBlocker;
+exports["default"] = _default;
+
+},{}],280:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.sdkParams = void 0;
-var sdkParams = {
-  token: "111",
-  generalTypeCode: "default",
-  typeCodeOwnerId: null,
-  mapApiKey: '8b77db18704aa646ee5aaea13e7370f4f88b9e8c',
-  productEnv: 'undefined',
-  forceWaitQueueInMemory: false,
-  grantDeviceIdFromSSO: false,
-  deliveryIntervalPitch: 2000,
-  seenIntervalPitch: 2000,
-  systemMessageIntervalPitch: 1000,
-  messagesDelivery: {},
-  messagesSeen: {},
-  deliveryInterval: undefined,
-  seenInterval: undefined,
-  getImageFromLinkObjects: {},
-  locationPingTypes: {
-    'CHAT': 1,
-    'THREAD': 2,
-    'CONTACTS': 3
-  },
-  isTypingInterval: undefined,
-  protocol: 'websocket',
-  deviceId: undefined,
-  socketAddress: "",
-  serverName: "",
-  wsConnectionWaitTime: 0,
-  connectionRetryInterval: 0,
-  msgPriority: 1,
-  messageTtl: 10000,
-  reconnectOnClose: false,
-  asyncLogging: undefined,
-  chatPingMessageInterval: 20000,
-  getUserInfoTimeout: undefined,
-  connectionCheckTimeout: 0,
-  httpRequestTimeout: 0,
-  asyncRequestTimeout: 0,
-  connectionCheckTimeoutThreshold: undefined,
-  httpUploadRequestTimeout: 0,
-  actualTimingLog: false,
-  consoleLogging: false,
-  fullResponseObject: false,
-  webrtcConfig: null,
-  callOptions: {},
-  asyncPriority: undefined
-};
-exports.sdkParams = sdkParams;
+exports.SDKParams = SDKParams;
 
-},{}],303:[function(require,module,exports){
+function SDKParams() {
+  return {
+    token: "111",
+    generalTypeCode: "default",
+    typeCodeOwnerId: null,
+    mapApiKey: '8b77db18704aa646ee5aaea13e7370f4f88b9e8c',
+    productEnv: 'undefined',
+    forceWaitQueueInMemory: false,
+    grantDeviceIdFromSSO: false,
+    deliveryIntervalPitch: 2000,
+    seenIntervalPitch: 2000,
+    systemMessageIntervalPitch: 1000,
+    messagesDelivery: {},
+    messagesSeen: {},
+    deliveryInterval: undefined,
+    seenInterval: undefined,
+    getImageFromLinkObjects: {},
+    locationPingTypes: {
+      'CHAT': 1,
+      'THREAD': 2,
+      'CONTACTS': 3
+    },
+    isTypingInterval: undefined,
+    protocol: 'websocket',
+    deviceId: undefined,
+    socketAddress: "",
+    serverName: "",
+    wsConnectionWaitTime: 0,
+    connectionRetryInterval: 0,
+    msgPriority: 1,
+    messageTtl: 10000,
+    reconnectOnClose: false,
+    asyncLogging: undefined,
+    chatPingMessageInterval: 20000,
+    getUserInfoTimeout: undefined,
+    connectionCheckTimeout: 0,
+    httpRequestTimeout: 0,
+    asyncRequestTimeout: 0,
+    connectionCheckTimeoutThreshold: undefined,
+    httpUploadRequestTimeout: 0,
+    actualTimingLog: false,
+    consoleLogging: false,
+    fullResponseObject: false,
+    webrtcConfig: null,
+    callOptions: {},
+    asyncPriority: undefined
+  };
+}
+
+},{}],281:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -56631,33 +51843,33 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.storeEvents = void 0;
+exports.StoreEvents = StoreEvents;
 
 var _events = _interopRequireDefault(require("events"));
 
 var Emitter = new _events["default"]();
-var storeEvents = {
-  on: function on(eventName, callback) {
-    Emitter.on(eventName, callback);
-  },
-  off: function off(eventName) {
-    Emitter.off(eventName);
-  },
-  emit: function emit(eventName, data) {
-    Emitter.emit(eventName, data);
-  }
-};
-exports.storeEvents = storeEvents;
 
-},{"@babel/runtime/helpers/interopRequireDefault":7,"events":156}],304:[function(require,module,exports){
+function StoreEvents() {
+  return {
+    on: function on(eventName, callback) {
+      Emitter.on(eventName, callback);
+    },
+    off: function off(eventName) {
+      Emitter.off(eventName);
+    },
+    emit: function emit(eventName, data) {
+      Emitter.emit(eventName, data);
+    }
+  };
+}
+
+},{"@babel/runtime/helpers/interopRequireDefault":7,"events":156}],282:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.store = void 0;
-
-var _threads = require("./threads");
+exports.Store = Store;
 
 var _eventEmitter = require("./eventEmitter");
 
@@ -56667,20 +51879,23 @@ var _user = require("./user");
 
 var _reactionsList = require("./reactionsList");
 
-var store = {
-  threads: _threads.threadsList,
-  events: _eventEmitter.storeEvents,
-  reactionSummaries: _reactionsSummaries.reactionsSummariesCache,
-  user: _user.user,
-  threadCallbacks: {},
-  sendMessageCallbacks: {},
-  messagesCallbacks: {},
-  asyncRequestTimeouts: {},
-  reactionsList: _reactionsList.reactionsListCache
-};
-exports.store = store;
+var _threads = require("./threads");
 
-},{"./eventEmitter":303,"./reactionsList":305,"./reactionsSummaries":306,"./threads":307,"./user":308}],305:[function(require,module,exports){
+function Store(app) {
+  return {
+    threads: new _threads.ThreadsList(app),
+    events: new _eventEmitter.StoreEvents(),
+    reactionSummaries: new _reactionsSummaries.ReactionsSummariesCache(app),
+    user: new _user.SDKUser(app),
+    threadCallbacks: {},
+    sendMessageCallbacks: {},
+    messagesCallbacks: {},
+    asyncRequestTimeouts: {},
+    reactionsList: new _reactionsList.ReactionsListCache(app)
+  };
+}
+
+},{"./eventEmitter":281,"./reactionsList":283,"./reactionsSummaries":284,"./threads":285,"./user":286}],283:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -56688,13 +51903,11 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.reactionsListCache = void 0;
+exports.ReactionsListCache = void 0;
 
 var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
 
 var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
-
-var _index = require("./index");
 
 var list = [];
 var eventsList = {
@@ -56807,10 +52020,9 @@ var ReactionsListCache = /*#__PURE__*/function () {
   return ReactionsListCache;
 }();
 
-var reactionsListCache = new ReactionsListCache();
-exports.reactionsListCache = reactionsListCache;
+exports.ReactionsListCache = ReactionsListCache;
 
-},{"./index":304,"@babel/runtime/helpers/classCallCheck":4,"@babel/runtime/helpers/createClass":5,"@babel/runtime/helpers/interopRequireDefault":7}],306:[function(require,module,exports){
+},{"@babel/runtime/helpers/classCallCheck":4,"@babel/runtime/helpers/createClass":5,"@babel/runtime/helpers/interopRequireDefault":7}],284:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -56818,15 +52030,13 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.reactionsSummariesCache = void 0;
+exports.ReactionsSummariesCache = void 0;
 
 var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
 
 var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
 
 var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
-
-var _index = require("./index");
 
 function ownKeys(object, enumerableOnly) {
   var keys = Object.keys(object);
@@ -56871,6 +52081,7 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
     (0, _classCallCheck2["default"])(this, ReactionsSummariesCache); // super(props);
 
     this._list = {};
+    this._app = props.app;
   }
 
   (0, _createClass2["default"])(ReactionsSummariesCache, [{
@@ -57047,7 +52258,7 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
       var message = this.getItem(messageId);
       if (!message) return;
 
-      if (_index.store.user().isMe(userId)) {
+      if (this._app.store.user.get().isMe(userId)) {
         this._list[messageId].userReaction = {
           id: reactionId,
           reaction: reaction,
@@ -57078,10 +52289,9 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
   return ReactionsSummariesCache;
 }();
 
-var reactionsSummariesCache = new ReactionsSummariesCache();
-exports.reactionsSummariesCache = reactionsSummariesCache;
+exports.ReactionsSummariesCache = ReactionsSummariesCache;
 
-},{"./index":304,"@babel/runtime/helpers/classCallCheck":4,"@babel/runtime/helpers/createClass":5,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7}],307:[function(require,module,exports){
+},{"@babel/runtime/helpers/classCallCheck":4,"@babel/runtime/helpers/createClass":5,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7}],285:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -57089,11 +52299,9 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.threadsList = void 0;
+exports.ThreadsList = ThreadsList;
 
 var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
-
-var _eventEmitter = require("./eventEmitter");
 
 function ownKeys(object, enumerableOnly) {
   var keys = Object.keys(object);
@@ -57127,63 +52335,66 @@ var eventsList = {
   UNREAD_COUNT_UPDATED: 'unreadCountUpdated',
   LAST_SEEN_MESSAGE_TIME_UPDATED: 'lastSeenMessageTimeUpdated'
 };
-var threadsList = {
-  eventsList: eventsList,
-  get: function get(id) {
-    return list[threadsList.findIndex(id)];
-  },
-  getAll: function getAll() {
-    return list;
-  },
-  findIndex: function findIndex(threadId) {
-    return list.findIndex(function (item) {
-      return (item === null || item === void 0 ? void 0 : item.get().id) == threadId;
-    });
-  },
-  save: function save(thread) {
-    var localThread;
-    var localThreadIndex = threadsList.findIndex(thread.id);
 
-    if (localThreadIndex > -1) {
-      list[localThreadIndex].set(thread);
-      localThread = list[localThreadIndex];
-    } else {
-      localThread = new ThreadObject(thread);
-      list = [localThread].concat(list);
-    }
+function ThreadsList(app) {
+  var threadsList = {
+    eventsList: eventsList,
+    get: function get(id) {
+      return list[threadsList.findIndex(id)];
+    },
+    getAll: function getAll() {
+      return list;
+    },
+    findIndex: function findIndex(threadId) {
+      return list.findIndex(function (item) {
+        return (item === null || item === void 0 ? void 0 : item.get().id) == threadId;
+      });
+    },
+    save: function save(thread) {
+      var localThread;
+      var localThreadIndex = threadsList.findIndex(thread.id);
 
-    _eventEmitter.storeEvents.emit(eventsList.SINGLE_THREAD_UPDATE, localThread.get());
-  },
-  saveMany: function saveMany(newThreads) {
-    if (Array.isArray(newThreads)) {
-      var nonExistingThreads = [];
+      if (localThreadIndex > -1) {
+        list[localThreadIndex].set(thread);
+        localThread = list[localThreadIndex];
+      } else {
+        localThread = new ThreadObject(app, thread);
+        list = [localThread].concat(list);
+      }
 
-      for (var item in newThreads) {
-        var localThreadIndex = threadsList.findIndex(newThreads[item].id);
+      app.store.events.emit(eventsList.SINGLE_THREAD_UPDATE, localThread.get());
+    },
+    saveMany: function saveMany(newThreads) {
+      if (Array.isArray(newThreads)) {
+        var nonExistingThreads = [];
 
-        if (localThreadIndex > -1) {
-          list[localThreadIndex].set(newThreads[item]);
-        } else {
-          nonExistingThreads.push(new ThreadObject(newThreads[item]));
+        for (var item in newThreads) {
+          var localThreadIndex = threadsList.findIndex(newThreads[item].id);
+
+          if (localThreadIndex > -1) {
+            list[localThreadIndex].set(newThreads[item]);
+          } else {
+            nonExistingThreads.push(new ThreadObject(app, newThreads[item]));
+          }
+        }
+
+        if (nonExistingThreads.length) {
+          list = nonExistingThreads.concat(list);
         }
       }
+    },
+    remove: function remove(id) {
+      var localThreadIndex = threadsList.findIndex(id);
 
-      if (nonExistingThreads.length) {
-        list = nonExistingThreads.concat(list);
+      if (localThreadIndex > -1) {
+        delete list[localThreadIndex];
       }
     }
-  },
-  remove: function remove(id) {
-    var localThreadIndex = threadsList.findIndex(id);
+  };
+  return threadsList;
+}
 
-    if (localThreadIndex > -1) {
-      delete list[localThreadIndex];
-    }
-  }
-};
-exports.threadsList = threadsList;
-
-function ThreadObject(thread) {
+function ThreadObject(app, thread) {
   var config = {
     thread: thread,
     latestReceivedMessage: null
@@ -57206,28 +52417,25 @@ function ThreadObject(thread) {
     },
     update: function update(field, newValue) {
       config.thread[field] = newValue;
-
-      _eventEmitter.storeEvents.emit(eventsList.SINGLE_THREAD_UPDATE, config.thread);
+      app.store.events.emit(eventsList.SINGLE_THREAD_UPDATE, config.thread);
     },
     unreadCount: {
       set: function set(count) {
         var sendEvent = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
         config.thread.unreadCount = count;
-        if (sendEvent) _eventEmitter.storeEvents.emit(eventsList.UNREAD_COUNT_UPDATED, config.thread);
+        if (sendEvent) app.store.events.emit(eventsList.UNREAD_COUNT_UPDATED, config.thread);
       },
       get: function get() {
         return config.thread.unreadCount;
       },
       increase: function increase() {
         config.thread.unreadCount++;
-
-        _eventEmitter.storeEvents.emit(eventsList.UNREAD_COUNT_UPDATED, config.thread);
+        app.store.events.emit(eventsList.UNREAD_COUNT_UPDATED, config.thread);
       },
       decrease: function decrease(time) {
         if (time > config.thread.lastSeenMessageTime && config.thread.unreadCount > 0) {
           config.thread.unreadCount--;
-
-          _eventEmitter.storeEvents.emit(eventsList.UNREAD_COUNT_UPDATED, config.thread);
+          app.store.events.emit(eventsList.UNREAD_COUNT_UPDATED, config.thread);
         }
       }
     },
@@ -57259,29 +52467,43 @@ function ThreadObject(thread) {
   };
 }
 
-},{"./eventEmitter":303,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7}],308:[function(require,module,exports){
+},{"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7}],286:[function(require,module,exports){
 "use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.setSDKUser = setSDKUser;
-exports.user = user;
-var localUser = null;
+exports.SDKUser = void 0;
 
-function setSDKUser(serverUSer) {
-  localUser = serverUSer;
+var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
 
-  localUser.isMe = function (userId) {
-    return localUser.id == userId;
-  };
-}
+var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
 
-function user() {
-  return localUser;
-}
+var SDKUser = /*#__PURE__*/function () {
+  function SDKUser() {
+    (0, _classCallCheck2["default"])(this, SDKUser);
+    this._user = null;
+  }
 
-},{}],309:[function(require,module,exports){
+  (0, _createClass2["default"])(SDKUser, [{
+    key: "get",
+    value: function get() {
+      return this._user;
+    }
+  }, {
+    key: "setUser",
+    value: function setUser(data) {
+      this._user = data;
+    }
+  }]);
+  return SDKUser;
+}();
+
+exports.SDKUser = SDKUser;
+
+},{"@babel/runtime/helpers/classCallCheck":4,"@babel/runtime/helpers/createClass":5,"@babel/runtime/helpers/interopRequireDefault":7}],287:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -57290,8 +52512,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports["default"] = void 0;
-exports.initChatMessaging = initChatMessaging;
-exports.messenger = messenger;
 
 var _typeof2 = _interopRequireDefault(require("@babel/runtime/helpers/typeof"));
 
@@ -57302,29 +52522,25 @@ var _dompurify = _interopRequireDefault(require("dompurify"));
 var _utility = _interopRequireDefault(require("./utility/utility"));
 
 var _errorHandler = require("./lib/errorHandler");
-
-var _sdkParams = require("./lib/sdkParams");
-
-var _store = require("./lib/store");
-
-var chatMessaging = null;
 /**
  * Communicates with chat server
+ * @param app
  * @param params
  * @constructor
  */
 
-function ChatMessaging(params) {
+
+function ChatMessaging(app, params) {
   var currentModuleInstance = this,
       asyncClient = params.asyncClient; //Utility = params.Utility,
-  // consoleLogging = sdkParams.consoleLogging,
-  //generalTypeCode = sdkParams.generalTypeCode,
+  // consoleLogging = app.sdkParams.consoleLogging,
+  //generalTypeCode = app.sdkParams.generalTypeCode,
   //chatPingMessageInterval = params.chatPingMessageInterval,
   //asyncRequestTimeout = params.asyncRequestTimeout,
   //messageTtl = params.messageTtl,
   //serverName = params.serverName,
   //msgPriority = params.msgPriority,
-  //typeCodeOwnerId = sdkParams.typeCodeOwnerId || null;
+  //typeCodeOwnerId = app.sdkParams.typeCodeOwnerId || null;
 
   this.threadCallbacks = {};
   this.sendMessageCallbacks = {}; // this.messagesCallbacks = {};
@@ -57339,14 +52555,14 @@ function ChatMessaging(params) {
    */
 
   this.startChatPing = function () {
-    _sdkParams.sdkParams.chatPingMessageInterval && clearInterval(_sdkParams.sdkParams.chatPingMessageInterval);
-    _sdkParams.sdkParams.chatPingMessageInterval = setInterval(function () {
+    app.sdkParams.chatPingMessageInterval && clearInterval(app.sdkParams.chatPingMessageInterval);
+    app.sdkParams.chatPingMessageInterval = setInterval(function () {
       currentModuleInstance.ping();
     }, 20000); //TODO: chatPingMessageInterval
   };
 
   this.stopChatPing = function () {
-    clearInterval(_sdkParams.sdkParams.chatPingMessageInterval);
+    clearInterval(app.sdkParams.chatPingMessageInterval);
   };
 
   this.asyncInitialized = function (client) {
@@ -57391,7 +52607,7 @@ function ChatMessaging(params) {
         clbck = callbacks.onResult;
       }
 
-      (0, _errorHandler.raiseError)(_errorHandler.errorList.SOCKET_NOT_CONNECTED, clbck, true, {});
+      app.errorHandler.raiseError(_errorHandler.errorList.SOCKET_NOT_CONNECTED, clbck, true, {});
       return;
     }
     /**
@@ -57412,19 +52628,19 @@ function ChatMessaging(params) {
 
 
     var threadId = null;
-    var asyncPriority = params.asyncPriority > 0 ? params.asyncPriority : _sdkParams.sdkParams.msgPriority;
+    var asyncPriority = params.asyncPriority > 0 ? params.asyncPriority : app.sdkParams.msgPriority;
     var messageVO = {
       type: params.chatMessageVOType,
-      token: _sdkParams.sdkParams.token,
+      token: app.sdkParams.token,
       tokenIssuer: 1
     };
 
-    if (params.typeCode || _sdkParams.sdkParams.generalTypeCode) {
-      messageVO.typeCode = _sdkParams.sdkParams.generalTypeCode; //params.typeCode;
+    if (params.typeCode || app.sdkParams.generalTypeCode) {
+      messageVO.typeCode = app.sdkParams.generalTypeCode; //params.typeCode;
     }
 
-    if (_sdkParams.sdkParams.typeCodeOwnerId) {
-      messageVO.ownerId = _sdkParams.sdkParams.typeCodeOwnerId;
+    if (app.sdkParams.typeCodeOwnerId) {
+      messageVO.ownerId = app.sdkParams.typeCodeOwnerId;
     }
 
     if (params.messageType) {
@@ -57478,33 +52694,33 @@ function ChatMessaging(params) {
 
     if ((0, _typeof2["default"])(callbacks) == 'object') {
       if (callbacks.onSeen || callbacks.onDeliver || callbacks.onSent) {
-        if (!_store.store.threadCallbacks[threadId]) {
-          _store.store.threadCallbacks[threadId] = {};
+        if (!app.store.threadCallbacks[threadId]) {
+          app.store.threadCallbacks[threadId] = {};
         }
 
-        _store.store.threadCallbacks[threadId][uniqueId] = {};
-        _store.store.sendMessageCallbacks[uniqueId] = {};
+        app.store.threadCallbacks[threadId][uniqueId] = {};
+        app.store.sendMessageCallbacks[uniqueId] = {};
 
         if (callbacks.onSent) {
-          _store.store.sendMessageCallbacks[uniqueId].onSent = callbacks.onSent;
-          _store.store.threadCallbacks[threadId][uniqueId].onSent = false;
-          _store.store.threadCallbacks[threadId][uniqueId].uniqueId = uniqueId;
+          app.store.sendMessageCallbacks[uniqueId].onSent = callbacks.onSent;
+          app.store.threadCallbacks[threadId][uniqueId].onSent = false;
+          app.store.threadCallbacks[threadId][uniqueId].uniqueId = uniqueId;
         }
 
         if (callbacks.onSeen) {
-          _store.store.sendMessageCallbacks[uniqueId].onSeen = callbacks.onSeen;
-          _store.store.threadCallbacks[threadId][uniqueId].onSeen = false;
+          app.store.sendMessageCallbacks[uniqueId].onSeen = callbacks.onSeen;
+          app.store.threadCallbacks[threadId][uniqueId].onSeen = false;
         }
 
         if (callbacks.onDeliver) {
-          _store.store.sendMessageCallbacks[uniqueId].onDeliver = callbacks.onDeliver;
-          _store.store.threadCallbacks[threadId][uniqueId].onDeliver = false;
+          app.store.sendMessageCallbacks[uniqueId].onDeliver = callbacks.onDeliver;
+          app.store.threadCallbacks[threadId][uniqueId].onDeliver = false;
         }
       } else if (callbacks.onResult) {
-        _store.store.messagesCallbacks[uniqueId] = callbacks.onResult;
+        app.store.messagesCallbacks[uniqueId] = callbacks.onResult;
       }
     } else if (typeof callbacks == 'function') {
-      _store.store.messagesCallbacks[uniqueId] = callbacks;
+      app.store.messagesCallbacks[uniqueId] = callbacks;
     }
     /**
      * Message to send through async SDK
@@ -57525,10 +52741,10 @@ function ChatMessaging(params) {
     var data = {
       type: parseInt(params.pushMsgType) > 0 ? params.pushMsgType : 3,
       content: {
-        peerName: _sdkParams.sdkParams.serverName,
+        peerName: app.sdkParams.serverName,
         priority: asyncPriority,
         content: JSON.stringify(messageVO),
-        ttl: params.messageTtl > 0 ? params.messageTtl : _sdkParams.sdkParams.messageTtl
+        ttl: params.messageTtl > 0 ? params.messageTtl : app.sdkParams.messageTtl
       },
       uniqueId: messageVO.uniqueId
     };
@@ -57540,15 +52756,15 @@ function ChatMessaging(params) {
           callbacks.onResult(res);
         }
 
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          delete _store.store.messagesCallbacks[uniqueId];
+        if (app.store.messagesCallbacks[uniqueId]) {
+          delete app.store.messagesCallbacks[uniqueId];
         }
       }
     });
 
-    if (_sdkParams.sdkParams.asyncRequestTimeout > 0) {
-      _store.store.asyncRequestTimeouts[uniqueId] && clearTimeout(_store.store.asyncRequestTimeouts[uniqueId]);
-      _store.store.asyncRequestTimeouts[uniqueId] = setTimeout(function () {
+    if (app.sdkParams.asyncRequestTimeout > 0) {
+      app.store.asyncRequestTimeouts[uniqueId] && clearTimeout(app.store.asyncRequestTimeouts[uniqueId]);
+      app.store.asyncRequestTimeouts[uniqueId] = setTimeout(function () {
         if (typeof callbacks == 'function') {
           callbacks({
             hasError: true,
@@ -57563,19 +52779,19 @@ function ChatMessaging(params) {
           });
         }
 
-        if (_store.store.messagesCallbacks[uniqueId]) {
-          delete _store.store.messagesCallbacks[uniqueId];
+        if (app.store.messagesCallbacks[uniqueId]) {
+          delete app.store.messagesCallbacks[uniqueId];
         }
 
-        if (_store.store.sendMessageCallbacks[uniqueId]) {
-          delete _store.store.sendMessageCallbacks[uniqueId];
+        if (app.store.sendMessageCallbacks[uniqueId]) {
+          delete app.store.sendMessageCallbacks[uniqueId];
         }
 
-        if (!!_store.store.threadCallbacks[threadId] && _store.store.threadCallbacks[threadId][uniqueId]) {
-          _store.store.threadCallbacks[threadId][uniqueId] = {};
-          delete _store.store.threadCallbacks[threadId][uniqueId];
+        if (!!app.store.threadCallbacks[threadId] && app.store.threadCallbacks[threadId][uniqueId]) {
+          app.store.threadCallbacks[threadId][uniqueId] = {};
+          delete app.store.threadCallbacks[threadId][uniqueId];
         }
-      }, _sdkParams.sdkParams.asyncRequestTimeout);
+      }, app.sdkParams.asyncRequestTimeout);
     }
     /*          currentModuleInstance.sendPingTimeout && clearTimeout(currentModuleInstance.sendPingTimeout);
             currentModuleInstance.sendPingTimeout = setTimeout(function () {
@@ -57619,22 +52835,10 @@ function ChatMessaging(params) {
   };
 }
 
-function initChatMessaging(params) {
-  if (!chatMessaging) {
-    chatMessaging = new ChatMessaging(params);
-  }
-
-  return chatMessaging;
-}
-
-function messenger() {
-  return chatMessaging;
-}
-
 var _default = ChatMessaging;
 exports["default"] = _default;
 
-},{"./lib/constants":299,"./lib/errorHandler":300,"./lib/sdkParams":302,"./lib/store":304,"./utility/utility":310,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/typeof":13,"dompurify":138}],310:[function(require,module,exports){
+},{"./lib/constants":277,"./lib/errorHandler":278,"./utility/utility":288,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/typeof":13,"dompurify":138}],288:[function(require,module,exports){
 (function (global){(function (){
 "use strict";
 
@@ -58221,4 +53425,4 @@ var _default = new ChatUtility();
 exports["default"] = _default;
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/typeof":13,"crypto-js":96}]},{},[282]);
+},{"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/typeof":13,"crypto-js":96}]},{},[260]);

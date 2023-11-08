@@ -5,15 +5,13 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.reactionsSummariesCache = void 0;
+exports.ReactionsSummariesCache = void 0;
 
 var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
 
 var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
 
 var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
-
-var _index = require("./index");
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
@@ -36,6 +34,7 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
     (0, _classCallCheck2["default"])(this, ReactionsSummariesCache);
     // super(props);
     this._list = {};
+    this._app = props.app;
   }
 
   (0, _createClass2["default"])(ReactionsSummariesCache, [{
@@ -212,7 +211,7 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
       var message = this.getItem(messageId);
       if (!message) return;
 
-      if (_index.store.user().isMe(userId)) {
+      if (this._app.store.user.get().isMe(userId)) {
         this._list[messageId].userReaction = {
           id: reactionId,
           reaction: reaction,
@@ -243,5 +242,4 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
   return ReactionsSummariesCache;
 }();
 
-var reactionsSummariesCache = new ReactionsSummariesCache();
-exports.reactionsSummariesCache = reactionsSummariesCache;
+exports.ReactionsSummariesCache = ReactionsSummariesCache;

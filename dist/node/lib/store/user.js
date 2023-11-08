@@ -1,20 +1,34 @@
 "use strict";
 
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.setSDKUser = setSDKUser;
-exports.user = user;
-var localUser = null;
+exports.SDKUser = void 0;
 
-function setSDKUser(serverUSer) {
-  localUser = serverUSer;
+var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
 
-  localUser.isMe = function (userId) {
-    return localUser.id == userId;
-  };
-}
+var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
 
-function user() {
-  return localUser;
-}
+var SDKUser = /*#__PURE__*/function () {
+  function SDKUser() {
+    (0, _classCallCheck2["default"])(this, SDKUser);
+    this._user = null;
+  }
+
+  (0, _createClass2["default"])(SDKUser, [{
+    key: "get",
+    value: function get() {
+      return this._user;
+    }
+  }, {
+    key: "setUser",
+    value: function setUser(data) {
+      this._user = data;
+    }
+  }]);
+  return SDKUser;
+}();
+
+exports.SDKUser = SDKUser;

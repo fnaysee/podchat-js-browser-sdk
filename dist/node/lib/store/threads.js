@@ -5,11 +5,9 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.threadsList = void 0;
+exports.ThreadsList = ThreadsList;
 
 var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
-
-var _eventEmitter = require("./eventEmitter");
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
@@ -21,63 +19,66 @@ var eventsList = {
   UNREAD_COUNT_UPDATED: 'unreadCountUpdated',
   LAST_SEEN_MESSAGE_TIME_UPDATED: 'lastSeenMessageTimeUpdated'
 };
-var threadsList = {
-  eventsList: eventsList,
-  get: function get(id) {
-    return list[threadsList.findIndex(id)];
-  },
-  getAll: function getAll() {
-    return list;
-  },
-  findIndex: function findIndex(threadId) {
-    return list.findIndex(function (item) {
-      return (item === null || item === void 0 ? void 0 : item.get().id) == threadId;
-    });
-  },
-  save: function save(thread) {
-    var localThread;
-    var localThreadIndex = threadsList.findIndex(thread.id);
 
-    if (localThreadIndex > -1) {
-      list[localThreadIndex].set(thread);
-      localThread = list[localThreadIndex];
-    } else {
-      localThread = new ThreadObject(thread);
-      list = [localThread].concat(list);
-    }
+function ThreadsList(app) {
+  var threadsList = {
+    eventsList: eventsList,
+    get: function get(id) {
+      return list[threadsList.findIndex(id)];
+    },
+    getAll: function getAll() {
+      return list;
+    },
+    findIndex: function findIndex(threadId) {
+      return list.findIndex(function (item) {
+        return (item === null || item === void 0 ? void 0 : item.get().id) == threadId;
+      });
+    },
+    save: function save(thread) {
+      var localThread;
+      var localThreadIndex = threadsList.findIndex(thread.id);
 
-    _eventEmitter.storeEvents.emit(eventsList.SINGLE_THREAD_UPDATE, localThread.get());
-  },
-  saveMany: function saveMany(newThreads) {
-    if (Array.isArray(newThreads)) {
-      var nonExistingThreads = [];
+      if (localThreadIndex > -1) {
+        list[localThreadIndex].set(thread);
+        localThread = list[localThreadIndex];
+      } else {
+        localThread = new ThreadObject(app, thread);
+        list = [localThread].concat(list);
+      }
 
-      for (var item in newThreads) {
-        var localThreadIndex = threadsList.findIndex(newThreads[item].id);
+      app.store.events.emit(eventsList.SINGLE_THREAD_UPDATE, localThread.get());
+    },
+    saveMany: function saveMany(newThreads) {
+      if (Array.isArray(newThreads)) {
+        var nonExistingThreads = [];
 
-        if (localThreadIndex > -1) {
-          list[localThreadIndex].set(newThreads[item]);
-        } else {
-          nonExistingThreads.push(new ThreadObject(newThreads[item]));
+        for (var item in newThreads) {
+          var localThreadIndex = threadsList.findIndex(newThreads[item].id);
+
+          if (localThreadIndex > -1) {
+            list[localThreadIndex].set(newThreads[item]);
+          } else {
+            nonExistingThreads.push(new ThreadObject(app, newThreads[item]));
+          }
+        }
+
+        if (nonExistingThreads.length) {
+          list = nonExistingThreads.concat(list);
         }
       }
+    },
+    remove: function remove(id) {
+      var localThreadIndex = threadsList.findIndex(id);
 
-      if (nonExistingThreads.length) {
-        list = nonExistingThreads.concat(list);
+      if (localThreadIndex > -1) {
+        delete list[localThreadIndex];
       }
     }
-  },
-  remove: function remove(id) {
-    var localThreadIndex = threadsList.findIndex(id);
+  };
+  return threadsList;
+}
 
-    if (localThreadIndex > -1) {
-      delete list[localThreadIndex];
-    }
-  }
-};
-exports.threadsList = threadsList;
-
-function ThreadObject(thread) {
+function ThreadObject(app, thread) {
   var config = {
     thread: thread,
     latestReceivedMessage: null
@@ -100,28 +101,25 @@ function ThreadObject(thread) {
     },
     update: function update(field, newValue) {
       config.thread[field] = newValue;
-
-      _eventEmitter.storeEvents.emit(eventsList.SINGLE_THREAD_UPDATE, config.thread);
+      app.store.events.emit(eventsList.SINGLE_THREAD_UPDATE, config.thread);
     },
     unreadCount: {
       set: function set(count) {
         var sendEvent = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
         config.thread.unreadCount = count;
-        if (sendEvent) _eventEmitter.storeEvents.emit(eventsList.UNREAD_COUNT_UPDATED, config.thread);
+        if (sendEvent) app.store.events.emit(eventsList.UNREAD_COUNT_UPDATED, config.thread);
       },
       get: function get() {
         return config.thread.unreadCount;
       },
       increase: function increase() {
         config.thread.unreadCount++;
-
-        _eventEmitter.storeEvents.emit(eventsList.UNREAD_COUNT_UPDATED, config.thread);
+        app.store.events.emit(eventsList.UNREAD_COUNT_UPDATED, config.thread);
       },
       decrease: function decrease(time) {
         if (time > config.thread.lastSeenMessageTime && config.thread.unreadCount > 0) {
           config.thread.unreadCount--;
-
-          _eventEmitter.storeEvents.emit(eventsList.UNREAD_COUNT_UPDATED, config.thread);
+          app.store.events.emit(eventsList.UNREAD_COUNT_UPDATED, config.thread);
         }
       }
     },

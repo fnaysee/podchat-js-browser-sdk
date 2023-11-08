@@ -1,6 +1,5 @@
 import '../constants.js'
-import { chatEvents } from "../../events.module.js";
-import handleError, {errorList, raiseError} from "../errorHandler.js";
+import {errorList} from "../errorHandler.js";
 
 const deviceList = {
     audioIn: [],
@@ -132,7 +131,7 @@ const deviceManager = {
                 })
                 resolve(stream);
             }).catch(e => {
-                let error = raiseError(errorList.SCREENSHARE_PERMISSION_ERROR, callback, true, {eventName: 'callEvents', eventType: 'CALL_ERROR'});
+                let error = app.errorHandler.raiseError(errorList.SCREENSHARE_PERMISSION_ERROR, callback, true, {eventName: 'callEvents', eventType: 'CALL_ERROR'});
                 reject(error);
             });
         });
@@ -195,13 +194,13 @@ const deviceManager = {
 
                 resolve(stream);
             }).catch(error => {
-                chatEvents.fireEvent('callEvents', {
+                app.chatEvents.fireEvent('callEvents', {
                     type: 'CALL_ERROR',
                     code: (audio ? 12400 : 12401),
                     message: error,
                     // environmentDetails: getSDKCallDetails()
                 });
-                reject(handleError((audio ? 12400 : 12401)))
+                reject(app.errorHandler.handleError((audio ? 12400 : 12401)))
             });
         });
     },

@@ -15,24 +15,15 @@ var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers
 
 var _errorHandler = require("../errorHandler");
 
-var _sdkParams = require("../sdkParams");
-
-var _events = require("../../events.module");
-
 var _topicMetaDataManager = require("./topicMetaDataManager");
-
-var _sharedData = require("./sharedData");
-
-var _messaging = require("../../messaging.module");
-
-var _callsList = require("./callsList");
 
 var _webrtcPeer = require("./webrtcPeer");
 
 var _utility = _interopRequireDefault(require("../../utility/utility"));
 
 function CallTopicManager(_ref) {
-  var callId = _ref.callId,
+  var app = _ref.app,
+      callId = _ref.callId,
       userId = _ref.userId,
       user = _ref.user,
       topic = _ref.topic,
@@ -126,13 +117,13 @@ function CallTopicManager(_ref) {
         config.htmlElement = document.createElement('video');
         var el = config.htmlElement;
         el.setAttribute('id', 'callUserVideo-' + config.user.videoTopicName);
-        el.setAttribute('class', _sharedData.sharedVariables.callVideoTagClassName);
+        el.setAttribute('class', app.call.sharedVariables.callVideoTagClassName);
         el.setAttribute('playsinline', '');
         el.setAttribute('muted', '');
         el.setAttribute('autoplay', '');
         el.setAttribute('data-uniqueId', elementUniqueId);
-        el.setAttribute('width', _sharedData.sharedVariables.callVideoMinWidth + 'px');
-        el.setAttribute('height', _sharedData.sharedVariables.callVideoMinHeight + 'px'); // el.setAttribute('controls', '');
+        el.setAttribute('width', app.call.sharedVariables.callVideoMinWidth + 'px');
+        el.setAttribute('height', app.call.sharedVariables.callVideoMinHeight + 'px'); // el.setAttribute('controls', '');
       }
 
       return config.htmlElement;
@@ -173,7 +164,7 @@ function CallTopicManager(_ref) {
 
       publicized.resumeSendStream();
       this.generateSdpOfferOptions().then(function (options) {
-        _sdkParams.sdkParams.consoleLogging && console.debug("[SDK][generateSdpOfferOptions] Options for this request have been resolved: ", {
+        app.sdkParams.consoleLogging && console.debug("[SDK][generateSdpOfferOptions] Options for this request have been resolved: ", {
           options: options
         }, "userId: ", config.userId, "topic: ", config.topic, "direction: ", config.direction);
         manager.establishPeerConnection(options);
@@ -191,8 +182,8 @@ function CallTopicManager(_ref) {
 
         if (config.direction === 'send' && config.mediaType === 'video') {
           mediaConstraints.video = {
-            width: _sharedData.sharedVariables.callVideoMinWidth,
-            height: _sharedData.sharedVariables.callVideoMinHeight,
+            width: app.call.sharedVariables.callVideoMinWidth,
+            height: app.call.sharedVariables.callVideoMinHeight,
             framerate: 15
           };
         }
@@ -204,14 +195,14 @@ function CallTopicManager(_ref) {
           //     topicManager.watchForIceCandidates(candidate)
           // },
           configuration: {
-            iceServers: (0, _sharedData.currentCall)().getTurnServer((0, _sharedData.currentCall)().callConfig())
+            iceServers: app.call.currentCall().getTurnServer(app.call.currentCall().callConfig())
           }
         };
 
         if (config.direction === 'send') {
           if (config.mediaType === 'video') {
             if (config.isScreenShare) {
-              (0, _sharedData.currentCall)().deviceManager().grantScreenSharePermission({
+              app.call.currentCall().deviceManager().grantScreenSharePermission({
                 closeStream: false
               }).then(function (stream) {
                 // let stream = currentCall().deviceManager().mediaStreams.getScreenShareInput();
@@ -224,7 +215,7 @@ function CallTopicManager(_ref) {
                     stream.getVideoTracks()[0].removeEventListener("ended", onScreenShareEndCallback);
 
                     if (!publicized.isDestroyed() && config.peer) {
-                      (0, _sharedData.endScreenShare)({
+                      app.call.endScreenShare({
                         callId: config.callId
                       });
                     }
@@ -238,29 +229,29 @@ function CallTopicManager(_ref) {
               })["catch"](function (error) {
                 var errorString = "[SDK][grantScreenSharePermission][catch] " + JSON.stringify(error);
                 console.error(errorString);
-                (0, _sharedData.currentCall)().raiseCallError(_errorHandler.errorList.SCREENSHARE_PERMISSION_ERROR, null, true);
+                app.call.currentCall().raiseCallError(_errorHandler.errorList.SCREENSHARE_PERMISSION_ERROR, null, true);
                 publicized.explainUserMediaError(error, 'video', 'screen'); //resolve(options);
 
-                (0, _sharedData.endScreenShare)({
+                app.call.endScreenShare({
                   callId: config.callId
                 });
               });
             } else {
-              (0, _sharedData.currentCall)().deviceManager().grantUserMediaDevicesPermissions({
+              app.call.currentCall().deviceManager().grantUserMediaDevicesPermissions({
                 video: true
               }).then(function () {
-                options.stream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getVideoInput();
+                options.stream = app.call.currentCall().deviceManager().mediaStreams.getVideoInput();
                 resolve(options);
               })["catch"](function (error) {
                 reject(error);
               });
             }
           } else if (config.mediaType === 'audio') {
-            (0, _sharedData.currentCall)().deviceManager().grantUserMediaDevicesPermissions({
+            app.call.currentCall().deviceManager().grantUserMediaDevicesPermissions({
               audio: true
             }).then(function () {
-              var audioInput = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getAudioInput();
-              (0, _sharedData.currentCall)().deviceManager().watchAudioInputStream((0, _sharedData.currentCall)().raiseCallError);
+              var audioInput = app.call.currentCall().deviceManager().mediaStreams.getAudioInput();
+              app.call.currentCall().deviceManager().watchAudioInputStream(app.call.currentCall().raiseCallError);
               options.stream = audioInput;
               resolve(options);
             })["catch"](function (error) {
@@ -271,7 +262,7 @@ function CallTopicManager(_ref) {
           resolve(options);
         }
 
-        _sdkParams.sdkParams.consoleLogging && console.log("[SDK][getSdpOfferOptions] ", "topic: ", config.topic, "mediaType: ", config.mediaType, "direction: ", config.direction, "options: ", options);
+        app.sdkParams.consoleLogging && console.log("[SDK][getSdpOfferOptions] ", "topic: ", config.topic, "mediaType: ", config.mediaType, "direction: ", config.direction, "options: ", options);
       });
     },
     establishPeerConnection: function establishPeerConnection(options) {
@@ -290,38 +281,36 @@ function CallTopicManager(_ref) {
         iceConnectionStateChange: publicized.onIceConnectionStateChange,
         onTrackCallback: addStreamTrackToElement
       }, function (err) {
-        _sdkParams.sdkParams.consoleLogging && console.debug("[SDK][establishPeerConnection][KurentoUtils.WebRtcPeer][WebRtcFunction]: ", {
+        app.sdkParams.consoleLogging && console.debug("[SDK][establishPeerConnection][KurentoUtils.WebRtcPeer][WebRtcFunction]: ", {
           options: options
         }, "userId: ", config.userId, "topic: ", config.topic, "direction: ", config.direction);
 
         if (err) {
           var errorString = "[SDK][start/webRtc " + config.direction + "  " + config.mediaType + " Peer] Error: " + publicized.explainUserMediaError(err, config.mediaType);
           console.error(errorString);
-
-          _events.chatEvents.fireEvent('callEvents', {
+          app.chatEvents.fireEvent('callEvents', {
             type: 'CALL_ERROR',
             code: 7000,
             message: errorString,
-            environmentDetails: (0, _sharedData.currentCall)().getCallDetails()
+            environmentDetails: app.call.currentCall().getCallDetails()
           });
-
           return;
         }
 
         if (config.direction === 'send') {
           //publicized.startMedia();
-          if ((0, _sharedData.currentCall)().users().get(config.userId).user().cameraPaused) {
+          if (app.call.currentCall().users().get(config.userId).user().cameraPaused) {
             publicized.pauseSendStream();
           }
         }
 
-        if ((0, _sharedData.currentCall)().callServerController().isJanus() && config.direction === 'receive') {
+        if (app.call.currentCall().callServerController().isJanus() && config.direction === 'receive') {
           var msgParams = {
             id: 'REGISTER_RECV_NOTIFICATION',
             topic: config.topic,
             mediaType: config.mediaType === 'video' ? 2 : 1
           };
-          (0, _sharedData.currentCall)().sendCallMessage(msgParams, null, {
+          app.call.currentCall().sendCallMessage(msgParams, null, {
             timeoutTime: 4000,
             timeoutRetriesCount: 5 // timeoutCallback(){
             //     sendCallMessage(msgParams, null, {});
@@ -330,19 +319,17 @@ function CallTopicManager(_ref) {
           });
         } else {
           config.peer.generateOffer(function (err, sdpOffer) {
-            // sdkParams.consoleLogging && console.debug("[SDK][establishPeerConnection][generateOffer] GenerateOffer:: ", " sdpOffer: ", sdpOffer, " err: ", err);
+            // app.sdkParams.consoleLogging && console.debug("[SDK][establishPeerConnection][generateOffer] GenerateOffer:: ", " sdpOffer: ", sdpOffer, " err: ", err);
             if (err) {
               var _errorString = "[SDK][start/WebRc " + config.direction + "  " + config.mediaType + " Peer/generateOffer] " + err;
 
               console.error(_errorString);
-
-              _events.chatEvents.fireEvent('callEvents', {
+              app.chatEvents.fireEvent('callEvents', {
                 type: 'CALL_ERROR',
                 code: 7000,
                 message: _errorString,
-                environmentDetails: (0, _sharedData.currentCall)().getCallDetails()
+                environmentDetails: app.call.currentCall().getCallDetails()
               });
-
               return;
             }
 
@@ -355,7 +342,7 @@ function CallTopicManager(_ref) {
       });
     },
     onConnectionStateChange: function onConnectionStateChange() {
-      _events.chatEvents.fireEvent("callStreamEvents", {
+      app.chatEvents.fireEvent("callStreamEvents", {
         type: 'WEBRTC_CONNECTION_STATE_CHANGE',
         callId: config.callId,
         userId: config.userId,
@@ -369,7 +356,7 @@ function CallTopicManager(_ref) {
         return; //avoid log errors
       }
 
-      _sdkParams.sdkParams.consoleLogging && console.log("[SDK][peerConnection.onconnectionstatechange] ", "peer: ", config.topic, " peerConnection.connectionState: ", config.peer.peerConnection.connectionState);
+      app.sdkParams.consoleLogging && console.log("[SDK][peerConnection.onconnectionstatechange] ", "peer: ", config.topic, " peerConnection.connectionState: ", config.peer.peerConnection.connectionState);
 
       if (config.peer.peerConnection.connectionState === 'disconnected') {
         publicized.removeConnectionQualityInterval();
@@ -379,15 +366,14 @@ function CallTopicManager(_ref) {
       if (config.peer.peerConnection.connectionState === "failed") {
         if (publicized.isPeerFailed()) return;
         config.state = peerStates.FAILED;
-
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_STATUS',
           errorCode: 7000,
           errorMessage: "Call Peer (".concat(config.topic, ") has failed!"),
           errorInfo: config.peer
         });
 
-        if ((0, _messaging.messenger)().chatState) {
+        if (app.messenger.chatState) {
           publicized.shouldReconnectTopic();
         }
       }
@@ -407,33 +393,30 @@ function CallTopicManager(_ref) {
         return; //avoid log errors
       }
 
-      _sdkParams.sdkParams.consoleLogging && console.log("[SDK][oniceconnectionstatechange] ", "peer: ", config.topic, " peerConnection.connectionState: ", config.peer.peerConnection.iceConnectionState);
+      app.sdkParams.consoleLogging && console.log("[SDK][oniceconnectionstatechange] ", "peer: ", config.topic, " peerConnection.connectionState: ", config.peer.peerConnection.iceConnectionState);
 
       if (config.peer.peerConnection.iceConnectionState === 'disconnected') {
         config.state = peerStates.DISCONNECTED;
-
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_STATUS',
           errorCode: 7000,
           errorMessage: "Call Peer (".concat(config.topic, ") is disconnected!"),
           errorInfo: config.peer
         });
-
-        _sdkParams.sdkParams.consoleLogging && console.log('[SDK][oniceconnectionstatechange]:[disconnected] Internet connection failed, Reconnect your call, topic:', config.topic);
+        app.sdkParams.consoleLogging && console.log('[SDK][oniceconnectionstatechange]:[disconnected] Internet connection failed, Reconnect your call, topic:', config.topic);
       }
 
       if (config.peer.peerConnection.iceConnectionState === "failed") {
         if (publicized.isPeerFailed()) return;
         config.state = peerStates.FAILED;
-
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_STATUS',
           errorCode: 7000,
           errorMessage: "Call Peer (".concat(config.topic, ") has failed!"),
           errorInfo: config.peer
         });
 
-        if ((0, _messaging.messenger)().chatState) {
+        if (app.messenger.chatState) {
           publicized.shouldReconnectTopic();
         }
       }
@@ -449,7 +432,7 @@ function CallTopicManager(_ref) {
 
         if (config.mediaType === 'video') {
           if (config.direction === 'receive') {
-            _events.chatEvents.fireEvent("callEvents", {
+            app.chatEvents.fireEvent("callEvents", {
               type: "RECEIVE_VIDEO_CONNECTION_ESTABLISHED",
               userId: config.userId
             });
@@ -458,7 +441,7 @@ function CallTopicManager(_ref) {
 
         config.state = peerStates.CONNECTED; // callRequestController.callEstablishedInMySide = true;
 
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_STATUS',
           errorCode: 7000,
           errorMessage: "Call Peer (".concat(config.topic, ") has connected!"),
@@ -467,7 +450,7 @@ function CallTopicManager(_ref) {
       }
     },
     sendSDPOfferRequestMessage: function sendSDPOfferRequestMessage(sdpOffer, retries) {
-      (0, _sharedData.currentCall)().sendCallMessage({
+      app.call.currentCall().sendCallMessage({
         id: config.direction === 'send' ? 'SEND_SDP_OFFER' : 'RECIVE_SDP_OFFER',
         sdpOffer: sdpOffer,
         useComedia: true,
@@ -489,10 +472,10 @@ function CallTopicManager(_ref) {
       var user = config.user,
           topicMetadata = config.topicMetaData; // Create and configure the audio pipeline
 
-      var analyzer = (0, _sharedData.audioCtx)().createAnalyser();
+      var analyzer = app.call.audioCtx().createAnalyser();
       analyzer.fftSize = 512;
       analyzer.smoothingTimeConstant = 0.1;
-      var sourceNode = (0, _sharedData.audioCtx)().createMediaStreamSource(stream);
+      var sourceNode = app.call.audioCtx().createMediaStreamSource(stream);
       sourceNode.connect(analyzer); // Analyze the sound
 
       topicMetadata.audioLevelInterval = setInterval(function () {
@@ -512,7 +495,7 @@ function CallTopicManager(_ref) {
         var audioMeter = Math.sqrt(sum / frequencyRangeData.length); //console.log({audioMeter}, {audioPeakDB});
 
         if (audioPeakDB > -50 && audioMeter > 0) {
-          _events.chatEvents.fireEvent('callStreamEvents', {
+          app.chatEvents.fireEvent('callStreamEvents', {
             type: 'USER_SPEAKING',
             userId: config.userId,
             audioLevel: convertToAudioLevel(audioPeakDB),
@@ -520,7 +503,7 @@ function CallTopicManager(_ref) {
             isMute: false
           });
         } else if (audioPeakDB !== -Infinity && audioPeakDB < -60 && audioMeter > 0) {
-          _events.chatEvents.fireEvent('callStreamEvents', {
+          app.chatEvents.fireEvent('callStreamEvents', {
             type: 'USER_SPEAKING',
             userId: config.userId,
             audioLevel: 0,
@@ -528,7 +511,7 @@ function CallTopicManager(_ref) {
             isMute: false
           });
         } else if (audioPeakDB === -Infinity && audioMeter == 0) {
-          _events.chatEvents.fireEvent('callStreamEvents', {
+          app.chatEvents.fireEvent('callStreamEvents', {
             type: 'USER_SPEAKING',
             userId: config.userId,
             audioLevel: 0,
@@ -553,7 +536,7 @@ function CallTopicManager(_ref) {
       }
     },
     checkConnectionQuality: function checkConnectionQuality() {
-      if (!(0, _sharedData.currentCall)() || !(0, _sharedData.currentCall)().users().get(config.userId) || !config.peer || !config.peer.peerConnection) {
+      if (!app.call.currentCall() || !app.call.currentCall().users().get(config.userId) || !config.peer || !config.peer.peerConnection) {
         this.removeConnectionQualityInterval();
         this.removeAudioWatcherInterval();
         return;
@@ -572,7 +555,7 @@ function CallTopicManager(_ref) {
             // sorted to the top above
             if (!report['roundTripTime'] || report['roundTripTime'] > 1) {
               if (topicMetadata.poorConnectionCount === 10) {
-                (0, _sharedData.currentCall)().sendQualityCheckEvent({
+                app.call.currentCall().sendQualityCheckEvent({
                   userId: config.userId,
                   topic: config.topic,
                   mediaType: config.mediaType,
@@ -581,8 +564,8 @@ function CallTopicManager(_ref) {
               }
 
               if (topicMetadata.poorConnectionCount > 3 && !topicMetadata.isConnectionPoor) {
-                _sdkParams.sdkParams.consoleLogging && console.log('[SDK][checkConnectionQuality] Poor connection detected...');
-                (0, _sharedData.currentCall)().sendQualityCheckEvent({
+                app.sdkParams.consoleLogging && console.log('[SDK][checkConnectionQuality] Poor connection detected...');
+                app.call.currentCall().sendQualityCheckEvent({
                   userId: config.userId,
                   topic: config.topic,
                   mediaType: config.mediaType
@@ -598,7 +581,7 @@ function CallTopicManager(_ref) {
                 topicMetadata.poorConnectionResolvedCount = 0;
                 topicMetadata.poorConnectionCount = 0;
                 topicMetadata.isConnectionPoor = false;
-                (0, _sharedData.currentCall)().sendQualityCheckEvent({
+                app.call.currentCall().sendQualityCheckEvent({
                   userId: config.userId,
                   topic: config.topic,
                   mediaType: config.mediaType,
@@ -633,19 +616,18 @@ function CallTopicManager(_ref) {
 
       if (!publicized.isDestroyed()) {
         if (config.peer && iceConnectionState != 'connected') {
-          _events.chatEvents.fireEvent('callEvents', {
+          app.chatEvents.fireEvent('callEvents', {
             type: 'CALL_STATUS',
             errorCode: 7000,
             errorMessage: "Call Peer (".concat(config.topic, ") is not in connected state, reconnecting peer ...!"),
             errorInfo: config.peer
           });
-
-          (0, _sharedData.currentCall)().users().get(config.userId).reconnectTopic(config.mediaType);
+          app.call.currentCall().users().get(config.userId).reconnectTopic(config.mediaType);
         }
       }
     },
     explainUserMediaError: function explainUserMediaError(err, deviceType, deviceSource) {
-      /*chatEvents.fireEvent('callEvents', {
+      /*app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_ERROR',
           code: 7000,
           message: err,
@@ -654,68 +636,62 @@ function CallTopicManager(_ref) {
       var n = err.name;
 
       if (n === 'NotFoundError' || n === 'DevicesNotFoundError') {
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_ERROR',
           code: 7000,
           message: "Missing " + (deviceType === 'video' ? 'webcam' : 'mice') + " for required tracks",
-          environmentDetails: (0, _sharedData.currentCall)().getCallDetails()
+          environmentDetails: app.call.currentCall().getCallDetails()
         });
-
         alert("Missing " + (deviceType === 'video' ? 'webcam' : 'mice') + " for required tracks");
         return "Missing " + (deviceType === 'video' ? 'webcam' : 'mice') + " for required tracks";
       } else if (n === 'NotReadableError' || n === 'TrackStartError') {
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_ERROR',
           code: 7000,
           message: (deviceType === 'video' ? 'Webcam' : 'Mice') + " is already in use",
-          environmentDetails: (0, _sharedData.currentCall)().getCallDetails()
+          environmentDetails: app.call.currentCall().getCallDetails()
         });
-
         alert((deviceType === 'video' ? 'Webcam' : 'Mice') + " is already in use");
         return (deviceType === 'video' ? 'Webcam' : 'Mice') + " is already in use";
       } else if (n === 'OverconstrainedError' || n === 'ConstraintNotSatisfiedError') {
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_ERROR',
           code: 7000,
           message: (deviceType === 'video' ? 'Webcam' : 'Mice') + " doesn't provide required tracks",
-          environmentDetails: (0, _sharedData.currentCall)().getCallDetails()
+          environmentDetails: app.call.currentCall().getCallDetails()
         });
-
         alert((deviceType === 'video' ? 'Webcam' : 'Mice') + " doesn't provide required tracks");
         return (deviceType === 'video' ? 'Webcam' : 'Mice') + " doesn't provide required tracks";
       } else if (n === 'NotAllowedError' || n === 'PermissionDeniedError') {
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_ERROR',
           code: 7000,
           message: (deviceType === 'video' ? deviceSource === 'screen' ? 'ScreenShare' : 'Webcam' : 'Mice') + " permission has been denied by the user",
-          environmentDetails: (0, _sharedData.currentCall)().getCallDetails()
+          environmentDetails: app.call.currentCall().getCallDetails()
         });
-
         alert((deviceType === 'video' ? deviceSource === 'screen' ? 'ScreenShare' : 'Webcam' : 'Mice') + " permission has been denied by the user");
         return (deviceType === 'video' ? deviceSource === 'screen' ? 'ScreenShare' : 'Webcam' : 'Mice') + " permission has been denied by the user";
       } else if (n === 'TypeError') {
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_ERROR',
           code: 7000,
           message: "No media tracks have been requested",
-          environmentDetails: (0, _sharedData.currentCall)().getCallDetails()
+          environmentDetails: app.call.currentCall().getCallDetails()
         });
-
         return "No media tracks have been requested";
       } else {
-        _events.chatEvents.fireEvent('callEvents', {
+        app.chatEvents.fireEvent('callEvents', {
           type: 'CALL_ERROR',
           code: 7000,
           message: "Unknown error: " + err,
-          environmentDetails: (0, _sharedData.currentCall)().getCallDetails()
+          environmentDetails: app.call.currentCall().getCallDetails()
         });
-
         return "Unknown error: " + err;
       }
     },
     stopTopicOnServer: function stopTopicOnServer() {
       return new Promise(function (resolve) {
-        (0, _callsList.callsManager)().get(config.callId).sendCallMessage({
+        app.callsManager.get(config.callId).sendCallMessage({
           id: 'STOP',
           topic: config.topic
         }, function (result) {
@@ -775,14 +751,14 @@ function CallTopicManager(_ref) {
 
       switch (config.mediaType) {
         case 'audio':
-          localStream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getAudioInput();
+          localStream = app.call.currentCall().deviceManager().mediaStreams.getAudioInput();
           break;
 
         case 'video':
           if (config.isScreenShare) {
-            localStream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getScreenShareInput();
+            localStream = app.call.currentCall().deviceManager().mediaStreams.getScreenShareInput();
           } else {
-            localStream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getVideoInput();
+            localStream = app.call.currentCall().deviceManager().mediaStreams.getVideoInput();
           }
 
       }
@@ -794,14 +770,14 @@ function CallTopicManager(_ref) {
 
       switch (config.mediaType) {
         case 'audio':
-          localStream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getAudioInput();
+          localStream = app.call.currentCall().deviceManager().mediaStreams.getAudioInput();
           break;
 
         case 'video':
           if (config.isScreenShare) {
-            localStream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getScreenShareInput();
+            localStream = app.call.currentCall().deviceManager().mediaStreams.getScreenShareInput();
           } else {
-            localStream = (0, _sharedData.currentCall)().deviceManager().mediaStreams.getVideoInput();
+            localStream = app.call.currentCall().deviceManager().mediaStreams.getVideoInput();
           }
 
       }
@@ -810,21 +786,21 @@ function CallTopicManager(_ref) {
       //     config.peer.getLocalStream().getTracks()[0].enabled = true;
     },
     startMedia: function startMedia() {
-      _sdkParams.sdkParams.consoleLogging && console.log("[SDK][startMedia] called with: ", config.htmlElement);
+      app.sdkParams.consoleLogging && console.log("[SDK][startMedia] called with: ", config.htmlElement);
       if (!config.htmlElement) return;
       config.htmlElement.play()["catch"](function (err) {
         if (err.name === 'NotAllowedError') {
-          _events.chatEvents.fireEvent('callEvents', {
+          app.chatEvents.fireEvent('callEvents', {
             type: 'CALL_ERROR',
             code: 7000,
             message: "[startMedia] Browser doesn't allow playing media: " + err,
-            environmentDetails: (0, _sharedData.currentCall)().getCallDetails()
+            environmentDetails: app.call.currentCall().getCallDetails()
           });
         }
       });
     },
     restartMediaOnKeyFrame: function restartMediaOnKeyFrame(userId, timeouts) {
-      if ((0, _sharedData.currentCall)().callServerController().isJanus()) return;
+      if (app.call.currentCall().callServerController().isJanus()) return;
 
       for (var i = 0; i < timeouts.length; i++) {
         setTimeout(function () {
@@ -833,8 +809,8 @@ function CallTopicManager(_ref) {
       }
     },
     restartMedia: function restartMedia() {
-      if (!publicized.isDestroyed() && !(0, _sharedData.currentCall)().users().get(config.userId).user().cameraPaused && config.mediaType == 'video') {
-        _sdkParams.sdkParams.consoleLogging && console.log('[SDK] Sending Key Frame ...');
+      if (!publicized.isDestroyed() && !app.call.currentCall().users().get(config.userId).user().cameraPaused && config.mediaType == 'video') {
+        app.sdkParams.consoleLogging && console.log('[SDK] Sending Key Frame ...');
         var el = document.getElementById('callUserVideo-' + config.user.videoTopicName);
         if (!el.srcObject) el.srcObject = config.dataStream;
         var videoElement = el;
@@ -848,8 +824,8 @@ function CallTopicManager(_ref) {
         }, 1500);
 
         if (videoElement) {
-          var width = config.isScreenShare ? (0, _sharedData.currentCall)().screenShareInfo.getWidth() : _sharedData.sharedVariables.callVideoMinWidth,
-              height = config.isScreenShare ? (0, _sharedData.currentCall)().screenShareInfo.getHeight() : _sharedData.sharedVariables.callVideoMinHeight,
+          var width = config.isScreenShare ? app.call.currentCall().screenShareInfo.getWidth() : app.call.sharedVariables.callVideoMinWidth,
+              height = config.isScreenShare ? app.call.currentCall().screenShareInfo.getHeight() : app.call.sharedVariables.callVideoMinHeight,
               rand = Math.random(),
               newWidth = width - 5,
               newHeight = height - 5;
@@ -881,7 +857,7 @@ function CallTopicManager(_ref) {
                 });
               }, 1500);
             })["catch"](function (e) {
-              return _sdkParams.sdkParams.consoleLogging && console.log(e);
+              return app.sdkParams.consoleLogging && console.log(e);
             });
           } else {
             videoTrack.applyConstraints({
@@ -891,7 +867,7 @@ function CallTopicManager(_ref) {
                 aspectRatio: 1.777
               }]
             }).then(function (res) {})["catch"](function (e) {
-              return _sdkParams.sdkParams.consoleLogging && console.log(e);
+              return app.sdkParams.consoleLogging && console.log(e);
             });
             setTimeout(function () {
               videoTrack.applyConstraints({

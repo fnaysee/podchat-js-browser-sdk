@@ -1,8 +1,6 @@
 import {CallManager} from "./callManager";
-import {sdkParams} from "../sdkParams";
-import {endCall, sharedVariables} from "./sharedData";
 
-function CallsList() {
+function CallsList(app) {
     const config = {
         list: {},
         currentCallId: null
@@ -14,15 +12,15 @@ function CallsList() {
                 await publicized.destroyAllCalls();
             }
 
-            callsManager().currentCallId = callId;
-            config.list[callId] = new CallManager({callId, callConfig});
+            app.callsManager.currentCallId = callId;
+            config.list[callId] = new CallManager({app, callId, callConfig});
         },
         async removeItem(callId) {
             if(config.list[callId]) {
                 await config.list[callId].destroy();
                 delete config.list[callId];
             }
-            callsManager().currentCallId = null;
+            app.callsManager.currentCallId = null;
         },
         get(id) {
             return config.list[id]
@@ -31,14 +29,14 @@ function CallsList() {
             if(config.list[callId])
                 config.list[callId].processCallMessage(message)
             else
-                sdkParams.consoleLogging && console.warn("[SDK] Skipping call message, call not exists. uniqueId: ", {message})
+                app.sdkParams.consoleLogging && console.warn("[SDK] Skipping call message, call not exists. uniqueId: ", {message})
         },
         destroyAllCalls() {
             return new Promise(resolve=>{
                 let allPromises = [];
                 for(let i in config.list) {
                     console.log("destroyAllCalls()", i);
-                    endCall({callId: i})
+                    app.call.endCall({callId: i})
                     allPromises.push(publicized.removeItem(i));
                 }
                 Promise.all(allPromises).then(()=>{
@@ -52,10 +50,4 @@ function CallsList() {
     return publicized;
 }
 
-const callsMgr = new CallsList();
-
-function callsManager() {
-    return callsMgr;
-}
-
-export {callsManager}
+export default CallsList

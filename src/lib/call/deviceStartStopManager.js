@@ -1,5 +1,3 @@
-import {store} from "../store";
-import {callsManager} from "./callsList";
 
 function DevicePauseStopManager({userId, mediaType, timeout, callId}) {
     const config = {
@@ -25,7 +23,7 @@ function DevicePauseStopManager({userId, mediaType, timeout, callId}) {
             if(config.paused) {
                 config.stopped = true;
 
-                callsManager().get(callId).users.get(userId).destroyAudio()
+                app.callsManager.get(callId).users.get(userId).destroyAudio()
                 //     .deactivateParticipantStream(
                 //     config.userId,
                 //     config.mediaType,

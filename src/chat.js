@@ -1,19 +1,14 @@
 'use strict';
 
+import App from "./lib/app";
 import Async from "podasync-ws-only"
 import Utility from "./utility/utility"
 import ChatCall from "./call.module"
-import {sdkParams} from "./lib/sdkParams";
-import ChatEvents, { initEventHandler, chatEvents } from "./events.module"
-import {initChatMessaging, messenger} from "./messaging.module"
+import ChatMessaging from "./messaging.module"
 import buildConfig from "./buildConfig.json"
 import {deprecatedString, printIsDeprecate} from "./deprecateMethods";
 import xss from "xss"
-import {
-    getThreadParticipants,
-    reformatThreadParticipants,
-    formatDataToMakeParticipant
-} from "./lib/chat/threadParticipantsMethods"
+import ThreadParticipantsMethods from "./lib/chat/threadParticipantsMethods"
 
 import {
     chatMessageVOTypes,
@@ -28,76 +23,67 @@ import {
     chatStickerTypes
 } from "./lib/constants";
 
-import deviceManager from "./lib/call/deviceManager.js";
-import {store} from "./lib/store";
-import {setSDKUser} from "./lib/store/user";
-import {
-    getReactionsSummaries,
-    getReactionList,
-    removeReaction,
-    replaceReaction,
-    getMyReaction,
-    addReaction,
-    onReactionSummaries,
-    onReactionList,
-    onRemoveReaction,
-    onReplaceReaction,
-    onAddReaction
-} from "./lib/chat/reactionsMethods";
+import ReactionsMethods from "./lib/chat/reactionsMethods";
 
 function Chat(params) {
     /*******************************************************
      *          P R I V A T E   V A R I A B L E S          *
      *******************************************************/
-    sdkParams.appId = params.appId;
-    sdkParams.token = params.token || "111";
-    sdkParams.generalTypeCode = params.typeCode || 'default';
-    sdkParams.typeCodeOwnerId = params.typeCodeOwnerId || null;
-    sdkParams.mapApiKey = params.mapApiKey || '8b77db18704aa646ee5aaea13e7370f4f88b9e8c';
-    sdkParams.productEnv = (typeof navigator != 'undefined') ? navigator.product : 'undefined';
-    sdkParams.forceWaitQueueInMemory = (params.forceWaitQueueInMemory && typeof params.forceWaitQueueInMemory === 'boolean') ? params.forceWaitQueueInMemory : false;
-    sdkParams.grantDeviceIdFromSSO = (params.grantDeviceIdFromSSO && typeof params.grantDeviceIdFromSSO === 'boolean')
+
+    const app = new App();
+    const reactionsMethods = new ReactionsMethods(app);
+    const threadParticipantsMethods = new ThreadParticipantsMethods(app);
+
+    app.sdkParams.appId = params.appId;
+    app.sdkParams.token = params.token || "111";
+    app.sdkParams.generalTypeCode = params.typeCode || 'default';
+    app.sdkParams.typeCodeOwnerId = params.typeCodeOwnerId || null;
+    app.sdkParams.mapApiKey = params.mapApiKey || '8b77db18704aa646ee5aaea13e7370f4f88b9e8c';
+    app.sdkParams.productEnv = (typeof navigator != 'undefined') ? navigator.product : 'undefined';
+    app.sdkParams.forceWaitQueueInMemory = (params.forceWaitQueueInMemory && typeof params.forceWaitQueueInMemory === 'boolean') ? params.forceWaitQueueInMemory : false;
+    app.sdkParams.grantDeviceIdFromSSO = (params.grantDeviceIdFromSSO && typeof params.grantDeviceIdFromSSO === 'boolean')
     ? params.grantDeviceIdFromSSO
     : false;
-    sdkParams.deliveryIntervalPitch = params.deliveryIntervalPitch || 2000;
-    sdkParams.seenIntervalPitch = params.seenIntervalPitch || 2000;
-    sdkParams.systemMessageIntervalPitch = params.systemMessageIntervalPitch || 1000;
-    sdkParams.socketAddress = params.socketAddress;
-    sdkParams.serverName = params.serverName;
-    sdkParams.wsConnectionWaitTime = params.wsConnectionWaitTime;
-    sdkParams.connectionRetryInterval = params.connectionRetryInterval;
-    sdkParams.msgPriority = params.msgPriority;
-    sdkParams.messageTtl = params.messageTtl || 10000;
-    sdkParams.reconnectOnClose = params.reconnectOnClose;
-    sdkParams.asyncLogging = params.asyncLogging;
+    app.sdkParams.deliveryIntervalPitch = params.deliveryIntervalPitch || 2000;
+    app.sdkParams.seenIntervalPitch = params.seenIntervalPitch || 2000;
+    app.sdkParams.systemMessageIntervalPitch = params.systemMessageIntervalPitch || 1000;
+    app.sdkParams.socketAddress = params.socketAddress;
+    app.sdkParams.serverName = params.serverName;
+    app.sdkParams.wsConnectionWaitTime = params.wsConnectionWaitTime;
+    app.sdkParams.connectionRetryInterval = params.connectionRetryInterval;
+    app.sdkParams.msgPriority = params.msgPriority;
+    app.sdkParams.messageTtl = params.messageTtl || 10000;
+    app.sdkParams.reconnectOnClose = params.reconnectOnClose;
+    app.sdkParams.asyncLogging = params.asyncLogging;
 
-    sdkParams.connectionCheckTimeout = params.connectionCheckTimeout;
-    sdkParams.httpRequestTimeout = (params.httpRequestTimeout >= 0) ? params.httpRequestTimeout : 0;
-    sdkParams.asyncRequestTimeout = (typeof params.asyncRequestTimeout === 'number' && params.asyncRequestTimeout >= 0) ? params.asyncRequestTimeout : 0;
-    sdkParams.connectionCheckTimeoutThreshold = params.connectionCheckTimeoutThreshold;
-    sdkParams.httpUploadRequestTimeout = (params.httpUploadRequestTimeout >= 0) ? params.httpUploadRequestTimeout : 0;
-    sdkParams.actualTimingLog = (params.asyncLogging.actualTiming && typeof params.asyncLogging.actualTiming === 'boolean')
+    app.sdkParams.connectionCheckTimeout = params.connectionCheckTimeout;
+    app.sdkParams.httpRequestTimeout = (params.httpRequestTimeout >= 0) ? params.httpRequestTimeout : 0;
+    app.sdkParams.asyncRequestTimeout = (typeof params.asyncRequestTimeout === 'number' && params.asyncRequestTimeout >= 0) ? params.asyncRequestTimeout : 0;
+    app.sdkParams.connectionCheckTimeoutThreshold = params.connectionCheckTimeoutThreshold;
+    app.sdkParams.httpUploadRequestTimeout = (params.httpUploadRequestTimeout >= 0) ? params.httpUploadRequestTimeout : 0;
+    app.sdkParams.actualTimingLog = (params.asyncLogging.actualTiming && typeof params.asyncLogging.actualTiming === 'boolean')
         ? params.asyncLogging.actualTiming
         : false;
-    sdkParams.consoleLogging = (params.asyncLogging.consoleLogging && typeof params.asyncLogging.consoleLogging === 'boolean')
+    app.sdkParams.consoleLogging = (params.asyncLogging.consoleLogging && typeof params.asyncLogging.consoleLogging === 'boolean')
         ? params.asyncLogging.consoleLogging
         : false;
-    sdkParams.fullResponseObject = params.fullResponseObject || false;
-    sdkParams.webrtcConfig = (params.webrtcConfig ? params.webrtcConfig : null);
-    sdkParams.chatPingMessageInterval = params.chatPingMessageInterval;
-    sdkParams.protocol = params.protocol;
+    app.sdkParams.fullResponseObject = params.fullResponseObject || false;
+    app.sdkParams.webrtcConfig = (params.webrtcConfig ? params.webrtcConfig : null);
+    app.sdkParams.chatPingMessageInterval = params.chatPingMessageInterval;
+    app.sdkParams.protocol = params.protocol;
 
-    sdkParams.callRequestTimeout = (typeof params.callRequestTimeout === 'number' && params.callRequestTimeout >= 0) ? params.callRequestTimeout : 10000
-    sdkParams.callOptions = params.callOptions;
+    app.sdkParams.callRequestTimeout = (typeof params.callRequestTimeout === 'number' && params.callRequestTimeout >= 0) ? params.callRequestTimeout : 10000
+    app.sdkParams.callOptions = params.callOptions;
 
     var asyncClient,
         peerId,
         oldPeerId,
+        localDeviceId,
         //deviceId,
         //db,
         //queueDb,
-        //hasCache = sdkParams.productEnv !== 'ReactNative' && typeof Dexie != 'undefined',
-        cacheInMemory = sdkParams.forceWaitQueueInMemory ? true : false,//!hasCache,
+        //hasCache = app.sdkParams.productEnv !== 'ReactNative' && typeof Dexie != 'undefined',
+        cacheInMemory = app.sdkParams.forceWaitQueueInMemory ? true : false,//!hasCache,
         //enableCache = (params.enableCache && typeof params.enableCache === 'boolean') ? params.enableCache : false,
         //canUseCache = hasCache && enableCache,
         //isCacheReady = false,
@@ -218,7 +204,7 @@ function Chat(params) {
         // actualTimingLog = (params.asyncLogging.actualTiming && typeof params.asyncLogging.actualTiming === 'boolean')
         //     ? params.asyncLogging.actualTiming
         //     : false,
-        // consoleLogging = (sdkParams.asyncLogging.consoleLogging && typeof sdkParams.asyncLogging.consoleLogging === 'boolean')
+        // consoleLogging = (app.sdkParams.asyncLogging.consoleLogging && typeof app.sdkParams.asyncLogging.consoleLogging === 'boolean')
         //     ? params.asyncLogging.consoleLogging
         //     : false,
         minIntegerValue = Number.MAX_SAFE_INTEGER * -1,
@@ -227,13 +213,13 @@ function Chat(params) {
         chatWaitQueue = [],
         chatUploadQueue = [],
         protocolSwitching = params.protocolSwitching,
-        protocolManager =  new ProtocolManager({protocol: sdkParams.protocol}),
+        protocolManager =  new ProtocolManager({protocol: app.sdkParams.protocol}),
         asyncLogCallback = typeof params.asyncLogCallback == "function" ? params.asyncLogCallback : null,
         msgLogCallback = typeof params.msgLogCallback == "function" ? params.msgLogCallback : null;
     //fullResponseObject = params.fullResponseObject || false,
         //webrtcConfig = (params.webrtcConfig ? params.webrtcConfig : null);
 
-    if(!sdkParams.consoleLogging) {
+    if(!app.sdkParams.consoleLogging) {
         /**
          * Disable kurento-utils logs
          */
@@ -244,12 +230,15 @@ function Chat(params) {
         };
     }
 
-    initEventHandler();
-    initChatMessaging(Object.assign(params, {
-        asyncClient: asyncClient,
+    app.messenger = new ChatMessaging(app, Object.assign(params, {
+        asyncClient: asyncClient
     }));
+    // initChatMessaging(Object.assign(params, {
+    //     asyncClient: asyncClient,
+    //     app
+    // }));
 
-    var callModule = new ChatCall(Object.assign(params, {
+    let callModule = new ChatCall(app, Object.assign(params, {
         asyncClient: asyncClient
     }));
 
@@ -283,9 +272,9 @@ function Chat(params) {
                     config.failOverProtocol = current;
                 }
 
-                sdkParams.consoleLogging && console.log("[SDK]|/| switchProtocol: ", "config.currentProtocol: ", config.currentProtocol, "config.currentWaitTime: ", config.currentWaitTime)
+                app.sdkParams.consoleLogging && console.log("[SDK]|/| switchProtocol: ", "config.currentProtocol: ", config.currentProtocol, "config.currentWaitTime: ", config.currentWaitTime)
 
-                chatEvents.fireEvent("autoSwitchAsyncProtocol", {
+                app.chatEvents.fireEvent("autoSwitchAsyncProtocol", {
                     current: config.currentProtocol,
                     previous: config.failOverProtocol
                 });
@@ -324,7 +313,7 @@ function Chat(params) {
                 config.currentWaitTime = (typeof time != "undefined" ? time : 0);
             },
             onAsyncIsReconnecting(event) {
-                sdkParams.consoleLogging && console.log("[SDK]|/| onAsyncIsReconnecting: ", "config.currentProtocol: ", config.currentProtocol, "config.currentWaitTime: ", config.currentWaitTime);
+                app.sdkParams.consoleLogging && console.log("[SDK]|/| onAsyncIsReconnecting: ", "config.currentProtocol: ", config.currentProtocol, "config.currentWaitTime: ", config.currentWaitTime);
                 publics.increaseRetries();
 
                 if(config.currentWaitTime < 64) {
@@ -369,14 +358,14 @@ function Chat(params) {
              * Initialize Cache Databases
              */
             //startCacheDatabases(function () {
-                if (sdkParams.grantDeviceIdFromSSO) {
+                if (app.sdkParams.grantDeviceIdFromSSO) {
                     var getDeviceIdWithTokenTime = new Date().getTime();
                     getDeviceIdWithToken(function (retrievedDeviceId) {
-                        if (sdkParams.actualTimingLog) {
+                        if (app.sdkParams.actualTimingLog) {
                             Utility.chatStepLogger('Get Device ID ', new Date().getTime() - getDeviceIdWithTokenTime);
                         }
 
-                        sdkParams.deviceId = retrievedDeviceId;
+                        localDeviceId = retrievedDeviceId;
 
                         initAsync();
                     });
@@ -400,7 +389,7 @@ function Chat(params) {
             var asyncGetReadyTime = new Date().getTime();
 
             asyncClient = new Async({
-                appId: sdkParams.appId,
+                appId: app.sdkParams.appId,
                 protocol: protocolManager.getCurrentProtocol(),
                 queueHost: queueHost,
                 queuePort: queuePort,
@@ -409,18 +398,18 @@ function Chat(params) {
                 queueReceive: queueReceive,
                 queueSend: queueSend,
                 queueConnectionTimeout: queueConnectionTimeout,
-                socketAddress: sdkParams.socketAddress,
-                serverName: sdkParams.serverName,
-                deviceId: sdkParams.deviceId,
-                wsConnectionWaitTime: sdkParams.wsConnectionWaitTime,
-                connectionRetryInterval: sdkParams.connectionRetryInterval,
-                connectionCheckTimeout: sdkParams.connectionCheckTimeout,
-                connectionCheckTimeoutThreshold: sdkParams.connectionCheckTimeoutThreshold,
-                messageTtl: sdkParams.messageTtl,
-                reconnectOnClose: sdkParams.reconnectOnClose,
-                asyncLogging: sdkParams.asyncLogging,
-                logLevel: (sdkParams.consoleLogging ? 3 : 1),
-                webrtcConfig: sdkParams.webrtcConfig,
+                socketAddress: app.sdkParams.socketAddress,
+                serverName: app.sdkParams.serverName,
+                deviceId: localDeviceId,
+                wsConnectionWaitTime: app.sdkParams.wsConnectionWaitTime,
+                connectionRetryInterval: app.sdkParams.connectionRetryInterval,
+                connectionCheckTimeout: app.sdkParams.connectionCheckTimeout,
+                connectionCheckTimeoutThreshold: app.sdkParams.connectionCheckTimeoutThreshold,
+                messageTtl: app.sdkParams.messageTtl,
+                reconnectOnClose: app.sdkParams.reconnectOnClose,
+                asyncLogging: app.sdkParams.asyncLogging,
+                logLevel: (app.sdkParams.consoleLogging ? 3 : 1),
+                webrtcConfig: app.sdkParams.webrtcConfig,
                 retryStepTimerTime: protocolManager.getRetryStepTimerTime(),
                 onStartWithRetryStepGreaterThanZero: onStateChange,
                 msgLogCallback: msgLogCallback || null,
@@ -429,53 +418,53 @@ function Chat(params) {
             });
 
             function onDeviceId(deviceId) {
-                if (!sdkParams.deviceId) {
-                    sdkParams.deviceId = deviceId;
+                if (!localDeviceId) {
+                    localDeviceId = deviceId;
                 }
 
-                asyncClient.registerDevice(sdkParams.deviceId);
+                asyncClient.registerDevice(localDeviceId);
             }
             callModule.asyncInitialized(asyncClient);
-            messenger().asyncInitialized(asyncClient);
+            app.messenger.asyncInitialized(asyncClient);
 
             asyncClient.on('asyncReady', function () {
-                if (sdkParams.actualTimingLog) {
+                if (app.sdkParams.actualTimingLog) {
                     Utility.chatStepLogger('Async Connection ', new Date().getTime() - asyncGetReadyTime);
                 }
 
                 peerId = asyncClient.getPeerId();
                 // store.reactionSummaries.removeAllMessages();
 
-                if (!store.user()) {
+                if (!app.store.user.get()) {
                     getUserAndUpdateSDKState();
-                } else if (store.user().id > 0) {
-                    messenger().chatState = true;
-                    chatEvents.fireEvent('chatReady');
+                } else if (app.store.user.get().id > 0) {
+                    app.messenger.chatState = true;
+                    app.chatEvents.fireEvent('chatReady');
                     chatSendQueueHandler();
                 }
 
-                sdkParams.deliveryInterval && clearInterval(sdkParams.deliveryInterval);
+                app.sdkParams.deliveryInterval && clearInterval(app.sdkParams.deliveryInterval);
 
-                sdkParams.deliveryInterval = setInterval(function () {
-                    if (Object.keys(sdkParams.messagesDelivery).length) {
+                app.sdkParams.deliveryInterval = setInterval(function () {
+                    if (Object.keys(app.sdkParams.messagesDelivery).length) {
                         messagesDeliveryQueueHandler();
                     }
-                }, sdkParams.deliveryIntervalPitch);
+                }, app.sdkParams.deliveryIntervalPitch);
 
-                sdkParams.seenInterval && clearInterval(sdkParams.seenInterval);
+                app.sdkParams.seenInterval && clearInterval(app.sdkParams.seenInterval);
 
-                sdkParams.seenInterval = setInterval(function () {
-                    if (Object.keys(sdkParams.messagesSeen).length) {
+                app.sdkParams.seenInterval = setInterval(function () {
+                    if (Object.keys(app.sdkParams.messagesSeen).length) {
                         messagesSeenQueueHandler();
                     }
-                }, sdkParams.seenIntervalPitch);
+                }, app.sdkParams.seenIntervalPitch);
 
                 //shouldReconnectCall();
             });
 
             asyncClient.on('stateChange', onStateChange);
             function onStateChange(state) {
-                chatEvents.fireEvent('chatState', state);
+                app.chatEvents.fireEvent('chatState', state);
                 chatFullStateObject = state;
 
                 switch (state.socketState) {
@@ -483,27 +472,27 @@ function Chat(params) {
                         protocolManager.resetRetries();
                         protocolManager.resetTimerTime();
                         if (state.deviceRegister && state.serverRegister) {
-                            // messenger().chatState = true;
-                            // messenger().ping();
-                            messenger().startChatPing();
+                            // app.messenger.chatState = true;
+                            // app.messenger.ping();
+                            app.messenger.startChatPing();
                         }
                         break;
                     case 0: // CONNECTING
-                        messenger().chatState = false;
-                        messenger().stopChatPing();
+                        app.messenger.chatState = false;
+                        app.messenger.stopChatPing();
                         break;
                     case 2: // CLOSING
-                        messenger().chatState = false;
-                        messenger().stopChatPing();
+                        app.messenger.chatState = false;
+                        app.messenger.stopChatPing();
                         break;
                     case 3: // CLOSED
-                        store.reactionSummaries.removeAllMessages();
-                        store.reactionsList.removeAllMessages();
+                        app.store.reactionSummaries.removeAllMessages();
+                        app.store.reactionsList.removeAllMessages();
                         // store.reactionsList.invalidateCache();
-                        messenger().chatState = false;
-                        messenger().stopChatPing();
+                        app.messenger.chatState = false;
+                        app.messenger.stopChatPing();
                         // TODO: Check if this is OK or not?!
-                        //messenger().sendPingTimeout && clearTimeout(messenger().sendPingTimeout);
+                        //app.messenger.sendPingTimeout && clearTimeout(app.messenger.sendPingTimeout);
                         break;
                 }
             }
@@ -511,16 +500,16 @@ function Chat(params) {
             asyncClient.on('connect', function (newPeerId) {
                 asyncGetReadyTime = new Date().getTime();
                 peerId = newPeerId;
-                chatEvents.fireEvent('connect');
-                messenger().ping();
+                app.chatEvents.fireEvent('connect');
+                app.messenger.ping();
             });
 
             asyncClient.on('disconnect', function (event) {
                 oldPeerId = peerId;
                 peerId = undefined;
-                chatEvents.fireEvent('disconnect', event);
+                app.chatEvents.fireEvent('disconnect', event);
 
-                // chatEvents.fireEvent('callEvents', {
+                // app.chatEvents.fireEvent('callEvents', {
                 //     type: 'CALL_ERROR',
                 //     code: 7000,
                 //     message: 'Call Socket is closed!',
@@ -530,11 +519,11 @@ function Chat(params) {
 
             asyncClient.on('reconnect', function (newPeerId) {
                 peerId = newPeerId;
-                chatEvents.fireEvent('reconnect');
+                app.chatEvents.fireEvent('reconnect');
             });
 
             asyncClient.on('reconnecting', function (event) {
-                sdkParams.consoleLogging && console.log("[SDK][event: asyncClient.reconnecting]")
+                app.sdkParams.consoleLogging && console.log("[SDK][event: asyncClient.reconnecting]")
                 protocolManager.onAsyncIsReconnecting(event);
             });
 
@@ -545,7 +534,7 @@ function Chat(params) {
             });
 
             asyncClient.on('error', function (error) {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: error.errorCode,
                     message: error.errorMessage,
                     error: error.errorEvent
@@ -555,20 +544,21 @@ function Chat(params) {
         getUserAndUpdateSDKState = function () {
             var getUserInfoTime = new Date().getTime();
             getUserInfo(function (userInfoResult) {
-                if (sdkParams.actualTimingLog) {
+                if (app.sdkParams.actualTimingLog) {
                     Utility.chatStepLogger('Get User Info ', new Date().getTime() - getUserInfoTime);
                 }
                 if (!userInfoResult.hasError) {
-                    setSDKUser(userInfoResult.result.user);
-                    // messenger().userInfo = userInfoResult.result.user;
+                    app.store.user.setUser(userInfoResult.result.user);
+                    // setSDKUser(userInfoResult.result.user);
+                    // app.messenger.userInfo = userInfoResult.result.user;
 
                     // getAllThreads({
                     //     summary: true,
                     //     cache: false
                     // });
 
-                    messenger().chatState = true;
-                    chatEvents.fireEvent('chatReady');
+                    app.messenger.chatState = true;
+                    app.chatEvents.fireEvent('chatReady');
                     chatSendQueueHandler();
                 }
             });
@@ -592,7 +582,7 @@ function Chat(params) {
                 url: SERVICE_ADDRESSES.SSO_ADDRESS + SERVICES_PATH.SSO_DEVICES,
                 method: 'GET',
                 headers: {
-                    'Authorization': 'Bearer ' + sdkParams.token
+                    'Authorization': 'Bearer ' + app.sdkParams.token
                 }
             };
 
@@ -608,7 +598,7 @@ function Chat(params) {
                         }
 
                         if (!deviceId) {
-                            chatEvents.fireEvent('error', {
+                            app.chatEvents.fireEvent('error', {
                                 code: 6000,
                                 message: CHAT_ERRORS[6000],
                                 error: null
@@ -617,14 +607,14 @@ function Chat(params) {
                             callback(deviceId);
                         }
                     } else {
-                        chatEvents.fireEvent('error', {
+                        app.chatEvents.fireEvent('error', {
                             code: 6001,
                             message: CHAT_ERRORS[6001],
                             error: null
                         });
                     }
                 } else {
-                    chatEvents.fireEvent('error', {
+                    app.chatEvents.fireEvent('error', {
                         code: result.errorCode,
                         message: result.errorMessage,
                         error: result
@@ -671,7 +661,7 @@ function Chat(params) {
                 method: 'POST',
                 data: data,
                 headers: {
-                    'Authorization': 'Bearer ' + sdkParams.token
+                    'Authorization': 'Bearer ' + app.sdkParams.token
                 }
             };
 
@@ -680,11 +670,11 @@ function Chat(params) {
                     try {
                         var response = JSON.parse(result.result.responseText);
                     } catch (e) {
-                        sdkParams.consoleLogging && console.log(e);
+                        app.sdkParams.consoleLogging && console.log(e);
                     }
 
                 } else {
-                    chatEvents.fireEvent('error', {
+                    app.chatEvents.fireEvent('error', {
                         code: result.error,
                         message: result.error_description,
                         error: result
@@ -718,7 +708,7 @@ function Chat(params) {
                         url: SERVICE_ADDRESSES.SSO_ADDRESS + SERVICES_PATH.SSO_GET_KEY + keyId,
                         method: 'GET',
                         headers: {
-                            'Authorization': 'Bearer ' + sdkParams.token
+                            'Authorization': 'Bearer ' + app.sdkParams.token
                         }
                     };
 
@@ -727,7 +717,7 @@ function Chat(params) {
                             try {
                                 var response = JSON.parse(result.result.responseText);
                             } catch (e) {
-                                sdkParams.consoleLogging && console.log(e);
+                                app.sdkParams.consoleLogging && console.log(e);
                             }
 
                             callback && callback({
@@ -741,7 +731,7 @@ function Chat(params) {
                                 message: result.errorMessage
                             });
 
-                            chatEvents.fireEvent('error', {
+                            app.chatEvents.fireEvent('error', {
                                 code: result.errorCode,
                                 message: result.errorMessage,
                                 error: result
@@ -800,11 +790,11 @@ function Chat(params) {
             if (data && typeof data === 'object' && (data.hasOwnProperty('image') || data.hasOwnProperty('file'))) {
                 httpRequestObject[eval('fileUploadUniqueId')].timeout = (settings && typeof parseInt(settings.uploadTimeout) > 0 && settings.uploadTimeout > 0)
                     ? settings.uploadTimeout
-                    : sdkParams.httpUploadRequestTimeout;
+                    : app.sdkParams.httpUploadRequestTimeout;
             } else {
                 httpRequestObject[eval('fileUploadUniqueId')].timeout = (settings && typeof parseInt(settings.timeout) > 0 && settings.timeout > 0)
                     ? settings.timeout
-                    : sdkParams.httpRequestTimeout;
+                    : app.sdkParams.httpRequestTimeout;
             }
 
             httpRequestObject[eval('fileUploadUniqueId')]
@@ -812,7 +802,7 @@ function Chat(params) {
                     if (callback && method === 'POST') {
                         if (hasFile) {
                             hasError = true;
-                            chatEvents.fireEvent('fileUploadEvents', {
+                            app.chatEvents.fireEvent('fileUploadEvents', {
                                 threadId: threadId,
                                 uniqueId: fileUniqueId,
                                 state: 'UPLOAD_ERROR',
@@ -840,7 +830,7 @@ function Chat(params) {
                             });
                         }
                         if(params.enableDownloadProgressEvents) {
-                            chatEvents.fireEvent('fileDownloadEvents', {
+                            app.chatEvents.fireEvent('fileDownloadEvents', {
                                 hashCode: params.hashCode,
                                 state: 'DOWNLOAD_ERROR',
                                 errorCode: 6200,
@@ -852,7 +842,7 @@ function Chat(params) {
 
             if(params.enableDownloadProgressEvents) {
                 httpRequestObject[eval('fileUploadUniqueId')].onprogress = (event) => {
-                    chatEvents.fireEvent('fileDownloadEvents', {
+                    app.chatEvents.fireEvent('fileDownloadEvents', {
                         hashCode: params.hashCode,
                         state: 'DOWNLOADING',
                         progress: Math.round((event.loaded / event.total) * 100),
@@ -865,7 +855,7 @@ function Chat(params) {
                     if (callback) {
                         if (hasFile) {
                             hasError = true;
-                            chatEvents.fireEvent('fileUploadEvents', {
+                            app.chatEvents.fireEvent('fileUploadEvents', {
                                 threadId: threadId,
                                 uniqueId: fileUniqueId,
                                 state: 'UPLOAD_CANCELED',
@@ -949,7 +939,7 @@ function Chat(params) {
 
                             httpRequestObject[eval('fileUploadUniqueId')].upload.onprogress = function (event) {
                                 if (event.lengthComputable && !hasError) {
-                                    chatEvents.fireEvent('fileUploadEvents', {
+                                    app.chatEvents.fireEvent('fileUploadEvents', {
                                         threadId: threadId,
                                         uniqueId: fileUniqueId,
                                         state: 'UPLOADING',
@@ -1010,10 +1000,10 @@ function Chat(params) {
                                     fileHashCode = fileUploadResult.result.hashCode;
                                 }
                             } catch (e) {
-                                sdkParams.consoleLogging && console.log(e)
+                                app.sdkParams.consoleLogging && console.log(e)
                             }
 
-                            chatEvents.fireEvent('fileUploadEvents', {
+                            app.chatEvents.fireEvent('fileUploadEvents', {
                                 threadId: threadId,
                                 uniqueId: fileUniqueId,
                                 fileHash: fileHashCode,
@@ -1040,7 +1030,7 @@ function Chat(params) {
                     } else {
                         if (hasFile) {
                             hasError = true;
-                            chatEvents.fireEvent('fileUploadEvents', {
+                            app.chatEvents.fireEvent('fileUploadEvents', {
                                 threadId: threadId,
                                 uniqueId: fileUniqueId,
                                 state: 'UPLOAD_ERROR',
@@ -1083,25 +1073,25 @@ function Chat(params) {
             getUserInfoRetryCount++;
 
             if (getUserInfoRetryCount > getUserInfoRetry) {
-                sdkParams.getUserInfoTimeout && clearTimeout(sdkParams.getUserInfoTimeout);
+                app.sdkParams.getUserInfoTimeout && clearTimeout(app.sdkParams.getUserInfoTimeout);
 
                 getUserInfoRetryCount = 0;
 
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 6101,
                     message: CHAT_ERRORS[6101],
                     error: null
                 });
             } else {
-                sdkParams.getUserInfoTimeout && clearTimeout(sdkParams.getUserInfoTimeout);
+                app.sdkParams.getUserInfoTimeout && clearTimeout(app.sdkParams.getUserInfoTimeout);
 
-                sdkParams.getUserInfoTimeout = setTimeout(function () {
+                app.sdkParams.getUserInfoTimeout = setTimeout(function () {
                     getUserInfoRecursive(callback);
                 }, getUserInfoRetryCount * 10000);
 
-                return messenger().sendMessage({
+                return app.messenger.sendMessage({
                     chatMessageVOType: chatMessageVOTypes.USER_INFO,
-                    typeCode: sdkParams.generalTypeCode//params.typeCode
+                    typeCode: app.sdkParams.generalTypeCode//params.typeCode
                 }, {
                     onResult: function (result) {
                         var returnData = {
@@ -1112,7 +1102,7 @@ function Chat(params) {
                         };
 
                         if (!returnData.hasError) {
-                            sdkParams.getUserInfoTimeout && clearTimeout(sdkParams.getUserInfoTimeout);
+                            app.sdkParams.getUserInfoTimeout && clearTimeout(app.sdkParams.getUserInfoTimeout);
 
                             var messageContent = result.result;
                             var currentUser = formatDataToMakeUser(messageContent);
@@ -1137,7 +1127,7 @@ function Chat(params) {
         },
 
         sendSystemMessage = function (params) {
-            return messenger().sendMessage({
+            return app.messenger.sendMessage({
                 chatMessageVOType: chatMessageVOTypes.SYSTEM_MESSAGE,
                 subjectId: params.threadId,
                 content: params.content,
@@ -1165,7 +1155,7 @@ function Chat(params) {
                  * Getting chatSendQueue from either cache or
                  * memory and scrolling through the send queue
                  * to send all the messages which are waiting
-                 * for messenger().chatState to become TRUE
+                 * for app.messenger.chatState to become TRUE
                  *
                  * There is a small possibility that a Message
                  * wouldn't make it through network, so it Will
@@ -1179,11 +1169,11 @@ function Chat(params) {
                  * will have failed messages alongside with typical
                  * messages history.
                  */
-                if (messenger().chatState) {
+                if (app.messenger.chatState) {
                     getChatSendQueue(0, function (chatSendQueue) {
                         deleteFromChatSentQueue(messageToBeSend,
                             function () {
-                                messenger().sendMessage(messageToBeSend.message, messageToBeSend.callbacks, function () {
+                                app.messenger.sendMessage(messageToBeSend.message, messageToBeSend.callbacks, function () {
                                     if (chatSendQueue.length) {
                                         chatSendQueueHandler();
                                     }
@@ -1195,26 +1185,26 @@ function Chat(params) {
         },
 
         putInMessagesDeliveryQueue = function (threadId, messageId) {
-            if (sdkParams.messagesDelivery.hasOwnProperty(threadId)
-                && typeof sdkParams.messagesDelivery[threadId] === 'number'
-                && !!sdkParams.messagesDelivery[threadId]) {
-                if (sdkParams.messagesDelivery[threadId] < messageId) {
-                    sdkParams.messagesDelivery[threadId] = messageId;
+            if (app.sdkParams.messagesDelivery.hasOwnProperty(threadId)
+                && typeof app.sdkParams.messagesDelivery[threadId] === 'number'
+                && !!app.sdkParams.messagesDelivery[threadId]) {
+                if (app.sdkParams.messagesDelivery[threadId] < messageId) {
+                    app.sdkParams.messagesDelivery[threadId] = messageId;
                 }
             } else {
-                sdkParams.messagesDelivery[threadId] = messageId;
+                app.sdkParams.messagesDelivery[threadId] = messageId;
             }
         },
 
         putInMessagesSeenQueue = function (threadId, messageId) {
-            if (sdkParams.messagesSeen.hasOwnProperty(threadId)
-                && typeof sdkParams.messagesSeen[threadId] === 'number'
-                && !!sdkParams.messagesSeen[threadId]) {
-                if (sdkParams.messagesSeen[threadId] < messageId) {
-                    sdkParams.messagesSeen[threadId] = messageId;
+            if (app.sdkParams.messagesSeen.hasOwnProperty(threadId)
+                && typeof app.sdkParams.messagesSeen[threadId] === 'number'
+                && !!app.sdkParams.messagesSeen[threadId]) {
+                if (app.sdkParams.messagesSeen[threadId] < messageId) {
+                    app.sdkParams.messagesSeen[threadId] = messageId;
                 }
             } else {
-                sdkParams.messagesSeen[threadId] = messageId;
+                app.sdkParams.messagesSeen[threadId] = messageId;
             }
         },
 
@@ -1230,14 +1220,14 @@ function Chat(params) {
          * @return {undefined}
          */
         messagesDeliveryQueueHandler = function () {
-            if (Object.keys(sdkParams.messagesDelivery).length) {
-                if (messenger().chatState) {
-                    for (var key in sdkParams.messagesDelivery) {
+            if (Object.keys(app.sdkParams.messagesDelivery).length) {
+                if (app.messenger.chatState) {
+                    for (var key in app.sdkParams.messagesDelivery) {
                         deliver({
-                            messageId: sdkParams.messagesDelivery[key]
+                            messageId: app.sdkParams.messagesDelivery[key]
                         });
 
-                        delete sdkParams.messagesDelivery[key];
+                        delete app.sdkParams.messagesDelivery[key];
                     }
                 }
             }
@@ -1255,14 +1245,14 @@ function Chat(params) {
          * @return {undefined}
          */
         messagesSeenQueueHandler = function () {
-            if (Object.keys(sdkParams.messagesSeen).length) {
-                if (messenger().chatState) {
-                    for (var key in sdkParams.messagesSeen) {
+            if (Object.keys(app.sdkParams.messagesSeen).length) {
+                if (app.messenger.chatState) {
+                    for (var key in app.sdkParams.messagesSeen) {
                         seen({
-                            messageId: sdkParams.messagesSeen[key]
+                            messageId: app.sdkParams.messagesSeen[key]
                         });
 
-                        delete sdkParams.messagesSeen[key];
+                        delete app.sdkParams.messagesSeen[key];
                     }
                 }
             }
@@ -1279,7 +1269,7 @@ function Chat(params) {
          * @return {undefined}
          */
         clearChatServerCaches = function () {
-            messenger().sendMessage({
+            app.messenger.sendMessage({
                 chatMessageVOType: chatMessageVOTypes.LOGOUT,
                 pushMsgType: 3
             });
@@ -1307,7 +1297,7 @@ function Chat(params) {
              *    - content                       {string}
              */
 
-            if (asyncMessage.senderName === sdkParams.serverName) {
+            if (asyncMessage.senderName === app.sdkParams.serverName) {
                 var content = JSON.parse(asyncMessage.content);
                 chatMessageHandler(content);
             } else {
@@ -1327,7 +1317,7 @@ function Chat(params) {
          * @return {undefined}
          */
         chatMessageHandler = function (chatMessage) {
-            if(chatMessage.typeCode && chatMessage.typeCode !== sdkParams.generalTypeCode) {
+            if(chatMessage.typeCode && chatMessage.typeCode !== app.sdkParams.generalTypeCode) {
                 return;
             }
 
@@ -1340,7 +1330,7 @@ function Chat(params) {
                 uniqueId = chatMessage.uniqueId,
                 time = chatMessage.time;
 
-            store.asyncRequestTimeouts[uniqueId] && clearTimeout(store.asyncRequestTimeouts[uniqueId]);
+            app.store.asyncRequestTimeouts[uniqueId] && clearTimeout(app.store.asyncRequestTimeouts[uniqueId]);
 
             switch (type) {
                 /**
@@ -1349,9 +1339,9 @@ function Chat(params) {
                 case chatMessageVOTypes.CREATE_THREAD:
                     messageContent.uniqueId = uniqueId;
 
-                    if (store.messagesCallbacks[uniqueId]) {
+                    if (app.store.messagesCallbacks[uniqueId]) {
                         createThread(messageContent, true, true);
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                     } else {
                         createThread(messageContent, true, false);
                     }
@@ -1369,14 +1359,14 @@ function Chat(params) {
                  * Type 3    Message Sent
                  */
                 case chatMessageVOTypes.SENT:
-                    if (store.sendMessageCallbacks[uniqueId] && store.sendMessageCallbacks[uniqueId].onSent) {
-                        store.sendMessageCallbacks[uniqueId].onSent({
+                    if (app.store.sendMessageCallbacks[uniqueId] && app.store.sendMessageCallbacks[uniqueId].onSent) {
+                        app.store.sendMessageCallbacks[uniqueId].onSent({
                             uniqueId: uniqueId,
                             messageId: messageContent
                         });
-                        delete (store.sendMessageCallbacks[uniqueId].onSent);
-                        if(store.threadCallbacks[threadId] && store.threadCallbacks[threadId][uniqueId])
-                            store.threadCallbacks[threadId][uniqueId].onSent = true;
+                        delete (app.store.sendMessageCallbacks[uniqueId].onSent);
+                        if(app.store.threadCallbacks[threadId] && app.store.threadCallbacks[threadId][uniqueId])
+                            app.store.threadCallbacks[threadId][uniqueId].onSent = true;
                     }
                     break;
 
@@ -1391,7 +1381,7 @@ function Chat(params) {
                         lastParticipantId: messageContent.participantId
                     };
 
-                    chatEvents.fireEvent('threadEvents', {
+                    app.chatEvents.fireEvent('threadEvents', {
                         type: 'THREAD_LAST_ACTIVITY_TIME',
                         result: {
                             thread: threadObject
@@ -1406,7 +1396,7 @@ function Chat(params) {
                     //         cache: false
                     //     }, function (result) {
                     //         if (!result.hasError) {
-                    //             chatEvents.fireEvent('messageEvents', {
+                    //             app.chatEvents.fireEvent('messageEvents', {
                     //                 type: 'MESSAGE_DELIVERY',
                     //                 result: {
                     //                     message: result.result.history[0],
@@ -1417,7 +1407,7 @@ function Chat(params) {
                     //         }
                     //     });
                     // } else {
-                    //     chatEvents.fireEvent('messageEvents', {
+                    //     app.chatEvents.fireEvent('messageEvents', {
                     //         type: 'MESSAGE_DELIVERY',
                     //         result: {
                     //             message: messageContent.messageId,
@@ -1441,14 +1431,14 @@ function Chat(params) {
                         lastParticipantId: messageContent.participantId
                     };
 
-                    chatEvents.fireEvent('threadEvents', {
+                    app.chatEvents.fireEvent('threadEvents', {
                         type: 'THREAD_LAST_ACTIVITY_TIME',
                         result: {
                             thread: threadObject
                         }
                     });
 
-                    chatEvents.fireEvent('messageEvents', {
+                    app.chatEvents.fireEvent('messageEvents', {
                         type: 'MESSAGE_SEEN',
                         result: {
                             message: messageContent.messageId,
@@ -1470,8 +1460,8 @@ function Chat(params) {
                  * Type 7    Block Contact
                  */
                 case chatMessageVOTypes.BLOCK:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
                     break;
 
@@ -1479,8 +1469,8 @@ function Chat(params) {
                  * Type 8    Unblock Blocked User
                  */
                 case chatMessageVOTypes.UNBLOCK:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
                     break;
 
@@ -1488,51 +1478,51 @@ function Chat(params) {
                  * Type 9   Leave Thread
                  */
                 case chatMessageVOTypes.LEAVE_THREAD:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                     }
-                    if (sdkParams.fullResponseObject) {
+                    if (app.sdkParams.fullResponseObject) {
                         getThreads({
                             threadIds: [threadId]
                         }, function (threadsResult) {
                             if (!threadsResult.cache) {
                                 var threads = threadsResult.result.threads;
                                 if (threads.length > 0) {
-                                    chatEvents.fireEvent('threadEvents', {
+                                    app.chatEvents.fireEvent('threadEvents', {
                                         type: 'THREAD_LEAVE_PARTICIPANT',
                                         result: {
                                             thread: threads[0],
-                                            participant: formatDataToMakeParticipant(messageContent, threadId)
+                                            participant: threadParticipantsMethods.formatDataToMakeParticipant(messageContent, threadId)
                                         }
                                     });
 
-                                    chatEvents.fireEvent('threadEvents', {
+                                    app.chatEvents.fireEvent('threadEvents', {
                                         type: 'THREAD_LAST_ACTIVITY_TIME',
                                         result: {
                                             thread: threads[0]
                                         }
                                     });
                                 } else {
-                                    chatEvents.fireEvent('threadEvents', {
+                                    app.chatEvents.fireEvent('threadEvents', {
                                         type: 'THREAD_LEAVE_PARTICIPANT',
                                         result: {
                                             threadId: threadId,
-                                            participant: formatDataToMakeParticipant(messageContent, threadId)
+                                            participant: threadParticipantsMethods.formatDataToMakeParticipant(messageContent, threadId)
                                         }
                                     });
                                 }
                             }
                         });
                     } else {
-                        chatEvents.fireEvent('threadEvents', {
+                        app.chatEvents.fireEvent('threadEvents', {
                             type: 'THREAD_LEAVE_PARTICIPANT',
                             result: {
                                 thread: threadId,
-                                participant: formatDataToMakeParticipant(messageContent, threadId)
+                                participant: threadParticipantsMethods.formatDataToMakeParticipant(messageContent, threadId)
                             }
                         });
 
-                        chatEvents.fireEvent('threadEvents', {
+                        app.chatEvents.fireEvent('threadEvents', {
                             type: 'THREAD_LAST_ACTIVITY_TIME',
                             result: {
                                 thread: threadId
@@ -1545,25 +1535,25 @@ function Chat(params) {
                  * Type 11    Add Participant to Thread
                  */
                 case chatMessageVOTypes.ADD_PARTICIPANT:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                     }
 
-                    if (sdkParams.fullResponseObject) {
+                    if (app.sdkParams.fullResponseObject) {
                         getThreads({
                             threadIds: [messageContent.id]
                         }, function (threadsResult) {
                             var threads = threadsResult.result.threads;
 
                             if (!threadsResult.cache) {
-                                chatEvents.fireEvent('threadEvents', {
+                                app.chatEvents.fireEvent('threadEvents', {
                                     type: 'THREAD_ADD_PARTICIPANTS',
                                     result: {
                                         thread: threads[0]
                                     }
                                 });
 
-                                chatEvents.fireEvent('threadEvents', {
+                                app.chatEvents.fireEvent('threadEvents', {
                                     type: 'THREAD_LAST_ACTIVITY_TIME',
                                     result: {
                                         thread: threads[0]
@@ -1572,14 +1562,14 @@ function Chat(params) {
                             }
                         });
                     } else {
-                        chatEvents.fireEvent('threadEvents', {
+                        app.chatEvents.fireEvent('threadEvents', {
                             type: 'THREAD_ADD_PARTICIPANTS',
                             result: {
                                 thread: messageContent
                             }
                         });
 
-                        chatEvents.fireEvent('threadEvents', {
+                        app.chatEvents.fireEvent('threadEvents', {
                             type: 'THREAD_LAST_ACTIVITY_TIME',
                             result: {
                                 thread: messageContent
@@ -1592,8 +1582,8 @@ function Chat(params) {
                  * Type 13    Get Contacts List
                  */
                 case chatMessageVOTypes.GET_CONTACTS:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                     }
                     break;
 
@@ -1601,8 +1591,8 @@ function Chat(params) {
                  * Type 14    Get Threads List
                  */
                 case chatMessageVOTypes.GET_THREADS:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
                     }
                     break;
 
@@ -1610,8 +1600,8 @@ function Chat(params) {
                  * Type 15    Get Message History of an Thread
                  */
                 case chatMessageVOTypes.GET_HISTORY:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                     }
                     break;
 
@@ -1620,7 +1610,7 @@ function Chat(params) {
                  */
                 case chatMessageVOTypes.REMOVED_FROM_THREAD:
 
-                    chatEvents.fireEvent('threadEvents', {
+                    app.chatEvents.fireEvent('threadEvents', {
                         type: 'THREAD_REMOVED_FROM',
                         result: {
                             thread: threadId
@@ -1633,26 +1623,26 @@ function Chat(params) {
                  * Type 18    Remove a participant from Thread
                  */
                 case chatMessageVOTypes.REMOVE_PARTICIPANT:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                     }
 
 
-                    if (sdkParams.fullResponseObject) {
+                    if (app.sdkParams.fullResponseObject) {
                         getThreads({
                             threadIds: [threadId]
                         }, function (threadsResult) {
                             var threads = threadsResult.result.threads;
 
                             if (!threadsResult.cache) {
-                                chatEvents.fireEvent('threadEvents', {
+                                app.chatEvents.fireEvent('threadEvents', {
                                     type: 'THREAD_REMOVE_PARTICIPANTS',
                                     result: {
                                         thread: threads[0]
                                     }
                                 });
 
-                                chatEvents.fireEvent('threadEvents', {
+                                app.chatEvents.fireEvent('threadEvents', {
                                     type: 'THREAD_LAST_ACTIVITY_TIME',
                                     result: {
                                         thread: threads[0]
@@ -1661,14 +1651,14 @@ function Chat(params) {
                             }
                         });
                     } else {
-                        chatEvents.fireEvent('threadEvents', {
+                        app.chatEvents.fireEvent('threadEvents', {
                             type: 'THREAD_REMOVE_PARTICIPANTS',
                             result: {
                                 thread: threadId
                             }
                         });
 
-                        chatEvents.fireEvent('threadEvents', {
+                        app.chatEvents.fireEvent('threadEvents', {
                             type: 'THREAD_LAST_ACTIVITY_TIME',
                             result: {
                                 thread: threadId
@@ -1681,18 +1671,18 @@ function Chat(params) {
                  * Type 19    Mute Thread
                  */
                 case chatMessageVOTypes.MUTE_THREAD:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    if (sdkParams.fullResponseObject) {
+                    if (app.sdkParams.fullResponseObject) {
                         getThreads({
                             threadIds: [threadId]
                         }, function (threadsResult) {
                             var thread = threadsResult.result.threads[0];
                             thread.mute = true;
 
-                            chatEvents.fireEvent('threadEvents', {
+                            app.chatEvents.fireEvent('threadEvents', {
                                 type: 'THREAD_MUTE',
                                 result: {
                                     thread: thread
@@ -1700,7 +1690,7 @@ function Chat(params) {
                             });
                         });
                     } else {
-                        chatEvents.fireEvent('threadEvents', {
+                        app.chatEvents.fireEvent('threadEvents', {
                             type: 'THREAD_MUTE',
                             result: {
                                 thread: threadId
@@ -1714,18 +1704,18 @@ function Chat(params) {
                  * Type 20    Unmute muted Thread
                  */
                 case chatMessageVOTypes.UNMUTE_THREAD:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    if (sdkParams.fullResponseObject) {
+                    if (app.sdkParams.fullResponseObject) {
                         getThreads({
                             threadIds: [threadId]
                         }, function (threadsResult) {
                             var thread = threadsResult.result.threads[0];
                             thread.mute = false;
 
-                            chatEvents.fireEvent('threadEvents', {
+                            app.chatEvents.fireEvent('threadEvents', {
                                 type: 'THREAD_UNMUTE',
                                 result: {
                                     thread: thread
@@ -1733,7 +1723,7 @@ function Chat(params) {
                             });
                         });
                     } else {
-                        chatEvents.fireEvent('threadEvents', {
+                        app.chatEvents.fireEvent('threadEvents', {
                             type: 'THREAD_UNMUTE',
                             result: {
                                 thread: threadId
@@ -1746,18 +1736,18 @@ function Chat(params) {
                  * Type 21    Update Thread Info
                  */
                 case chatMessageVOTypes.UPDATE_THREAD_INFO:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    if (sdkParams.fullResponseObject) {
+                    if (app.sdkParams.fullResponseObject) {
                         getThreads({
                             threadIds: [messageContent.id],
                             cache: false
                         }, function (threadsResult) {
                             var thread = formatDataToMakeConversation(threadsResult.result.threads[0]);
 
-                            chatEvents.fireEvent('threadEvents', {
+                            app.chatEvents.fireEvent('threadEvents', {
                                 type: 'THREAD_INFO_UPDATED',
                                 result: {
                                     thread: thread
@@ -1765,7 +1755,7 @@ function Chat(params) {
                             });
                         });
                     } else {
-                        chatEvents.fireEvent('threadEvents', {
+                        app.chatEvents.fireEvent('threadEvents', {
                             type: 'THREAD_INFO_UPDATED',
                             result: {
                                 thread: messageContent
@@ -1785,11 +1775,11 @@ function Chat(params) {
                  * Type 23    User Info
                  */
                 case chatMessageVOTypes.USER_INFO:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    chatEvents.fireEvent('systemEvents', {
+                    app.chatEvents.fireEvent('systemEvents', {
                         type: 'SERVER_TIME',
                         result: {
                             time: time
@@ -1802,8 +1792,8 @@ function Chat(params) {
                  * Type 25    Get Blocked List
                  */
                 case chatMessageVOTypes.GET_BLOCKED:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                     }
                     break;
 
@@ -1811,8 +1801,8 @@ function Chat(params) {
                  * Type 27    Thread Participants List
                  */
                 case chatMessageVOTypes.THREAD_PARTICIPANTS:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                     }
                     break;
 
@@ -1820,8 +1810,8 @@ function Chat(params) {
                  * Type 28    Edit Message
                  */
                 case chatMessageVOTypes.EDIT_MESSAGE:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                     }
                     chatEditMessageHandler(threadId, messageContent);
                     break;
@@ -1830,13 +1820,13 @@ function Chat(params) {
                  * Type 29    Delete Message
                  */
                 case chatMessageVOTypes.DELETE_MESSAGE:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                     }
 
                     let msgTime = (parseInt(parseInt(messageContent.time) / 1000) * 1000000000) + parseInt(messageContent.timeNanos);
-                    if(store.threads.get(threadId))
-                        store.threads.get(threadId).unreadCount.decrease(msgTime);
+                    if(app.store.threads.get(threadId))
+                        app.store.threads.get(threadId).unreadCount.decrease(msgTime);
 
                     if (messageContent.pinned) {
                         unPinMessage({
@@ -1845,7 +1835,7 @@ function Chat(params) {
                         });
                     }
 
-                    if (sdkParams.fullResponseObject) {
+                    if (app.sdkParams.fullResponseObject) {
                         var time, timeMiliSeconds;
                         if (messageContent.time.toString().length > 14) {
                             time = messageContent.time;
@@ -1862,7 +1852,7 @@ function Chat(params) {
                         }, function (threadsResult) {
                             var threads = threadsResult.result.threads;
                             if (!threadsResult.cache) {
-                                chatEvents.fireEvent('messageEvents', {
+                                app.chatEvents.fireEvent('messageEvents', {
                                     type: 'MESSAGE_DELETE',
                                     result: {
                                         message: {
@@ -1876,7 +1866,7 @@ function Chat(params) {
                                     }
                                 });
                                 if (messageContent.pinned) {
-                                    chatEvents.fireEvent('threadEvents', {
+                                    app.chatEvents.fireEvent('threadEvents', {
                                         type: 'THREAD_LAST_ACTIVITY_TIME',
                                         result: {
                                             thread: threads[0]
@@ -1886,7 +1876,7 @@ function Chat(params) {
                             }
                         });
                     } else {
-                        chatEvents.fireEvent('messageEvents', {
+                        app.chatEvents.fireEvent('messageEvents', {
                             type: 'MESSAGE_DELETE',
                             result: {
                                 message: {
@@ -1900,7 +1890,7 @@ function Chat(params) {
                             }
                         });
                         if (messageContent.pinned) {
-                            chatEvents.fireEvent('threadEvents', {
+                            app.chatEvents.fireEvent('threadEvents', {
                                 type: 'THREAD_LAST_ACTIVITY_TIME',
                                 result: {
                                     thread: threadId
@@ -1923,7 +1913,7 @@ function Chat(params) {
                     // var thread = formatDataToMakeConversation(messageContent.conversation);
                     var thread = formatDataToMakeConversation(messageContent);
 
-                    chatEvents.fireEvent('threadEvents', {
+                    app.chatEvents.fireEvent('threadEvents', {
                         type: 'THREAD_INFO_UPDATED',
                         result: {
                             thread: thread
@@ -1942,7 +1932,7 @@ function Chat(params) {
                         ? (parseInt(parseInt(messageContent.lastSeenMessageTime) / 1000) * 1000000000) + parseInt(messageContent.lastSeenMessageNanos)
                         : (parseInt(messageContent.lastSeenMessageTime));
 
-                    chatEvents.fireEvent('threadEvents', {
+                    app.chatEvents.fireEvent('threadEvents', {
                         type: 'THREAD_UNREAD_COUNT_UPDATED',
                         result: {
                             thread: threadObject,
@@ -1950,7 +1940,7 @@ function Chat(params) {
                         }
                     });
 
-                    chatEvents.fireEvent('threadEvents', {
+                    app.chatEvents.fireEvent('threadEvents', {
                         type: 'THREAD_LAST_SEEN_UPDATED',
                         result: {
                             thread: threadObject,
@@ -1959,20 +1949,20 @@ function Chat(params) {
                     });
 
                     if (
-                        store.threads.get(threadId) &&
+                        app.store.threads.get(threadId) &&
                         (
-                            !store.threads.get(threadId).lastSeenMessageTime.get() ||
+                            !app.store.threads.get(threadId).lastSeenMessageTime.get() ||
                             (
-                                store.threads.get(threadId).lastSeenMessageTime.get()
-                                && threadObject.lastSeenMessageTime > store.threads.get(threadId).lastSeenMessageTime.get()
-                                && threadObject.unreadCount < store.threads.get(threadId).unreadCount.get()
+                                app.store.threads.get(threadId).lastSeenMessageTime.get()
+                                && threadObject.lastSeenMessageTime > app.store.threads.get(threadId).lastSeenMessageTime.get()
+                                && threadObject.unreadCount < app.store.threads.get(threadId).unreadCount.get()
                             )
                         )
                     ) {
                         let localThreadLastSeenUpdated = JSON.parse(JSON.stringify(messageContent));
-                        store.threads.save(localThreadLastSeenUpdated);
-                        store.threads.get(threadId).lastSeenMessageTime.set(threadObject.lastSeenMessageTime)
-                        store.threads.get(threadId).unreadCount.set(messageContent.unreadCount)
+                        app.store.threads.save(localThreadLastSeenUpdated);
+                        app.store.threads.get(threadId).lastSeenMessageTime.set(threadObject.lastSeenMessageTime)
+                        app.store.threads.get(threadId).unreadCount.set(messageContent.unreadCount)
                     }
 
 
@@ -1983,7 +1973,7 @@ function Chat(params) {
                     //         var threads = threadsResult.result.threads;
                     //
                     //         if (!threadsResult.cache) {
-                    //             chatEvents.fireEvent('threadEvents', {
+                    //             app.chatEvents.fireEvent('threadEvents', {
                     //                 type: 'THREAD_UNREAD_COUNT_UPDATED',
                     //                 result: {
                     //                     thread: threads[0],
@@ -1991,7 +1981,7 @@ function Chat(params) {
                     //                 }
                     //             });
                     //
-                    //             chatEvents.fireEvent('threadEvents', {
+                    //             app.chatEvents.fireEvent('threadEvents', {
                     //                 type: 'THREAD_LAST_ACTIVITY_TIME',
                     //                 result: {
                     //                     thread: threads[0]
@@ -2000,7 +1990,7 @@ function Chat(params) {
                     //         }
                     //     });
                     // } else {
-                    //     chatEvents.fireEvent('threadEvents', {
+                    //     app.chatEvents.fireEvent('threadEvents', {
                     //         type: 'THREAD_UNREAD_COUNT_UPDATED',
                     //         result: {
                     //             thread: threadId,
@@ -2008,7 +1998,7 @@ function Chat(params) {
                     //         }
                     //     });
                     //
-                    //     chatEvents.fireEvent('threadEvents', {
+                    //     app.chatEvents.fireEvent('threadEvents', {
                     //         type: 'THREAD_LAST_ACTIVITY_TIME',
                     //         result: {
                     //             thread: threadId
@@ -2022,8 +2012,8 @@ function Chat(params) {
                  * Type 32    Get Message Delivered List
                  */
                 case chatMessageVOTypes.GET_MESSAGE_DELIVERY_PARTICIPANTS:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                     }
                     break;
 
@@ -2031,8 +2021,8 @@ function Chat(params) {
                  * Type 33    Get Message Seen List
                  */
                 case chatMessageVOTypes.GET_MESSAGE_SEEN_PARTICIPANTS:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                     }
                     break;
 
@@ -2040,8 +2030,8 @@ function Chat(params) {
                  * Type 34    Is Public Group Name Available?
                  */
                 case chatMessageVOTypes.IS_NAME_AVAILABLE:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                     }
                     break;
 
@@ -2049,8 +2039,8 @@ function Chat(params) {
                  * Type 39    Join Public Group or Channel
                  */
                 case chatMessageVOTypes.JOIN_THREAD:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                     }
                     break;
 
@@ -2058,7 +2048,7 @@ function Chat(params) {
                  * Type 40    Bot Messages
                  */
                 case chatMessageVOTypes.BOT_MESSAGE:
-                    chatEvents.fireEvent('botEvents', {
+                    app.chatEvents.fireEvent('botEvents', {
                         type: 'BOT_MESSAGE',
                         result: {
                             bot: messageContent
@@ -2070,8 +2060,8 @@ function Chat(params) {
                  * Type 41    Spam P2P Thread
                  */
                 case chatMessageVOTypes.SPAM_PV_THREAD:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
                     break;
 
@@ -2079,18 +2069,18 @@ function Chat(params) {
                  * Type 42    Set Role To User
                  */
                 case chatMessageVOTypes.SET_ROLE_TO_USER:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    if (sdkParams.fullResponseObject) {
+                    if (app.sdkParams.fullResponseObject) {
                         getThreads({
                             threadIds: [messageContent.id]
                         }, function (threadsResult) {
                             var threads = threadsResult.result.threads;
 
                             if (!threadsResult.cache) {
-                                chatEvents.fireEvent('threadEvents', {
+                                app.chatEvents.fireEvent('threadEvents', {
                                     type: 'THREAD_ADD_ADMIN',
                                     result: {
                                         thread: threads[0],
@@ -2098,7 +2088,7 @@ function Chat(params) {
                                     }
                                 });
 
-                                chatEvents.fireEvent('threadEvents', {
+                                app.chatEvents.fireEvent('threadEvents', {
                                     type: 'THREAD_LAST_ACTIVITY_TIME',
                                     result: {
                                         thread: threads[0],
@@ -2108,7 +2098,7 @@ function Chat(params) {
                             }
                         });
                     } else {
-                        chatEvents.fireEvent('threadEvents', {
+                        app.chatEvents.fireEvent('threadEvents', {
                             type: 'THREAD_ADD_ADMIN',
                             result: {
                                 thread: threadId,
@@ -2116,7 +2106,7 @@ function Chat(params) {
                             }
                         });
 
-                        chatEvents.fireEvent('threadEvents', {
+                        app.chatEvents.fireEvent('threadEvents', {
                             type: 'THREAD_LAST_ACTIVITY_TIME',
                             result: {
                                 thread: threadId,
@@ -2131,18 +2121,18 @@ function Chat(params) {
                  * Type 43    Remove Role From User
                  */
                 case chatMessageVOTypes.REMOVE_ROLE_FROM_USER:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    if (sdkParams.fullResponseObject) {
+                    if (app.sdkParams.fullResponseObject) {
                         getThreads({
                             threadIds: [messageContent.id]
                         }, function (threadsResult) {
                             var threads = threadsResult.result.threads;
 
                             if (!threadsResult.cache) {
-                                chatEvents.fireEvent('threadEvents', {
+                                app.chatEvents.fireEvent('threadEvents', {
                                     type: 'THREAD_REMOVE_ADMIN',
                                     result: {
                                         thread: threads[0],
@@ -2150,7 +2140,7 @@ function Chat(params) {
                                     }
                                 });
 
-                                chatEvents.fireEvent('threadEvents', {
+                                app.chatEvents.fireEvent('threadEvents', {
                                     type: 'THREAD_LAST_ACTIVITY_TIME',
                                     result: {
                                         thread: threads[0],
@@ -2160,7 +2150,7 @@ function Chat(params) {
                             }
                         });
                     } else {
-                        chatEvents.fireEvent('threadEvents', {
+                        app.chatEvents.fireEvent('threadEvents', {
                             type: 'THREAD_REMOVE_ADMIN',
                             result: {
                                 thread: threadId,
@@ -2168,7 +2158,7 @@ function Chat(params) {
                             }
                         });
 
-                        chatEvents.fireEvent('threadEvents', {
+                        app.chatEvents.fireEvent('threadEvents', {
                             type: 'THREAD_LAST_ACTIVITY_TIME',
                             result: {
                                 thread: threadId,
@@ -2183,8 +2173,8 @@ function Chat(params) {
                  * Type 44    Clear History
                  */
                 case chatMessageVOTypes.CLEAR_HISTORY:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
                     break;
 
@@ -2192,7 +2182,7 @@ function Chat(params) {
                  * Type 46    System Messages
                  */
                 case chatMessageVOTypes.SYSTEM_MESSAGE:
-                    chatEvents.fireEvent('systemEvents', {
+                    app.chatEvents.fireEvent('systemEvents', {
                         type: 'IS_TYPING',
                         result: {
                             thread: threadId,
@@ -2205,8 +2195,8 @@ function Chat(params) {
                  * Type 47    Get Not Seen Duration
                  */
                 case chatMessageVOTypes.GET_NOT_SEEN_DURATION:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
                     break;
 
@@ -2214,17 +2204,17 @@ function Chat(params) {
                  * Type 48    Pin Thread
                  */
                 case chatMessageVOTypes.PIN_THREAD:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    if (sdkParams.fullResponseObject) {
+                    if (app.sdkParams.fullResponseObject) {
                         getThreads({
                             threadIds: [threadId]
                         }, function (threadsResult) {
                             var thread = threadsResult.result.threads[0];
 
-                            chatEvents.fireEvent('threadEvents', {
+                            app.chatEvents.fireEvent('threadEvents', {
                                 type: 'THREAD_PIN',
                                 result: {
                                     thread: thread
@@ -2232,7 +2222,7 @@ function Chat(params) {
                             });
                         });
                     } else {
-                        chatEvents.fireEvent('threadEvents', {
+                        app.chatEvents.fireEvent('threadEvents', {
                             type: 'THREAD_PIN',
                             result: {
                                 thread: threadId
@@ -2246,17 +2236,17 @@ function Chat(params) {
                  * Type 49    UnPin Thread
                  */
                 case chatMessageVOTypes.UNPIN_THREAD:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    if (sdkParams.fullResponseObject) {
+                    if (app.sdkParams.fullResponseObject) {
                         getThreads({
                             threadIds: [threadId]
                         }, function (threadsResult) {
                             var thread = threadsResult.result.threads[0];
 
-                            chatEvents.fireEvent('threadEvents', {
+                            app.chatEvents.fireEvent('threadEvents', {
                                 type: 'THREAD_UNPIN',
                                 result: {
                                     thread: thread
@@ -2264,7 +2254,7 @@ function Chat(params) {
                             });
                         });
                     } else {
-                        chatEvents.fireEvent('threadEvents', {
+                        app.chatEvents.fireEvent('threadEvents', {
                             type: 'THREAD_UNPIN',
                             result: {
                                 thread: threadId
@@ -2278,10 +2268,10 @@ function Chat(params) {
                  * Type 50    Pin Message
                  */
                 case chatMessageVOTypes.PIN_MESSAGE:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
-                    chatEvents.fireEvent('threadEvents', {
+                    app.chatEvents.fireEvent('threadEvents', {
                         type: 'MESSAGE_PIN',
                         result: {
                             thread: threadId,
@@ -2294,10 +2284,10 @@ function Chat(params) {
                  * Type 51    UnPin Message
                  */
                 case chatMessageVOTypes.UNPIN_MESSAGE:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
-                    chatEvents.fireEvent('threadEvents', {
+                    app.chatEvents.fireEvent('threadEvents', {
                         type: 'MESSAGE_UNPIN',
                         result: {
                             thread: threadId,
@@ -2310,10 +2300,10 @@ function Chat(params) {
                  * Type 52    Update Chat Profile
                  */
                 case chatMessageVOTypes.UPDATE_CHAT_PROFILE:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
-                    chatEvents.fireEvent('userEvents', {
+                    app.chatEvents.fireEvent('userEvents', {
                         type: 'CHAT_PROFILE_UPDATED',
                         result: {
                             user: messageContent
@@ -2325,11 +2315,11 @@ function Chat(params) {
                  * Type 53    Change Thread Privacy
                  */
                 case chatMessageVOTypes.CHANGE_THREAD_PRIVACY:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    chatEvents.fireEvent('threadEvents', {
+                    app.chatEvents.fireEvent('threadEvents', {
                         type: 'THREAD_PRIVACY_CHANGED',
                         result: {
                             thread: messageContent
@@ -2342,10 +2332,10 @@ function Chat(params) {
                  * Type 54    Get Participant Roles
                  */
                 case chatMessageVOTypes.GET_PARTICIPANT_ROLES:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
-                    chatEvents.fireEvent('userEvents', {
+                    app.chatEvents.fireEvent('userEvents', {
                         type: 'GET_PARTICIPANT_ROLES',
                         result: {
                             roles: messageContent
@@ -2357,7 +2347,7 @@ function Chat(params) {
                  * Type 60    Get Contact Not Seen Duration
                  */
                 case chatMessageVOTypes.GET_CONTACT_NOT_SEEN_DURATION:
-                    chatEvents.fireEvent('contactEvents', {
+                    app.chatEvents.fireEvent('contactEvents', {
                         type: 'CONTACTS_LAST_SEEN',
                         result: messageContent
                     });
@@ -2367,11 +2357,11 @@ function Chat(params) {
                  * Type 61      Get All Unread Message Count
                  */
                 case chatMessageVOTypes.ALL_UNREAD_MESSAGE_COUNT:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    chatEvents.fireEvent('systemEvents', {
+                    app.chatEvents.fireEvent('systemEvents', {
                         type: 'ALL_UNREAD_MESSAGES_COUNT',
                         result: messageContent
                     });
@@ -2382,8 +2372,8 @@ function Chat(params) {
                  * Type 62    Create Bot
                  */
                 case chatMessageVOTypes.CREATE_BOT:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                     }
                     break;
 
@@ -2391,8 +2381,8 @@ function Chat(params) {
                  * Type 63    Define Bot Commands
                  */
                 case chatMessageVOTypes.DEFINE_BOT_COMMAND:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                     }
                     break;
 
@@ -2400,8 +2390,8 @@ function Chat(params) {
                  * Type 64    Start Bot
                  */
                 case chatMessageVOTypes.START_BOT:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                     }
                     break;
 
@@ -2409,8 +2399,8 @@ function Chat(params) {
                  * Type 65    Stop Bot
                  */
                 case chatMessageVOTypes.STOP_BOT:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                     }
                     break;
 
@@ -2420,9 +2410,9 @@ function Chat(params) {
                 case chatMessageVOTypes.LAST_MESSAGE_DELETED:
                     delete messageContent.unreadCount;
                     let threadOfDeletedMessage = formatDataToMakeConversation(messageContent);
-                    store.threads.save(threadOfDeletedMessage);
+                    app.store.threads.save(threadOfDeletedMessage);
                     new Promise((resolve, reject)=> {
-                        if (sdkParams.fullResponseObject) {
+                        if (app.sdkParams.fullResponseObject) {
                             getThreads({
                                 threadIds: [messageContent.id]
                             }, function (threadsResult) {
@@ -2430,7 +2420,7 @@ function Chat(params) {
 
                                 if (!threadsResult.cache) {
                                     resolve(threads[0])
-                                    chatEvents.fireEvent('threadEvents', {
+                                    app.chatEvents.fireEvent('threadEvents', {
                                         type: 'THREAD_INFO_UPDATED',
                                         result: {
                                             thread: threads[0]
@@ -2441,7 +2431,7 @@ function Chat(params) {
                         } else {
                             var thread = formatDataToMakeConversation(messageContent);
                             resolve(thread);
-                            chatEvents.fireEvent('threadEvents', {
+                            app.chatEvents.fireEvent('threadEvents', {
                                 type: 'THREAD_INFO_UPDATED',
                                 result: {
                                     thread: thread
@@ -2450,7 +2440,7 @@ function Chat(params) {
                         }
                     }).then(thread => {
                         if(typeof messageContent.unreadCount !== "undefined") {
-                            chatEvents.fireEvent('threadEvents', {
+                            app.chatEvents.fireEvent('threadEvents', {
                                 type: 'THREAD_UNREAD_COUNT_UPDATED',
                                 result: {
                                     thread: thread,
@@ -2468,14 +2458,14 @@ function Chat(params) {
                  * Type 67    Last Message Edited
                  */
                 case chatMessageVOTypes.LAST_MESSAGE_EDITED:
-                    if (sdkParams.fullResponseObject) {
+                    if (app.sdkParams.fullResponseObject) {
                         getThreads({
                             threadIds: [messageContent.id]
                         }, function (threadsResult) {
                             var threads = threadsResult.result.threads;
 
                             if (!threadsResult.cache) {
-                                chatEvents.fireEvent('threadEvents', {
+                                app.chatEvents.fireEvent('threadEvents', {
                                     type: 'THREAD_INFO_UPDATED',
                                     result: {
                                         thread: threads[0]
@@ -2486,7 +2476,7 @@ function Chat(params) {
                     } else {
                         var thread = formatDataToMakeConversation(messageContent);
 
-                        chatEvents.fireEvent('threadEvents', {
+                        app.chatEvents.fireEvent('threadEvents', {
                             type: 'THREAD_INFO_UPDATED',
                             result: {
                                 thread: thread
@@ -2499,8 +2489,8 @@ function Chat(params) {
                  * Type 68    Get Bot Commands List
                  */
                 case chatMessageVOTypes.BOT_COMMANDS:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                     }
                     break;
 
@@ -2508,8 +2498,8 @@ function Chat(params) {
                  * Type 69    Get Thread All Bots
                  */
                 case chatMessageVOTypes.THREAD_ALL_BOTS:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                     }
                     break;
 
@@ -2558,7 +2548,7 @@ function Chat(params) {
                  * Type 90    Contacts Synced
                  */
                 case chatMessageVOTypes.CONTACT_SYNCED:
-                    chatEvents.fireEvent('contactEvents', {
+                    app.chatEvents.fireEvent('contactEvents', {
                         type: 'CONTACTS_SYNCED',
                         result: messageContent
                     });
@@ -2568,11 +2558,11 @@ function Chat(params) {
                  * Type 101    Location Ping
                  */
                 case chatMessageVOTypes.LOCATION_PING:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    chatEvents.fireEvent('systemEvents', {
+                    app.chatEvents.fireEvent('systemEvents', {
                         type: 'LOCATION_PING',
                         result: messageContent
                     });
@@ -2582,18 +2572,18 @@ function Chat(params) {
                  * Type 102    Close Thread
                  */
                 case chatMessageVOTypes.CLOSE_THREAD:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    if (sdkParams.fullResponseObject) {
+                    if (app.sdkParams.fullResponseObject) {
                         getThreads({
                             threadIds: [threadId]
                         }, function (threadsResult) {
                             var thread = threadsResult.result.threads[0];
                             thread.mute = true;
 
-                            chatEvents.fireEvent('threadEvents', {
+                            app.chatEvents.fireEvent('threadEvents', {
                                 type: 'THREAD_CLOSE',
                                 result: {
                                     thread: thread
@@ -2601,7 +2591,7 @@ function Chat(params) {
                             });
                         });
                     } else {
-                        chatEvents.fireEvent('threadEvents', {
+                        app.chatEvents.fireEvent('threadEvents', {
                             type: 'THREAD_CLOSE',
                             result: {
                                 thread: threadId
@@ -2615,8 +2605,8 @@ function Chat(params) {
                  * Type 104    Remove Bot Commands
                  */
                 case chatMessageVOTypes.REMOVE_BOT_COMMANDS:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                     }
                     break;
 
@@ -2624,11 +2614,11 @@ function Chat(params) {
                  * Type 107    Register Assistant
                  */
                 case chatMessageVOTypes.REGISTER_ASSISTANT:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    chatEvents.fireEvent('assistantEvents', {
+                    app.chatEvents.fireEvent('assistantEvents', {
                         type: 'ASSISTANT_REGISTER',
                         result: messageContent
                     });
@@ -2639,11 +2629,11 @@ function Chat(params) {
                  * Type 108    Deactivate Assistant
                  */
                 case chatMessageVOTypes.DEACTIVATE_ASSISTANT:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    chatEvents.fireEvent('assistantEvents', {
+                    app.chatEvents.fireEvent('assistantEvents', {
                         type: 'ASSISTANT_DEACTIVATE',
                         result: messageContent
                     });
@@ -2654,11 +2644,11 @@ function Chat(params) {
                  * Type 109    Get Assistants List
                  */
                 case chatMessageVOTypes.GET_ASSISTANTS:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                     }
 
-                    chatEvents.fireEvent('assistantEvents', {
+                    app.chatEvents.fireEvent('assistantEvents', {
                         type: 'ASSISTANTS_LIST',
                         result: messageContent
                     });
@@ -2669,11 +2659,11 @@ function Chat(params) {
                  * Type 115    Get Assistants History
                  */
                 case chatMessageVOTypes.ASSISTANT_HISTORY:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                     }
 
-                    chatEvents.fireEvent('assistantEvents', {
+                    app.chatEvents.fireEvent('assistantEvents', {
                         type: 'ASSISTANTS_HSITORY',
                         result: messageContent
                     });
@@ -2684,11 +2674,11 @@ function Chat(params) {
                  * Type 116    Block Assistants
                  */
                 case chatMessageVOTypes.BLOCK_ASSISTANT:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    chatEvents.fireEvent('assistantEvents', {
+                    app.chatEvents.fireEvent('assistantEvents', {
                         type: 'ASSISTANT_BLOCK',
                         result: messageContent
                     });
@@ -2699,11 +2689,11 @@ function Chat(params) {
                  * Type 117    UnBlock Assistant
                  */
                 case chatMessageVOTypes.UNBLOCK_ASSISTANT:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    chatEvents.fireEvent('assistantEvents', {
+                    app.chatEvents.fireEvent('assistantEvents', {
                         type: 'ASSISTANT_UNBLOCK',
                         result: messageContent
                     });
@@ -2714,11 +2704,11 @@ function Chat(params) {
                  * Type 118    Blocked Assistants List
                  */
                 case chatMessageVOTypes.BLOCKED_ASSISTANTS:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                     }
 
-                    chatEvents.fireEvent('assistantEvents', {
+                    app.chatEvents.fireEvent('assistantEvents', {
                         type: 'ASSISTANTS_BLOCKED_LIST',
                         result: messageContent
                     });
@@ -2729,11 +2719,11 @@ function Chat(params) {
                  * Type 130    Mutual Groups
                  */
                 case chatMessageVOTypes.MUTUAL_GROUPS:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));
                     }
 
-                    chatEvents.fireEvent('threadEvents', {
+                    app.chatEvents.fireEvent('threadEvents', {
                         type: 'MUTUAL_GROUPS',
                         result: messageContent
                     });
@@ -2744,11 +2734,11 @@ function Chat(params) {
                  * Type 140    Create Tag
                  */
                 case chatMessageVOTypes.CREATE_TAG:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    chatEvents.fireEvent('threadEvents', {
+                    app.chatEvents.fireEvent('threadEvents', {
                         type: 'NEW_TAG',
                         result: messageContent
                     });
@@ -2759,11 +2749,11 @@ function Chat(params) {
                  * Type 141    Edit Tag
                  */
                 case chatMessageVOTypes.EDIT_TAG:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    chatEvents.fireEvent('threadEvents', {
+                    app.chatEvents.fireEvent('threadEvents', {
                         type: 'EDIT_TAG',
                         result: messageContent
                     });
@@ -2774,11 +2764,11 @@ function Chat(params) {
                  * Type 142    Delete Tag
                  */
                 case chatMessageVOTypes.DELETE_TAG:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    chatEvents.fireEvent('threadEvents', {
+                    app.chatEvents.fireEvent('threadEvents', {
                         type: 'DELETE_TAG',
                         result: messageContent
                     });
@@ -2789,11 +2779,11 @@ function Chat(params) {
                  * Type 143    Delete Tag
                  */
                 case chatMessageVOTypes.ADD_TAG_PARTICIPANT:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    chatEvents.fireEvent('threadEvents', {
+                    app.chatEvents.fireEvent('threadEvents', {
                         type: 'ADD_TAG_PARTICIPANT',
                         result: messageContent
                     });
@@ -2804,11 +2794,11 @@ function Chat(params) {
                  * Type 144    Delete Tag
                  */
                 case chatMessageVOTypes.REMOVE_TAG_PARTICIPANT:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    chatEvents.fireEvent('threadEvents', {
+                    app.chatEvents.fireEvent('threadEvents', {
                         type: 'REMOVE_TAG_PARTICIPANT',
                         result: messageContent
                     });
@@ -2819,11 +2809,11 @@ function Chat(params) {
                  * Type 145    Delete Tag
                  */
                 case chatMessageVOTypes.GET_TAG_LIST:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
-                    chatEvents.fireEvent('threadEvents', {
+                    app.chatEvents.fireEvent('threadEvents', {
                         type: 'TAG_LIST',
                         result: messageContent
                     });
@@ -2834,15 +2824,15 @@ function Chat(params) {
                  * Type 151    Delete Message Thread
                  */
                 case chatMessageVOTypes.DELETE_MESSAGE_THREAD:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent));
                     }
 
                     if(!messageContent) {
                         messageContent = {};
                     }
                     messageContent.threadId = threadId;
-                    chatEvents.fireEvent('threadEvents', {
+                    app.chatEvents.fireEvent('threadEvents', {
                         type: 'DELETE_THREAD',
                         result: messageContent
                     });
@@ -2853,8 +2843,8 @@ function Chat(params) {
                  * Type 152    Gives us a json to export for user
                  */
                 case chatMessageVOTypes.EXPORT_CHAT:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
                     }
 
                     break;
@@ -2863,8 +2853,8 @@ function Chat(params) {
                  * Type 200    Adding a user to contacts list
                  */
                 case chatMessageVOTypes.ADD_CONTACTS:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
                     }
                     break;
 
@@ -2872,8 +2862,8 @@ function Chat(params) {
                  * Type 201    Remove contacts result
                  */
                 case chatMessageVOTypes.REMOVE_CONTACTS:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
                     }
                     break;
 
@@ -2882,7 +2872,7 @@ function Chat(params) {
                  */
                 case chatMessageVOTypes.CONTACT_THREAD_UPDATE:
                     messageContent.threadId = threadId;
-                    chatEvents.fireEvent('threadEvents', {
+                    app.chatEvents.fireEvent('threadEvents', {
                         type: 'CONTACT_THREAD_UPDATE',
                         result: messageContent
                     });
@@ -2894,8 +2884,8 @@ function Chat(params) {
                  * Type 223    ARCHIVE_THREAD
                  */
                 case chatMessageVOTypes.ARCHIVE_THREAD:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
                     }
                     break;
 
@@ -2904,8 +2894,8 @@ function Chat(params) {
                  * Type 224    UNARCHIVE_THREAD
                  */
                 case chatMessageVOTypes.UNARCHIVE_THREAD:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
                     }
                     break;
 
@@ -2914,8 +2904,8 @@ function Chat(params) {
                 * Type 226    CUSTOMER_INFO
                 */
                 case chatMessageVOTypes.CUSTOMER_INFO:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
                     }
                     break;
 
@@ -2923,8 +2913,8 @@ function Chat(params) {
                  * Type 234    LAST_MESSAGE_INFO
                  */
                 case chatMessageVOTypes.LAST_MESSAGE_INFO:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
                     }
                     break;
 
@@ -2932,8 +2922,8 @@ function Chat(params) {
                  * Type 236    GET PIN MESSAGE
                  */
                 case chatMessageVOTypes.GET_PIN_MESSAGE:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
                     }
                     break;
 
@@ -2941,16 +2931,16 @@ function Chat(params) {
                  * Type 237    GET_THREAD_LIGHT
                  */
                 case chatMessageVOTypes.GET_THREAD_LIGHT:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
                     }
                     break;
                 /**
                  * Type 238    REPLY_PRIVATELY
                  */
                 case chatMessageVOTypes.REPLY_PRIVATELY:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
                     }
                     break;
 
@@ -2958,35 +2948,35 @@ function Chat(params) {
                  * Type 239    ADD_REACTION
                  */
                 case chatMessageVOTypes.ADD_REACTION:
-                    onAddReaction(uniqueId, messageContent, contentCount);
+                    reactionsMethods.onAddReaction(uniqueId, messageContent, contentCount);
                     break;
 
                 /**
                  * Type 240    REPLACE_REACTION
                  */
                 case chatMessageVOTypes.REPLACE_REACTION:
-                    onReplaceReaction(uniqueId, messageContent, contentCount);
+                    reactionsMethods.onReplaceReaction(uniqueId, messageContent, contentCount);
                     break;
 
                 /**
                  * Type 241    REMOVE_REACTION
                  */
                 case chatMessageVOTypes.REMOVE_REACTION:
-                    onRemoveReaction(uniqueId, messageContent, contentCount);
+                    reactionsMethods.onRemoveReaction(uniqueId, messageContent, contentCount);
                     break;
 
                 /**
                  * Type 242    REACTION_LIST
                  */
                 case chatMessageVOTypes.REACTION_LIST:
-                    onReactionList(uniqueId, messageContent);
+                    reactionsMethods.onReactionList(uniqueId, messageContent);
                     break;
                 /**
                  * Type 243   Get My Reaction
                  */
                 case chatMessageVOTypes.GET_MY_REACTION:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
                     }
                     break;
 
@@ -2994,14 +2984,14 @@ function Chat(params) {
                  Type 244   REACTION_COUNT
                  */
                 case chatMessageVOTypes.REACTION_COUNT:
-                    onReactionSummaries(uniqueId, messageContent);
+                    reactionsMethods.onReactionSummaries(uniqueId, messageContent);
                     break;
                 /**
                  * Type 999   All unknown errors
                  */
                 case chatMessageVOTypes.ERROR:
-                    if (store.messagesCallbacks[uniqueId]) {
-                        store.messagesCallbacks[uniqueId](Utility.createReturnData(true, messageContent.message, messageContent.code, messageContent, 0));
+                    if (app.store.messagesCallbacks[uniqueId]) {
+                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(true, messageContent.message, messageContent.code, messageContent, 0));
                     }
 
                     /**
@@ -3010,7 +3000,7 @@ function Chat(params) {
                      */
                     if (messageContent.code === 21) {
                         // TODO: Temporarily removed due to unknown side-effects
-                        // messenger().chatState = false;
+                        // app.messenger.chatState = false;
                         // asyncClient.logout();
                         // clearChatServerCaches();
                     }
@@ -3019,9 +3009,9 @@ function Chat(params) {
                      * has been blocked cause of spam activity
                      */
                     if (messageContent.code === 208) {
-                        if (store.sendMessageCallbacks[uniqueId]) {
+                        if (app.store.sendMessageCallbacks[uniqueId]) {
                             getItemFromChatWaitQueue(uniqueId, function (message) {
-                                chatEvents.fireEvent('messageEvents', {
+                                app.chatEvents.fireEvent('messageEvents', {
                                     type: 'MESSAGE_FAILED',
                                     cache: false,
                                     result: {
@@ -3032,7 +3022,7 @@ function Chat(params) {
                         }
                     }
 
-                    chatEvents.fireEvent('error', {
+                    app.chatEvents.fireEvent('error', {
                         code: messageContent.code,
                         message: messageContent.message,
                         error: messageContent,
@@ -3063,20 +3053,20 @@ function Chat(params) {
             switch (actionType) {
 
                 case chatMessageVOTypes.DELIVERY:
-                    if (store.threadCallbacks[threadId]) {
-                        var lastThreadCallbackIndex = Object.keys(store.threadCallbacks[threadId])
+                    if (app.store.threadCallbacks[threadId]) {
+                        var lastThreadCallbackIndex = Object.keys(app.store.threadCallbacks[threadId])
                             .indexOf(uniqueId);
                         if (typeof lastThreadCallbackIndex !== 'undefined') {
                             while (lastThreadCallbackIndex > -1) {
-                                var tempUniqueId = Object.entries(store.threadCallbacks[threadId])[lastThreadCallbackIndex][0];
-                                if (store.sendMessageCallbacks[tempUniqueId] && store.sendMessageCallbacks[tempUniqueId].onDeliver) {
-                                    if (store.threadCallbacks[threadId][tempUniqueId] && store.threadCallbacks[threadId][tempUniqueId].onSent) {
-                                        store.sendMessageCallbacks[tempUniqueId].onDeliver(
+                                var tempUniqueId = Object.entries(app.store.threadCallbacks[threadId])[lastThreadCallbackIndex][0];
+                                if (app.store.sendMessageCallbacks[tempUniqueId] && app.store.sendMessageCallbacks[tempUniqueId].onDeliver) {
+                                    if (app.store.threadCallbacks[threadId][tempUniqueId] && app.store.threadCallbacks[threadId][tempUniqueId].onSent) {
+                                        app.store.sendMessageCallbacks[tempUniqueId].onDeliver(
                                             {
                                                 uniqueId: tempUniqueId
                                             });
-                                        delete (store.sendMessageCallbacks[tempUniqueId].onDeliver);
-                                        store.threadCallbacks[threadId][tempUniqueId].onDeliver = true;
+                                        delete (app.store.sendMessageCallbacks[tempUniqueId].onDeliver);
+                                        app.store.threadCallbacks[threadId][tempUniqueId].onDeliver = true;
                                     }
                                 }
 
@@ -3087,37 +3077,37 @@ function Chat(params) {
                     break;
 
                 case chatMessageVOTypes.SEEN:
-                    if (store.threadCallbacks[threadId]) {
-                        var lastThreadCallbackIndex = Object.keys(store.threadCallbacks[threadId])
+                    if (app.store.threadCallbacks[threadId]) {
+                        var lastThreadCallbackIndex = Object.keys(app.store.threadCallbacks[threadId])
                             .indexOf(uniqueId);
                         if (typeof lastThreadCallbackIndex !== 'undefined') {
                             while (lastThreadCallbackIndex > -1) {
-                                var tempUniqueId = Object.entries(store.threadCallbacks[threadId])[lastThreadCallbackIndex][0];
+                                var tempUniqueId = Object.entries(app.store.threadCallbacks[threadId])[lastThreadCallbackIndex][0];
 
-                                if (store.sendMessageCallbacks[tempUniqueId] && store.sendMessageCallbacks[tempUniqueId].onSeen) {
-                                    if (store.threadCallbacks[threadId][tempUniqueId] && store.threadCallbacks[threadId][tempUniqueId].onSent) {
-                                        if (!store.threadCallbacks[threadId][tempUniqueId].onDeliver) {
-                                            store.sendMessageCallbacks[tempUniqueId].onDeliver(
+                                if (app.store.sendMessageCallbacks[tempUniqueId] && app.store.sendMessageCallbacks[tempUniqueId].onSeen) {
+                                    if (app.store.threadCallbacks[threadId][tempUniqueId] && app.store.threadCallbacks[threadId][tempUniqueId].onSent) {
+                                        if (!app.store.threadCallbacks[threadId][tempUniqueId].onDeliver) {
+                                            app.store.sendMessageCallbacks[tempUniqueId].onDeliver(
                                                 {
                                                     uniqueId: tempUniqueId
                                                 });
-                                            delete (store.sendMessageCallbacks[tempUniqueId].onDeliver);
-                                            store.threadCallbacks[threadId][tempUniqueId].onDeliver = true;
+                                            delete (app.store.sendMessageCallbacks[tempUniqueId].onDeliver);
+                                            app.store.threadCallbacks[threadId][tempUniqueId].onDeliver = true;
                                         }
 
-                                        store.sendMessageCallbacks[tempUniqueId].onSeen(
+                                        app.store.sendMessageCallbacks[tempUniqueId].onSeen(
                                             {
                                                 uniqueId: tempUniqueId
                                             });
 
-                                        delete (store.sendMessageCallbacks[tempUniqueId].onSeen);
-                                        store.threadCallbacks[threadId][tempUniqueId].onSeen = true;
+                                        delete (app.store.sendMessageCallbacks[tempUniqueId].onSeen);
+                                        app.store.threadCallbacks[threadId][tempUniqueId].onSeen = true;
 
-                                        if (store.threadCallbacks[threadId][tempUniqueId].onSent &&
-                                            store.threadCallbacks[threadId][tempUniqueId].onDeliver &&
-                                            store.threadCallbacks[threadId][tempUniqueId].onSeen) {
-                                            delete store.threadCallbacks[threadId][tempUniqueId];
-                                            delete store.sendMessageCallbacks[tempUniqueId];
+                                        if (app.store.threadCallbacks[threadId][tempUniqueId].onSent &&
+                                            app.store.threadCallbacks[threadId][tempUniqueId].onDeliver &&
+                                            app.store.threadCallbacks[threadId][tempUniqueId].onSeen) {
+                                            delete app.store.threadCallbacks[threadId][tempUniqueId];
+                                            delete app.store.sendMessageCallbacks[tempUniqueId];
                                         }
                                     }
                                 }
@@ -3160,7 +3150,7 @@ function Chat(params) {
 
             let stringMsg = JSON.parse(JSON.stringify(message));
             stringMsg.conversation = JSON.parse(JSON.stringify(threadObject));
-            chatEvents.fireEvent('messageEvents', {
+            app.chatEvents.fireEvent('messageEvents', {
                 type: 'MESSAGE_NEW',
                 cache: false,
                 result: {
@@ -3168,7 +3158,7 @@ function Chat(params) {
                 }
             });
 
-            chatEvents.fireEvent('threadEvents', {
+            app.chatEvents.fireEvent('threadEvents', {
                 type: 'THREAD_UNREAD_COUNT_UPDATED',
                 result: {
                     thread: threadObject,
@@ -3176,15 +3166,15 @@ function Chat(params) {
                 }
             });
 
-            let storeThread = store.threads.get(threadObject.id);
+            let storeThread = app.store.threads.get(threadObject.id);
             if(!storeThread) {
-                store.threads.save(threadObject);
-                storeThread = store.threads.get(threadObject.id);
+                app.store.threads.save(threadObject);
+                storeThread = app.store.threads.get(threadObject.id);
             }
 
             // let unreadCount = message.conversation.unreadCount;
-            // store.threads.get(threadObject.id).unreadCount.set();
-            if(message.ownerId != store.user().id) {
+            // app.store.threads.get(threadObject.id).unreadCount.set();
+            if(message.ownerId != app.store.user.get().id) {
                 if(!storeThread.unreadCount.get())
                     storeThread.unreadCount.set(1);
                 else
@@ -3201,7 +3191,7 @@ function Chat(params) {
                 storeThread.unreadCount.set(0);
             }
 
-            chatEvents.fireEvent('threadEvents', {
+            app.chatEvents.fireEvent('threadEvents', {
                 type: 'THREAD_LAST_ACTIVITY_TIME',
                 result: {
                     thread: threadObject
@@ -3214,7 +3204,7 @@ function Chat(params) {
             //     }, function (threadsResult) {
             //         var threads = threadsResult.result.threads;
             //
-            //         chatEvents.fireEvent('threadEvents', {
+            //         app.chatEvents.fireEvent('threadEvents', {
             //             type: 'THREAD_UNREAD_COUNT_UPDATED',
             //             result: {
             //                 thread: threads[0],
@@ -3222,7 +3212,7 @@ function Chat(params) {
             //             }
             //         });
             //
-            //         chatEvents.fireEvent('threadEvents', {
+            //         app.chatEvents.fireEvent('threadEvents', {
             //             type: 'THREAD_LAST_ACTIVITY_TIME',
             //             result: {
             //                 thread: threads[0]
@@ -3231,14 +3221,14 @@ function Chat(params) {
             //
             //     });
             // } else {
-            //     chatEvents.fireEvent('threadEvents', {
+            //     app.chatEvents.fireEvent('threadEvents', {
             //         type: 'THREAD_LAST_ACTIVITY_TIME',
             //         result: {
             //             thread: threadId
             //         }
             //     });
             //
-            //     chatEvents.fireEvent('threadEvents', {
+            //     app.chatEvents.fireEvent('threadEvents', {
             //         type: 'THREAD_UNREAD_COUNT_UPDATED',
             //         result: {
             //             thread: messageContent.id,
@@ -3270,20 +3260,20 @@ function Chat(params) {
         chatEditMessageHandler = function (threadId, messageContent) {
             var message = formatDataToMakeMessage(threadId, messageContent);
 
-            if (sdkParams.fullResponseObject) {
+            if (app.sdkParams.fullResponseObject) {
                 getThreads({
                     threadIds: [threadId]
                 }, function (threadsResult) {
                     var threads = threadsResult.result.threads;
                     if (!threadsResult.cache) {
-                        chatEvents.fireEvent('messageEvents', {
+                        app.chatEvents.fireEvent('messageEvents', {
                             type: 'MESSAGE_EDIT',
                             result: {
                                 message: message
                             }
                         });
                         if (message.pinned) {
-                            chatEvents.fireEvent('threadEvents', {
+                            app.chatEvents.fireEvent('threadEvents', {
                                 type: 'THREAD_LAST_ACTIVITY_TIME',
                                 result: {
                                     thread: threads[0]
@@ -3293,14 +3283,14 @@ function Chat(params) {
                     }
                 });
             } else {
-                chatEvents.fireEvent('messageEvents', {
+                app.chatEvents.fireEvent('messageEvents', {
                     type: 'MESSAGE_EDIT',
                     result: {
                         message: message
                     }
                 });
                 if (message.pinned) {
-                    chatEvents.fireEvent('threadEvents', {
+                    app.chatEvents.fireEvent('threadEvents', {
                         type: 'THREAD_LAST_ACTIVITY_TIME',
                         result: {
                             thread: threadId
@@ -3331,7 +3321,7 @@ function Chat(params) {
             var redirectToThread = (showThread === true) ? showThread : false;
 
             if (addFromService) {
-                chatEvents.fireEvent('threadEvents', {
+                app.chatEvents.fireEvent('threadEvents', {
                     type: 'THREAD_NEW',
                     redirectToThread: redirectToThread,
                     result: {
@@ -3695,7 +3685,7 @@ function Chat(params) {
 
             // Add inviter if exist
             if (messageContent.inviter) {
-                conversation.inviter = formatDataToMakeParticipant(messageContent.inviter, messageContent.id);
+                conversation.inviter = threadParticipantsMethods.formatDataToMakeParticipant(messageContent.inviter, messageContent.id);
             }
 
             // Add participants list if exist
@@ -3703,7 +3693,7 @@ function Chat(params) {
                 conversation.participants = [];
 
                 for (var i = 0; i < messageContent.participants.length; i++) {
-                    var participantData = formatDataToMakeParticipant(messageContent.participants[i], messageContent.id);
+                    var participantData = threadParticipantsMethods.formatDataToMakeParticipant(messageContent.participants[i], messageContent.id);
                     if (participantData) {
                         conversation.participants.push(participantData);
                     }
@@ -3766,7 +3756,7 @@ function Chat(params) {
             };
 
             if (messageContent.participant) {
-                replyInfo.participant = formatDataToMakeParticipant(messageContent.participant, threadId);
+                replyInfo.participant = threadParticipantsMethods.formatDataToMakeParticipant(messageContent.participant, threadId);
             }
 
             if (messageContent.replyPrivatelyInfoVO) {
@@ -3805,7 +3795,7 @@ function Chat(params) {
             }
 
             if (messageContent.participant) {
-                forwardInfo.participant = formatDataToMakeParticipant(messageContent.participant, threadId);
+                forwardInfo.participant = threadParticipantsMethods.formatDataToMakeParticipant(messageContent.participant, threadId);
             }
 
             // return forwardInfo;
@@ -3914,7 +3904,7 @@ function Chat(params) {
             }
 
             if (pushMessageVO.participant) {
-                message.participant = formatDataToMakeParticipant(pushMessageVO.participant, threadId);
+                message.participant = threadParticipantsMethods.formatDataToMakeParticipant(pushMessageVO.participant, threadId);
             }
 
             // return message;
@@ -4134,14 +4124,14 @@ function Chat(params) {
 
             var sendMessageParams = {
                 chatMessageVOType: chatMessageVOTypes.GET_THREADS,
-                typeCode: sdkParams.generalTypeCode, //params.typeCode,
+                typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
                 content: content
             };
 
             /**
              * Retrive get threads response from server
              */
-            return messenger().sendMessage(sendMessageParams, {
+            return app.messenger.sendMessage(sendMessageParams, {
                 onResult: function (result) {
                     var returnData = {
                         hasError: result.hasError,
@@ -4170,7 +4160,7 @@ function Chat(params) {
                             }
                         }
 
-                        store.threads.saveMany(resultData.threads);
+                        app.store.threads.saveMany(resultData.threads);
                         returnData.result = resultData;
                     }
 
@@ -4182,7 +4172,7 @@ function Chat(params) {
                     callback = undefined;
 
                     if (!returnData.hasError && returnCache) {
-                        chatEvents.fireEvent('threadEvents', {
+                        app.chatEvents.fireEvent('threadEvents', {
                             type: 'THREADS_LIST_CHANGE',
                             result: returnData.result
                         });
@@ -4194,13 +4184,13 @@ function Chat(params) {
         getAllThreads = function (params, callback) {
             var sendMessageParams = {
                 chatMessageVOType: chatMessageVOTypes.GET_THREADS,
-                typeCode: sdkParams.generalTypeCode, //params.typeCode,
+                typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
                 content: {}
             };
 
             sendMessageParams.content.summary = params.summary;
 
-            return messenger().sendMessage(sendMessageParams, {
+            return app.messenger.sendMessage(sendMessageParams, {
                 onResult: function (result) {
 
                     callback && callback(result);
@@ -4238,7 +4228,7 @@ function Chat(params) {
             if (parseInt(params.threadId) > 0) {
                 var sendMessageParams = {
                         chatMessageVOType: chatMessageVOTypes.GET_HISTORY,
-                        typeCode: sdkParams.generalTypeCode, //params.typeCode,
+                        typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
                         content: {},
                         subjectId: params.threadId
                     },
@@ -4276,7 +4266,7 @@ function Chat(params) {
 
                             sendingQueueMessages.push(formatDataToMakeMessage(sendQueueMessages[i].threadId, {
                                 uniqueId: sendQueueMessages[i].uniqueId,
-                                ownerId: store.user().id,
+                                ownerId: app.store.user.get().id,
                                 message: sendQueueMessages[i].content,
                                 metadata: sendQueueMessages[i].metadata,
                                 systemMetadata: sendQueueMessages[i].systemMetadata,
@@ -4293,7 +4283,7 @@ function Chat(params) {
                 if (uploadingQueue) {
                     getChatUploadQueue(parseInt(params.threadId), function (uploadQueueMessages) {
                         for (var i = 0; i < uploadQueueMessages.length; i++) {
-                            uploadQueueMessages[i].message.participant = store.user();
+                            uploadQueueMessages[i].message.participant = app.store.user.get();
                             var time = new Date().getTime();
                             uploadQueueMessages[i].message.time = time;
                             uploadQueueMessages[i].message.timeNanos = (time % 1000) * 1000000;
@@ -4317,13 +4307,13 @@ function Chat(params) {
                             failedQueueMessages[i] = formatDataToMakeMessage(waitQueueMessages[i].threadId,
                                 {
                                     uniqueId: decryptedEnqueuedMessage.uniqueId,
-                                    ownerId: store.user().id,
+                                    ownerId: app.store.user.get().id,
                                     message: decryptedEnqueuedMessage.content,
                                     metadata: decryptedEnqueuedMessage.metadata,
                                     systemMetadata: decryptedEnqueuedMessage.systemMetadata,
                                     replyInfo: decryptedEnqueuedMessage.replyInfo,
                                     forwardInfo: decryptedEnqueuedMessage.forwardInfo,
-                                    participant: store.user(),
+                                    participant: app.store.user.get(),
                                     time: time,
                                     timeNanos: (time % 1000) * 1000000
                                 }
@@ -4408,7 +4398,7 @@ function Chat(params) {
                     /**
                      * Get Thread Messages From Server
                      */
-                    return messenger().sendMessage(sendMessageParams, {
+                    return app.messenger.sendMessage(sendMessageParams, {
                         onResult: function (result) {
 
                             var returnData = {
@@ -4435,7 +4425,7 @@ function Chat(params) {
                                     /**
                                      * Sending Delivery for Last Message of Thread
                                      */
-                                    if (store.user().id !== firstMessage.participant.id && !firstMessage.delivered) {
+                                    if (app.store.user.get().id !== firstMessage.participant.id && !firstMessage.delivered) {
                                         putInMessagesDeliveryQueue(params.threadId, firstMessage.id);
                                     }
                                 }
@@ -4464,7 +4454,7 @@ function Chat(params) {
                     });
                 });
             } else {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'Thread ID is required for Getting history!'
                 });
@@ -4490,10 +4480,10 @@ function Chat(params) {
         updateThreadInfo = function (params, callback) {
             var updateThreadInfoData = {
                     chatMessageVOType: chatMessageVOTypes.UPDATE_THREAD_INFO,
-                    typeCode: sdkParams.generalTypeCode, //params.typeCode,
+                    typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
                     content: {},
                     pushMsgType: 3,
-                    token: sdkParams.token
+                    token: app.sdkParams.token
                 },
                 threadInfoContent = {},
                 fileUploadParams = {},
@@ -4503,7 +4493,7 @@ function Chat(params) {
 
             if (params) {
                 if (!params.userGroupHash || params.userGroupHash.length === 0 || typeof (params.userGroupHash) !== 'string') {
-                    chatEvents.fireEvent('error', {
+                    app.chatEvents.fireEvent('error', {
                         code: 6304,
                         message: CHAT_ERRORS[6304]
                     });
@@ -4516,7 +4506,7 @@ function Chat(params) {
                     threadId = parseInt(params.threadId);
                     updateThreadInfoData.subjectId = threadId;
                 } else {
-                    chatEvents.fireEvent('error', {
+                    app.chatEvents.fireEvent('error', {
                         code: 999,
                         message: 'Thread ID is required for Updating thread info!'
                     });
@@ -4556,13 +4546,13 @@ function Chat(params) {
                         putInChatUploadQueue({
                             message: {
                                 chatMessageVOType: chatMessageVOTypes.UPDATE_THREAD_INFO,
-                                typeCode: sdkParams.generalTypeCode, //params.typeCode,
+                                typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
                                 subjectId: threadId,
                                 content: threadInfoContent,
                                 metadata: threadInfoContent.metadata,
                                 uniqueId: fileUniqueId,
                                 pushMsgType: 3,
-                                token: sdkParams.token
+                                token: app.sdkParams.token
                             },
                             callbacks: callback
                         }, function () {
@@ -4587,7 +4577,7 @@ function Chat(params) {
                                     }
                                 });
                             } else {
-                                chatEvents.fireEvent('error', {
+                                app.chatEvents.fireEvent('error', {
                                     code: 999,
                                     message: 'Thread picture can be a image type only!'
                                 });
@@ -4605,15 +4595,15 @@ function Chat(params) {
                         }
                     });
 
-                    return messenger().sendMessage({
+                    return app.messenger.sendMessage({
                         chatMessageVOType: chatMessageVOTypes.UPDATE_THREAD_INFO,
-                        typeCode: sdkParams.generalTypeCode, //params.typeCode,
+                        typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
                         subjectId: threadId,
                         content: threadInfoContent,
                         metadata: threadInfoContent.metadata,
                         uniqueId: fileUniqueId,
                         pushMsgType: 3,
-                        token: sdkParams.token
+                        token: app.sdkParams.token
                     }, {
                         onResult: function (result) {
                             callback && callback(result);
@@ -4624,15 +4614,15 @@ function Chat(params) {
                         delete threadInfoContent.metadata;
                     }
 
-                    return messenger().sendMessage({
+                    return app.messenger.sendMessage({
                         chatMessageVOType: chatMessageVOTypes.UPDATE_THREAD_INFO,
-                        typeCode: sdkParams.generalTypeCode,//params.typeCode,
+                        typeCode: app.sdkParams.generalTypeCode,//params.typeCode,
                         subjectId: threadId,
                         content: threadInfoContent,
                         metadata: threadInfoContent.metadata,
                         uniqueId: fileUniqueId,
                         pushMsgType: 3,
-                        token: sdkParams.token
+                        token: app.sdkParams.token
                     }, {
                         onResult: function (result) {
                             callback && callback(result);
@@ -4663,7 +4653,7 @@ function Chat(params) {
                 chatMessageVOType: chatMessageVOTypes.UPDATE_CHAT_PROFILE,
                 content: {},
                 pushMsgType: 3,
-                token: sdkParams.token
+                token: app.sdkParams.token
             };
             if (params) {
                 if (typeof params.bio == 'string') {
@@ -4675,7 +4665,7 @@ function Chat(params) {
                     updateChatProfileData.content.metadata = params.metadata;
                 }
             }
-            return messenger().sendMessage(updateChatProfileData, {
+            return app.messenger.sendMessage(updateChatProfileData, {
                 onResult: function (result) {
                     callback && callback(result);
                 }
@@ -4700,9 +4690,9 @@ function Chat(params) {
                 chatMessageVOType: chatMessageVOTypes.GET_PARTICIPANT_ROLES,
                 pushMsgType: 3,
                 subjectId: params.threadId,
-                token: sdkParams.token
+                token: app.sdkParams.token
             };
-            return messenger().sendMessage(updateChatProfileData, {
+            return app.messenger.sendMessage(updateChatProfileData, {
                 onResult: function (result) {
                     callback && callback(result);
                 }
@@ -4721,9 +4711,9 @@ function Chat(params) {
          * @return {object} Instant sendMessage result
          */
         deliver = function (params) {
-            return messenger().sendMessage({
+            return app.messenger.sendMessage({
                 chatMessageVOType: chatMessageVOTypes.DELIVERY,
-                typeCode: sdkParams.generalTypeCode, //params.typeCode,
+                typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
                 content: params.messageId,
                 pushMsgType: 3
             });
@@ -4741,9 +4731,9 @@ function Chat(params) {
          * @return {object} Instant sendMessage result
          */
         seen = function (params) {
-            return messenger().sendMessage({
+            return app.messenger.sendMessage({
                 chatMessageVOType: chatMessageVOTypes.SEEN,
-                typeCode: sdkParams.generalTypeCode, //params.typeCode,
+                typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
                 content: params.messageId,
                 pushMsgType: 3
             });
@@ -4905,7 +4895,7 @@ function Chat(params) {
             }
 
             if (params.responseType === 'link') {
-                var returnLink = SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS + SERVICES_PATH.PODSPACE_DOWNLOAD_FILE + `?hash=${params.hashCode}&_token_=${sdkParams.token}&_token_issuer_=1`;
+                var returnLink = SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS + SERVICES_PATH.PODSPACE_DOWNLOAD_FILE + `?hash=${params.hashCode}&_token_=${app.sdkParams.token}&_token_issuer_=1`;
 
                 callback({
                     hasError: false,
@@ -4920,7 +4910,7 @@ function Chat(params) {
                     responseType: 'blob',
                     uniqueId: downloadUniqueId,
                     headers: {
-                        '_token_': sdkParams.token,
+                        '_token_': app.sdkParams.token,
                         '_token_issuer_': 1,
                         // 'Range': 'bytes=100-200'
                     },
@@ -4945,7 +4935,7 @@ function Chat(params) {
                         cancelFileDownload({
                             uniqueId: downloadUniqueId
                         }, function () {
-                            sdkParams.consoleLogging && console.log(`"${downloadUniqueId}" - File download has been canceled!`);
+                            app.sdkParams.consoleLogging && console.log(`"${downloadUniqueId}" - File download has been canceled!`);
                         });
                     }
                 };
@@ -4996,7 +4986,7 @@ function Chat(params) {
                     responseType: 'blob',
                     uniqueId: downloadUniqueId,
                     headers: {
-                        'Authorization': 'Bearer ' + sdkParams.token
+                        'Authorization': 'Bearer ' + app.sdkParams.token
                     },
                     enableDownloadProgressEvents: params.enableDownloadProgressEvents,
                     hashCode: params.hashCode
@@ -5021,7 +5011,7 @@ function Chat(params) {
                         cancelFileDownload({
                             uniqueId: downloadUniqueId
                         }, function () {
-                            sdkParams.consoleLogging && console.log(`"${downloadUniqueId}" - File download has been canceled!`);
+                            app.sdkParams.consoleLogging && console.log(`"${downloadUniqueId}" - File download has been canceled!`);
                         });
                     }
                 };
@@ -5063,7 +5053,7 @@ function Chat(params) {
                 }
 
                 if (params.responseType === 'link') {
-                    var returnLink = SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS + SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE + `?hash=${params.hashCode}&_token_=${sdkParams.token}&_token_issuer_=1&size=${params.size}&quality=${params.quality}&crop=${params.crop}`;
+                    var returnLink = SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS + SERVICES_PATH.PODSPACE_DOWNLOAD_IMAGE + `?hash=${params.hashCode}&_token_=${app.sdkParams.token}&_token_issuer_=1&size=${params.size}&quality=${params.quality}&crop=${params.crop}`;
 
                     callback({
                         hasError: false,
@@ -5077,7 +5067,7 @@ function Chat(params) {
                         uniqueId: downloadUniqueId,
                         responseType: 'blob',
                         headers: {
-                            '_token_': sdkParams.token,
+                            '_token_': app.sdkParams.token,
                             '_token_issuer_': 1
                         },
                         data: getImageData
@@ -5107,7 +5097,7 @@ function Chat(params) {
                             cancelFileDownload({
                                 uniqueId: downloadUniqueId
                             }, function () {
-                                sdkParams.consoleLogging && console.log(`"${downloadUniqueId}" - Image download has been canceled!`);
+                                app.sdkParams.consoleLogging && console.log(`"${downloadUniqueId}" - Image download has been canceled!`);
                             });
                         }
                     };
@@ -5118,7 +5108,7 @@ function Chat(params) {
                         responseType: 'blob',
                         uniqueId: downloadUniqueId,
                         headers: {
-                            '_token_': sdkParams.token,
+                            '_token_': app.sdkParams.token,
                             '_token_issuer_': 1
                         },
                         data: getImageData
@@ -5142,7 +5132,7 @@ function Chat(params) {
                             cancelFileDownload({
                                 uniqueId: downloadUniqueId
                             }, function () {
-                                sdkParams.consoleLogging && console.log(`"${downloadUniqueId}" - Image download has been canceled!`);
+                                app.sdkParams.consoleLogging && console.log(`"${downloadUniqueId}" - Image download has been canceled!`);
                             });
                         }
                     };
@@ -5199,7 +5189,7 @@ function Chat(params) {
                         uniqueId: downloadUniqueId,
                         responseType: 'blob',
                         headers: {
-                            'Authorization': 'Bearer ' + sdkParams.token
+                            'Authorization': 'Bearer ' + app.sdkParams.token
                         },
                         enableDownloadProgressEvents: params.enableDownloadProgressEvents,
                         hashCode: params.hashCode
@@ -5230,7 +5220,7 @@ function Chat(params) {
                             cancelFileDownload({
                                 uniqueId: downloadUniqueId
                             }, function () {
-                                sdkParams.consoleLogging && console.log(`"${downloadUniqueId}" - Image download has been canceled!`);
+                                app.sdkParams.consoleLogging && console.log(`"${downloadUniqueId}" - Image download has been canceled!`);
                             });
                         }
                     };
@@ -5242,7 +5232,7 @@ function Chat(params) {
                         responseType: 'blob',
                         uniqueId: downloadUniqueId,
                         headers: {
-                            'Authorization': 'Bearer ' + sdkParams.token
+                            'Authorization': 'Bearer ' + app.sdkParams.token
                         },
                         enableDownloadProgressEvents: params.enableDownloadProgressEvents,
                         hashCode: params.hashCode
@@ -5267,7 +5257,7 @@ function Chat(params) {
                             cancelFileDownload({
                                 uniqueId: downloadUniqueId
                             }, function () {
-                                sdkParams.consoleLogging && console.log(`"${downloadUniqueId}" - Image download has been canceled!`);
+                                app.sdkParams.consoleLogging && console.log(`"${downloadUniqueId}" - Image download has been canceled!`);
                             });
                         }
                     };
@@ -5439,7 +5429,7 @@ function Chat(params) {
                 url: SERVICE_ADDRESSES.FILESERVER_ADDRESS + SERVICES_PATH.UPLOAD_FILE,
                 method: 'POST',
                 headers: {
-                    '_token_': sdkParams.token,
+                    '_token_': app.sdkParams.token,
                     '_token_issuer_': 1
                 },
                 data: uploadFileData,
@@ -5473,7 +5463,7 @@ function Chat(params) {
             return {
                 uniqueId: uploadUniqueId,
                 threadId: uploadThreadId,
-                participant: store.user(),
+                participant: app.store.user.get(),
                 content: {
                     caption: params.content,
                     file: {
@@ -5563,7 +5553,7 @@ function Chat(params) {
                 url: SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS + SERVICES_PATH.PODSPACE_UPLOAD_FILE_TO_USERGROUP,
                 method: 'POST',
                 headers: {
-                    '_token_': sdkParams.token,
+                    '_token_': app.sdkParams.token,
                     '_token_issuer_': 1
                 },
                 data: uploadFileData,
@@ -5596,7 +5586,7 @@ function Chat(params) {
             return {
                 uniqueId: uploadUniqueId,
                 threadId: uploadThreadId,
-                participant: store.user(),
+                participant: app.store.user.get(),
                 content: {
                     caption: params.content,
                     file: {
@@ -5666,7 +5656,7 @@ function Chat(params) {
                 url: SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS + SERVICES_PATH.PODSPACE_UPLOAD_FILE_NEW,
                 method: 'POST',
                 headers: {
-                    'Authorization': 'Bearer ' + sdkParams.token
+                    'Authorization': 'Bearer ' + app.sdkParams.token
                 },
                 data: uploadFileData,
                 uniqueId: uploadUniqueId
@@ -5699,7 +5689,7 @@ function Chat(params) {
             return {
                 uniqueId: uploadUniqueId,
                 threadId: uploadThreadId,
-                participant: store.user(),
+                participant: app.store.user.get(),
                 content: {
                     caption: params.content,
                     file: {
@@ -5780,7 +5770,7 @@ function Chat(params) {
                 url: SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS + SERVICES_PATH.PODSPACE_UPLOAD_FILE_TO_USERGROUP_NEW.replace('{userGroupHash}', uploadFileData.userGroupHash),
                 method: 'POST',
                 headers: {
-                    'Authorization': 'Bearer ' + sdkParams.token,
+                    'Authorization': 'Bearer ' + app.sdkParams.token,
                 },
                 data: uploadFileData,
                 uniqueId: uploadUniqueId
@@ -5812,7 +5802,7 @@ function Chat(params) {
             return {
                 uniqueId: uploadUniqueId,
                 threadId: uploadThreadId,
-                participant: store.user(),
+                participant: app.store.user.get(),
                 content: {
                     caption: params.content,
                     file: {
@@ -5883,7 +5873,7 @@ function Chat(params) {
                 url: SERVICE_ADDRESSES.POD_DRIVE_ADDRESS + SERVICES_PATH.DRIVE_UPLOAD_FILE_FROM_URL,
                 method: 'POST',
                 headers: {
-                    '_token_': sdkParams.token,
+                    '_token_': app.sdkParams.token,
                     '_token_issuer_': 1
                 },
                 data: uploadFileData,
@@ -5918,7 +5908,7 @@ function Chat(params) {
             return {
                 uniqueId: uploadUniqueId,
                 threadId: uploadThreadId,
-                participant: store.user(),
+                participant: app.store.user.get(),
                 content: {
                     file: {
                         uniqueId: uploadUniqueId,
@@ -6022,7 +6012,7 @@ function Chat(params) {
                     url: SERVICE_ADDRESSES.FILESERVER_ADDRESS + SERVICES_PATH.UPLOAD_IMAGE,
                     method: 'POST',
                     headers: {
-                        '_token_': sdkParams.token,
+                        '_token_': app.sdkParams.token,
                         '_token_issuer_': 1
                     },
                     data: uploadImageData,
@@ -6064,7 +6054,7 @@ function Chat(params) {
                 return {
                     uniqueId: uploadUniqueId,
                     threadId: uploadThreadId,
-                    participant: store.user(),
+                    participant: app.store.user.get(),
                     content: {
                         caption: params.content,
                         file: {
@@ -6180,7 +6170,7 @@ function Chat(params) {
                         url: SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS + SERVICES_PATH.PODSPACE_UPLOAD_IMAGE,
                         method: 'POST',
                         headers: {
-                            '_token_': sdkParams.token,
+                            '_token_': app.sdkParams.token,
                             '_token_issuer_': 1
                         },
                         data: uploadImageData,
@@ -6204,7 +6194,7 @@ function Chat(params) {
                                     });
                                 }
                             } catch (e) {
-                                sdkParams.consoleLogging && console.log(e)
+                                app.sdkParams.consoleLogging && console.log(e)
                                 callback({
                                     hasError: true,
                                     errorCode: 6300,
@@ -6222,7 +6212,7 @@ function Chat(params) {
                     return {
                         uniqueId: uploadUniqueId,
                         threadId: uploadThreadId,
-                        participant: store.user(),
+                        participant: app.store.user.get(),
                         content: {
                             caption: params.content,
                             file: {
@@ -6317,7 +6307,7 @@ function Chat(params) {
                     url: SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS + SERVICES_PATH.PODSPACE_UPLOAD_IMAGE_NEW,
                     method: 'POST',
                     headers: {
-                        'Authorization': 'Bearer ' + sdkParams.token,
+                        'Authorization': 'Bearer ' + app.sdkParams.token,
                     },
                     data: uploadImageData,
                     uniqueId: uploadUniqueId
@@ -6358,7 +6348,7 @@ function Chat(params) {
                 return {
                     uniqueId: uploadUniqueId,
                     threadId: uploadThreadId,
-                    participant: store.user(),
+                    participant: app.store.user.get(),
                     content: {
                         caption: params.content,
                         file: {
@@ -6470,7 +6460,7 @@ function Chat(params) {
                         url: SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS + SERVICES_PATH.PODSPACE_UPLOAD_IMAGE_TO_USERGROUP,
                         method: 'POST',
                         headers: {
-                            '_token_': sdkParams.token,
+                            '_token_': app.sdkParams.token,
                             '_token_issuer_': 1
                         },
                         data: uploadImageData,
@@ -6496,7 +6486,7 @@ function Chat(params) {
                                     });
                                 }
                             } catch (e) {
-                                sdkParams.consoleLogging && console.log(e)
+                                app.sdkParams.consoleLogging && console.log(e)
                                 callback({
                                     hasError: true,
                                     errorCode: 6300,
@@ -6514,7 +6504,7 @@ function Chat(params) {
                     return {
                         uniqueId: uploadUniqueId,
                         threadId: uploadThreadId,
-                        participant: store.user(),
+                        participant: app.store.user.get(),
                         content: {
                             caption: params.content,
                             file: {
@@ -6640,7 +6630,7 @@ function Chat(params) {
                         url: SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS + SERVICES_PATH.PODSPACE_UPLOAD_IMAGE_TO_USERGROUP_NEW.replace('{userGroupHash}', uploadImageData.userGroupHash),
                         method: 'POST',
                         headers: {
-                            'Authorization': 'Bearer ' + sdkParams.token,
+                            'Authorization': 'Bearer ' + app.sdkParams.token,
                         },
                         data: uploadImageData,
                         uniqueId: uploadUniqueId
@@ -6665,7 +6655,7 @@ function Chat(params) {
                                     });
                                 }
                             } catch (e) {
-                                sdkParams.consoleLogging && console.log(e)
+                                app.sdkParams.consoleLogging && console.log(e)
                                 callback({
                                     hasError: true,
                                     errorCode: 6300,
@@ -6683,7 +6673,7 @@ function Chat(params) {
                     return {
                         uniqueId: uploadUniqueId,
                         threadId: uploadThreadId,
-                        participant: store.user(),
+                        participant: app.store.user.get(),
                         content: {
                             caption: params.content,
                             file: {
@@ -6727,7 +6717,7 @@ function Chat(params) {
                 fileUniqueId = (typeof params.fileUniqueId == 'string' && params.fileUniqueId.length > 0) ? params.fileUniqueId : Utility.generateUUID();
             if (params) {
                 if (!params.userGroupHash || params.userGroupHash.length === 0 || typeof (params.userGroupHash) !== 'string') {
-                    chatEvents.fireEvent('error', {
+                    app.chatEvents.fireEvent('error', {
                         code: 6304,
                         message: CHAT_ERRORS[6304]
                     });
@@ -6744,7 +6734,7 @@ function Chat(params) {
                     putInChatUploadQueue({
                         message: {
                             chatMessageVOType: chatMessageVOTypes.MESSAGE,
-                            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+                            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
                             messageType: (params.messageType && typeof params.messageType.toUpperCase() !== 'undefined' && chatMessageTypes[params.messageType.toUpperCase()] > 0) ? chatMessageTypes[params.messageType.toUpperCase()] : 1,
                             subjectId: params.threadId,
                             repliedTo: params.repliedTo,
@@ -6874,35 +6864,35 @@ function Chat(params) {
             //     cacheDeletingInProgress = true;
             //     db.threads
             //         .where('owner')
-            //         .equals(parseInt(store.user().id))
+            //         .equals(parseInt(app.store.user.get().id))
             //         .delete()
             //         .then(function () {
             //             consoleLogging && console.log('Threads table deleted');
             //
             //             db.contacts
             //                 .where('owner')
-            //                 .equals(parseInt(store.user().id))
+            //                 .equals(parseInt(app.store.user.get().id))
             //                 .delete()
             //                 .then(function () {
             //                     consoleLogging && console.log('Contacts table deleted');
             //
             //                     db.messages
             //                         .where('owner')
-            //                         .equals(parseInt(store.user().id))
+            //                         .equals(parseInt(app.store.user.get().id))
             //                         .delete()
             //                         .then(function () {
             //                             consoleLogging && console.log('Messages table deleted');
             //
             //                             db.participants
             //                                 .where('owner')
-            //                                 .equals(parseInt(store.user().id))
+            //                                 .equals(parseInt(app.store.user.get().id))
             //                                 .delete()
             //                                 .then(function () {
             //                                     consoleLogging && console.log('Participants table deleted');
             //
             //                                     db.messageGaps
             //                                         .where('owner')
-            //                                         .equals(parseInt(store.user().id))
+            //                                         .equals(parseInt(app.store.user.get().id))
             //                                         .delete()
             //                                         .then(function () {
             //                                             consoleLogging && console.log('MessageGaps table deleted');
@@ -6914,7 +6904,7 @@ function Chat(params) {
             //                 });
             //         })
             //         .catch(function (error) {
-            //             chatEvents.fireEvent('error', {
+            //             app.chatEvents.fireEvent('error', {
             //                 code: error.code,
             //                 message: error.message,
             //                 error: error
@@ -7033,7 +7023,7 @@ function Chat(params) {
             //     }
             //
             //     if (uniqueIds.length) {
-            //         messenger().sendMessage({
+            //         app.messenger.sendMessage({
             //             chatMessageVOType: chatMessageVOTypes.GET_HISTORY,
             //             content: {
             //                 uniqueIds: uniqueIds
@@ -7197,7 +7187,7 @@ function Chat(params) {
                 var waitQueueUniqueId = (typeof item.uniqueId == 'string') ? item.uniqueId : (Array.isArray(item.uniqueId)) ? item.uniqueId[0] : null;
 
                 if (waitQueueUniqueId != null) {
-                    sdkParams.consoleLogging && console.log('Forced to use in memory cache');
+                    app.sdkParams.consoleLogging && console.log('Forced to use in memory cache');
                     item.uniqueId = waitQueueUniqueId;
                     chatWaitQueue.push(item);
                     callback && callback();
@@ -7212,13 +7202,13 @@ function Chat(params) {
                     var time = new Date().getTime();
                     var message = formatDataToMakeMessage(decryptedEnqueuedMessage.threadId, {
                         uniqueId: decryptedEnqueuedMessage.uniqueId,
-                        ownerId: store.user().id,
+                        ownerId: app.store.user.get().id,
                         message: decryptedEnqueuedMessage.content,
                         metadata: decryptedEnqueuedMessage.metadata,
                         systemMetadata: decryptedEnqueuedMessage.systemMetadata,
                         replyInfo: decryptedEnqueuedMessage.replyInfo,
                         forwardInfo: decryptedEnqueuedMessage.forwardInfo,
-                        participant: store.user(),
+                        participant: app.store.user.get(),
                         time: time,
                         timeNanos: (time % 1000) * 1000000
                     });
@@ -7287,7 +7277,7 @@ function Chat(params) {
 
                             message.metadata = JSON.stringify(finalMetaData);
                         } catch (e) {
-                            sdkParams.consoleLogging && console.log(e);
+                            app.sdkParams.consoleLogging && console.log(e);
                         }
                         deleteFromChatUploadQueue(uploadQueue[i],
                             function () {
@@ -7334,17 +7324,17 @@ function Chat(params) {
                     if (db) {
                         db.threads
                             .where('owner')
-                            .equals(parseInt(store.user().id))
+                            .equals(parseInt(app.store.user.get().id))
                             .count()
                             .then(function (threadsCount) {
                                 if (threadsCount > 0) {
                                     clearCacheDatabasesOfUser(function () {
-                                        sdkParams.consoleLogging && console.log('All cache databases have been cleared.');
+                                        app.sdkParams.consoleLogging && console.log('All cache databases have been cleared.');
                                     });
                                 }
                             })
                             .catch(function (e) {
-                                sdkParams.consoleLogging && console.log(e);
+                                app.sdkParams.consoleLogging && console.log(e);
                             });
                     }
                 }
@@ -7375,10 +7365,10 @@ function Chat(params) {
         setRoleToUser = function (params, callback) {
             var setRoleData = {
                 chatMessageVOType: chatMessageVOTypes.SET_ROLE_TO_USER,
-                typeCode: sdkParams.generalTypeCode, //params.typeCode,
+                typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
                 content: [],
                 pushMsgType: 3,
-                token: sdkParams.token
+                token: app.sdkParams.token
             };
 
             if (params) {
@@ -7404,7 +7394,7 @@ function Chat(params) {
                 }
             }
 
-            return messenger().sendMessage(setRoleData, {
+            return app.messenger.sendMessage(setRoleData, {
                 onResult: function (result) {
                     callback && callback(result);
                 }
@@ -7414,10 +7404,10 @@ function Chat(params) {
         removeRoleFromUser = function (params, callback) {
             var setAdminData = {
                 chatMessageVOType: chatMessageVOTypes.REMOVE_ROLE_FROM_USER,
-                typeCode: sdkParams.generalTypeCode, //params.typeCode,
+                typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
                 content: [],
                 pushMsgType: 3,
-                token: sdkParams.token
+                token: app.sdkParams.token
             };
 
             if (params) {
@@ -7443,7 +7433,7 @@ function Chat(params) {
                 }
             }
 
-            return messenger().sendMessage(setAdminData, {
+            return app.messenger.sendMessage(setAdminData, {
                 onResult: function (result) {
                     callback && callback(result);
                 }
@@ -7451,15 +7441,15 @@ function Chat(params) {
         },
 
         unPinMessage = function (params, callback) {
-            return messenger().sendMessage({
+            return app.messenger.sendMessage({
                 chatMessageVOType: chatMessageVOTypes.UNPIN_MESSAGE,
-                typeCode: sdkParams.generalTypeCode, //params.typeCode,
+                typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
                 subjectId: params.messageId,
                 content: JSON.stringify({
                     'notifyAll': (typeof params.notifyAll === 'boolean') ? params.notifyAll : false
                 }),
                 pushMsgType: 3,
-                token: sdkParams.token
+                token: app.sdkParams.token
             }, {
                 onResult: function (result) {
                     callback && callback(result);
@@ -7483,7 +7473,7 @@ function Chat(params) {
                 fileExtension = params.file.name.split('.')
                     .pop();
 
-                chatEvents.fireEvent('fileUploadEvents', {
+                app.chatEvents.fireEvent('fileUploadEvents', {
                     threadId: params.threadId,
                     uniqueId: fileUniqueId,
                     state: 'NOT_STARTED',
@@ -7524,7 +7514,7 @@ function Chat(params) {
                 chatUploadHandlerResult.originalFileName = fileName;
                 callbacks && callbacks(chatUploadHandlerResult, metadata, fileType, fileExtension);
             } else {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 6302,
                     message: CHAT_ERRORS[6302]
                 });
@@ -7532,7 +7522,7 @@ function Chat(params) {
             return {
                 uniqueId: fileUniqueId,
                 threadId: params.threadId,
-                participant: store.user(),
+                participant: app.store.user.get(),
                 content: {
                     caption: params.content,
                     file: {
@@ -7604,7 +7594,7 @@ function Chat(params) {
                 method: 'GET',
                 data: data,
                 headers: {
-                    'Api-Key': sdkParams.mapApiKey
+                    'Api-Key': app.sdkParams.mapApiKey
                 }
             };
 
@@ -7623,7 +7613,7 @@ function Chat(params) {
                     callback && callback(returnData);
 
                 } else {
-                    chatEvents.fireEvent('error', {
+                    app.chatEvents.fireEvent('error', {
                         code: result.errorCode,
                         message: result.errorMessage,
                         error: result
@@ -7656,7 +7646,7 @@ function Chat(params) {
                 method: 'GET',
                 data: data,
                 headers: {
-                    'Api-Key': sdkParams.mapApiKey
+                    'Api-Key': app.sdkParams.mapApiKey
                 }
             };
 
@@ -7675,7 +7665,7 @@ function Chat(params) {
                     callback && callback(returnData);
 
                 } else {
-                    chatEvents.fireEvent('error', {
+                    app.chatEvents.fireEvent('error', {
                         code: result.errorCode,
                         message: result.errorMessage,
                         error: result
@@ -7698,7 +7688,7 @@ function Chat(params) {
                     if (parseFloat(params.origin.lat) > 0 && parseFloat(params.origin.lng)) {
                         data.origin = params.origin.lat + ',' + parseFloat(params.origin.lng);
                     } else {
-                        sdkParams.consoleLogging && console.log('No origin has been selected!');
+                        app.sdkParams.consoleLogging && console.log('No origin has been selected!');
                     }
                 }
 
@@ -7706,7 +7696,7 @@ function Chat(params) {
                     if (parseFloat(params.destination.lat) > 0 && parseFloat(params.destination.lng)) {
                         data.destination = params.destination.lat + ',' + parseFloat(params.destination.lng);
                     } else {
-                        sdkParams.consoleLogging && console.log('No destination has been selected!');
+                        app.sdkParams.consoleLogging && console.log('No destination has been selected!');
                     }
                 }
 
@@ -7718,7 +7708,7 @@ function Chat(params) {
                 method: 'GET',
                 data: data,
                 headers: {
-                    'Api-Key': sdkParams.mapApiKey
+                    'Api-Key': app.sdkParams.mapApiKey
                 }
             };
 
@@ -7737,7 +7727,7 @@ function Chat(params) {
                     callback && callback(returnData);
 
                 } else {
-                    chatEvents.fireEvent('error', {
+                    app.chatEvents.fireEvent('error', {
                         code: result.errorCode,
                         message: result.errorMessage,
                         error: result
@@ -7781,7 +7771,7 @@ function Chat(params) {
                         data.center = params.center.lat + ',' + parseFloat(params.center.lng);
                     } else {
                         hasError = true;
-                        chatEvents.fireEvent('error', {
+                        app.chatEvents.fireEvent('error', {
                             code: 6700,
                             message: CHAT_ERRORS[6700],
                             error: undefined
@@ -7789,14 +7779,14 @@ function Chat(params) {
                     }
                 } else {
                     hasError = true;
-                    chatEvents.fireEvent('error', {
+                    app.chatEvents.fireEvent('error', {
                         code: 6700,
                         message: CHAT_ERRORS[6700],
                         error: undefined
                     });
                 }
 
-                data.key = sdkParams.mapApiKey;
+                data.key = app.sdkParams.mapApiKey;
             }
 
             var keys = Object.keys(data);
@@ -7828,10 +7818,10 @@ function Chat(params) {
 
         //TODO Change Node Version
         getImageFormUrl = function (url, uniqueId, callback) {
-            sdkParams.getImageFromLinkObjects[uniqueId] = new Image();
-            sdkParams.getImageFromLinkObjects[uniqueId].setAttribute('crossOrigin', 'anonymous');
+            app.sdkParams.getImageFromLinkObjects[uniqueId] = new Image();
+            app.sdkParams.getImageFromLinkObjects[uniqueId].setAttribute('crossOrigin', 'anonymous');
 
-            sdkParams.getImageFromLinkObjects[uniqueId].onload = function () {
+            app.sdkParams.getImageFromLinkObjects[uniqueId].onload = function () {
                 var canvas = document.createElement("canvas");
                 canvas.width = this.width;
                 canvas.height = this.height;
@@ -7852,11 +7842,11 @@ function Chat(params) {
                     ia[i] = byteString.charCodeAt(i);
                 }
 
-                delete sdkParams.getImageFromLinkObjects[uniqueId];
+                delete app.sdkParams.getImageFromLinkObjects[uniqueId];
                 return callback(new Blob([ia], {type: mimeString}));
             }
 
-            sdkParams.getImageFromLinkObjects[uniqueId].src = url;
+            app.sdkParams.getImageFromLinkObjects[uniqueId].src = url;
         };
 
     /******************************************************
@@ -7864,21 +7854,21 @@ function Chat(params) {
      ******************************************************/
     let publicized = {};
 
-    publicized.on = chatEvents.on;
-    publicized.off = chatEvents.off;
+    publicized.on = app.chatEvents.on;
+    publicized.off = app.chatEvents.off;
 
     publicized.getPeerId = function () {
         return peerId;
     };
 
     publicized.getCurrentUser = function () {
-        return store.user();
+        return app.store.user.get();
     };
 
     publicized.getUserInfo = function (callback) {
-        return messenger().sendMessage({
+        return app.messenger.sendMessage({
             chatMessageVOType: chatMessageVOTypes.USER_INFO,
-            typeCode: sdkParams.generalTypeCode
+            typeCode: app.sdkParams.generalTypeCode
         }, {
             onResult: function (result) {
                 var returnData = {
@@ -7913,7 +7903,7 @@ function Chat(params) {
         return getHistory({
             threadId: params.threadId,
             allMentioned: true,
-            typeCode: sdkParams.generalTypeCode,//params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode,//params.typeCode,
             count: params.count || 25,
             offset: params.offset || 0,
             cache: false,
@@ -7928,7 +7918,7 @@ function Chat(params) {
         return getHistory({
             threadId: params.threadId,
             unreadMentioned: true,
-            typeCode: sdkParams.generalTypeCode,//params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode,//params.typeCode,
             count: params.count || 25,
             offset: params.offset || 0,
             cache: false,
@@ -7940,14 +7930,14 @@ function Chat(params) {
     };
 
     publicized.getAllUnreadMessagesCount = function (params, callback) {
-        return messenger().sendMessage({
+        return app.messenger.sendMessage({
             chatMessageVOType: chatMessageVOTypes.ALL_UNREAD_MESSAGE_COUNT,
-            typeCode: sdkParams.generalTypeCode,//params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode,//params.typeCode,
             content: JSON.stringify({
                 'mute': (typeof params.countMuteThreads === 'boolean') ? params.countMuteThreads : false
             }),
             pushMsgType: 3,
-            token: sdkParams.token
+            token: app.sdkParams.token
         }, {
             onResult: function (result) {
                 callback && callback(result);
@@ -8011,14 +8001,14 @@ function Chat(params) {
 
         var sendMessageParams = {
             chatMessageVOType: chatMessageVOTypes.GET_CONTACTS,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             content: content
         };
 
         /**
          * Retrieve Contacts from server
          */
-        return messenger().sendMessage(sendMessageParams, {
+        return app.messenger.sendMessage(sendMessageParams, {
             onResult: function (result) {
                 var returnData = {
                     hasError: result.hasError,
@@ -8058,7 +8048,7 @@ function Chat(params) {
                 callback = undefined;
 
                 if (!returnData.hasError && returnCache) {
-                    chatEvents.fireEvent('contactEvents', {
+                    app.chatEvents.fireEvent('contactEvents', {
                         type: 'CONTACTS_LIST_CHANGE',
                         result: returnData.result
                     });
@@ -8067,7 +8057,7 @@ function Chat(params) {
         });
     };
 
-    publicized.getThreadParticipants = getThreadParticipants;
+    publicized.getThreadParticipants = threadParticipantsMethods.getThreadParticipants;
 
     /**
      * Get Thread Admins
@@ -8081,7 +8071,7 @@ function Chat(params) {
      * @return {object} Instant Response
      */
     publicized.getThreadAdmins = function (params, callback) {
-        getThreadParticipants({
+        threadParticipantsMethods.getThreadParticipants({
             threadId: params.threadId,
             admin: true,
             cache: false
@@ -8097,7 +8087,7 @@ function Chat(params) {
          */
         var sendMessageParams = {
             chatMessageVOType: chatMessageVOTypes.ADD_PARTICIPANT,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             content: []
         };
         if (params) {
@@ -8130,7 +8120,7 @@ function Chat(params) {
             }
         }
 
-        return messenger().sendMessage(sendMessageParams, {
+        return app.messenger.sendMessage(sendMessageParams, {
             onResult: function (result) {
                 var returnData = {
                     hasError: result.hasError,
@@ -8161,7 +8151,7 @@ function Chat(params) {
 
         var sendMessageParams = {
             chatMessageVOType: chatMessageVOTypes.REMOVE_PARTICIPANT,
-            typeCode: sdkParams.generalTypeCode //params.typeCode
+            typeCode: app.sdkParams.generalTypeCode //params.typeCode
         };
 
         if (params) {
@@ -8184,7 +8174,7 @@ function Chat(params) {
             }
         }
 
-        return messenger().sendMessage(sendMessageParams, {
+        return app.messenger.sendMessage(sendMessageParams, {
             onResult: function (result) {
                 var returnData = {
                     hasError: result.hasError,
@@ -8218,7 +8208,7 @@ function Chat(params) {
 
         var sendMessageParams = {
             chatMessageVOType: chatMessageVOTypes.LEAVE_THREAD,
-            typeCode: sdkParams.generalTypeCode//params.typeCode
+            typeCode: app.sdkParams.generalTypeCode//params.typeCode
         };
 
         if (params) {
@@ -8237,7 +8227,7 @@ function Chat(params) {
             }
         }
 
-        return messenger().sendMessage(sendMessageParams, {
+        return app.messenger.sendMessage(sendMessageParams, {
             onResult: function (result) {
                 var returnData = {
                     hasError: result.hasError,
@@ -8323,7 +8313,7 @@ function Chat(params) {
                 try {
                     content.metadata = JSON.stringify(params.metadata);
                 } catch (e) {
-                    sdkParams.consoleLogging && console.log(e);
+                    app.sdkParams.consoleLogging && console.log(e);
                 }
             }
 
@@ -8371,11 +8361,11 @@ function Chat(params) {
 
         var sendMessageParams = {
             chatMessageVOType: chatMessageVOTypes.CREATE_THREAD,
-            typeCode: sdkParams.generalTypeCode,//params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode,//params.typeCode,
             content: content
         };
 
-        return messenger().sendMessage(sendMessageParams, {
+        return app.messenger.sendMessage(sendMessageParams, {
             onResult: function (result) {
                 var returnData = {
                     hasError: result.hasError,
@@ -8414,7 +8404,7 @@ function Chat(params) {
                 try {
                     content.metadata = JSON.stringify(params.metadata);
                 } catch (e) {
-                    sdkParams.consoleLogging && console.log(e);
+                    app.sdkParams.consoleLogging && console.log(e);
                 }
             }
 
@@ -8462,11 +8452,11 @@ function Chat(params) {
 
         var sendMessageParams = {
             chatMessageVOType: chatMessageVOTypes.CREATE_THREAD,
-            typeCode: sdkParams.generalTypeCode,//params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode,//params.typeCode,
             content: content
         };
 
-        return messenger().sendMessage(sendMessageParams, {
+        return app.messenger.sendMessage(sendMessageParams, {
             onResult: function (result) {
                 var returnData = {
                     hasError: result.hasError,
@@ -8512,7 +8502,7 @@ function Chat(params) {
         putInChatSendQueue({
             message: {
                 chatMessageVOType: chatMessageVOTypes.REPLY_PRIVATELY,
-                typeCode: sdkParams.generalTypeCode,
+                typeCode: app.sdkParams.generalTypeCode,
                 messageType: 1,
                 subjectId: params.threadId,
                 repliedTo: params.repliedTo,
@@ -8528,7 +8518,7 @@ function Chat(params) {
         return {
             uniqueId: uniqueId,
             threadId: params.threadId,
-            participant: store.user(),
+            participant: app.store.user.get(),
             content: sendContentParams
         };
     }
@@ -8546,7 +8536,7 @@ function Chat(params) {
         putInChatSendQueue({
             message: {
                 chatMessageVOType: chatMessageVOTypes.MESSAGE,
-                typeCode: sdkParams.generalTypeCode, //params.typeCode,
+                typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
                 messageType: (params.messageType && typeof params.messageType.toUpperCase() !== 'undefined' && chatMessageTypes[params.messageType.toUpperCase()] > 0) ? chatMessageTypes[params.messageType.toUpperCase()] : chatMessageTypes.TEXT,
                 subjectId: params.threadId,
                 repliedTo: params.repliedTo,
@@ -8564,7 +8554,7 @@ function Chat(params) {
         return {
             uniqueId: uniqueId,
             threadId: params.threadId,
-            participant: store.user(),
+            participant: app.store.user.get(),
             content: params.content
         };
     };
@@ -8572,9 +8562,9 @@ function Chat(params) {
     publicized.sendBotMessage = function (params, callbacks) {
         var metadata = {};
 
-        return messenger().sendMessage({
+        return app.messenger.sendMessage({
             chatMessageVOType: chatMessageVOTypes.BOT_MESSAGE,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             subjectId: params.messageId,
             content: params.content,
             uniqueId: params.uniqueId,
@@ -8637,16 +8627,16 @@ function Chat(params) {
                 try {
                     content.metadata = JSON.stringify(params.metadata);
                 } catch (e) {
-                    sdkParams.consoleLogging && console.log(e);
+                    app.sdkParams.consoleLogging && console.log(e);
                 }
             }
         }
         var sendMessageParams = {
             chatMessageVOType: chatMessageVOTypes.CREATE_THREAD,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             content: content
         };
-        return messenger().sendMessage(sendMessageParams, {
+        return app.messenger.sendMessage(sendMessageParams, {
             onResult: function (result) {
                 var returnData = {
                     hasError: result.hasError,
@@ -8703,7 +8693,7 @@ function Chat(params) {
                     data.center = params.mapCenter.lat + ',' + parseFloat(params.mapCenter.lng);
                 } else {
                     hasError = true;
-                    chatEvents.fireEvent('error', {
+                    app.chatEvents.fireEvent('error', {
                         code: 6700,
                         message: CHAT_ERRORS[6700],
                         error: undefined
@@ -8711,13 +8701,13 @@ function Chat(params) {
                 }
             } else {
                 hasError = true;
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 6700,
                     message: CHAT_ERRORS[6700],
                     error: undefined
                 });
             }
-            data.key = sdkParams.mapApiKey;
+            data.key = app.sdkParams.mapApiKey;
             data.marker = 'red';
         }
         var keys = Object.keys(data);
@@ -8755,19 +8745,19 @@ function Chat(params) {
         return {
             uniqueId: fileUniqueId,
             threadId: params.threadId,
-            participant: store.user(),
+            participant: app.store.user.get(),
             cancel: function () {
-                if (typeof sdkParams.getImageFromLinkObjects !== 'undefined' && sdkParams.getImageFromLinkObjects.hasOwnProperty(fileUniqueId)) {
-                    sdkParams.getImageFromLinkObjects[fileUniqueId].onload = function () {
+                if (typeof app.sdkParams.getImageFromLinkObjects !== 'undefined' && app.sdkParams.getImageFromLinkObjects.hasOwnProperty(fileUniqueId)) {
+                    app.sdkParams.getImageFromLinkObjects[fileUniqueId].onload = function () {
                     };
-                    delete sdkParams.getImageFromLinkObjects[fileUniqueId];
-                    sdkParams.consoleLogging && console.log(`"${fileUniqueId}" - Downloading Location Map has been canceled!`);
+                    delete app.sdkParams.getImageFromLinkObjects[fileUniqueId];
+                    app.sdkParams.consoleLogging && console.log(`"${fileUniqueId}" - Downloading Location Map has been canceled!`);
                 }
 
                 cancelFileUpload({
                     uniqueId: fileUniqueId
                 }, function () {
-                    sdkParams.consoleLogging && console.log(`"${fileUniqueId}" - Sending Location Message has been canceled!`);
+                    app.sdkParams.consoleLogging && console.log(`"${fileUniqueId}" - Sending Location Message has been canceled!`);
                 });
             }
         };
@@ -8798,7 +8788,7 @@ function Chat(params) {
 
         var clearHistoryParams = {
             chatMessageVOType: chatMessageVOTypes.CLEAR_HISTORY,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode
         };
 
         if (params) {
@@ -8807,7 +8797,7 @@ function Chat(params) {
             }
         }
 
-        return messenger().sendMessage(clearHistoryParams, {
+        return app.messenger.sendMessage(clearHistoryParams, {
             onResult: function (result) {
                 var returnData = {
                     hasError: result.hasError,
@@ -8848,9 +8838,9 @@ function Chat(params) {
     publicized.cancelFileDownload = cancelFileDownload;
 
     publicized.editMessage = function (params, callback) {
-        return messenger().sendMessage({
+        return app.messenger.sendMessage({
             chatMessageVOType: chatMessageVOTypes.EDIT_MESSAGE,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             messageType: params.messageType,
             subjectId: params.messageId,
             repliedTo: params.repliedTo,
@@ -8883,9 +8873,9 @@ function Chat(params) {
     };
 
     publicized.deleteMessage = function (params, callback) {
-        return messenger().sendMessage({
+        return app.messenger.sendMessage({
             chatMessageVOType: chatMessageVOTypes.DELETE_MESSAGE,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             subjectId: params.messageId,
             uniqueId: params.uniqueId,
             content: JSON.stringify({
@@ -8928,7 +8918,7 @@ function Chat(params) {
             var uniqueId = Utility.generateUUID();
             uniqueIdsList.push(uniqueId);
 
-            store.messagesCallbacks[uniqueId] = function (result) {
+            app.store.messagesCallbacks[uniqueId] = function (result) {
                 var returnData = {
                     hasError: result.hasError,
                     cache: false,
@@ -8954,9 +8944,9 @@ function Chat(params) {
             };
         }
 
-        return messenger().sendMessage({
+        return app.messenger.sendMessage({
             chatMessageVOType: chatMessageVOTypes.DELETE_MESSAGE,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             content: {
                 uniqueIds: uniqueIdsList,
                 ids: messageIdsList,
@@ -8978,7 +8968,7 @@ function Chat(params) {
         putInChatSendQueue({
             message: {
                 chatMessageVOType: chatMessageVOTypes.MESSAGE,
-                typeCode: sdkParams.generalTypeCode, //params.typeCode,
+                typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
                 messageType: 1,
                 subjectId: params.threadId,
                 repliedTo: params.repliedTo,
@@ -8996,7 +8986,7 @@ function Chat(params) {
         return {
             uniqueId: uniqueId,
             threadId: params.threadId,
-            participant: store.user(),
+            participant: app.store.user.get(),
             content: params.content
         };
     };
@@ -9006,7 +8996,7 @@ function Chat(params) {
             fileUploadParams = {},
             fileUniqueId = Utility.generateUUID();
         if (!params.userGroupHash || params.userGroupHash.length === 0 || typeof (params.userGroupHash) !== 'string') {
-            chatEvents.fireEvent('error', {
+            app.chatEvents.fireEvent('error', {
                 code: 6304,
                 message: CHAT_ERRORS[6304]
             });
@@ -9023,7 +9013,7 @@ function Chat(params) {
             putInChatUploadQueue({
                 message: {
                     chatMessageVOType: chatMessageVOTypes.MESSAGE,
-                    typeCode: sdkParams.generalTypeCode, //params.typeCode,
+                    typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
                     messageType: (params.messageType && typeof params.messageType.toUpperCase() !== 'undefined' && chatMessageTypes[params.messageType.toUpperCase()] > 0) ? chatMessageTypes[params.messageType.toUpperCase()] : 1,
                     subjectId: params.threadId,
                     repliedTo: params.repliedTo,
@@ -9082,7 +9072,7 @@ function Chat(params) {
             fileUploadParams = {},
             fileUniqueId = Utility.generateUUID();
         if (!params.userGroupHash || params.userGroupHash.length === 0 || typeof (params.userGroupHash) !== 'string') {
-            chatEvents.fireEvent('error', {
+            app.chatEvents.fireEvent('error', {
                 code: 6304,
                 message: CHAT_ERRORS[6304]
             });
@@ -9111,7 +9101,7 @@ function Chat(params) {
             putInChatUploadQueue({
                 message: {
                     chatMessageVOType: chatMessageVOTypes.REPLY_PRIVATELY,
-                    typeCode: sdkParams.generalTypeCode, //params.typeCode,
+                    typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
                     messageType: (params.messageType && typeof params.messageType.toUpperCase() !== 'undefined' && chatMessageTypes[params.messageType.toUpperCase()] > 0) ? chatMessageTypes[params.messageType.toUpperCase()] : 1,
                     subjectId: params.threadId,
                     repliedTo: params.repliedTo,
@@ -9171,38 +9161,38 @@ function Chat(params) {
             uniqueIdsList = [];
 
         for (var i in messageIdsList) {
-            if (!store.threadCallbacks[threadId]) {
-                store.threadCallbacks[threadId] = {};
+            if (!app.store.threadCallbacks[threadId]) {
+                app.store.threadCallbacks[threadId] = {};
             }
 
             var uniqueId = Utility.generateUUID();
             uniqueIdsList.push(uniqueId);
 
-            store.threadCallbacks[threadId][uniqueId] = {};
+            app.store.threadCallbacks[threadId][uniqueId] = {};
 
-            store.sendMessageCallbacks[uniqueId] = {};
+            app.store.sendMessageCallbacks[uniqueId] = {};
 
             if (callbacks.onSent) {
-                store.sendMessageCallbacks[uniqueId].onSent = callbacks.onSent;
-                store.threadCallbacks[threadId][uniqueId].onSent = false;
-                store.threadCallbacks[threadId][uniqueId].uniqueId = uniqueId;
+                app.store.sendMessageCallbacks[uniqueId].onSent = callbacks.onSent;
+                app.store.threadCallbacks[threadId][uniqueId].onSent = false;
+                app.store.threadCallbacks[threadId][uniqueId].uniqueId = uniqueId;
             }
 
             if (callbacks.onSeen) {
-                store.sendMessageCallbacks[uniqueId].onSeen = callbacks.onSeen;
-                store.threadCallbacks[threadId][uniqueId].onSeen = false;
+                app.store.sendMessageCallbacks[uniqueId].onSeen = callbacks.onSeen;
+                app.store.threadCallbacks[threadId][uniqueId].onSeen = false;
             }
 
             if (callbacks.onDeliver) {
-                store.sendMessageCallbacks[uniqueId].onDeliver = callbacks.onDeliver;
-                store.threadCallbacks[threadId][uniqueId].onDeliver = false;
+                app.store.sendMessageCallbacks[uniqueId].onDeliver = callbacks.onDeliver;
+                app.store.threadCallbacks[threadId][uniqueId].onDeliver = false;
             }
         }
 
         putInChatSendQueue({
             message: {
                 chatMessageVOType: chatMessageVOTypes.FORWARD_MESSAGE,
-                typeCode: sdkParams.generalTypeCode,//params.typeCode,
+                typeCode: app.sdkParams.generalTypeCode,//params.typeCode,
                 subjectId: params.threadId,
                 repliedTo: params.repliedTo,
                 content: messageIdsList,
@@ -9230,9 +9220,9 @@ function Chat(params) {
         if (parseInt(params.threadId) > 0) {
             var threadId = params.threadId;
         }
-        sdkParams.isTypingInterval && clearInterval(sdkParams.isTypingInterval);
+        app.sdkParams.isTypingInterval && clearInterval(app.sdkParams.isTypingInterval);
 
-        sdkParams.isTypingInterval = setInterval(function () {
+        app.sdkParams.isTypingInterval = setInterval(function () {
             sendSystemMessage({
                 content: JSON.stringify({
                     type: systemMessageTypes.IS_TYPING
@@ -9240,21 +9230,21 @@ function Chat(params) {
                 threadId: threadId,
                 uniqueId: uniqueId
             });
-        }, sdkParams.systemMessageIntervalPitch);
+        }, app.sdkParams.systemMessageIntervalPitch);
     };
 
     publicized.stopTyping = function () {
-        sdkParams.isTypingInterval && clearInterval(sdkParams.isTypingInterval);
+        app.sdkParams.isTypingInterval && clearInterval(app.sdkParams.isTypingInterval);
     };
 
     publicized.getMessageDeliveredList = function (params, callback) {
 
         var deliveryListData = {
             chatMessageVOType: chatMessageVOTypes.GET_MESSAGE_DELIVERY_PARTICIPANTS,
-            typeCode: sdkParams.generalTypeCode,//params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode,//params.typeCode,
             content: {},
             pushMsgType: 3,
-            token: sdkParams.token,
+            token: app.sdkParams.token,
             timeout: params.timeout
         };
 
@@ -9264,7 +9254,7 @@ function Chat(params) {
             }
         }
 
-        return messenger().sendMessage(deliveryListData, {
+        return app.messenger.sendMessage(deliveryListData, {
             onResult: function (result) {
                 if (typeof result.result == 'object') {
                     for (var i = 0; i < result.result.length; i++) {
@@ -9279,10 +9269,10 @@ function Chat(params) {
     publicized.getMessageSeenList = function (params, callback) {
         var seenListData = {
             chatMessageVOType: chatMessageVOTypes.GET_MESSAGE_SEEN_PARTICIPANTS,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             content: {},
             pushMsgType: 3,
-            token: sdkParams.token,
+            token: app.sdkParams.token,
             timeout: params.timeout
         };
 
@@ -9298,7 +9288,7 @@ function Chat(params) {
             }
         }
 
-        return messenger().sendMessage(seenListData, {
+        return app.messenger.sendMessage(seenListData, {
             onResult: function (result) {
                 if (typeof result.result == 'object') {
                     for (var i = 0; i < result.result.length; i++) {
@@ -9315,13 +9305,13 @@ function Chat(params) {
     publicized.updateChatProfile = updateChatProfile;
 
     publicized.muteThread = function (params, callback) {
-        return messenger().sendMessage({
+        return app.messenger.sendMessage({
             chatMessageVOType: chatMessageVOTypes.MUTE_THREAD,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             subjectId: params.threadId,
             content: {},
             pushMsgType: 3,
-            token: sdkParams.token
+            token: app.sdkParams.token
         }, {
             onResult: function (result) {
                 callback && callback(result);
@@ -9330,13 +9320,13 @@ function Chat(params) {
     };
 
     publicized.unMuteThread = function (params, callback) {
-        return messenger().sendMessage({
+        return app.messenger.sendMessage({
             chatMessageVOType: chatMessageVOTypes.UNMUTE_THREAD,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             subjectId: params.threadId,
             content: {},
             pushMsgType: 3,
-            token: sdkParams.token
+            token: app.sdkParams.token
         }, {
             onResult: function (result) {
                 callback && callback(result);
@@ -9345,13 +9335,13 @@ function Chat(params) {
     };
 
     publicized.closeThread = function (params, callback) {
-        return messenger().sendMessage({
+        return app.messenger.sendMessage({
             chatMessageVOType: chatMessageVOTypes.CLOSE_THREAD,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             subjectId: params.threadId,
             content: {},
             pushMsgType: 3,
-            token: sdkParams.token
+            token: app.sdkParams.token
         }, {
             onResult: function (result) {
                 callback && callback(result);
@@ -9362,17 +9352,17 @@ function Chat(params) {
     publicized.joinPublicThread = function (params, callback) {
         var joinThreadData = {
             chatMessageVOType: chatMessageVOTypes.JOIN_THREAD,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             content: '',
             pushMsgType: 3,
-            token: sdkParams.token
+            token: app.sdkParams.token
         };
         if (params) {
             if (typeof params.uniqueName === 'string' && params.uniqueName.length > 0) {
                 joinThreadData.content = params.uniqueName;
             }
         }
-        return messenger().sendMessage(joinThreadData, {
+        return app.messenger.sendMessage(joinThreadData, {
             onResult: function (result) {
                 callback && callback(result);
             }
@@ -9382,17 +9372,17 @@ function Chat(params) {
     publicized.isPublicThreadNameAvailable = function (params, callback) {
         var isNameAvailableData = {
             chatMessageVOType: chatMessageVOTypes.IS_NAME_AVAILABLE,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             content: '',
             pushMsgType: 3,
-            token: sdkParams.token
+            token: app.sdkParams.token
         };
         if (params) {
             if (typeof params.uniqueName === 'string' && params.uniqueName.length > 0) {
                 isNameAvailableData.content = params.uniqueName;
             }
         }
-        return messenger().sendMessage(isNameAvailableData, {
+        return app.messenger.sendMessage(isNameAvailableData, {
             onResult: function (result) {
                 callback && callback(result);
             }
@@ -9402,10 +9392,10 @@ function Chat(params) {
     publicized.changeThreadPrivacy = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.CHANGE_THREAD_PRIVACY,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             pushMsgType: 3,
             content: {},
-            token: sdkParams.token,
+            token: app.sdkParams.token,
             timeout: params.timeout
         };
 
@@ -9413,7 +9403,7 @@ function Chat(params) {
             if (parseInt(params.threadId) > 0) {
                 sendData.subjectId = +params.threadId;
             } else {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: `No Thread Id has been sent!`
                 });
@@ -9425,7 +9415,7 @@ function Chat(params) {
                     if (typeof params.uniqueName === 'string' && params.uniqueName.length > 0) {
                         sendData.content.uniqueName = params.uniqueName;
                     } else {
-                        chatEvents.fireEvent('error', {
+                        app.chatEvents.fireEvent('error', {
                             code: 999,
                             message: `Public Threads need a unique name! One must enter a unique name for this thread.`
                         });
@@ -9435,7 +9425,7 @@ function Chat(params) {
 
                 sendData.content.type = createThreadTypes[params.threadType.toUpperCase()];
             } else {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: `No thread type has been declared! Possible inputs are (${Object.keys(createThreadTypes).join(',')})`
                 });
@@ -9443,14 +9433,14 @@ function Chat(params) {
             }
 
         } else {
-            chatEvents.fireEvent('error', {
+            app.chatEvents.fireEvent('error', {
                 code: 999,
                 message: 'No params have been sent to Change thread Privacy!'
             });
             return;
         }
 
-        return messenger().sendMessage(sendData, {
+        return app.messenger.sendMessage(sendData, {
             onResult: function (result) {
                 callback && callback(result);
             }
@@ -9458,13 +9448,13 @@ function Chat(params) {
     };
 
     publicized.pinThread = function (params, callback) {
-        return messenger().sendMessage({
+        return app.messenger.sendMessage({
             chatMessageVOType: chatMessageVOTypes.PIN_THREAD,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             subjectId: params.threadId,
             content: {},
             pushMsgType: 3,
-            token: sdkParams.token
+            token: app.sdkParams.token
         }, {
             onResult: function (result) {
                 callback && callback(result);
@@ -9473,13 +9463,13 @@ function Chat(params) {
     };
 
     publicized.unPinThread = function (params, callback) {
-        return messenger().sendMessage({
+        return app.messenger.sendMessage({
             chatMessageVOType: chatMessageVOTypes.UNPIN_THREAD,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             subjectId: params.threadId,
             content: {},
             pushMsgType: 3,
-            token: sdkParams.token
+            token: app.sdkParams.token
         }, {
             onResult: function (result) {
                 callback && callback(result);
@@ -9490,7 +9480,7 @@ function Chat(params) {
     publicized.deleteThread = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.DELETE_MESSAGE_THREAD,
-            typeCode: sdkParams.generalTypeCode//params.typeCode
+            typeCode: app.sdkParams.generalTypeCode//params.typeCode
         };
 
         if (params) {
@@ -9498,14 +9488,14 @@ function Chat(params) {
                 sendData.subjectId = +params.threadId;
             }
         } else {
-            chatEvents.fireEvent('error', {
+            app.chatEvents.fireEvent('error', {
                 code: 999,
                 message: 'No params have been sent to Delete Thread!'
             });
             return;
         }
 
-        return messenger().sendMessage(sendData, {
+        return app.messenger.sendMessage(sendData, {
             onResult: function (result) {
                 var returnData = {
                     hasError: result.hasError,
@@ -9523,15 +9513,15 @@ function Chat(params) {
     };
 
     publicized.pinMessage = function (params, callback) {
-        return messenger().sendMessage({
+        return app.messenger.sendMessage({
             chatMessageVOType: chatMessageVOTypes.PIN_MESSAGE,
-            typeCode: sdkParams.generalTypeCode,//params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode,//params.typeCode,
             subjectId: params.messageId,
             content: JSON.stringify({
                 'notifyAll': (typeof params.notifyAll === 'boolean') ? params.notifyAll : false
             }),
             pushMsgType: 3,
-            token: sdkParams.token
+            token: app.sdkParams.token
         }, {
             onResult: function (result) {
                 callback && callback(result);
@@ -9544,9 +9534,9 @@ function Chat(params) {
     publicized.spamPrivateThread = function (params, callback) {
         var spamData = {
             chatMessageVOType: chatMessageVOTypes.SPAM_PV_THREAD,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             pushMsgType: 3,
-            token: sdkParams.token,
+            token: app.sdkParams.token,
             timeout: params.timeout
         };
 
@@ -9556,7 +9546,7 @@ function Chat(params) {
             }
         }
 
-        return messenger().sendMessage(spamData, {
+        return app.messenger.sendMessage(spamData, {
             onResult: function (result) {
                 callback && callback(result);
             }
@@ -9567,10 +9557,10 @@ function Chat(params) {
 
         var blockData = {
             chatMessageVOType: chatMessageVOTypes.BLOCK,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             content: {},
             pushMsgType: 3,
-            token: sdkParams.token,
+            token: app.sdkParams.token,
             timeout: params.timeout
         };
 
@@ -9588,7 +9578,7 @@ function Chat(params) {
             }
         }
 
-        return messenger().sendMessage(blockData, {
+        return app.messenger.sendMessage(blockData, {
             onResult: function (result) {
                 if (typeof result.result == 'object') {
                     result.result = formatDataToMakeBlockedUser(result.result);
@@ -9601,9 +9591,9 @@ function Chat(params) {
     publicized.unblock = function (params, callback) {
         var unblockData = {
             chatMessageVOType: chatMessageVOTypes.UNBLOCK,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             pushMsgType: 3,
-            token: sdkParams.token,
+            token: app.sdkParams.token,
             content: {},
             timeout: params.timeout
         };
@@ -9626,7 +9616,7 @@ function Chat(params) {
             }
         }
 
-        return messenger().sendMessage(unblockData, {
+        return app.messenger.sendMessage(unblockData, {
             onResult: function (result) {
                 if (typeof result.result == 'object') {
                     result.result = formatDataToMakeBlockedUser(result.result);
@@ -9657,14 +9647,14 @@ function Chat(params) {
 
         var getBlockedData = {
             chatMessageVOType: chatMessageVOTypes.GET_BLOCKED,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             content: content,
             pushMsgType: 3,
-            token: sdkParams.token,
+            token: app.sdkParams.token,
             timeout: params.timeout
         };
 
-        return messenger().sendMessage(getBlockedData, {
+        return app.messenger.sendMessage(getBlockedData, {
             onResult: function (result) {
                 var returnData = {
                     hasError: result.hasError,
@@ -9710,14 +9700,14 @@ function Chat(params) {
 
         var getNotSeenDurationData = {
             chatMessageVOType: chatMessageVOTypes.GET_NOT_SEEN_DURATION,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             content: content,
             pushMsgType: 3,
-            token: sdkParams.token,
+            token: app.sdkParams.token,
             timeout: params.timeout
         };
 
-        return messenger().sendMessage(getNotSeenDurationData, {
+        return app.messenger.sendMessage(getNotSeenDurationData, {
             onResult: function (result) {
                 var returnData = {
                     hasError: result.hasError,
@@ -9753,11 +9743,11 @@ function Chat(params) {
 
             if (typeof params.typeCode === 'string') {
                 data.typeCode = params.typeCode;
-            } else if (sdkParams.generalTypeCode) {
-                data.typeCode = sdkParams.generalTypeCode;
+            } else if (app.sdkParams.generalTypeCode) {
+                data.typeCode = app.sdkParams.generalTypeCode;
             }
 
-            data.ownerId = sdkParams.typeCodeOwnerId ? sdkParams.typeCodeOwnerId : (params.ownerId ? params.ownerId : undefined);
+            data.ownerId = app.sdkParams.typeCodeOwnerId ? app.sdkParams.typeCodeOwnerId : (params.ownerId ? params.ownerId : undefined);
 
             if (typeof params.cellphoneNumber === 'string') {
                 data.cellphoneNumber = params.cellphoneNumber;
@@ -9783,7 +9773,7 @@ function Chat(params) {
             method: 'POST',
             data: data,
             headers: {
-                '_token_': sdkParams.token,
+                '_token_': app.sdkParams.token,
                 '_token_issuer_': 1
             }
         };
@@ -9822,7 +9812,7 @@ function Chat(params) {
                 callback && callback(returnData);
 
             } else {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: result.errorCode,
                     message: result.errorMessage,
                     error: result
@@ -9836,8 +9826,8 @@ function Chat(params) {
             chatMessageVOType: chatMessageVOTypes.ADD_CONTACTS,
             content: {},
             pushMsgType: 3,
-            token: sdkParams.token,
-            typeCode: sdkParams.generalTypeCode
+            token: app.sdkParams.token,
+            typeCode: app.sdkParams.generalTypeCode
         },
             AddContactVO = {},
             firstNameList = [],
@@ -9898,7 +9888,7 @@ function Chat(params) {
 
         addContactsData.content = AddContactVO;
 
-        return messenger().sendMessage(addContactsData, {
+        return app.messenger.sendMessage(addContactsData, {
             onResult: function (result) {
                 // var responseData = JSON.parse(result.result.responseText);
 
@@ -9961,7 +9951,7 @@ function Chat(params) {
 
 
             //} else {
-              /*  chatEvents.fireEvent('error', {
+              /*  app.chatEvents.fireEvent('error', {
                     code: result.errorCode,
                     message: result.errorMessage,
                     error: result
@@ -9985,7 +9975,7 @@ function Chat(params) {
 
 
             if(!id) {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'ID is required for Deleting Contact!',
                     error: undefined
@@ -9993,7 +9983,7 @@ function Chat(params) {
             }
 
 
-        return messenger().sendMessage(data, {
+        return app.messenger.sendMessage(data, {
             onResult: function (result) {
             if (!result.hasError) {
                 // var responseData = JSON.parse(result.result.responseText);
@@ -10020,14 +10010,14 @@ function Chat(params) {
                             .equals(parseInt(params.id))
                             .delete()
                             .catch(function (error) {
-                                chatEvents.fireEvent('error', {
+                                app.chatEvents.fireEvent('error', {
                                     code: 6602,
                                     message: CHAT_ERRORS[6602],
                                     error: error
                                 });
                             });
                     } else {
-                        chatEvents.fireEvent('error', {
+                        app.chatEvents.fireEvent('error', {
                             code: 6601,
                             message: CHAT_ERRORS[6601],
                             error: null
@@ -10038,7 +10028,7 @@ function Chat(params) {
                 result.result.uniqueId = result.uniqueId;
                 callback && callback(result.result);
             } else {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: result.errorCode,
                     message: result.errorMessage,
                     error: result
@@ -10055,7 +10045,7 @@ function Chat(params) {
             if (parseInt(params.id) > 0) {
                 data.id = parseInt(params.id);
             } else {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'ID is required for Updating Contact!',
                     error: undefined
@@ -10065,7 +10055,7 @@ function Chat(params) {
             if (typeof params.firstName === 'string') {
                 data.firstName = params.firstName;
             } else {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'firstName is required for Updating Contact!'
                 });
@@ -10074,7 +10064,7 @@ function Chat(params) {
             if (typeof params.lastName === 'string') {
                 data.lastName = params.lastName;
             } else {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'lastName is required for Updating Contact!'
                 });
@@ -10083,7 +10073,7 @@ function Chat(params) {
             if (typeof params.cellphoneNumber === 'string') {
                 data.cellphoneNumber = params.cellphoneNumber;
             } else {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'cellphoneNumber is required for Updating Contact!'
                 });
@@ -10092,7 +10082,7 @@ function Chat(params) {
             if (typeof params.email === 'string') {
                 data.email = params.email;
             } else {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'email is required for Updating Contact!'
                 });
@@ -10107,7 +10097,7 @@ function Chat(params) {
             method: 'GET',
             data: data,
             headers: {
-                '_token_': sdkParams.token,
+                '_token_': app.sdkParams.token,
                 '_token_issuer_': 1
             }
         };
@@ -10145,7 +10135,7 @@ function Chat(params) {
                 callback && callback(returnData);
 
             } else {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: result.errorCode,
                     message: result.errorMessage,
                     error: result
@@ -10161,7 +10151,7 @@ function Chat(params) {
             if (parseInt(params.id) > 0) {
                 data.id = parseInt(params.id);
             } else {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'ID is required for Deleting Contact!',
                     error: undefined
@@ -10169,7 +10159,7 @@ function Chat(params) {
             }
         }
 
-        data.ownerId = sdkParams.typeCodeOwnerId ? sdkParams.typeCodeOwnerId : (params.ownerId ? params.ownerId : undefined);
+        data.ownerId = app.sdkParams.typeCodeOwnerId ? app.sdkParams.typeCodeOwnerId : (params.ownerId ? params.ownerId : undefined);
 
 
         var requestParams = {
@@ -10177,7 +10167,7 @@ function Chat(params) {
             method: 'POST',
             data: data,
             headers: {
-                '_token_': sdkParams.token,
+                '_token_': app.sdkParams.token,
                 '_token_issuer_': 1
             }
         };
@@ -10200,7 +10190,7 @@ function Chat(params) {
                 callback && callback(returnData);
 
             } else {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: result.errorCode,
                     message: result.errorMessage,
                     error: result
@@ -10265,7 +10255,7 @@ function Chat(params) {
             method: 'POST',
             data: data,
             headers: {
-                '_token_': sdkParams.token,
+                '_token_': app.sdkParams.token,
                 '_token_issuer_': 1
             }
         };
@@ -10311,13 +10301,13 @@ function Chat(params) {
                 callback = undefined;
 
                 if (!returnData.hasError && returnCache) {
-                    chatEvents.fireEvent('contactEvents', {
+                    app.chatEvents.fireEvent('contactEvents', {
                         type: 'CONTACTS_SEARCH_RESULT_CHANGE',
                         result: returnData.result
                     });
                 }
             } else {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: result.errorCode,
                     message: result.errorMessage,
                     error: result
@@ -10329,37 +10319,37 @@ function Chat(params) {
     publicized.createBot = function (params, callback) {
         var createBotData = {
             chatMessageVOType: chatMessageVOTypes.CREATE_BOT,
-            typeCode: sdkParams.generalTypeCode,//params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode,//params.typeCode,
             content: '',
             pushMsgType: 3,
-            token: sdkParams.token
+            token: app.sdkParams.token
         };
         if (params) {
             if (typeof params.botName === 'string' && params.botName.length > 0) {
                 if (params.botName.substr(-3) === "BOT") {
                     createBotData.content = params.botName;
                 } else {
-                    chatEvents.fireEvent('error', {
+                    app.chatEvents.fireEvent('error', {
                         code: 999,
                         message: 'Bot name should end in "BOT", ex. "testBOT"'
                     });
                     return;
                 }
             } else {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'Insert a bot name to create one!'
                 });
                 return;
             }
         } else {
-            chatEvents.fireEvent('error', {
+            app.chatEvents.fireEvent('error', {
                 code: 999,
                 message: 'Insert a bot name to create one!'
             });
             return;
         }
-        return messenger().sendMessage(createBotData, {
+        return app.messenger.sendMessage(createBotData, {
             onResult: function (result) {
                 callback && callback(result);
             }
@@ -10369,21 +10359,21 @@ function Chat(params) {
     publicized.defineBotCommand = function (params, callback) {
         var defineBotCommandData = {
             chatMessageVOType: chatMessageVOTypes.DEFINE_BOT_COMMAND,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             content: {},
             pushMsgType: 3,
-            token: sdkParams.token
+            token: app.sdkParams.token
         }, commandList = [];
         if (params) {
             if (typeof params.botName !== 'string' || params.botName.length === 0) {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'You need to insert a botName!'
                 });
                 return;
             }
             if (!Array.isArray(params.commandList) || !params.commandList.length) {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'Bot Commands List has to be an array of strings.'
                 });
@@ -10398,13 +10388,13 @@ function Chat(params) {
                 commandList: commandList
             };
         } else {
-            chatEvents.fireEvent('error', {
+            app.chatEvents.fireEvent('error', {
                 code: 999,
                 message: 'No params have been sent to create bot commands'
             });
             return;
         }
-        return messenger().sendMessage(defineBotCommandData, {
+        return app.messenger.sendMessage(defineBotCommandData, {
             onResult: function (result) {
                 callback && callback(result);
             }
@@ -10414,15 +10404,15 @@ function Chat(params) {
     publicized.removeBotCommand = function (params, callback) {
         var defineBotCommandData = {
             chatMessageVOType: chatMessageVOTypes.REMOVE_BOT_COMMANDS,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             content: {},
             pushMsgType: 3,
-            token: sdkParams.token
+            token: app.sdkParams.token
         }, commandList = [];
 
         if (params) {
             if (typeof params.botName !== 'string' || params.botName.length === 0) {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'You need to insert a botName!'
                 });
@@ -10430,7 +10420,7 @@ function Chat(params) {
             }
 
             if (!Array.isArray(params.commandList) || !params.commandList.length) {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'Bot Commands List has to be an array of strings.'
                 });
@@ -10447,14 +10437,14 @@ function Chat(params) {
             };
 
         } else {
-            chatEvents.fireEvent('error', {
+            app.chatEvents.fireEvent('error', {
                 code: 999,
                 message: 'No params have been sent to remove bot commands'
             });
             return;
         }
 
-        return messenger().sendMessage(defineBotCommandData, {
+        return app.messenger.sendMessage(defineBotCommandData, {
             onResult: function (result) {
                 callback && callback(result);
             }
@@ -10464,21 +10454,21 @@ function Chat(params) {
     publicized.startBot = function (params, callback) {
         var startBotData = {
             chatMessageVOType: chatMessageVOTypes.START_BOT,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             content: {},
             pushMsgType: 3,
-            token: sdkParams.token
+            token: app.sdkParams.token
         };
         if (params) {
             if (typeof +params.threadId !== 'number' || params.threadId < 0) {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'Enter a valid Thread Id for Bot to start in!'
                 });
                 return;
             }
             if (typeof params.botName !== 'string' || params.botName.length === 0) {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'You need to insert a botName!'
                 });
@@ -10489,13 +10479,13 @@ function Chat(params) {
                 botName: params.botName.trim()
             });
         } else {
-            chatEvents.fireEvent('error', {
+            app.chatEvents.fireEvent('error', {
                 code: 999,
                 message: 'No params have been sent to create bot commands'
             });
             return;
         }
-        return messenger().sendMessage(startBotData, {
+        return app.messenger.sendMessage(startBotData, {
             onResult: function (result) {
                 callback && callback(result);
             }
@@ -10505,21 +10495,21 @@ function Chat(params) {
     publicized.stopBot = function (params, callback) {
         var stopBotData = {
             chatMessageVOType: chatMessageVOTypes.STOP_BOT,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             content: {},
             pushMsgType: 3,
-            token: sdkParams.token
+            token: app.sdkParams.token
         };
         if (params) {
             if (typeof +params.threadId !== 'number' || params.threadId < 0) {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'Enter a valid Thread Id for Bot to stop on!'
                 });
                 return;
             }
             if (typeof params.botName !== 'string' || params.botName.length === 0) {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'You need to insert a botName!'
                 });
@@ -10530,13 +10520,13 @@ function Chat(params) {
                 botName: params.botName.trim()
             });
         } else {
-            chatEvents.fireEvent('error', {
+            app.chatEvents.fireEvent('error', {
                 code: 999,
                 message: 'No params have been sent to create bot commands'
             });
             return;
         }
-        return messenger().sendMessage(stopBotData, {
+        return app.messenger.sendMessage(stopBotData, {
             onResult: function (result) {
                 callback && callback(result);
             }
@@ -10546,15 +10536,15 @@ function Chat(params) {
     publicized.getBotCommandsList = function (params, callback) {
         var getBotCommandsListData = {
             chatMessageVOType: chatMessageVOTypes.BOT_COMMANDS,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             content: {},
             pushMsgType: 3,
-            token: sdkParams.token
+            token: app.sdkParams.token
         };
 
         if (params) {
             if (typeof params.botName !== 'string' || params.botName.length === 0) {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'You need to insert a botName!'
                 });
@@ -10566,14 +10556,14 @@ function Chat(params) {
             });
 
         } else {
-            chatEvents.fireEvent('error', {
+            app.chatEvents.fireEvent('error', {
                 code: 999,
                 message: 'No params have been sent to get bot commands'
             });
             return;
         }
 
-        return messenger().sendMessage(getBotCommandsListData, {
+        return app.messenger.sendMessage(getBotCommandsListData, {
             onResult: function (result) {
                 callback && callback(result);
             }
@@ -10583,15 +10573,15 @@ function Chat(params) {
     publicized.getThreadAllBots = function (params, callback) {
         var getThreadBotsData = {
             chatMessageVOType: chatMessageVOTypes.THREAD_ALL_BOTS,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             content: {},
             pushMsgType: 3,
-            token: sdkParams.token
+            token: app.sdkParams.token
         };
 
         if (params) {
             if (typeof +params.threadId !== 'number' || params.threadId < 0) {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'Enter a valid Thread Id to get all Bots List!'
                 });
@@ -10601,14 +10591,14 @@ function Chat(params) {
             getThreadBotsData.subjectId = +params.threadId;
 
         } else {
-            chatEvents.fireEvent('error', {
+            app.chatEvents.fireEvent('error', {
                 code: 999,
                 message: 'No params have been sent to get thread\' bots list!'
             });
             return;
         }
 
-        return messenger().sendMessage(getThreadBotsData, {
+        return app.messenger.sendMessage(getThreadBotsData, {
             onResult: function (result) {
                 callback && callback(result);
             }
@@ -10618,31 +10608,31 @@ function Chat(params) {
     publicized.createTag = function (params, callback) {
         var createTagData = {
             chatMessageVOType: chatMessageVOTypes.CREATE_TAG,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             content: {},
             pushMsgType: 3,
-            token: sdkParams.token
+            token: app.sdkParams.token
         };
 
         if (params) {
             if (typeof params.tagName === 'string' && params.tagName.length > 0) {
                 createTagData.content.name = params.tagName;
             } else {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: `No tag name has been declared!`
                 });
                 return;
             }
         } else {
-            chatEvents.fireEvent('error', {
+            app.chatEvents.fireEvent('error', {
                 code: 999,
                 message: 'No params have been sent to Create New Tag!'
             });
             return;
         }
 
-        return messenger().sendMessage(createTagData, {
+        return app.messenger.sendMessage(createTagData, {
             onResult: function (result) {
                 callback && callback(result);
             }
@@ -10652,17 +10642,17 @@ function Chat(params) {
     publicized.editTag = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.EDIT_TAG,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             content: {},
             pushMsgType: 3,
-            token: sdkParams.token
+            token: app.sdkParams.token
         };
 
         if (params) {
             if (parseInt(params.tagId) > 0) {
                 sendData.subjectId = +params.tagId;
             } else {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: `No Tag Id has been sent!`
                 });
@@ -10672,21 +10662,21 @@ function Chat(params) {
             if (typeof params.tagName === 'string' && params.tagName.length > 0) {
                 sendData.content.name = params.tagName;
             } else {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: `No tag name has been declared!`
                 });
                 return;
             }
         } else {
-            chatEvents.fireEvent('error', {
+            app.chatEvents.fireEvent('error', {
                 code: 999,
                 message: 'No params have been sent to Edit Tag!'
             });
             return;
         }
 
-        return messenger().sendMessage(sendData, {
+        return app.messenger.sendMessage(sendData, {
             onResult: function (result) {
                 callback && callback(result);
             }
@@ -10696,31 +10686,31 @@ function Chat(params) {
     publicized.deleteTag = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.DELETE_TAG,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             content: {},
             pushMsgType: 3,
-            token: sdkParams.token
+            token: app.sdkParams.token
         };
 
         if (params) {
             if (parseInt(params.tagId) > 0) {
                 sendData.subjectId = +params.tagId;
             } else {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: `No Tag Id has been sent!`
                 });
                 return;
             }
         } else {
-            chatEvents.fireEvent('error', {
+            app.chatEvents.fireEvent('error', {
                 code: 999,
                 message: 'No params have been sent to Delete Tag!'
             });
             return;
         }
 
-        return messenger().sendMessage(sendData, {
+        return app.messenger.sendMessage(sendData, {
             onResult: function (result) {
                 callback && callback(result);
             }
@@ -10730,13 +10720,13 @@ function Chat(params) {
     publicized.getTagList = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.GET_TAG_LIST,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             content: {},
             pushMsgType: 3,
-            token: sdkParams.token
+            token: app.sdkParams.token
         };
 
-        return messenger().sendMessage(sendData, {
+        return app.messenger.sendMessage(sendData, {
             onResult: function (result) {
                 callback && callback(result);
             }
@@ -10746,7 +10736,7 @@ function Chat(params) {
     publicized.addTagParticipants = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.ADD_TAG_PARTICIPANT,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             content: []
         };
 
@@ -10759,14 +10749,14 @@ function Chat(params) {
                 sendData.content = params.threadIds;
             }
         } else {
-            chatEvents.fireEvent('error', {
+            app.chatEvents.fireEvent('error', {
                 code: 999,
                 message: 'No params have been sent to Add Tag PArticipants!'
             });
             return;
         }
 
-        return messenger().sendMessage(sendData, {
+        return app.messenger.sendMessage(sendData, {
             onResult: function (result) {
                 var returnData = {
                     hasError: result.hasError,
@@ -10786,7 +10776,7 @@ function Chat(params) {
     publicized.removeTagParticipants = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.REMOVE_TAG_PARTICIPANT,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             content: []
         };
 
@@ -10799,14 +10789,14 @@ function Chat(params) {
                 sendData.content = params.threadIds;
             }
         } else {
-            chatEvents.fireEvent('error', {
+            app.chatEvents.fireEvent('error', {
                 code: 999,
                 message: 'No params have been sent to Remove Tag Participants!'
             });
             return;
         }
 
-        return messenger().sendMessage(sendData, {
+        return app.messenger.sendMessage(sendData, {
             onResult: function (result) {
                 var returnData = {
                     hasError: result.hasError,
@@ -10826,7 +10816,7 @@ function Chat(params) {
     publicized.registerAssistant = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.REGISTER_ASSISTANT,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             content: []
         };
 
@@ -10853,7 +10843,7 @@ function Chat(params) {
                             }
                         });
                     } else {
-                        chatEvents.fireEvent('error', {
+                        app.chatEvents.fireEvent('error', {
                             code: 999,
                             message: 'You should send an array of Assistant Objects each containing of contactType, roleTypes and assistant itself!'
                         });
@@ -10861,21 +10851,21 @@ function Chat(params) {
                     }
                 }
             } else {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'You should send an array of Assistant Objects each containing of contactType, roleTypes and assistant itself!'
                 });
                 return;
             }
         } else {
-            chatEvents.fireEvent('error', {
+            app.chatEvents.fireEvent('error', {
                 code: 999,
                 message: 'No params have been sent to Create Assistants!'
             });
             return;
         }
 
-        return messenger().sendMessage(sendData, {
+        return app.messenger.sendMessage(sendData, {
             onResult: function (result) {
                 var returnData = {
                     hasError: result.hasError,
@@ -10895,7 +10885,7 @@ function Chat(params) {
     publicized.deactivateAssistant = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.DEACTIVATE_ASSISTANT,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             content: []
         };
 
@@ -10915,7 +10905,7 @@ function Chat(params) {
                             }
                         });
                     } else {
-                        chatEvents.fireEvent('error', {
+                        app.chatEvents.fireEvent('error', {
                             code: 999,
                             message: 'You should send an array of Assistant Objects each containing of an assistant!'
                         });
@@ -10923,21 +10913,21 @@ function Chat(params) {
                     }
                 }
             } else {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'You should send an array of Assistant Objects each containing of an assistant!'
                 });
                 return;
             }
         } else {
-            chatEvents.fireEvent('error', {
+            app.chatEvents.fireEvent('error', {
                 code: 999,
                 message: 'No params have been sent to Deactivate Assistants!'
             });
             return;
         }
 
-        return messenger().sendMessage(sendData, {
+        return app.messenger.sendMessage(sendData, {
             onResult: function (result) {
                 var returnData = {
                     hasError: result.hasError,
@@ -10957,7 +10947,7 @@ function Chat(params) {
     publicized.blockAssistant = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.BLOCK_ASSISTANT,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             content: []
         };
 
@@ -10977,7 +10967,7 @@ function Chat(params) {
                             }
                         });
                     } else {
-                        chatEvents.fireEvent('error', {
+                        app.chatEvents.fireEvent('error', {
                             code: 999,
                             message: 'You should send an array of Assistant Objects each containing of an assistant!'
                         });
@@ -10985,21 +10975,21 @@ function Chat(params) {
                     }
                 }
             } else {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'You should send an array of Assistant Objects each containing of an assistant!'
                 });
                 return;
             }
         } else {
-            chatEvents.fireEvent('error', {
+            app.chatEvents.fireEvent('error', {
                 code: 999,
                 message: 'No params have been sent to Block Assistants!'
             });
             return;
         }
 
-        return messenger().sendMessage(sendData, {
+        return app.messenger.sendMessage(sendData, {
             onResult: function (result) {
                 var returnData = {
                     hasError: result.hasError,
@@ -11019,7 +11009,7 @@ function Chat(params) {
     publicized.unblockAssistant = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.UNBLOCK_ASSISTANT,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             content: []
         };
 
@@ -11039,7 +11029,7 @@ function Chat(params) {
                             }
                         });
                     } else {
-                        chatEvents.fireEvent('error', {
+                        app.chatEvents.fireEvent('error', {
                             code: 999,
                             message: 'You should send an array of Assistant Objects each containing of an assistant!'
                         });
@@ -11047,21 +11037,21 @@ function Chat(params) {
                     }
                 }
             } else {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'You should send an array of Assistant Objects each containing of an assistant!'
                 });
                 return;
             }
         } else {
-            chatEvents.fireEvent('error', {
+            app.chatEvents.fireEvent('error', {
                 code: 999,
                 message: 'No params have been sent to Unblock Assistants!'
             });
             return;
         }
 
-        return messenger().sendMessage(sendData, {
+        return app.messenger.sendMessage(sendData, {
             onResult: function (result) {
                 var returnData = {
                     hasError: result.hasError,
@@ -11081,17 +11071,17 @@ function Chat(params) {
     publicized.getAssistantsList = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.GET_ASSISTANTS,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             content: {},
             pushMsgType: 3,
-            token: sdkParams.token
+            token: app.sdkParams.token
         };
 
         if (params) {
             if (typeof params.contactType === 'string' && params.contactType.length) {
                 sendData.content.contactType = params.contactType;
             } else {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'Enter a ContactType to get all related Assistants!'
                 });
@@ -11101,14 +11091,14 @@ function Chat(params) {
             sendData.content.count = !!params.count ? +params.count : 25;
             sendData.content.offset = !!params.offset ? +params.offset : 0;
         } else {
-            chatEvents.fireEvent('error', {
+            app.chatEvents.fireEvent('error', {
                 code: 999,
                 message: 'No params have been sent to get Assistants list!'
             });
             return;
         }
 
-        return messenger().sendMessage(sendData, {
+        return app.messenger.sendMessage(sendData, {
             onResult: function (result) {
                 callback && callback(result);
             }
@@ -11118,17 +11108,17 @@ function Chat(params) {
     publicized.getBlockedAssistantsList = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.BLOCKED_ASSISTANTS,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             content: {},
             pushMsgType: 3,
-            token: sdkParams.token
+            token: app.sdkParams.token
         };
 
         if (params) {
             if (typeof params.contactType === 'string' && params.contactType.length) {
                 sendData.content.contactType = params.contactType;
             } else {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'Enter a ContactType to get all Blocked Assistants!'
                 });
@@ -11138,14 +11128,14 @@ function Chat(params) {
             sendData.content.count = !!params.count ? +params.count : 25;
             sendData.content.offset = !!params.offset ? +params.offset : 0;
         } else {
-            chatEvents.fireEvent('error', {
+            app.chatEvents.fireEvent('error', {
                 code: 999,
                 message: 'No params have been sent to get Blocked Assistants list!'
             });
             return;
         }
 
-        return messenger().sendMessage(sendData, {
+        return app.messenger.sendMessage(sendData, {
             onResult: function (result) {
                 callback && callback(result);
             }
@@ -11155,7 +11145,7 @@ function Chat(params) {
     publicized.getAssistantsHistory = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.ASSISTANT_HISTORY,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             content: {
                 offset: +params.offset > 0 ? +params.offset : 0,
                 count: +params.count > 0 ? +params.count : config.getHistoryCount
@@ -11174,7 +11164,7 @@ function Chat(params) {
             sendData.content.actionType = assistantActionTypes[params.actionType.toUpperCase()];
         }
 
-        return messenger().sendMessage(sendData, {
+        return app.messenger.sendMessage(sendData, {
             onResult: function (result) {
                 var returnData = {
                     hasError: result.hasError,
@@ -11230,7 +11220,7 @@ function Chat(params) {
         sendData.content.offset = offset;
         sendData.content.count = stepCount;
         return new Promise(function(resolve, reject){
-            return messenger().sendMessage(sendData, {
+            return app.messenger.sendMessage(sendData, {
                 onResult: function (result) {
                     var returnData = {
                         hasError: result.hasError,
@@ -11246,14 +11236,14 @@ function Chat(params) {
 
                         stackArr.push(...result.result);
 
-                        sdkParams.consoleLogging && console.log("[SDK][exportChat] a step passed...");
+                        app.sdkParams.consoleLogging && console.log("[SDK][exportChat] a step passed...");
                         // wantedCount = wantedCount > result.contentCount ? result.contentCount : wantedCount;
                         if(result.result.length < stepCount) {
                             wantedCount = stackArr.length
                         }
 
                         setTimeout(function () {
-                            chatEvents.fireEvent('threadEvents', {
+                            app.chatEvents.fireEvent('threadEvents', {
                                 type: 'EXPORT_CHAT',
                                 subType: 'IN_PROGRESS',
                                 threadId: sendData.subjectId,
@@ -11271,7 +11261,7 @@ function Chat(params) {
                         });
                     } else {
                         if(result.errorCode !== 21) {
-                            sdkParams.consoleLogging && console.log("[SDK][exportChat] Problem in one step... . Rerunning the request.", wantedCount, stepCount, stackArr.length, sendData, result);
+                            app.sdkParams.consoleLogging && console.log("[SDK][exportChat] Problem in one step... . Rerunning the request.", wantedCount, stepCount, stackArr.length, sendData, result);
                             setTimeout(function () {
                                 resolve(requestExportChat(stackArr, wantedCount, stepCount, stackArr.length, sendData))
                             }, 2000)
@@ -11288,7 +11278,7 @@ function Chat(params) {
         var stackArr = [], wantedCount = 10000, stepCount = 500, offset = 0;
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.EXPORT_CHAT,
-            typeCode: sdkParams.generalTypeCode,//params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode,//params.typeCode,
             content: {
                 offset: +params.offset > 0 ? +params.offset : offset,
                 count: +params.count > 0 ? +params.count : wantedCount,//config.getHistoryCount,
@@ -11324,9 +11314,9 @@ function Chat(params) {
         if(wantedCount < stepCount)
             stepCount = wantedCount;
 
-        sdkParams.consoleLogging && console.log("[SDK][exportChat] Starting...");
+        app.sdkParams.consoleLogging && console.log("[SDK][exportChat] Starting...");
         requestExportChat(stackArr, wantedCount, stepCount, offset, sendData).then(function (result) {
-            sdkParams.consoleLogging && console.log("[SDK][exportChat] Export done..., Now converting...");
+            app.sdkParams.consoleLogging && console.log("[SDK][exportChat] Export done..., Now converting...");
 
             var exportedFilename = (params.fileName || 'export-' + params.threadId) + '.csv',
                 responseType = params.responseType !== null ? params.responseType : "blob",
@@ -11372,7 +11362,7 @@ function Chat(params) {
                 radif++;
             }
             var blob = new Blob([str], { type: 'text/csv;charset=utf-8;' });
-            chatEvents.fireEvent('threadEvents', {
+            app.chatEvents.fireEvent('threadEvents', {
                 type: 'EXPORT_CHAT',
                 subType: 'DONE',
                 threadId: sendData.subjectId,
@@ -11492,7 +11482,9 @@ function Chat(params) {
 
     publicized.recallThreadParticipant = callModule.recallThreadParticipant;
 
-    publicized.deviceManager = callModule.deviceManager;
+    publicized.deviceManager = function () {
+        return app.call.currentCall().deviceManager;
+    }
 
     publicized.inquiryCallParticipants = callModule.inquiryCallParticipants;
 
@@ -11504,7 +11496,7 @@ function Chat(params) {
 
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.MUTUAL_GROUPS,
-            typeCode: sdkParams.generalTypeCode,//params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode,//params.typeCode,
             content: {
                 count: count,
                 offset: offset
@@ -11522,7 +11514,7 @@ function Chat(params) {
                     idType: +inviteeVOidTypes[params.user.idType]
                 };
             } else {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'You should send an user object like {id: 92, idType: "TO_BE_USER_CONTACT_ID"}'
                 });
@@ -11530,14 +11522,14 @@ function Chat(params) {
             }
 
         } else {
-            chatEvents.fireEvent('error', {
+            app.chatEvents.fireEvent('error', {
                 code: 999,
                 message: 'No params have been sent to Get Mutual Groups!'
             });
             return;
         }
 
-        return messenger().sendMessage(sendData, {
+        return app.messenger.sendMessage(sendData, {
             onResult: function (result) {
                 var returnData = {
                     hasError: result.hasError,
@@ -11586,20 +11578,20 @@ function Chat(params) {
 
         var locationPingData = {
             chatMessageVOType: chatMessageVOTypes.LOCATION_PING,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             pushMsgType: 3,
-            token: sdkParams.token
+            token: app.sdkParams.token
         }, content = {};
 
         if (params) {
-            if (typeof params.location === 'string' && sdkParams.locationPingTypes.hasOwnProperty(params.location.toUpperCase())) {
-                content.location = sdkParams.locationPingTypes[params.location.toUpperCase()];
+            if (typeof params.location === 'string' && app.sdkParams.locationPingTypes.hasOwnProperty(params.location.toUpperCase())) {
+                content.location = app.sdkParams.locationPingTypes[params.location.toUpperCase()];
 
                 if (params.location.toUpperCase() === 'THREAD') {
                     if (typeof params.threadId === 'number' && params.threadId > 0) {
                         content.locationId = +params.threadId;
                     } else {
-                        chatEvents.fireEvent('error', {
+                        app.chatEvents.fireEvent('error', {
                             code: 999,
                             message: 'You set the location to be a thread, you have to send a valid ThreadId'
                         });
@@ -11607,7 +11599,7 @@ function Chat(params) {
                     }
                 }
             } else {
-                chatEvents.fireEvent('error', {
+                app.chatEvents.fireEvent('error', {
                     code: 999,
                     message: 'Send a valid location type (CHAT / THREAD / CONTACTS)'
                 });
@@ -11616,14 +11608,14 @@ function Chat(params) {
 
             locationPingData.content = JSON.stringify(content);
         } else {
-            chatEvents.fireEvent('error', {
+            app.chatEvents.fireEvent('error', {
                 code: 999,
                 message: 'No params have been sent to LocationPing!'
             });
             return;
         }
 
-        return messenger().sendMessage(locationPingData, {
+        return app.messenger.sendMessage(locationPingData, {
             onResult: function (result) {
                 callback && callback(result);
             }
@@ -11646,8 +11638,8 @@ function Chat(params) {
 
     publicized.setToken = function (newToken) {
         if (typeof newToken !== 'undefined') {
-            sdkParams.token = newToken;
-            if(!store.user() || !store.user().id) {
+            app.sdkParams.token = newToken;
+            if(!app.store.user.get() || !app.store.user.get().id) {
                 getUserAndUpdateSDKState();
             }
         }
@@ -11658,12 +11650,12 @@ function Chat(params) {
     publicized.logout = function () {
         // clearChatServerCaches();
 
-        chatEvents.clearEventCallbacks();
+        app.chatEvents.clearEventCallbacks();
 
-        store.messagesCallbacks = {};
-        store.sendMessageCallbacks = {};
-        store.threadCallbacks = {};
-        messenger().stopChatPing();
+        app.store.messagesCallbacks = {};
+        app.store.sendMessageCallbacks = {};
+        app.store.threadCallbacks = {};
+        app.messenger.stopChatPing();
 
         asyncClient.logout();
     };
@@ -11724,17 +11716,17 @@ function Chat(params) {
         });
     }
     publicized.getCustomerInfo = function (params, callback) {
-        let userId = params.userId || store.user().id
+        let userId = params.userId || app.store.user.get().id
             , sendData = {
             chatMessageVOType: chatMessageVOTypes.CUSTOMER_INFO,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             content: [
                 userId
             ],
-            token: sdkParams.token
+            token: app.sdkParams.token
         };
 
-        return messenger().sendMessage(sendData, {
+        return app.messenger.sendMessage(sendData, {
             onResult: function (result) {
                 callback && callback(result);
             }
@@ -11808,11 +11800,11 @@ function Chat(params) {
 
         var sendMessageParams = {
             chatMessageVOType: chatMessageVOTypes.GET_THREAD_LIGHT,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
             content: content
         };
 
-        return messenger().sendMessage(sendMessageParams, {
+        return app.messenger.sendMessage(sendMessageParams, {
             onResult: function (result) {
                 var returnData = {
                     hasError: result.hasError,
@@ -11841,7 +11833,7 @@ function Chat(params) {
                         }
                     }
 
-                    store.threads.saveMany(resultData.threads);
+                    app.store.threads.saveMany(resultData.threads);
                     returnData.result = resultData;
                 }
 
@@ -11855,12 +11847,12 @@ function Chat(params) {
     }, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.ARCHIVE_THREAD,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
-            token: sdkParams.token,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
+            token: app.sdkParams.token,
             subjectId: threadId
         };
 
-        return messenger().sendMessage(sendData, {
+        return app.messenger.sendMessage(sendData, {
             onResult: function (result) {
                 callback && callback(result);
             }
@@ -11871,12 +11863,12 @@ function Chat(params) {
     }, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.UNARCHIVE_THREAD,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
-            token: sdkParams.token,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
+            token: app.sdkParams.token,
             subjectId: threadId
         };
 
-        return messenger().sendMessage(sendData, {
+        return app.messenger.sendMessage(sendData, {
             onResult: function (result) {
                 callback && callback(result);
             }
@@ -11884,12 +11876,12 @@ function Chat(params) {
     };
     publicized.chatStickerTypes = chatStickerTypes;
 
-    publicized.addReaction = addReaction;
-    publicized.getMyReaction = getMyReaction;
-    publicized.replaceReaction = replaceReaction;
-    publicized.removeReaction = removeReaction;
-    publicized.getReactionList = getReactionList;
-    publicized.getReactionsSummaries = getReactionsSummaries;
+    publicized.addReaction = reactionsMethods.addReaction;
+    publicized.getMyReaction = reactionsMethods.getMyReaction;
+    publicized.replaceReaction = reactionsMethods.replaceReaction;
+    publicized.removeReaction = reactionsMethods.removeReaction;
+    publicized.getReactionList = reactionsMethods.getReactionList;
+    publicized.getReactionsSummaries = reactionsMethods.getReactionsSummaries;
 
     publicized.version = function () {
         console.log("%c[SDK] Version: podchat-browser@" + buildConfig.version, "color:green; font-size:13px")
@@ -11902,7 +11894,7 @@ function Chat(params) {
         if(["webrtc", "websocket", "auto"].includes(proto)) {
             if (proto != protocolManager.getCurrentProtocol()) {
                 protocolManager.switchProtocol(proto.toLowerCase());
-                // sdkParams.protocol = protocolSwitching.getCurrentProtocol();
+                // app.sdkParams.protocol = protocolSwitching.getCurrentProtocol();
                 // asyncClient.logout();
                 // initAsync();
             } else {
@@ -11915,12 +11907,12 @@ function Chat(params) {
     publicized.getPinMessages = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.GET_PIN_MESSAGE,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
-            token: sdkParams.token,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
+            token: app.sdkParams.token,
             content: params.content
         };
 
-        return messenger().sendMessage(sendData, {
+        return app.messenger.sendMessage(sendData, {
             onResult: function (result) {
 
                 callback && callback(result);
@@ -11931,12 +11923,12 @@ function Chat(params) {
     publicized.lastMessageInfo = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.LAST_MESSAGE_INFO,
-            typeCode: sdkParams.generalTypeCode, //params.typeCode,
-            token: sdkParams.token,
+            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
+            token: app.sdkParams.token,
             content:params.content
         };
 
-        return messenger().sendMessage(sendData, {
+        return app.messenger.sendMessage(sendData, {
             onResult: function (result) {
                 if(!result.hasError) {
                     let formattedData = {};
@@ -11957,8 +11949,8 @@ function Chat(params) {
     publicized.stopPrintStatus = callModule.stopPrintStatus;
     publicized.startPrintStatus = callModule.startPrintStatus;
 
-    store.events.on(store.threads.eventsList.UNREAD_COUNT_UPDATED, (thread) => {
-        chatEvents.fireEvent('threadEvents', {
+    app.store.events.on(app.store.threads.eventsList.UNREAD_COUNT_UPDATED, (thread) => {
+        app.chatEvents.fireEvent('threadEvents', {
             type: 'UNREAD_COUNT_UPDATED',
             result: {
                 threadId: thread.id,

@@ -3,12 +3,9 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.CallServerManager = CallServerManager;
-exports.callServerController = void 0;
+exports["default"] = void 0;
 
-var _sdkParams = require("../sdkParams");
-
-function CallServerManager() {
+function CallServerManager(app) {
   var config = {
     servers: [],
     currentServerIndex: 0
@@ -29,12 +26,12 @@ function CallServerManager() {
     },
     changeServer: function changeServer() {
       if (this.canChangeServer()) {
-        _sdkParams.sdkParams.consoleLogging && console.debug('[SDK][changeServer] Changing kurento server...');
+        app.sdkParams.consoleLogging && console.debug('[SDK][changeServer] Changing kurento server...');
         config.currentServerIndex++;
       }
     }
   };
 }
 
-var callServerController = new CallServerManager();
-exports.callServerController = callServerController;
+var _default = CallServerManager;
+exports["default"] = _default;

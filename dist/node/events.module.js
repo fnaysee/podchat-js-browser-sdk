@@ -5,17 +5,11 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports["default"] = exports.chatEvents = void 0;
-exports.initEventHandler = initEventHandler;
+exports["default"] = void 0;
 
 var _utility = _interopRequireDefault(require("./utility/utility"));
 
-var _sdkParams = require("./lib/sdkParams");
-
-var chatEvents = new ChatEvents();
-exports.chatEvents = chatEvents;
-
-function ChatEvents() {
+function ChatEvents(app) {
   var eventCallbacks = {
     connect: {},
     disconnect: {},
@@ -40,7 +34,7 @@ function ChatEvents() {
     this.code = error.error ? error.error.code : error.code;
     this.message = error.error ? error.error.message : error.message;
     this.uniqueId = error.uniqueId ? error.uniqueId : '';
-    this.token = _sdkParams.sdkParams.token;
+    this.token = app.sdkParams.token;
     this.error = JSON.stringify(error.error ? error.error : error);
     this.environmentDetails = error.environmentDetails;
   };
@@ -61,9 +55,9 @@ function ChatEvents() {
   this.fireEvent = function (eventName, param) {
     if (eventName === "chatReady") {
       if (typeof navigator === "undefined") {
-        _sdkParams.sdkParams.consoleLogging && console.log("\x1b[90m    ☰ \x1b[0m\x1b[90m%s\x1b[0m", "Chat is Ready 😉");
+        app.sdkParams.consoleLogging && console.log("\x1b[90m    ☰ \x1b[0m\x1b[90m%s\x1b[0m", "Chat is Ready 😉");
       } else {
-        _sdkParams.sdkParams.consoleLogging && console.log("%c   Chat is Ready 😉", 'border-left: solid #666 10px; color: #666;');
+        app.sdkParams.consoleLogging && console.log("%c   Chat is Ready 😉", 'border-left: solid #666 10px; color: #666;');
       }
     }
 
@@ -104,14 +98,6 @@ function ChatEvents() {
       delete eventCallbacks[i];
     }
   };
-}
-
-function initEventHandler() {
-  if (!chatEvents) {
-    exports.chatEvents = chatEvents = new ChatEvents();
-  }
-
-  return chatEvents;
 }
 
 var _default = ChatEvents;
