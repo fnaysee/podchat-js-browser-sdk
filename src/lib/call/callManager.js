@@ -838,13 +838,14 @@ function CallManager({app, callId, callConfig}) {
             if (Array.isArray(messageContent)) {
                 for (let i in messageContent) {
                     let user = config.users.get(messageContent[i].userId);
-                    if(user){
-                        if(user.audioTopicManager()) {
-                            await user.stopVideo();
+                    if(user) {
+                        if(user.videoTopicManager()) {
+                            await user.destroyVideo();
                         }
-                        user.startVideo(messageContent[i].sendTopic);
+                        setTimeout(()=>{
+                            user.startVideo(messageContent[i].sendTopic);
+                        }, 50);
                     }
-
                 }
             }
 

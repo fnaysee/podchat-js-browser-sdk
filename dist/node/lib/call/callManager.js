@@ -140,14 +140,14 @@ function CallManager(_ref) {
     _callStop = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee6() {
       var resetCurrentCallId,
           resetCameraPaused,
-          _args7 = arguments;
-      return _regenerator["default"].wrap(function _callee6$(_context7) {
+          _args8 = arguments;
+      return _regenerator["default"].wrap(function _callee6$(_context8) {
         while (1) {
-          switch (_context7.prev = _context7.next) {
+          switch (_context8.prev = _context8.next) {
             case 0:
-              resetCurrentCallId = _args7.length > 0 && _args7[0] !== undefined ? _args7[0] : true;
-              resetCameraPaused = _args7.length > 1 && _args7[1] !== undefined ? _args7[1] : true;
-              _context7.next = 4;
+              resetCurrentCallId = _args8.length > 0 && _args8[0] !== undefined ? _args8[0] : true;
+              resetCameraPaused = _args8.length > 1 && _args8[1] !== undefined ? _args8[1] : true;
+              _context8.next = 4;
               return config.users.destroy();
 
             case 4:
@@ -165,7 +165,7 @@ function CallManager(_ref) {
 
             case 9:
             case "end":
-              return _context7.stop();
+              return _context8.stop();
           }
         }
       }, _callee6);
@@ -978,48 +978,66 @@ function CallManager(_ref) {
     },
     handleParticipantVideoOn: function handleParticipantVideoOn(messageContent) {
       return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3() {
-        var i, user;
-        return _regenerator["default"].wrap(function _callee3$(_context4) {
+        var _loop3, i;
+
+        return _regenerator["default"].wrap(function _callee3$(_context5) {
           while (1) {
-            switch (_context4.prev = _context4.next) {
+            switch (_context5.prev = _context5.next) {
               case 0:
                 if (!Array.isArray(messageContent)) {
-                  _context4.next = 12;
+                  _context5.next = 8;
                   break;
                 }
 
-                _context4.t0 = _regenerator["default"].keys(messageContent);
+                _loop3 = /*#__PURE__*/_regenerator["default"].mark(function _loop3(i) {
+                  var user;
+                  return _regenerator["default"].wrap(function _loop3$(_context4) {
+                    while (1) {
+                      switch (_context4.prev = _context4.next) {
+                        case 0:
+                          user = config.users.get(messageContent[i].userId);
 
-              case 2:
-                if ((_context4.t1 = _context4.t0()).done) {
-                  _context4.next = 12;
+                          if (!user) {
+                            _context4.next = 6;
+                            break;
+                          }
+
+                          if (!user.videoTopicManager()) {
+                            _context4.next = 5;
+                            break;
+                          }
+
+                          _context4.next = 5;
+                          return user.destroyVideo();
+
+                        case 5:
+                          setTimeout(function () {
+                            user.startVideo(messageContent[i].sendTopic);
+                          }, 50);
+
+                        case 6:
+                        case "end":
+                          return _context4.stop();
+                      }
+                    }
+                  }, _loop3);
+                });
+                _context5.t0 = _regenerator["default"].keys(messageContent);
+
+              case 3:
+                if ((_context5.t1 = _context5.t0()).done) {
+                  _context5.next = 8;
                   break;
                 }
 
-                i = _context4.t1.value;
-                user = config.users.get(messageContent[i].userId);
+                i = _context5.t1.value;
+                return _context5.delegateYield(_loop3(i), "t2", 6);
 
-                if (!user) {
-                  _context4.next = 10;
-                  break;
-                }
-
-                if (!user.audioTopicManager()) {
-                  _context4.next = 9;
-                  break;
-                }
-
-                _context4.next = 9;
-                return user.stopVideo();
-
-              case 9:
-                user.startVideo(messageContent[i].sendTopic);
-
-              case 10:
-                _context4.next = 2;
+              case 6:
+                _context5.next = 3;
                 break;
 
-              case 12:
+              case 8:
                 setTimeout(function () {
                   app.chatEvents.fireEvent('callEvents', {
                     type: 'CALL_DIVS',
@@ -1031,9 +1049,9 @@ function CallManager(_ref) {
                   result: messageContent
                 });
 
-              case 14:
+              case 10:
               case "end":
-                return _context4.stop();
+                return _context5.stop();
             }
           }
         }, _callee3);
@@ -1119,17 +1137,17 @@ function CallManager(_ref) {
     },
     handleEndScreenShare: function handleEndScreenShare(messageContent) {
       return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4() {
-        return _regenerator["default"].wrap(function _callee4$(_context5) {
+        return _regenerator["default"].wrap(function _callee4$(_context6) {
           while (1) {
-            switch (_context5.prev = _context5.next) {
+            switch (_context6.prev = _context6.next) {
               case 0:
                 config.screenShareInfo.setIsStarted(false);
                 config.screenShareInfo.setOwner(messageContent.screenOwner.id);
-                _context5.next = 4;
+                _context6.next = 4;
                 return config.users.removeItem('screenShare');
 
               case 4:
-                _context5.next = 6;
+                _context6.next = 6;
                 return config.deviceManager.mediaStreams.stopScreenShareInput();
 
               case 6:
@@ -1144,7 +1162,7 @@ function CallManager(_ref) {
 
               case 8:
               case "end":
-                return _context5.stop();
+                return _context6.stop();
             }
           }
         }, _callee4);
@@ -1196,27 +1214,27 @@ function CallManager(_ref) {
     },
     destroy: function destroy() {
       return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5() {
-        return _regenerator["default"].wrap(function _callee5$(_context6) {
+        return _regenerator["default"].wrap(function _callee5$(_context7) {
           while (1) {
-            switch (_context6.prev = _context6.next) {
+            switch (_context7.prev = _context7.next) {
               case 0:
-                _context6.next = 2;
+                _context7.next = 2;
                 return config.deviceManager.mediaStreams.stopAudioInput();
 
               case 2:
-                _context6.next = 4;
+                _context7.next = 4;
                 return config.deviceManager.mediaStreams.stopVideoInput();
 
               case 4:
-                _context6.next = 6;
+                _context7.next = 6;
                 return config.deviceManager.mediaStreams.stopScreenShareInput();
 
               case 6:
-                return _context6.abrupt("return", callStop());
+                return _context7.abrupt("return", callStop());
 
               case 7:
               case "end":
-                return _context6.stop();
+                return _context7.stop();
             }
           }
         }, _callee5);
