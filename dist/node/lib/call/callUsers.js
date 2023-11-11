@@ -5,7 +5,7 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.CallUsers = CallUsers;
+exports["default"] = void 0;
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
@@ -125,3 +125,6 @@ function CallUsers(_ref) {
   };
   return publicized;
 }
+
+var _default = CallUsers;
+exports["default"] = _default;

@@ -1,4 +1,4 @@
-import {CallUsers} from "./callUsers";
+import CallUsers from "./callUsers";
 import Utility from "../../utility/utility";
 import CallServerManager from "./callServerManager";
 import {callMetaDataTypes} from "../constants";
@@ -1057,4 +1057,4 @@ function ScreenShareStateManager(app) {
 }
 
 
-export {CallManager}
+export default CallManager

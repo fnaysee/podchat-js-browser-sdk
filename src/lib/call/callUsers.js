@@ -92,4 +92,4 @@ function CallUsers({app, callId}) {
     return publicized;
 }
 
-export {CallUsers}
+export default CallUsers

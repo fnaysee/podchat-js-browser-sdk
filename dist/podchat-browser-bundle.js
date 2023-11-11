@@ -41723,13 +41723,11 @@ FilterXSS.prototype.process = function (html) {
 module.exports = FilterXSS;
 
 },{"./default":253,"./parser":255,"./util":256,"cssfilter":124}],258:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.48","date":"۱۴۰۲/۸/۱۷","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.7-snapshot.48","date":"۱۴۰۲/۸/۲۰","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],259:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-
-var _typeof3 = require("@babel/runtime/helpers/typeof");
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -41750,7 +41748,7 @@ var _constants = require("./lib/constants");
 
 var _utility = _interopRequireDefault(require("./utility/utility"));
 
-var _errorHandler = _interopRequireWildcard(require("./lib/errorHandler"));
+var _errorHandler = require("./lib/errorHandler");
 
 var _callsList = _interopRequireDefault(require("./lib/call/callsList"));
 
@@ -41759,56 +41757,6 @@ var _deviceManager = require("./lib/call/deviceManager2");
 var _call = _interopRequireDefault(require("./lib/call/call"));
 
 var _callServerManager = _interopRequireDefault(require("./lib/call/callServerManager"));
-
-function _getRequireWildcardCache(nodeInterop) {
-  if (typeof WeakMap !== "function") return null;
-  var cacheBabelInterop = new WeakMap();
-  var cacheNodeInterop = new WeakMap();
-  return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) {
-    return nodeInterop ? cacheNodeInterop : cacheBabelInterop;
-  })(nodeInterop);
-}
-
-function _interopRequireWildcard(obj, nodeInterop) {
-  if (!nodeInterop && obj && obj.__esModule) {
-    return obj;
-  }
-
-  if (obj === null || _typeof3(obj) !== "object" && typeof obj !== "function") {
-    return {
-      "default": obj
-    };
-  }
-
-  var cache = _getRequireWildcardCache(nodeInterop);
-
-  if (cache && cache.has(obj)) {
-    return cache.get(obj);
-  }
-
-  var newObj = {};
-  var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
-
-  for (var key in obj) {
-    if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) {
-      var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
-
-      if (desc && (desc.get || desc.set)) {
-        Object.defineProperty(newObj, key, desc);
-      } else {
-        newObj[key] = obj[key];
-      }
-    }
-  }
-
-  newObj["default"] = obj;
-
-  if (cache) {
-    cache.set(obj, newObj);
-  }
-
-  return newObj;
-}
 
 function ownKeys(object, enumerableOnly) {
   var keys = Object.keys(object);
@@ -41948,14 +41896,6 @@ function ChatCall(app, params) {
         config.servers = serversList;
         config.currentServerIndex = 0;
       },
-      // setCurrentServer: function (query) {
-      //     for(let i in config.servers) {
-      //         if(config.servers[i].indexOf(query) !== -1) {
-      //             config.currentServerIndex = i;
-      //             break;
-      //         }
-      //     }
-      // },
       getCurrentServer: function getCurrentServer() {
         return config.servers[0]; //config.currentServerIndex];
       },
@@ -44495,7 +44435,7 @@ function ChatCall(app, params) {
 var _default = ChatCall;
 exports["default"] = _default;
 
-},{"./lib/call/call":264,"./lib/call/callServerManager":266,"./lib/call/callsList":270,"./lib/call/deviceManager2":271,"./lib/constants":277,"./lib/errorHandler":278,"./utility/utility":288,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/objectDestructuringEmpty":10,"@babel/runtime/helpers/typeof":13,"@babel/runtime/regenerator":15}],260:[function(require,module,exports){
+},{"./lib/call/call":264,"./lib/call/callServerManager":266,"./lib/call/callsList":270,"./lib/call/deviceManager2":271,"./lib/constants":282,"./lib/errorHandler":283,"./utility/utility":293,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/objectDestructuringEmpty":10,"@babel/runtime/helpers/typeof":13,"@babel/runtime/regenerator":15}],260:[function(require,module,exports){
 'use strict';var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _app=_interopRequireDefault(require("./lib/app"));var _podasyncWsOnly=_interopRequireDefault(require("podasync-ws-only"));var _utility=_interopRequireDefault(require("./utility/utility"));var _call=_interopRequireDefault(require("./call.module"));var _messaging=_interopRequireDefault(require("./messaging.module"));var _buildConfig=_interopRequireDefault(require("./buildConfig.json"));var _deprecateMethods=require("./deprecateMethods");var _xss=_interopRequireDefault(require("xss"));var _threadParticipantsMethods=_interopRequireDefault(require("./lib/chat/threadParticipantsMethods"));var _constants=require("./lib/constants");var _reactionsMethods=_interopRequireDefault(require("./lib/chat/reactionsMethods"));function Chat(params){/*******************************************************
    *          P R I V A T E   V A R I A B L E S          *
    *******************************************************/var app=new _app["default"]();var reactionsMethods=new _reactionsMethods["default"](app);var threadParticipantsMethods=new _threadParticipantsMethods["default"](app);app.sdkParams.appId=params.appId;app.sdkParams.token=params.token||"111";app.sdkParams.generalTypeCode=params.typeCode||'default';app.sdkParams.typeCodeOwnerId=params.typeCodeOwnerId||null;app.sdkParams.mapApiKey=params.mapApiKey||'8b77db18704aa646ee5aaea13e7370f4f88b9e8c';app.sdkParams.productEnv=typeof navigator!='undefined'?navigator.product:'undefined';app.sdkParams.forceWaitQueueInMemory=params.forceWaitQueueInMemory&&typeof params.forceWaitQueueInMemory==='boolean'?params.forceWaitQueueInMemory:false;app.sdkParams.grantDeviceIdFromSSO=params.grantDeviceIdFromSSO&&typeof params.grantDeviceIdFromSSO==='boolean'?params.grantDeviceIdFromSSO:false;app.sdkParams.deliveryIntervalPitch=params.deliveryIntervalPitch||2000;app.sdkParams.seenIntervalPitch=params.seenIntervalPitch||2000;app.sdkParams.systemMessageIntervalPitch=params.systemMessageIntervalPitch||1000;app.sdkParams.socketAddress=params.socketAddress;app.sdkParams.serverName=params.serverName;app.sdkParams.wsConnectionWaitTime=params.wsConnectionWaitTime;app.sdkParams.connectionRetryInterval=params.connectionRetryInterval;app.sdkParams.msgPriority=params.msgPriority;app.sdkParams.messageTtl=params.messageTtl||10000;app.sdkParams.reconnectOnClose=params.reconnectOnClose;app.sdkParams.asyncLogging=params.asyncLogging;app.sdkParams.connectionCheckTimeout=params.connectionCheckTimeout;app.sdkParams.httpRequestTimeout=params.httpRequestTimeout>=0?params.httpRequestTimeout:0;app.sdkParams.asyncRequestTimeout=typeof params.asyncRequestTimeout==='number'&&params.asyncRequestTimeout>=0?params.asyncRequestTimeout:0;app.sdkParams.connectionCheckTimeoutThreshold=params.connectionCheckTimeoutThreshold;app.sdkParams.httpUploadRequestTimeout=params.httpUploadRequestTimeout>=0?params.httpUploadRequestTimeout:0;app.sdkParams.actualTimingLog=params.asyncLogging.actualTiming&&typeof params.asyncLogging.actualTiming==='boolean'?params.asyncLogging.actualTiming:false;app.sdkParams.consoleLogging=params.asyncLogging.consoleLogging&&typeof params.asyncLogging.consoleLogging==='boolean'?params.asyncLogging.consoleLogging:false;app.sdkParams.fullResponseObject=params.fullResponseObject||false;app.sdkParams.webrtcConfig=params.webrtcConfig?params.webrtcConfig:null;app.sdkParams.chatPingMessageInterval=params.chatPingMessageInterval;app.sdkParams.protocol=params.protocol;app.sdkParams.callRequestTimeout=typeof params.callRequestTimeout==='number'&&params.callRequestTimeout>=0?params.callRequestTimeout:10000;app.sdkParams.callOptions=params.callOptions;var asyncClient,peerId,oldPeerId,localDeviceId,//deviceId,
@@ -46468,7 +46408,7 @@ token:app.sdkParams.token,content:params.content};return app.messenger.sendMessa
 window.PodChat=Chat;}var _default=Chat;// })();
 exports["default"]=_default;
 
-},{"./buildConfig.json":258,"./call.module":259,"./deprecateMethods":261,"./lib/app":263,"./lib/chat/reactionsMethods":275,"./lib/chat/threadParticipantsMethods":276,"./lib/constants":277,"./messaging.module":287,"./utility/utility":288,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/toConsumableArray":12,"@babel/runtime/helpers/typeof":13,"podasync-ws-only":209,"xss":254}],261:[function(require,module,exports){
+},{"./buildConfig.json":258,"./call.module":259,"./deprecateMethods":261,"./lib/app":263,"./lib/chat/reactionsMethods":280,"./lib/chat/threadParticipantsMethods":281,"./lib/constants":282,"./messaging.module":292,"./utility/utility":293,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/toConsumableArray":12,"@babel/runtime/helpers/typeof":13,"podasync-ws-only":209,"xss":254}],261:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -46645,7 +46585,7 @@ function ChatEvents(app) {
 var _default = ChatEvents;
 exports["default"] = _default;
 
-},{"./utility/utility":288,"@babel/runtime/helpers/interopRequireDefault":7}],263:[function(require,module,exports){
+},{"./utility/utility":293,"@babel/runtime/helpers/interopRequireDefault":7}],263:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -46678,7 +46618,7 @@ function App() {
 var _default = App;
 exports["default"] = _default;
 
-},{"../events.module":262,"./errorHandler":278,"./requestBlocker":279,"./sdkParams":280,"./store":282,"@babel/runtime/helpers/interopRequireDefault":7}],264:[function(require,module,exports){
+},{"../events.module":262,"./errorHandler":283,"./requestBlocker":284,"./sdkParams":285,"./store":287,"@babel/runtime/helpers/interopRequireDefault":7}],264:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -46710,7 +46650,7 @@ function Call(app) {
 var _default = Call;
 exports["default"] = _default;
 
-},{"./sharedData":272,"@babel/runtime/helpers/interopRequireDefault":7}],265:[function(require,module,exports){
+},{"./sharedData":277,"@babel/runtime/helpers/interopRequireDefault":7}],265:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -46718,7 +46658,7 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.CallManager = CallManager;
+exports["default"] = void 0;
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
@@ -46726,7 +46666,7 @@ var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/de
 
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 
-var _callUsers = require("./callUsers");
+var _callUsers = _interopRequireDefault(require("./callUsers"));
 
 var _utility = _interopRequireDefault(require("../../utility/utility"));
 
@@ -46769,7 +46709,7 @@ function CallManager(_ref) {
   var config = {
     callId: callId,
     callConfig: callConfig,
-    users: new _callUsers.CallUsers({
+    users: new _callUsers["default"]({
       app: app,
       callId: callId
     }),
@@ -48013,7 +47953,10 @@ function ScreenShareStateManager(app) {
   };
 }
 
-},{"../../utility/utility":288,"../constants":277,"../errorHandler":278,"./callServerManager":266,"./callUsers":269,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15}],266:[function(require,module,exports){
+var _default = CallManager;
+exports["default"] = _default;
+
+},{"../../utility/utility":293,"../constants":282,"../errorHandler":283,"./callServerManager":266,"./callUsers":269,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15}],266:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -49002,7 +48945,7 @@ function CallTopicManager(_ref) {
   return publicized;
 }
 
-},{"../../utility/utility":288,"../errorHandler":278,"./topicMetaDataManager":273,"./webrtcPeer":274,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/toConsumableArray":12,"@babel/runtime/regenerator":15}],268:[function(require,module,exports){
+},{"../../utility/utility":293,"../errorHandler":283,"./topicMetaDataManager":278,"./webrtcPeer":279,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/toConsumableArray":12,"@babel/runtime/regenerator":15}],268:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -49623,7 +49566,7 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.CallUsers = CallUsers;
+exports["default"] = void 0;
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
@@ -49744,6 +49687,9 @@ function CallUsers(_ref) {
   return publicized;
 }
 
+var _default = CallUsers;
+exports["default"] = _default;
+
 },{"./callUser":268,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15}],270:[function(require,module,exports){
 "use strict";
 
@@ -49758,7 +49704,11 @@ var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"))
 
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 
-var _callManager = require("./callManager");
+var _callManager = _interopRequireDefault(require("./callManager"));
+
+var _callServerManager = _interopRequireDefault(require("./callServerManager"));
+
+var _callManager2 = _interopRequireDefault(require("./multitrack/callManager"));
 
 function CallsList(app) {
   var config = {
@@ -49768,29 +49718,42 @@ function CallsList(app) {
   var publicized = {
     addItem: function addItem(callId, callConfig) {
       return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
+        var csm;
         return _regenerator["default"].wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
+                csm = new _callServerManager["default"](app);
+                csm.setServers(callConfig.kurentoAddress);
+
                 if (!Object.values(config.list).filter(function (item) {
                   return item != undefined;
                 }).length) {
-                  _context.next = 3;
+                  _context.next = 5;
                   break;
                 }
 
-                _context.next = 3;
+                _context.next = 5;
                 return publicized.destroyAllCalls();
 
-              case 3:
-                app.callsManager.currentCallId = callId;
-                config.list[callId] = new _callManager.CallManager({
-                  app: app,
-                  callId: callId,
-                  callConfig: callConfig
-                });
-
               case 5:
+                app.callsManager.currentCallId = callId;
+
+                if (csm.isJanus()) {
+                  config.list[callId] = new _callManager2["default"]({
+                    app: app,
+                    callId: callId,
+                    callConfig: callConfig
+                  });
+                } else {
+                  config.list[callId] = new _callManager["default"]({
+                    app: app,
+                    callId: callId,
+                    callConfig: callConfig
+                  });
+                }
+
+              case 7:
               case "end":
                 return _context.stop();
             }
@@ -49858,7 +49821,7 @@ function CallsList(app) {
 var _default = CallsList;
 exports["default"] = _default;
 
-},{"./callManager":265,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15}],271:[function(require,module,exports){
+},{"./callManager":265,"./callServerManager":266,"./multitrack/callManager":272,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15}],271:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -50217,7 +50180,2865 @@ function DeviceManager(app) {
 
 ;
 
-},{"../constants.js":277,"../errorHandler.js":278,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15}],272:[function(require,module,exports){
+},{"../constants.js":282,"../errorHandler.js":283,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15}],272:[function(require,module,exports){
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+
+var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
+
+var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
+
+var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
+
+var _callUsers = _interopRequireDefault(require("./callUsers"));
+
+var _utility = _interopRequireDefault(require("../../../utility/utility"));
+
+var _callServerManager = _interopRequireDefault(require("../callServerManager"));
+
+var _constants = require("../../constants");
+
+var _errorHandler = require("../../errorHandler");
+
+var _peerConnectionManager = _interopRequireDefault(require("./peerConnectionManager"));
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    enumerableOnly && (symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    })), keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = null != arguments[i] ? arguments[i] : {};
+    i % 2 ? ownKeys(Object(source), !0).forEach(function (key) {
+      (0, _defineProperty2["default"])(target, key, source[key]);
+    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) {
+      Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+    });
+  }
+
+  return target;
+}
+
+function MultiTrackCallManager(_ref) {
+  var app = _ref.app,
+      callId = _ref.callId,
+      callConfig = _ref.callConfig;
+  var config = {
+    callId: callId,
+    callConfig: callConfig,
+    users: new _callUsers["default"]({
+      app: app,
+      callId: callId
+    }),
+    callServerController: new _callServerManager["default"](app),
+    screenShareInfo: new ScreenShareStateManager(app),
+    deviceManager: null,
+    sendPeerManager: null,
+    receivePeerManager: null
+  };
+
+  function startCallWebRTCFunctions(callConfig) {
+    config.callServerController.setServers(callConfig.kurentoAddress); // console.log('debug startCallWebRTCFunctions:: ', {
+    //     iceServers: publicized.getTurnServer(publicized.callConfig()),
+    //     iceTransportPolicy: 'relay',
+    // });
+
+    config.receivePeerManager = new _peerConnectionManager["default"](app, callId, 'receive', {
+      iceServers: publicized.getTurnServer(publicized.callConfig()),
+      iceTransportPolicy: 'relay'
+    }, config.callConfig.brokerAddress);
+    config.sendPeerManager = new _peerConnectionManager["default"](app, callId, 'send', {
+      iceServers: publicized.getTurnServer(publicized.callConfig()),
+      iceTransportPolicy: 'relay'
+    }, config.callConfig.brokerAddress);
+
+    if (app.call.sharedVariables.callDivId) {
+      new Promise(function (resolve) {
+        var callVideo = typeof callConfig.video === 'boolean' ? callConfig.video : true,
+            callMute = typeof callConfig.mute === 'boolean' ? callConfig.mute : false;
+        config.deviceManager = app.call.sharedVariables.deviceManager;
+        app.call.sharedVariables.deviceManager = null;
+
+        if (callConfig.selfData) {
+          callConfig.selfData.callId = config.callId;
+          callConfig.selfData.cameraPaused = callConfig.cameraPaused;
+          config.users.addItem(callConfig.selfData); // callStateController.setupCallParticipant(params.selfData);
+        }
+
+        config.screenShareInfo.setOwner(callConfig.screenShareOwner);
+        config.screenShareInfo.setIsStarted(!!callConfig.screenShareOwner);
+
+        if (callConfig.recordingOwner) {
+          app.chatEvents.fireEvent('callEvents', {
+            type: 'CALL_RECORDING_STARTED',
+            result: {
+              id: params.recordingOwner
+            }
+          });
+        }
+
+        if (callConfig.clientsList && callConfig.clientsList.length) {
+          for (var i in callConfig.clientsList) {
+            if (callConfig.clientsList[i].userId !== app.store.user.get().id) {
+              callConfig.clientsList[i].callId = config.callId;
+              callConfig.clientsList[i].cameraPaused = false;
+              config.users.addItem(callConfig.clientsList[i]);
+            }
+          }
+        }
+
+        config.callConfig.screenShareObject = {
+          callId: config.callId,
+          cameraPaused: false,
+          userId: "screenShare",
+          topicSend: callConfig.screenShare
+        };
+        config.screenShareInfo.setIsStarted(!!config.callConfig.screenShareOwner);
+
+        if (config.screenShareInfo.isStarted()) {
+          config.screenShareInfo.setOwner(config.callConfig.screenShareOwner);
+          config.users.addItem(config.callConfig.screenShareObject, "screenShare");
+        }
+
+        config.callConfig.callVideo = callVideo;
+        config.callConfig.callAudio = callMute;
+        createSessionInChat();
+        resolve();
+      }).then(function () {
+        app.chatEvents.fireEvent('callEvents', {
+          type: 'CALL_DIVS',
+          result: config.users.generateCallUIList()
+        });
+      });
+    } else {
+      app.sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
+    }
+  }
+
+  function createSessionInChat() {
+    app.call.callStopQueue.callStarted = true;
+
+    var message = {
+      id: 'CREATE_SESSION',
+      brokerAddress: config.callConfig.brokerAddress,
+      turnAddress: config.callConfig.turnAddress.split(',')[0],
+      chatId: callId,
+      // clientId: app.sdkParams.token
+      token: app.sdkParams.token
+    },
+        onResultCallback = function onResultCallback(res) {
+      if (res.done === 'TRUE') {
+        app.call.callStopQueue.callStarted = true;
+        var user = config.users.get(app.store.user.get().id); //Start my own senders
+
+        console.log('debug ', 77, user.user());
+
+        if (user.user().video) {
+          console.log('debug 111 createSessionInChat() video 1', user.user());
+          user.startVideo(user.user().topicSend);
+        }
+
+        if (!user.user().mute) {
+          console.log('debug 111 createSessionInChat() voice 2', user.user());
+          user.startAudio(user.user().topicSend);
+        }
+      } else {
+        app.callsManager.removeItem(config.callId); // endCall({callId: config.callId});
+        // callStop(true, true);
+      }
+    };
+
+    sendCallMessage(message, onResultCallback, {
+      timeoutTime: 4000,
+      timeoutRetriesCount: 5
+    });
+  }
+
+  function callStop() {
+    return _callStop.apply(this, arguments);
+  }
+
+  function _callStop() {
+    _callStop = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee6() {
+      var resetCurrentCallId,
+          resetCameraPaused,
+          _args7 = arguments;
+      return _regenerator["default"].wrap(function _callee6$(_context7) {
+        while (1) {
+          switch (_context7.prev = _context7.next) {
+            case 0:
+              resetCurrentCallId = _args7.length > 0 && _args7[0] !== undefined ? _args7[0] : true;
+              resetCameraPaused = _args7.length > 1 && _args7[1] !== undefined ? _args7[1] : true;
+              _context7.next = 4;
+              return config.users.destroy();
+
+            case 4:
+              if (app.call.callStopQueue.callStarted) {
+                sendCallMessage({
+                  id: 'CLOSE'
+                }, null, {});
+                app.call.callStopQueue.callStarted = false;
+              }
+
+              if (resetCameraPaused) app.call.joinCallParams.cameraPaused = false;
+              clearTimeout(config.callRequestTimeout);
+              config.callConfig = {};
+              if (resetCurrentCallId) config.callId = null;
+
+            case 9:
+            case "end":
+              return _context7.stop();
+          }
+        }
+      }, _callee6);
+    }));
+    return _callStop.apply(this, arguments);
+  }
+
+  function sendCallMessage(message, callback, _ref2) {
+    var _ref2$timeoutTime = _ref2.timeoutTime,
+        timeoutTime = _ref2$timeoutTime === void 0 ? 0 : _ref2$timeoutTime,
+        _ref2$timeoutRetriesC = _ref2.timeoutRetriesCount,
+        timeoutRetriesCount = _ref2$timeoutRetriesC === void 0 ? 0 : _ref2$timeoutRetriesC;
+    message.token = app.sdkParams.token; // let uniqueId;
+
+    if (!message.uniqueId) {
+      message.uniqueId = _utility["default"].generateUUID();
+    } // message.uniqueId = uniqueId;
+
+
+    message.chatId = config.callId;
+    var data = {
+      type: 3,
+      content: {
+        peerName: config.callServerController.getCurrentServer(),
+        // callServerName,
+        priority: 1,
+        content: JSON.stringify(message),
+        ttl: app.sdkParams.messageTtl
+      }
+    };
+
+    if (typeof callback == 'function') {
+      app.store.messagesCallbacks[message.uniqueId] = callback;
+    }
+
+    app.call.sharedVariables.asyncClient.send(data, function (res) {});
+
+    if (timeoutTime || app.call.sharedVariables.globalCallRequestTimeout > 0) {
+      app.store.asyncRequestTimeouts[message.uniqueId] && clearTimeout(app.store.asyncRequestTimeouts[message.uniqueId]);
+      app.store.asyncRequestTimeouts[message.uniqueId] = setTimeout(function () {
+        if (app.store.messagesCallbacks[message.uniqueId]) {
+          delete app.store.messagesCallbacks[message.uniqueId];
+        }
+
+        if (timeoutRetriesCount) {
+          app.sdkParams.consoleLogging && console.log("[SDK][sendCallMessage] Retrying call request. uniqueId :" + message.uniqueId, {
+            message: message
+          }); //timeoutCallback();
+
+          sendCallMessage(message, callback, {
+            timeoutTime: timeoutTime,
+            timeoutRetriesCount: timeoutRetriesCount - 1
+          });
+        } else if (typeof callback == 'function') {
+          /**
+           * Request failed
+           */
+          callback({
+            done: 'SKIP'
+          });
+        }
+      }, timeoutTime || app.call.sharedVariables.globalCallRequestTimeout);
+    }
+  }
+
+  function handleReceivingTracksChanges(jsonMessage) {
+    // jsonMessage.recvList
+    console.log('debug jsonMessage', {
+      jsonMessage: jsonMessage
+    });
+
+    if (jsonMessage && jsonMessage.recvList && jsonMessage.recvList.length) {
+      try {
+        var list = JSON.parse(jsonMessage.recvList);
+        console.log('debug handleReceivingTracksChanges 1', {
+          list: list
+        });
+        list.forEach(function (item) {
+          console.log('debug handleReceivingTracksChanges 2', {
+            item: item
+          });
+          var userId = config.users.findUserIdByTopic(item.topic);
+          var user = config.users.get(userId);
+          console.log('debug handleReceivingTracksChanges 3', user, userId, user.user(), item, user && !user.isMe());
+
+          if (user && !user.isMe()) {
+            user.processTrackChange(item);
+          } // config.receivePeerManager.addTrack(jsonMessage.recvList)
+
+        });
+      } catch (error) {
+        console.error('Unable to parse receive list', error);
+      }
+    }
+  }
+
+  function handleProcessSdpOffer(jsonMessage) {
+    config.receivePeerManager.handleProcessSDPOfferForReceiveTrack(jsonMessage, function () {
+      receiveAddIceCandidates.forEach(function (item) {
+        addIceCandidate(config.sendPeerManager.getPeer(), item, 'receivePeerManager');
+      });
+    });
+  }
+
+  function handleProcessSdpAnswer(jsonMessage) {
+    var peer = config.sendPeerManager.getPeer();
+
+    if (peer == null) {
+      app.chatEvents.fireEvent('callEvents', {
+        type: 'CALL_ERROR',
+        code: 7000,
+        message: "[handleProcessSdpAnswer] Skip, no WebRTC Peer",
+        error: peer,
+        environmentDetails: getCallDetails()
+      });
+      return;
+    }
+
+    peer.processAnswer(jsonMessage.sdpAnswer, function (err) {
+      if (err) {
+        sendCallSocketError("[handleProcessSdpAnswer] Error: " + err);
+        app.chatEvents.fireEvent('callEvents', {
+          type: 'CALL_ERROR',
+          code: 7000,
+          message: "[handleProcessSdpAnswer] Error: " + err,
+          environmentDetails: getCallDetails()
+        });
+        return;
+      }
+
+      sendAddIceCandidates.forEach(function (item) {
+        addIceCandidate(config.sendPeerManager.getPeer(), item, 'sendPeerManager');
+      });
+      app.sdkParams.consoleLogging && console.log("[SDK][handleProcessSdpAnswer]", jsonMessage);
+    });
+  }
+
+  function addIceCandidate(peer, data, key) {
+    peer.addIceCandidate(data, function (err) {
+      if (err) {
+        console.error("[" + key + "] " + err);
+        app.chatEvents.fireEvent('callEvents', {
+          type: 'CALL_ERROR',
+          code: 7000,
+          message: "[" + key + "] " + err,
+          error: JSON.stringify(data),
+          environmentDetails: getCallDetails()
+        });
+        return;
+      }
+    });
+  }
+
+  var sendAddIceCandidates = [];
+
+  function handleSendAddIceCandidate(jsonMessage) {
+    var peer = config.sendPeerManager.getPeer();
+
+    if (!peer) {
+      app.chatEvents.fireEvent('callEvents', {
+        type: 'CALL_ERROR',
+        code: 7000,
+        message: "[handleSendAddIceCandidate] Skip, no WebRTC Peer",
+        error: JSON.stringify(peer),
+        environmentDetails: getCallDetails()
+      });
+      return;
+    }
+
+    if (jsonMessage.candidate && jsonMessage.candidate.length) {
+      var candidate = JSON.parse(jsonMessage.candidate);
+
+      if (peer.peerConnection.currentRemoteDescription) {
+        addIceCandidate(peer, candidate, 'handleSendAddIceCandidate');
+      } else {
+        sendAddIceCandidates.push(candidate);
+      }
+    }
+  }
+
+  var receiveAddIceCandidates = [];
+
+  function handleReceiveAddIceCandidate(jsonMessage) {
+    var peer = config.receivePeerManager.getPeer();
+
+    if (!peer) {
+      app.chatEvents.fireEvent('callEvents', {
+        type: 'CALL_ERROR',
+        code: 7000,
+        message: "[handleReceiveAddIceCandidate] Skip, no WebRTC Peer",
+        error: JSON.stringify(peer),
+        environmentDetails: getCallDetails()
+      });
+      return;
+    }
+
+    if (jsonMessage.candidate && jsonMessage.candidate.length) {
+      var candidate = JSON.parse(jsonMessage.candidate);
+
+      if (peer.peerConnection.currentRemoteDescription) {
+        addIceCandidate(peer, candidate, 'handleReceiveAddIceCandidate');
+      } else {
+        receiveAddIceCandidates.push(candidate);
+      }
+    }
+  }
+
+  function getCallDetails(customData) {
+    return _objectSpread({
+      currentUser: app.store.user.get(),
+      currentServers: {
+        callTurnIp: app.call.sharedVariables.callTurnIp
+      },
+      isJanus: config.callId && config.callServerController.isJanus(),
+      screenShareInfo: {
+        isStarted: config.screenShareInfo.isStarted(),
+        iAmOwner: config.screenShareInfo.iAmOwner()
+      },
+      callId: config.callId,
+      startCallInfo: config.callConfig
+    }, customData);
+  }
+
+  function sendCallSocketError(message) {
+    app.chatEvents.fireEvent('callEvents', {
+      type: 'CALL_ERROR',
+      code: 7000,
+      message: message,
+      environmentDetails: getCallDetails()
+    });
+    sendCallMessage({
+      id: 'ERROR',
+      message: message
+    }, null, {});
+  }
+
+  function handlePartnerFreeze(jsonMessage) {
+    if (!!jsonMessage && !!jsonMessage.topic && jsonMessage.topic.substring(0, 2) === 'Vi') {
+      var userId = config.users.findUserIdByTopic();
+
+      if (userId) {
+        config.users.get(userId).videoTopicManager().restartMedia();
+        setTimeout(function () {
+          config.users.get(userId).videoTopicManager().restartMedia();
+        }, 4000);
+        setTimeout(function () {
+          config.users.get(userId).videoTopicManager().restartMedia();
+        }, 8000);
+      }
+    }
+  }
+
+  function handleReceivedMetaData(jsonMessage, uniqueId) {
+    var jMessage = JSON.parse(jsonMessage.message);
+    var id = jMessage.id;
+
+    if (!id || typeof id === "undefined" || jsonMessage.userid == app.store.user.get().id) {
+      return;
+    }
+
+    switch (id) {
+      case _constants.callMetaDataTypes.POORCONNECTION:
+        publicized.sendQualityCheckEvent({
+          userId: jMessage.userid,
+          topic: jMessage.content.description,
+          //jMessage.topic,
+          mediaType: jMessage.content.description.indexOf('Vi') !== -1 ? 'video' : 'audio',
+          //jMessage.mediaType,
+          canSendCallMetaData: false
+        });
+        break;
+
+      case _constants.callMetaDataTypes.POORCONNECTIONRESOLVED:
+        publicized.sendQualityCheckEvent({
+          userId: jMessage.userid,
+          topic: jMessage.content.description,
+          mediaType: jMessage.content.description.indexOf('Vi') !== -1 ? 'video' : 'audio',
+          isResolved: true,
+          canSendCallMetaData: false
+        });
+        break;
+
+      case _constants.callMetaDataTypes.CUSTOMUSERMETADATA:
+        if (app.store.messagesCallbacks[uniqueId]) {
+          app.store.messagesCallbacks[uniqueId](jsonMessage);
+        }
+
+        app.chatEvents.fireEvent('callEvents', {
+          type: 'CUSTOM_USER_METADATA',
+          userId: jMessage.userid,
+          content: jMessage.content
+        });
+        break;
+
+      case _constants.callMetaDataTypes.SCREENSHAREMETADATA:
+        if (config.screenShareInfo.isStarted()) {
+          config.screenShareInfo.setWidth(jMessage.content.dimension.width);
+          config.screenShareInfo.setHeight(jMessage.content.dimension.height); // applyScreenShareSizeToElement();
+
+          if (config.screenShareInfo.iAmOwner()) {
+            setTimeout(function () {
+              if (config.users.get('screenShare') && config.users.get('screenShare').videoTopicManager()) config.users.get('screenShare').videoTopicManager().restartMediaOnKeyFrame('screenShare', [2000]);
+            }, 2500);
+          }
+
+          app.chatEvents.fireEvent("callEvents", {
+            type: 'SCREENSHARE_METADATA',
+            userId: jMessage.userid,
+            content: jMessage.content
+          });
+        }
+
+        break;
+    }
+  }
+
+  function sendCallMetaData(params) {
+    var message = {
+      id: params.id,
+      userid: params.userid,
+      content: params.content || undefined
+    };
+    sendCallMessage({
+      id: 'SENDMETADATA',
+      message: JSON.stringify(message),
+      chatId: config.callId
+    }, null, {});
+  }
+
+  function handleError(jsonMessage, sendingTopic, receiveTopic) {
+    var errMessage = jsonMessage.message;
+    app.chatEvents.fireEvent('callEvents', {
+      type: 'CALL_ERROR',
+      code: 7000,
+      message: "Kurento error: " + errMessage,
+      environmentDetails: getCallDetails()
+    });
+  }
+
+  var publicized = {
+    callServerController: function callServerController() {
+      return config.callServerController;
+    },
+    callConfig: function callConfig() {
+      return config.callConfig;
+    },
+    callStop: callStop,
+    endCall: app.call.endCall,
+    users: function users() {
+      return config.users;
+    },
+    deviceManager: function deviceManager() {
+      return config.deviceManager;
+    },
+    sendCallDivs: function sendCallDivs() {
+      app.chatEvents.fireEvent('callEvents', {
+        type: 'CALL_DIVS',
+        result: config.users.generateCallUIList()
+      });
+    },
+    screenShareInfo: config.screenShareInfo,
+    raiseCallError: function raiseCallError(errorObject, callBack, fireEvent) {
+      app.errorHandler.raiseError(errorObject, callBack, fireEvent, {
+        eventName: 'callEvents',
+        eventType: 'CALL_ERROR',
+        environmentDetails: getCallDetails()
+      });
+    },
+    getCallDetails: getCallDetails,
+    sendCallMessage: sendCallMessage,
+    sendPeerManager: function sendPeerManager() {
+      return config.sendPeerManager;
+    },
+    receivePeerManager: function receivePeerManager() {
+      return config.receivePeerManager;
+    },
+    getTurnServer: function getTurnServer(params) {
+      if (!!params.turnAddress && params.turnAddress.length > 0 || app.call.sharedVariables.useInternalTurnAddress && !!params.internalTurnAddress && params.turnAddress.length > 0) {
+        var serversTemp = app.call.sharedVariables.useInternalTurnAddress ? params.internalTurnAddress.split(',') : params.turnAddress.split(','),
+            turnsList = [];
+
+        for (var i in serversTemp) {
+          turnsList.push({
+            "urls": "turn:" + serversTemp[i],
+            "username": "mkhorrami",
+            "credential": "mkh_123456"
+          });
+        }
+
+        return turnsList;
+      } else {
+        return [{
+          "urls": "turn:" + app.call.sharedVariables.callTurnIp + ":3478",
+          "username": "mkhorrami",
+          "credential": "mkh_123456"
+        }];
+      }
+    },
+    sendQualityCheckEvent: function sendQualityCheckEvent(_ref3) {
+      var userId = _ref3.userId,
+          topic = _ref3.topic,
+          mediaType = _ref3.mediaType,
+          _ref3$isLongTime = _ref3.isLongTime,
+          isLongTime = _ref3$isLongTime === void 0 ? false : _ref3$isLongTime,
+          _ref3$isResolved = _ref3.isResolved,
+          isResolved = _ref3$isResolved === void 0 ? false : _ref3$isResolved,
+          _ref3$canSendCallMeta = _ref3.canSendCallMetaData,
+          canSendCallMetaData = _ref3$canSendCallMeta === void 0 ? true : _ref3$canSendCallMeta;
+
+      if (mediaType === 'video') {
+        //TODO: Deprecated!
+        app.chatEvents.fireEvent('callEvents', {
+          type: isResolved ? 'POOR_VIDEO_CONNECTION_RESOLVED' : 'POOR_VIDEO_CONNECTION',
+          subType: isResolved ? undefined : isLongTime ? 'LONG_TIME' : 'SHORT_TIME',
+          message: 'Poor connection resolved',
+          metadata: {
+            elementId: "uiRemoteVideo-" + topic,
+            topic: topic,
+            userId: userId
+          }
+        });
+      }
+
+      app.chatEvents.fireEvent('callEvents', {
+        type: isResolved ? 'POOR_CONNECTION_RESOLVED' : 'POOR_CONNECTION',
+        subType: isResolved ? undefined : isLongTime ? 'LONG_TIME' : 'SHORT_TIME',
+        message: "Poor connection ".concat(isResolved ? 'resolved' : ''),
+        metadata: {
+          media: mediaType,
+          elementId: "uiRemoteVideo-" + topic,
+          topic: topic,
+          userId: userId
+        }
+      });
+
+      if (canSendCallMetaData) {
+        sendCallMetaData({
+          id: isResolved ? _constants.callMetaDataTypes.POORCONNECTIONRESOLVED : _constants.callMetaDataTypes.POORCONNECTION,
+          userid: userId,
+          content: {
+            title: "Poor Connection ".concat(isResolved ? 'Resolved' : ''),
+            description: topic
+          }
+        });
+      }
+    },
+    processCallMessage: function processCallMessage(message) {
+      var uniqueId = message.uniqueId;
+
+      if (message.done !== 'FALSE' || message.done === 'FALSE' && message.desc === 'duplicated') {
+        app.store.asyncRequestTimeouts[uniqueId] && clearTimeout(app.store.asyncRequestTimeouts[uniqueId]);
+      } else if (message.done === 'FALSE') {
+        app.chatEvents.fireEvent('callEvents', {
+          type: 'CALL_ERROR',
+          code: 7000,
+          message: "Kurento error: " + (message.desc ? message.desc : message.message),
+          environmentDetails: getCallDetails()
+        });
+      }
+
+      switch (message.id) {
+        case 'PROCESS_SDP_ANSWER':
+          //For send connection 1
+          handleProcessSdpAnswer(message);
+          break;
+
+        case 'SEND_COMPLETE':
+          //For send connection 2
+          // console.log("send completed. trying next if any")
+          // let data = message.addition;
+          // if(data && data.length) {
+          //     try{
+          //         data = JSON.parse(data);
+          //     } catch (error) {
+          //         console.error('Unable to parse SEND_COMPLETE result', error);
+          //     }
+          //     if(data[0].topic.indexOf('Vo-') > -1) {
+          //         // let el = config.users.get(store.user().id).getAudioHtmlElement();
+          //         // config.htmlElements[config.user.audioTopicName] = el;
+          //         // config.users.get(store.user().id).appendAudioToCallDiv();
+          //     } else {
+          //         let el = config.users.get(store.user().id).getVideoHtmlElement();
+          //         config.htmlElements[config.user.videoTopicName] = el;
+          //         config.users.get(store.user().id).appendVideoToCallDiv();
+          //     }
+          // }
+          config.sendPeerManager.processingCurrentTrackCompleted();
+          break;
+
+        case 'RECEIVING_MEDIA': // Only for receiving topics from janus, first we subscribe
+
+        case 'UNPUBLISHED':
+          handleReceivingTracksChanges(message);
+          break;
+
+        case 'PROCESS_SDP_OFFER': //Then janus sends offers
+
+        case 'PROCESS_SDP_UPDATE':
+          handleProcessSdpOffer(message);
+          break;
+
+        case 'SEND_ADD_ICE_CANDIDATE':
+          handleSendAddIceCandidate(message);
+
+        case 'RECIVE_ADD_ICE_CANDIDATE':
+          handleReceiveAddIceCandidate(message);
+          break;
+
+        case 'JOIN_AADDITIONN_COMPLETE':
+          // For receive connections 2
+          // console.log("join completed. trying next if any")
+          // let recvData = message.addition;
+          // if(recvData && recvData.length) {
+          //     try {
+          //         recvData = JSON.parse(recvData);
+          //     } catch (error) {
+          //         console.error('Unable to parse JOIN_AADDITIONN_COMPLETE result', error);
+          //     }
+          //     let userId = config.users.findUserIdByTopic(recvData[0].topic);
+          //     if(recvData[0].topic.indexOf('Vo-') > -1) {
+          //         let el = config.users.get(userId).getAudioHtmlElement();
+          //         config.htmlElements[config.user.audioTopicName] = el;
+          //         config.users.get(userId).appendAudioToCallDiv();
+          //     } else {
+          //         let el = config.users.get(userId).getVideoHtmlElement();
+          //         config.htmlElements[config.user.videoTopicName] = el;
+          //         config.users.get(userId).appendVideoToCallDiv();
+          //     }
+          // }
+          config.receivePeerManager.processingCurrentTrackCompleted();
+          break;
+
+        case 'GET_KEY_FRAME':
+          // let user = config.users.get(store.user().id);
+          // if (user && user.user().video) {
+          //     user.videoTopicManager().restartMediaOnKeyFrame([2000, 4000, 8000, 12000]);
+          // }
+          // let screenShareuser = config.users.get('screenShare');
+          // if (screenShareuser
+          //     && screenShareuser.user().video
+          //     && config.screenShareInfo.isStarted()
+          //     && config.screenShareInfo.iAmOwner()
+          // ) {
+          //     screenShareuser.videoTopicManager().restartMediaOnKeyFrame([2000, 4000, 8000, 12000]);
+          // }
+          break;
+
+        case 'STOP':
+          if (app.store.messagesCallbacks[uniqueId]) {
+            app.store.messagesCallbacks[uniqueId](message);
+          }
+
+          break;
+
+        case 'EXIT_CLIENT':
+        case 'CLOSE':
+          if (app.store.messagesCallbacks[uniqueId]) {
+            app.store.messagesCallbacks[uniqueId](message);
+          }
+
+          break;
+
+        case 'SESSION_NEW_CREATED':
+        case 'SESSION_REFRESH':
+          if (app.store.messagesCallbacks[uniqueId]) {
+            app.store.messagesCallbacks[uniqueId](message);
+          }
+
+          break;
+
+        case 'RECEIVEMETADATA':
+          handleReceivedMetaData(message, uniqueId);
+          break;
+
+        case 'ERROR':
+          publicized.raiseCallError(app.errorHandler.getFilledErrorObject(_objectSpread(_objectSpread({}, _errorHandler.errorList.CALL_SERVER_ERROR), {}, {
+            replacements: [JSON.stringify(message)]
+          })), null, true);
+          break;
+
+        default:
+          console.warn("[SDK][onmessage] Invalid message, id: " + message.id, message); // if (jsonMessage.match(/NOT CREATE SESSION/g)) {
+          //     if (currentCallParams && Object.keys(currentCallParams)) {
+          //         //handleCallSocketOpen(currentCallParams);
+          //         callStateController.createSessionInChat(currentCallParams);
+          //     }
+          // }
+
+          break;
+      }
+
+      app.store.messagesCallbacks[uniqueId] && delete app.store.messagesCallbacks[uniqueId];
+    },
+    handleParticipantJoin: function handleParticipantJoin(messageContent) {
+      if (Array.isArray(messageContent)) {
+        var _loop = function _loop(i) {
+          var correctedData = {
+            video: messageContent[i].video,
+            mute: messageContent[i].mute,
+            userId: messageContent[i].userId,
+            topicSend: messageContent[i].sendTopic,
+            autoStartStreams: true,
+            callId: config.callId,
+            cameraPaused: false
+          };
+
+          if (!config.users.get(correctedData.userId)) {
+            new Promise(function (resolve) {
+              config.users.addItem(correctedData);
+              resolve();
+            }).then(function () {
+              app.chatEvents.fireEvent('callEvents', {
+                type: 'CALL_DIVS',
+                result: config.users.generateCallUIList()
+              });
+            });
+          } else {
+            config.users.removeItem(correctedData.userId);
+            new Promise(function (resolve) {
+              config.users.addItem(correctedData);
+              resolve();
+            }).then(function () {
+              app.chatEvents.fireEvent('callEvents', {
+                type: 'CALL_DIVS',
+                result: config.users.generateCallUIList()
+              });
+            });
+          }
+        };
+
+        for (var i in messageContent) {
+          _loop(i);
+        }
+      }
+
+      app.chatEvents.fireEvent('callEvents', {
+        type: 'CALL_PARTICIPANT_JOINED',
+        result: messageContent
+      });
+
+      if (config.users.get(app.store.user.get().id).video) {
+        config.users.get(app.store.user.get().id).videoTopicManager().restartMediaOnKeyFrame(app.store.user.get().id, [2000, 4000, 8000, 12000, 16000, 24000]);
+      }
+
+      if (config.screenShareInfo.isStarted() && config.screenShareInfo.iAmOwner()) {
+        sendCallMetaData({
+          id: _constants.callMetaDataTypes.SCREENSHAREMETADATA,
+          userid: app.store.user.get().id,
+          content: {
+            dimension: {
+              width: config.screenShareInfo.getWidth(),
+              height: config.screenShareInfo.getHeight()
+            }
+          }
+        }); // config.users.get('screenShare').videoTopicManager().restartMediaOnKeyFrame('screenShare', [2000, 4000, 8000, 12000, 16000, 24000]);
+      }
+    },
+    handleParticipantLeft: function handleParticipantLeft(messageContent, threadId) {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
+        return _regenerator["default"].wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                app.chatEvents.fireEvent('callEvents', {
+                  type: 'CALL_PARTICIPANT_LEFT',
+                  callId: threadId,
+                  result: messageContent
+                }); //If I'm the only call participant, stop the call
+
+                if (!(Object.values(config.users.getAll()).length < 2)) {
+                  _context.next = 5;
+                  break;
+                }
+
+                app.chatEvents.fireEvent('callEvents', {
+                  type: 'CALL_ENDED',
+                  callId: config.callId
+                });
+                app.callsManager.removeItem(config.callId);
+                return _context.abrupt("return");
+
+              case 5:
+                if (!messageContent[0].userId) {
+                  _context.next = 13;
+                  break;
+                }
+
+                if (!(messageContent[0].userId == app.store.user.get().id)) {
+                  _context.next = 10;
+                  break;
+                } // await callStop();
+
+
+                app.callsManager.removeItem(config.callId);
+                _context.next = 13;
+                break;
+
+              case 10:
+                _context.next = 12;
+                return config.users.removeItem(messageContent[0].userId);
+
+              case 12:
+                if (config.screenShareInfo.isStarted() && config.screenShareInfo.getOwner() === messageContent[0].userId) {
+                  config.users.removeItem("screenShare");
+                }
+
+              //callStateController.removeScreenShareFromCall()
+
+              case 13:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }))();
+    },
+    handleParticipantMute: function handleParticipantMute(messageContent) {
+      if (Array.isArray(messageContent)) {
+        for (var i in messageContent) {
+          var user = config.users.get(messageContent[i].userId);
+
+          if (user) {
+            user.stopAudio();
+          }
+        }
+      }
+
+      setTimeout(function () {
+        app.chatEvents.fireEvent('callEvents', {
+          type: 'CALL_DIVS',
+          result: config.users.generateCallUIList()
+        });
+      });
+      app.chatEvents.fireEvent('callEvents', {
+        type: 'CALL_PARTICIPANT_MUTE',
+        result: messageContent
+      });
+    },
+    handleParticipantUnMute: function handleParticipantUnMute(messageContent) {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
+        var _loop2, i;
+
+        return _regenerator["default"].wrap(function _callee2$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                if (!Array.isArray(messageContent)) {
+                  _context3.next = 8;
+                  break;
+                }
+
+                _loop2 = /*#__PURE__*/_regenerator["default"].mark(function _loop2(i) {
+                  var user;
+                  return _regenerator["default"].wrap(function _loop2$(_context2) {
+                    while (1) {
+                      switch (_context2.prev = _context2.next) {
+                        case 0:
+                          user = config.users.get(messageContent[i].userId);
+
+                          if (!user) {
+                            _context2.next = 6;
+                            break;
+                          }
+
+                          if (!user.audioTopicManager()) {
+                            _context2.next = 5;
+                            break;
+                          }
+
+                          _context2.next = 5;
+                          return user.destroyAudio();
+
+                        case 5:
+                          setTimeout(function () {
+                            user.startAudio(messageContent[i].sendTopic);
+                          }, 50);
+
+                        case 6:
+                        case "end":
+                          return _context2.stop();
+                      }
+                    }
+                  }, _loop2);
+                });
+                _context3.t0 = _regenerator["default"].keys(messageContent);
+
+              case 3:
+                if ((_context3.t1 = _context3.t0()).done) {
+                  _context3.next = 8;
+                  break;
+                }
+
+                i = _context3.t1.value;
+                return _context3.delegateYield(_loop2(i), "t2", 6);
+
+              case 6:
+                _context3.next = 3;
+                break;
+
+              case 8:
+                setTimeout(function () {
+                  app.chatEvents.fireEvent('callEvents', {
+                    type: 'CALL_DIVS',
+                    result: config.users.generateCallUIList()
+                  });
+                });
+                app.chatEvents.fireEvent('callEvents', {
+                  type: 'CALL_PARTICIPANT_UNMUTE',
+                  result: messageContent
+                });
+
+              case 10:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee2);
+      }))();
+    },
+    handleParticipantVideoOn: function handleParticipantVideoOn(messageContent) {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3() {
+        var i, user;
+        return _regenerator["default"].wrap(function _callee3$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                if (!Array.isArray(messageContent)) {
+                  _context4.next = 12;
+                  break;
+                }
+
+                _context4.t0 = _regenerator["default"].keys(messageContent);
+
+              case 2:
+                if ((_context4.t1 = _context4.t0()).done) {
+                  _context4.next = 12;
+                  break;
+                }
+
+                i = _context4.t1.value;
+                user = config.users.get(messageContent[i].userId);
+
+                if (!user) {
+                  _context4.next = 10;
+                  break;
+                }
+
+                if (!user.audioTopicManager()) {
+                  _context4.next = 9;
+                  break;
+                }
+
+                _context4.next = 9;
+                return user.stopVideo();
+
+              case 9:
+                user.startVideo(messageContent[i].sendTopic);
+
+              case 10:
+                _context4.next = 2;
+                break;
+
+              case 12:
+                setTimeout(function () {
+                  app.chatEvents.fireEvent('callEvents', {
+                    type: 'CALL_DIVS',
+                    result: config.users.generateCallUIList()
+                  });
+                });
+                app.chatEvents.fireEvent('callEvents', {
+                  type: 'TURN_ON_VIDEO_CALL',
+                  result: messageContent
+                });
+
+              case 14:
+              case "end":
+                return _context4.stop();
+            }
+          }
+        }, _callee3);
+      }))();
+    },
+    handleParticipantVideoOff: function handleParticipantVideoOff(messageContent) {
+      if (Array.isArray(messageContent)) {
+        for (var i in messageContent) {
+          var user = config.users.get(messageContent[i].userId);
+          if (user) user.stopVideo();
+        }
+      }
+
+      setTimeout(function () {
+        app.chatEvents.fireEvent('callEvents', {
+          type: 'CALL_DIVS',
+          result: config.users.generateCallUIList()
+        });
+      });
+      app.chatEvents.fireEvent('callEvents', {
+        type: 'TURN_OFF_VIDEO_CALL',
+        result: messageContent
+      });
+    },
+    handleStartScreenShare: function handleStartScreenShare(messageContent) {
+      app.sdkParams.consoleLogging && console.log("[sdk][startScreenShare][onResult]: ", messageContent);
+
+      var result = _utility["default"].createReturnData(false, '', 0, messageContent, null);
+
+      if (result.hasError) {
+        // endScreenShare({}, null);
+        config.users.removeItem("screenShare");
+        return;
+      }
+
+      var direction = 'send',
+          shareScreen = true;
+      config.screenShareInfo.setIsStarted(true);
+      config.screenShareInfo.setOwner(messageContent.screenOwner.id);
+
+      if (config.screenShareInfo.isStarted() && !config.screenShareInfo.iAmOwner()) {
+        direction = 'receive';
+        shareScreen = false;
+      }
+
+      if (config.screenShareInfo.isStarted() && config.screenShareInfo.iAmOwner()) {
+        var qualityObject = app.call.calculateScreenSize({
+          quality: app.call.sharedVariables.startScreenSharetParams.quality
+        });
+        config.screenShareInfo.setWidth(qualityObject.width);
+        config.screenShareInfo.setHeight(qualityObject.height);
+        sendCallMetaData({
+          id: _constants.callMetaDataTypes.SCREENSHAREMETADATA,
+          userid: app.store.user.get().id,
+          content: {
+            dimension: {
+              width: config.screenShareInfo.getWidth(),
+              height: config.screenShareInfo.getHeight()
+            }
+          }
+        });
+      } // callStateController.addScreenShareToCall(direction, shareScreen);
+
+
+      if (config.screenShareInfo.iAmOwner()) {
+        setTimeout(function () {
+          doThings();
+        }, 1000);
+      } else {
+        doThings();
+      }
+
+      function doThings() {
+        callConfig.screenShareObject.callId = config.callId;
+        callConfig.screenShareObject.cameraPaused = false;
+        callConfig.screenShareObject.userId = "screenShare";
+        config.users.addItem(callConfig.screenShareObject, "screenShare");
+        app.chatEvents.fireEvent('callEvents', {
+          type: 'START_SCREEN_SHARE',
+          result: messageContent
+        });
+      }
+    },
+    handleEndScreenShare: function handleEndScreenShare(messageContent) {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4() {
+        return _regenerator["default"].wrap(function _callee4$(_context5) {
+          while (1) {
+            switch (_context5.prev = _context5.next) {
+              case 0:
+                config.screenShareInfo.setIsStarted(false);
+                config.screenShareInfo.setOwner(messageContent.screenOwner.id);
+                _context5.next = 4;
+                return config.users.removeItem('screenShare');
+
+              case 4:
+                _context5.next = 6;
+                return config.deviceManager.mediaStreams.stopScreenShareInput();
+
+              case 6:
+                app.chatEvents.fireEvent('callEvents', {
+                  type: 'END_SCREEN_SHARE',
+                  result: messageContent
+                });
+                app.chatEvents.fireEvent('callEvents', {
+                  type: 'CALL_DIVS',
+                  result: config.users.generateCallUIList()
+                });
+
+              case 8:
+              case "end":
+                return _context5.stop();
+            }
+          }
+        }, _callee4);
+      }))();
+    },
+    onChatConnectionReconnect: function onChatConnectionReconnect() {
+      return; //First count all failed topics
+
+      var ftCount = 0,
+          totalTopics = 0;
+      Object.values(config.users.getAll()).forEach(function (item) {
+        if (item.user().video) {
+          totalTopics++;
+
+          if (item.videoTopicManager().isPeerFailed()) {
+            ftCount++;
+          }
+        }
+
+        if (!item.user().mute) {
+          totalTopics++;
+
+          if (item.audioTopicManager().isPeerFailed()) {
+            ftCount++;
+          }
+        }
+      }); //If only some topics are failed
+
+      if (ftCount < totalTopics) {
+        Object.values(config.users.getAll()).forEach(function (item) {
+          if (item.user().video) {
+            totalTopics++;
+
+            if (item.videoTopicManager().isPeerFailed()) {
+              item.reconnectTopic("video");
+            }
+          }
+
+          if (!item.user().mute) {
+            totalTopics++;
+
+            if (item.audioTopicManager().isPeerFailed()) {
+              item.reconnectTopic("audio");
+            }
+          }
+        });
+      } else {//Inquiry the call
+      }
+    },
+    destroy: function destroy() {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5() {
+        return _regenerator["default"].wrap(function _callee5$(_context6) {
+          while (1) {
+            switch (_context6.prev = _context6.next) {
+              case 0:
+                _context6.next = 2;
+                return config.deviceManager.mediaStreams.stopAudioInput();
+
+              case 2:
+                _context6.next = 4;
+                return config.deviceManager.mediaStreams.stopVideoInput();
+
+              case 4:
+                _context6.next = 6;
+                return config.deviceManager.mediaStreams.stopScreenShareInput();
+
+              case 6:
+                return _context6.abrupt("return", callStop());
+
+              case 7:
+              case "end":
+                return _context6.stop();
+            }
+          }
+        }, _callee5);
+      }))();
+    }
+  };
+  setTimeout(function () {
+    startCallWebRTCFunctions(config.callConfig);
+  }, 50);
+  return publicized;
+}
+
+function ScreenShareStateManager(app) {
+  var config = {
+    ownerId: 0,
+    imOwner: false,
+    isStarted: false,
+    width: app.call.sharedVariables.callVideoMinWidth,
+    height: app.call.sharedVariables.callVideoMinHeight
+  };
+  return {
+    setOwner: function setOwner(ownerId) {
+      config.ownerId = +ownerId;
+    },
+    setIsStarted: function setIsStarted(isStarted) {
+      config.isStarted = isStarted;
+    },
+    isStarted: function isStarted() {
+      return config.isStarted;
+    },
+    iAmOwner: function iAmOwner() {
+      return config.ownerId === app.store.user.get().id;
+    },
+    setWidth: function setWidth(width) {
+      config.width = width;
+    },
+    setHeight: function setHeight(height) {
+      config.height = height;
+    },
+    getWidth: function getWidth(width) {
+      return config.width;
+    },
+    getHeight: function getHeight(height) {
+      return config.height;
+    },
+    getOwner: function getOwner() {
+      return config.ownerId;
+    },
+    setDimension: function setDimension(dimension) {
+      if (dimension && dimension.width && +dimension.width > 0 && dimension.height && +dimension.height > 0) {
+        config.screenShareInfo.setHeight(dimension.height);
+        config.screenShareInfo.setWidth(dimension.width);
+      } else {
+        config.screenShareInfo.setHeight(app.call.sharedVariables.callVideoMinHeight);
+        config.screenShareInfo.setWidth(app.call.sharedVariables.callVideoMinWidth);
+      }
+    }
+  };
+}
+
+var _default = MultiTrackCallManager;
+exports["default"] = _default;
+
+},{"../../../utility/utility":293,"../../constants":282,"../../errorHandler":283,"../callServerManager":266,"./callUsers":274,"./peerConnectionManager":275,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15}],273:[function(require,module,exports){
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.CallScreenShare = CallScreenShare;
+exports.CallUser = CallUser;
+
+var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
+
+var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));
+
+var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
+
+var _sharedData = require("../sharedData");
+
+var _callsList = require("../callsList");
+
+var _utility = _interopRequireDefault(require("../../../utility/utility"));
+
+function CallUser(app, user) {
+  var config = {
+    callId: user.callId,
+    userId: user.userId,
+    user: user,
+    isMe: user.userId == app.store.user.get().id,
+    containerTag: null,
+    htmlElements: {},
+    videoTopicManager: null,
+    audioTopicManager: null,
+    videoIsOpen: false,
+    audioIsOpen: false
+  };
+  var publicized = {
+    userId: function userId() {
+      return config.userId;
+    },
+    isMe: function isMe() {
+      return config.userId == app.store.user.get().id;
+    },
+    isScreenShare: function isScreenShare() {
+      return false;
+    },
+    user: function user() {
+      return config.user;
+    },
+    getHTMLElements: function getHTMLElements() {
+      return config.htmlElements;
+    },
+    getVideoHtmlElement: function getVideoHtmlElement() {
+      var elementUniqueId = _utility["default"].generateUUID();
+
+      if (config.user.video && !config.htmlElement) {
+        config.htmlElement = document.createElement('video');
+        var el = config.htmlElement;
+        el.setAttribute('id', 'callUserVideo-' + config.user.videoTopicName);
+        el.setAttribute('class', app.call.sharedVariables.callVideoTagClassName);
+        el.setAttribute('playsinline', '');
+        el.setAttribute('muted', '');
+        el.setAttribute('autoplay', '');
+        el.setAttribute('data-uniqueId', elementUniqueId);
+        el.setAttribute('width', app.call.sharedVariables.callVideoMinWidth + 'px');
+        el.setAttribute('height', app.call.sharedVariables.callVideoMinHeight + 'px'); // el.setAttribute('controls', '');
+      }
+
+      return config.htmlElement;
+    },
+    getAudioHtmlElement: function getAudioHtmlElement(stream) {
+      if (!config.isMe) {
+        config.audioObject = new Audio();
+        config.audioObject.srcObject = stream;
+        config.audioObject.srcObject = stream;
+        config.audioObject.autoplay = true;
+        config.audioObject.play();
+        publicized.watchAudioLevel();
+      }
+    },
+    appendAudioToCallDiv: function appendAudioToCallDiv() {
+      if (!app.call.sharedVariables.callDivId) {
+        app.sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
+        return;
+      }
+
+      var user = config.user,
+          callParentDiv = document.getElementById(app.call.sharedVariables.callDivId),
+          userContainer = document.getElementById("callParticipantWrapper-" + config.userId);
+
+      if (!userContainer) {
+        callParentDiv.appendChild(config.htmlElements.container);
+        userContainer = document.getElementById("callParticipantWrapper-" + config.userId);
+      }
+
+      if (typeof user.mute !== "undefined" && !user.mute && config.audioTopicManager) {
+        if (!document.getElementById("callUserAudio-" + config.user.audioTopicName)) {
+          userContainer.appendChild(config.htmlElements[config.user.audioTopicName]);
+          config.audioTopicManager.startMedia();
+          config.audioTopicManager.watchAudioLevel();
+        }
+      }
+    },
+    appendVideoToCallDiv: function appendVideoToCallDiv() {
+      if (!app.call.sharedVariables.callDivId) {
+        app.sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
+        return;
+      }
+
+      var user = config.user,
+          callParentDiv = document.getElementById(app.call.sharedVariables.callDivId),
+          userContainer = document.getElementById("callParticipantWrapper-" + config.userId);
+
+      if (!userContainer) {
+        callParentDiv.appendChild(config.htmlElements.container);
+        userContainer = document.getElementById("callParticipantWrapper-" + config.userId);
+      }
+
+      if (user.video) {
+        if (!document.getElementById("callUserVideo-" + config.user.videoTopicName)) {
+          console.log('debug appendVideoToCallDiv 995', config.user.videoTopicName, config.htmlElements[config.user.videoTopicName]);
+          userContainer.appendChild(config.htmlElements[config.user.videoTopicName]);
+          config.htmlElements[config.user.videoTopicName].play();
+        }
+      }
+
+      app.call.currentCall().sendCallDivs();
+    },
+    videoTopicManager: function videoTopicManager() {
+      return config.videoTopicManager;
+    },
+    audioTopicManager: function audioTopicManager() {
+      return config.audioTopicManager;
+    },
+    startAudio: function startAudio(sendTopic) {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
+        return _regenerator["default"].wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                config.audioIsOpen = true;
+                config.user.mute = false;
+
+                if (config.isMe) {
+                  app.call.currentCall().deviceManager().grantUserMediaDevicesPermissions({
+                    audio: true
+                  }).then(function () {
+                    app.call.currentCall().sendPeerManager().addTrack({
+                      clientId: config.user.clientId,
+                      topic: config.user.audioTopicName,
+                      mediaType: 1,
+                      stream: app.call.currentCall().deviceManager().mediaStreams.getAudioInput(),
+                      onTrackCallback: onTrackCallback
+                    });
+                  })["catch"](function (error) {// reject(error)
+                  });
+                } else {
+                  app.call.currentCall().receivePeerManager().addTrack({
+                    clientId: config.user.clientId,
+                    topic: config.user.audioTopicName,
+                    mediaType: 1,
+                    onTrackCallback: onTrackCallback
+                  });
+                }
+
+              case 3:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }))();
+    },
+    startVideo: function startVideo(sendTopic) {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
+        return _regenerator["default"].wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                config.user.video = true;
+                config.videoIsOpen = true;
+
+                if (config.isMe) {
+                  app.call.currentCall().deviceManager().grantUserMediaDevicesPermissions({
+                    video: true
+                  }).then(function () {
+                    app.call.currentCall().sendPeerManager().addTrack({
+                      clientId: config.user.clientId,
+                      topic: config.user.videoTopicName,
+                      mediaType: 0,
+                      stream: app.call.currentCall().deviceManager().mediaStreams.getVideoInput(),
+                      onTrackCallback: onTrackCallback
+                    });
+                  })["catch"](function (error) {// reject(error)
+                  });
+                } else {
+                  app.call.currentCall().receivePeerManager().addTrack({
+                    clientId: config.user.clientId,
+                    topic: config.user.videoTopicName,
+                    mediaType: 0,
+                    onTrackCallback: onTrackCallback
+                  });
+                }
+
+              case 3:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }))();
+    },
+    destroy: function destroy() {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3() {
+        return _regenerator["default"].wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _context3.next = 2;
+                return publicized.destroyVideo();
+
+              case 2:
+                _context3.next = 4;
+                return publicized.destroyAudio();
+
+              case 4:
+                config.htmlElements = {};
+                user = null;
+
+              case 6:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3);
+      }))();
+    },
+    stopAudio: function stopAudio() {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4() {
+        return _regenerator["default"].wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                config.user.mute = true;
+                _context4.next = 3;
+                return publicized.destroyAudio();
+
+              case 3:
+              case "end":
+                return _context4.stop();
+            }
+          }
+        }, _callee4);
+      }))();
+    },
+    destroyAudio: function destroyAudio() {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5() {
+        return _regenerator["default"].wrap(function _callee5$(_context5) {
+          while (1) {
+            switch (_context5.prev = _context5.next) {
+              case 0:
+                if (config.htmlElements[config.user.audioTopicName]) {
+                  config.htmlElements[config.user.audioTopicName].remove();
+                  delete config.htmlElements[config.user.audioTopicName];
+                }
+
+              case 1:
+              case "end":
+                return _context5.stop();
+            }
+          }
+        }, _callee5);
+      }))();
+    },
+    stopVideo: function stopVideo() {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee6() {
+        return _regenerator["default"].wrap(function _callee6$(_context6) {
+          while (1) {
+            switch (_context6.prev = _context6.next) {
+              case 0:
+                config.videoIsOpen = false;
+                _context6.next = 3;
+                return publicized.destroyVideo();
+
+              case 3:
+              case "end":
+                return _context6.stop();
+            }
+          }
+        }, _callee6);
+      }))();
+    },
+    destroyVideo: function destroyVideo() {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee7() {
+        return _regenerator["default"].wrap(function _callee7$(_context7) {
+          while (1) {
+            switch (_context7.prev = _context7.next) {
+              case 0:
+                if (config.htmlElements[config.user.videoTopicName]) {
+                  config.htmlElements[config.user.videoTopicName].remove();
+                  delete config.htmlElements[config.user.videoTopicName];
+                }
+
+              case 1:
+              case "end":
+                return _context7.stop();
+            }
+          }
+        }, _callee7);
+      }))();
+    },
+    processTrackChange: function processTrackChange(conf) {
+      if (conf.topic.indexOf('Vi-') > -1) {
+        if (!config.videoIsOpen && conf.isReceiving) {
+          console.log('debug 111 processTrackChange 1', conf, conf.topic, conf.topic.replace('Vi-', ''));
+          publicized.startVideo(conf.topic.replace('Vi-', ''));
+        } else if (config.videoIsOpen && !conf.isReceiving) {
+          config.videoIsOpen = false;
+          publicized.stopVideo();
+        }
+      } else if (conf.topic.indexOf('Vo-') > -1) {
+        if (!config.audioIsOpen && conf.isReceiving) {
+          console.log('debug  111 processTrackChange 2', conf, conf.topic, conf.topic.replace('Vo-', ''));
+          publicized.startAudio(conf.topic.replace('Vo-', ''));
+        } else if (config.audioIsOpen && !conf.isReceiving) {
+          config.user.mute = true;
+          config.audioIsOpen = false;
+          publicized.stopAudio();
+        }
+      }
+    },
+    watchAudioLevel: function watchAudioLevel() {
+      var stream = config.dataStream;
+      var user = config.user,
+          topicMetadata = config.topicMetaData; // Create and configure the audio pipeline
+
+      var analyzer = (0, _sharedData.audioCtx)().createAnalyser();
+      analyzer.fftSize = 512;
+      analyzer.smoothingTimeConstant = 0.1;
+      var sourceNode = (0, _sharedData.audioCtx)().createMediaStreamSource(stream);
+      sourceNode.connect(analyzer); // Analyze the sound
+
+      topicMetadata.audioLevelInterval = setInterval(function () {
+        // Compute the max volume level (-Infinity...0)
+        var fftBins = new Float32Array(analyzer.frequencyBinCount); // Number of values manipulated for each sample
+
+        analyzer.getFloatFrequencyData(fftBins); // audioPeakDB varies from -Infinity up to 0
+
+        var audioPeakDB = Math.max.apply(Math, (0, _toConsumableArray2["default"])(fftBins)); // Compute a wave (0...)
+
+        var frequencyRangeData = new Uint8Array(analyzer.frequencyBinCount);
+        analyzer.getByteFrequencyData(frequencyRangeData);
+        var sum = frequencyRangeData.reduce(function (p, c) {
+          return p + c;
+        }, 0); // audioMeter varies from 0 to 10
+
+        var audioMeter = Math.sqrt(sum / frequencyRangeData.length); //console.log({audioMeter}, {audioPeakDB});
+
+        if (audioPeakDB > -50 && audioMeter > 0) {
+          app.chatEvents.fireEvent('callStreamEvents', {
+            type: 'USER_SPEAKING',
+            userId: config.userId,
+            audioLevel: convertToAudioLevel(audioPeakDB),
+            isNoise: false,
+            isMute: false
+          });
+        } else if (audioPeakDB !== -Infinity && audioPeakDB < -60 && audioMeter > 0) {
+          app.chatEvents.fireEvent('callStreamEvents', {
+            type: 'USER_SPEAKING',
+            userId: config.userId,
+            audioLevel: 0,
+            isNoise: true,
+            isMute: false
+          });
+        } else if (audioPeakDB === -Infinity && audioMeter == 0) {
+          app.chatEvents.fireEvent('callStreamEvents', {
+            type: 'USER_SPEAKING',
+            userId: config.userId,
+            audioLevel: 0,
+            isNoise: false,
+            isMute: true
+          });
+        }
+      }, 500);
+
+      function convertToAudioLevel(soundPower) {
+        if (soundPower <= -60) {
+          return 0;
+        } else if (soundPower >= -60 && soundPower < -50) {
+          return 1;
+        } else if (soundPower >= -50 && soundPower < -40) {
+          return 2;
+        } else if (soundPower >= -40 && soundPower < 30) {
+          return 3;
+        } else if (soundPower >= -30) {
+          return 4;
+        }
+      }
+    }
+  };
+
+  function onTrackCallback(line, track) {
+    var stream = new MediaStream([track]);
+    var isAudio = line.topic.indexOf('Vo-') > -1;
+    console.log('debug', 991);
+
+    if (config.isMe) {
+      if (isAudio) {//TODO: implement
+        // publicized.watchAudioLevel();
+      } else {
+        var el = publicized.getVideoHtmlElement();
+        el.srcObject = stream;
+        config.htmlElements[config.user.videoTopicName] = el;
+        console.log('debug', 992, {
+          el: el
+        }, config.user.videoTopicName);
+        publicized.appendVideoToCallDiv();
+      }
+    } else {
+      if (isAudio) {
+        config.audioObject = new Audio();
+        config.audioObject.srcObject = stream;
+        config.audioObject.srcObject = stream;
+        config.audioObject.autoplay = true;
+        config.audioObject.play(); //TODO: implement
+        // publicized.watchAudioLevel();
+      } else {
+        var _el = publicized.getVideoHtmlElement();
+
+        console.log('debug onTrackCallback 111', _el, config.user, config.user.videoTopicName, config.htmlElement);
+        _el.srcObject = stream;
+        config.htmlElements[config.user.videoTopicName] = _el;
+        publicized.appendVideoToCallDiv();
+      }
+    }
+  }
+
+  function setup(participant) {
+    config.user = participant;
+
+    if (config.isMe) {
+      config.user.direction = 'send';
+    } else {
+      config.user.direction = 'receive';
+    }
+
+    config.user.videoTopicName = 'Vi-' + config.user.topicSend;
+    config.user.audioTopicName = 'Vo-' + config.user.topicSend;
+    generateContainerElement(); //
+  }
+
+  function generateContainerElement() {
+    if (!config.htmlElements.container) {
+      config.htmlElements.container = document.createElement('div');
+      var el = config.htmlElements.container;
+      el.setAttribute('id', 'callParticipantWrapper-' + config.userId);
+      el.classList.add('participant');
+      el.classList.add('wrapper');
+      el.classList.add('user-' + config.userId);
+      el.classList.add(config.isMe ? 'local' : 'remote');
+    }
+
+    return config.htmlElements;
+  }
+
+  setup(user);
+  return publicized;
+}
+
+function CallScreenShare(user) {
+  var config = {
+    callId: user.callId,
+    userId: user.userId,
+    isMe: user.userId == app.store.user.get().id,
+    user: user,
+    type: "screenShare",
+    containerTag: null,
+    htmlElements: {},
+    videoTopicManager: null
+  };
+  var publicized = {
+    isMe: function isMe() {
+      return false;
+    },
+    isScreenShare: function isScreenShare() {
+      return true;
+    },
+    user: function user() {
+      return config.user;
+    },
+    getHTMLElements: function getHTMLElements() {
+      return config.htmlElements;
+    },
+    appendVideoToCallDiv: function appendVideoToCallDiv() {
+      var _config$videoTopicMan;
+
+      if (!app.call.sharedVariables.callDivId) {
+        app.sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
+        return;
+      }
+
+      var user = config.user,
+          callParentDiv = document.getElementById(app.call.sharedVariables.callDivId),
+          userContainer = document.getElementById("callParticipantWrapper-" + config.userId);
+
+      if (!userContainer) {
+        callParentDiv.appendChild(config.htmlElements.container);
+        userContainer = document.getElementById("callParticipantWrapper-" + config.userId);
+      }
+
+      if (user.video && config.videoTopicManager) {
+        if (!document.getElementById("callUserVideo-" + config.user.videoTopicName)) {
+          userContainer.appendChild(config.htmlElements[config.user.videoTopicName]);
+          config.videoTopicManager.startMedia();
+        }
+      } // if(currentCall().screenShareInfo.iAmOwner())
+
+
+      (_config$videoTopicMan = config.videoTopicManager) === null || _config$videoTopicMan === void 0 ? void 0 : _config$videoTopicMan.restartMediaOnKeyFrame("screenShare", [1000, 4000]); // else {
+      //     config.videoTopicManager?.restartMediaOnKeyFrame("screenShare", [1000, 3000, 6000]);
+      // }
+
+      app.call.currentCall().sendCallDivs();
+    },
+    videoTopicManager: function videoTopicManager() {
+      return config.videoTopicManager;
+    },
+    audioTopicManager: function audioTopicManager() {
+      return config.audioTopicManager;
+    },
+    audioStopManager: function audioStopManager() {
+      return config.user.audioStopManager;
+    },
+    startAudio: function startAudio(sendTopic) {
+      return;
+    },
+    startVideo: function startVideo(sendTopic) {
+      // config.user.videoTopicName = sendTopic;
+      config.user.video = true;
+      app.call.currentCall().sendPeerManager(config.user, 'video'); // config.videoTopicManager = new CallTopicManager({
+      //     callId: config.user.callId,
+      //     userId: config.user.userId,
+      //     topic: config.user.videoTopicName,
+      //     mediaType: 'video',
+      //     direction: (app.callsManager.get(config.callId).screenShareInfo.iAmOwner() ? 'send' : 'receive'),
+      //     user: config.user,
+      //     isScreenShare: true,
+      //     onHTMLElement(el) {
+      //         config.htmlElements[config.user.videoTopicName] = el;
+      //         publicized.appendVideoToCallDiv();
+      //     }
+      // });
+      // config.videoTopicManager.createTopic();
+    },
+    reconnectTopic: function reconnectTopic(media) {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee8() {
+        return _regenerator["default"].wrap(function _callee8$(_context8) {
+          while (1) {
+            switch (_context8.prev = _context8.next) {
+              case 0:
+                _context8.next = 2;
+                return config.videoTopicManager.stopTopicOnServer();
+
+              case 2:
+                _context8.next = 4;
+                return publicized.destroyVideo();
+
+              case 4:
+                _context8.next = 6;
+                return publicized.startVideo(config.user.topic);
+
+              case 6:
+              case "end":
+                return _context8.stop();
+            }
+          }
+        }, _callee8);
+      }))();
+    },
+    destroy: function destroy() {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee9() {
+        return _regenerator["default"].wrap(function _callee9$(_context9) {
+          while (1) {
+            switch (_context9.prev = _context9.next) {
+              case 0:
+                if (!(config.videoTopicManager && config.videoTopicManager.getPeer())) {
+                  _context9.next = 3;
+                  break;
+                }
+
+                _context9.next = 3;
+                return config.videoTopicManager.destroy();
+
+              case 3:
+                // user.topicMetaData = {};
+                config.htmlElements = {};
+                user = null;
+
+              case 5:
+              case "end":
+                return _context9.stop();
+            }
+          }
+        }, _callee9);
+      }))();
+    },
+    destroyAudio: function destroyAudio() {
+      return new Promise(function (resolve) {
+        resolve();
+      });
+    },
+    destroyVideo: function destroyVideo() {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee10() {
+        return _regenerator["default"].wrap(function _callee10$(_context10) {
+          while (1) {
+            switch (_context10.prev = _context10.next) {
+              case 0:
+                _context10.next = 2;
+                return config.videoTopicManager.destroy();
+
+              case 2:
+                delete config.htmlElements[config.user.videoTopicName];
+                config.videoTopicManager = null;
+
+              case 4:
+              case "end":
+                return _context10.stop();
+            }
+          }
+        }, _callee10);
+      }))();
+    }
+  };
+
+  function setup(user) {
+    var iAmOwner = app.callsManager.get(config.callId).screenShareInfo.iAmOwner();
+    var obj = {
+      video: true,
+      callId: user.callId,
+      userId: user.userId,
+      topic: user.topicSend
+    };
+    obj.direction = iAmOwner ? 'send' : 'receive';
+    obj.videoTopicName = config.topic;
+    config.user = obj; // publicized.appendUserToCallDiv(generateContainerElement())
+
+    generateContainerElement(); // if(config.user.video)
+    //     publicized.startVideo(obj.topic);
+  }
+
+  function generateContainerElement() {
+    if (!config.htmlElements.container) {
+      config.htmlElements.container = document.createElement('div');
+      var el = config.htmlElements.container;
+      el.setAttribute('id', 'callParticipantWrapper-' + config.userId);
+      el.classList.add('participant');
+      el.classList.add('wrapper');
+      el.classList.add('user-' + config.userId);
+      el.classList.add(config.isMe ? 'local' : 'remote');
+    }
+
+    return config.htmlElements;
+  }
+
+  function generateVideoElement() {
+    if (config.user.video && !config.htmlElements[config.user.videoTopicName]) {
+      var el = config.videoTopicManager.getHtmlElement();
+      config.htmlElements[config.user.videoTopicName] = el;
+    }
+  }
+
+  setup(user);
+  return publicized;
+}
+
+},{"../../../utility/utility":293,"../callsList":270,"../sharedData":277,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/toConsumableArray":12,"@babel/runtime/regenerator":15}],274:[function(require,module,exports){
+arguments[4][269][0].apply(exports,arguments)
+},{"./callUser":273,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15,"dup":269}],275:[function(require,module,exports){
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+
+var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
+
+var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
+
+var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
+
+var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
+
+var _webrtcPeer = require("./webrtcPeer");
+
+var PeerConnectionManager = /*#__PURE__*/function () {
+  function PeerConnectionManager(app, callId, direction, rtcPeerConfig, brokerAddress) {
+    (0, _classCallCheck2["default"])(this, PeerConnectionManager);
+    this._app = app;
+    this._callId = callId;
+    this._brokerAddress = brokerAddress;
+    this._nextTrackMid = 0;
+    this._trackList = [];
+    this._addTrackQueue = [];
+    this._direction = direction;
+    this._firstSub = true;
+    this._canProcessNextTrack = true;
+    this._isDestroyed = false;
+    this._peerStates = {
+      DISCONNECTED: 0,
+      CONNECTING: 1,
+      FAILED: 3,
+      CONNECTED: 4
+    };
+    this._state = 0; //0: disconnected, 1: connecting, 2: failed, 3: connected, 4: disconnected
+
+    this._defaultConfig = {
+      callId: callId,
+      direction: direction,
+      rtcPeerConfig: rtcPeerConfig,
+      connectionStateChange: this._onConnectionStateChange.bind(this),
+      iceConnectionStateChange: this._onIceConnectionStateChange.bind(this)
+    };
+    this._peer = new _webrtcPeer.WebrtcPeerConnection(this._defaultConfig);
+  }
+
+  (0, _createClass2["default"])(PeerConnectionManager, [{
+    key: "_nextTrack",
+    value: function _nextTrack() {
+      if (this._canProcessNextTrack) {
+        if (this._direction == 'send' && this._canProcessNextTrack && this._addTrackQueue.length) {
+          this._canProcessNextTrack = false;
+
+          var item = this._addTrackQueue.shift();
+
+          this._requestAddSendTrack(item);
+        } else if (this._direction == 'receive' && this._canProcessNextTrack && this._addTrackQueue.length) {
+          this._canProcessNextTrack = false;
+
+          var _item = this._addTrackQueue.shift();
+
+          this._requestReceiveTrack(_item);
+        }
+      }
+    }
+  }, {
+    key: "_requestAddSendTrack",
+    value: function _requestAddSendTrack(item) {
+      var _this = this;
+
+      var that = this;
+
+      this._peer.peerConnection.onicecandidate = function (_ref) {
+        var candidate = _ref.candidate;
+
+        _this._app.call.currentCall().sendCallMessage({
+          id: "SEND_ADD_ICE_CANDIDATE",
+          token: _this._app.sdkParams.token,
+          chatId: _this._callId,
+          brokerAddress: _this._brokerAddress,
+          // clientId: this._app.call.currentCall().users().get(this._app.store.user().id).user().clientId,
+          iceCandidate: JSON.stringify(candidate)
+        }, null, {});
+      };
+
+      var localStream;
+
+      if (item.topic.indexOf('Vi-') > -1) {
+        localStream = this._app.call.currentCall().deviceManager().mediaStreams.getVideoInput();
+
+        if (localStream) {
+          this._peer.addTrack(localStream.getTracks()[0], localStream);
+        }
+      } else {
+        localStream = this._app.call.currentCall().deviceManager().mediaStreams.getAudioInput();
+
+        if (localStream) {
+          this._peer.addTrack(localStream.getTracks()[0], localStream);
+        }
+      }
+
+      item.onTrackCallback(item, localStream.getTracks()[0]); // item.stream.getTracks().forEach(track => {
+      //     this._peer.addTrack(track, item.stream);
+      //     // mline_topic.set(localTrackCounter, line.topic);
+      //     // mline_track.set(localTrackCounter, track);
+      // });
+
+      if (this._firstSub) {
+        this._firstSub = false;
+
+        that._peer.peerConnection.createOffer().then(function (offer) {
+          return that._peer.peerConnection.setLocalDescription(offer);
+        }).then(function () {
+          _this._app.call.currentCall().sendCallMessage({
+            id: "SEND_SDP_OFFER",
+            sdpOffer: _this._peer.peerConnection.localDescription.sdp,
+            token: _this._app.sdkParams.token,
+            chatId: _this._callId,
+            brokerAddress: _this._brokerAddress,
+            // clientId: currentCall().users().get(this._app.store.user().id).user().clientId,
+            // brokerAddress: getBrokerAddress(),
+            // chatId: getChatId(),
+            addition: [{
+              // clientId: getClientId(),
+              mline: item.mline,
+              topic: item.topic,
+              mediaType: item.mediaType
+            }]
+          }, null, {});
+        })["catch"](function (error) {
+          return console.error({
+            error: error
+          });
+        });
+      } else {
+        that._peer.peerConnection.createOffer().then(function (offer) {
+          return that._peer.peerConnection.setLocalDescription(offer);
+        }).then(function () {
+          console.log('debug _requestAddSendTrack 7 createOffer sdp: ', _this._peer.peerConnection.localDescription.sdp);
+
+          _this._app.call.currentCall().sendCallMessage({
+            id: "SEND_NEGOTIATION",
+            sdpOffer: _this._peer.peerConnection.localDescription.sdp,
+            // clientId: currentCall().users().get(this._app.store.user().id).user().clientId,
+            token: _this._app.sdkParams.token,
+            chatId: _this._callId,
+            brokerAddress: _this._brokerAddress,
+            // brokerAddress: getBrokerAddress(),
+            // chatId: getChatId(),
+            addition: [{
+              // clientId: getClientId(),
+              mline: item.mline,
+              topic: item.topic,
+              mediaType: item.mediaType
+            }]
+          }, null, {});
+        });
+      }
+    }
+  }, {
+    key: "_requestReceiveTrack",
+    value: function _requestReceiveTrack(item) {
+      if (this._firstSub) {
+        this._firstSub = false;
+
+        this._app.call.currentCall().sendCallMessage({
+          id: 'SUBSCRIBE',
+          // chatId: getChatId(),
+          // clientId: this._app.call.currentCall().users().get(this._app.store.user().id).user().clientId,
+          token: this._app.sdkParams.token,
+          chatId: this._callId,
+          brokerAddress: this._brokerAddress,
+          addition: [{
+            // id: line.id,
+            // chatId: line.chatId,
+            clientId: item.clientId,
+            mline: item.mline,
+            topic: item.topic,
+            mediaType: item.mediaType
+          }]
+        }, null, {});
+      } else {
+        this._app.call.currentCall().sendCallMessage({
+          id: 'UPDATE',
+          // chatId: getChatId(),
+          // clientId: this._app.call.currentCall().users().get(this._app.store.user().id).user().clientId,
+          token: this._app.sdkParams.token,
+          chatId: this._callId,
+          brokerAddress: this._brokerAddress,
+          addition: [{
+            // id: line.id,
+            // chatId: line.chatId,
+            clientId: item.clientId,
+            mline: item.mline,
+            topic: item.topic,
+            mediaType: item.mediaType
+          }]
+        }, null, {});
+      }
+    }
+  }, {
+    key: "_unlockProcessingNextTrack",
+    value: function _unlockProcessingNextTrack() {
+      this._canProcessNextTrack = true;
+    }
+  }, {
+    key: "_setPeerState",
+    value: function _setPeerState(state) {
+      this._state = state;
+    }
+  }, {
+    key: "addTrack",
+    value: function addTrack(data) {
+      data.mline = this._nextTrackMid;
+
+      this._trackList.push(data);
+
+      this._addTrackQueue.push(data);
+
+      this._nextTrackMid++;
+
+      this._nextTrack();
+    }
+  }, {
+    key: "processingCurrentTrackCompleted",
+    value: function processingCurrentTrackCompleted() {
+      this._unlockProcessingNextTrack();
+
+      this._nextTrack();
+    }
+  }, {
+    key: "isPeerConnecting",
+    value: function isPeerConnecting() {
+      return this._state === this._peerStates.CONNECTING;
+    }
+  }, {
+    key: "isPeerFailed",
+    value: function isPeerFailed() {
+      return this._state === this._peerStates.FAILED;
+    }
+  }, {
+    key: "isPeerConnected",
+    value: function isPeerConnected() {
+      return this._state === this._peerStates.CONNECTED;
+    }
+  }, {
+    key: "isPeerDisconnected",
+    value: function isPeerDisconnected() {
+      return this._state === this._peerStates.DISCONNECTED;
+    }
+  }, {
+    key: "_onConnectionStateChange",
+    value: function _onConnectionStateChange() {
+      console.log('debug _onConnectionStateChange', this._direction, this._peer.peerConnection.connectionState);
+
+      this._app.chatEvents.fireEvent("callStreamEvents", {
+        type: 'WEBRTC_CONNECTION_STATE_CHANGE',
+        callId: this._callId,
+        direction: this._direction,
+        connectionState: this._peer.peerConnection.connectionState
+      });
+
+      if (this.isDestroyed()) {
+        return; //avoid log errors
+      }
+
+      this._app.sdkParams.consoleLogging && console.log("[SDK][peerConnection.onconnectionstatechange] ", "peer: ", this._direction, " peerConnection.connectionState: ", this._peer.peerConnection.connectionState);
+
+      if (this._peer.peerConnection.connectionState === 'disconnected') {//TODO: implement
+        // publicized.removeConnectionQualityInterval();
+        // publicized.removeAudioWatcherInterval();
+      }
+
+      if (this._peer.peerConnection.connectionState === "failed") {
+        if (this.isPeerFailed()) return;
+        this._state = this._peerStates.FAILED;
+
+        this._app.chatEvents.fireEvent('callEvents', {
+          type: 'CALL_STATUS',
+          errorCode: 7000,
+          errorMessage: "Call Peer (".concat(this._direction, ") has failed!"),
+          errorInfo: this._peer.peerConnection
+        });
+
+        if (this._app.messenger.chatState) {
+          this.shouldReconnectTopic();
+        }
+      }
+
+      if (this._peer.peerConnection.connectionState === 'connected') {
+        this._state = this._peerStates.CONNECTED; //TODO: implement new poorconnection
+        // if(this._direction === 'send' && !config.topicMetaData.connectionQualityInterval) {
+        //     config.topicMetaData.connectionQualityInterval = setInterval(function() {
+        //         publicized.checkConnectionQuality();
+        //     }, 1000);
+        // }
+      }
+    }
+  }, {
+    key: "_onIceConnectionStateChange",
+    value: function _onIceConnectionStateChange() {
+      console.log('debug _onIceConnectionStateChange', this._direction, this._peer.peerConnection.connectionState);
+
+      if (!this._peer || this.isDestroyed()) {
+        return; //avoid log errors
+      }
+
+      this._app.sdkParams.consoleLogging && console.log("[SDK][oniceconnectionstatechange] ", "peer: ", this._direction, " peerConnection.connectionState: ", this._peer.peerConnection.iceConnectionState);
+
+      if (this._peer.peerConnection.iceConnectionState === 'disconnected') {
+        // config.state = this._peerStates.DISCONNECTED;
+        this._state = this._peerStates.DISCONNECTED;
+
+        this._app.chatEvents.fireEvent('callEvents', {
+          type: 'CALL_STATUS',
+          errorCode: 7000,
+          errorMessage: "Call Peer (".concat(this._direction, ") is disconnected!"),
+          errorInfo: this._peer
+        });
+
+        this._app.sdkParams.consoleLogging && console.log('[SDK][oniceconnectionstatechange]:[disconnected] Internet connection failed, Reconnect your call, peer:', this._direction);
+      }
+
+      if (this._peer.peerConnection.iceConnectionState === "failed") {
+        if (this.isPeerFailed()) return;
+        this._state = this._peerStates.FAILED;
+
+        this._app.chatEvents.fireEvent('callEvents', {
+          type: 'CALL_STATUS',
+          errorCode: 7000,
+          errorMessage: "Call Peer (".concat(this._direction, ") has failed!"),
+          errorInfo: this._peer
+        });
+
+        if (this._app.messenger.chatState) {// publicized.shouldReconnectTopic();
+        }
+      }
+
+      if (this._peer.peerConnection.iceConnectionState === "connected") {
+        this._state = this._peerStates.CONNECTED; //TODO: implement
+        // if(config.direction === 'send' && !config.topicMetaData.connectionQualityInterval) {
+        //     config.topicMetaData.connectionQualityInterval = setInterval(function() {
+        //         publicized.checkConnectionQuality();
+        //     }, 1000);
+        // }
+        // if(config.mediaType === 'video' ) {
+        //     if(config.direction === 'receive') {
+        //         chatEvents.fireEvent("callEvents", {
+        //             type: "RECEIVE_VIDEO_CONNECTION_ESTABLISHED",
+        //             userId: this._userId
+        //         })
+        //     }
+        // }
+
+        this._state = this._peerStates.CONNECTED; // callRequestController.callEstablishedInMySide = true;
+
+        this._app.chatEvents.fireEvent('callEvents', {
+          type: 'CALL_STATUS',
+          errorCode: 7000,
+          errorMessage: "Call Peer (".concat(this._direction, ") has connected!"),
+          errorInfo: this._peer.peerConnection
+        });
+      }
+    }
+  }, {
+    key: "shouldReconnectTopic",
+    value: function shouldReconnectTopic() {
+      var iceConnectionState = this._peer.peerConnection.iceConnectionState;
+
+      if (!this.isDestroyed()) {
+        if (this._peer && iceConnectionState != 'connected') {
+          this._app.chatEvents.fireEvent('callEvents', {
+            type: 'CALL_STATUS',
+            errorCode: 7000,
+            errorMessage: "Call Peer (".concat(this._direction, ") is not in connected state, reconnecting peer ...!"),
+            errorInfo: this._peer
+          });
+
+          this.reconnectPeer();
+        }
+      }
+    }
+  }, {
+    key: "reconnectPeer",
+    value: function reconnectPeer() {
+      this._destroyPeer();
+
+      this._peer = new _webrtcPeer.WebrtcPeerConnection(this._defaultConfig);
+    }
+  }, {
+    key: "handleProcessSDPOfferForReceiveTrack",
+    value: function handleProcessSDPOfferForReceiveTrack(jsonMessage, callback) {
+      var _this2 = this;
+
+      console.log('ooooooooooooooooooooooo ', {
+        jsonMessage: jsonMessage
+      });
+      var topics = JSON.parse(jsonMessage.topic);
+      var currentTrackData;
+
+      this._trackList.forEach(function (item) {
+        if (item.topic === topics[0].topic) {
+          // item.track = transceiver.receiver.track;
+          currentTrackData = item;
+        }
+      });
+
+      this._peer.peerConnection.onicecandidate = function (_ref2) {
+        var candidate = _ref2.candidate;
+
+        _this2._app.call.currentCall().sendCallMessage({
+          id: "RECIVE_ADD_ICE_CANDIDATE",
+          // chatId: getChatId(),
+          // clientId: this._app.call.currentCall().users().get(this._app.store.user().id).user().clientId,
+          brokerAddress: _this2._brokerAddress,
+          token: _this2._app.sdkParams.token,
+          chatId: _this2._callId,
+          iceCandidate: JSON.stringify(candidate) // addition: [{mline: 0, topic: `Vi-send-${getChatId()}-12345678`}]
+
+        }, null, {});
+      };
+
+      this._peer.peerConnection.ontrack = function (_ref3) {
+        var transceiver = _ref3.transceiver;
+        currentTrackData.track = transceiver.receiver.track;
+        currentTrackData.onTrackCallback(currentTrackData, transceiver.receiver.track);
+      };
+
+      this._peer.processOffer(jsonMessage.sdpOffer, function (error, sdpAnswer) {
+        if (error) {
+          return;
+        }
+
+        _this2._app.call.currentCall().sendCallMessage({
+          id: "RECIVE_SDP_ANSWER",
+          sdpAnswer: sdpAnswer,
+          // clientId: getClientId(),
+          token: _this2._app.sdkParams.token,
+          // brokerAddress: getBrokerAddress(),
+          // chatId: getChatId(),
+          addition: [{
+            // chatId: topic[0].chatId,
+            clientId: topics[0].clientId,
+            mline: topics[0].mline,
+            topic: topics[0].topic,
+            mediaType: topics[0].mediaType
+          }]
+        }, null, {});
+      });
+    }
+  }, {
+    key: "getPeer",
+    value: function getPeer() {
+      return this._peer;
+    }
+  }, {
+    key: "_destroyPeer",
+    value: function _destroyPeer() {
+      this._peer.dispose();
+
+      this._peer = null;
+    }
+  }, {
+    key: "destroy",
+    value: function () {
+      var _destroy = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
+        return _regenerator["default"].wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                this._isDestroyed = true;
+
+                this._destroyPeer();
+
+              case 2:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function destroy() {
+        return _destroy.apply(this, arguments);
+      }
+
+      return destroy;
+    }()
+  }, {
+    key: "isDestroyed",
+    value: function isDestroyed() {
+      return this._isDestroyed;
+    }
+  }]);
+  return PeerConnectionManager;
+}();
+
+var _default = PeerConnectionManager;
+exports["default"] = _default;
+
+},{"./webrtcPeer":276,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/classCallCheck":4,"@babel/runtime/helpers/createClass":5,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15}],276:[function(require,module,exports){
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.WebrtcPeerConnection = WebrtcPeerConnection;
+
+var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
+
+var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
+
+function WebrtcPeerConnection(_ref) {
+  var callId = _ref.callId,
+      direction = _ref.direction,
+      rtcPeerConfig = _ref.rtcPeerConfig,
+      _ref$connectionStateC = _ref.connectionStateChange,
+      connectionStateChange = _ref$connectionStateC === void 0 ? null : _ref$connectionStateC,
+      _ref$iceConnectionSta = _ref.iceConnectionStateChange,
+      iceConnectionStateChange = _ref$iceConnectionSta === void 0 ? null : _ref$iceConnectionSta,
+      onTrackCallback = _ref.onTrackCallback;
+  var config = {
+    rtcPeerConfig: rtcPeerConfig,
+    direction: direction,
+    offer: null,
+    peerConnection: null,
+    dataChannel: null,
+    candidatesQueue: []
+  };
+
+  function createPeer() {
+    try {
+      console.log('debug createPeer', config.rtcPeerConfig, config.direction);
+      config.peerConnection = new RTCPeerConnection(config.rtcPeerConfig);
+    } catch (err) {
+      console.error("[SDK][WebrtcPeerConnection][createPeer]", err);
+    }
+
+    console.log('debug createPeer 2', config.rtcPeerConfig, config.direction);
+    config.peerConnection.onconnectionstatechange = connectionStateChange;
+    config.peerConnection.oniceconnectionstatechange = iceConnectionStateChange;
+    console.log('debug createPeer 3', config.rtcPeerConfig, config.direction);
+    config.peerConnection.addEventListener('signalingstatechange', signalingStateChangeCallback); // config.peerConnection.addEventListener('track', onRemoteTrack);
+  }
+
+  createPeer();
+
+  function onRemoteTrack(_x) {
+    return _onRemoteTrack.apply(this, arguments);
+  }
+
+  function _onRemoteTrack() {
+    _onRemoteTrack = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(event) {
+      var track, streams;
+      return _regenerator["default"].wrap(function _callee3$(_context3) {
+        while (1) {
+          switch (_context3.prev = _context3.next) {
+            case 0:
+              track = event.track, streams = event.streams; // const [remoteStream] = event.streams;
+              // let newStream = new MediaStream([track])
+
+              track.onunmute = function () {
+                var newStream = new MediaStream([track]);
+                onTrackCallback && onTrackCallback(newStream);
+              };
+
+            case 2:
+            case "end":
+              return _context3.stop();
+          }
+        }
+      }, _callee3);
+    }));
+    return _onRemoteTrack.apply(this, arguments);
+  }
+
+  function getLocalStreams() {
+    if (!config.peerConnection) return [];
+    var stream = new MediaStream();
+    config.peerConnection.getSenders().forEach(function (sender) {
+      stream.addTrack(sender.track);
+    });
+    return [stream];
+  }
+
+  ;
+
+  function getRemoteStreams() {
+    if (!config.peerConnection) return [];
+    var stream = new MediaStream();
+    config.peerConnection.getReceivers().forEach(function (sender) {
+      stream.addTrack(sender.track);
+    });
+    return [stream];
+  }
+
+  ;
+
+  function addTrackToPeer(track, stream) {
+    config.peerConnection.addTrack(track, stream);
+  }
+
+  function signalingStateChangeCallback() {
+    switch (config.peerConnection.signalingState) {
+      case 'stable':
+        addTheCandidates();
+        break;
+
+      case 'closed': //TODO: notify topicManager to do sth
+
+    }
+  }
+
+  function addTheCandidates() {
+    while (config.candidatesQueue.length) {
+      var entry = config.candidatesQueue.shift();
+      config.peerConnection.addIceCandidate(entry.candidate, entry.callback, entry.callback);
+    }
+  }
+
+  return {
+    peerConnection: config.peerConnection,
+    addTrack: function addTrack(streamTrack, stream) {
+      addTrackToPeer(streamTrack, stream);
+    },
+    dispose: function dispose() {
+      if (config.peerConnection) {
+        config.peerConnection.ontrack = null;
+        config.peerConnection.onremovetrack = null;
+        config.peerConnection.onicecandidate = null;
+        config.peerConnection.oniceconnectionstatechange = null;
+        config.peerConnection.onsignalingstatechange = null;
+
+        if (config.peerConnection.signalingState !== 'closed') {
+          if (direction != 'send') {
+            getRemoteStreams().forEach(function (stream) {
+              stream.getTracks().forEach(function (track) {
+                track.enabled = false;
+              });
+            });
+          }
+
+          config.peerConnection.close();
+        }
+
+        config.peerConnection = null;
+      }
+    },
+    generateOffer: function generateOffer(callback) {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
+        return _regenerator["default"].wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                if (config.direction == 'send') {
+                  config.peerConnection.getTransceivers().forEach(function (transceiver) {
+                    transceiver.direction = "sendonly";
+                  });
+                } else {
+                  config.peerConnection.addTransceiver(config.mediaType, {
+                    direction: 'recvonly'
+                  });
+                }
+
+                _context.prev = 1;
+                _context.next = 4;
+                return config.peerConnection.setLocalDescription();
+
+              case 4:
+                callback && callback(null, config.peerConnection.localDescription.sdp);
+                _context.next = 10;
+                break;
+
+              case 7:
+                _context.prev = 7;
+                _context.t0 = _context["catch"](1);
+                callback && callback(_context.t0, null);
+
+              case 10:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, null, [[1, 7]]);
+      }))();
+    },
+    processOffer: function processOffer(sdpOffer, callback) {
+      callback = callback.bind(this);
+      var offer = new RTCSessionDescription({
+        type: 'offer',
+        sdp: sdpOffer
+      });
+
+      if (config.peerConnection.signalingState === 'closed') {
+        return callback('[SDK][WebRtcModule] PeerConnection is closed');
+      }
+
+      config.peerConnection.setRemoteDescription(offer).then(function () {
+        return; //setRemoteStream()
+      }).then(function () {
+        return config.peerConnection.createAnswer();
+      }).then(function (answer) {
+        console.debug('[SDK][WebRtcModule] Created SDP answer');
+        return config.peerConnection.setLocalDescription(answer);
+      }).then(function () {
+        var localDescription = config.peerConnection.localDescription; // console.debug('[SDK][WebRtcModule] Local description set\n', localDescription.sdp)
+
+        callback(undefined, localDescription.sdp);
+      })["catch"](callback);
+    },
+    processAnswer: function processAnswer(sdpAnswer, callback) {
+      if (config.peerConnection.signalingState === 'closed') {
+        return callback('[SDK][WebRtcModule] PeerConnection is closed');
+      }
+
+      if (config.peerConnection.signalingState === 'stable') {
+        return callback('[SDK][WebRtcModule] PeerConnection is already stable');
+      }
+
+      var answer;
+      var descriptionInit = {
+        type: "answer",
+        sdp: sdpAnswer
+      };
+      answer = new RTCSessionDescription(descriptionInit); // let answer = new RTCSessionDescription({
+      //     type: 'answer',
+      //     sdp: sdpAnswer
+      // });
+
+      config.peerConnection.setRemoteDescription(answer).then(function () {
+        // if (config.direction != 'send') {
+        //setRemoteStream()
+        // }
+        callback && callback();
+      }, function (error) {
+        // console.log("config.peerConnection.setRemoteDescription",
+        //     config.peerConnection.signalingState,
+        //     config.peerConnection.mediaType,
+        //     config.peerConnection.direction,
+        // )
+        callback && callback(error);
+      });
+    },
+    addIceCandidate: function addIceCandidate(candidate, callback) {
+      console.log('debug 3', {
+        candidate: candidate
+      });
+      config.candidatesQueue.push({
+        candidate: new RTCIceCandidate(candidate),
+        callback: callback
+      });
+      addTheCandidates(); // console.log("[SDK][WebRtcModule] Remote ICE candidate received", candidate)
+      // if (config.peerConnection.signalingState === 'stable') {
+      //     addTheCandidates();
+      // }
+    },
+    getRemoteStream: function getRemoteStream(index) {
+      if (config.peerConnection) {
+        return config.peerConnection.getRemoteStreams()[index || 0];
+      }
+    },
+    getLocalStream: function getLocalStream(index) {
+      if (config.peerConnection) {
+        return config.peerConnection.getLocalStreams()[index || 0];
+      }
+    },
+    onConnectionStable: function onConnectionStable(callback) {
+      config.peerConnection.addEventListener('signalingstatechange', function () {
+        if (config.peerConnection.signalingState === 'stable') {
+          callback && callback();
+        }
+      });
+    },
+    generateSDPAnswer: function generateSDPAnswer() {
+      return new Promise(function (resolve) {
+        config.peerConnection.createAnswer(function (answer) {
+          config.peerConnection.setLocalDescription(answer);
+          resolve(answer); // sendClientMessage({
+          //     id:"RECIVE_SDP_ANSWER",
+          //     sdpAnswer: answer.sdp,
+          //     clientId: getClientId(),
+          //     chatId:getChatId(),
+          //     addition: [{chatId:topic[0].chatId, clientId:topic[0].clientId, mline:topic[0].mline, topic:topic[0].topic, mediaType:topic[0].mediaType}]
+          // });
+        }, function (error) {
+          if (error) {
+            console.error("error: ", {
+              error: error
+            });
+          }
+        });
+      });
+    },
+    updateStream: function updateStream(stream) {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
+        var localTrack, sender;
+        return _regenerator["default"].wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                localTrack = stream.getTracks()[0];
+                sender = config.peerConnection.getSenders()[0];
+
+                if (sender) {
+                  _context2.next = 6;
+                  break;
+                }
+
+                config.peerConnection.addTrack(localTrack); // will create sender, streamless track must be handled on another side here
+
+                _context2.next = 8;
+                break;
+
+              case 6:
+                _context2.next = 8;
+                return sender.replaceTrack(localTrack);
+
+              case 8:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }))();
+    }
+  };
+}
+
+},{"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15}],277:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -50394,7 +53215,7 @@ function SharedData(app) {
 var _default = SharedData;
 exports["default"] = _default;
 
-},{"../constants":277,"../errorHandler":278}],273:[function(require,module,exports){
+},{"../constants":282,"../errorHandler":283}],278:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -50438,7 +53259,7 @@ function topicMetaDataManager(params) {
   };
 }
 
-},{}],274:[function(require,module,exports){
+},{}],279:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -50758,7 +53579,7 @@ function WebrtcPeerConnection(_ref, onCreatePeerCallback) {
   };
 }
 
-},{"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15}],275:[function(require,module,exports){
+},{"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15}],280:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -51041,7 +53862,7 @@ function ReactionsMethods(app) {
 var _default = ReactionsMethods;
 exports["default"] = _default;
 
-},{"../../utility/utility":288,"../constants":277,"@babel/runtime/helpers/interopRequireDefault":7}],276:[function(require,module,exports){
+},{"../../utility/utility":293,"../constants":282,"@babel/runtime/helpers/interopRequireDefault":7}],281:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -51246,7 +54067,7 @@ function ThreadParticipantsMethods(app) {
 var _default = ThreadParticipantsMethods;
 exports["default"] = _default;
 
-},{"../constants":277}],277:[function(require,module,exports){
+},{"../constants":282}],282:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -51482,7 +54303,7 @@ var callMetaDataTypes = {
 };
 exports.callMetaDataTypes = callMetaDataTypes;
 
-},{}],278:[function(require,module,exports){
+},{}],283:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -51668,7 +54489,7 @@ function ErrorHandler(app) {
 var _default = ErrorHandler;
 exports["default"] = _default;
 
-},{"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7}],279:[function(require,module,exports){
+},{"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7}],284:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -51774,7 +54595,7 @@ function RequestBlocker() {
 var _default = RequestBlocker;
 exports["default"] = _default;
 
-},{}],280:[function(require,module,exports){
+},{}],285:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -51831,7 +54652,7 @@ function SDKParams() {
   };
 }
 
-},{}],281:[function(require,module,exports){
+},{}],286:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -51859,7 +54680,7 @@ function StoreEvents() {
   };
 }
 
-},{"@babel/runtime/helpers/interopRequireDefault":7,"events":156}],282:[function(require,module,exports){
+},{"@babel/runtime/helpers/interopRequireDefault":7,"events":156}],287:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -51891,7 +54712,7 @@ function Store(app) {
   };
 }
 
-},{"./eventEmitter":281,"./reactionsList":283,"./reactionsSummaries":284,"./threads":285,"./user":286}],283:[function(require,module,exports){
+},{"./eventEmitter":286,"./reactionsList":288,"./reactionsSummaries":289,"./threads":290,"./user":291}],288:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -52018,7 +54839,7 @@ var ReactionsListCache = /*#__PURE__*/function () {
 
 exports.ReactionsListCache = ReactionsListCache;
 
-},{"@babel/runtime/helpers/classCallCheck":4,"@babel/runtime/helpers/createClass":5,"@babel/runtime/helpers/interopRequireDefault":7}],284:[function(require,module,exports){
+},{"@babel/runtime/helpers/classCallCheck":4,"@babel/runtime/helpers/createClass":5,"@babel/runtime/helpers/interopRequireDefault":7}],289:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -52287,7 +55108,7 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
 
 exports.ReactionsSummariesCache = ReactionsSummariesCache;
 
-},{"@babel/runtime/helpers/classCallCheck":4,"@babel/runtime/helpers/createClass":5,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7}],285:[function(require,module,exports){
+},{"@babel/runtime/helpers/classCallCheck":4,"@babel/runtime/helpers/createClass":5,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7}],290:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -52463,7 +55284,7 @@ function ThreadObject(app, thread) {
   };
 }
 
-},{"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7}],286:[function(require,module,exports){
+},{"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":7}],291:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -52499,7 +55320,7 @@ var SDKUser = /*#__PURE__*/function () {
 
 exports.SDKUser = SDKUser;
 
-},{"@babel/runtime/helpers/classCallCheck":4,"@babel/runtime/helpers/createClass":5,"@babel/runtime/helpers/interopRequireDefault":7}],287:[function(require,module,exports){
+},{"@babel/runtime/helpers/classCallCheck":4,"@babel/runtime/helpers/createClass":5,"@babel/runtime/helpers/interopRequireDefault":7}],292:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -52834,7 +55655,7 @@ function ChatMessaging(app, params) {
 var _default = ChatMessaging;
 exports["default"] = _default;
 
-},{"./lib/constants":277,"./lib/errorHandler":278,"./utility/utility":288,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/typeof":13,"dompurify":138}],288:[function(require,module,exports){
+},{"./lib/constants":282,"./lib/errorHandler":283,"./utility/utility":293,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/typeof":13,"dompurify":138}],293:[function(require,module,exports){
 (function (global){(function (){
 "use strict";
 

@@ -1,4 +1,6 @@
-import {CallManager} from "./callManager";
+import CallManager from "./callManager";
+import CallServerManager from "./callServerManager";
+import MultiTrackCallManager from "./multitrack/callManager";
 
 function CallsList(app) {
     const config = {
@@ -8,12 +10,19 @@ function CallsList(app) {
 
     const publicized = {
         async addItem(callId, callConfig) {
+            const csm = new CallServerManager(app);
+            csm.setServers(callConfig.kurentoAddress);
+
             if(Object.values(config.list).filter(item => item != undefined).length) {
                 await publicized.destroyAllCalls();
             }
 
             app.callsManager.currentCallId = callId;
-            config.list[callId] = new CallManager({app, callId, callConfig});
+            if(csm.isJanus()) {
+                config.list[callId] = new MultiTrackCallManager({app, callId, callConfig});
+            } else {
+                config.list[callId] = new CallManager({app, callId, callConfig});
+            }
         },
         async removeItem(callId) {
             if(config.list[callId]) {

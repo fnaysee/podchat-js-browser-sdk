@@ -1,5 +1,3 @@
-import {currentCall} from "../sharedData";
-import {sdkParams} from "../../sdkParams";
 
 function WebrtcPeerConnection({
     callId,
@@ -20,16 +18,12 @@ function WebrtcPeerConnection({
 
     function createPeer() {
         try {
-            console.log('debug createPeer', config.rtcPeerConfig, config.direction);
             config.peerConnection = new RTCPeerConnection(config.rtcPeerConfig);
         } catch (err) {
             console.error("[SDK][WebrtcPeerConnection][createPeer]", err);
         }
-        console.log('debug createPeer 2', config.rtcPeerConfig, config.direction);
         config.peerConnection.onconnectionstatechange = connectionStateChange;
         config.peerConnection.oniceconnectionstatechange = iceConnectionStateChange;
-        console.log('debug createPeer 3', config.rtcPeerConfig, config.direction);
-
         config.peerConnection.addEventListener('signalingstatechange', signalingStateChangeCallback);
         // config.peerConnection.addEventListener('track', onRemoteTrack);
     }
@@ -195,7 +189,6 @@ function WebrtcPeerConnection({
             });
         },
         addIceCandidate(candidate, callback){
-            console.log('debug 3', {candidate})
             config.candidatesQueue.push({
                 candidate: new RTCIceCandidate(candidate),
                 callback: callback

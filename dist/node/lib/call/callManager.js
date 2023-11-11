@@ -5,7 +5,7 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.CallManager = CallManager;
+exports["default"] = void 0;
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
@@ -13,7 +13,7 @@ var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/de
 
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 
-var _callUsers = require("./callUsers");
+var _callUsers = _interopRequireDefault(require("./callUsers"));
 
 var _utility = _interopRequireDefault(require("../../utility/utility"));
 
@@ -34,7 +34,7 @@ function CallManager(_ref) {
   var config = {
     callId: callId,
     callConfig: callConfig,
-    users: new _callUsers.CallUsers({
+    users: new _callUsers["default"]({
       app: app,
       callId: callId
     }),
@@ -1276,3 +1276,6 @@ function ScreenShareStateManager(app) {
     }
   };
 }
+
+var _default = CallManager;
+exports["default"] = _default;

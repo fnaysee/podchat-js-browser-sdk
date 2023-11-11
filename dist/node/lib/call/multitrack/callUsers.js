@@ -5,7 +5,7 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.CallUsers = CallUsers;
+exports["default"] = void 0;
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
@@ -13,14 +13,9 @@ var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/
 
 var _callUser = require("./callUser");
 
-var _callsList = require("../callsList");
-
-var _store = require("../../store");
-
-var _sharedData = require("../sharedData");
-
 function CallUsers(_ref) {
-  var callId = _ref.callId;
+  var app = _ref.app,
+      callId = _ref.callId;
   var config = {
     list: {},
     callId: callId
@@ -39,8 +34,8 @@ function CallUsers(_ref) {
   var publicized = {
     addItem: function addItem(memberObject) {
       var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "user";
-      if (type == 'user') config.list[memberObject.userId] = new _callUser.CallUser(memberObject);else if (type == 'screenShare') {
-        config.list[memberObject.userId] = new _callUser.CallScreenShare(memberObject);
+      if (type == 'user') config.list[memberObject.userId] = new _callUser.CallUser(app, memberObject);else if (type == 'screenShare') {
+        config.list[memberObject.userId] = new _callUser.CallScreenShare(app, memberObject);
       }
     },
     removeItem: function removeItem(userId) {
@@ -74,10 +69,9 @@ function CallUsers(_ref) {
     },
     getHTMLElements: getHTMLElements,
     generateCallUIList: function generateCallUIList() {
-      var me = _store.store.user().id,
+      var me = app.store.user.get().id,
           callUIElements = {};
-
-      if (!(0, _callsList.callsManager)().get(config.callId)) return;
+      if (!app.callsManager.get(config.callId)) return;
 
       for (var i in config.list) {
         var tags = {};
@@ -88,7 +82,7 @@ function CallUsers(_ref) {
 
         if (config.list[i] && HTMLElements) {
           tags.container = HTMLElements.container;
-          if (i === 'screenShare' && (0, _sharedData.currentCall)().screenShareInfo.isStarted() || i != 'screenShare' && config.list[i].user().video && HTMLElements[config.list[i].user().videoTopicName]) tags.video = HTMLElements[config.list[i].user().videoTopicName]; // if (!config.list[i].mute && config.list[i].getHTMLElements()[config.list[i].user().audioTopicName])
+          if (i === 'screenShare' && app.call.currentCall().screenShareInfo.isStarted() || i != 'screenShare' && config.list[i].user().video && HTMLElements[config.list[i].user().videoTopicName]) tags.video = HTMLElements[config.list[i].user().videoTopicName]; // if (!config.list[i].mute && config.list[i].getHTMLElements()[config.list[i].user().audioTopicName])
           //     tags.audio = config.list[i].getHTMLElements()[config.list[i].user().audioTopicName];
 
           callUIElements[i] = tags;
@@ -131,3 +125,6 @@ function CallUsers(_ref) {
   };
   return publicized;
 }
+
+var _default = CallUsers;
+exports["default"] = _default;

@@ -2177,20 +2177,19 @@ function ChatCall(app, params) {
             return;
         }
 
-        let call = app.callsManager.get(app.callsManager.currentCallId);
+        let call = app.call.currentCall();
         if(!call) {
-            app.chatEvents.fireEvent('error', {
-                code: 999,
-                message: 'Call not exists'
-            });
+            app.errorHandler.raiseError(errorList.INVALID_CALLID, callback, true, {});
+            // app.chatEvents.fireEvent('error', {
+            //     code: 999,
+            //     message: 'Call not exists'
+            // });
             return;
         }
 
         let user = call.users().get(app.store.user.get().id); //callUsers[store.user().id];
-        if(user
-            && user.videoTopicManager()
-            && user.videoTopicManager().getPeer()
-        ) {
+
+        if(user && user.user().video) {
             app.chatEvents.fireEvent('error', {
                 code: 999,
                 message: 'Video stream is already open!'

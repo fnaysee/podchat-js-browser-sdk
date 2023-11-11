@@ -1,21 +1,11 @@
-import {sdkParams} from "../../sdkParams";
-
-import {
-    audioCtx,
-    currentCall,
-    sharedVariables
-} from "../sharedData";
-import {callsManager} from "../callsList";
-import {store} from "../../store";
 import Utility from "../../../utility/utility";
-import {chatEvents} from "../../../events.module";
 
-function CallUser(user) {
+function CallUser(app, user) {
     const config = {
         callId: user.callId,
         userId: user.userId,
         user,
-        isMe: user.userId == store.user().id,
+        isMe: user.userId == app.store.user.get().id,
         containerTag: null,
         htmlElements: {},
         videoTopicManager: null,
@@ -29,7 +19,7 @@ function CallUser(user) {
             return config.userId;
         },
         isMe() {
-            return config.userId == store.user().id;
+            return config.userId == app.store.user.get().id;
         },
         isScreenShare() {
             return false;
@@ -46,13 +36,13 @@ function CallUser(user) {
                 config.htmlElement = document.createElement('video');
                 let el = config.htmlElement;
                 el.setAttribute('id', 'callUserVideo-' + config.user.videoTopicName);
-                el.setAttribute('class', sharedVariables.callVideoTagClassName);
+                el.setAttribute('class', app.call.sharedVariables.callVideoTagClassName);
                 el.setAttribute('playsinline', '');
                 el.setAttribute('muted', '');
                 el.setAttribute('autoplay', '');
                 el.setAttribute('data-uniqueId', elementUniqueId);
-                el.setAttribute('width', sharedVariables.callVideoMinWidth + 'px');
-                el.setAttribute('height', sharedVariables.callVideoMinHeight + 'px');
+                el.setAttribute('width', app.call.sharedVariables.callVideoMinWidth + 'px');
+                el.setAttribute('height', app.call.sharedVariables.callVideoMinHeight + 'px');
                 // el.setAttribute('controls', '');
             }
 
@@ -70,12 +60,12 @@ function CallUser(user) {
             }
         },
         appendAudioToCallDiv() {
-            if (!sharedVariables.callDivId) {
-                sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
+            if (!app.call.sharedVariables.callDivId) {
+                app.sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
                 return;
             }
             let user = config.user,
-                callParentDiv = document.getElementById(sharedVariables.callDivId),
+                callParentDiv = document.getElementById(app.call.sharedVariables.callDivId),
                 userContainer = document.getElementById("callParticipantWrapper-" + config.userId);
 
             if (!userContainer) {
@@ -91,12 +81,12 @@ function CallUser(user) {
             }
         },
         appendVideoToCallDiv() {
-            if (!sharedVariables.callDivId) {
-                sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
+            if (!app.call.sharedVariables.callDivId) {
+                app.sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
                 return;
             }
             let user = config.user,
-                callParentDiv = document.getElementById(sharedVariables.callDivId),
+                callParentDiv = document.getElementById(app.call.sharedVariables.callDivId),
                 userContainer = document.getElementById("callParticipantWrapper-" + config.userId);
 
             if (!userContainer) {
@@ -105,13 +95,12 @@ function CallUser(user) {
             }
             if (user.video) {
                 if (!document.getElementById("callUserVideo-" + config.user.videoTopicName)) {
-                    console.log('debug appendVideoToCallDiv 995', config.user.videoTopicName, config.htmlElements[config.user.videoTopicName])
                     userContainer.appendChild(config.htmlElements[config.user.videoTopicName]);
                     config.htmlElements[config.user.videoTopicName].play();
                 }
             }
 
-            currentCall().sendCallDivs()
+            app.call.currentCall().sendCallDivs()
         },
         videoTopicManager() {
             return config.videoTopicManager;
@@ -123,19 +112,19 @@ function CallUser(user) {
             config.audioIsOpen = true;
             config.user.mute = false;
             if (config.isMe) {
-                currentCall().deviceManager().grantUserMediaDevicesPermissions({audio: true}).then(() => {
-                    currentCall().sendPeerManager().addTrack({
+                app.call.currentCall().deviceManager().grantUserMediaDevicesPermissions({audio: true}).then(() => {
+                    app.call.currentCall().sendPeerManager().addTrack({
                         clientId: config.user.clientId,
                         topic: config.user.audioTopicName,
                         mediaType: 1,
-                        stream: currentCall().deviceManager().mediaStreams.getAudioInput(),
+                        stream: app.call.currentCall().deviceManager().mediaStreams.getAudioInput(),
                         onTrackCallback
                     });
                 }).catch(error => {
                     // reject(error)
                 })
             } else {
-                currentCall().receivePeerManager().addTrack({
+                app.call.currentCall().receivePeerManager().addTrack({
                     clientId: config.user.clientId,
                     topic: config.user.audioTopicName,
                     mediaType: 1,
@@ -147,19 +136,19 @@ function CallUser(user) {
             config.user.video = true;
             config.videoIsOpen = true;
             if (config.isMe) {
-                currentCall().deviceManager().grantUserMediaDevicesPermissions({video: true}).then(() => {
-                    currentCall().sendPeerManager().addTrack({
+                app.call.currentCall().deviceManager().grantUserMediaDevicesPermissions({video: true}).then(() => {
+                    app.call.currentCall().sendPeerManager().addTrack({
                         clientId: config.user.clientId,
                         topic: config.user.videoTopicName,
                         mediaType: 0,
-                        stream: currentCall().deviceManager().mediaStreams.getVideoInput(),
+                        stream: app.call.currentCall().deviceManager().mediaStreams.getVideoInput(),
                         onTrackCallback
                     });
                 }).catch(error => {
                     // reject(error)
                 })
             } else {
-                currentCall().receivePeerManager().addTrack({
+                app.call.currentCall().receivePeerManager().addTrack({
                     clientId: config.user.clientId,
                     topic: config.user.videoTopicName,
                     mediaType: 0,
@@ -196,7 +185,6 @@ function CallUser(user) {
         processTrackChange(conf) {
             if (conf.topic.indexOf('Vi-') > -1) {
                 if (!config.videoIsOpen && conf.isReceiving) {
-                    console.log('debug 111 processTrackChange 1', conf, conf.topic, conf.topic.replace('Vi-', ''))
                     publicized.startVideo(conf.topic.replace('Vi-', ''));
                 } else if (config.videoIsOpen && !conf.isReceiving) {
                     config.videoIsOpen = false;
@@ -219,10 +207,10 @@ function CallUser(user) {
             let user = config.user,
                 topicMetadata = config.topicMetaData;
             // Create and configure the audio pipeline
-            const analyzer = audioCtx().createAnalyser();
+            const analyzer = app.call.audioCtx().createAnalyser();
             analyzer.fftSize = 512;
             analyzer.smoothingTimeConstant = 0.1;
-            const sourceNode = audioCtx().createMediaStreamSource(stream);
+            const sourceNode = app.call.audioCtx().createMediaStreamSource(stream);
             sourceNode.connect(analyzer);
 
             // Analyze the sound
@@ -244,7 +232,7 @@ function CallUser(user) {
 
 
                 if (audioPeakDB > -50 && audioMeter > 0) {
-                    chatEvents.fireEvent('callStreamEvents', {
+                    app.chatEvents.fireEvent('callStreamEvents', {
                         type: 'USER_SPEAKING',
                         userId: config.userId,
                         audioLevel: convertToAudioLevel(audioPeakDB),
@@ -252,7 +240,7 @@ function CallUser(user) {
                         isMute: false
                     });
                 } else if (audioPeakDB !== -Infinity && audioPeakDB < -60 && audioMeter > 0) {
-                    chatEvents.fireEvent('callStreamEvents', {
+                    app.chatEvents.fireEvent('callStreamEvents', {
                         type: 'USER_SPEAKING',
                         userId: config.userId,
                         audioLevel: 0,
@@ -260,7 +248,7 @@ function CallUser(user) {
                         isMute: false
                     });
                 } else if (audioPeakDB === -Infinity && audioMeter == 0) {
-                    chatEvents.fireEvent('callStreamEvents', {
+                    app.chatEvents.fireEvent('callStreamEvents', {
                         type: 'USER_SPEAKING',
                         userId: config.userId,
                         audioLevel: 0,
@@ -315,8 +303,6 @@ function CallUser(user) {
                 // publicized.watchAudioLevel();
             } else {
                 let el = publicized.getVideoHtmlElement();
-                console.log('debug onTrackCallback 111', el, config.user, config.user.videoTopicName, config.htmlElement)
-
                 el.srcObject = stream;
                 config.htmlElements[config.user.videoTopicName] = el;
                 publicized.appendVideoToCallDiv();
@@ -356,11 +342,11 @@ function CallUser(user) {
     return publicized;
 }
 
-function CallScreenShare(user) {
+function CallScreenShare(app, user) {
     const config = {
         callId: user.callId,
         userId: user.userId,
-        isMe: user.userId == store.user().id,
+        isMe: user.userId == app.store.user.get().id,
         user,
         type: "screenShare",
         containerTag: null,
@@ -381,12 +367,12 @@ function CallScreenShare(user) {
             return config.htmlElements;
         },
         appendVideoToCallDiv() {
-            if (!sharedVariables.callDivId) {
-                sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
+            if (!app.call.sharedVariables.callDivId) {
+                app.sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
                 return;
             }
             let user = config.user,
-                callParentDiv = document.getElementById(sharedVariables.callDivId),
+                callParentDiv = document.getElementById(app.call.sharedVariables.callDivId),
                 userContainer = document.getElementById("callParticipantWrapper-" + config.userId);
 
             if (!userContainer) {
@@ -406,7 +392,7 @@ function CallScreenShare(user) {
             //     config.videoTopicManager?.restartMediaOnKeyFrame("screenShare", [1000, 3000, 6000]);
             // }
 
-            currentCall().sendCallDivs()
+            app.call.currentCall().sendCallDivs()
         },
         videoTopicManager() {
             return config.videoTopicManager;
@@ -425,13 +411,13 @@ function CallScreenShare(user) {
 
 
             config.user.video = true;
-            currentCall().sendPeerManager(config.user, 'video');
+            app.call.currentCall().sendPeerManager(config.user, 'video');
             // config.videoTopicManager = new CallTopicManager({
             //     callId: config.user.callId,
             //     userId: config.user.userId,
             //     topic: config.user.videoTopicName,
             //     mediaType: 'video',
-            //     direction: (callsManager().get(config.callId).screenShareInfo.iAmOwner() ? 'send' : 'receive'),
+            //     direction: (app.callsManager.get(config.callId).screenShareInfo.iAmOwner() ? 'send' : 'receive'),
             //     user: config.user,
             //     isScreenShare: true,
             //     onHTMLElement(el) {
@@ -467,7 +453,7 @@ function CallScreenShare(user) {
     }
 
     function setup(user) {
-        let iAmOwner = callsManager().get(config.callId).screenShareInfo.iAmOwner();
+        let iAmOwner = app.callsManager.get(config.callId).screenShareInfo.iAmOwner();
 
         let obj = {
             video: true,

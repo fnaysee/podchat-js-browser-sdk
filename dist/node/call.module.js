@@ -2,8 +2,6 @@
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 
-var _typeof3 = require("@babel/runtime/helpers/typeof");
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -23,7 +21,7 @@ var _constants = require("./lib/constants");
 
 var _utility = _interopRequireDefault(require("./utility/utility"));
 
-var _errorHandler = _interopRequireWildcard(require("./lib/errorHandler"));
+var _errorHandler = require("./lib/errorHandler");
 
 var _callsList = _interopRequireDefault(require("./lib/call/callsList"));
 
@@ -32,10 +30,6 @@ var _deviceManager = require("./lib/call/deviceManager2");
 var _call = _interopRequireDefault(require("./lib/call/call"));
 
 var _callServerManager = _interopRequireDefault(require("./lib/call/callServerManager"));
-
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof3(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
@@ -153,14 +147,6 @@ function ChatCall(app, params) {
         config.servers = serversList;
         config.currentServerIndex = 0;
       },
-      // setCurrentServer: function (query) {
-      //     for(let i in config.servers) {
-      //         if(config.servers[i].indexOf(query) !== -1) {
-      //             config.currentServerIndex = i;
-      //             break;
-      //         }
-      //     }
-      // },
       getCurrentServer: function getCurrentServer() {
         return config.servers[0]; //config.currentServerIndex];
       },

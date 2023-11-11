@@ -11,7 +11,11 @@ var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"))
 
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 
-var _callManager = require("./callManager");
+var _callManager = _interopRequireDefault(require("./callManager"));
+
+var _callServerManager = _interopRequireDefault(require("./callServerManager"));
+
+var _callManager2 = _interopRequireDefault(require("./multitrack/callManager"));
 
 function CallsList(app) {
   var config = {
@@ -21,29 +25,42 @@ function CallsList(app) {
   var publicized = {
     addItem: function addItem(callId, callConfig) {
       return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
+        var csm;
         return _regenerator["default"].wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
+                csm = new _callServerManager["default"](app);
+                csm.setServers(callConfig.kurentoAddress);
+
                 if (!Object.values(config.list).filter(function (item) {
                   return item != undefined;
                 }).length) {
-                  _context.next = 3;
+                  _context.next = 5;
                   break;
                 }
 
-                _context.next = 3;
+                _context.next = 5;
                 return publicized.destroyAllCalls();
 
-              case 3:
-                app.callsManager.currentCallId = callId;
-                config.list[callId] = new _callManager.CallManager({
-                  app: app,
-                  callId: callId,
-                  callConfig: callConfig
-                });
-
               case 5:
+                app.callsManager.currentCallId = callId;
+
+                if (csm.isJanus()) {
+                  config.list[callId] = new _callManager2["default"]({
+                    app: app,
+                    callId: callId,
+                    callConfig: callConfig
+                  });
+                } else {
+                  config.list[callId] = new _callManager["default"]({
+                    app: app,
+                    callId: callId,
+                    callConfig: callConfig
+                  });
+                }
+
+              case 7:
               case "end":
                 return _context.stop();
             }
