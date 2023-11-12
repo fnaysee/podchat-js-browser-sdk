@@ -14,10 +14,6 @@ var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers
 
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 
-var _sharedData = require("../sharedData");
-
-var _callsList = require("../callsList");
-
 var _utility = _interopRequireDefault(require("../../../utility/utility"));
 
 function CallUser(app, user) {
@@ -117,7 +113,6 @@ function CallUser(app, user) {
 
       if (user.video) {
         if (!document.getElementById("callUserVideo-" + config.user.videoTopicName)) {
-          console.log('debug appendVideoToCallDiv 995', config.user.videoTopicName, config.htmlElements[config.user.videoTopicName]);
           userContainer.appendChild(config.htmlElements[config.user.videoTopicName]);
           config.htmlElements[config.user.videoTopicName].play();
         }
@@ -241,10 +236,12 @@ function CallUser(app, user) {
             switch (_context4.prev = _context4.next) {
               case 0:
                 config.user.mute = true;
-                _context4.next = 3;
+                config.audioIsOpen = false;
+                if (config.isMe) app.call.currentCall().sendPeerManager().removeTrack(config.user.audioTopicName);
+                _context4.next = 5;
                 return publicized.destroyAudio();
 
-              case 3:
+              case 5:
               case "end":
                 return _context4.stop();
             }
@@ -277,11 +274,13 @@ function CallUser(app, user) {
           while (1) {
             switch (_context6.prev = _context6.next) {
               case 0:
+                config.user.video = false;
                 config.videoIsOpen = false;
-                _context6.next = 3;
+                if (config.isMe) app.call.currentCall().sendPeerManager().removeTrack(config.user.videoTopicName);
+                _context6.next = 5;
                 return publicized.destroyVideo();
 
-              case 3:
+              case 5:
               case "end":
                 return _context6.stop();
             }
@@ -311,7 +310,6 @@ function CallUser(app, user) {
     processTrackChange: function processTrackChange(conf) {
       if (conf.topic.indexOf('Vi-') > -1) {
         if (!config.videoIsOpen && conf.isReceiving) {
-          console.log('debug 111 processTrackChange 1', conf, conf.topic, conf.topic.replace('Vi-', ''));
           publicized.startVideo(conf.topic.replace('Vi-', ''));
         } else if (config.videoIsOpen && !conf.isReceiving) {
           config.videoIsOpen = false;
@@ -333,10 +331,10 @@ function CallUser(app, user) {
       var user = config.user,
           topicMetadata = config.topicMetaData; // Create and configure the audio pipeline
 
-      var analyzer = (0, _sharedData.audioCtx)().createAnalyser();
+      var analyzer = app.call.audioCtx().createAnalyser();
       analyzer.fftSize = 512;
       analyzer.smoothingTimeConstant = 0.1;
-      var sourceNode = (0, _sharedData.audioCtx)().createMediaStreamSource(stream);
+      var sourceNode = app.call.audioCtx().createMediaStreamSource(stream);
       sourceNode.connect(analyzer); // Analyze the sound
 
       topicMetadata.audioLevelInterval = setInterval(function () {
@@ -426,7 +424,6 @@ function CallUser(app, user) {
       } else {
         var _el = publicized.getVideoHtmlElement();
 
-        console.log('debug onTrackCallback 111', _el, config.user, config.user.videoTopicName, config.htmlElement);
         _el.srcObject = stream;
         config.htmlElements[config.user.videoTopicName] = _el;
         publicized.appendVideoToCallDiv();
@@ -466,7 +463,7 @@ function CallUser(app, user) {
   return publicized;
 }
 
-function CallScreenShare(user) {
+function CallScreenShare(app, user) {
   var config = {
     callId: user.callId,
     userId: user.userId,

@@ -164,6 +164,11 @@ function CallUser(app, user) {
         },
         async stopAudio() {
             config.user.mute = true;
+            config.audioIsOpen = false;
+
+            if(config.isMe)
+                app.call.currentCall().sendPeerManager().removeTrack(config.user.audioTopicName);
+
             await publicized.destroyAudio();
         },
         async destroyAudio() {
@@ -173,7 +178,12 @@ function CallUser(app, user) {
             }
         },
         async stopVideo() {
+            config.user.video = false;
             config.videoIsOpen = false;
+
+            if(config.isMe)
+                app.call.currentCall().sendPeerManager().removeTrack(config.user.videoTopicName)
+
             await publicized.destroyVideo();
         },
         async destroyVideo() {
@@ -348,6 +358,7 @@ function CallScreenShare(app, user) {
         userId: user.userId,
         isMe: user.userId == app.store.user.get().id,
         user,
+        videoIsOpen: false,
         type: "screenShare",
         containerTag: null,
         htmlElements: {},
@@ -407,25 +418,30 @@ function CallScreenShare(app, user) {
             return;
         },
         startVideo(sendTopic) {
-            // config.user.videoTopicName = sendTopic;
-
-
             config.user.video = true;
-            app.call.currentCall().sendPeerManager(config.user, 'video');
-            // config.videoTopicManager = new CallTopicManager({
-            //     callId: config.user.callId,
-            //     userId: config.user.userId,
-            //     topic: config.user.videoTopicName,
-            //     mediaType: 'video',
-            //     direction: (app.callsManager.get(config.callId).screenShareInfo.iAmOwner() ? 'send' : 'receive'),
-            //     user: config.user,
-            //     isScreenShare: true,
-            //     onHTMLElement(el) {
-            //         config.htmlElements[config.user.videoTopicName] = el;
-            //         publicized.appendVideoToCallDiv();
-            //     }
-            // });
-            // config.videoTopicManager.createTopic();
+            config.videoIsOpen = true;
+            let iAmOwner = app.call.currentCall().screenShareInfo.iAmOwner();
+
+            if (iAmOwner) {
+                app.call.currentCall().deviceManager().grantUserMediaDevicesPermissions({video: true}).then(() => {
+                    app.call.currentCall().sendPeerManager().addTrack({
+                        clientId: config.user.clientId,
+                        topic: config.user.videoTopicName,
+                        mediaType: 0,
+                        stream: app.call.currentCall().deviceManager().mediaStreams.getVideoInput(),
+                        onTrackCallback
+                    });
+                }).catch(error => {
+                    // reject(error)
+                })
+            } else {
+                app.call.currentCall().receivePeerManager().addTrack({
+                    clientId: config.user.clientId,
+                    topic: config.user.videoTopicName,
+                    mediaType: 0,
+                    onTrackCallback
+                })
+            }
         },
         async reconnectTopic(media) {
             await config.videoTopicManager.stopTopicOnServer();
@@ -446,14 +462,19 @@ function CallScreenShare(app, user) {
             })
         },
         async destroyVideo() {
-            await config.videoTopicManager.destroy();
-            delete config.htmlElements[config.user.videoTopicName];
-            config.videoTopicManager = null;
+            // await config.videoTopicManager.destroy();
+            // delete config.htmlElements[config.user.videoTopicName];
+            // config.videoTopicManager = null;
+
+            if (config.htmlElements[config.user.videoTopicName]) {
+                config.htmlElements[config.user.videoTopicName].remove();
+                delete config.htmlElements[config.user.videoTopicName];
+            }
         },
     }
 
     function setup(user) {
-        let iAmOwner = app.callsManager.get(config.callId).screenShareInfo.iAmOwner();
+        let iAmOwner = app.call.currentCall().screenShareInfo.iAmOwner();
 
         let obj = {
             video: true,
@@ -487,11 +508,12 @@ function CallScreenShare(app, user) {
         return config.htmlElements;
     }
 
-    function generateVideoElement() {
-        if (config.user.video && !config.htmlElements[config.user.videoTopicName]) {
-            let el = config.videoTopicManager.getHtmlElement();
-            config.htmlElements[config.user.videoTopicName] = el;
-        }
+    function onTrackCallback(line, track) {
+        let stream = new MediaStream([track]);
+        let el = publicized.getVideoHtmlElement();
+        el.srcObject = stream;
+        config.htmlElements[config.user.videoTopicName] = el;
+        publicized.appendVideoToCallDiv();
     }
 
     setup(user);

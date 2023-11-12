@@ -73,19 +73,20 @@ var PeerConnectionManager = /*#__PURE__*/function () {
       var _this = this;
 
       var that = this;
+      var localTrackIndex;
 
-      this._peer.peerConnection.onicecandidate = function (_ref) {
-        var candidate = _ref.candidate;
+      var sender = this._peer.peerConnection.getSenders().find(function (s, index) {
+        if (s.track == item.stream.getTracks()[0]) {
+          localTrackIndex = index;
+          return true;
+        }
+      });
 
-        _this._app.call.currentCall().sendCallMessage({
-          id: "SEND_ADD_ICE_CANDIDATE",
-          token: _this._app.sdkParams.token,
-          chatId: _this._callId,
-          brokerAddress: _this._brokerAddress,
-          // clientId: this._app.call.currentCall().users().get(this._app.store.user().id).user().clientId,
-          iceCandidate: JSON.stringify(candidate)
-        }, null, {});
-      };
+      if (sender) {
+        console.warn('Track already exists in connection, direction: send');
+        item.onTrackCallback(item, item.stream.getTracks()[localTrackIndex]);
+        return;
+      }
 
       var localStream;
 
@@ -102,6 +103,19 @@ var PeerConnectionManager = /*#__PURE__*/function () {
           this._peer.addTrack(localStream.getTracks()[0], localStream);
         }
       }
+
+      this._peer.peerConnection.onicecandidate = function (_ref) {
+        var candidate = _ref.candidate;
+
+        _this._app.call.currentCall().sendCallMessage({
+          id: "SEND_ADD_ICE_CANDIDATE",
+          token: _this._app.sdkParams.token,
+          chatId: _this._callId,
+          brokerAddress: _this._brokerAddress,
+          // clientId: this._app.call.currentCall().users().get(this._app.store.user().id).user().clientId,
+          iceCandidate: JSON.stringify(candidate)
+        }, null, {});
+      };
 
       item.onTrackCallback(item, localStream.getTracks()[0]); // item.stream.getTracks().forEach(track => {
       //     this._peer.addTrack(track, item.stream);
@@ -140,8 +154,6 @@ var PeerConnectionManager = /*#__PURE__*/function () {
         that._peer.peerConnection.createOffer().then(function (offer) {
           return that._peer.peerConnection.setLocalDescription(offer);
         }).then(function () {
-          console.log('debug _requestAddSendTrack 7 createOffer sdp: ', _this._peer.peerConnection.localDescription.sdp);
-
           _this._app.call.currentCall().sendCallMessage({
             id: "SEND_NEGOTIATION",
             sdpOffer: _this._peer.peerConnection.localDescription.sdp,
@@ -156,6 +168,44 @@ var PeerConnectionManager = /*#__PURE__*/function () {
               mline: item.mline,
               topic: item.topic,
               mediaType: item.mediaType
+            }]
+          }, null, {});
+        });
+      }
+    }
+  }, {
+    key: "_requestRemoveSendTrack",
+    value: function _requestRemoveSendTrack(item) {
+      var _this2 = this;
+
+      var localTrackIndex;
+
+      var sender = this._peer.peerConnection.getSenders().find(function (s, index) {
+        if (s.track == item.stream.getTracks()[0]) {
+          localTrackIndex = index;
+          return true;
+        }
+      });
+
+      if (sender) {
+        this._peer.peerConnection.removeTrack(sender);
+
+        this._peer.peerConnection.createOffer().then(function (offer) {
+          return _this2._peer.peerConnection.setLocalDescription(offer);
+        }).then(function () {
+          _this2._app.call.currentCall().sendCallMessage({
+            id: "SEND_NEGOTIATION",
+            sdpOffer: _this2._peer.peerConnection.localDescription.sdp,
+            // clientId: getClientId(),
+            token: _this2._app.sdkParams.token,
+            chatId: _this2._callId,
+            // brokerAddress: getBrokerAddress(),
+            // chatId: getChatId(),
+            brokerAddress: _this2._brokerAddress,
+            deletion: [{
+              /*clientId: getClientId(),*/
+              mline: item.mline,
+              topic: item.topic
             }]
           }, null, {});
         });
@@ -226,6 +276,15 @@ var PeerConnectionManager = /*#__PURE__*/function () {
       this._nextTrack();
     }
   }, {
+    key: "removeTrack",
+    value: function removeTrack(topic) {
+      var item = this._trackList.find(function (item, index) {
+        return item.topic === topic;
+      });
+
+      if (item) this._requestRemoveSendTrack(item);
+    }
+  }, {
     key: "processingCurrentTrackCompleted",
     value: function processingCurrentTrackCompleted() {
       this._unlockProcessingNextTrack();
@@ -255,8 +314,6 @@ var PeerConnectionManager = /*#__PURE__*/function () {
   }, {
     key: "_onConnectionStateChange",
     value: function _onConnectionStateChange() {
-      console.log('debug _onConnectionStateChange', this._direction, this._peer.peerConnection.connectionState);
-
       this._app.chatEvents.fireEvent("callStreamEvents", {
         type: 'WEBRTC_CONNECTION_STATE_CHANGE',
         callId: this._callId,
@@ -303,8 +360,6 @@ var PeerConnectionManager = /*#__PURE__*/function () {
   }, {
     key: "_onIceConnectionStateChange",
     value: function _onIceConnectionStateChange() {
-      console.log('debug _onIceConnectionStateChange', this._direction, this._peer.peerConnection.connectionState);
-
       if (!this._peer || this.isDestroyed()) {
         return; //avoid log errors
       }
@@ -394,7 +449,7 @@ var PeerConnectionManager = /*#__PURE__*/function () {
   }, {
     key: "handleProcessSDPOfferForReceiveTrack",
     value: function handleProcessSDPOfferForReceiveTrack(jsonMessage, callback) {
-      var _this2 = this;
+      var _this3 = this;
 
       console.log('ooooooooooooooooooooooo ', {
         jsonMessage: jsonMessage
@@ -412,13 +467,13 @@ var PeerConnectionManager = /*#__PURE__*/function () {
       this._peer.peerConnection.onicecandidate = function (_ref2) {
         var candidate = _ref2.candidate;
 
-        _this2._app.call.currentCall().sendCallMessage({
+        _this3._app.call.currentCall().sendCallMessage({
           id: "RECIVE_ADD_ICE_CANDIDATE",
           // chatId: getChatId(),
           // clientId: this._app.call.currentCall().users().get(this._app.store.user().id).user().clientId,
-          brokerAddress: _this2._brokerAddress,
-          token: _this2._app.sdkParams.token,
-          chatId: _this2._callId,
+          brokerAddress: _this3._brokerAddress,
+          token: _this3._app.sdkParams.token,
+          chatId: _this3._callId,
           iceCandidate: JSON.stringify(candidate) // addition: [{mline: 0, topic: `Vi-send-${getChatId()}-12345678`}]
 
         }, null, {});
@@ -435,11 +490,11 @@ var PeerConnectionManager = /*#__PURE__*/function () {
           return;
         }
 
-        _this2._app.call.currentCall().sendCallMessage({
+        _this3._app.call.currentCall().sendCallMessage({
           id: "RECIVE_SDP_ANSWER",
           sdpAnswer: sdpAnswer,
           // clientId: getClientId(),
-          token: _this2._app.sdkParams.token,
+          token: _this3._app.sdkParams.token,
           // brokerAddress: getBrokerAddress(),
           // chatId: getChatId(),
           addition: [{

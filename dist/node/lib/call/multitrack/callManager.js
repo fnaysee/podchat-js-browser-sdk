@@ -141,15 +141,11 @@ function MultiTrackCallManager(_ref) {
         app.call.callStopQueue.callStarted = true;
         var user = config.users.get(app.store.user.get().id); //Start my own senders
 
-        console.log('debug ', 77, user.user());
-
         if (user.user().video) {
-          console.log('debug 111 createSessionInChat() video 1', user.user());
           user.startVideo(user.user().topicSend);
         }
 
         if (!user.user().mute) {
-          console.log('debug 111 createSessionInChat() voice 2', user.user());
           user.startAudio(user.user().topicSend);
         }
       } else {
@@ -265,23 +261,12 @@ function MultiTrackCallManager(_ref) {
 
   function handleReceivingTracksChanges(jsonMessage) {
     // jsonMessage.recvList
-    console.log('debug jsonMessage', {
-      jsonMessage: jsonMessage
-    });
-
     if (jsonMessage && jsonMessage.recvList && jsonMessage.recvList.length) {
       try {
         var list = JSON.parse(jsonMessage.recvList);
-        console.log('debug handleReceivingTracksChanges 1', {
-          list: list
-        });
         list.forEach(function (item) {
-          console.log('debug handleReceivingTracksChanges 2', {
-            item: item
-          });
           var userId = config.users.findUserIdByTopic(item.topic);
           var user = config.users.get(userId);
-          console.log('debug handleReceivingTracksChanges 3', user, userId, user.user(), item, user && !user.isMe());
 
           if (user && !user.isMe()) {
             user.processTrackChange(item);
@@ -1044,7 +1029,7 @@ function MultiTrackCallManager(_ref) {
                   break;
                 }
 
-                if (!user.audioTopicManager()) {
+                if (!user.user.video) {
                   _context4.next = 9;
                   break;
                 }

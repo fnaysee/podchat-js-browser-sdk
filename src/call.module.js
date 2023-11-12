@@ -958,10 +958,10 @@ function ChatCall(app, params) {
              * Type 123   Start Screen Share
              */
             case chatMessageVOTypes.START_SCREEN_SHARE:
-                if(!app.callsManager.currentCallId)
+                if(!app.call.currentCall())
                     return;
 
-                app.callsManager.get(threadId).handleStartScreenShare(messageContent);
+                app.call.currentCall().handleStartScreenShare(messageContent);
 
                 if (app.store.messagesCallbacks[uniqueId]) {
                         app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount));

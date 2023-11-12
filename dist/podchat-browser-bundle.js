@@ -41723,7 +41723,7 @@ FilterXSS.prototype.process = function (html) {
 module.exports = FilterXSS;
 
 },{"./default":253,"./parser":255,"./util":256,"cssfilter":124}],258:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.48","date":"۱۴۰۲/۸/۲۰","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.7-snapshot.48","date":"۱۴۰۲/۸/۲۱","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],259:[function(require,module,exports){
 "use strict";
 
@@ -44021,19 +44021,20 @@ function ChatCall(app, params) {
       return;
     }
 
-    var call = app.callsManager.get(app.callsManager.currentCallId);
+    var call = app.call.currentCall();
 
     if (!call) {
-      app.chatEvents.fireEvent('error', {
-        code: 999,
-        message: 'Call not exists'
-      });
+      app.errorHandler.raiseError(_errorHandler.errorList.INVALID_CALLID, callback, true, {}); // app.chatEvents.fireEvent('error', {
+      //     code: 999,
+      //     message: 'Call not exists'
+      // });
+
       return;
     }
 
     var user = call.users().get(app.store.user.get().id); //callUsers[store.user().id];
 
-    if (user && user.videoTopicManager() && user.videoTopicManager().getPeer()) {
+    if (user && user.user().video) {
       app.chatEvents.fireEvent('error', {
         code: 999,
         message: 'Video stream is already open!'
@@ -50346,15 +50347,11 @@ function MultiTrackCallManager(_ref) {
         app.call.callStopQueue.callStarted = true;
         var user = config.users.get(app.store.user.get().id); //Start my own senders
 
-        console.log('debug ', 77, user.user());
-
         if (user.user().video) {
-          console.log('debug 111 createSessionInChat() video 1', user.user());
           user.startVideo(user.user().topicSend);
         }
 
         if (!user.user().mute) {
-          console.log('debug 111 createSessionInChat() voice 2', user.user());
           user.startAudio(user.user().topicSend);
         }
       } else {
@@ -50470,23 +50467,12 @@ function MultiTrackCallManager(_ref) {
 
   function handleReceivingTracksChanges(jsonMessage) {
     // jsonMessage.recvList
-    console.log('debug jsonMessage', {
-      jsonMessage: jsonMessage
-    });
-
     if (jsonMessage && jsonMessage.recvList && jsonMessage.recvList.length) {
       try {
         var list = JSON.parse(jsonMessage.recvList);
-        console.log('debug handleReceivingTracksChanges 1', {
-          list: list
-        });
         list.forEach(function (item) {
-          console.log('debug handleReceivingTracksChanges 2', {
-            item: item
-          });
           var userId = config.users.findUserIdByTopic(item.topic);
           var user = config.users.get(userId);
-          console.log('debug handleReceivingTracksChanges 3', user, userId, user.user(), item, user && !user.isMe());
 
           if (user && !user.isMe()) {
             user.processTrackChange(item);
@@ -51250,7 +51236,7 @@ function MultiTrackCallManager(_ref) {
                   break;
                 }
 
-                if (!user.audioTopicManager()) {
+                if (!user.user.video) {
                   _context4.next = 9;
                   break;
                 }
@@ -51543,10 +51529,6 @@ var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers
 
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 
-var _sharedData = require("../sharedData");
-
-var _callsList = require("../callsList");
-
 var _utility = _interopRequireDefault(require("../../../utility/utility"));
 
 function CallUser(app, user) {
@@ -51646,7 +51628,6 @@ function CallUser(app, user) {
 
       if (user.video) {
         if (!document.getElementById("callUserVideo-" + config.user.videoTopicName)) {
-          console.log('debug appendVideoToCallDiv 995', config.user.videoTopicName, config.htmlElements[config.user.videoTopicName]);
           userContainer.appendChild(config.htmlElements[config.user.videoTopicName]);
           config.htmlElements[config.user.videoTopicName].play();
         }
@@ -51770,10 +51751,12 @@ function CallUser(app, user) {
             switch (_context4.prev = _context4.next) {
               case 0:
                 config.user.mute = true;
-                _context4.next = 3;
+                config.audioIsOpen = false;
+                if (config.isMe) app.call.currentCall().sendPeerManager().removeTrack(config.user.audioTopicName);
+                _context4.next = 5;
                 return publicized.destroyAudio();
 
-              case 3:
+              case 5:
               case "end":
                 return _context4.stop();
             }
@@ -51806,11 +51789,13 @@ function CallUser(app, user) {
           while (1) {
             switch (_context6.prev = _context6.next) {
               case 0:
+                config.user.video = false;
                 config.videoIsOpen = false;
-                _context6.next = 3;
+                if (config.isMe) app.call.currentCall().sendPeerManager().removeTrack(config.user.videoTopicName);
+                _context6.next = 5;
                 return publicized.destroyVideo();
 
-              case 3:
+              case 5:
               case "end":
                 return _context6.stop();
             }
@@ -51840,7 +51825,6 @@ function CallUser(app, user) {
     processTrackChange: function processTrackChange(conf) {
       if (conf.topic.indexOf('Vi-') > -1) {
         if (!config.videoIsOpen && conf.isReceiving) {
-          console.log('debug 111 processTrackChange 1', conf, conf.topic, conf.topic.replace('Vi-', ''));
           publicized.startVideo(conf.topic.replace('Vi-', ''));
         } else if (config.videoIsOpen && !conf.isReceiving) {
           config.videoIsOpen = false;
@@ -51862,10 +51846,10 @@ function CallUser(app, user) {
       var user = config.user,
           topicMetadata = config.topicMetaData; // Create and configure the audio pipeline
 
-      var analyzer = (0, _sharedData.audioCtx)().createAnalyser();
+      var analyzer = app.call.audioCtx().createAnalyser();
       analyzer.fftSize = 512;
       analyzer.smoothingTimeConstant = 0.1;
-      var sourceNode = (0, _sharedData.audioCtx)().createMediaStreamSource(stream);
+      var sourceNode = app.call.audioCtx().createMediaStreamSource(stream);
       sourceNode.connect(analyzer); // Analyze the sound
 
       topicMetadata.audioLevelInterval = setInterval(function () {
@@ -51955,7 +51939,6 @@ function CallUser(app, user) {
       } else {
         var _el = publicized.getVideoHtmlElement();
 
-        console.log('debug onTrackCallback 111', _el, config.user, config.user.videoTopicName, config.htmlElement);
         _el.srcObject = stream;
         config.htmlElements[config.user.videoTopicName] = _el;
         publicized.appendVideoToCallDiv();
@@ -51995,7 +51978,7 @@ function CallUser(app, user) {
   return publicized;
 }
 
-function CallScreenShare(user) {
+function CallScreenShare(app, user) {
   var config = {
     callId: user.callId,
     userId: user.userId,
@@ -52201,7 +52184,7 @@ function CallScreenShare(user) {
   return publicized;
 }
 
-},{"../../../utility/utility":293,"../callsList":270,"../sharedData":277,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/toConsumableArray":12,"@babel/runtime/regenerator":15}],274:[function(require,module,exports){
+},{"../../../utility/utility":293,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/toConsumableArray":12,"@babel/runtime/regenerator":15}],274:[function(require,module,exports){
 arguments[4][269][0].apply(exports,arguments)
 },{"./callUser":273,"@babel/runtime/helpers/asyncToGenerator":3,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":15,"dup":269}],275:[function(require,module,exports){
 "use strict";
@@ -52279,19 +52262,20 @@ var PeerConnectionManager = /*#__PURE__*/function () {
       var _this = this;
 
       var that = this;
+      var localTrackIndex;
 
-      this._peer.peerConnection.onicecandidate = function (_ref) {
-        var candidate = _ref.candidate;
+      var sender = this._peer.peerConnection.getSenders().find(function (s, index) {
+        if (s.track == item.stream.getTracks()[0]) {
+          localTrackIndex = index;
+          return true;
+        }
+      });
 
-        _this._app.call.currentCall().sendCallMessage({
-          id: "SEND_ADD_ICE_CANDIDATE",
-          token: _this._app.sdkParams.token,
-          chatId: _this._callId,
-          brokerAddress: _this._brokerAddress,
-          // clientId: this._app.call.currentCall().users().get(this._app.store.user().id).user().clientId,
-          iceCandidate: JSON.stringify(candidate)
-        }, null, {});
-      };
+      if (sender) {
+        console.warn('Track already exists in connection, direction: send');
+        item.onTrackCallback(item, item.stream.getTracks()[localTrackIndex]);
+        return;
+      }
 
       var localStream;
 
@@ -52308,6 +52292,19 @@ var PeerConnectionManager = /*#__PURE__*/function () {
           this._peer.addTrack(localStream.getTracks()[0], localStream);
         }
       }
+
+      this._peer.peerConnection.onicecandidate = function (_ref) {
+        var candidate = _ref.candidate;
+
+        _this._app.call.currentCall().sendCallMessage({
+          id: "SEND_ADD_ICE_CANDIDATE",
+          token: _this._app.sdkParams.token,
+          chatId: _this._callId,
+          brokerAddress: _this._brokerAddress,
+          // clientId: this._app.call.currentCall().users().get(this._app.store.user().id).user().clientId,
+          iceCandidate: JSON.stringify(candidate)
+        }, null, {});
+      };
 
       item.onTrackCallback(item, localStream.getTracks()[0]); // item.stream.getTracks().forEach(track => {
       //     this._peer.addTrack(track, item.stream);
@@ -52346,8 +52343,6 @@ var PeerConnectionManager = /*#__PURE__*/function () {
         that._peer.peerConnection.createOffer().then(function (offer) {
           return that._peer.peerConnection.setLocalDescription(offer);
         }).then(function () {
-          console.log('debug _requestAddSendTrack 7 createOffer sdp: ', _this._peer.peerConnection.localDescription.sdp);
-
           _this._app.call.currentCall().sendCallMessage({
             id: "SEND_NEGOTIATION",
             sdpOffer: _this._peer.peerConnection.localDescription.sdp,
@@ -52362,6 +52357,44 @@ var PeerConnectionManager = /*#__PURE__*/function () {
               mline: item.mline,
               topic: item.topic,
               mediaType: item.mediaType
+            }]
+          }, null, {});
+        });
+      }
+    }
+  }, {
+    key: "_requestRemoveSendTrack",
+    value: function _requestRemoveSendTrack(item) {
+      var _this2 = this;
+
+      var localTrackIndex;
+
+      var sender = this._peer.peerConnection.getSenders().find(function (s, index) {
+        if (s.track == item.stream.getTracks()[0]) {
+          localTrackIndex = index;
+          return true;
+        }
+      });
+
+      if (sender) {
+        this._peer.peerConnection.removeTrack(sender);
+
+        this._peer.peerConnection.createOffer().then(function (offer) {
+          return _this2._peer.peerConnection.setLocalDescription(offer);
+        }).then(function () {
+          _this2._app.call.currentCall().sendCallMessage({
+            id: "SEND_NEGOTIATION",
+            sdpOffer: _this2._peer.peerConnection.localDescription.sdp,
+            // clientId: getClientId(),
+            token: _this2._app.sdkParams.token,
+            chatId: _this2._callId,
+            // brokerAddress: getBrokerAddress(),
+            // chatId: getChatId(),
+            brokerAddress: _this2._brokerAddress,
+            deletion: [{
+              /*clientId: getClientId(),*/
+              mline: item.mline,
+              topic: item.topic
             }]
           }, null, {});
         });
@@ -52432,6 +52465,15 @@ var PeerConnectionManager = /*#__PURE__*/function () {
       this._nextTrack();
     }
   }, {
+    key: "removeTrack",
+    value: function removeTrack(topic) {
+      var item = this._trackList.find(function (item, index) {
+        return item.topic === topic;
+      });
+
+      if (item) this._requestRemoveSendTrack(item);
+    }
+  }, {
     key: "processingCurrentTrackCompleted",
     value: function processingCurrentTrackCompleted() {
       this._unlockProcessingNextTrack();
@@ -52461,8 +52503,6 @@ var PeerConnectionManager = /*#__PURE__*/function () {
   }, {
     key: "_onConnectionStateChange",
     value: function _onConnectionStateChange() {
-      console.log('debug _onConnectionStateChange', this._direction, this._peer.peerConnection.connectionState);
-
       this._app.chatEvents.fireEvent("callStreamEvents", {
         type: 'WEBRTC_CONNECTION_STATE_CHANGE',
         callId: this._callId,
@@ -52509,8 +52549,6 @@ var PeerConnectionManager = /*#__PURE__*/function () {
   }, {
     key: "_onIceConnectionStateChange",
     value: function _onIceConnectionStateChange() {
-      console.log('debug _onIceConnectionStateChange', this._direction, this._peer.peerConnection.connectionState);
-
       if (!this._peer || this.isDestroyed()) {
         return; //avoid log errors
       }
@@ -52600,7 +52638,7 @@ var PeerConnectionManager = /*#__PURE__*/function () {
   }, {
     key: "handleProcessSDPOfferForReceiveTrack",
     value: function handleProcessSDPOfferForReceiveTrack(jsonMessage, callback) {
-      var _this2 = this;
+      var _this3 = this;
 
       console.log('ooooooooooooooooooooooo ', {
         jsonMessage: jsonMessage
@@ -52618,13 +52656,13 @@ var PeerConnectionManager = /*#__PURE__*/function () {
       this._peer.peerConnection.onicecandidate = function (_ref2) {
         var candidate = _ref2.candidate;
 
-        _this2._app.call.currentCall().sendCallMessage({
+        _this3._app.call.currentCall().sendCallMessage({
           id: "RECIVE_ADD_ICE_CANDIDATE",
           // chatId: getChatId(),
           // clientId: this._app.call.currentCall().users().get(this._app.store.user().id).user().clientId,
-          brokerAddress: _this2._brokerAddress,
-          token: _this2._app.sdkParams.token,
-          chatId: _this2._callId,
+          brokerAddress: _this3._brokerAddress,
+          token: _this3._app.sdkParams.token,
+          chatId: _this3._callId,
           iceCandidate: JSON.stringify(candidate) // addition: [{mline: 0, topic: `Vi-send-${getChatId()}-12345678`}]
 
         }, null, {});
@@ -52641,11 +52679,11 @@ var PeerConnectionManager = /*#__PURE__*/function () {
           return;
         }
 
-        _this2._app.call.currentCall().sendCallMessage({
+        _this3._app.call.currentCall().sendCallMessage({
           id: "RECIVE_SDP_ANSWER",
           sdpAnswer: sdpAnswer,
           // clientId: getClientId(),
-          token: _this2._app.sdkParams.token,
+          token: _this3._app.sdkParams.token,
           // brokerAddress: getBrokerAddress(),
           // chatId: getChatId(),
           addition: [{
@@ -52742,16 +52780,13 @@ function WebrtcPeerConnection(_ref) {
 
   function createPeer() {
     try {
-      console.log('debug createPeer', config.rtcPeerConfig, config.direction);
       config.peerConnection = new RTCPeerConnection(config.rtcPeerConfig);
     } catch (err) {
       console.error("[SDK][WebrtcPeerConnection][createPeer]", err);
     }
 
-    console.log('debug createPeer 2', config.rtcPeerConfig, config.direction);
     config.peerConnection.onconnectionstatechange = connectionStateChange;
     config.peerConnection.oniceconnectionstatechange = iceConnectionStateChange;
-    console.log('debug createPeer 3', config.rtcPeerConfig, config.direction);
     config.peerConnection.addEventListener('signalingstatechange', signalingStateChangeCallback); // config.peerConnection.addEventListener('track', onRemoteTrack);
   }
 
@@ -52954,9 +52989,6 @@ function WebrtcPeerConnection(_ref) {
       });
     },
     addIceCandidate: function addIceCandidate(candidate, callback) {
-      console.log('debug 3', {
-        candidate: candidate
-      });
       config.candidatesQueue.push({
         candidate: new RTCIceCandidate(candidate),
         callback: callback

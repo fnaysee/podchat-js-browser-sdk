@@ -854,12 +854,11 @@ function MultiTrackCallManager({app, callId, callConfig}) {
                 for (let i in messageContent) {
                     let user = config.users.get(messageContent[i].userId);
                     if(user){
-                        if(user.audioTopicManager()) {
+                        if(user.user.video) {
                             await user.stopVideo();
                         }
                         user.startVideo(messageContent[i].sendTopic);
                     }
-
                 }
             }
 

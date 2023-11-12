@@ -46,16 +46,20 @@ class PeerConnectionManager {
 
     _requestAddSendTrack(item) {
         let that = this;
-        this._peer.peerConnection.onicecandidate = ({candidate}) => {
-            this._app.call.currentCall().sendCallMessage({
-                id: "SEND_ADD_ICE_CANDIDATE",
-                token: this._app.sdkParams.token,
-                chatId: this._callId,
-                brokerAddress: this._brokerAddress,
-                // clientId: this._app.call.currentCall().users().get(this._app.store.user().id).user().clientId,
-                iceCandidate: JSON.stringify(candidate),
-            }, null, {});
-        };
+        let localTrackIndex;
+        let sender = this._peer.peerConnection.getSenders().find(function (s, index) {
+            if(s.track == item.stream.getTracks()[0]) {
+                localTrackIndex = index;
+                return true;
+            }
+        });
+
+        if(sender) {
+            console.warn('Track already exists in connection, direction: send');
+            item.onTrackCallback(item, item.stream.getTracks()[localTrackIndex])
+            return
+        }
+
         let localStream;
         if(item.topic.indexOf('Vi-') > -1) {
             localStream = this._app.call.currentCall().deviceManager().mediaStreams.getVideoInput();
@@ -68,6 +72,18 @@ class PeerConnectionManager {
                 this._peer.addTrack(localStream.getTracks()[0], localStream);
             }
         }
+
+        this._peer.peerConnection.onicecandidate = ({candidate}) => {
+            this._app.call.currentCall().sendCallMessage({
+                id: "SEND_ADD_ICE_CANDIDATE",
+                token: this._app.sdkParams.token,
+                chatId: this._callId,
+                brokerAddress: this._brokerAddress,
+                // clientId: this._app.call.currentCall().users().get(this._app.store.user().id).user().clientId,
+                iceCandidate: JSON.stringify(candidate),
+            }, null, {});
+        };
+
         item.onTrackCallback(item, localStream.getTracks()[0])
         // item.stream.getTracks().forEach(track => {
         //     this._peer.addTrack(track, item.stream);
@@ -128,6 +144,41 @@ class PeerConnectionManager {
         }
     }
 
+    _requestRemoveSendTrack(item) {
+        let localTrackIndex;
+        let sender = this._peer.peerConnection.getSenders().find(function (s, index) {
+            if(s.track == item.stream.getTracks()[0]) {
+                localTrackIndex = index;
+                return true;
+            }
+        });
+
+        if (sender) {
+            this._peer.peerConnection.removeTrack(sender);
+
+            this._peer.peerConnection
+                .createOffer()
+                .then(offer => this._peer.peerConnection.setLocalDescription(offer))
+                .then(() => {
+                    this._app.call.currentCall().sendCallMessage({
+                        id: "SEND_NEGOTIATION",
+                        sdpOffer: this._peer.peerConnection.localDescription.sdp,
+                        // clientId: getClientId(),
+                        token: this._app.sdkParams.token,
+                        chatId: this._callId,
+                        // brokerAddress: getBrokerAddress(),
+                        // chatId: getChatId(),
+                        brokerAddress: this._brokerAddress,
+                        deletion: [{
+                            /*clientId: getClientId(),*/
+                            mline: item.mline,
+                            topic: item.topic,
+                        }]
+                    }, null, {});
+                });
+        }
+    }
+
     _requestReceiveTrack(item) {
         if (this._firstSub) {
             this._firstSub = false;
@@ -182,6 +233,14 @@ class PeerConnectionManager {
         this._addTrackQueue.push(data);
         this._nextTrackMid++;
         this._nextTrack();
+    }
+
+    removeTrack(topic){
+        let item = this._trackList.find((item, index)=>{
+            return item.topic === topic;
+        });
+        if(item)
+            this._requestRemoveSendTrack(item);
     }
 
     processingCurrentTrackCompleted() {
