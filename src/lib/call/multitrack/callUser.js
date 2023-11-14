@@ -362,7 +362,7 @@ function CallScreenShare(app, user) {
         type: "screenShare",
         containerTag: null,
         htmlElements: {},
-        videoTopicManager: null
+        videoStream: null
     };
     const publicized = {
         isMe() {
@@ -388,22 +388,28 @@ function CallScreenShare(app, user) {
 
             if (!userContainer) {
                 callParentDiv.appendChild(config.htmlElements.container);
-                userContainer = document.getElementById("callParticipantWrapper-" + config.userId)
+                userContainer = document.getElementById("callParticipantWrapper-" + config.userId);
             }
-            if (user.video && config.videoTopicManager) {
+            if (user.video) {
                 if (!document.getElementById("callUserVideo-" + config.user.videoTopicName)) {
                     userContainer.appendChild(config.htmlElements[config.user.videoTopicName]);
-                    config.videoTopicManager.startMedia();
+                    config.videoStream.getTracks()[0].enabled = true;
+                    setTimeout(()=>{
+                        let el = document.getElementById("callUserVideo-" + config.user.videoTopicName);
+                        el.addEventListener('loadedmetadata', playTheTag);
+                        el.srcObject = config.videoStream;
+
+                        function playTheTag() {
+                            el.play();
+                        }
+                    }, 500);
+
+                    // config.htmlElements[config.user.videoTopicName].srcObject = config.videoStream
+                    // config.htmlElements[config.user.videoTopicName].play();
                 }
             }
 
-            // if(currentCall().screenShareInfo.iAmOwner())
-            config.videoTopicManager?.restartMediaOnKeyFrame("screenShare", [1000, 4000]);
-            // else {
-            //     config.videoTopicManager?.restartMediaOnKeyFrame("screenShare", [1000, 3000, 6000]);
-            // }
-
-            app.call.currentCall().sendCallDivs()
+            app.call.currentCall().sendCallDivs();
         },
         videoTopicManager() {
             return config.videoTopicManager;
@@ -423,12 +429,13 @@ function CallScreenShare(app, user) {
             let iAmOwner = app.call.currentCall().screenShareInfo.iAmOwner();
 
             if (iAmOwner) {
-                app.call.currentCall().deviceManager().grantUserMediaDevicesPermissions({video: true}).then(() => {
+                app.call.currentCall().deviceManager().grantScreenSharePermission({closeStream: false}).then(stream => {
                     app.call.currentCall().sendPeerManager().addTrack({
                         clientId: config.user.clientId,
                         topic: config.user.videoTopicName,
-                        mediaType: 0,
-                        stream: app.call.currentCall().deviceManager().mediaStreams.getVideoInput(),
+                        mediaType: 2,
+                        isScreenShare: true,
+                        stream: app.call.currentCall().deviceManager().mediaStreams.getScreenShareInput(),
                         onTrackCallback
                     });
                 }).catch(error => {
@@ -438,9 +445,20 @@ function CallScreenShare(app, user) {
                 app.call.currentCall().receivePeerManager().addTrack({
                     clientId: config.user.clientId,
                     topic: config.user.videoTopicName,
-                    mediaType: 0,
+                    mediaType: 2,
+                    isScreenShare: true,
                     onTrackCallback
                 })
+            }
+        },
+        processTrackChange(conf) {
+            if (conf.topic.indexOf('Vi-') > -1) {
+                if (!config.videoIsOpen && conf.isReceiving) {
+                    publicized.startVideo(conf.topic.replace('Vi-', ''));
+                } else if (config.videoIsOpen && !conf.isReceiving) {
+                    config.videoIsOpen = false;
+                    publicized.stopVideo();
+                }
             }
         },
         async reconnectTopic(media) {
@@ -480,18 +498,19 @@ function CallScreenShare(app, user) {
             video: true,
             callId: user.callId,
             userId: user.userId,
-            topic: user.topicSend
+            topic: user.topicSend,
+            clientId: user.clientId
         };
 
         obj.direction = iAmOwner ? 'send' : 'receive';
-        obj.videoTopicName = config.topic;
+        obj.videoTopicName = `Vi-send-${obj.callId}-screenShare`;//config.topic;
         config.user = obj;
 
         // publicized.appendUserToCallDiv(generateContainerElement())
         generateContainerElement();
 
-        // if(config.user.video)
-        //     publicized.startVideo(obj.topic);
+        if(config.user.video && app.call.currentCall().screenShareInfo.iAmOwner())
+            publicized.startVideo(obj.topic);
     }
 
     function generateContainerElement() {
@@ -508,10 +527,31 @@ function CallScreenShare(app, user) {
         return config.htmlElements;
     }
 
+    function getVideoHtmlElement() {
+        let elementUniqueId = Utility.generateUUID();
+        if (config.user.video && !config.htmlElement) {
+            config.htmlElement = document.createElement('video');
+            let el = config.htmlElement;
+            el.setAttribute('id', 'callUserVideo-' + config.user.videoTopicName);
+            el.setAttribute('class', app.call.sharedVariables.callVideoTagClassName);
+            el.setAttribute('playsinline', '');
+            el.setAttribute('muted', '');
+            el.setAttribute('autoplay', '');
+            el.setAttribute('data-uniqueId', elementUniqueId);
+            el.setAttribute('width', app.call.sharedVariables.callVideoMinWidth + 'px');
+            el.setAttribute('height', app.call.sharedVariables.callVideoMinHeight + 'px');
+            // el.setAttribute('controls', '');
+        }
+
+        return config.htmlElement;
+    }
+
     function onTrackCallback(line, track) {
         let stream = new MediaStream([track]);
-        let el = publicized.getVideoHtmlElement();
-        el.srcObject = stream;
+        config.videoStream = stream;
+        let el = getVideoHtmlElement();
+        // el.addEventListener('loadedmetadata', playTheTag);
+        // el.srcObject = stream;
         config.htmlElements[config.user.videoTopicName] = el;
         publicized.appendVideoToCallDiv();
     }

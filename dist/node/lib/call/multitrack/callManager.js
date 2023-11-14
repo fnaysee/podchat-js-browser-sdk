@@ -260,7 +260,6 @@ function MultiTrackCallManager(_ref) {
   }
 
   function handleReceivingTracksChanges(jsonMessage) {
-    // jsonMessage.recvList
     if (jsonMessage && jsonMessage.recvList && jsonMessage.recvList.length) {
       try {
         var list = JSON.parse(jsonMessage.recvList);
@@ -268,10 +267,11 @@ function MultiTrackCallManager(_ref) {
           var userId = config.users.findUserIdByTopic(item.topic);
           var user = config.users.get(userId);
 
-          if (user && !user.isMe()) {
-            user.processTrackChange(item);
-          } // config.receivePeerManager.addTrack(jsonMessage.recvList)
-
+          if (user) {
+            if (user.isScreenShare() && !config.screenShareInfo.iAmOwner() || !user.isMe()) {
+              user.processTrackChange(item);
+            }
+          }
         });
       } catch (error) {
         console.error('Unable to parse receive list', error);
@@ -480,14 +480,7 @@ function MultiTrackCallManager(_ref) {
       case _constants.callMetaDataTypes.SCREENSHAREMETADATA:
         if (config.screenShareInfo.isStarted()) {
           config.screenShareInfo.setWidth(jMessage.content.dimension.width);
-          config.screenShareInfo.setHeight(jMessage.content.dimension.height); // applyScreenShareSizeToElement();
-
-          if (config.screenShareInfo.iAmOwner()) {
-            setTimeout(function () {
-              if (config.users.get('screenShare') && config.users.get('screenShare').videoTopicManager()) config.users.get('screenShare').videoTopicManager().restartMediaOnKeyFrame('screenShare', [2000]);
-            }, 2500);
-          }
-
+          config.screenShareInfo.setHeight(jMessage.content.dimension.height);
           app.chatEvents.fireEvent("callEvents", {
             type: 'SCREENSHARE_METADATA',
             userId: jMessage.userid,
@@ -1133,6 +1126,9 @@ function MultiTrackCallManager(_ref) {
 
       function doThings() {
         callConfig.screenShareObject.callId = config.callId;
+        var clientId = messageContent.topicSend.split('-')[2];
+        callConfig.screenShareObject.clientId = clientId; //config.users.get(app.store.user.get().id).user().clientId;
+
         callConfig.screenShareObject.cameraPaused = false;
         callConfig.screenShareObject.userId = "screenShare";
         config.users.addItem(callConfig.screenShareObject, "screenShare");

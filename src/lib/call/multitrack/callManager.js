@@ -216,17 +216,20 @@ function MultiTrackCallManager({app, callId, callConfig}) {
     }
 
     function handleReceivingTracksChanges(jsonMessage) {
-        // jsonMessage.recvList
         if(jsonMessage && jsonMessage.recvList && jsonMessage.recvList.length) {
             try {
                 let list = JSON.parse(jsonMessage.recvList);
                list.forEach(item => {
                     let userId = config.users.findUserIdByTopic(item.topic);
                     let user = config.users.get(userId);
-                    if (user && !user.isMe()) {
-                        user.processTrackChange(item)
+                    if (user) {
+                        if(
+                            (user.isScreenShare() && !config.screenShareInfo.iAmOwner())
+                            || !user.isMe()
+                        ) {
+                            user.processTrackChange(item);
+                        }
                     }
-                    // config.receivePeerManager.addTrack(jsonMessage.recvList)
                 });
             } catch (error) {
                 console.error('Unable to parse receive list', error);
@@ -429,14 +432,6 @@ function MultiTrackCallManager({app, callId, callConfig}) {
                 if(config.screenShareInfo.isStarted()) {
                     config.screenShareInfo.setWidth(jMessage.content.dimension.width);
                     config.screenShareInfo.setHeight(jMessage.content.dimension.height);
-                    // applyScreenShareSizeToElement();
-                    if(config.screenShareInfo.iAmOwner()){
-                        setTimeout(()=>{
-                            if(config.users.get('screenShare') && config.users.get('screenShare').videoTopicManager())
-                                config.users.get('screenShare').videoTopicManager().restartMediaOnKeyFrame('screenShare', [2000]);
-                        }, 2500)
-                    }
-
                     app.chatEvents.fireEvent("callEvents", {
                         type: 'SCREENSHARE_METADATA',
                         userId: jMessage.userid,
@@ -940,6 +935,9 @@ function MultiTrackCallManager({app, callId, callConfig}) {
             }
             function doThings(){
                 callConfig.screenShareObject.callId = config.callId;
+                let clientId = messageContent.topicSend.split('-')[2];
+                callConfig.screenShareObject.clientId = clientId;
+                //config.users.get(app.store.user.get().id).user().clientId;
                 callConfig.screenShareObject.cameraPaused = false;
                 callConfig.screenShareObject.userId = "screenShare";
                 config.users.addItem(callConfig.screenShareObject, "screenShare");

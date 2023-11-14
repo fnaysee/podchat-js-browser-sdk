@@ -469,10 +469,11 @@ function CallScreenShare(app, user) {
     userId: user.userId,
     isMe: user.userId == app.store.user.get().id,
     user: user,
+    videoIsOpen: false,
     type: "screenShare",
     containerTag: null,
     htmlElements: {},
-    videoTopicManager: null
+    videoStream: null
   };
   var publicized = {
     isMe: function isMe() {
@@ -488,8 +489,6 @@ function CallScreenShare(app, user) {
       return config.htmlElements;
     },
     appendVideoToCallDiv: function appendVideoToCallDiv() {
-      var _config$videoTopicMan;
-
       if (!app.call.sharedVariables.callDivId) {
         app.sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
         return;
@@ -504,17 +503,22 @@ function CallScreenShare(app, user) {
         userContainer = document.getElementById("callParticipantWrapper-" + config.userId);
       }
 
-      if (user.video && config.videoTopicManager) {
+      if (user.video) {
         if (!document.getElementById("callUserVideo-" + config.user.videoTopicName)) {
           userContainer.appendChild(config.htmlElements[config.user.videoTopicName]);
-          config.videoTopicManager.startMedia();
+          config.videoStream.getTracks()[0].enabled = true;
+          setTimeout(function () {
+            var el = document.getElementById("callUserVideo-" + config.user.videoTopicName);
+            el.addEventListener('loadedmetadata', playTheTag);
+            el.srcObject = config.videoStream;
+
+            function playTheTag() {
+              el.play();
+            }
+          }, 500); // config.htmlElements[config.user.videoTopicName].srcObject = config.videoStream
+          // config.htmlElements[config.user.videoTopicName].play();
         }
-      } // if(currentCall().screenShareInfo.iAmOwner())
-
-
-      (_config$videoTopicMan = config.videoTopicManager) === null || _config$videoTopicMan === void 0 ? void 0 : _config$videoTopicMan.restartMediaOnKeyFrame("screenShare", [1000, 4000]); // else {
-      //     config.videoTopicManager?.restartMediaOnKeyFrame("screenShare", [1000, 3000, 6000]);
-      // }
+      }
 
       app.call.currentCall().sendCallDivs();
     },
@@ -531,22 +535,43 @@ function CallScreenShare(app, user) {
       return;
     },
     startVideo: function startVideo(sendTopic) {
-      // config.user.videoTopicName = sendTopic;
       config.user.video = true;
-      app.call.currentCall().sendPeerManager(config.user, 'video'); // config.videoTopicManager = new CallTopicManager({
-      //     callId: config.user.callId,
-      //     userId: config.user.userId,
-      //     topic: config.user.videoTopicName,
-      //     mediaType: 'video',
-      //     direction: (app.callsManager.get(config.callId).screenShareInfo.iAmOwner() ? 'send' : 'receive'),
-      //     user: config.user,
-      //     isScreenShare: true,
-      //     onHTMLElement(el) {
-      //         config.htmlElements[config.user.videoTopicName] = el;
-      //         publicized.appendVideoToCallDiv();
-      //     }
-      // });
-      // config.videoTopicManager.createTopic();
+      config.videoIsOpen = true;
+      var iAmOwner = app.call.currentCall().screenShareInfo.iAmOwner();
+
+      if (iAmOwner) {
+        app.call.currentCall().deviceManager().grantScreenSharePermission({
+          closeStream: false
+        }).then(function (stream) {
+          app.call.currentCall().sendPeerManager().addTrack({
+            clientId: config.user.clientId,
+            topic: config.user.videoTopicName,
+            mediaType: 2,
+            isScreenShare: true,
+            stream: app.call.currentCall().deviceManager().mediaStreams.getScreenShareInput(),
+            onTrackCallback: onTrackCallback
+          });
+        })["catch"](function (error) {// reject(error)
+        });
+      } else {
+        app.call.currentCall().receivePeerManager().addTrack({
+          clientId: config.user.clientId,
+          topic: config.user.videoTopicName,
+          mediaType: 2,
+          isScreenShare: true,
+          onTrackCallback: onTrackCallback
+        });
+      }
+    },
+    processTrackChange: function processTrackChange(conf) {
+      if (conf.topic.indexOf('Vi-') > -1) {
+        if (!config.videoIsOpen && conf.isReceiving) {
+          publicized.startVideo(conf.topic.replace('Vi-', ''));
+        } else if (config.videoIsOpen && !conf.isReceiving) {
+          config.videoIsOpen = false;
+          publicized.stopVideo();
+        }
+      }
     },
     reconnectTopic: function reconnectTopic(media) {
       return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee8() {
@@ -611,14 +636,15 @@ function CallScreenShare(app, user) {
           while (1) {
             switch (_context10.prev = _context10.next) {
               case 0:
-                _context10.next = 2;
-                return config.videoTopicManager.destroy();
+                // await config.videoTopicManager.destroy();
+                // delete config.htmlElements[config.user.videoTopicName];
+                // config.videoTopicManager = null;
+                if (config.htmlElements[config.user.videoTopicName]) {
+                  config.htmlElements[config.user.videoTopicName].remove();
+                  delete config.htmlElements[config.user.videoTopicName];
+                }
 
-              case 2:
-                delete config.htmlElements[config.user.videoTopicName];
-                config.videoTopicManager = null;
-
-              case 4:
+              case 1:
               case "end":
                 return _context10.stop();
             }
@@ -629,19 +655,21 @@ function CallScreenShare(app, user) {
   };
 
   function setup(user) {
-    var iAmOwner = app.callsManager.get(config.callId).screenShareInfo.iAmOwner();
+    var iAmOwner = app.call.currentCall().screenShareInfo.iAmOwner();
     var obj = {
       video: true,
       callId: user.callId,
       userId: user.userId,
-      topic: user.topicSend
+      topic: user.topicSend,
+      clientId: user.clientId
     };
     obj.direction = iAmOwner ? 'send' : 'receive';
-    obj.videoTopicName = config.topic;
+    obj.videoTopicName = "Vi-send-".concat(obj.callId, "-screenShare"); //config.topic;
+
     config.user = obj; // publicized.appendUserToCallDiv(generateContainerElement())
 
-    generateContainerElement(); // if(config.user.video)
-    //     publicized.startVideo(obj.topic);
+    generateContainerElement();
+    if (config.user.video && app.call.currentCall().screenShareInfo.iAmOwner()) publicized.startVideo(obj.topic);
   }
 
   function generateContainerElement() {
@@ -658,11 +686,33 @@ function CallScreenShare(app, user) {
     return config.htmlElements;
   }
 
-  function generateVideoElement() {
-    if (config.user.video && !config.htmlElements[config.user.videoTopicName]) {
-      var el = config.videoTopicManager.getHtmlElement();
-      config.htmlElements[config.user.videoTopicName] = el;
+  function getVideoHtmlElement() {
+    var elementUniqueId = _utility["default"].generateUUID();
+
+    if (config.user.video && !config.htmlElement) {
+      config.htmlElement = document.createElement('video');
+      var el = config.htmlElement;
+      el.setAttribute('id', 'callUserVideo-' + config.user.videoTopicName);
+      el.setAttribute('class', app.call.sharedVariables.callVideoTagClassName);
+      el.setAttribute('playsinline', '');
+      el.setAttribute('muted', '');
+      el.setAttribute('autoplay', '');
+      el.setAttribute('data-uniqueId', elementUniqueId);
+      el.setAttribute('width', app.call.sharedVariables.callVideoMinWidth + 'px');
+      el.setAttribute('height', app.call.sharedVariables.callVideoMinHeight + 'px'); // el.setAttribute('controls', '');
     }
+
+    return config.htmlElement;
+  }
+
+  function onTrackCallback(line, track) {
+    var stream = new MediaStream([track]);
+    config.videoStream = stream;
+    var el = getVideoHtmlElement(); // el.addEventListener('loadedmetadata', playTheTag);
+    // el.srcObject = stream;
+
+    config.htmlElements[config.user.videoTopicName] = el;
+    publicized.appendVideoToCallDiv();
   }
 
   setup(user);

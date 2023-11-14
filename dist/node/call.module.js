@@ -928,8 +928,8 @@ function ChatCall(app, params) {
        */
 
       case _constants.chatMessageVOTypes.START_SCREEN_SHARE:
-        if (!app.callsManager.currentCallId) return;
-        app.callsManager.get(threadId).handleStartScreenShare(messageContent);
+        if (!app.call.currentCall()) return;
+        app.call.currentCall().handleStartScreenShare(messageContent);
 
         if (app.store.messagesCallbacks[uniqueId]) {
           app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false, '', 0, messageContent, contentCount));

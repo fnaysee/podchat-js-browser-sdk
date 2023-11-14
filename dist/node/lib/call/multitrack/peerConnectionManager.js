@@ -91,7 +91,11 @@ var PeerConnectionManager = /*#__PURE__*/function () {
       var localStream;
 
       if (item.topic.indexOf('Vi-') > -1) {
-        localStream = this._app.call.currentCall().deviceManager().mediaStreams.getVideoInput();
+        if (item.isScreenShare) {
+          localStream = this._app.call.currentCall().deviceManager().mediaStreams.getScreenShareInput();
+        } else {
+          localStream = this._app.call.currentCall().deviceManager().mediaStreams.getVideoInput();
+        }
 
         if (localStream) {
           this._peer.addTrack(localStream.getTracks()[0], localStream);

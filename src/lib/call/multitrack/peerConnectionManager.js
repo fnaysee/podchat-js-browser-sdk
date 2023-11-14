@@ -62,7 +62,11 @@ class PeerConnectionManager {
 
         let localStream;
         if(item.topic.indexOf('Vi-') > -1) {
-            localStream = this._app.call.currentCall().deviceManager().mediaStreams.getVideoInput();
+            if(item.isScreenShare) {
+                localStream = this._app.call.currentCall().deviceManager().mediaStreams.getScreenShareInput();
+            } else {
+                localStream = this._app.call.currentCall().deviceManager().mediaStreams.getVideoInput();
+            }
             if(localStream) {
                 this._peer.addTrack(localStream.getTracks()[0], localStream);
             }
@@ -72,7 +76,6 @@ class PeerConnectionManager {
                 this._peer.addTrack(localStream.getTracks()[0], localStream);
             }
         }
-
         this._peer.peerConnection.onicecandidate = ({candidate}) => {
             this._app.call.currentCall().sendCallMessage({
                 id: "SEND_ADD_ICE_CANDIDATE",

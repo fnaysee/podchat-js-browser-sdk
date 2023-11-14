@@ -138,7 +138,9 @@ function DeviceManager (app) {
 
                 navigator.mediaDevices.getDisplayMedia({
                     audio: false,
-                    video: true
+                    video: {
+                        cursor: 'always'
+                    }
                 }).then(stream => {
                     config.mediaStreams.setScreenShareInput(stream);
 
