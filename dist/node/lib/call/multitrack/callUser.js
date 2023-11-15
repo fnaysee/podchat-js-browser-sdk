@@ -509,6 +509,7 @@ function CallScreenShare(app, user) {
           config.videoStream.getTracks()[0].enabled = true;
           setTimeout(function () {
             var el = document.getElementById("callUserVideo-" + config.user.videoTopicName);
+            if (!el) return;
             el.addEventListener('loadedmetadata', playTheTag);
             el.srcObject = config.videoStream;
 
@@ -543,6 +544,24 @@ function CallScreenShare(app, user) {
         app.call.currentCall().deviceManager().grantScreenSharePermission({
           closeStream: false
         }).then(function (stream) {
+          if (!stream) {
+            alert("Error: could not find screenShareInput");
+          } else {
+            var onScreenShareEndCallback = function onScreenShareEndCallback(event) {
+              // Click on browser UI stop sharing button
+              if (!config.user) return;
+              stream.getVideoTracks()[0].removeEventListener("ended", onScreenShareEndCallback);
+
+              if (app.call.currentCall() && app.call.currentCall().screenShareInfo.isStarted()) {
+                app.call.endScreenShare({
+                  callId: config.callId
+                });
+              }
+            };
+
+            stream.getVideoTracks()[0].addEventListener("ended", onScreenShareEndCallback);
+          }
+
           app.call.currentCall().sendPeerManager().addTrack({
             clientId: config.user.clientId,
             topic: config.user.videoTopicName,
@@ -609,7 +628,7 @@ function CallScreenShare(app, user) {
 
               case 2:
                 config.htmlElements = {};
-                user = null;
+                config.user = null;
 
               case 4:
               case "end":
@@ -621,6 +640,8 @@ function CallScreenShare(app, user) {
     },
     stopVideo: function stopVideo() {
       return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee10() {
+        var _app$call$currentCall;
+
         var iAmOwner;
         return _regenerator["default"].wrap(function _callee10$(_context10) {
           while (1) {
@@ -628,7 +649,7 @@ function CallScreenShare(app, user) {
               case 0:
                 config.user.video = false;
                 config.videoIsOpen = false;
-                iAmOwner = app.call.currentCall().screenShareInfo.iAmOwner();
+                iAmOwner = (_app$call$currentCall = app.call.currentCall().screenShareInfo) === null || _app$call$currentCall === void 0 ? void 0 : _app$call$currentCall.iAmOwner();
                 if (iAmOwner) app.call.currentCall().sendPeerManager().removeTrack(config.user.videoTopicName);
                 _context10.next = 6;
                 return publicized.destroyVideo();

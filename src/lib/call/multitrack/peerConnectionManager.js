@@ -158,6 +158,11 @@ class PeerConnectionManager {
 
         if (sender) {
             this._peer.peerConnection.removeTrack(sender);
+            this._trackList.forEach((it, index) => {
+                if(item.topic == it.topic) {
+                    delete this._trackList[index]
+                }
+            })
 
             this._peer.peerConnection
                 .createOffer()
@@ -240,7 +245,7 @@ class PeerConnectionManager {
 
     removeTrack(topic){
         let item = this._trackList.find(item => {
-            return item.topic === topic;
+            return item && item.topic === topic;
         });
         if(item)
             this._requestRemoveSendTrack(item);

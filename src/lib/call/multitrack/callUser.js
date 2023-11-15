@@ -432,6 +432,25 @@ function CallScreenShare(app, user) {
 
             if (iAmOwner) {
                 app.call.currentCall().deviceManager().grantScreenSharePermission({closeStream: false}).then(stream => {
+
+                    if(!stream) {
+                        alert("Error: could not find screenShareInput");
+                    } else {
+                        stream.getVideoTracks()[0].addEventListener("ended", onScreenShareEndCallback);
+
+                        function onScreenShareEndCallback(event) { // Click on browser UI stop sharing button
+                            if (!config.user)
+                                return;
+
+                            stream.getVideoTracks()[0].removeEventListener("ended", onScreenShareEndCallback);
+                            if (app.call.currentCall() && app.call.currentCall().screenShareInfo.isStarted()) {
+                                app.call.endScreenShare({
+                                    callId: config.callId
+                                });
+                            }
+                        }
+                    }
+
                     app.call.currentCall().sendPeerManager().addTrack({
                         clientId: config.user.clientId,
                         topic: config.user.videoTopicName,
@@ -478,7 +497,7 @@ function CallScreenShare(app, user) {
             config.user.video = false;
             config.videoIsOpen = false;
 
-            let iAmOwner = app.call.currentCall().screenShareInfo.iAmOwner();
+            let iAmOwner = app.call.currentCall().screenShareInfo?.iAmOwner();
 
             if(iAmOwner)
                 app.call.currentCall().sendPeerManager().removeTrack(config.user.videoTopicName)
