@@ -239,7 +239,7 @@ class PeerConnectionManager {
     }
 
     removeTrack(topic){
-        let item = this._trackList.find((item, index)=>{
+        let item = this._trackList.find(item => {
             return item.topic === topic;
         });
         if(item)
@@ -398,7 +398,6 @@ class PeerConnectionManager {
     }
 
     handleProcessSDPOfferForReceiveTrack(jsonMessage, callback) {
-        console.log('ooooooooooooooooooooooo ', {jsonMessage})
         let topics = JSON.parse(jsonMessage.topic);
         let currentTrackData;
         this._trackList.forEach(item => {

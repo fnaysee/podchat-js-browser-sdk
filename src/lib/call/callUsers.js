@@ -43,7 +43,7 @@ function CallUsers({app, callId}) {
             for (let i in config.list) {
                 let tags = {};
                 let HTMLElements = config.list[i].getHTMLElements();
-                config.list[i] && console.log('HTMLElements:: ', {HTMLElements}, config.list[i], config.list[i].user(), config.list[i].user().videoTopicName);
+
                 if (config.list[i] && HTMLElements) {
                     tags.container = HTMLElements.container;
                     if ((i === 'screenShare' && app.call.currentCall().screenShareInfo.isStarted())

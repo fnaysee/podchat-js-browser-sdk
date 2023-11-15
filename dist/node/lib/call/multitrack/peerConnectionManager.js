@@ -455,9 +455,6 @@ var PeerConnectionManager = /*#__PURE__*/function () {
     value: function handleProcessSDPOfferForReceiveTrack(jsonMessage, callback) {
       var _this3 = this;
 
-      console.log('ooooooooooooooooooooooo ', {
-        jsonMessage: jsonMessage
-      });
       var topics = JSON.parse(jsonMessage.topic);
       var currentTrackData;
 

@@ -604,25 +604,41 @@ function CallScreenShare(app, user) {
           while (1) {
             switch (_context9.prev = _context9.next) {
               case 0:
-                if (!(config.videoTopicManager && config.videoTopicManager.getPeer())) {
-                  _context9.next = 3;
-                  break;
-                }
+                _context9.next = 2;
+                return publicized.stopVideo();
 
-                _context9.next = 3;
-                return config.videoTopicManager.destroy();
-
-              case 3:
-                // user.topicMetaData = {};
+              case 2:
                 config.htmlElements = {};
                 user = null;
 
-              case 5:
+              case 4:
               case "end":
                 return _context9.stop();
             }
           }
         }, _callee9);
+      }))();
+    },
+    stopVideo: function stopVideo() {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee10() {
+        var iAmOwner;
+        return _regenerator["default"].wrap(function _callee10$(_context10) {
+          while (1) {
+            switch (_context10.prev = _context10.next) {
+              case 0:
+                config.user.video = false;
+                config.videoIsOpen = false;
+                iAmOwner = app.call.currentCall().screenShareInfo.iAmOwner();
+                if (iAmOwner) app.call.currentCall().sendPeerManager().removeTrack(config.user.videoTopicName);
+                _context10.next = 6;
+                return publicized.destroyVideo();
+
+              case 6:
+              case "end":
+                return _context10.stop();
+            }
+          }
+        }, _callee10);
       }))();
     },
     destroyAudio: function destroyAudio() {
@@ -631,25 +647,27 @@ function CallScreenShare(app, user) {
       });
     },
     destroyVideo: function destroyVideo() {
-      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee10() {
-        return _regenerator["default"].wrap(function _callee10$(_context10) {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee11() {
+        return _regenerator["default"].wrap(function _callee11$(_context11) {
           while (1) {
-            switch (_context10.prev = _context10.next) {
+            switch (_context11.prev = _context11.next) {
               case 0:
-                // await config.videoTopicManager.destroy();
-                // delete config.htmlElements[config.user.videoTopicName];
-                // config.videoTopicManager = null;
-                if (config.htmlElements[config.user.videoTopicName]) {
-                  config.htmlElements[config.user.videoTopicName].remove();
-                  delete config.htmlElements[config.user.videoTopicName];
-                }
+                return _context11.abrupt("return", new Promise(function (resolve) {
+                  if (config.htmlElements[config.user.videoTopicName]) {
+                    document.getElementById("callUserVideo-".concat(config.user.videoTopicName)).remove();
+                    config.htmlElements[config.user.videoTopicName].remove();
+                    delete config.htmlElements[config.user.videoTopicName];
+                  }
+
+                  resolve();
+                }));
 
               case 1:
               case "end":
-                return _context10.stop();
+                return _context11.stop();
             }
           }
-        }, _callee10);
+        }, _callee11);
       }))();
     }
   };

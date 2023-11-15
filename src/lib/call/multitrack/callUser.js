@@ -396,6 +396,8 @@ function CallScreenShare(app, user) {
                     config.videoStream.getTracks()[0].enabled = true;
                     setTimeout(()=>{
                         let el = document.getElementById("callUserVideo-" + config.user.videoTopicName);
+                        if(!el)
+                            return;
                         el.addEventListener('loadedmetadata', playTheTag);
                         el.srcObject = config.videoStream;
 
@@ -467,12 +469,21 @@ function CallScreenShare(app, user) {
             await publicized.startVideo(config.user.topic)
         },
         async destroy() {
-            if (config.videoTopicManager && config.videoTopicManager.getPeer()) {
-                await config.videoTopicManager.destroy();
-            }
             // user.topicMetaData = {};
+            await publicized.stopVideo();
             config.htmlElements = {};
-            user = null;
+            config.user = null;
+        },
+        async stopVideo(){
+            config.user.video = false;
+            config.videoIsOpen = false;
+
+            let iAmOwner = app.call.currentCall().screenShareInfo.iAmOwner();
+
+            if(iAmOwner)
+                app.call.currentCall().sendPeerManager().removeTrack(config.user.videoTopicName)
+
+            await publicized.destroyVideo();
         },
         destroyAudio() {
             return new Promise(resolve => {
@@ -480,15 +491,15 @@ function CallScreenShare(app, user) {
             })
         },
         async destroyVideo() {
-            // await config.videoTopicManager.destroy();
-            // delete config.htmlElements[config.user.videoTopicName];
-            // config.videoTopicManager = null;
-
-            if (config.htmlElements[config.user.videoTopicName]) {
-                config.htmlElements[config.user.videoTopicName].remove();
-                delete config.htmlElements[config.user.videoTopicName];
-            }
-        },
+            return new Promise(resolve => {
+                if (config.htmlElements[config.user.videoTopicName]) {
+                    document.getElementById(`callUserVideo-${config.user.videoTopicName}`).remove();
+                    config.htmlElements[config.user.videoTopicName].remove();
+                    delete config.htmlElements[config.user.videoTopicName];
+                }
+                resolve();
+            })
+        }
     }
 
     function setup(user) {
