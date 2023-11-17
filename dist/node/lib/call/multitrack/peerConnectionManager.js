@@ -192,13 +192,10 @@ var PeerConnectionManager = /*#__PURE__*/function () {
       });
 
       if (sender) {
-        console.log('debug _requestRemoveSendTrack 1');
-
         this._peer.peerConnection.removeTrack(sender);
 
         this._trackList.forEach(function (it, index) {
           if (item.topic == it.topic) {
-            console.log('debug _requestRemoveSendTrack 2');
             delete _this2._trackList[index];
           }
         });
@@ -206,8 +203,6 @@ var PeerConnectionManager = /*#__PURE__*/function () {
         this._peer.peerConnection.createOffer().then(function (offer) {
           return _this2._peer.peerConnection.setLocalDescription(offer);
         }).then(function () {
-          console.log('debug _requestRemoveSendTrack 3');
-
           _this2._app.call.currentCall().sendCallMessage({
             id: "SEND_NEGOTIATION",
             sdpOffer: _this2._peer.peerConnection.localDescription.sdp,

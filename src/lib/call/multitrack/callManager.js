@@ -80,10 +80,21 @@ function MultiTrackCallManager({app, callId, callConfig}) {
                     cameraPaused : false,
                     userId : "screenShare",
                     topicSend: callConfig.screenShare
-                }
-
+                };
                 config.screenShareInfo.setIsStarted(!!config.callConfig.screenShareOwner);
+
                 if(config.screenShareInfo.isStarted()) {
+                    let clientId = callConfig.screenShare.split('-')[2];
+                    let screenOwnerClientId;
+
+                    for(let user of callConfig.clientsList) {
+                        if(user.userId == config.callConfig.screenShareOwner) {
+                            screenOwnerClientId = user.clientId;
+                        }
+                    }
+
+                    config.callConfig.screenShareObject.clientId = screenOwnerClientId;
+
                     config.screenShareInfo.setOwner(config.callConfig.screenShareOwner);
                     config.users.addItem(config.callConfig.screenShareObject, "screenShare");
                 }

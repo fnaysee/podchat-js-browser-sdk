@@ -317,7 +317,6 @@ function CallUser(app, user) {
         }
       } else if (conf.topic.indexOf('Vo-') > -1) {
         if (!config.audioIsOpen && conf.isReceiving) {
-          console.log('debug  111 processTrackChange 2', conf, conf.topic, conf.topic.replace('Vo-', ''));
           publicized.startAudio(conf.topic.replace('Vo-', ''));
         } else if (config.audioIsOpen && !conf.isReceiving) {
           config.user.mute = true;
