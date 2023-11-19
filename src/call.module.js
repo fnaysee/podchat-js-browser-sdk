@@ -2245,10 +2245,10 @@ function ChatCall(app, params) {
         }
 
         let user = call.users().get(app.store.user.get().id); //callUsers[store.user().id];
-        if(user
+        if(!call.callServerController().isJanus() &&
+            user
             && user.videoTopicManager()
             && user.videoTopicManager().getPeer()
-
             && (
                 user.videoTopicManager().isPeerConnecting()
                 || user.videoTopicManager().isPeerFailed()
@@ -2261,6 +2261,23 @@ function ChatCall(app, params) {
             });
             return;
         }
+
+        if(call.callServerController().isJanus()
+            && call.sendPeerManager()
+            && call.sendPeerManager().getPeer()
+            && (
+                call.sendPeerManager().isPeerConnecting()
+                || call.sendPeerManager().isPeerFailed()
+                || call.sendPeerManager().isPeerDisconnected()
+            )
+        ) {
+            app.chatEvents.fireEvent('error', {
+                code: 999,
+                message: 'Can not stop stream in current state'
+            });
+            return;
+        }
+
         app.requestBlocker.add({
             key: app.requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE,
             uniqueId: turnOffVideoData.uniqueId

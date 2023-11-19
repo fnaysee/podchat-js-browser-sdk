@@ -469,6 +469,10 @@ class PeerConnectionManager {
         return this._isDestroyed;
     }
 
+    getPeer() {
+        return this._peer;
+    }
+
 }
 
 export default PeerConnectionManager

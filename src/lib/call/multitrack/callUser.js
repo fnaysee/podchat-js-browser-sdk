@@ -8,8 +8,6 @@ function CallUser(app, user) {
         isMe: user.userId == app.store.user.get().id,
         containerTag: null,
         htmlElements: {},
-        videoTopicManager: null,
-        audioTopicManager: null,
         videoIsOpen: false,
         audioIsOpen: false
     };
@@ -411,12 +409,6 @@ function CallScreenShare(app, user) {
             }
 
             app.call.currentCall().sendCallDivs();
-        },
-        videoTopicManager() {
-            return config.videoTopicManager;
-        },
-        audioTopicManager() {
-            return config.audioTopicManager;
         },
         audioStopManager() {
             return config.user.audioStopManager
