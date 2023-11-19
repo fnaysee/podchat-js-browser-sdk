@@ -804,6 +804,7 @@ function MultiTrackCallManager(_ref) {
             mute: messageContent[i].mute,
             userId: messageContent[i].userId,
             topicSend: messageContent[i].sendTopic,
+            clientId: messageContent[i].participantVO.ssoId,
             autoStartStreams: true,
             callId: config.callId,
             cameraPaused: false

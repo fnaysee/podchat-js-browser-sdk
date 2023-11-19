@@ -673,8 +673,10 @@ function CallScreenShare(app, user) {
             switch (_context11.prev = _context11.next) {
               case 0:
                 return _context11.abrupt("return", new Promise(function (resolve) {
-                  if (config.htmlElements[config.user.videoTopicName]) {
-                    document.getElementById("callUserVideo-".concat(config.user.videoTopicName)).remove();
+                  var el = document.getElementById("callUserVideo-".concat(config.user.videoTopicName));
+
+                  if (el) {
+                    el.remove();
                     config.htmlElements[config.user.videoTopicName].remove();
                     delete config.htmlElements[config.user.videoTopicName];
                   }

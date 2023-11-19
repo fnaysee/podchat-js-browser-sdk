@@ -41723,7 +41723,7 @@ FilterXSS.prototype.process = function (html) {
 module.exports = FilterXSS;
 
 },{"./default":253,"./parser":255,"./util":256,"cssfilter":124}],258:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.48","date":"۱۴۰۲/۸/۲۴","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.7-snapshot.48","date":"۱۴۰۲/۸/۲۷","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],259:[function(require,module,exports){
 "use strict";
 
@@ -51077,6 +51077,7 @@ function MultiTrackCallManager(_ref) {
             mute: messageContent[i].mute,
             userId: messageContent[i].userId,
             topicSend: messageContent[i].sendTopic,
+            clientId: messageContent[i].participantVO.ssoId,
             autoStartStreams: true,
             callId: config.callId,
             cameraPaused: false
@@ -52278,8 +52279,10 @@ function CallScreenShare(app, user) {
             switch (_context11.prev = _context11.next) {
               case 0:
                 return _context11.abrupt("return", new Promise(function (resolve) {
-                  if (config.htmlElements[config.user.videoTopicName]) {
-                    document.getElementById("callUserVideo-".concat(config.user.videoTopicName)).remove();
+                  var el = document.getElementById("callUserVideo-".concat(config.user.videoTopicName));
+
+                  if (el) {
+                    el.remove();
                     config.htmlElements[config.user.videoTopicName].remove();
                     delete config.htmlElements[config.user.videoTopicName];
                   }
