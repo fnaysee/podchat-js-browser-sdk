@@ -10,18 +10,6 @@ All notable changes to this project will be documented here.
 
 -   Search in threads metadata
 
-## [4.10.0] - 2019-06-24
-
-### Added
-
--   ACL functionalities
-    - Getting admins list, `getThreadAdmins()`
-    - Setting / Removing new admin with roles, `setAdmin()`
--   `isTyping` for users, you can call `startTyping()` and `stopTyping()` to handle typing system messages
--   `clearHistory()` function to fully clear thread's history
--   `deleteMultipleMessages()` function to delete an array of message at once
--   `getNotSeenDuration()` function to get the not seen time duration of user being off the application in miliseconds
-
 In order to see complete list of changelog please visit [ChangeLog](https://github.com/masoudmanson/pod-chat/blob/master/changelog.md)
 
 ## Code Example
@@ -29,7 +17,7 @@ In order to see complete list of changelog please visit [ChangeLog](https://gith
 Create an Javascript file e.x `index.js` and put following code there:
 
 ```javascript
-var Chat = require('podchat');
+var Chat = require('podchat-browser');
 
 var params = {
   appId: new Date().getTime(),
@@ -181,9 +169,22 @@ You'll get all the Events which are related to File Uploads in fileUploadEvents 
 
 ```javascript
 /**
- * Listen to File Uploads Event Listener
+ * Listen to File Uploads Events
  */
 chatAgent.on("fileUploadEvents", function(event) {
+  console.log(event);
+});
+```
+
+### fileDownloadEvents
+
+You'll get all the Events which are related to File Download Events in fileDownloadEvents listener
+
+```javascript
+/**
+ * Listen to File Download Events
+ */
+chatAgent.on("fileDownloadEvents", function(event) {
   console.log(event);
 });
 ```

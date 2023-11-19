@@ -41723,7 +41723,7 @@ FilterXSS.prototype.process = function (html) {
 module.exports = FilterXSS;
 
 },{"./default":253,"./parser":255,"./util":256,"cssfilter":124}],258:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.48","date":"۱۴۰۲/۸/۲۰","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.7-snapshot.48","date":"۱۴۰۲/۸/۲۸","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],259:[function(require,module,exports){
 "use strict";
 
