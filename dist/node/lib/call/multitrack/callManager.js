@@ -289,17 +289,22 @@ function MultiTrackCallManager(_ref) {
   function handleReceivingTracksChanges(jsonMessage) {
     if (jsonMessage && jsonMessage.recvList && jsonMessage.recvList.length) {
       try {
+        var processedTopics = [];
         var list = JSON.parse(jsonMessage.recvList);
-        list.forEach(function (item) {
-          var userId = config.users.findUserIdByTopic(item.topic);
-          var user = config.users.get(userId);
 
-          if (user) {
-            if (user.isScreenShare() && !config.screenShareInfo.iAmOwner() || !user.isMe()) {
-              user.processTrackChange(item);
+        for (var i = list.length; i >= 0; i--) {
+          if (!processedTopics.includes(list[i].topic)) {
+            processedTopics.push(list[i].topic);
+            var userId = config.users.findUserIdByTopic(list[i].topic);
+            var user = config.users.get(userId);
+
+            if (user) {
+              if (user.isScreenShare() && !config.screenShareInfo.iAmOwner() || !user.isMe()) {
+                user.processTrackChange(list[i]);
+              }
             }
           }
-        });
+        }
       } catch (error) {
         console.error('Unable to parse receive list', error);
       }
@@ -962,12 +967,12 @@ function MultiTrackCallManager(_ref) {
                         case 0:
                           user = config.users.get(messageContent[i].userId);
 
-                          if (!user) {
+                          if (!(user && user.isMe())) {
                             _context2.next = 6;
                             break;
                           }
 
-                          if (!user.audioTopicManager()) {
+                          if (user.user.mute) {
                             _context2.next = 5;
                             break;
                           }
@@ -1045,7 +1050,7 @@ function MultiTrackCallManager(_ref) {
                 i = _context4.t1.value;
                 user = config.users.get(messageContent[i].userId);
 
-                if (!user) {
+                if (!(user && user.isMe())) {
                   _context4.next = 10;
                   break;
                 }

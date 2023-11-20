@@ -438,6 +438,7 @@ class PeerConnectionManager {
                 sdpAnswer,
                 // clientId: getClientId(),
                 token: this._app.sdkParams.token,
+                brokerAddress: this._brokerAddress,
                 // brokerAddress: getBrokerAddress(),
                 // chatId: getChatId(),
                 addition: [{

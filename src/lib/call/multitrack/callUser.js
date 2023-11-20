@@ -170,10 +170,13 @@ function CallUser(app, user) {
             await publicized.destroyAudio();
         },
         async destroyAudio() {
-            if (config.htmlElements[config.user.audioTopicName]) {
-                config.htmlElements[config.user.audioTopicName].remove();
-                delete config.htmlElements[config.user.audioTopicName];
-            }
+            config.audioObject = null;
+            //TODO: Remove audio level watcher interval
+
+            // if (config.htmlElements[config.user.audioTopicName]) {
+            //     config.htmlElements[config.user.audioTopicName].remove();
+            //     delete config.htmlElements[config.user.audioTopicName];
+            // }
         },
         async stopVideo() {
             config.user.video = false;
@@ -284,7 +287,7 @@ function CallUser(app, user) {
     function onTrackCallback(line, track) {
         let stream = new MediaStream([track]);
         let isAudio = (line.topic.indexOf('Vo-') > -1);
-        console.log('debug', 991);
+        let isVideo = (line.topic.indexOf('Vi-') > -1);
 
         if (config.isMe) {
             if (isAudio) {
@@ -308,7 +311,7 @@ function CallUser(app, user) {
                 config.audioObject.play();
                 //TODO: implement
                 // publicized.watchAudioLevel();
-            } else {
+            } else if(isVideo) {
                 let el = publicized.getVideoHtmlElement();
                 el.srcObject = stream;
                 config.htmlElements[config.user.videoTopicName] = el;

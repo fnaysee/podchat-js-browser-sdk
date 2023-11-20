@@ -502,6 +502,7 @@ var PeerConnectionManager = /*#__PURE__*/function () {
           sdpAnswer: sdpAnswer,
           // clientId: getClientId(),
           token: _this3._app.sdkParams.token,
+          brokerAddress: _this3._brokerAddress,
           // brokerAddress: getBrokerAddress(),
           // chatId: getChatId(),
           addition: [{

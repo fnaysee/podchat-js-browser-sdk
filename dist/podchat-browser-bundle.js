@@ -730,8 +730,9 @@ function Async(params) {
     if (params.trackerId) {
       socketData.trackerId = params.trackerId;
     }
-    lastMessageId += 1;
-    var messageId = lastMessageId;
+
+    // lastMessageId += 1;
+    var messageId = 5;
     if (messageType === asyncMessageType.MESSAGE_SENDER_ACK_NEEDED || messageType === asyncMessageType.MESSAGE_ACK_NEEDED) {
       ackCallback[messageId] = function () {
         callback && callback();
@@ -42083,7 +42084,7 @@ FilterXSS.prototype.process = function (html) {
 module.exports = FilterXSS;
 
 },{"./default":258,"./parser":260,"./util":261,"cssfilter":137}],263:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.48","date":"۱۴۰۲/۸/۲۸","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.7-snapshot.48","date":"۱۴۰۲/۸/۲۹","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],264:[function(require,module,exports){
 "use strict";
 
@@ -50930,17 +50931,22 @@ function MultiTrackCallManager(_ref) {
   function handleReceivingTracksChanges(jsonMessage) {
     if (jsonMessage && jsonMessage.recvList && jsonMessage.recvList.length) {
       try {
+        var processedTopics = [];
         var list = JSON.parse(jsonMessage.recvList);
-        list.forEach(function (item) {
-          var userId = config.users.findUserIdByTopic(item.topic);
-          var user = config.users.get(userId);
 
-          if (user) {
-            if (user.isScreenShare() && !config.screenShareInfo.iAmOwner() || !user.isMe()) {
-              user.processTrackChange(item);
+        for (var i = list.length; i >= 0; i--) {
+          if (!processedTopics.includes(list[i].topic)) {
+            processedTopics.push(list[i].topic);
+            var userId = config.users.findUserIdByTopic(list[i].topic);
+            var user = config.users.get(userId);
+
+            if (user) {
+              if (user.isScreenShare() && !config.screenShareInfo.iAmOwner() || !user.isMe()) {
+                user.processTrackChange(list[i]);
+              }
             }
           }
-        });
+        }
       } catch (error) {
         console.error('Unable to parse receive list', error);
       }
@@ -51604,12 +51610,12 @@ function MultiTrackCallManager(_ref) {
                         case 0:
                           user = config.users.get(messageContent[i].userId);
 
-                          if (!user) {
+                          if (!(user && user.isMe())) {
                             _context2.next = 6;
                             break;
                           }
 
-                          if (!user.audioTopicManager()) {
+                          if (user.user.mute) {
                             _context2.next = 5;
                             break;
                           }
@@ -51687,7 +51693,7 @@ function MultiTrackCallManager(_ref) {
                 i = _context4.t1.value;
                 user = config.users.get(messageContent[i].userId);
 
-                if (!user) {
+                if (!(user && user.isMe())) {
                   _context4.next = 10;
                   break;
                 }
@@ -52227,10 +52233,12 @@ function CallUser(app, user) {
           while (1) {
             switch (_context5.prev = _context5.next) {
               case 0:
-                if (config.htmlElements[config.user.audioTopicName]) {
-                  config.htmlElements[config.user.audioTopicName].remove();
-                  delete config.htmlElements[config.user.audioTopicName];
-                }
+                config.audioObject = null;
+              //TODO: Remove audio level watcher interval
+              // if (config.htmlElements[config.user.audioTopicName]) {
+              //     config.htmlElements[config.user.audioTopicName].remove();
+              //     delete config.htmlElements[config.user.audioTopicName];
+              // }
 
               case 1:
               case "end":
@@ -52370,7 +52378,7 @@ function CallUser(app, user) {
   function onTrackCallback(line, track) {
     var stream = new MediaStream([track]);
     var isAudio = line.topic.indexOf('Vo-') > -1;
-    console.log('debug', 991);
+    var isVideo = line.topic.indexOf('Vi-') > -1;
 
     if (config.isMe) {
       if (isAudio) {//TODO: implement
@@ -52392,7 +52400,7 @@ function CallUser(app, user) {
         config.audioObject.autoplay = true;
         config.audioObject.play(); //TODO: implement
         // publicized.watchAudioLevel();
-      } else {
+      } else if (isVideo) {
         var _el = publicized.getVideoHtmlElement();
 
         _el.srcObject = stream;
@@ -53362,6 +53370,7 @@ var PeerConnectionManager = /*#__PURE__*/function () {
           sdpAnswer: sdpAnswer,
           // clientId: getClientId(),
           token: _this3._app.sdkParams.token,
+          brokerAddress: _this3._brokerAddress,
           // brokerAddress: getBrokerAddress(),
           // chatId: getChatId(),
           addition: [{

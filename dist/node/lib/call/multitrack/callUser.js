@@ -253,10 +253,11 @@ function CallUser(app, user) {
           while (1) {
             switch (_context5.prev = _context5.next) {
               case 0:
-                if (config.htmlElements[config.user.audioTopicName]) {
-                  config.htmlElements[config.user.audioTopicName].remove();
-                  delete config.htmlElements[config.user.audioTopicName];
-                }
+                config.audioObject = null; //TODO: Remove audio level watcher interval
+                // if (config.htmlElements[config.user.audioTopicName]) {
+                //     config.htmlElements[config.user.audioTopicName].remove();
+                //     delete config.htmlElements[config.user.audioTopicName];
+                // }
 
               case 1:
               case "end":
@@ -396,7 +397,7 @@ function CallUser(app, user) {
   function onTrackCallback(line, track) {
     var stream = new MediaStream([track]);
     var isAudio = line.topic.indexOf('Vo-') > -1;
-    console.log('debug', 991);
+    var isVideo = line.topic.indexOf('Vi-') > -1;
 
     if (config.isMe) {
       if (isAudio) {//TODO: implement
@@ -418,7 +419,7 @@ function CallUser(app, user) {
         config.audioObject.autoplay = true;
         config.audioObject.play(); //TODO: implement
         // publicized.watchAudioLevel();
-      } else {
+      } else if (isVideo) {
         var _el = publicized.getVideoHtmlElement();
 
         _el.srcObject = stream;

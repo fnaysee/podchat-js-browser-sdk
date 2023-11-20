@@ -35,8 +35,6 @@ function MultiTrackCallManager({app, callId, callConfig}) {
             iceTransportPolicy: 'relay',
         }, config.callConfig.brokerAddress);
 
-
-
         if (app.call.sharedVariables.callDivId) {
             new Promise(resolve => {
                 let callVideo = (typeof callConfig.video === 'boolean') ? callConfig.video : true,
@@ -76,19 +74,19 @@ function MultiTrackCallManager({app, callId, callConfig}) {
                 }
 
                 config.callConfig.screenShareObject = {
-                    callId : config.callId,
-                    cameraPaused : false,
-                    userId : "screenShare",
+                    callId: config.callId,
+                    cameraPaused: false,
+                    userId: "screenShare",
                     topicSend: callConfig.screenShare
                 };
                 config.screenShareInfo.setIsStarted(!!config.callConfig.screenShareOwner);
 
-                if(config.screenShareInfo.isStarted()) {
+                if (config.screenShareInfo.isStarted()) {
                     let clientId = callConfig.screenShare.split('-')[2];
                     let screenOwnerClientId;
 
-                    for(let user of callConfig.clientsList) {
-                        if(user.userId == config.callConfig.screenShareOwner) {
+                    for (let user of callConfig.clientsList) {
+                        if (user.userId == config.callConfig.screenShareOwner) {
                             screenOwnerClientId = user.clientId;
                         }
                     }
@@ -103,7 +101,7 @@ function MultiTrackCallManager({app, callId, callConfig}) {
                 config.callConfig.callAudio = callMute;
                 createSessionInChat();
                 resolve();
-            }).then(()=>{
+            }).then(() => {
                 app.chatEvents.fireEvent('callEvents', {
                     type: 'CALL_DIVS',
                     result: config.users.generateCallUIList()
@@ -132,10 +130,10 @@ function MultiTrackCallManager({app, callId, callConfig}) {
 
                     let user = config.users.get(app.store.user.get().id);
                     //Start my own senders
-                    if(user.user().video){
+                    if (user.user().video) {
                         user.startVideo(user.user().topicSend);
                     }
-                    if(!user.user().mute){
+                    if (!user.user().mute) {
                         user.startAudio(user.user().topicSend);
                     }
                 } else {
@@ -201,7 +199,8 @@ function MultiTrackCallManager({app, callId, callConfig}) {
             app.store.messagesCallbacks[message.uniqueId] = callback;
         }
 
-        app.call.sharedVariables.asyncClient.send(data, function (res) {});
+        app.call.sharedVariables.asyncClient.send(data, function (res) {
+        });
 
         if (timeoutTime || app.call.sharedVariables.globalCallRequestTimeout > 0) {
             app.store.asyncRequestTimeouts[message.uniqueId] && clearTimeout(app.store.asyncRequestTimeouts[message.uniqueId]);
@@ -227,21 +226,26 @@ function MultiTrackCallManager({app, callId, callConfig}) {
     }
 
     function handleReceivingTracksChanges(jsonMessage) {
-        if(jsonMessage && jsonMessage.recvList && jsonMessage.recvList.length) {
+        if (jsonMessage && jsonMessage.recvList && jsonMessage.recvList.length) {
             try {
+                let processedTopics = [];
+
                 let list = JSON.parse(jsonMessage.recvList);
-               list.forEach(item => {
-                    let userId = config.users.findUserIdByTopic(item.topic);
-                    let user = config.users.get(userId);
-                    if (user) {
-                        if(
-                            (user.isScreenShare() && !config.screenShareInfo.iAmOwner())
-                            || !user.isMe()
-                        ) {
-                            user.processTrackChange(item);
+                for(let i = list.length; i >= 0; i--) {
+                    if(!processedTopics.includes(list[i].topic)) {
+                        processedTopics.push(list[i].topic);
+                        let userId = config.users.findUserIdByTopic(list[i].topic);
+                        let user = config.users.get(userId);
+                        if (user) {
+                            if (
+                                (user.isScreenShare() && !config.screenShareInfo.iAmOwner())
+                                || !user.isMe()
+                            ) {
+                                user.processTrackChange(list[i]);
+                            }
                         }
                     }
-                });
+                }
             } catch (error) {
                 console.error('Unable to parse receive list', error);
             }
@@ -249,7 +253,7 @@ function MultiTrackCallManager({app, callId, callConfig}) {
     }
 
     function handleProcessSdpOffer(jsonMessage) {
-        config.receivePeerManager.handleProcessSDPOfferForReceiveTrack(jsonMessage, ()=>{
+        config.receivePeerManager.handleProcessSDPOfferForReceiveTrack(jsonMessage, () => {
             receiveAddIceCandidates.forEach(item => {
                 addIceCandidate(config.sendPeerManager.getPeer(), item, 'receivePeerManager');
             });
@@ -309,7 +313,9 @@ function MultiTrackCallManager({app, callId, callConfig}) {
             }
         });
     }
+
     let sendAddIceCandidates = [];
+
     function handleSendAddIceCandidate(jsonMessage) {
         let peer = config.sendPeerManager.getPeer();
         if (!peer) {
@@ -323,16 +329,18 @@ function MultiTrackCallManager({app, callId, callConfig}) {
             return;
         }
 
-        if(jsonMessage.candidate && jsonMessage.candidate.length) {
+        if (jsonMessage.candidate && jsonMessage.candidate.length) {
             let candidate = JSON.parse(jsonMessage.candidate);
-            if(peer.peerConnection.currentRemoteDescription) {
+            if (peer.peerConnection.currentRemoteDescription) {
                 addIceCandidate(peer, candidate, 'handleSendAddIceCandidate');
             } else {
                 sendAddIceCandidates.push(candidate);
             }
         }
     }
+
     let receiveAddIceCandidates = [];
+
     function handleReceiveAddIceCandidate(jsonMessage) {
         let peer = config.receivePeerManager.getPeer();
         if (!peer) {
@@ -345,10 +353,10 @@ function MultiTrackCallManager({app, callId, callConfig}) {
             });
             return;
         }
-        if(jsonMessage.candidate && jsonMessage.candidate.length) {
+        if (jsonMessage.candidate && jsonMessage.candidate.length) {
             let candidate = JSON.parse(jsonMessage.candidate);
 
-            if(peer.peerConnection.currentRemoteDescription) {
+            if (peer.peerConnection.currentRemoteDescription) {
                 addIceCandidate(peer, candidate, 'handleReceiveAddIceCandidate');
             } else {
                 receiveAddIceCandidates.push(candidate);
@@ -440,7 +448,7 @@ function MultiTrackCallManager({app, callId, callConfig}) {
                 });
                 break;
             case callMetaDataTypes.SCREENSHAREMETADATA:
-                if(config.screenShareInfo.isStarted()) {
+                if (config.screenShareInfo.isStarted()) {
                     config.screenShareInfo.setWidth(jMessage.content.dimension.width);
                     config.screenShareInfo.setHeight(jMessage.content.dimension.height);
                     app.chatEvents.fireEvent("callEvents", {
@@ -467,6 +475,7 @@ function MultiTrackCallManager({app, callId, callConfig}) {
             chatId: config.callId
         }, null, {});
     }
+
     function handleError(jsonMessage, sendingTopic, receiveTopic) {
         const errMessage = jsonMessage.message;
 
@@ -479,7 +488,7 @@ function MultiTrackCallManager({app, callId, callConfig}) {
     }
 
     const publicized = {
-        callServerController(){
+        callServerController() {
             return config.callServerController
         },
         callConfig() {
@@ -487,13 +496,13 @@ function MultiTrackCallManager({app, callId, callConfig}) {
         },
         callStop,
         endCall: app.call.endCall,
-        users(){
+        users() {
             return config.users;
         },
-        deviceManager(){
+        deviceManager() {
             return config.deviceManager;
         },
-        sendCallDivs(){
+        sendCallDivs() {
             app.chatEvents.fireEvent('callEvents', {
                 type: 'CALL_DIVS',
                 result: config.users.generateCallUIList()
@@ -518,12 +527,12 @@ function MultiTrackCallManager({app, callId, callConfig}) {
         getTurnServer: function (params) {
 
             if (!!params.turnAddress && params.turnAddress.length > 0
-                || (app.call.sharedVariables.useInternalTurnAddress && !!params.internalTurnAddress && params.turnAddress.length > 0 )) {
+                || (app.call.sharedVariables.useInternalTurnAddress && !!params.internalTurnAddress && params.turnAddress.length > 0)) {
 
                 let serversTemp = app.call.sharedVariables.useInternalTurnAddress ? params.internalTurnAddress.split(',') : params.turnAddress.split(','),
                     turnsList = [];
 
-                for(let i in serversTemp) {
+                for (let i in serversTemp) {
                     turnsList.push({
                         "urls": "turn:" + serversTemp[i],
                         "username": "mkhorrami",
@@ -700,7 +709,10 @@ function MultiTrackCallManager({app, callId, callConfig}) {
                     break;
 
                 case 'ERROR':
-                    publicized.raiseCallError(app.errorHandler.getFilledErrorObject({...errorList.CALL_SERVER_ERROR, replacements:[JSON.stringify(message)]}), null, true);
+                    publicized.raiseCallError(app.errorHandler.getFilledErrorObject({
+                        ...errorList.CALL_SERVER_ERROR,
+                        replacements: [JSON.stringify(message)]
+                    }), null, true);
                     break;
 
                 default:
@@ -733,7 +745,7 @@ function MultiTrackCallManager({app, callId, callConfig}) {
                         new Promise(resolve => {
                             config.users.addItem(correctedData);
                             resolve();
-                        }).then(()=>{
+                        }).then(() => {
                             app.chatEvents.fireEvent('callEvents', {
                                 type: 'CALL_DIVS',
                                 result: config.users.generateCallUIList()
@@ -744,7 +756,7 @@ function MultiTrackCallManager({app, callId, callConfig}) {
                         new Promise(resolve => {
                             config.users.addItem(correctedData);
                             resolve();
-                        }).then(()=>{
+                        }).then(() => {
                             app.chatEvents.fireEvent('callEvents', {
                                 type: 'CALL_DIVS',
                                 result: config.users.generateCallUIList()
@@ -834,11 +846,11 @@ function MultiTrackCallManager({app, callId, callConfig}) {
             if (Array.isArray(messageContent)) {
                 for (let i in messageContent) {
                     let user = config.users.get(messageContent[i].userId);
-                    if (user) {
-                        if(user.audioTopicManager()) {
+                    if (user && user.isMe()) {
+                        if (!user.user.mute) {
                             await user.destroyAudio();
                         }
-                        setTimeout(()=>{
+                        setTimeout(() => {
                             user.startAudio(messageContent[i].sendTopic);
                         }, 50);
                     }
@@ -860,8 +872,8 @@ function MultiTrackCallManager({app, callId, callConfig}) {
             if (Array.isArray(messageContent)) {
                 for (let i in messageContent) {
                     let user = config.users.get(messageContent[i].userId);
-                    if(user){
-                        if(user.user.video) {
+                    if (user && user.isMe()) {
+                        if (user.user.video) {
                             await user.stopVideo();
                         }
                         user.startVideo(messageContent[i].sendTopic);
@@ -885,7 +897,7 @@ function MultiTrackCallManager({app, callId, callConfig}) {
             if (Array.isArray(messageContent)) {
                 for (let i in messageContent) {
                     let user = config.users.get(messageContent[i].userId);
-                    if(user)
+                    if (user)
                         user.stopVideo();
                 }
             }
@@ -902,10 +914,10 @@ function MultiTrackCallManager({app, callId, callConfig}) {
                 result: messageContent
             });
         },
-        handleStartScreenShare(messageContent){
+        handleStartScreenShare(messageContent) {
             app.sdkParams.consoleLogging && console.log("[sdk][startScreenShare][onResult]: ", messageContent);
             let result = Utility.createReturnData(false, '', 0, messageContent, null)
-            if(result.hasError) {
+            if (result.hasError) {
                 // endScreenShare({}, null);
                 config.users.removeItem("screenShare");
                 return;
@@ -938,14 +950,15 @@ function MultiTrackCallManager({app, callId, callConfig}) {
 
             // callStateController.addScreenShareToCall(direction, shareScreen);
 
-            if(config.screenShareInfo.iAmOwner()){
-                setTimeout(()=>{
+            if (config.screenShareInfo.iAmOwner()) {
+                setTimeout(() => {
                     doThings();
                 }, 1000)
             } else {
                 doThings();
             }
-            function doThings(){
+
+            function doThings() {
                 callConfig.screenShareObject.callId = config.callId;
                 let clientId = messageContent.topicSend.split('-')[2];
                 callConfig.screenShareObject.clientId = clientId;
@@ -980,31 +993,31 @@ function MultiTrackCallManager({app, callId, callConfig}) {
             //First count all failed topics
             let ftCount = 0, totalTopics = 0;
             Object.values(config.users.getAll()).forEach(item => {
-                if(item.user().video ){
+                if (item.user().video) {
                     totalTopics++;
-                    if(item.videoTopicManager().isPeerFailed()){
+                    if (item.videoTopicManager().isPeerFailed()) {
                         ftCount++;
                     }
                 }
-                if(!item.user().mute){
+                if (!item.user().mute) {
                     totalTopics++;
-                    if(item.audioTopicManager().isPeerFailed()){
+                    if (item.audioTopicManager().isPeerFailed()) {
                         ftCount++;
                     }
                 }
             });
             //If only some topics are failed
-            if(ftCount < totalTopics) {
+            if (ftCount < totalTopics) {
                 Object.values(config.users.getAll()).forEach(item => {
-                    if(item.user().video ){
+                    if (item.user().video) {
                         totalTopics++;
-                        if(item.videoTopicManager().isPeerFailed()){
+                        if (item.videoTopicManager().isPeerFailed()) {
                             item.reconnectTopic("video");
                         }
                     }
-                    if(!item.user().mute){
+                    if (!item.user().mute) {
                         totalTopics++;
-                        if(item.audioTopicManager().isPeerFailed()){
+                        if (item.audioTopicManager().isPeerFailed()) {
                             item.reconnectTopic("audio");
                         }
                     }
@@ -1022,9 +1035,9 @@ function MultiTrackCallManager({app, callId, callConfig}) {
         }
     }
 
-    setTimeout(()=>{
+    setTimeout(() => {
         startCallWebRTCFunctions(config.callConfig);
-    },50)
+    }, 50)
     return publicized;
 }
 
