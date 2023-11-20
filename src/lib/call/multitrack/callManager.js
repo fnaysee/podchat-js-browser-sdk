@@ -231,7 +231,7 @@ function MultiTrackCallManager({app, callId, callConfig}) {
                 let processedTopics = [];
 
                 let list = JSON.parse(jsonMessage.recvList);
-                for(let i = list.length; i >= 0; i--) {
+                for(let i = list.length - 1; i >= 0; i--) {
                     if(!processedTopics.includes(list[i].topic)) {
                         processedTopics.push(list[i].topic);
                         let userId = config.users.findUserIdByTopic(list[i].topic);

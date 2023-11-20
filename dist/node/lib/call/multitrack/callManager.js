@@ -292,7 +292,7 @@ function MultiTrackCallManager(_ref) {
         var processedTopics = [];
         var list = JSON.parse(jsonMessage.recvList);
 
-        for (var i = list.length; i >= 0; i--) {
+        for (var i = list.length - 1; i >= 0; i--) {
           if (!processedTopics.includes(list[i].topic)) {
             processedTopics.push(list[i].topic);
             var userId = config.users.findUserIdByTopic(list[i].topic);
