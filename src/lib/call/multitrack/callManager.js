@@ -1031,6 +1031,8 @@ function MultiTrackCallManager({app, callId, callConfig}) {
             await config.deviceManager.mediaStreams.stopAudioInput();
             await config.deviceManager.mediaStreams.stopVideoInput();
             await config.deviceManager.mediaStreams.stopScreenShareInput();
+            config.sendPeerManager.destroy();
+            config.receivePeerManager.destroy();
             return callStop()
         }
     }

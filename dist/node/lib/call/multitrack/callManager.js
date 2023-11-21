@@ -1266,9 +1266,11 @@ function MultiTrackCallManager(_ref) {
                 return config.deviceManager.mediaStreams.stopScreenShareInput();
 
               case 6:
+                config.sendPeerManager.destroy();
+                config.receivePeerManager.destroy();
                 return _context6.abrupt("return", callStop());
 
-              case 7:
+              case 9:
               case "end":
                 return _context6.stop();
             }

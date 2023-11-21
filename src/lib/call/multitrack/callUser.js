@@ -9,7 +9,10 @@ function CallUser(app, user) {
         containerTag: null,
         htmlElements: {},
         videoIsOpen: false,
-        audioIsOpen: false
+        audioIsOpen: false,
+        topicMetaData: {
+            audioLevelInterval: null
+        }
     };
 
     const publicized = {
@@ -46,38 +49,6 @@ function CallUser(app, user) {
 
             return config.htmlElement;
         },
-        getAudioHtmlElement(stream) {
-            if (!config.isMe) {
-                config.audioObject = new Audio();
-                config.audioObject.srcObject = stream;
-                config.audioObject.srcObject = stream;
-                config.audioObject.autoplay = true;
-
-                config.audioObject.play();
-                publicized.watchAudioLevel();
-            }
-        },
-        appendAudioToCallDiv() {
-            if (!app.call.sharedVariables.callDivId) {
-                app.sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
-                return;
-            }
-            let user = config.user,
-                callParentDiv = document.getElementById(app.call.sharedVariables.callDivId),
-                userContainer = document.getElementById("callParticipantWrapper-" + config.userId);
-
-            if (!userContainer) {
-                callParentDiv.appendChild(config.htmlElements.container);
-                userContainer = document.getElementById("callParticipantWrapper-" + config.userId)
-            }
-            if (typeof user.mute !== "undefined" && !user.mute && config.audioTopicManager) {
-                if (!document.getElementById("callUserAudio-" + config.user.audioTopicName)) {
-                    userContainer.appendChild(config.htmlElements[config.user.audioTopicName]);
-                    config.audioTopicManager.startMedia();
-                    config.audioTopicManager.watchAudioLevel();
-                }
-            }
-        },
         appendVideoToCallDiv() {
             if (!app.call.sharedVariables.callDivId) {
                 app.sdkParams.consoleLogging && console.log('No Call DIV has been declared!');
@@ -101,10 +72,15 @@ function CallUser(app, user) {
             app.call.currentCall().sendCallDivs()
         },
         videoTopicManager() {
-            return config.videoTopicManager;
+            // return config.videoTopicManager;
         },
         audioTopicManager() {
-            return config.audioTopicManager;
+            // return config.audioTopicManager;
+        },
+        removeAudioWatcherInterval() {
+            if(config.topicMetaData) {
+                clearInterval(config.topicMetaData.audioLevelInterval);
+            }
         },
         async startAudio(sendTopic, conf) {
             config.audioIsOpen = true;
@@ -173,7 +149,7 @@ function CallUser(app, user) {
         },
         async destroyAudio() {
             config.audioObject = null;
-            //TODO: Remove audio level watcher interval
+            publicized.removeAudioWatcherInterval();
 
             // if (config.htmlElements[config.user.audioTopicName]) {
             //     config.htmlElements[config.user.audioTopicName].remove();
@@ -213,9 +189,7 @@ function CallUser(app, user) {
                 }
             }
         },
-        watchAudioLevel: function () {
-            const stream = config.dataStream;
-
+        watchAudioLevel: function (stream) {
             let user = config.user,
                 topicMetadata = config.topicMetaData;
             // Create and configure the audio pipeline
@@ -293,14 +267,12 @@ function CallUser(app, user) {
 
         if (config.isMe) {
             if (isAudio) {
-                //TODO: implement
-                // publicized.watchAudioLevel();
+                publicized.watchAudioLevel(stream);
 
             } else {
                 let el = publicized.getVideoHtmlElement();
                 el.srcObject = stream;
                 config.htmlElements[config.user.videoTopicName] = el;
-                console.log('debug', 992, {el}, config.user.videoTopicName)
                 publicized.appendVideoToCallDiv();
             }
         } else {
@@ -311,8 +283,7 @@ function CallUser(app, user) {
                 config.audioObject.autoplay = true;
 
                 config.audioObject.play();
-                //TODO: implement
-                // publicized.watchAudioLevel();
+                publicized.watchAudioLevel(stream);
             } else if(isVideo) {
                 let el = publicized.getVideoHtmlElement();
                 el.srcObject = stream;
