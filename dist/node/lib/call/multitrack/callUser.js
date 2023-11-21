@@ -124,7 +124,7 @@ function CallUser(app, user) {
     audioTopicManager: function audioTopicManager() {
       return config.audioTopicManager;
     },
-    startAudio: function startAudio(sendTopic) {
+    startAudio: function startAudio(sendTopic, conf) {
       return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
         return _regenerator["default"].wrap(function _callee$(_context) {
           while (1) {
@@ -151,6 +151,7 @@ function CallUser(app, user) {
                     clientId: config.user.clientId,
                     topic: config.user.audioTopicName,
                     mediaType: 1,
+                    mline: conf && conf.mline,
                     onTrackCallback: onTrackCallback
                   });
                 }
@@ -163,7 +164,7 @@ function CallUser(app, user) {
         }, _callee);
       }))();
     },
-    startVideo: function startVideo(sendTopic) {
+    startVideo: function startVideo(sendTopic, conf) {
       return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
         return _regenerator["default"].wrap(function _callee2$(_context2) {
           while (1) {
@@ -190,6 +191,7 @@ function CallUser(app, user) {
                     clientId: config.user.clientId,
                     topic: config.user.videoTopicName,
                     mediaType: 0,
+                    mline: conf && conf.mline,
                     onTrackCallback: onTrackCallback
                   });
                 }
@@ -309,14 +311,14 @@ function CallUser(app, user) {
     processTrackChange: function processTrackChange(conf) {
       if (conf.topic.indexOf('Vi-') > -1) {
         if (!config.videoIsOpen && conf.isReceiving) {
-          publicized.startVideo(conf.topic.replace('Vi-', ''));
+          publicized.startVideo(conf.topic.replace('Vi-', ''), conf);
         } else if (config.videoIsOpen && !conf.isReceiving) {
           config.videoIsOpen = false;
           publicized.stopVideo();
         }
       } else if (conf.topic.indexOf('Vo-') > -1) {
         if (!config.audioIsOpen && conf.isReceiving) {
-          publicized.startAudio(conf.topic.replace('Vo-', ''));
+          publicized.startAudio(conf.topic.replace('Vo-', ''), conf);
         } else if (config.audioIsOpen && !conf.isReceiving) {
           config.user.mute = true;
           config.audioIsOpen = false;
@@ -527,7 +529,7 @@ function CallScreenShare(app, user) {
     startAudio: function startAudio(sendTopic) {
       return;
     },
-    startVideo: function startVideo(sendTopic) {
+    startVideo: function startVideo(sendTopic, conf) {
       config.user.video = true;
       config.videoIsOpen = true;
       var iAmOwner = app.call.currentCall().screenShareInfo.iAmOwner();
@@ -570,6 +572,7 @@ function CallScreenShare(app, user) {
           topic: config.user.videoTopicName,
           mediaType: 2,
           isScreenShare: true,
+          mline: conf && conf.mline,
           onTrackCallback: onTrackCallback
         });
       }
@@ -577,7 +580,7 @@ function CallScreenShare(app, user) {
     processTrackChange: function processTrackChange(conf) {
       if (conf.topic.indexOf('Vi-') > -1) {
         if (!config.videoIsOpen && conf.isReceiving) {
-          publicized.startVideo(conf.topic.replace('Vi-', ''));
+          publicized.startVideo(conf.topic.replace('Vi-', ''), conf);
         } else if (config.videoIsOpen && !conf.isReceiving) {
           config.videoIsOpen = false;
           publicized.stopVideo();

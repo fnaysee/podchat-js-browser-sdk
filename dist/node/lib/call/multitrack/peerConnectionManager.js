@@ -275,7 +275,7 @@ var PeerConnectionManager = /*#__PURE__*/function () {
   }, {
     key: "addTrack",
     value: function addTrack(data) {
-      data.mline = this._nextTrackMid;
+      if (this._direction == 'send') data.mline = this._nextTrackMid;
 
       this._trackList.push(data);
 

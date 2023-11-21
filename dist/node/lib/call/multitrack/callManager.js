@@ -169,11 +169,11 @@ function MultiTrackCallManager(_ref) {
         var user = config.users.get(app.store.user.get().id); //Start my own senders
 
         if (user.user().video) {
-          user.startVideo(user.user().topicSend);
+          user.startVideo(user.user().topicSend, null);
         }
 
         if (!user.user().mute) {
-          user.startAudio(user.user().topicSend);
+          user.startAudio(user.user().topicSend, null);
         }
       } else {
         app.callsManager.removeItem(config.callId); // endCall({callId: config.callId});

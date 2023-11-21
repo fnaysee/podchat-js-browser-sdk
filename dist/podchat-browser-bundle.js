@@ -42084,7 +42084,7 @@ FilterXSS.prototype.process = function (html) {
 module.exports = FilterXSS;
 
 },{"./default":258,"./parser":260,"./util":261,"cssfilter":137}],263:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.48","date":"۱۴۰۲/۸/۲۹","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.7-snapshot.48","date":"۱۴۰۲/۸/۳۰","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],264:[function(require,module,exports){
 "use strict";
 
@@ -50811,11 +50811,11 @@ function MultiTrackCallManager(_ref) {
         var user = config.users.get(app.store.user.get().id); //Start my own senders
 
         if (user.user().video) {
-          user.startVideo(user.user().topicSend);
+          user.startVideo(user.user().topicSend, null);
         }
 
         if (!user.user().mute) {
-          user.startAudio(user.user().topicSend);
+          user.startAudio(user.user().topicSend, null);
         }
       } else {
         app.callsManager.removeItem(config.callId); // endCall({callId: config.callId});
@@ -52104,7 +52104,7 @@ function CallUser(app, user) {
     audioTopicManager: function audioTopicManager() {
       return config.audioTopicManager;
     },
-    startAudio: function startAudio(sendTopic) {
+    startAudio: function startAudio(sendTopic, conf) {
       return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
         return _regenerator["default"].wrap(function _callee$(_context) {
           while (1) {
@@ -52131,6 +52131,7 @@ function CallUser(app, user) {
                     clientId: config.user.clientId,
                     topic: config.user.audioTopicName,
                     mediaType: 1,
+                    mline: conf && conf.mline,
                     onTrackCallback: onTrackCallback
                   });
                 }
@@ -52143,7 +52144,7 @@ function CallUser(app, user) {
         }, _callee);
       }))();
     },
-    startVideo: function startVideo(sendTopic) {
+    startVideo: function startVideo(sendTopic, conf) {
       return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
         return _regenerator["default"].wrap(function _callee2$(_context2) {
           while (1) {
@@ -52170,6 +52171,7 @@ function CallUser(app, user) {
                     clientId: config.user.clientId,
                     topic: config.user.videoTopicName,
                     mediaType: 0,
+                    mline: conf && conf.mline,
                     onTrackCallback: onTrackCallback
                   });
                 }
@@ -52290,14 +52292,14 @@ function CallUser(app, user) {
     processTrackChange: function processTrackChange(conf) {
       if (conf.topic.indexOf('Vi-') > -1) {
         if (!config.videoIsOpen && conf.isReceiving) {
-          publicized.startVideo(conf.topic.replace('Vi-', ''));
+          publicized.startVideo(conf.topic.replace('Vi-', ''), conf);
         } else if (config.videoIsOpen && !conf.isReceiving) {
           config.videoIsOpen = false;
           publicized.stopVideo();
         }
       } else if (conf.topic.indexOf('Vo-') > -1) {
         if (!config.audioIsOpen && conf.isReceiving) {
-          publicized.startAudio(conf.topic.replace('Vo-', ''));
+          publicized.startAudio(conf.topic.replace('Vo-', ''), conf);
         } else if (config.audioIsOpen && !conf.isReceiving) {
           config.user.mute = true;
           config.audioIsOpen = false;
@@ -52508,7 +52510,7 @@ function CallScreenShare(app, user) {
     startAudio: function startAudio(sendTopic) {
       return;
     },
-    startVideo: function startVideo(sendTopic) {
+    startVideo: function startVideo(sendTopic, conf) {
       config.user.video = true;
       config.videoIsOpen = true;
       var iAmOwner = app.call.currentCall().screenShareInfo.iAmOwner();
@@ -52551,6 +52553,7 @@ function CallScreenShare(app, user) {
           topic: config.user.videoTopicName,
           mediaType: 2,
           isScreenShare: true,
+          mline: conf && conf.mline,
           onTrackCallback: onTrackCallback
         });
       }
@@ -52558,7 +52561,7 @@ function CallScreenShare(app, user) {
     processTrackChange: function processTrackChange(conf) {
       if (conf.topic.indexOf('Vi-') > -1) {
         if (!config.videoIsOpen && conf.isReceiving) {
-          publicized.startVideo(conf.topic.replace('Vi-', ''));
+          publicized.startVideo(conf.topic.replace('Vi-', ''), conf);
         } else if (config.videoIsOpen && !conf.isReceiving) {
           config.videoIsOpen = false;
           publicized.stopVideo();
@@ -53143,7 +53146,7 @@ var PeerConnectionManager = /*#__PURE__*/function () {
   }, {
     key: "addTrack",
     value: function addTrack(data) {
-      data.mline = this._nextTrackMid;
+      if (this._direction == 'send') data.mline = this._nextTrackMid;
 
       this._trackList.push(data);
 

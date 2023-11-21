@@ -106,7 +106,7 @@ function CallUser(app, user) {
         audioTopicManager() {
             return config.audioTopicManager;
         },
-        async startAudio(sendTopic) {
+        async startAudio(sendTopic, conf) {
             config.audioIsOpen = true;
             config.user.mute = false;
             if (config.isMe) {
@@ -126,11 +126,12 @@ function CallUser(app, user) {
                     clientId: config.user.clientId,
                     topic: config.user.audioTopicName,
                     mediaType: 1,
+                    mline: (conf && conf.mline),
                     onTrackCallback
                 });
             }
          },
-        async startVideo(sendTopic) {
+        async startVideo(sendTopic, conf) {
             config.user.video = true;
             config.videoIsOpen = true;
             if (config.isMe) {
@@ -150,6 +151,7 @@ function CallUser(app, user) {
                     clientId: config.user.clientId,
                     topic: config.user.videoTopicName,
                     mediaType: 0,
+                    mline: (conf && conf.mline),
                     onTrackCallback
                 })
             }
@@ -196,14 +198,14 @@ function CallUser(app, user) {
         processTrackChange(conf) {
             if (conf.topic.indexOf('Vi-') > -1) {
                 if (!config.videoIsOpen && conf.isReceiving) {
-                    publicized.startVideo(conf.topic.replace('Vi-', ''));
+                    publicized.startVideo(conf.topic.replace('Vi-', ''), conf);
                 } else if (config.videoIsOpen && !conf.isReceiving) {
                     config.videoIsOpen = false;
                     publicized.stopVideo();
                 }
             } else if (conf.topic.indexOf('Vo-') > -1) {
                 if (!config.audioIsOpen && conf.isReceiving) {
-                    publicized.startAudio(conf.topic.replace('Vo-', ''));
+                    publicized.startAudio(conf.topic.replace('Vo-', ''), conf);
                 } else if (config.audioIsOpen && !conf.isReceiving) {
                     config.user.mute = true;
                     config.audioIsOpen = false;
@@ -419,7 +421,7 @@ function CallScreenShare(app, user) {
         startAudio(sendTopic) {
             return;
         },
-        startVideo(sendTopic) {
+        startVideo(sendTopic, conf) {
             config.user.video = true;
             config.videoIsOpen = true;
             let iAmOwner = app.call.currentCall().screenShareInfo.iAmOwner();
@@ -462,6 +464,7 @@ function CallScreenShare(app, user) {
                     topic: config.user.videoTopicName,
                     mediaType: 2,
                     isScreenShare: true,
+                    mline: (conf && conf.mline),
                     onTrackCallback
                 })
             }
@@ -469,7 +472,7 @@ function CallScreenShare(app, user) {
         processTrackChange(conf) {
             if (conf.topic.indexOf('Vi-') > -1) {
                 if (!config.videoIsOpen && conf.isReceiving) {
-                    publicized.startVideo(conf.topic.replace('Vi-', ''));
+                    publicized.startVideo(conf.topic.replace('Vi-', ''), conf);
                 } else if (config.videoIsOpen && !conf.isReceiving) {
                     config.videoIsOpen = false;
                     publicized.stopVideo();

@@ -236,7 +236,8 @@ class PeerConnectionManager {
     }
 
     addTrack(data) {
-        data.mline = this._nextTrackMid;
+        if(this._direction == 'send')
+            data.mline = this._nextTrackMid;
         this._trackList.push(data);
         this._addTrackQueue.push(data);
         this._nextTrackMid++;
