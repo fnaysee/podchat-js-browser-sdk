@@ -255,7 +255,7 @@ function MultiTrackCallManager({app, callId, callConfig}) {
     function handleProcessSdpOffer(jsonMessage) {
         config.receivePeerManager.handleProcessSDPOfferForReceiveTrack(jsonMessage, () => {
             receiveAddIceCandidates.forEach(item => {
-                addIceCandidate(config.sendPeerManager.getPeer(), item, 'receivePeerManager');
+                addIceCandidate(config.receivePeerManager.getPeer(), item, 'receivePeerManager');
             });
         });
     }

@@ -42084,7 +42084,7 @@ FilterXSS.prototype.process = function (html) {
 module.exports = FilterXSS;
 
 },{"./default":258,"./parser":260,"./util":261,"cssfilter":137}],263:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.48","date":"۱۴۰۲/۸/۳۰","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.7-snapshot.48","date":"۱۴۰۲/۹/۴","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],264:[function(require,module,exports){
 "use strict";
 
@@ -50956,7 +50956,7 @@ function MultiTrackCallManager(_ref) {
   function handleProcessSdpOffer(jsonMessage) {
     config.receivePeerManager.handleProcessSDPOfferForReceiveTrack(jsonMessage, function () {
       receiveAddIceCandidates.forEach(function (item) {
-        addIceCandidate(config.sendPeerManager.getPeer(), item, 'receivePeerManager');
+        addIceCandidate(config.receivePeerManager.getPeer(), item, 'receivePeerManager');
       });
     });
   }

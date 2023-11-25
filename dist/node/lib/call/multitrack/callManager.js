@@ -314,7 +314,7 @@ function MultiTrackCallManager(_ref) {
   function handleProcessSdpOffer(jsonMessage) {
     config.receivePeerManager.handleProcessSDPOfferForReceiveTrack(jsonMessage, function () {
       receiveAddIceCandidates.forEach(function (item) {
-        addIceCandidate(config.sendPeerManager.getPeer(), item, 'receivePeerManager');
+        addIceCandidate(config.receivePeerManager.getPeer(), item, 'receivePeerManager');
       });
     });
   }
