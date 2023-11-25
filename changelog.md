@@ -5,6 +5,37 @@ to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.i
 
 ## [Unreleased]
 
+## [12.9.7] 25-11-2023
+
+### Added
+- Method replyPrivately
+- Method replyFileMessagePrivately
+- Method getThreadsLight
+- Method getPinMessages
+- Method lastMessageInfo
+- Method addReaction
+- Method removeReaction
+- Method replaceReaction
+- Method getReactionsSummaries
+- cache for getReactionsSummaries
+- Method getReactionsList
+- cache for getReactionsList
+- Ability to switch async protocols
+- uniqueId for ping messages
+- Parameter usernames to method removeParticipants
+- xss check for messages contents
+- requestBlocking for some call actions
+- callId to REJECT_GROUP_CALL
+
+### Fixed
+- socketState 0 on event chatState was not being fired
+- mute/unmute in calls causing performance bug in browsers
+- screenShare cropped when sharing a non fullscreen window
+
+### Changed
+- Internal changes making the sdk more modular
+- Rewrite call module
+
 ## [12.9.6] 29-07-2023
 ## [12.9.6-snapshot.4] 19-07-2023
 ## [12.9.6-snapshot.3] 19-07-2023
@@ -47,7 +78,7 @@ to see complete list of changelog please visit [ChangeLog](http://gp.fanapsoft.i
 - Fix lastSeenMessageTime (19 Numbers) on type 31:LAST_SEEN_UPDATED
 - timeNanos & Changed time (19 Numbers) in pinMessage
 
-## Changed
+### Changed
 - Changed cached unreadCount calculation on new messages
 
 ## [12.9.3] 2023-06-20
