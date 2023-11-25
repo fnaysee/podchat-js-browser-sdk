@@ -3604,7 +3604,7 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
 
     document.getElementById("setRoleAdmin").addEventListener("click", function (event){
         event.preventDefault();
-        chatAgent.setRoleAdmin({
+        chatAgent.setAdminRole({
             threadId: 3443316,
             content: [{
                 id: "nedahgh.test",
@@ -3616,7 +3616,7 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
     });
     document.getElementById("removeRoleAdmin").addEventListener("click", function (event){
         event.preventDefault();
-        chatAgent.removeRoleAdmin({
+        chatAgent.removeAdminRole({
             threadId: 3443316,
             content: [{
                 id: "nedahgh.test",

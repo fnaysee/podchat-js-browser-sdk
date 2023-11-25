@@ -143,6 +143,7 @@ var chatMessageVOTypes = {
   REACTION_LIST: 242,
   GET_MY_REACTION: 243,
   REACTION_COUNT: 244,
+  CUSTOMIZE_REACTION: 245,
   SET_ADMIN_ROLE_TO_USER: 250,
   REMOVE_ADMIN_ROLE_FROM_USER: 251,
   ERROR: 999
@@ -234,3 +235,8 @@ var callMetaDataTypes = {
   SCREENSHAREMETADATA: 4
 };
 exports.callMetaDataTypes = callMetaDataTypes;
+var customizeReactionTypes = {
+  deActive: 1,
+  active: 2,
+  customizeReaction: 3
+};

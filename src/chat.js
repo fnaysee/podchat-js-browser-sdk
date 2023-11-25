@@ -20,7 +20,8 @@ import {
     imageMimeTypes,
     imageExtentions,
     callStickerTypes,
-    chatStickerTypes
+    chatStickerTypes,
+    customizeReactionTypes
 } from "./lib/constants";
 
 import ReactionsMethods from "./lib/chat/reactionsMethods";
@@ -2971,6 +2972,7 @@ function Chat(params) {
                 case chatMessageVOTypes.REACTION_LIST:
                     reactionsMethods.onReactionList(uniqueId, messageContent);
                     break;
+
                 /**
                  * Type 243   Get My Reaction
                  */
@@ -2986,6 +2988,34 @@ function Chat(params) {
                 case chatMessageVOTypes.REACTION_COUNT:
                     reactionsMethods.onReactionSummaries(uniqueId, messageContent);
                     break;
+
+                /**
+                 * Type 243   CUSTOMIZE_REACTION
+                 */
+                case chatMessageVOTypes.CUSTOMIZE_REACTION:
+                    if (chatMessaging.messagesCallbacks[uniqueId]) {
+                        chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(true, messageContent.message, messageContent.code, messageContent, 0));
+                    }
+                    break;
+
+                /**
+                 * Type 250   SET_ADMIN_ROLE_TO_USER
+                 */
+                case chatMessageVOTypes.SET_ADMIN_ROLE_TO_USER:
+                    if (chatMessaging.messagesCallbacks[uniqueId]) {
+                        chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(true, messageContent.message, messageContent.code, messageContent, 0));
+                    }
+                    break;
+
+                /**
+                 * Type 251   REMOVE_ADMIN_ROLE_FROM_USER
+                 */
+                case chatMessageVOTypes.REMOVE_ADMIN_ROLE_FROM_USER:
+                    if (chatMessaging.messagesCallbacks[uniqueId]) {
+                        chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(true, messageContent.message, messageContent.code, messageContent, 0));
+                    }
+                    break;
+
                 /**
                  * Type 999   All unknown errors
                  */
@@ -11944,7 +11974,7 @@ function Chat(params) {
         });
     }
 
-    publicized.setRoleAdmin = function (params, callback) {
+    publicized.setAdminRole = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.SET_ADMIN_ROLE_TO_USER,
             typeCode: sdkParams.generalTypeCode, //params.typeCode,
@@ -11960,7 +11990,7 @@ function Chat(params) {
         });
     };
 
-    publicized.removeRoleAdmin = function (params, callback) {
+    publicized.removeAdminRole = function (params, callback) {
         var sendData = {
             chatMessageVOType: chatMessageVOTypes.REMOVE_ADMIN_ROLE_FROM_USER,
             typeCode: sdkParams.generalTypeCode, //params.typeCode,
@@ -11969,6 +11999,28 @@ function Chat(params) {
             content: params.content
         };
 
+        return chatMessaging.sendMessage(sendData, {
+            onResult: function (result) {
+                callback && callback(result);
+            }
+        });
+    };
+
+    publicized.setRoleToUser = setRoleToUser;
+
+    publicized.removeRoleFromUser = removeRoleFromUser;
+
+    publicized.customizeReaction = function (params, callback) {
+        var sendData = {
+            chatMessageVOType: chatMessageVOTypes.CUSTOMIZE_REACTION,
+            typeCode: sdkParams.generalTypeCode, //params.typeCode,
+            token: sdkParams.token,
+            subjectId: params.threadId,
+            content: {
+                "reactionStatus" : customizeReactionTypes[params.reactionStatus],
+                "allowedReactions" : params.allowedReactions
+            }
+        };
         return chatMessaging.sendMessage(sendData, {
             onResult: function (result) {
                 callback && callback(result);
