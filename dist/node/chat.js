@@ -11950,6 +11950,38 @@ function Chat(params) {
     });
   };
 
+  publicized.setRoleAdmin = function (params, callback) {
+    var sendData = {
+      chatMessageVOType: _constants.chatMessageVOTypes.SET_ADMIN_ROLE_TO_USER,
+      typeCode: sdkParams.generalTypeCode,
+      //params.typeCode,
+      token: sdkParams.token,
+      subjectId: params.threadId,
+      content: params.content
+    };
+    return chatMessaging.sendMessage(sendData, {
+      onResult: function onResult(result) {
+        callback && callback(result);
+      }
+    });
+  };
+
+  publicized.removeRoleAdmin = function (params, callback) {
+    var sendData = {
+      chatMessageVOType: _constants.chatMessageVOTypes.REMOVE_ADMIN_ROLE_FROM_USER,
+      typeCode: sdkParams.generalTypeCode,
+      //params.typeCode,
+      token: sdkParams.token,
+      subjectId: params.threadId,
+      content: params.content
+    };
+    return chatMessaging.sendMessage(sendData, {
+      onResult: function onResult(result) {
+        callback && callback(result);
+      }
+    });
+  };
+
   publicized.resetAudioSendStream = callModule.resetAudioSendStream;
   publicized.resetVideoSendStream = callModule.resetVideoSendStream;
   publicized.stopPrintStatus = callModule.stopPrintStatus;

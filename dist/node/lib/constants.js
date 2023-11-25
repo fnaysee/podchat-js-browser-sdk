@@ -143,6 +143,8 @@ var chatMessageVOTypes = {
   REACTION_LIST: 242,
   GET_MY_REACTION: 243,
   REACTION_COUNT: 244,
+  SET_ADMIN_ROLE_TO_USER: 250,
+  REMOVE_ADMIN_ROLE_FROM_USER: 251,
   ERROR: 999
 };
 exports.chatMessageVOTypes = chatMessageVOTypes;

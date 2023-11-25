@@ -1980,6 +1980,8 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
         <input type="text" name="adminThreadParticipantUserId" id="adminThreadParticipantUserId" placeholder="UserId">
         <button type="button" name="button" id="adminThreadParticipantBtn">Make admin</button>
         <button type="button" name="button" id="removeAdminThreadParticipantBtn">Remove admin</button>
+        <button type="button" name="button" id="setRoleAdmin">Set role admin</button>
+        <button type="button" name="button" id="removeRoleAdmin">Remove role admin</button>
     </fieldset>
 </form>
 
@@ -3598,7 +3600,32 @@ Thread: <input type="text" id="threadInput" autocomplete="on" width="500">
         }, function(result) {
             console.log("deleteMultipleMessages:: ", {result});
         })
-    }
+    };
+
+    document.getElementById("setRoleAdmin").addEventListener("click", function (event){
+        event.preventDefault();
+        chatAgent.setRoleAdmin({
+            threadId: 3443316,
+            content: [{
+                id: "nedahgh.test",
+                idType: 4
+            }],
+        }, function (result) {
+            console.log("[HTML][chatAgent.setRoleAdmin][result]", result);
+        })
+    });
+    document.getElementById("removeRoleAdmin").addEventListener("click", function (event){
+        event.preventDefault();
+        chatAgent.removeRoleAdmin({
+            threadId: 3443316,
+            content: [{
+                id: "nedahgh.test",
+                idType: 4
+            }],
+        }, function (result) {
+            console.log("[HTML][chatAgent.removeRoleAdmin][result]", result);
+        })
+    });
 
     window.deleteMultipleMessages = deleteMultipleMessages;
 
