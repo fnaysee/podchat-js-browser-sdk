@@ -87,6 +87,24 @@ function CallUsers({app, callId}) {
             })
 
         },
+        async reconnectAllUsers() {
+            for (let i in config.list) {
+                let user = config.list[i];
+                if (user ) {
+                    if(user.user().video)
+                        await user.stopVideo();
+                    if(!user.user().mute)
+                        await user.stopAudio();
+
+                    setTimeout(()=>{
+                        if(user.user().video)
+                            user.startVideo(user.user().topicSend);
+                        if(!user.user().mute)
+                            user.startAudio(user.user().topicSend);
+                    }, 500)
+                }
+            }
+        }
     }
 
     return publicized;

@@ -1,7 +1,14 @@
 import {WebrtcPeerConnection} from "./webrtcPeer";
 
 class PeerConnectionManager {
-    constructor(app, callId, direction, rtcPeerConfig, brokerAddress) {
+    constructor({
+                    app,
+                    callId,
+                    direction,
+                    rtcPeerConfig,
+                    brokerAddress,
+                    onPeerFailed
+    }) {
         this._app = app;
         this._callId = callId;
         this._brokerAddress = brokerAddress;
@@ -26,7 +33,7 @@ class PeerConnectionManager {
             connectionStateChange: this._onConnectionStateChange.bind(this),
             iceConnectionStateChange: this._onIceConnectionStateChange.bind(this)
         };
-
+        this._onPeerFailed = onPeerFailed;
         this._peer = new WebrtcPeerConnection(this._defaultConfig);
     }
 
@@ -271,16 +278,16 @@ class PeerConnectionManager {
     }
 
     _onConnectionStateChange() {
+        if(!this._peer || this.isDestroyed()) {
+            return; //avoid log errors
+        }
+
         this._app.chatEvents.fireEvent("callStreamEvents", {
             type: 'WEBRTC_CONNECTION_STATE_CHANGE',
             callId: this._callId,
             direction: this._direction,
             connectionState: this._peer.peerConnection.connectionState,
         });
-
-        if(this.isDestroyed()) {
-            return; //avoid log errors
-        }
 
         this._app.sdkParams.consoleLogging && console.log("[SDK][peerConnection.onconnectionstatechange] ", "peer: ", this._direction, " peerConnection.connectionState: ", this._peer.peerConnection.connectionState);
         if (this._peer.peerConnection.connectionState === 'disconnected') {
@@ -300,10 +307,7 @@ class PeerConnectionManager {
                 errorMessage: `Call Peer (${this._direction}) has failed!`,
                 errorInfo: this._peer.peerConnection
             });
-
-            if(this._app.messenger.chatState) {
-                this.shouldReconnectTopic();
-            }
+            this._onPeerFailed(this._direction);
         }
 
         if(this._peer.peerConnection.connectionState === 'connected') {
@@ -348,9 +352,10 @@ class PeerConnectionManager {
                 errorMessage: `Call Peer (${this._direction}) has failed!`,
                 errorInfo: this._peer
             });
-            if(this._app.messenger.chatState) {
-                // publicized.shouldReconnectTopic();
-            }
+            this._onPeerFailed(this._direction);
+            // if(this._app.messenger.chatState) {
+                // // publicized.shouldReconnectTopic();
+            // }
         }
 
         if (this._peer.peerConnection.iceConnectionState === "connected") {

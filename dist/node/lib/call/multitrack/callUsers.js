@@ -121,6 +121,80 @@ function CallUsers(_ref) {
           resolve();
         });
       });
+    },
+    reconnectAllUsers: function reconnectAllUsers() {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
+        var _loop, i;
+
+        return _regenerator["default"].wrap(function _callee2$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _loop = /*#__PURE__*/_regenerator["default"].mark(function _loop(i) {
+                  var user;
+                  return _regenerator["default"].wrap(function _loop$(_context2) {
+                    while (1) {
+                      switch (_context2.prev = _context2.next) {
+                        case 0:
+                          user = config.list[i];
+
+                          if (!user) {
+                            _context2.next = 9;
+                            break;
+                          }
+
+                          if (!user.user().video) {
+                            _context2.next = 5;
+                            break;
+                          }
+
+                          _context2.next = 5;
+                          return user.stopVideo();
+
+                        case 5:
+                          if (user.user().mute) {
+                            _context2.next = 8;
+                            break;
+                          }
+
+                          _context2.next = 8;
+                          return user.stopAudio();
+
+                        case 8:
+                          setTimeout(function () {
+                            if (user.user().video) user.startVideo(user.user().topicSend);
+                            if (!user.user().mute) user.startAudio(user.user().topicSend);
+                          }, 500);
+
+                        case 9:
+                        case "end":
+                          return _context2.stop();
+                      }
+                    }
+                  }, _loop);
+                });
+                _context3.t0 = _regenerator["default"].keys(config.list);
+
+              case 2:
+                if ((_context3.t1 = _context3.t0()).done) {
+                  _context3.next = 7;
+                  break;
+                }
+
+                i = _context3.t1.value;
+                return _context3.delegateYield(_loop(i), "t2", 5);
+
+              case 5:
+                _context3.next = 2;
+                break;
+
+              case 7:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee2);
+      }))();
     }
   };
   return publicized;

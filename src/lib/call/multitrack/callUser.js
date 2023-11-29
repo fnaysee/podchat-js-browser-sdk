@@ -451,7 +451,6 @@ function CallScreenShare(app, user) {
             }
         },
         async reconnectTopic(media) {
-            await config.videoTopicManager.stopTopicOnServer();
             await publicized.destroyVideo()
             await publicized.startVideo(config.user.topic)
         },

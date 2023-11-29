@@ -563,17 +563,13 @@ function CallScreenShare(app, user) {
             switch (_context8.prev = _context8.next) {
               case 0:
                 _context8.next = 2;
-                return config.videoTopicManager.stopTopicOnServer();
+                return publicized.destroyVideo();
 
               case 2:
                 _context8.next = 4;
-                return publicized.destroyVideo();
-
-              case 4:
-                _context8.next = 6;
                 return publicized.startVideo(config.user.topic);
 
-              case 6:
+              case 4:
               case "end":
                 return _context8.stop();
             }

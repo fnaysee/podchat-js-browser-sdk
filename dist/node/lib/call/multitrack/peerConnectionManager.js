@@ -18,7 +18,13 @@ var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/creat
 var _webrtcPeer = require("./webrtcPeer");
 
 var PeerConnectionManager = /*#__PURE__*/function () {
-  function PeerConnectionManager(app, callId, direction, rtcPeerConfig, brokerAddress) {
+  function PeerConnectionManager(_ref) {
+    var app = _ref.app,
+        callId = _ref.callId,
+        direction = _ref.direction,
+        rtcPeerConfig = _ref.rtcPeerConfig,
+        brokerAddress = _ref.brokerAddress,
+        onPeerFailed = _ref.onPeerFailed;
     (0, _classCallCheck2["default"])(this, PeerConnectionManager);
     this._app = app;
     this._callId = callId;
@@ -45,6 +51,7 @@ var PeerConnectionManager = /*#__PURE__*/function () {
       connectionStateChange: this._onConnectionStateChange.bind(this),
       iceConnectionStateChange: this._onIceConnectionStateChange.bind(this)
     };
+    this._onPeerFailed = onPeerFailed;
     this._peer = new _webrtcPeer.WebrtcPeerConnection(this._defaultConfig);
   }
 
@@ -108,8 +115,8 @@ var PeerConnectionManager = /*#__PURE__*/function () {
         }
       }
 
-      this._peer.peerConnection.onicecandidate = function (_ref) {
-        var candidate = _ref.candidate;
+      this._peer.peerConnection.onicecandidate = function (_ref2) {
+        var candidate = _ref2.candidate;
 
         _this._app.call.currentCall().sendCallMessage({
           id: "SEND_ADD_ICE_CANDIDATE",
@@ -324,16 +331,16 @@ var PeerConnectionManager = /*#__PURE__*/function () {
   }, {
     key: "_onConnectionStateChange",
     value: function _onConnectionStateChange() {
+      if (!this._peer || this.isDestroyed()) {
+        return; //avoid log errors
+      }
+
       this._app.chatEvents.fireEvent("callStreamEvents", {
         type: 'WEBRTC_CONNECTION_STATE_CHANGE',
         callId: this._callId,
         direction: this._direction,
         connectionState: this._peer.peerConnection.connectionState
       });
-
-      if (this.isDestroyed()) {
-        return; //avoid log errors
-      }
 
       this._app.sdkParams.consoleLogging && console.log("[SDK][peerConnection.onconnectionstatechange] ", "peer: ", this._direction, " peerConnection.connectionState: ", this._peer.peerConnection.connectionState);
 
@@ -353,9 +360,7 @@ var PeerConnectionManager = /*#__PURE__*/function () {
           errorInfo: this._peer.peerConnection
         });
 
-        if (this._app.messenger.chatState) {
-          this.shouldReconnectTopic();
-        }
+        this._onPeerFailed(this._direction);
       }
 
       if (this._peer.peerConnection.connectionState === 'connected') {
@@ -401,8 +406,10 @@ var PeerConnectionManager = /*#__PURE__*/function () {
           errorInfo: this._peer
         });
 
-        if (this._app.messenger.chatState) {// publicized.shouldReconnectTopic();
-        }
+        this._onPeerFailed(this._direction); // if(this._app.messenger.chatState) {
+        // // publicized.shouldReconnectTopic();
+        // }
+
       }
 
       if (this._peer.peerConnection.iceConnectionState === "connected") {
@@ -471,8 +478,8 @@ var PeerConnectionManager = /*#__PURE__*/function () {
         }
       });
 
-      this._peer.peerConnection.onicecandidate = function (_ref2) {
-        var candidate = _ref2.candidate;
+      this._peer.peerConnection.onicecandidate = function (_ref3) {
+        var candidate = _ref3.candidate;
 
         _this3._app.call.currentCall().sendCallMessage({
           id: "RECIVE_ADD_ICE_CANDIDATE",
@@ -486,8 +493,8 @@ var PeerConnectionManager = /*#__PURE__*/function () {
         }, null, {});
       };
 
-      this._peer.peerConnection.ontrack = function (_ref3) {
-        var transceiver = _ref3.transceiver;
+      this._peer.peerConnection.ontrack = function (_ref4) {
+        var transceiver = _ref4.transceiver;
         currentTrackData.track = transceiver.receiver.track;
         currentTrackData.onTrackCallback(currentTrackData, transceiver.receiver.track);
       };

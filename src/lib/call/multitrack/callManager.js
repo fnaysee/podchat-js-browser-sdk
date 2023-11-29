@@ -17,6 +17,58 @@ function MultiTrackCallManager({app, callId, callConfig}) {
         receivePeerManager: null
     };
 
+    function socketConnectListener(dir) {
+        destroyPeerManager(dir);
+        createPeerManager(dir);
+        config.users.reconnectAllUsers();
+        app.chatEvents.off('chatReady', socketConnectListener);
+    }
+
+    function onPeerFailed(direction){
+
+        if (app.messenger.chatState) {
+            socketConnectListener(direction)
+        } else {
+            app.chatEvents.on('chatReady', socketConnectListener);
+        }
+    }
+
+    function destroyPeerManager(direction){
+        if(direction === 'send' ) {
+            config.sendPeerManager.destroy();
+        } else {
+            config.receivePeerManager.destroy();
+        }
+    }
+
+    function createPeerManager(direction) {
+        if(direction === 'send' ) {
+            config.sendPeerManager = new PeerConnectionManager({
+                app,
+                callId,
+                direction: 'send',
+                rtcPeerConfig: {
+                    iceServers: publicized.getTurnServer(publicized.callConfig()),
+                    iceTransportPolicy: 'relay',
+                },
+                brokerAddress: config.callConfig.brokerAddress,
+                onPeerFailed
+            });
+        } else {
+            config.receivePeerManager = new PeerConnectionManager({
+                app,
+                callId,
+                direction: 'receive',
+                rtcPeerConfig: {
+                    iceServers: publicized.getTurnServer(publicized.callConfig()),
+                    iceTransportPolicy: 'relay',
+                },
+                brokerAddress: config.callConfig.brokerAddress,
+                onPeerFailed
+            });
+        }
+    }
+
     function startCallWebRTCFunctions(callConfig) {
         config.callServerController.setServers(callConfig.kurentoAddress);
 
@@ -25,15 +77,8 @@ function MultiTrackCallManager({app, callId, callConfig}) {
         //     iceTransportPolicy: 'relay',
         // });
 
-        config.receivePeerManager = new PeerConnectionManager(app, callId, 'receive', {
-            iceServers: publicized.getTurnServer(publicized.callConfig()),
-            iceTransportPolicy: 'relay',
-        }, config.callConfig.brokerAddress);
-
-        config.sendPeerManager = new PeerConnectionManager(app, callId, 'send', {
-            iceServers: publicized.getTurnServer(publicized.callConfig()),
-            iceTransportPolicy: 'relay',
-        }, config.callConfig.brokerAddress);
+        createPeerManager('send');
+        createPeerManager('receive');
 
         if (app.call.sharedVariables.callDivId) {
             new Promise(resolve => {
@@ -1028,6 +1073,7 @@ function MultiTrackCallManager({app, callId, callConfig}) {
             }
         },
         async destroy() {
+            app.chatEvents.off('chatReady', socketConnectListener);
             await config.deviceManager.mediaStreams.stopAudioInput();
             await config.deviceManager.mediaStreams.stopVideoInput();
             await config.deviceManager.mediaStreams.stopScreenShareInput();
