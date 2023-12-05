@@ -3005,6 +3005,11 @@ function Chat(params) {
                     if (chatMessaging.messagesCallbacks[uniqueId]) {
                         chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(true, messageContent.message, messageContent.code, messageContent, 0));
                     }
+
+                    app.chatEvents.fireEvent('threadEvents', {
+                        type: 'SET_ADMIN_ROLE_TO_USER',
+                        result: messageContent
+                    });
                     break;
 
                 /**
@@ -3014,6 +3019,11 @@ function Chat(params) {
                     if (chatMessaging.messagesCallbacks[uniqueId]) {
                         chatMessaging.messagesCallbacks[uniqueId](Utility.createReturnData(true, messageContent.message, messageContent.code, messageContent, 0));
                     }
+
+                    app.chatEvents.fireEvent('threadEvents', {
+                        type: 'REMOVE_ADMIN_ROLE_FROM_USER',
+                        result: messageContent
+                    });
                     break;
 
                 /**

@@ -732,7 +732,7 @@ function Async(params) {
     }
 
     // lastMessageId += 1;
-    var messageId = 5;
+    var messageId = 99999999;
     if (messageType === asyncMessageType.MESSAGE_SENDER_ACK_NEEDED || messageType === asyncMessageType.MESSAGE_ACK_NEEDED) {
       ackCallback[messageId] = function () {
         callback && callback();
@@ -42084,7 +42084,7 @@ FilterXSS.prototype.process = function (html) {
 module.exports = FilterXSS;
 
 },{"./default":258,"./parser":260,"./util":261,"cssfilter":137}],263:[function(require,module,exports){
-module.exports={"version":"12.9.7","date":"۱۴۰۲/۹/۵","VersionInfo":"Release: true, Snapshot: false, Is For Test: false"}
+module.exports={"version":"12.9.7","date":"۱۴۰۲/۹/۱۴","VersionInfo":"Release: true, Snapshot: false, Is For Test: false"}
 },{}],264:[function(require,module,exports){
 "use strict";
 
@@ -45383,9 +45383,9 @@ break;/**
                  * Type 243   CUSTOMIZE_REACTION
                  */case _constants.chatMessageVOTypes.CUSTOMIZE_REACTION:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(true,messageContent.message,messageContent.code,messageContent,0));}break;/**
                  * Type 250   SET_ADMIN_ROLE_TO_USER
-                 */case _constants.chatMessageVOTypes.SET_ADMIN_ROLE_TO_USER:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(true,messageContent.message,messageContent.code,messageContent,0));}break;/**
+                 */case _constants.chatMessageVOTypes.SET_ADMIN_ROLE_TO_USER:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(true,messageContent.message,messageContent.code,messageContent,0));}app.chatEvents.fireEvent('threadEvents',{type:'SET_ADMIN_ROLE_TO_USER',result:messageContent});break;/**
                  * Type 251   REMOVE_ADMIN_ROLE_FROM_USER
-                 */case _constants.chatMessageVOTypes.REMOVE_ADMIN_ROLE_FROM_USER:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(true,messageContent.message,messageContent.code,messageContent,0));}break;/**
+                 */case _constants.chatMessageVOTypes.REMOVE_ADMIN_ROLE_FROM_USER:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(true,messageContent.message,messageContent.code,messageContent,0));}app.chatEvents.fireEvent('threadEvents',{type:'REMOVE_ADMIN_ROLE_FROM_USER',result:messageContent});break;/**
                  * Type 999   All unknown errors
                  */case _constants.chatMessageVOTypes.ERROR:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(true,messageContent.message,messageContent.code,messageContent,0));}/**
                      * If error code is 21, Token is invalid &
@@ -51642,7 +51642,7 @@ exports["default"] = _default;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.systemMessageTypes = exports.inviteeVOidTypes = exports.imageMimeTypes = exports.imageExtentions = exports.createThreadTypes = exports.chatStickerTypes = exports.chatMessageVOTypes = exports.chatMessageTypes = exports.callStickerTypes = exports.callMetaDataTypes = exports.assistantActionTypes = void 0;
+exports.systemMessageTypes = exports.inviteeVOidTypes = exports.imageMimeTypes = exports.imageExtentions = exports.customizeReactionTypes = exports.createThreadTypes = exports.chatStickerTypes = exports.chatMessageVOTypes = exports.chatMessageTypes = exports.callStickerTypes = exports.callMetaDataTypes = exports.assistantActionTypes = void 0;
 var chatMessageVOTypes = {
   CREATE_THREAD: 1,
   MESSAGE: 2,
@@ -51879,6 +51879,7 @@ var customizeReactionTypes = {
   active: 2,
   customizeReaction: 3
 };
+exports.customizeReactionTypes = customizeReactionTypes;
 
 },{}],283:[function(require,module,exports){
 "use strict";

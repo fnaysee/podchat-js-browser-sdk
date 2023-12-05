@@ -524,9 +524,9 @@ break;/**
                  * Type 243   CUSTOMIZE_REACTION
                  */case _constants.chatMessageVOTypes.CUSTOMIZE_REACTION:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(true,messageContent.message,messageContent.code,messageContent,0));}break;/**
                  * Type 250   SET_ADMIN_ROLE_TO_USER
-                 */case _constants.chatMessageVOTypes.SET_ADMIN_ROLE_TO_USER:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(true,messageContent.message,messageContent.code,messageContent,0));}break;/**
+                 */case _constants.chatMessageVOTypes.SET_ADMIN_ROLE_TO_USER:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(true,messageContent.message,messageContent.code,messageContent,0));}app.chatEvents.fireEvent('threadEvents',{type:'SET_ADMIN_ROLE_TO_USER',result:messageContent});break;/**
                  * Type 251   REMOVE_ADMIN_ROLE_FROM_USER
-                 */case _constants.chatMessageVOTypes.REMOVE_ADMIN_ROLE_FROM_USER:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(true,messageContent.message,messageContent.code,messageContent,0));}break;/**
+                 */case _constants.chatMessageVOTypes.REMOVE_ADMIN_ROLE_FROM_USER:if(chatMessaging.messagesCallbacks[uniqueId]){chatMessaging.messagesCallbacks[uniqueId](_utility["default"].createReturnData(true,messageContent.message,messageContent.code,messageContent,0));}app.chatEvents.fireEvent('threadEvents',{type:'REMOVE_ADMIN_ROLE_FROM_USER',result:messageContent});break;/**
                  * Type 999   All unknown errors
                  */case _constants.chatMessageVOTypes.ERROR:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(true,messageContent.message,messageContent.code,messageContent,0));}/**
                      * If error code is 21, Token is invalid &
