@@ -113,24 +113,6 @@ function MultiTrackCallManager(_ref) {
     createPeerManager('send');
     createPeerManager('receive');
 
-    config.sendPeerManager.getPeer().onsignalingstatechange = function (event) {
-      if (config.sendPeerManager.getPeer().signalingState === 'stable') {
-        console.log('debug sendAddIceCandidates', sendAddIceCandidates);
-        sendAddIceCandidates.forEach(function (item) {
-          addIceCandidate(config.sendPeerManager.getPeer(), item, 'sendPeerManager');
-        });
-      }
-    };
-
-    config.receivePeerManager.getPeer().onsignalingstatechange = function (event) {
-      if (config.receivePeerManager.getPeer().signalingState === 'stable') {
-        console.log('debug receiveAddIceCandidates', receiveAddIceCandidates);
-        receiveAddIceCandidates.forEach(function (item) {
-          addIceCandidate(config.receivePeerManager.getPeer(), item, 'receivePeerManager');
-        });
-      }
-    };
-
     if (app.call.sharedVariables.callDivId) {
       new Promise(function (resolve) {
         var callVideo = typeof callConfig.video === 'boolean' ? callConfig.video : true,
@@ -408,47 +390,6 @@ function MultiTrackCallManager(_ref) {
     });
   }
 
-  function addIceCandidate(_x, _x2, _x3) {
-    return _addIceCandidate.apply(this, arguments);
-  }
-
-  function _addIceCandidate() {
-    _addIceCandidate = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee7(peer, data, key) {
-      return _regenerator["default"].wrap(function _callee7$(_context8) {
-        while (1) {
-          switch (_context8.prev = _context8.next) {
-            case 0:
-              return _context8.abrupt("return", new Promise(function (resolve, reject) {
-                peer.addIceCandidate(data, function (err) {
-                  if (err) {
-                    console.error("[" + key + "] " + err);
-                    reject(err);
-                    app.chatEvents.fireEvent('callEvents', {
-                      type: 'CALL_ERROR',
-                      code: 7000,
-                      message: "[" + key + "] " + err,
-                      error: JSON.stringify(data),
-                      environmentDetails: getCallDetails()
-                    });
-                    return;
-                  }
-                })["catch"](function (error) {
-                  return reject(error);
-                });
-              }));
-
-            case 1:
-            case "end":
-              return _context8.stop();
-          }
-        }
-      }, _callee7);
-    }));
-    return _addIceCandidate.apply(this, arguments);
-  }
-
-  var sendAddIceCandidates = [];
-
   function handleSendAddIceCandidate(jsonMessage) {
     var peer = config.sendPeerManager.getPeer();
 
@@ -465,18 +406,10 @@ function MultiTrackCallManager(_ref) {
 
     if (jsonMessage.candidate && jsonMessage.candidate.length) {
       var candidate = JSON.parse(jsonMessage.candidate);
-      addIceCandidate(peer, candidate, 'handleSendAddIceCandidate')["catch"](function (error) {
-        console.log('debug handleSendAddIceCandidate catch', error);
-        sendAddIceCandidates.push(candidate);
-      }); // if (peer.peerConnection.currentRemoteDescription) {
-      //     addIceCandidate(peer, candidate, 'handleSendAddIceCandidate');
-      // } else {
-      //     sendAddIceCandidates.push(candidate);
-      // }
+      config.sendPeerManager.addIceCandidateToQueue(candidate);
     }
-  }
+  } // let receiveAddIceCandidates = [];
 
-  var receiveAddIceCandidates = [];
 
   function handleReceiveAddIceCandidate(jsonMessage) {
     var peer = config.receivePeerManager.getPeer();
@@ -493,20 +426,8 @@ function MultiTrackCallManager(_ref) {
     }
 
     if (jsonMessage.candidate && jsonMessage.candidate.length) {
-      var candidate = JSON.parse(jsonMessage.candidate); // try {
-
-      addIceCandidate(peer, candidate, 'handleReceiveAddIceCandidate')["catch"](function (error) {
-        console.log('debug handleReceiveAddIceCandidate catch', error);
-        receiveAddIceCandidates.push(candidate);
-      }); // } catch (error) {
-      //     console.log('debug handleReceiveAddIceCandidate catch', error)
-      //     receiveAddIceCandidates.push(candidate);
-      // }
-      // if (peer.peerConnection.currentRemoteDescription) {
-      //     addIceCandidate(peer, candidate, 'handleReceiveAddIceCandidate');
-      // } else {
-      //     receiveAddIceCandidates.push(candidate);
-      // }
+      var candidate = JSON.parse(jsonMessage.candidate);
+      config.receivePeerManager.addIceCandidateToQueue(candidate);
     }
   }
 
@@ -764,24 +685,6 @@ function MultiTrackCallManager(_ref) {
 
         case 'SEND_COMPLETE':
           //For send connection 2
-          // console.log("send completed. trying next if any")
-          // let data = message.addition;
-          // if(data && data.length) {
-          //     try{
-          //         data = JSON.parse(data);
-          //     } catch (error) {
-          //         console.error('Unable to parse SEND_COMPLETE result', error);
-          //     }
-          //     if(data[0].topic.indexOf('Vo-') > -1) {
-          //         // let el = config.users.get(store.user().id).getAudioHtmlElement();
-          //         // config.htmlElements[config.user.audioTopicName] = el;
-          //         // config.users.get(store.user().id).appendAudioToCallDiv();
-          //     } else {
-          //         let el = config.users.get(store.user().id).getVideoHtmlElement();
-          //         config.htmlElements[config.user.videoTopicName] = el;
-          //         config.users.get(store.user().id).appendVideoToCallDiv();
-          //     }
-          // }
           config.sendPeerManager.processingCurrentTrackCompleted();
           break;
 

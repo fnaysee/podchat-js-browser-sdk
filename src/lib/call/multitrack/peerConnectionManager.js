@@ -8,13 +8,14 @@ class PeerConnectionManager {
                     rtcPeerConfig,
                     brokerAddress,
                     onPeerFailed
-    }) {
+                }) {
         this._app = app;
         this._callId = callId;
         this._brokerAddress = brokerAddress;
         this._nextTrackMid = 0;
         this._trackList = [];
         this._addTrackQueue = [];
+        this._addIceQueue = [];
         this._direction = direction;
         this._firstSub = true;
         this._canProcessNextTrack = true;
@@ -35,10 +36,11 @@ class PeerConnectionManager {
         };
         this._onPeerFailed = onPeerFailed;
         this._peer = new WebrtcPeerConnection(this._defaultConfig);
+        this.watchConnectionStateChange()
     }
 
     _nextTrack() {
-        if(this._canProcessNextTrack) {
+        if (this._canProcessNextTrack) {
             if (this._direction == 'send' && this._canProcessNextTrack && this._addTrackQueue.length) {
                 this._canProcessNextTrack = false;
                 let item = this._addTrackQueue.shift();
@@ -55,31 +57,31 @@ class PeerConnectionManager {
         let that = this;
         let localTrackIndex;
         let sender = this._peer.peerConnection.getSenders().find(function (s, index) {
-            if(s.track == item.stream.getTracks()[0]) {
+            if (s.track == item.stream.getTracks()[0]) {
                 localTrackIndex = index;
                 return true;
             }
         });
 
-        if(sender) {
+        if (sender) {
             console.warn('Track already exists in connection, direction: send');
             item.onTrackCallback(item, item.stream.getTracks()[localTrackIndex])
             return
         }
 
         let localStream;
-        if(item.topic.indexOf('Vi-') > -1) {
-            if(item.isScreenShare) {
+        if (item.topic.indexOf('Vi-') > -1) {
+            if (item.isScreenShare) {
                 localStream = this._app.call.currentCall().deviceManager().mediaStreams.getScreenShareInput();
             } else {
                 localStream = this._app.call.currentCall().deviceManager().mediaStreams.getVideoInput();
             }
-            if(localStream) {
+            if (localStream) {
                 this._peer.addTrack(localStream.getTracks()[0], localStream);
             }
         } else {
             localStream = this._app.call.currentCall().deviceManager().mediaStreams.getAudioInput();
-            if(localStream) {
+            if (localStream) {
                 this._peer.addTrack(localStream.getTracks()[0], localStream);
             }
         }
@@ -157,7 +159,7 @@ class PeerConnectionManager {
     _requestRemoveSendTrack(item) {
         let localTrackIndex;
         let sender = this._peer.peerConnection.getSenders().find(function (s, index) {
-            if(s.track == item.stream.getTracks()[0]) {
+            if (s.track == item.stream.getTracks()[0]) {
                 localTrackIndex = index;
                 return true;
             }
@@ -166,7 +168,7 @@ class PeerConnectionManager {
         if (sender) {
             this._peer.peerConnection.removeTrack(sender);
             this._trackList.forEach((it, index) => {
-                if(item.topic == it.topic) {
+                if (item.topic == it.topic) {
                     delete this._trackList[index]
                 }
             })
@@ -234,7 +236,7 @@ class PeerConnectionManager {
         }
     }
 
-    _unlockProcessingNextTrack(){
+    _unlockProcessingNextTrack() {
         this._canProcessNextTrack = true;
     }
 
@@ -243,7 +245,7 @@ class PeerConnectionManager {
     }
 
     addTrack(data) {
-        if(this._direction == 'send')
+        if (this._direction == 'send')
             data.mline = this._nextTrackMid;
         this._trackList.push(data);
         this._addTrackQueue.push(data);
@@ -251,11 +253,11 @@ class PeerConnectionManager {
         this._nextTrack();
     }
 
-    removeTrack(topic){
+    removeTrack(topic) {
         let item = this._trackList.find(item => {
             return item && item.topic === topic;
         });
-        if(item)
+        if (item)
             this._requestRemoveSendTrack(item);
     }
 
@@ -264,21 +266,24 @@ class PeerConnectionManager {
         this._nextTrack();
     }
 
-    isPeerConnecting () {
+    isPeerConnecting() {
         return this._state === this._peerStates.CONNECTING;
     }
-    isPeerFailed () {
+
+    isPeerFailed() {
         return this._state === this._peerStates.FAILED;
     }
-    isPeerConnected () {
+
+    isPeerConnected() {
         return this._state === this._peerStates.CONNECTED;
     }
-    isPeerDisconnected () {
+
+    isPeerDisconnected() {
         return this._state === this._peerStates.DISCONNECTED;
     }
 
     _onConnectionStateChange() {
-        if(!this._peer || this._peer.peerConnection || this.isDestroyed()) {
+        if (!this._peer || this._peer.peerConnection || this.isDestroyed()) {
             return; //avoid log errors
         }
 
@@ -297,7 +302,7 @@ class PeerConnectionManager {
         }
 
         if (this._peer.peerConnection.connectionState === "failed") {
-            if(this.isPeerFailed())
+            if (this.isPeerFailed())
                 return;
 
             this._state = this._peerStates.FAILED;
@@ -310,7 +315,7 @@ class PeerConnectionManager {
             this._onPeerFailed(this._direction);
         }
 
-        if(this._peer.peerConnection.connectionState === 'connected') {
+        if (this._peer.peerConnection.connectionState === 'connected') {
             this._state = this._peerStates.CONNECTED;
             //TODO: implement new poorconnection
             // if(this._direction === 'send' && !config.topicMetaData.connectionQualityInterval) {
@@ -322,7 +327,7 @@ class PeerConnectionManager {
     }
 
     _onIceConnectionStateChange() {
-        if(!this._peer || this._peer.peerConnection || this.isDestroyed()) {
+        if (!this._peer || this._peer.peerConnection || this.isDestroyed()) {
             return; //avoid log errors
         }
 
@@ -341,7 +346,7 @@ class PeerConnectionManager {
         }
 
         if (this._peer.peerConnection.iceConnectionState === "failed") {
-            if(this.isPeerFailed())
+            if (this.isPeerFailed())
                 return;
 
             this._state = this._peerStates.FAILED;
@@ -354,7 +359,7 @@ class PeerConnectionManager {
             });
             this._onPeerFailed(this._direction);
             // if(this._app.messenger.chatState) {
-                // // publicized.shouldReconnectTopic();
+            // // publicized.shouldReconnectTopic();
             // }
         }
 
@@ -386,6 +391,44 @@ class PeerConnectionManager {
         }
     }
 
+    addIceCandidateToQueue(candidate) {
+        this.addIceCandidate(candidate)
+            .catch(error => {
+                console.log('debug handleSendAddIceCandidate catch', error)
+                this._addIceQueue.push(candidate);
+            });
+    }
+
+    watchConnectionStateChange() {
+        this._peer.peerConnection.onsignalingstatechange = (event) => {
+            if (this._peer.peerConnection.signalingState === 'stable') {
+                this._addIceQueue.forEach(item => {
+                    this.addIceCandidate(item);
+                });
+            }
+        }
+    }
+
+    async addIceCandidate(data) {
+        return new Promise((resolve, reject) => {
+            this._peer.peerConnection
+                .addIceCandidate(data)
+                .catch(err => {
+                    if (err) {
+                        console.warn("[peerConnectionManager addIceCandidate" + this._direction + "] " + err);
+                        reject(err);
+                        // this._app.chatEvents.fireEvent('callEvents', {
+                        //     type: 'CALL_ERROR',
+                        //     code: 7000,
+                        //     message: "[" + key + "] " + err,
+                        //     error: JSON.stringify(data),
+                        //     environmentDetails: getCallDetails()
+                        // });
+                    }
+                });
+        });
+    }
+
     shouldReconnectTopic() {
         let iceConnectionState = this._peer.peerConnection.iceConnectionState;
         if (!this.isDestroyed()) {
@@ -412,7 +455,7 @@ class PeerConnectionManager {
         let topics = JSON.parse(jsonMessage.topic);
         let currentTrackData;
         this._trackList.forEach(item => {
-            if(item.topic === topics[0].topic) {
+            if (item.topic === topics[0].topic) {
                 // item.track = transceiver.receiver.track;
                 currentTrackData = item;
             }
@@ -434,8 +477,8 @@ class PeerConnectionManager {
             currentTrackData.track = transceiver.receiver.track;
             currentTrackData.onTrackCallback(currentTrackData, transceiver.receiver.track);
         };
-        this._peer.processOffer(jsonMessage.sdpOffer, (error, sdpAnswer)=>{
-            if(error) {
+        this._peer.processOffer(jsonMessage.sdpOffer, (error, sdpAnswer) => {
+            if (error) {
                 return;
             }
 
@@ -458,7 +501,7 @@ class PeerConnectionManager {
         });
     }
 
-    getPeer(){
+    getPeer() {
         return this._peer;
     }
 
@@ -472,7 +515,7 @@ class PeerConnectionManager {
         this._destroyPeer();
     }
 
-    isDestroyed(){
+    isDestroyed() {
         return this._isDestroyed;
     }
 

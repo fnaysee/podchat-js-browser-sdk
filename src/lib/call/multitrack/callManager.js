@@ -79,24 +79,6 @@ function MultiTrackCallManager({app, callId, callConfig}) {
         createPeerManager('send');
         createPeerManager('receive');
 
-        config.sendPeerManager.getPeer().onsignalingstatechange = (event ) => {
-            if(config.sendPeerManager.getPeer().signalingState === 'stable') {
-                console.log('debug sendAddIceCandidates', sendAddIceCandidates)
-                sendAddIceCandidates.forEach(item => {
-                    addIceCandidate(config.sendPeerManager.getPeer(), item, 'sendPeerManager');
-                });
-            }
-        }
-
-        config.receivePeerManager.getPeer().onsignalingstatechange = (event ) => {
-            if(config.receivePeerManager.getPeer().signalingState === 'stable') {
-                console.log('debug receiveAddIceCandidates', receiveAddIceCandidates)
-                receiveAddIceCandidates.forEach(item => {
-                    addIceCandidate(config.receivePeerManager.getPeer(), item, 'receivePeerManager');
-                });
-            }
-        }
-
         if (app.call.sharedVariables.callDivId) {
             new Promise(resolve => {
                 let callVideo = (typeof callConfig.video === 'boolean') ? callConfig.video : true,
@@ -350,30 +332,6 @@ function MultiTrackCallManager({app, callId, callConfig}) {
             app.sdkParams.consoleLogging && console.log("[SDK][handleProcessSdpAnswer]", jsonMessage);
         });
     }
-
-    async function addIceCandidate(peer, data, key) {
-        return new Promise((resolve, reject)=>{
-            peer.addIceCandidate(data, (err) => {
-                if (err) {
-                    console.error("[" + key + "] " + err);
-
-                    reject(err);
-                    app.chatEvents.fireEvent('callEvents', {
-                        type: 'CALL_ERROR',
-                        code: 7000,
-                        message: "[" + key + "] " + err,
-                        error: JSON.stringify(data),
-                        environmentDetails: getCallDetails()
-                    });
-
-                    return;
-                }
-            }).catch(error => reject(error));
-        });
-    }
-
-    let sendAddIceCandidates = [];
-
     function handleSendAddIceCandidate(jsonMessage) {
         let peer = config.sendPeerManager.getPeer();
         if (!peer) {
@@ -390,21 +348,11 @@ function MultiTrackCallManager({app, callId, callConfig}) {
         if (jsonMessage.candidate && jsonMessage.candidate.length) {
             let candidate = JSON.parse(jsonMessage.candidate);
 
-                addIceCandidate(peer, candidate, 'handleSendAddIceCandidate')
-                    .catch(error => {
-                    console.log('debug handleSendAddIceCandidate catch', error)
-                    sendAddIceCandidates.push(candidate);
-                });
-
-            // if (peer.peerConnection.currentRemoteDescription) {
-            //     addIceCandidate(peer, candidate, 'handleSendAddIceCandidate');
-            // } else {
-            //     sendAddIceCandidates.push(candidate);
-            // }
+            config.sendPeerManager.addIceCandidateToQueue(candidate)
         }
     }
 
-    let receiveAddIceCandidates = [];
+    // let receiveAddIceCandidates = [];
 
     function handleReceiveAddIceCandidate(jsonMessage) {
         let peer = config.receivePeerManager.getPeer();
@@ -421,22 +369,7 @@ function MultiTrackCallManager({app, callId, callConfig}) {
         if (jsonMessage.candidate && jsonMessage.candidate.length) {
             let candidate = JSON.parse(jsonMessage.candidate);
 
-            // try {
-                addIceCandidate(peer, candidate, 'handleReceiveAddIceCandidate')
-                    .catch(error => {
-                        console.log('debug handleReceiveAddIceCandidate catch', error)
-                        receiveAddIceCandidates.push(candidate);
-                    });
-            // } catch (error) {
-            //     console.log('debug handleReceiveAddIceCandidate catch', error)
-            //     receiveAddIceCandidates.push(candidate);
-            // }
-
-            // if (peer.peerConnection.currentRemoteDescription) {
-            //     addIceCandidate(peer, candidate, 'handleReceiveAddIceCandidate');
-            // } else {
-            //     receiveAddIceCandidates.push(candidate);
-            // }
+            config.receivePeerManager.addIceCandidateToQueue(candidate);
         }
     }
 
@@ -688,24 +621,6 @@ function MultiTrackCallManager({app, callId, callConfig}) {
                     handleProcessSdpAnswer(message);
                     break;
                 case 'SEND_COMPLETE': //For send connection 2
-                    // console.log("send completed. trying next if any")
-                    // let data = message.addition;
-                    // if(data && data.length) {
-                    //     try{
-                    //         data = JSON.parse(data);
-                    //     } catch (error) {
-                    //         console.error('Unable to parse SEND_COMPLETE result', error);
-                    //     }
-                    //     if(data[0].topic.indexOf('Vo-') > -1) {
-                    //         // let el = config.users.get(store.user().id).getAudioHtmlElement();
-                    //         // config.htmlElements[config.user.audioTopicName] = el;
-                    //         // config.users.get(store.user().id).appendAudioToCallDiv();
-                    //     } else {
-                    //         let el = config.users.get(store.user().id).getVideoHtmlElement();
-                    //         config.htmlElements[config.user.videoTopicName] = el;
-                    //         config.users.get(store.user().id).appendVideoToCallDiv();
-                    //     }
-                    // }
                     config.sendPeerManager.processingCurrentTrackCompleted();
                     break;
 
