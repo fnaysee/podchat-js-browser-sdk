@@ -25,7 +25,6 @@ function MultiTrackCallManager({app, callId, callConfig}) {
     }
 
     function onPeerFailed(direction){
-
         if (app.messenger.chatState) {
             socketConnectListener(direction)
         } else {

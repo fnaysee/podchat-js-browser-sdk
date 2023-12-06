@@ -278,7 +278,7 @@ class PeerConnectionManager {
     }
 
     _onConnectionStateChange() {
-        if(!this._peer || this.isDestroyed()) {
+        if(!this._peer || this._peer.peerConnection || this.isDestroyed()) {
             return; //avoid log errors
         }
 
@@ -322,7 +322,7 @@ class PeerConnectionManager {
     }
 
     _onIceConnectionStateChange() {
-        if(!this._peer || this.isDestroyed()) {
+        if(!this._peer || this._peer.peerConnection || this.isDestroyed()) {
             return; //avoid log errors
         }
 

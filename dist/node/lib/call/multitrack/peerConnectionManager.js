@@ -331,7 +331,7 @@ var PeerConnectionManager = /*#__PURE__*/function () {
   }, {
     key: "_onConnectionStateChange",
     value: function _onConnectionStateChange() {
-      if (!this._peer || this.isDestroyed()) {
+      if (!this._peer || this._peer.peerConnection || this.isDestroyed()) {
         return; //avoid log errors
       }
 
@@ -375,7 +375,7 @@ var PeerConnectionManager = /*#__PURE__*/function () {
   }, {
     key: "_onIceConnectionStateChange",
     value: function _onIceConnectionStateChange() {
-      if (!this._peer || this.isDestroyed()) {
+      if (!this._peer || this._peer.peerConnection || this.isDestroyed()) {
         return; //avoid log errors
       }
 
