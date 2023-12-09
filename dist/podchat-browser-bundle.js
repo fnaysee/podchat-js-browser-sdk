@@ -50725,6 +50725,7 @@ function MultiTrackCallManager(_ref) {
         callId: callId,
         direction: 'send',
         rtcPeerConfig: {
+          // sdpSemantics:'unified-plan',
           iceServers: publicized.getTurnServer(publicized.callConfig()),
           iceTransportPolicy: 'relay'
         },
@@ -51069,7 +51070,21 @@ function MultiTrackCallManager(_ref) {
 
     if (jsonMessage.candidate && jsonMessage.candidate.length) {
       var candidate = JSON.parse(jsonMessage.candidate);
-      config.receivePeerManager.addIceCandidateToQueue(candidate);
+      config.receivePeerManager.addIceCandidateToQueue(candidate); // try {
+      //     addIceCandidate(peer, candidate, 'handleReceiveAddIceCandidate')
+      //         .catch(error => {
+      //             console.log('debug handleReceiveAddIceCandidate catch', error)
+      //             receiveAddIceCandidates.push(candidate);
+      //         });
+      // } catch (error) {
+      //     console.log('debug handleReceiveAddIceCandidate catch', error)
+      //     receiveAddIceCandidates.push(candidate);
+      // }
+      // if (peer.peerConnection.currentRemoteDescription) {
+      //     addIceCandidate(peer, candidate, 'handleReceiveAddIceCandidate');
+      // } else {
+      //     receiveAddIceCandidates.push(candidate);
+      // }
     }
   }
 
@@ -53237,7 +53252,7 @@ var PeerConnectionManager = /*#__PURE__*/function () {
   }, {
     key: "_onConnectionStateChange",
     value: function _onConnectionStateChange() {
-      if (!this._peer || this._peer.peerConnection || this.isDestroyed()) {
+      if (!this._peer || this.isDestroyed()) {
         return; //avoid log errors
       }
 
@@ -53281,7 +53296,7 @@ var PeerConnectionManager = /*#__PURE__*/function () {
   }, {
     key: "_onIceConnectionStateChange",
     value: function _onIceConnectionStateChange() {
-      if (!this._peer || this._peer.peerConnection || this.isDestroyed()) {
+      if (!this._peer || this.isDestroyed()) {
         return; //avoid log errors
       }
 
@@ -53350,7 +53365,7 @@ var PeerConnectionManager = /*#__PURE__*/function () {
       var _this3 = this;
 
       this.addIceCandidate(candidate)["catch"](function (error) {
-        console.log('debug handleSendAddIceCandidate catch', error);
+        console.log('debug addIceCandidateToQueue catch', error, _this3);
 
         _this3._addIceQueue.push(candidate);
       });

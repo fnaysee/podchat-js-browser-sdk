@@ -83,6 +83,7 @@ function MultiTrackCallManager(_ref) {
         callId: callId,
         direction: 'send',
         rtcPeerConfig: {
+          // sdpSemantics:'unified-plan',
           iceServers: publicized.getTurnServer(publicized.callConfig()),
           iceTransportPolicy: 'relay'
         },
@@ -427,7 +428,21 @@ function MultiTrackCallManager(_ref) {
 
     if (jsonMessage.candidate && jsonMessage.candidate.length) {
       var candidate = JSON.parse(jsonMessage.candidate);
-      config.receivePeerManager.addIceCandidateToQueue(candidate);
+      config.receivePeerManager.addIceCandidateToQueue(candidate); // try {
+      //     addIceCandidate(peer, candidate, 'handleReceiveAddIceCandidate')
+      //         .catch(error => {
+      //             console.log('debug handleReceiveAddIceCandidate catch', error)
+      //             receiveAddIceCandidates.push(candidate);
+      //         });
+      // } catch (error) {
+      //     console.log('debug handleReceiveAddIceCandidate catch', error)
+      //     receiveAddIceCandidates.push(candidate);
+      // }
+      // if (peer.peerConnection.currentRemoteDescription) {
+      //     addIceCandidate(peer, candidate, 'handleReceiveAddIceCandidate');
+      // } else {
+      //     receiveAddIceCandidates.push(candidate);
+      // }
     }
   }
 

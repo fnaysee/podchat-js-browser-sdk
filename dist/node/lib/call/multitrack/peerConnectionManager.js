@@ -333,7 +333,7 @@ var PeerConnectionManager = /*#__PURE__*/function () {
   }, {
     key: "_onConnectionStateChange",
     value: function _onConnectionStateChange() {
-      if (!this._peer || this._peer.peerConnection || this.isDestroyed()) {
+      if (!this._peer || this.isDestroyed()) {
         return; //avoid log errors
       }
 
@@ -377,7 +377,7 @@ var PeerConnectionManager = /*#__PURE__*/function () {
   }, {
     key: "_onIceConnectionStateChange",
     value: function _onIceConnectionStateChange() {
-      if (!this._peer || this._peer.peerConnection || this.isDestroyed()) {
+      if (!this._peer || this.isDestroyed()) {
         return; //avoid log errors
       }
 
@@ -446,7 +446,7 @@ var PeerConnectionManager = /*#__PURE__*/function () {
       var _this3 = this;
 
       this.addIceCandidate(candidate)["catch"](function (error) {
-        console.log('debug handleSendAddIceCandidate catch', error);
+        console.log('debug addIceCandidateToQueue catch', error, _this3);
 
         _this3._addIceQueue.push(candidate);
       });
