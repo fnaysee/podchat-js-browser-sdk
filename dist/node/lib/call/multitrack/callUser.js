@@ -37,6 +37,12 @@ function CallUser(app, user) {
     isMe: function isMe() {
       return config.userId == app.store.user.get().id;
     },
+    setVideoIsOpen: function setVideoIsOpen(value) {
+      config.videoIsOpen = value;
+    },
+    setAudioIsOpen: function setAudioIsOpen(value) {
+      config.audioIsOpen = value;
+    },
     isScreenShare: function isScreenShare() {
       return false;
     },
@@ -229,12 +235,13 @@ function CallUser(app, user) {
             switch (_context5.prev = _context5.next) {
               case 0:
                 config.audioObject = null;
+                config.audioIsOpen = false;
                 publicized.removeAudioWatcherInterval(); // if (config.htmlElements[config.user.audioTopicName]) {
                 //     config.htmlElements[config.user.audioTopicName].remove();
                 //     delete config.htmlElements[config.user.audioTopicName];
                 // }
 
-              case 2:
+              case 3:
               case "end":
                 return _context5.stop();
             }
@@ -268,12 +275,14 @@ function CallUser(app, user) {
           while (1) {
             switch (_context7.prev = _context7.next) {
               case 0:
+                config.videoIsOpen = false;
+
                 if (config.htmlElements[config.user.videoTopicName]) {
                   config.htmlElements[config.user.videoTopicName].remove();
                   delete config.htmlElements[config.user.videoTopicName];
                 }
 
-              case 1:
+              case 2:
               case "end":
                 return _context7.stop();
             }
@@ -282,6 +291,8 @@ function CallUser(app, user) {
       }))();
     },
     processTrackChange: function processTrackChange(conf) {
+      console.log('debug processTrackChange ', conf, config);
+
       if (conf.topic.indexOf('Vi-') > -1) {
         if (!config.videoIsOpen && conf.isReceiving) {
           publicized.startVideo(conf.topic.replace('Vi-', ''), conf);
@@ -453,6 +464,12 @@ function CallScreenShare(app, user) {
     },
     user: function user() {
       return config.user;
+    },
+    setVideoIsOpen: function setVideoIsOpen(value) {
+      config.videoIsOpen = value;
+    },
+    setAudioIsOpen: function setAudioIsOpen(value) {
+      config.audioIsOpen = value;
     },
     getHTMLElements: function getHTMLElements() {
       return config.htmlElements;

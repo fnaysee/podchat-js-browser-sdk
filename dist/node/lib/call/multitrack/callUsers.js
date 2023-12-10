@@ -122,78 +122,171 @@ function CallUsers(_ref) {
         });
       });
     },
-    reconnectAllUsers: function reconnectAllUsers() {
+    stopTracks: function stopTracks(user) {
       return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
-        var _loop, i;
-
-        return _regenerator["default"].wrap(function _callee2$(_context3) {
+        return _regenerator["default"].wrap(function _callee2$(_context2) {
           while (1) {
-            switch (_context3.prev = _context3.next) {
+            switch (_context2.prev = _context2.next) {
               case 0:
-                _loop = /*#__PURE__*/_regenerator["default"].mark(function _loop(i) {
-                  var user;
-                  return _regenerator["default"].wrap(function _loop$(_context2) {
-                    while (1) {
-                      switch (_context2.prev = _context2.next) {
-                        case 0:
-                          user = config.list[i];
-
-                          if (!user) {
-                            _context2.next = 9;
-                            break;
-                          }
-
-                          if (!user.user().video) {
-                            _context2.next = 5;
-                            break;
-                          }
-
-                          _context2.next = 5;
-                          return user.stopVideo();
-
-                        case 5:
-                          if (user.user().mute) {
-                            _context2.next = 8;
-                            break;
-                          }
-
-                          _context2.next = 8;
-                          return user.stopAudio();
-
-                        case 8:
-                          setTimeout(function () {
-                            if (user.user().video) user.startVideo(user.user().topicSend);
-                            if (!user.user().mute) user.startAudio(user.user().topicSend);
-                          }, 500);
-
-                        case 9:
-                        case "end":
-                          return _context2.stop();
-                      }
-                    }
-                  }, _loop);
-                });
-                _context3.t0 = _regenerator["default"].keys(config.list);
-
-              case 2:
-                if ((_context3.t1 = _context3.t0()).done) {
-                  _context3.next = 7;
+                if (!user.user().video) {
+                  _context2.next = 3;
                   break;
                 }
 
-                i = _context3.t1.value;
-                return _context3.delegateYield(_loop(i), "t2", 5);
+                _context2.next = 3;
+                return user.destroyVideo();
 
-              case 5:
-                _context3.next = 2;
-                break;
+              case 3:
+                if (user.user().mute) {
+                  _context2.next = 6;
+                  break;
+                }
 
-              case 7:
+                _context2.next = 6;
+                return user.destroyAudio();
+
+              case 6:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }))();
+    },
+    startTracks: function startTracks(user) {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3() {
+        return _regenerator["default"].wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                if (user.user().video) user.startVideo(user.user().topicSend);
+                if (!user.user().mute) user.startAudio(user.user().topicSend);
+
+              case 2:
               case "end":
                 return _context3.stop();
             }
           }
-        }, _callee2);
+        }, _callee3);
+      }))();
+    },
+    stopAllReceivers: function stopAllReceivers() {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4() {
+        var i, user;
+        return _regenerator["default"].wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                _context4.t0 = _regenerator["default"].keys(config.list);
+
+              case 1:
+                if ((_context4.t1 = _context4.t0()).done) {
+                  _context4.next = 9;
+                  break;
+                }
+
+                i = _context4.t1.value;
+                user = config.list[i];
+
+                if (!(user && !user.isMe())) {
+                  _context4.next = 7;
+                  break;
+                }
+
+                _context4.next = 7;
+                return publicized.stopTracks(user);
+
+              case 7:
+                _context4.next = 1;
+                break;
+
+              case 9:
+              case "end":
+                return _context4.stop();
+            }
+          }
+        }, _callee4);
+      }))();
+    },
+    startAllReceivers: function startAllReceivers() {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5() {
+        var i, user;
+        return _regenerator["default"].wrap(function _callee5$(_context5) {
+          while (1) {
+            switch (_context5.prev = _context5.next) {
+              case 0:
+                _context5.t0 = _regenerator["default"].keys(config.list);
+
+              case 1:
+                if ((_context5.t1 = _context5.t0()).done) {
+                  _context5.next = 9;
+                  break;
+                }
+
+                i = _context5.t1.value;
+                user = config.list[i];
+
+                if (!(user && !user.isMe())) {
+                  _context5.next = 7;
+                  break;
+                }
+
+                _context5.next = 7;
+                return publicized.startTracks(user);
+
+              case 7:
+                _context5.next = 1;
+                break;
+
+              case 9:
+              case "end":
+                return _context5.stop();
+            }
+          }
+        }, _callee5);
+      }))();
+    },
+    stopAllSenders: function stopAllSenders() {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee6() {
+        var me;
+        return _regenerator["default"].wrap(function _callee6$(_context6) {
+          while (1) {
+            switch (_context6.prev = _context6.next) {
+              case 0:
+                me = publicized.get(app.store.user.get().id);
+
+                if (config.isMe) {
+                  app.call.currentCall().sendPeerManager().removeTrack(config.user.videoTopicName);
+                  app.call.currentCall().sendPeerManager().removeTrack(config.user.audioTopicName);
+                }
+
+                _context6.next = 4;
+                return publicized.stopTracks(me);
+
+              case 4:
+              case "end":
+                return _context6.stop();
+            }
+          }
+        }, _callee6);
+      }))();
+    },
+    startAllsenders: function startAllsenders() {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee7() {
+        var me;
+        return _regenerator["default"].wrap(function _callee7$(_context7) {
+          while (1) {
+            switch (_context7.prev = _context7.next) {
+              case 0:
+                me = publicized.get(app.store.user.get().id);
+                publicized.startTracks(me);
+
+              case 2:
+              case "end":
+                return _context7.stop();
+            }
+          }
+        }, _callee7);
       }))();
     }
   };

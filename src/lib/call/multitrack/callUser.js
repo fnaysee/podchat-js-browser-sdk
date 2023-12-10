@@ -22,6 +22,12 @@ function CallUser(app, user) {
         isMe() {
             return config.userId == app.store.user.get().id;
         },
+        setVideoIsOpen(value) {
+            config.videoIsOpen = value;
+        },
+        setAudioIsOpen(value) {
+            config.audioIsOpen = value;
+        },
         isScreenShare() {
             return false;
         },
@@ -149,6 +155,7 @@ function CallUser(app, user) {
         },
         async destroyAudio() {
             config.audioObject = null;
+            config.audioIsOpen = false;
             publicized.removeAudioWatcherInterval();
 
             // if (config.htmlElements[config.user.audioTopicName]) {
@@ -166,6 +173,7 @@ function CallUser(app, user) {
             await publicized.destroyVideo();
         },
         async destroyVideo() {
+            config.videoIsOpen = false;
             if (config.htmlElements[config.user.videoTopicName]) {
                 config.htmlElements[config.user.videoTopicName].remove();
                 delete config.htmlElements[config.user.videoTopicName];
@@ -346,6 +354,12 @@ function CallScreenShare(app, user) {
         },
         user() {
             return config.user;
+        },
+        setVideoIsOpen(value) {
+            config.videoIsOpen = value;
+        },
+        setAudioIsOpen(value) {
+            config.audioIsOpen = value;
         },
         getHTMLElements() {
             return config.htmlElements;

@@ -53,16 +53,75 @@ function MultiTrackCallManager(_ref) {
     receivePeerManager: null
   };
 
-  function socketConnectListener(dir) {
-    destroyPeerManager(dir);
-    createPeerManager(dir);
-    config.users.reconnectAllUsers();
+  function socketConnectListener() {
+    if (!failedPeers.length) return;
+
+    var _loop = function _loop() {
+      var dir = failedPeers.shift();
+      destroyPeerManager(dir);
+      createPeerManager(dir);
+      setTimeout( /*#__PURE__*/(0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
+        return _regenerator["default"].wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                if (!(dir === 'send')) {
+                  _context.next = 6;
+                  break;
+                }
+
+                _context.next = 3;
+                return config.users.stopAllSenders();
+
+              case 3:
+                config.users.startAllsenders();
+                _context.next = 9;
+                break;
+
+              case 6:
+                console.log('debug inja');
+                Object.values(config.users.getAll()).forEach(function (user) {
+                  console.log('debug ', user);
+
+                  if (!user.isMe()) {
+                    user.setVideoIsOpen(false);
+                    user.setAudioIsOpen(false);
+                  }
+                });
+                sendCallMessage({
+                  id: 'REQUEST_RECEIVING_MEDIA',
+                  token: app.sdkParams.token,
+                  chatId: config.callId,
+                  brokerAddress: config.callConfig.brokerAddress
+                }, null, {}); // await config.users.stopAllReceivers();
+                // config.users.startAllReceivers();
+
+              case 9:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      })), 200);
+    };
+
+    while (failedPeers.length) {
+      _loop();
+    }
+
     app.chatEvents.off('chatReady', socketConnectListener);
   }
 
+  var failedPeers = [];
+
   function onPeerFailed(direction) {
+    failedPeers.push(direction);
+    console.log('debug onPeerFailed', {
+      direction: direction
+    }, 'app.messenger.chatState: ', app.messenger.chatState);
+
     if (app.messenger.chatState) {
-      socketConnectListener(direction);
+      socketConnectListener();
     } else {
       app.chatEvents.on('chatReady', socketConnectListener);
     }
@@ -71,8 +130,10 @@ function MultiTrackCallManager(_ref) {
   function destroyPeerManager(direction) {
     if (direction === 'send') {
       config.sendPeerManager.destroy();
+      config.sendPeerManager = null;
     } else {
       config.receivePeerManager.destroy();
+      config.receivePeerManager = null;
     }
   }
 
@@ -83,7 +144,6 @@ function MultiTrackCallManager(_ref) {
         callId: callId,
         direction: 'send',
         rtcPeerConfig: {
-          // sdpSemantics:'unified-plan',
           iceServers: publicized.getTurnServer(publicized.callConfig()),
           iceTransportPolicy: 'relay'
         },
@@ -238,17 +298,17 @@ function MultiTrackCallManager(_ref) {
   }
 
   function _callStop() {
-    _callStop = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee6() {
+    _callStop = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee7() {
       var resetCurrentCallId,
           resetCameraPaused,
-          _args7 = arguments;
-      return _regenerator["default"].wrap(function _callee6$(_context7) {
+          _args8 = arguments;
+      return _regenerator["default"].wrap(function _callee7$(_context8) {
         while (1) {
-          switch (_context7.prev = _context7.next) {
+          switch (_context8.prev = _context8.next) {
             case 0:
-              resetCurrentCallId = _args7.length > 0 && _args7[0] !== undefined ? _args7[0] : true;
-              resetCameraPaused = _args7.length > 1 && _args7[1] !== undefined ? _args7[1] : true;
-              _context7.next = 4;
+              resetCurrentCallId = _args8.length > 0 && _args8[0] !== undefined ? _args8[0] : true;
+              resetCameraPaused = _args8.length > 1 && _args8[1] !== undefined ? _args8[1] : true;
+              _context8.next = 4;
               return config.users.destroy();
 
             case 4:
@@ -266,19 +326,19 @@ function MultiTrackCallManager(_ref) {
 
             case 9:
             case "end":
-              return _context7.stop();
+              return _context8.stop();
           }
         }
-      }, _callee6);
+      }, _callee7);
     }));
     return _callStop.apply(this, arguments);
   }
 
-  function sendCallMessage(message, callback, _ref2) {
-    var _ref2$timeoutTime = _ref2.timeoutTime,
-        timeoutTime = _ref2$timeoutTime === void 0 ? 0 : _ref2$timeoutTime,
-        _ref2$timeoutRetriesC = _ref2.timeoutRetriesCount,
-        timeoutRetriesCount = _ref2$timeoutRetriesC === void 0 ? 0 : _ref2$timeoutRetriesC;
+  function sendCallMessage(message, callback, _ref3) {
+    var _ref3$timeoutTime = _ref3.timeoutTime,
+        timeoutTime = _ref3$timeoutTime === void 0 ? 0 : _ref3$timeoutTime,
+        _ref3$timeoutRetriesC = _ref3.timeoutRetriesCount,
+        timeoutRetriesCount = _ref3$timeoutRetriesC === void 0 ? 0 : _ref3$timeoutRetriesC;
     message.token = app.sdkParams.token; // let uniqueId;
 
     if (!message.uniqueId) {
@@ -428,21 +488,7 @@ function MultiTrackCallManager(_ref) {
 
     if (jsonMessage.candidate && jsonMessage.candidate.length) {
       var candidate = JSON.parse(jsonMessage.candidate);
-      config.receivePeerManager.addIceCandidateToQueue(candidate); // try {
-      //     addIceCandidate(peer, candidate, 'handleReceiveAddIceCandidate')
-      //         .catch(error => {
-      //             console.log('debug handleReceiveAddIceCandidate catch', error)
-      //             receiveAddIceCandidates.push(candidate);
-      //         });
-      // } catch (error) {
-      //     console.log('debug handleReceiveAddIceCandidate catch', error)
-      //     receiveAddIceCandidates.push(candidate);
-      // }
-      // if (peer.peerConnection.currentRemoteDescription) {
-      //     addIceCandidate(peer, candidate, 'handleReceiveAddIceCandidate');
-      // } else {
-      //     receiveAddIceCandidates.push(candidate);
-      // }
+      config.receivePeerManager.addIceCandidateToQueue(candidate);
     }
   }
 
@@ -630,16 +676,16 @@ function MultiTrackCallManager(_ref) {
         }];
       }
     },
-    sendQualityCheckEvent: function sendQualityCheckEvent(_ref3) {
-      var userId = _ref3.userId,
-          topic = _ref3.topic,
-          mediaType = _ref3.mediaType,
-          _ref3$isLongTime = _ref3.isLongTime,
-          isLongTime = _ref3$isLongTime === void 0 ? false : _ref3$isLongTime,
-          _ref3$isResolved = _ref3.isResolved,
-          isResolved = _ref3$isResolved === void 0 ? false : _ref3$isResolved,
-          _ref3$canSendCallMeta = _ref3.canSendCallMetaData,
-          canSendCallMetaData = _ref3$canSendCallMeta === void 0 ? true : _ref3$canSendCallMeta;
+    sendQualityCheckEvent: function sendQualityCheckEvent(_ref4) {
+      var userId = _ref4.userId,
+          topic = _ref4.topic,
+          mediaType = _ref4.mediaType,
+          _ref4$isLongTime = _ref4.isLongTime,
+          isLongTime = _ref4$isLongTime === void 0 ? false : _ref4$isLongTime,
+          _ref4$isResolved = _ref4.isResolved,
+          isResolved = _ref4$isResolved === void 0 ? false : _ref4$isResolved,
+          _ref4$canSendCallMeta = _ref4.canSendCallMetaData,
+          canSendCallMetaData = _ref4$canSendCallMeta === void 0 ? true : _ref4$canSendCallMeta;
 
       if (mediaType === 'video') {
         //TODO: Deprecated!
@@ -809,7 +855,7 @@ function MultiTrackCallManager(_ref) {
     },
     handleParticipantJoin: function handleParticipantJoin(messageContent) {
       if (Array.isArray(messageContent)) {
-        var _loop = function _loop(i) {
+        var _loop2 = function _loop2(i) {
           var correctedData = {
             video: messageContent[i].video,
             mute: messageContent[i].mute,
@@ -846,7 +892,7 @@ function MultiTrackCallManager(_ref) {
         };
 
         for (var i in messageContent) {
-          _loop(i);
+          _loop2(i);
         }
       }
 
@@ -873,10 +919,10 @@ function MultiTrackCallManager(_ref) {
       }
     },
     handleParticipantLeft: function handleParticipantLeft(messageContent, threadId) {
-      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
-        return _regenerator["default"].wrap(function _callee$(_context) {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
+        return _regenerator["default"].wrap(function _callee2$(_context2) {
           while (1) {
-            switch (_context.prev = _context.next) {
+            switch (_context2.prev = _context2.next) {
               case 0:
                 app.chatEvents.fireEvent('callEvents', {
                   type: 'CALL_PARTICIPANT_LEFT',
@@ -885,7 +931,7 @@ function MultiTrackCallManager(_ref) {
                 }); //If I'm the only call participant, stop the call
 
                 if (!(Object.values(config.users.getAll()).length < 2)) {
-                  _context.next = 5;
+                  _context2.next = 5;
                   break;
                 }
 
@@ -894,26 +940,26 @@ function MultiTrackCallManager(_ref) {
                   callId: config.callId
                 });
                 app.callsManager.removeItem(config.callId);
-                return _context.abrupt("return");
+                return _context2.abrupt("return");
 
               case 5:
                 if (!messageContent[0].userId) {
-                  _context.next = 13;
+                  _context2.next = 13;
                   break;
                 }
 
                 if (!(messageContent[0].userId == app.store.user.get().id)) {
-                  _context.next = 10;
+                  _context2.next = 10;
                   break;
                 }
 
                 // await callStop();
                 app.callsManager.removeItem(config.callId);
-                _context.next = 13;
+                _context2.next = 13;
                 break;
 
               case 10:
-                _context.next = 12;
+                _context2.next = 12;
                 return config.users.removeItem(messageContent[0].userId);
 
               case 12:
@@ -924,10 +970,10 @@ function MultiTrackCallManager(_ref) {
 
               case 13:
               case "end":
-                return _context.stop();
+                return _context2.stop();
             }
           }
-        }, _callee);
+        }, _callee2);
       }))();
     },
     handleParticipantMute: function handleParticipantMute(messageContent) {
@@ -953,37 +999,37 @@ function MultiTrackCallManager(_ref) {
       });
     },
     handleParticipantUnMute: function handleParticipantUnMute(messageContent) {
-      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
-        var _loop2, i;
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3() {
+        var _loop3, i;
 
-        return _regenerator["default"].wrap(function _callee2$(_context3) {
+        return _regenerator["default"].wrap(function _callee3$(_context4) {
           while (1) {
-            switch (_context3.prev = _context3.next) {
+            switch (_context4.prev = _context4.next) {
               case 0:
                 if (!Array.isArray(messageContent)) {
-                  _context3.next = 8;
+                  _context4.next = 8;
                   break;
                 }
 
-                _loop2 = /*#__PURE__*/_regenerator["default"].mark(function _loop2(i) {
+                _loop3 = /*#__PURE__*/_regenerator["default"].mark(function _loop3(i) {
                   var user;
-                  return _regenerator["default"].wrap(function _loop2$(_context2) {
+                  return _regenerator["default"].wrap(function _loop3$(_context3) {
                     while (1) {
-                      switch (_context2.prev = _context2.next) {
+                      switch (_context3.prev = _context3.next) {
                         case 0:
                           user = config.users.get(messageContent[i].userId);
 
                           if (!(user && user.isMe())) {
-                            _context2.next = 6;
+                            _context3.next = 6;
                             break;
                           }
 
                           if (user.user.mute) {
-                            _context2.next = 5;
+                            _context3.next = 5;
                             break;
                           }
 
-                          _context2.next = 5;
+                          _context3.next = 5;
                           return user.destroyAudio();
 
                         case 5:
@@ -993,24 +1039,24 @@ function MultiTrackCallManager(_ref) {
 
                         case 6:
                         case "end":
-                          return _context2.stop();
+                          return _context3.stop();
                       }
                     }
-                  }, _loop2);
+                  }, _loop3);
                 });
-                _context3.t0 = _regenerator["default"].keys(messageContent);
+                _context4.t0 = _regenerator["default"].keys(messageContent);
 
               case 3:
-                if ((_context3.t1 = _context3.t0()).done) {
-                  _context3.next = 8;
+                if ((_context4.t1 = _context4.t0()).done) {
+                  _context4.next = 8;
                   break;
                 }
 
-                i = _context3.t1.value;
-                return _context3.delegateYield(_loop2(i), "t2", 6);
+                i = _context4.t1.value;
+                return _context4.delegateYield(_loop3(i), "t2", 6);
 
               case 6:
-                _context3.next = 3;
+                _context4.next = 3;
                 break;
 
               case 8:
@@ -1027,53 +1073,53 @@ function MultiTrackCallManager(_ref) {
 
               case 10:
               case "end":
-                return _context3.stop();
+                return _context4.stop();
             }
           }
-        }, _callee2);
+        }, _callee3);
       }))();
     },
     handleParticipantVideoOn: function handleParticipantVideoOn(messageContent) {
-      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3() {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4() {
         var i, user;
-        return _regenerator["default"].wrap(function _callee3$(_context4) {
+        return _regenerator["default"].wrap(function _callee4$(_context5) {
           while (1) {
-            switch (_context4.prev = _context4.next) {
+            switch (_context5.prev = _context5.next) {
               case 0:
                 if (!Array.isArray(messageContent)) {
-                  _context4.next = 12;
+                  _context5.next = 12;
                   break;
                 }
 
-                _context4.t0 = _regenerator["default"].keys(messageContent);
+                _context5.t0 = _regenerator["default"].keys(messageContent);
 
               case 2:
-                if ((_context4.t1 = _context4.t0()).done) {
-                  _context4.next = 12;
+                if ((_context5.t1 = _context5.t0()).done) {
+                  _context5.next = 12;
                   break;
                 }
 
-                i = _context4.t1.value;
+                i = _context5.t1.value;
                 user = config.users.get(messageContent[i].userId);
 
                 if (!(user && user.isMe())) {
-                  _context4.next = 10;
+                  _context5.next = 10;
                   break;
                 }
 
                 if (!user.user.video) {
-                  _context4.next = 9;
+                  _context5.next = 9;
                   break;
                 }
 
-                _context4.next = 9;
+                _context5.next = 9;
                 return user.stopVideo();
 
               case 9:
                 user.startVideo(messageContent[i].sendTopic);
 
               case 10:
-                _context4.next = 2;
+                _context5.next = 2;
                 break;
 
               case 12:
@@ -1090,10 +1136,10 @@ function MultiTrackCallManager(_ref) {
 
               case 14:
               case "end":
-                return _context4.stop();
+                return _context5.stop();
             }
           }
-        }, _callee3);
+        }, _callee4);
       }))();
     },
     handleParticipantVideoOff: function handleParticipantVideoOff(messageContent) {
@@ -1178,18 +1224,18 @@ function MultiTrackCallManager(_ref) {
       }
     },
     handleEndScreenShare: function handleEndScreenShare(messageContent) {
-      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4() {
-        return _regenerator["default"].wrap(function _callee4$(_context5) {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5() {
+        return _regenerator["default"].wrap(function _callee5$(_context6) {
           while (1) {
-            switch (_context5.prev = _context5.next) {
+            switch (_context6.prev = _context6.next) {
               case 0:
                 config.screenShareInfo.setIsStarted(false);
                 config.screenShareInfo.setOwner(messageContent.screenOwner.id);
-                _context5.next = 4;
+                _context6.next = 4;
                 return config.users.removeItem('screenShare');
 
               case 4:
-                _context5.next = 6;
+                _context6.next = 6;
                 return config.deviceManager.mediaStreams.stopScreenShareInput();
 
               case 6:
@@ -1204,10 +1250,10 @@ function MultiTrackCallManager(_ref) {
 
               case 8:
               case "end":
-                return _context5.stop();
+                return _context6.stop();
             }
           }
-        }, _callee4);
+        }, _callee5);
       }))();
     },
     onChatConnectionReconnect: function onChatConnectionReconnect() {
@@ -1255,34 +1301,34 @@ function MultiTrackCallManager(_ref) {
       }
     },
     destroy: function destroy() {
-      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5() {
-        return _regenerator["default"].wrap(function _callee5$(_context6) {
+      return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee6() {
+        return _regenerator["default"].wrap(function _callee6$(_context7) {
           while (1) {
-            switch (_context6.prev = _context6.next) {
+            switch (_context7.prev = _context7.next) {
               case 0:
                 app.chatEvents.off('chatReady', socketConnectListener);
-                _context6.next = 3;
+                _context7.next = 3;
                 return config.deviceManager.mediaStreams.stopAudioInput();
 
               case 3:
-                _context6.next = 5;
+                _context7.next = 5;
                 return config.deviceManager.mediaStreams.stopVideoInput();
 
               case 5:
-                _context6.next = 7;
+                _context7.next = 7;
                 return config.deviceManager.mediaStreams.stopScreenShareInput();
 
               case 7:
                 config.sendPeerManager.destroy();
                 config.receivePeerManager.destroy();
-                return _context6.abrupt("return", callStop());
+                return _context7.abrupt("return", callStop());
 
               case 10:
               case "end":
-                return _context6.stop();
+                return _context7.stop();
             }
           }
-        }, _callee5);
+        }, _callee6);
       }))();
     }
   };

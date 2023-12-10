@@ -87,23 +87,47 @@ function CallUsers({app, callId}) {
             })
 
         },
-        async reconnectAllUsers() {
+        async stopTracks(user) {
+            if(user.user().video)
+                await user.destroyVideo();
+            if(!user.user().mute)
+                await user.destroyAudio();
+        },
+        async startTracks(user) {
+            if(user.user().video)
+                user.startVideo(user.user().topicSend);
+            if(!user.user().mute)
+                user.startAudio(user.user().topicSend);
+        },
+        async stopAllReceivers() {
             for (let i in config.list) {
                 let user = config.list[i];
-                if (user ) {
-                    if(user.user().video)
-                        await user.stopVideo();
-                    if(!user.user().mute)
-                        await user.stopAudio();
-
-                    setTimeout(()=>{
-                        if(user.user().video)
-                            user.startVideo(user.user().topicSend);
-                        if(!user.user().mute)
-                            user.startAudio(user.user().topicSend);
-                    }, 500)
+                if (user && !user.isMe()) {
+                    await publicized.stopTracks(user);
                 }
             }
+        },
+        async startAllReceivers(){
+            for (let i in config.list) {
+                let user = config.list[i];
+                if (user && !user.isMe()) {
+                    await publicized.startTracks(user);
+                }
+            }
+        },
+        async stopAllSenders(){
+            let me = publicized.get(app.store.user.get().id);
+            if(config.isMe){
+                app.call.currentCall().sendPeerManager().removeTrack(config.user.videoTopicName);
+                app.call.currentCall().sendPeerManager().removeTrack(config.user.audioTopicName);
+            }
+
+            await publicized.stopTracks(me);
+
+        },
+        async startAllsenders(){
+            let me = publicized.get(app.store.user.get().id);
+            publicized.startTracks(me);
         }
     }
 

@@ -305,14 +305,7 @@ class PeerConnectionManager {
             if (this.isPeerFailed())
                 return;
 
-            this._state = this._peerStates.FAILED;
-            this._app.chatEvents.fireEvent('callEvents', {
-                type: 'CALL_STATUS',
-                errorCode: 7000,
-                errorMessage: `Call Peer (${this._direction}) has failed!`,
-                errorInfo: this._peer.peerConnection
-            });
-            this._onPeerFailed(this._direction);
+            this._handlePeerFailed();
         }
 
         if (this._peer.peerConnection.connectionState === 'connected') {
@@ -349,15 +342,7 @@ class PeerConnectionManager {
             if (this.isPeerFailed())
                 return;
 
-            this._state = this._peerStates.FAILED;
-
-            this._app.chatEvents.fireEvent('callEvents', {
-                type: 'CALL_STATUS',
-                errorCode: 7000,
-                errorMessage: `Call Peer (${this._direction}) has failed!`,
-                errorInfo: this._peer
-            });
-            this._onPeerFailed(this._direction);
+            this._handlePeerFailed();
             // if(this._app.messenger.chatState) {
             // // publicized.shouldReconnectTopic();
             // }
@@ -389,6 +374,17 @@ class PeerConnectionManager {
                 errorInfo: this._peer.peerConnection
             });
         }
+    }
+
+    _handlePeerFailed(){
+        this._state = this._peerStates.FAILED;
+        this._app.chatEvents.fireEvent('callEvents', {
+            type: 'CALL_STATUS',
+            errorCode: 7000,
+            errorMessage: `Call Peer (${this._direction}) has failed!`,
+            errorInfo: this._peer
+        });
+        this._onPeerFailed(this._direction);
     }
 
     addIceCandidateToQueue(candidate) {

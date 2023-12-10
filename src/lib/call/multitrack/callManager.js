@@ -17,16 +17,49 @@ function MultiTrackCallManager({app, callId, callConfig}) {
         receivePeerManager: null
     };
 
-    function socketConnectListener(dir) {
-        destroyPeerManager(dir);
-        createPeerManager(dir);
-        config.users.reconnectAllUsers();
+    function socketConnectListener() {
+        if(!failedPeers.length)
+            return;
+
+        while (failedPeers.length) {
+            let dir = failedPeers.shift();
+
+            destroyPeerManager(dir);
+            createPeerManager(dir);
+
+            setTimeout(async () => {
+                if (dir === 'send') {
+                    await config.users.stopAllSenders();
+                    config.users.startAllsenders();
+                } else {
+                    Object.values(config.users.getAll()).forEach(user => {
+                        if(!user.isMe()) {
+                            user.setVideoIsOpen(false);
+                            user.setAudioIsOpen(false);
+                        }
+                    });
+
+                    sendCallMessage({
+                        id: 'REQUEST_RECEIVING_MEDIA',
+                        token: app.sdkParams.token,
+                        chatId: config.callId,
+                        brokerAddress: config.callConfig.brokerAddress,
+                    }, null, {});
+                    // await config.users.stopAllReceivers();
+                    // config.users.startAllReceivers();
+                }
+            }, 200);
+        }
+
         app.chatEvents.off('chatReady', socketConnectListener);
     }
 
+    let failedPeers = [];
     function onPeerFailed(direction){
+        failedPeers.push(direction);
+
         if (app.messenger.chatState) {
-            socketConnectListener(direction)
+            socketConnectListener();
         } else {
             app.chatEvents.on('chatReady', socketConnectListener);
         }
@@ -35,8 +68,10 @@ function MultiTrackCallManager({app, callId, callConfig}) {
     function destroyPeerManager(direction){
         if(direction === 'send' ) {
             config.sendPeerManager.destroy();
+            config.sendPeerManager = null;
         } else {
             config.receivePeerManager.destroy();
+            config.receivePeerManager = null;
         }
     }
 

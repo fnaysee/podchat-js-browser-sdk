@@ -353,16 +353,8 @@ var PeerConnectionManager = /*#__PURE__*/function () {
 
       if (this._peer.peerConnection.connectionState === "failed") {
         if (this.isPeerFailed()) return;
-        this._state = this._peerStates.FAILED;
 
-        this._app.chatEvents.fireEvent('callEvents', {
-          type: 'CALL_STATUS',
-          errorCode: 7000,
-          errorMessage: "Call Peer (".concat(this._direction, ") has failed!"),
-          errorInfo: this._peer.peerConnection
-        });
-
-        this._onPeerFailed(this._direction);
+        this._handlePeerFailed();
       }
 
       if (this._peer.peerConnection.connectionState === 'connected') {
@@ -399,16 +391,8 @@ var PeerConnectionManager = /*#__PURE__*/function () {
 
       if (this._peer.peerConnection.iceConnectionState === "failed") {
         if (this.isPeerFailed()) return;
-        this._state = this._peerStates.FAILED;
 
-        this._app.chatEvents.fireEvent('callEvents', {
-          type: 'CALL_STATUS',
-          errorCode: 7000,
-          errorMessage: "Call Peer (".concat(this._direction, ") has failed!"),
-          errorInfo: this._peer
-        });
-
-        this._onPeerFailed(this._direction); // if(this._app.messenger.chatState) {
+        this._handlePeerFailed(); // if(this._app.messenger.chatState) {
         // // publicized.shouldReconnectTopic();
         // }
 
@@ -441,13 +425,27 @@ var PeerConnectionManager = /*#__PURE__*/function () {
       }
     }
   }, {
+    key: "_handlePeerFailed",
+    value: function _handlePeerFailed() {
+      console.log('debug Peer failed detected', this._direction, this._peer.peerConnection.connectionState, this._peer.peerConnection.iceConnectionState);
+      this._state = this._peerStates.FAILED;
+
+      this._app.chatEvents.fireEvent('callEvents', {
+        type: 'CALL_STATUS',
+        errorCode: 7000,
+        errorMessage: "Call Peer (".concat(this._direction, ") has failed!"),
+        errorInfo: this._peer
+      });
+
+      this._onPeerFailed(this._direction);
+    }
+  }, {
     key: "addIceCandidateToQueue",
     value: function addIceCandidateToQueue(candidate) {
       var _this3 = this;
 
       this.addIceCandidate(candidate)["catch"](function (error) {
-        console.log('debug addIceCandidateToQueue catch', error, _this3);
-
+        // console.log('debug addIceCandidateToQueue catch', error, this)
         _this3._addIceQueue.push(candidate);
       });
     }
