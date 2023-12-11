@@ -100,6 +100,13 @@ function CallUsers(_ref) {
         }
       }
     },
+    findUserIdByClientId: function findUserIdByClientId(clientId) {
+      for (var i in config.list) {
+        if (config.list[i] && config.list[i].user().clientId == clientId) {
+          return i;
+        }
+      }
+    },
     destroy: function destroy() {
       return new Promise(function (resolve) {
         var promises = [];

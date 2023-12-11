@@ -559,22 +559,6 @@ function MultiTrackCallManager(_ref) {
     }, null, {});
   }
 
-  function handlePartnerFreeze(jsonMessage) {
-    if (!!jsonMessage && !!jsonMessage.topic && jsonMessage.topic.substring(0, 2) === 'Vi') {
-      var userId = config.users.findUserIdByTopic();
-
-      if (userId) {
-        config.users.get(userId).videoTopicManager().restartMedia();
-        setTimeout(function () {
-          config.users.get(userId).videoTopicManager().restartMedia();
-        }, 4000);
-        setTimeout(function () {
-          config.users.get(userId).videoTopicManager().restartMedia();
-        }, 8000);
-      }
-    }
-  }
-
   function handleReceivedMetaData(jsonMessage, uniqueId) {
     var jMessage = JSON.parse(jsonMessage.message);
     var id = jMessage.id;
@@ -630,6 +614,28 @@ function MultiTrackCallManager(_ref) {
 
         break;
     }
+  }
+
+  var slowLinkTimeout;
+
+  function handleSlowLink(jsonMessage) {
+    console.log('handleSlowLink ', {
+      jsonMessage: jsonMessage
+    });
+    var userId = config.users.findUserIdByClientId(jsonMessage.client);
+    app.chatEvents.fireEvent('callEvents', {
+      type: 'SLOW_LINK',
+      message: "Slow link",
+      userId: userId
+    });
+    slowLinkTimeout && clearTimeout(slowLinkTimeout);
+    slowLinkTimeout = setTimeout(function () {
+      app.chatEvents.fireEvent('callEvents', {
+        type: 'SLOW_LINK_RESOLVED',
+        message: "Slow link resolved",
+        userId: userId
+      });
+    }, 10000);
   }
 
   function sendCallMetaData(params) {
@@ -858,6 +864,10 @@ function MultiTrackCallManager(_ref) {
             app.store.messagesCallbacks[uniqueId](message);
           }
 
+          break;
+
+        case 'SLOW_LINK':
+          handleSlowLink(message);
           break;
 
         case 'SESSION_NEW_CREATED':

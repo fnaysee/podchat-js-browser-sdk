@@ -481,21 +481,6 @@ function MultiTrackCallManager({app, callId, callConfig}) {
         }, null, {});
     }
 
-    function handlePartnerFreeze(jsonMessage) {
-        if (!!jsonMessage && !!jsonMessage.topic && jsonMessage.topic.substring(0, 2) === 'Vi') {
-            let userId = config.users.findUserIdByTopic();
-            if (userId) {
-                config.users.get(userId).videoTopicManager().restartMedia()
-                setTimeout(function () {
-                    config.users.get(userId).videoTopicManager().restartMedia()
-                }, 4000);
-                setTimeout(function () {
-                    config.users.get(userId).videoTopicManager().restartMedia()
-                }, 8000);
-            }
-        }
-    }
-
     function handleReceivedMetaData(jsonMessage, uniqueId) {
         let jMessage = JSON.parse(jsonMessage.message);
         let id = jMessage.id;
@@ -545,6 +530,25 @@ function MultiTrackCallManager({app, callId, callConfig}) {
                 break;
         }
 
+    }
+    let slowLinkTimeout;
+    function handleSlowLink(jsonMessage){
+        console.log('handleSlowLink ', {jsonMessage})
+        let userId = config.users.findUserIdByClientId(jsonMessage.client)
+        app.chatEvents.fireEvent('callEvents', {
+            type: 'SLOW_LINK',
+            message: `Slow link`,
+            userId
+        });
+
+        slowLinkTimeout && clearTimeout(slowLinkTimeout);
+        slowLinkTimeout = setTimeout(()=>{
+            app.chatEvents.fireEvent('callEvents', {
+                type: 'SLOW_LINK_RESOLVED',
+                message: `Slow link resolved`,
+                userId
+            });
+        }, 10000);
     }
 
     function sendCallMetaData(params) {
@@ -699,7 +703,6 @@ function MultiTrackCallManager({app, callId, callConfig}) {
                 case 'SEND_COMPLETE': //For send connection 2
                     config.sendPeerManager.processingCurrentTrackCompleted();
                     break;
-
                 case 'RECEIVING_MEDIA': // Only for receiving topics from janus, first we subscribe
                 case 'UNPUBLISHED':
                     handleReceivingTracksChanges(message);
@@ -763,6 +766,9 @@ function MultiTrackCallManager({app, callId, callConfig}) {
                     }
                     break;
 
+                case 'SLOW_LINK':
+                    handleSlowLink(message)
+                    break;
                 case 'SESSION_NEW_CREATED':
                 case 'SESSION_REFRESH':
                     if (app.store.messagesCallbacks[uniqueId]) {

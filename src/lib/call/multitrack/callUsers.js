@@ -67,6 +67,14 @@ function CallUsers({app, callId}) {
                 }
             }
         },
+        findUserIdByClientId(clientId) {
+            for (let i in config.list) {
+                if (config.list[i] && (config.list[i].user().clientId == clientId)) {
+                    return i;
+                }
+            }
+        },
+
         destroy() {
             return new Promise(resolve => {
                 let promises = [];
