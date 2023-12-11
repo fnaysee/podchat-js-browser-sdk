@@ -17,32 +17,43 @@ function MultiTrackCallManager({app, callId, callConfig}) {
         receivePeerManager: null
     };
 
+    let inquiryCallCounter = 0
     function socketConnectListener() {
         if(!failedPeers.length)
             return;
 
-        if(new Date().getTime() - (20 * 1000) > peerFailedTime) {
-            app.call.inquiryCallParticipants.inquiryCallParticipants({}, result => {
-                if(!result.hasError) {
-                    doReconnect();
-                } else {
-                    if(result.errorCode == 171) {
-                        app.chatEvents.fireEvent('callEvents', {
-                            type: 'DROPPED_FROM_CALL',
-                            result: [{
-                                callId: config.callId,
-                                userId: app.store.user.get().id,
-                                sendTopic: config.users.get(app.store.user.get().id).user().topicSend
-                            }]
-                        });
-                    } else if (result.errorCode == 351) {
-                        app.call.endCall({callId: config.callId}, null);
+        if(!inquiryCallCounter) {
+            if (new Date().getTime() - (20 * 1000) > peerFailedTime) {
+                inquiryCallCounter++;
+                app.call.inquiryCallParticipants.inquiryCallParticipants({}, result => {
+                    if (!result.hasError) {
+                        inquiryCallCounter = 0;
+                        doReconnect();
+                    } else {
+                        if (result.errorCode == 171) {
+                            app.call.endCall({callId: config.callId}, null);
+                            app.chatEvents.fireEvent('callEvents', {
+                                type: 'YOU_DROPPED_FROM_CALL',
+                                result: {
+                                    callId: config.callId,
+                                    userId: app.store.user.get().id,
+                                }
+                            });
+                        } else if (result.errorCode == 163) {
+                            app.call.endCall({callId: config.callId}, null);
+                            app.chatEvents.fireEvent('callEvents', {
+                                type: 'CALL_ENDED',
+                                callId: config.callId
+                            });
+                        }
+
+                        app.callsManager.removeItem(config.callId);
                     }
-                }
-                // console.log('debug inquiryCallParticipants result', {result});
-            });
-        } else {
-            doReconnect();
+                    // console.log('debug inquiryCallParticipants result', {result});
+                });
+            } else {
+                doReconnect();
+            }
         }
 
         function doReconnect(){
@@ -263,7 +274,8 @@ function MultiTrackCallManager({app, callId, callConfig}) {
 
         if (app.call.callStopQueue.callStarted) {
             sendCallMessage({
-                id: 'CLOSE'
+                id: 'EXIT_CLIENT',
+                token: app.sdkParams.token
             }, null, {});
             app.call.callStopQueue.callStarted = false;
         }

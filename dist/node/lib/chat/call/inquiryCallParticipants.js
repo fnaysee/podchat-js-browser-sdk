@@ -11,8 +11,6 @@ var _objectDestructuringEmpty2 = _interopRequireDefault(require("@babel/runtime/
 
 var _constants = require("../../constants");
 
-var _utility = _interopRequireDefault(require("../../../utility/utility"));
-
 function InquiryCallParticipants(app) {
   function inquiryCallParticipants(_ref, callback) {
     (0, _objectDestructuringEmpty2["default"])(_ref);

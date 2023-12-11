@@ -499,25 +499,23 @@ var PeerConnectionManager = /*#__PURE__*/function () {
       }
 
       return addIceCandidate;
-    }()
-  }, {
-    key: "shouldReconnectTopic",
-    value: function shouldReconnectTopic() {
-      var iceConnectionState = this._peer.peerConnection.iceConnectionState;
+    }() // shouldReconnectTopic() {
+    //     let iceConnectionState = this._peer.peerConnection.iceConnectionState;
+    //     if (!this.isDestroyed()) {
+    //         if (this._peer
+    //             && iceConnectionState != 'connected') {
+    //             this._app.chatEvents.fireEvent('callEvents', {
+    //                 type: 'CALL_STATUS',
+    //                 errorCode: 7000,
+    //                 errorMessage: `Call Peer (${this._direction}) is not in connected state, reconnecting peer ...!`,
+    //                 errorInfo: this._peer
+    //             });
+    //
+    //             this.reconnectPeer();
+    //         }
+    //     }
+    // }
 
-      if (!this.isDestroyed()) {
-        if (this._peer && iceConnectionState != 'connected') {
-          this._app.chatEvents.fireEvent('callEvents', {
-            type: 'CALL_STATUS',
-            errorCode: 7000,
-            errorMessage: "Call Peer (".concat(this._direction, ") is not in connected state, reconnecting peer ...!"),
-            errorInfo: this._peer
-          });
-
-          this.reconnectPeer();
-        }
-      }
-    }
   }, {
     key: "reconnectPeer",
     value: function reconnectPeer() {

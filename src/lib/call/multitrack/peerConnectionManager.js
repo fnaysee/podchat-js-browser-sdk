@@ -425,22 +425,22 @@ class PeerConnectionManager {
         });
     }
 
-    shouldReconnectTopic() {
-        let iceConnectionState = this._peer.peerConnection.iceConnectionState;
-        if (!this.isDestroyed()) {
-            if (this._peer
-                && iceConnectionState != 'connected') {
-                this._app.chatEvents.fireEvent('callEvents', {
-                    type: 'CALL_STATUS',
-                    errorCode: 7000,
-                    errorMessage: `Call Peer (${this._direction}) is not in connected state, reconnecting peer ...!`,
-                    errorInfo: this._peer
-                });
-
-                this.reconnectPeer();
-            }
-        }
-    }
+    // shouldReconnectTopic() {
+    //     let iceConnectionState = this._peer.peerConnection.iceConnectionState;
+    //     if (!this.isDestroyed()) {
+    //         if (this._peer
+    //             && iceConnectionState != 'connected') {
+    //             this._app.chatEvents.fireEvent('callEvents', {
+    //                 type: 'CALL_STATUS',
+    //                 errorCode: 7000,
+    //                 errorMessage: `Call Peer (${this._direction}) is not in connected state, reconnecting peer ...!`,
+    //                 errorInfo: this._peer
+    //             });
+    //
+    //             this.reconnectPeer();
+    //         }
+    //     }
+    // }
 
     reconnectPeer() {
         this._destroyPeer();

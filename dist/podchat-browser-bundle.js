@@ -44765,7 +44765,7 @@ exports["default"] = _default;
 },{"./lib/call/call":269,"./lib/call/callServerManager":271,"./lib/call/callsList":275,"./lib/call/deviceManager2":276,"./lib/chat/call/inquiryCallParticipants":285,"./lib/constants":288,"./lib/errorHandler":289,"./utility/utility":299,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/defineProperty":19,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/helpers/typeof":26,"@babel/runtime/regenerator":28}],265:[function(require,module,exports){
 'use strict';var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _app=_interopRequireDefault(require("./lib/app"));var _podasyncWsOnly=_interopRequireDefault(require("podasync-ws-only"));var _utility=_interopRequireDefault(require("./utility/utility"));var _call=_interopRequireDefault(require("./call.module"));var _messaging=_interopRequireDefault(require("./messaging.module"));var _buildConfig=_interopRequireDefault(require("./buildConfig.json"));var _deprecateMethods=require("./deprecateMethods");var _xss=_interopRequireDefault(require("xss"));var _threadParticipantsMethods=_interopRequireDefault(require("./lib/chat/threadParticipantsMethods"));var _constants=require("./lib/constants");var _reactionsMethods=_interopRequireDefault(require("./lib/chat/reactionsMethods"));function Chat(params){/*******************************************************
    *          P R I V A T E   V A R I A B L E S          *
-   *******************************************************/var app=new _app["default"]();var reactionsMethods=new _reactionsMethods["default"](app);var callParticipants=new _reactionsMethods["default"](app);var threadParticipantsMethods=new _threadParticipantsMethods["default"](app);app.sdkParams.appId=params.appId;app.sdkParams.token=params.token||"111";app.sdkParams.generalTypeCode=params.typeCode||'default';app.sdkParams.typeCodeOwnerId=params.typeCodeOwnerId||null;app.sdkParams.mapApiKey=params.mapApiKey||'8b77db18704aa646ee5aaea13e7370f4f88b9e8c';app.sdkParams.productEnv=typeof navigator!='undefined'?navigator.product:'undefined';app.sdkParams.forceWaitQueueInMemory=params.forceWaitQueueInMemory&&typeof params.forceWaitQueueInMemory==='boolean'?params.forceWaitQueueInMemory:false;app.sdkParams.grantDeviceIdFromSSO=params.grantDeviceIdFromSSO&&typeof params.grantDeviceIdFromSSO==='boolean'?params.grantDeviceIdFromSSO:false;app.sdkParams.deliveryIntervalPitch=params.deliveryIntervalPitch||2000;app.sdkParams.seenIntervalPitch=params.seenIntervalPitch||2000;app.sdkParams.systemMessageIntervalPitch=params.systemMessageIntervalPitch||1000;app.sdkParams.socketAddress=params.socketAddress;app.sdkParams.serverName=params.serverName;app.sdkParams.wsConnectionWaitTime=params.wsConnectionWaitTime;app.sdkParams.connectionRetryInterval=params.connectionRetryInterval;app.sdkParams.msgPriority=params.msgPriority;app.sdkParams.messageTtl=params.messageTtl||10000;app.sdkParams.reconnectOnClose=params.reconnectOnClose;app.sdkParams.asyncLogging=params.asyncLogging;app.sdkParams.connectionCheckTimeout=params.connectionCheckTimeout;app.sdkParams.httpRequestTimeout=params.httpRequestTimeout>=0?params.httpRequestTimeout:0;app.sdkParams.asyncRequestTimeout=typeof params.asyncRequestTimeout==='number'&&params.asyncRequestTimeout>=0?params.asyncRequestTimeout:0;app.sdkParams.connectionCheckTimeoutThreshold=params.connectionCheckTimeoutThreshold;app.sdkParams.httpUploadRequestTimeout=params.httpUploadRequestTimeout>=0?params.httpUploadRequestTimeout:0;app.sdkParams.actualTimingLog=params.asyncLogging.actualTiming&&typeof params.asyncLogging.actualTiming==='boolean'?params.asyncLogging.actualTiming:false;app.sdkParams.consoleLogging=params.asyncLogging.consoleLogging&&typeof params.asyncLogging.consoleLogging==='boolean'?params.asyncLogging.consoleLogging:false;app.sdkParams.fullResponseObject=params.fullResponseObject||false;app.sdkParams.webrtcConfig=params.webrtcConfig?params.webrtcConfig:null;app.sdkParams.chatPingMessageInterval=params.chatPingMessageInterval;app.sdkParams.protocol=params.protocol;app.sdkParams.callRequestTimeout=typeof params.callRequestTimeout==='number'&&params.callRequestTimeout>=0?params.callRequestTimeout:10000;app.sdkParams.callOptions=params.callOptions;var asyncClient,peerId,oldPeerId,localDeviceId,//deviceId,
+   *******************************************************/var app=new _app["default"]();var reactionsMethods=new _reactionsMethods["default"](app);var threadParticipantsMethods=new _threadParticipantsMethods["default"](app);app.sdkParams.appId=params.appId;app.sdkParams.token=params.token||"111";app.sdkParams.generalTypeCode=params.typeCode||'default';app.sdkParams.typeCodeOwnerId=params.typeCodeOwnerId||null;app.sdkParams.mapApiKey=params.mapApiKey||'8b77db18704aa646ee5aaea13e7370f4f88b9e8c';app.sdkParams.productEnv=typeof navigator!='undefined'?navigator.product:'undefined';app.sdkParams.forceWaitQueueInMemory=params.forceWaitQueueInMemory&&typeof params.forceWaitQueueInMemory==='boolean'?params.forceWaitQueueInMemory:false;app.sdkParams.grantDeviceIdFromSSO=params.grantDeviceIdFromSSO&&typeof params.grantDeviceIdFromSSO==='boolean'?params.grantDeviceIdFromSSO:false;app.sdkParams.deliveryIntervalPitch=params.deliveryIntervalPitch||2000;app.sdkParams.seenIntervalPitch=params.seenIntervalPitch||2000;app.sdkParams.systemMessageIntervalPitch=params.systemMessageIntervalPitch||1000;app.sdkParams.socketAddress=params.socketAddress;app.sdkParams.serverName=params.serverName;app.sdkParams.wsConnectionWaitTime=params.wsConnectionWaitTime;app.sdkParams.connectionRetryInterval=params.connectionRetryInterval;app.sdkParams.msgPriority=params.msgPriority;app.sdkParams.messageTtl=params.messageTtl||10000;app.sdkParams.reconnectOnClose=params.reconnectOnClose;app.sdkParams.asyncLogging=params.asyncLogging;app.sdkParams.connectionCheckTimeout=params.connectionCheckTimeout;app.sdkParams.httpRequestTimeout=params.httpRequestTimeout>=0?params.httpRequestTimeout:0;app.sdkParams.asyncRequestTimeout=typeof params.asyncRequestTimeout==='number'&&params.asyncRequestTimeout>=0?params.asyncRequestTimeout:0;app.sdkParams.connectionCheckTimeoutThreshold=params.connectionCheckTimeoutThreshold;app.sdkParams.httpUploadRequestTimeout=params.httpUploadRequestTimeout>=0?params.httpUploadRequestTimeout:0;app.sdkParams.actualTimingLog=params.asyncLogging.actualTiming&&typeof params.asyncLogging.actualTiming==='boolean'?params.asyncLogging.actualTiming:false;app.sdkParams.consoleLogging=params.asyncLogging.consoleLogging&&typeof params.asyncLogging.consoleLogging==='boolean'?params.asyncLogging.consoleLogging:false;app.sdkParams.fullResponseObject=params.fullResponseObject||false;app.sdkParams.webrtcConfig=params.webrtcConfig?params.webrtcConfig:null;app.sdkParams.chatPingMessageInterval=params.chatPingMessageInterval;app.sdkParams.protocol=params.protocol;app.sdkParams.callRequestTimeout=typeof params.callRequestTimeout==='number'&&params.callRequestTimeout>=0?params.callRequestTimeout:10000;app.sdkParams.callOptions=params.callOptions;var asyncClient,peerId,oldPeerId,localDeviceId,//deviceId,
 //db,
 //queueDb,
 //hasCache = app.sdkParams.productEnv !== 'ReactNative' && typeof Dexie != 'undefined',
@@ -50651,34 +50651,47 @@ function MultiTrackCallManager(_ref) {
     sendPeerManager: null,
     receivePeerManager: null
   };
+  var inquiryCallCounter = 0;
 
   function socketConnectListener() {
     if (!failedPeers.length) return;
 
-    if (new Date().getTime() - 20 * 1000 > peerFailedTime) {
-      app.call.inquiryCallParticipants.inquiryCallParticipants({}, function (result) {
-        if (!result.hasError) {
-          doReconnect();
-        } else {
-          if (result.errorCode == 171) {
-            app.chatEvents.fireEvent('callEvents', {
-              type: 'DROPPED_FROM_CALL',
-              result: [{
-                callId: config.callId,
-                userId: app.store.user.get().id,
-                sendTopic: config.users.get(app.store.user.get().id).user().topicSend
-              }]
-            });
-          } else if (result.errorCode == 351) {
-            app.call.endCall({
-              callId: config.callId
-            }, null);
-          }
-        } // console.log('debug inquiryCallParticipants result', {result});
+    if (!inquiryCallCounter) {
+      if (new Date().getTime() - 20 * 1000 > peerFailedTime) {
+        inquiryCallCounter++;
+        app.call.inquiryCallParticipants.inquiryCallParticipants({}, function (result) {
+          if (!result.hasError) {
+            inquiryCallCounter = 0;
+            doReconnect();
+          } else {
+            if (result.errorCode == 171) {
+              app.call.endCall({
+                callId: config.callId
+              }, null);
+              app.chatEvents.fireEvent('callEvents', {
+                type: 'YOU_DROPPED_FROM_CALL',
+                result: {
+                  callId: config.callId,
+                  userId: app.store.user.get().id
+                }
+              });
+            } else if (result.errorCode == 163) {
+              app.call.endCall({
+                callId: config.callId
+              }, null);
+              app.chatEvents.fireEvent('callEvents', {
+                type: 'CALL_ENDED',
+                callId: config.callId
+              });
+            }
 
-      });
-    } else {
-      doReconnect();
+            app.callsManager.removeItem(config.callId);
+          } // console.log('debug inquiryCallParticipants result', {result});
+
+        });
+      } else {
+        doReconnect();
+      }
     }
 
     function doReconnect() {
@@ -50938,7 +50951,8 @@ function MultiTrackCallManager(_ref) {
             case 4:
               if (app.call.callStopQueue.callStarted) {
                 sendCallMessage({
-                  id: 'CLOSE'
+                  id: 'EXIT_CLIENT',
+                  token: app.sdkParams.token
                 }, null, {});
                 app.call.callStopQueue.callStarted = false;
               }
@@ -53554,25 +53568,23 @@ var PeerConnectionManager = /*#__PURE__*/function () {
       }
 
       return addIceCandidate;
-    }()
-  }, {
-    key: "shouldReconnectTopic",
-    value: function shouldReconnectTopic() {
-      var iceConnectionState = this._peer.peerConnection.iceConnectionState;
+    }() // shouldReconnectTopic() {
+    //     let iceConnectionState = this._peer.peerConnection.iceConnectionState;
+    //     if (!this.isDestroyed()) {
+    //         if (this._peer
+    //             && iceConnectionState != 'connected') {
+    //             this._app.chatEvents.fireEvent('callEvents', {
+    //                 type: 'CALL_STATUS',
+    //                 errorCode: 7000,
+    //                 errorMessage: `Call Peer (${this._direction}) is not in connected state, reconnecting peer ...!`,
+    //                 errorInfo: this._peer
+    //             });
+    //
+    //             this.reconnectPeer();
+    //         }
+    //     }
+    // }
 
-      if (!this.isDestroyed()) {
-        if (this._peer && iceConnectionState != 'connected') {
-          this._app.chatEvents.fireEvent('callEvents', {
-            type: 'CALL_STATUS',
-            errorCode: 7000,
-            errorMessage: "Call Peer (".concat(this._direction, ") is not in connected state, reconnecting peer ...!"),
-            errorInfo: this._peer
-          });
-
-          this.reconnectPeer();
-        }
-      }
-    }
   }, {
     key: "reconnectPeer",
     value: function reconnectPeer() {
@@ -54568,8 +54580,6 @@ var _objectDestructuringEmpty2 = _interopRequireDefault(require("@babel/runtime/
 
 var _constants = require("../../constants");
 
-var _utility = _interopRequireDefault(require("../../../utility/utility"));
-
 function InquiryCallParticipants(app) {
   function inquiryCallParticipants(_ref, callback) {
     (0, _objectDestructuringEmpty2["default"])(_ref);
@@ -54707,7 +54717,7 @@ function InquiryCallParticipants(app) {
 var _default = InquiryCallParticipants;
 exports["default"] = _default;
 
-},{"../../../utility/utility":299,"../../constants":288,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/helpers/objectDestructuringEmpty":23}],286:[function(require,module,exports){
+},{"../../constants":288,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/helpers/objectDestructuringEmpty":23}],286:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
