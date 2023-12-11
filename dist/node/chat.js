@@ -39,6 +39,7 @@ function Chat(params) {
    *******************************************************/
   var app = new _app["default"]();
   var reactionsMethods = new _reactionsMethods["default"](app);
+  var callParticipants = new _reactionsMethods["default"](app);
   var threadParticipantsMethods = new _threadParticipantsMethods["default"](app);
   app.sdkParams.appId = params.appId;
   app.sdkParams.token = params.token || "111";

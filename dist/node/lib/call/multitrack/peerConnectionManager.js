@@ -427,7 +427,6 @@ var PeerConnectionManager = /*#__PURE__*/function () {
   }, {
     key: "_handlePeerFailed",
     value: function _handlePeerFailed() {
-      console.log('debug Peer failed detected', this._direction, this._peer.peerConnection.connectionState, this._peer.peerConnection.iceConnectionState);
       this._state = this._peerStates.FAILED;
 
       this._app.chatEvents.fireEvent('callEvents', {

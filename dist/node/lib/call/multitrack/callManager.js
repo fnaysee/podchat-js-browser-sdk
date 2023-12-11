@@ -56,69 +56,93 @@ function MultiTrackCallManager(_ref) {
   function socketConnectListener() {
     if (!failedPeers.length) return;
 
-    var _loop = function _loop() {
-      var dir = failedPeers.shift();
-      destroyPeerManager(dir);
-      createPeerManager(dir);
-      setTimeout( /*#__PURE__*/(0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
-        return _regenerator["default"].wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                if (!(dir === 'send')) {
-                  _context.next = 6;
-                  break;
-                }
-
-                _context.next = 3;
-                return config.users.stopAllSenders();
-
-              case 3:
-                config.users.startAllsenders();
-                _context.next = 9;
-                break;
-
-              case 6:
-                console.log('debug inja');
-                Object.values(config.users.getAll()).forEach(function (user) {
-                  console.log('debug ', user);
-
-                  if (!user.isMe()) {
-                    user.setVideoIsOpen(false);
-                    user.setAudioIsOpen(false);
-                  }
-                });
-                sendCallMessage({
-                  id: 'REQUEST_RECEIVING_MEDIA',
-                  token: app.sdkParams.token,
-                  chatId: config.callId,
-                  brokerAddress: config.callConfig.brokerAddress
-                }, null, {}); // await config.users.stopAllReceivers();
-                // config.users.startAllReceivers();
-
-              case 9:
-              case "end":
-                return _context.stop();
-            }
+    if (new Date().getTime() - 20 * 1000 > peerFailedTime) {
+      app.call.inquiryCallParticipants.inquiryCallParticipants({}, function (result) {
+        if (!result.hasError) {
+          doReconnect();
+        } else {
+          if (result.errorCode == 171) {
+            app.chatEvents.fireEvent('callEvents', {
+              type: 'DROPPED_FROM_CALL',
+              result: [{
+                callId: config.callId,
+                userId: app.store.user.get().id,
+                sendTopic: config.users.get(app.store.user.get().id).user().topicSend
+              }]
+            });
+          } else if (result.errorCode == 351) {
+            app.call.endCall({
+              callId: config.callId
+            }, null);
           }
-        }, _callee);
-      })), 200);
-    };
+        } // console.log('debug inquiryCallParticipants result', {result});
 
-    while (failedPeers.length) {
-      _loop();
+      });
+    } else {
+      doReconnect();
+    }
+
+    function doReconnect() {
+      var _loop = function _loop() {
+        var dir = failedPeers.shift();
+        destroyPeerManager(dir);
+        createPeerManager(dir);
+        setTimeout( /*#__PURE__*/(0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
+          return _regenerator["default"].wrap(function _callee$(_context) {
+            while (1) {
+              switch (_context.prev = _context.next) {
+                case 0:
+                  if (!(dir === 'send')) {
+                    _context.next = 6;
+                    break;
+                  }
+
+                  _context.next = 3;
+                  return config.users.stopAllSenders();
+
+                case 3:
+                  config.users.startAllsenders();
+                  _context.next = 8;
+                  break;
+
+                case 6:
+                  Object.values(config.users.getAll()).forEach(function (user) {
+                    if (!user.isMe()) {
+                      user.setVideoIsOpen(false);
+                      user.setAudioIsOpen(false);
+                    }
+                  });
+                  sendCallMessage({
+                    id: 'REQUEST_RECEIVING_MEDIA',
+                    token: app.sdkParams.token,
+                    chatId: config.callId,
+                    brokerAddress: config.callConfig.brokerAddress
+                  }, null, {}); // await config.users.stopAllReceivers();
+                  // config.users.startAllReceivers();
+
+                case 8:
+                case "end":
+                  return _context.stop();
+              }
+            }
+          }, _callee);
+        })), 200);
+      };
+
+      while (failedPeers.length) {
+        _loop();
+      }
     }
 
     app.chatEvents.off('chatReady', socketConnectListener);
   }
 
   var failedPeers = [];
+  var peerFailedTime;
 
   function onPeerFailed(direction) {
+    peerFailedTime = new Date().getTime();
     failedPeers.push(direction);
-    console.log('debug onPeerFailed', {
-      direction: direction
-    }, 'app.messenger.chatState: ', app.messenger.chatState);
 
     if (app.messenger.chatState) {
       socketConnectListener();

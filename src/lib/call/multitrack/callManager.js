@@ -21,41 +21,70 @@ function MultiTrackCallManager({app, callId, callConfig}) {
         if(!failedPeers.length)
             return;
 
-        while (failedPeers.length) {
-            let dir = failedPeers.shift();
-
-            destroyPeerManager(dir);
-            createPeerManager(dir);
-
-            setTimeout(async () => {
-                if (dir === 'send') {
-                    await config.users.stopAllSenders();
-                    config.users.startAllsenders();
+        if(new Date().getTime() - (20 * 1000) > peerFailedTime) {
+            app.call.inquiryCallParticipants.inquiryCallParticipants({}, result => {
+                if(!result.hasError) {
+                    doReconnect();
                 } else {
-                    Object.values(config.users.getAll()).forEach(user => {
-                        if(!user.isMe()) {
-                            user.setVideoIsOpen(false);
-                            user.setAudioIsOpen(false);
-                        }
-                    });
-
-                    sendCallMessage({
-                        id: 'REQUEST_RECEIVING_MEDIA',
-                        token: app.sdkParams.token,
-                        chatId: config.callId,
-                        brokerAddress: config.callConfig.brokerAddress,
-                    }, null, {});
-                    // await config.users.stopAllReceivers();
-                    // config.users.startAllReceivers();
+                    if(result.errorCode == 171) {
+                        app.chatEvents.fireEvent('callEvents', {
+                            type: 'DROPPED_FROM_CALL',
+                            result: [{
+                                callId: config.callId,
+                                userId: app.store.user.get().id,
+                                sendTopic: config.users.get(app.store.user.get().id).user().topicSend
+                            }]
+                        });
+                    } else if (result.errorCode == 351) {
+                        app.call.endCall({callId: config.callId}, null);
+                    }
                 }
-            }, 200);
+                // console.log('debug inquiryCallParticipants result', {result});
+            });
+        } else {
+            doReconnect();
+        }
+
+        function doReconnect(){
+            while (failedPeers.length) {
+                let dir = failedPeers.shift();
+
+                destroyPeerManager(dir);
+                createPeerManager(dir);
+
+                setTimeout(async () => {
+                    if (dir === 'send') {
+                        await config.users.stopAllSenders();
+                        config.users.startAllsenders();
+                    } else {
+                        Object.values(config.users.getAll()).forEach(user => {
+                            if(!user.isMe()) {
+                                user.setVideoIsOpen(false);
+                                user.setAudioIsOpen(false);
+                            }
+                        });
+
+                        sendCallMessage({
+                            id: 'REQUEST_RECEIVING_MEDIA',
+                            token: app.sdkParams.token,
+                            chatId: config.callId,
+                            brokerAddress: config.callConfig.brokerAddress,
+                        }, null, {});
+                        // await config.users.stopAllReceivers();
+                        // config.users.startAllReceivers();
+                    }
+                }, 200);
+            }
         }
 
         app.chatEvents.off('chatReady', socketConnectListener);
     }
 
     let failedPeers = [];
+    let peerFailedTime;
+
     function onPeerFailed(direction){
+        peerFailedTime = new Date().getTime();
         failedPeers.push(direction);
 
         if (app.messenger.chatState) {

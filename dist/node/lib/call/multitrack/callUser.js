@@ -291,8 +291,6 @@ function CallUser(app, user) {
       }))();
     },
     processTrackChange: function processTrackChange(conf) {
-      console.log('debug processTrackChange ', conf, config);
-
       if (conf.topic.indexOf('Vi-') > -1) {
         if (!config.videoIsOpen && conf.isReceiving) {
           publicized.startVideo(conf.topic.replace('Vi-', ''), conf);

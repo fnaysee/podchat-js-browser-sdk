@@ -6,11 +6,16 @@ import CallsList from "./lib/call/callsList";
 import {DeviceManager} from "./lib/call/deviceManager2";
 import Call from "./lib/call/call";
 import CallServerManager from "./lib/call/callServerManager";
+import InquiryCallParticipants from "./lib/chat/call/inquiryCallParticipants";
 
 function ChatCall(app, params) {
     app.call = new Call(app);
     app.callsManager = new CallsList(app);
+    const inquiryCallModule = new InquiryCallParticipants(app);
+    app.call.inquiryCallParticipants = inquiryCallModule;
+
     const callServerController = new CallServerManager(app);
+
 
     let //Utility = params.Utility,
         currentModuleInstance = this,
@@ -1902,52 +1907,7 @@ function ChatCall(app, params) {
     /**
      * This method inquiries call participants from call servers
      */
-    this.inquiryCallParticipants = function ({}, callback) {
-        let sendMessageParams = {
-            chatMessageVOType: chatMessageVOTypes.INQUIRY_CALL,
-            typeCode: app.sdkParams.generalTypeCode,//params.typeCode,
-            subjectId: app.callsManager.currentCallId,
-            content: {}
-        };
-
-        return app.messenger.sendMessage(sendMessageParams, {
-            onResult: function (result) {
-                let returnData = {
-                    hasError: result.hasError,
-                    cache: false,
-                    errorMessage: result.errorMessage,
-                    errorCode: result.errorCode
-                };
-
-                if (!returnData.hasError) {
-                    let messageContent = result.result,
-                        messageLength = messageContent.length,
-                        resultData = {
-                            participants: reformatCallParticipants(messageContent),
-                            contentCount: result.contentCount,
-                        };
-
-                    returnData.result = resultData;
-                }
-
-                callback && callback(returnData);
-                /**
-                 * Delete callback so if server pushes response before
-                 * cache, cache won't send data again
-                 */
-                callback = undefined;
-
-                returnData.result.callId = app.callsManager.currentCallId;
-
-                if (!returnData.hasError) {
-                    app.chatEvents.fireEvent('callEvents', {
-                        type: 'ACTIVE_CALL_PARTICIPANTS',
-                        result: returnData.result
-                    });
-                }
-            }
-        });
-    };
+    this.inquiryCallParticipants = app.inquiryCallParticipants;
 
     this.addCallParticipants = function (params, callback) {
         /**

@@ -11,8 +11,6 @@ var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"))
 
 var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
 
-var _objectDestructuringEmpty2 = _interopRequireDefault(require("@babel/runtime/helpers/objectDestructuringEmpty"));
-
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 
 var _typeof2 = _interopRequireDefault(require("@babel/runtime/helpers/typeof"));
@@ -31,6 +29,8 @@ var _call = _interopRequireDefault(require("./lib/call/call"));
 
 var _callServerManager = _interopRequireDefault(require("./lib/call/callServerManager"));
 
+var _inquiryCallParticipants = _interopRequireDefault(require("./lib/chat/call/inquiryCallParticipants"));
+
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
@@ -40,6 +40,8 @@ function ChatCall(app, params) {
 
   app.call = new _call["default"](app);
   app.callsManager = new _callsList["default"](app);
+  var inquiryCallModule = new _inquiryCallParticipants["default"](app);
+  app.call.inquiryCallParticipants = inquiryCallModule;
   var callServerController = new _callServerManager["default"](app);
   var //Utility = params.Utility,
   currentModuleInstance = this,
@@ -1976,52 +1978,7 @@ function ChatCall(app, params) {
    */
 
 
-  this.inquiryCallParticipants = function (_ref5, callback) {
-    (0, _objectDestructuringEmpty2["default"])(_ref5);
-    var sendMessageParams = {
-      chatMessageVOType: _constants.chatMessageVOTypes.INQUIRY_CALL,
-      typeCode: app.sdkParams.generalTypeCode,
-      //params.typeCode,
-      subjectId: app.callsManager.currentCallId,
-      content: {}
-    };
-    return app.messenger.sendMessage(sendMessageParams, {
-      onResult: function onResult(result) {
-        var returnData = {
-          hasError: result.hasError,
-          cache: false,
-          errorMessage: result.errorMessage,
-          errorCode: result.errorCode
-        };
-
-        if (!returnData.hasError) {
-          var messageContent = result.result,
-              messageLength = messageContent.length,
-              resultData = {
-            participants: reformatCallParticipants(messageContent),
-            contentCount: result.contentCount
-          };
-          returnData.result = resultData;
-        }
-
-        callback && callback(returnData);
-        /**
-         * Delete callback so if server pushes response before
-         * cache, cache won't send data again
-         */
-
-        callback = undefined;
-        returnData.result.callId = app.callsManager.currentCallId;
-
-        if (!returnData.hasError) {
-          app.chatEvents.fireEvent('callEvents', {
-            type: 'ACTIVE_CALL_PARTICIPANTS',
-            result: returnData.result
-          });
-        }
-      }
-    });
-  };
+  this.inquiryCallParticipants = app.inquiryCallParticipants;
 
   this.addCallParticipants = function (params, callback) {
     /**
@@ -2512,9 +2469,9 @@ function ChatCall(app, params) {
     }
   };
 
-  this.sendCallSticker = function (_ref6, callback) {
-    var _ref6$sticker = _ref6.sticker,
-        sticker = _ref6$sticker === void 0 ? _constants.callStickerTypes.RAISE_HAND : _ref6$sticker;
+  this.sendCallSticker = function (_ref5, callback) {
+    var _ref5$sticker = _ref5.sticker,
+        sticker = _ref5$sticker === void 0 ? _constants.callStickerTypes.RAISE_HAND : _ref5$sticker;
     var sendMessageParams = {
       chatMessageVOType: _constants.chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE,
       typeCode: app.sdkParams.generalTypeCode,
@@ -2540,8 +2497,8 @@ function ChatCall(app, params) {
     });
   };
 
-  this.recallThreadParticipant = function (_ref7, callback) {
-    var invitees = _ref7.invitees;
+  this.recallThreadParticipant = function (_ref6, callback) {
+    var invitees = _ref6.invitees;
     var sendData = {
       chatMessageVOType: _constants.chatMessageVOTypes.RECALL_THREAD_PARTICIPANT,
       typeCode: app.sdkParams.generalTypeCode,
@@ -2571,14 +2528,14 @@ function ChatCall(app, params) {
   this.deviceManager = app.call.sharedVariables.deviceManager ? app.call.sharedVariables.deviceManager : app.call.currentCall() ? currentCall().deviceManager() : null;
 
   this.resetCallStream = /*#__PURE__*/function () {
-    var _ref9 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(_ref8, callback) {
-      var userId, _ref8$streamType, streamType, user;
+    var _ref8 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(_ref7, callback) {
+      var userId, _ref7$streamType, streamType, user;
 
       return _regenerator["default"].wrap(function _callee4$(_context4) {
         while (1) {
           switch (_context4.prev = _context4.next) {
             case 0:
-              userId = _ref8.userId, _ref8$streamType = _ref8.streamType, streamType = _ref8$streamType === void 0 ? 'audio' : _ref8$streamType;
+              userId = _ref7.userId, _ref7$streamType = _ref7.streamType, streamType = _ref7$streamType === void 0 ? 'audio' : _ref7$streamType;
 
               if (app.call.currentCall()) {
                 _context4.next = 4;
@@ -2621,7 +2578,7 @@ function ChatCall(app, params) {
     }));
 
     return function (_x7, _x8) {
-      return _ref9.apply(this, arguments);
+      return _ref8.apply(this, arguments);
     };
   }();
 

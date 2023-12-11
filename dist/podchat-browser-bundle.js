@@ -42084,7 +42084,7 @@ FilterXSS.prototype.process = function (html) {
 module.exports = FilterXSS;
 
 },{"./default":258,"./parser":260,"./util":261,"cssfilter":137}],263:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.48","date":"۱۴۰۲/۹/۱۹","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.7-snapshot.48","date":"۱۴۰۲/۹/۲۰","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],264:[function(require,module,exports){
 "use strict";
 
@@ -42098,8 +42098,6 @@ exports["default"] = void 0;
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
 var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
-
-var _objectDestructuringEmpty2 = _interopRequireDefault(require("@babel/runtime/helpers/objectDestructuringEmpty"));
 
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 
@@ -42118,6 +42116,8 @@ var _deviceManager = require("./lib/call/deviceManager2");
 var _call = _interopRequireDefault(require("./lib/call/call"));
 
 var _callServerManager = _interopRequireDefault(require("./lib/call/callServerManager"));
+
+var _inquiryCallParticipants = _interopRequireDefault(require("./lib/chat/call/inquiryCallParticipants"));
 
 function ownKeys(object, enumerableOnly) {
   var keys = Object.keys(object);
@@ -42150,6 +42150,8 @@ function ChatCall(app, params) {
 
   app.call = new _call["default"](app);
   app.callsManager = new _callsList["default"](app);
+  var inquiryCallModule = new _inquiryCallParticipants["default"](app);
+  app.call.inquiryCallParticipants = inquiryCallModule;
   var callServerController = new _callServerManager["default"](app);
   var //Utility = params.Utility,
   currentModuleInstance = this,
@@ -44086,52 +44088,7 @@ function ChatCall(app, params) {
    */
 
 
-  this.inquiryCallParticipants = function (_ref5, callback) {
-    (0, _objectDestructuringEmpty2["default"])(_ref5);
-    var sendMessageParams = {
-      chatMessageVOType: _constants.chatMessageVOTypes.INQUIRY_CALL,
-      typeCode: app.sdkParams.generalTypeCode,
-      //params.typeCode,
-      subjectId: app.callsManager.currentCallId,
-      content: {}
-    };
-    return app.messenger.sendMessage(sendMessageParams, {
-      onResult: function onResult(result) {
-        var returnData = {
-          hasError: result.hasError,
-          cache: false,
-          errorMessage: result.errorMessage,
-          errorCode: result.errorCode
-        };
-
-        if (!returnData.hasError) {
-          var messageContent = result.result,
-              messageLength = messageContent.length,
-              resultData = {
-            participants: reformatCallParticipants(messageContent),
-            contentCount: result.contentCount
-          };
-          returnData.result = resultData;
-        }
-
-        callback && callback(returnData);
-        /**
-         * Delete callback so if server pushes response before
-         * cache, cache won't send data again
-         */
-
-        callback = undefined;
-        returnData.result.callId = app.callsManager.currentCallId;
-
-        if (!returnData.hasError) {
-          app.chatEvents.fireEvent('callEvents', {
-            type: 'ACTIVE_CALL_PARTICIPANTS',
-            result: returnData.result
-          });
-        }
-      }
-    });
-  };
+  this.inquiryCallParticipants = app.inquiryCallParticipants;
 
   this.addCallParticipants = function (params, callback) {
     /**
@@ -44622,9 +44579,9 @@ function ChatCall(app, params) {
     }
   };
 
-  this.sendCallSticker = function (_ref6, callback) {
-    var _ref6$sticker = _ref6.sticker,
-        sticker = _ref6$sticker === void 0 ? _constants.callStickerTypes.RAISE_HAND : _ref6$sticker;
+  this.sendCallSticker = function (_ref5, callback) {
+    var _ref5$sticker = _ref5.sticker,
+        sticker = _ref5$sticker === void 0 ? _constants.callStickerTypes.RAISE_HAND : _ref5$sticker;
     var sendMessageParams = {
       chatMessageVOType: _constants.chatMessageVOTypes.CALL_STICKER_SYSTEM_MESSAGE,
       typeCode: app.sdkParams.generalTypeCode,
@@ -44650,8 +44607,8 @@ function ChatCall(app, params) {
     });
   };
 
-  this.recallThreadParticipant = function (_ref7, callback) {
-    var invitees = _ref7.invitees;
+  this.recallThreadParticipant = function (_ref6, callback) {
+    var invitees = _ref6.invitees;
     var sendData = {
       chatMessageVOType: _constants.chatMessageVOTypes.RECALL_THREAD_PARTICIPANT,
       typeCode: app.sdkParams.generalTypeCode,
@@ -44681,14 +44638,14 @@ function ChatCall(app, params) {
   this.deviceManager = app.call.sharedVariables.deviceManager ? app.call.sharedVariables.deviceManager : app.call.currentCall() ? currentCall().deviceManager() : null;
 
   this.resetCallStream = /*#__PURE__*/function () {
-    var _ref9 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(_ref8, callback) {
-      var userId, _ref8$streamType, streamType, user;
+    var _ref8 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(_ref7, callback) {
+      var userId, _ref7$streamType, streamType, user;
 
       return _regenerator["default"].wrap(function _callee4$(_context4) {
         while (1) {
           switch (_context4.prev = _context4.next) {
             case 0:
-              userId = _ref8.userId, _ref8$streamType = _ref8.streamType, streamType = _ref8$streamType === void 0 ? 'audio' : _ref8$streamType;
+              userId = _ref7.userId, _ref7$streamType = _ref7.streamType, streamType = _ref7$streamType === void 0 ? 'audio' : _ref7$streamType;
 
               if (app.call.currentCall()) {
                 _context4.next = 4;
@@ -44731,7 +44688,7 @@ function ChatCall(app, params) {
     }));
 
     return function (_x7, _x8) {
-      return _ref9.apply(this, arguments);
+      return _ref8.apply(this, arguments);
     };
   }();
 
@@ -44805,10 +44762,10 @@ function ChatCall(app, params) {
 var _default = ChatCall;
 exports["default"] = _default;
 
-},{"./lib/call/call":269,"./lib/call/callServerManager":271,"./lib/call/callsList":275,"./lib/call/deviceManager2":276,"./lib/constants":287,"./lib/errorHandler":288,"./utility/utility":298,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/defineProperty":19,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/helpers/objectDestructuringEmpty":23,"@babel/runtime/helpers/typeof":26,"@babel/runtime/regenerator":28}],265:[function(require,module,exports){
+},{"./lib/call/call":269,"./lib/call/callServerManager":271,"./lib/call/callsList":275,"./lib/call/deviceManager2":276,"./lib/chat/call/inquiryCallParticipants":285,"./lib/constants":288,"./lib/errorHandler":289,"./utility/utility":299,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/defineProperty":19,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/helpers/typeof":26,"@babel/runtime/regenerator":28}],265:[function(require,module,exports){
 'use strict';var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _app=_interopRequireDefault(require("./lib/app"));var _podasyncWsOnly=_interopRequireDefault(require("podasync-ws-only"));var _utility=_interopRequireDefault(require("./utility/utility"));var _call=_interopRequireDefault(require("./call.module"));var _messaging=_interopRequireDefault(require("./messaging.module"));var _buildConfig=_interopRequireDefault(require("./buildConfig.json"));var _deprecateMethods=require("./deprecateMethods");var _xss=_interopRequireDefault(require("xss"));var _threadParticipantsMethods=_interopRequireDefault(require("./lib/chat/threadParticipantsMethods"));var _constants=require("./lib/constants");var _reactionsMethods=_interopRequireDefault(require("./lib/chat/reactionsMethods"));function Chat(params){/*******************************************************
    *          P R I V A T E   V A R I A B L E S          *
-   *******************************************************/var app=new _app["default"]();var reactionsMethods=new _reactionsMethods["default"](app);var threadParticipantsMethods=new _threadParticipantsMethods["default"](app);app.sdkParams.appId=params.appId;app.sdkParams.token=params.token||"111";app.sdkParams.generalTypeCode=params.typeCode||'default';app.sdkParams.typeCodeOwnerId=params.typeCodeOwnerId||null;app.sdkParams.mapApiKey=params.mapApiKey||'8b77db18704aa646ee5aaea13e7370f4f88b9e8c';app.sdkParams.productEnv=typeof navigator!='undefined'?navigator.product:'undefined';app.sdkParams.forceWaitQueueInMemory=params.forceWaitQueueInMemory&&typeof params.forceWaitQueueInMemory==='boolean'?params.forceWaitQueueInMemory:false;app.sdkParams.grantDeviceIdFromSSO=params.grantDeviceIdFromSSO&&typeof params.grantDeviceIdFromSSO==='boolean'?params.grantDeviceIdFromSSO:false;app.sdkParams.deliveryIntervalPitch=params.deliveryIntervalPitch||2000;app.sdkParams.seenIntervalPitch=params.seenIntervalPitch||2000;app.sdkParams.systemMessageIntervalPitch=params.systemMessageIntervalPitch||1000;app.sdkParams.socketAddress=params.socketAddress;app.sdkParams.serverName=params.serverName;app.sdkParams.wsConnectionWaitTime=params.wsConnectionWaitTime;app.sdkParams.connectionRetryInterval=params.connectionRetryInterval;app.sdkParams.msgPriority=params.msgPriority;app.sdkParams.messageTtl=params.messageTtl||10000;app.sdkParams.reconnectOnClose=params.reconnectOnClose;app.sdkParams.asyncLogging=params.asyncLogging;app.sdkParams.connectionCheckTimeout=params.connectionCheckTimeout;app.sdkParams.httpRequestTimeout=params.httpRequestTimeout>=0?params.httpRequestTimeout:0;app.sdkParams.asyncRequestTimeout=typeof params.asyncRequestTimeout==='number'&&params.asyncRequestTimeout>=0?params.asyncRequestTimeout:0;app.sdkParams.connectionCheckTimeoutThreshold=params.connectionCheckTimeoutThreshold;app.sdkParams.httpUploadRequestTimeout=params.httpUploadRequestTimeout>=0?params.httpUploadRequestTimeout:0;app.sdkParams.actualTimingLog=params.asyncLogging.actualTiming&&typeof params.asyncLogging.actualTiming==='boolean'?params.asyncLogging.actualTiming:false;app.sdkParams.consoleLogging=params.asyncLogging.consoleLogging&&typeof params.asyncLogging.consoleLogging==='boolean'?params.asyncLogging.consoleLogging:false;app.sdkParams.fullResponseObject=params.fullResponseObject||false;app.sdkParams.webrtcConfig=params.webrtcConfig?params.webrtcConfig:null;app.sdkParams.chatPingMessageInterval=params.chatPingMessageInterval;app.sdkParams.protocol=params.protocol;app.sdkParams.callRequestTimeout=typeof params.callRequestTimeout==='number'&&params.callRequestTimeout>=0?params.callRequestTimeout:10000;app.sdkParams.callOptions=params.callOptions;var asyncClient,peerId,oldPeerId,localDeviceId,//deviceId,
+   *******************************************************/var app=new _app["default"]();var reactionsMethods=new _reactionsMethods["default"](app);var callParticipants=new _reactionsMethods["default"](app);var threadParticipantsMethods=new _threadParticipantsMethods["default"](app);app.sdkParams.appId=params.appId;app.sdkParams.token=params.token||"111";app.sdkParams.generalTypeCode=params.typeCode||'default';app.sdkParams.typeCodeOwnerId=params.typeCodeOwnerId||null;app.sdkParams.mapApiKey=params.mapApiKey||'8b77db18704aa646ee5aaea13e7370f4f88b9e8c';app.sdkParams.productEnv=typeof navigator!='undefined'?navigator.product:'undefined';app.sdkParams.forceWaitQueueInMemory=params.forceWaitQueueInMemory&&typeof params.forceWaitQueueInMemory==='boolean'?params.forceWaitQueueInMemory:false;app.sdkParams.grantDeviceIdFromSSO=params.grantDeviceIdFromSSO&&typeof params.grantDeviceIdFromSSO==='boolean'?params.grantDeviceIdFromSSO:false;app.sdkParams.deliveryIntervalPitch=params.deliveryIntervalPitch||2000;app.sdkParams.seenIntervalPitch=params.seenIntervalPitch||2000;app.sdkParams.systemMessageIntervalPitch=params.systemMessageIntervalPitch||1000;app.sdkParams.socketAddress=params.socketAddress;app.sdkParams.serverName=params.serverName;app.sdkParams.wsConnectionWaitTime=params.wsConnectionWaitTime;app.sdkParams.connectionRetryInterval=params.connectionRetryInterval;app.sdkParams.msgPriority=params.msgPriority;app.sdkParams.messageTtl=params.messageTtl||10000;app.sdkParams.reconnectOnClose=params.reconnectOnClose;app.sdkParams.asyncLogging=params.asyncLogging;app.sdkParams.connectionCheckTimeout=params.connectionCheckTimeout;app.sdkParams.httpRequestTimeout=params.httpRequestTimeout>=0?params.httpRequestTimeout:0;app.sdkParams.asyncRequestTimeout=typeof params.asyncRequestTimeout==='number'&&params.asyncRequestTimeout>=0?params.asyncRequestTimeout:0;app.sdkParams.connectionCheckTimeoutThreshold=params.connectionCheckTimeoutThreshold;app.sdkParams.httpUploadRequestTimeout=params.httpUploadRequestTimeout>=0?params.httpUploadRequestTimeout:0;app.sdkParams.actualTimingLog=params.asyncLogging.actualTiming&&typeof params.asyncLogging.actualTiming==='boolean'?params.asyncLogging.actualTiming:false;app.sdkParams.consoleLogging=params.asyncLogging.consoleLogging&&typeof params.asyncLogging.consoleLogging==='boolean'?params.asyncLogging.consoleLogging:false;app.sdkParams.fullResponseObject=params.fullResponseObject||false;app.sdkParams.webrtcConfig=params.webrtcConfig?params.webrtcConfig:null;app.sdkParams.chatPingMessageInterval=params.chatPingMessageInterval;app.sdkParams.protocol=params.protocol;app.sdkParams.callRequestTimeout=typeof params.callRequestTimeout==='number'&&params.callRequestTimeout>=0?params.callRequestTimeout:10000;app.sdkParams.callOptions=params.callOptions;var asyncClient,peerId,oldPeerId,localDeviceId,//deviceId,
 //db,
 //queueDb,
 //hasCache = app.sdkParams.productEnv !== 'ReactNative' && typeof Dexie != 'undefined',
@@ -46778,7 +46735,7 @@ token:app.sdkParams.token,content:params.content};return app.messenger.sendMessa
 window.PodChat=Chat;}var _default=Chat;// })();
 exports["default"]=_default;
 
-},{"./buildConfig.json":263,"./call.module":264,"./deprecateMethods":266,"./lib/app":268,"./lib/chat/reactionsMethods":285,"./lib/chat/threadParticipantsMethods":286,"./lib/constants":287,"./messaging.module":297,"./utility/utility":298,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/helpers/toConsumableArray":25,"@babel/runtime/helpers/typeof":26,"podasync-ws-only":1,"xss":259}],266:[function(require,module,exports){
+},{"./buildConfig.json":263,"./call.module":264,"./deprecateMethods":266,"./lib/app":268,"./lib/chat/reactionsMethods":286,"./lib/chat/threadParticipantsMethods":287,"./lib/constants":288,"./messaging.module":298,"./utility/utility":299,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/helpers/toConsumableArray":25,"@babel/runtime/helpers/typeof":26,"podasync-ws-only":1,"xss":259}],266:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -46955,7 +46912,7 @@ function ChatEvents(app) {
 var _default = ChatEvents;
 exports["default"] = _default;
 
-},{"./utility/utility":298,"@babel/runtime/helpers/interopRequireDefault":20}],268:[function(require,module,exports){
+},{"./utility/utility":299,"@babel/runtime/helpers/interopRequireDefault":20}],268:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -46988,7 +46945,7 @@ function App() {
 var _default = App;
 exports["default"] = _default;
 
-},{"../events.module":267,"./errorHandler":288,"./requestBlocker":289,"./sdkParams":290,"./store":292,"@babel/runtime/helpers/interopRequireDefault":20}],269:[function(require,module,exports){
+},{"../events.module":267,"./errorHandler":289,"./requestBlocker":290,"./sdkParams":291,"./store":293,"@babel/runtime/helpers/interopRequireDefault":20}],269:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -48326,7 +48283,7 @@ function ScreenShareStateManager(app) {
 var _default = CallManager;
 exports["default"] = _default;
 
-},{"../../utility/utility":298,"../constants":287,"../errorHandler":288,"./callServerManager":271,"./callUsers":274,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/defineProperty":19,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/regenerator":28}],271:[function(require,module,exports){
+},{"../../utility/utility":299,"../constants":288,"../errorHandler":289,"./callServerManager":271,"./callUsers":274,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/defineProperty":19,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/regenerator":28}],271:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -49315,7 +49272,7 @@ function CallTopicManager(_ref) {
   return publicized;
 }
 
-},{"../../utility/utility":298,"../errorHandler":288,"./topicMetaDataManager":283,"./webrtcPeer":284,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/helpers/toConsumableArray":25,"@babel/runtime/regenerator":28}],273:[function(require,module,exports){
+},{"../../utility/utility":299,"../errorHandler":289,"./topicMetaDataManager":283,"./webrtcPeer":284,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/helpers/toConsumableArray":25,"@babel/runtime/regenerator":28}],273:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -50547,7 +50504,7 @@ function DeviceManager(app) {
 
 ;
 
-},{"../constants.js":287,"../errorHandler.js":288,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/regenerator":28}],277:[function(require,module,exports){
+},{"../constants.js":288,"../errorHandler.js":289,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/regenerator":28}],277:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -50698,70 +50655,94 @@ function MultiTrackCallManager(_ref) {
   function socketConnectListener() {
     if (!failedPeers.length) return;
 
-    var _loop = function _loop() {
-      var dir = failedPeers.shift();
-      destroyPeerManager(dir);
-      createPeerManager(dir);
-      setTimeout( /*#__PURE__*/(0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
-        return _regenerator["default"].wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                if (!(dir === 'send')) {
-                  _context.next = 6;
-                  break;
-                }
-
-                _context.next = 3;
-                return config.users.stopAllSenders();
-
-              case 3:
-                config.users.startAllsenders();
-                _context.next = 9;
-                break;
-
-              case 6:
-                console.log('debug inja');
-                Object.values(config.users.getAll()).forEach(function (user) {
-                  console.log('debug ', user);
-
-                  if (!user.isMe()) {
-                    user.setVideoIsOpen(false);
-                    user.setAudioIsOpen(false);
-                  }
-                });
-                sendCallMessage({
-                  id: 'REQUEST_RECEIVING_MEDIA',
-                  token: app.sdkParams.token,
-                  chatId: config.callId,
-                  brokerAddress: config.callConfig.brokerAddress
-                }, null, {});
-              // await config.users.stopAllReceivers();
-              // config.users.startAllReceivers();
-
-              case 9:
-              case "end":
-                return _context.stop();
-            }
+    if (new Date().getTime() - 20 * 1000 > peerFailedTime) {
+      app.call.inquiryCallParticipants.inquiryCallParticipants({}, function (result) {
+        if (!result.hasError) {
+          doReconnect();
+        } else {
+          if (result.errorCode == 171) {
+            app.chatEvents.fireEvent('callEvents', {
+              type: 'DROPPED_FROM_CALL',
+              result: [{
+                callId: config.callId,
+                userId: app.store.user.get().id,
+                sendTopic: config.users.get(app.store.user.get().id).user().topicSend
+              }]
+            });
+          } else if (result.errorCode == 351) {
+            app.call.endCall({
+              callId: config.callId
+            }, null);
           }
-        }, _callee);
-      })), 200);
-    };
+        } // console.log('debug inquiryCallParticipants result', {result});
 
-    while (failedPeers.length) {
-      _loop();
+      });
+    } else {
+      doReconnect();
+    }
+
+    function doReconnect() {
+      var _loop = function _loop() {
+        var dir = failedPeers.shift();
+        destroyPeerManager(dir);
+        createPeerManager(dir);
+        setTimeout( /*#__PURE__*/(0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
+          return _regenerator["default"].wrap(function _callee$(_context) {
+            while (1) {
+              switch (_context.prev = _context.next) {
+                case 0:
+                  if (!(dir === 'send')) {
+                    _context.next = 6;
+                    break;
+                  }
+
+                  _context.next = 3;
+                  return config.users.stopAllSenders();
+
+                case 3:
+                  config.users.startAllsenders();
+                  _context.next = 8;
+                  break;
+
+                case 6:
+                  Object.values(config.users.getAll()).forEach(function (user) {
+                    if (!user.isMe()) {
+                      user.setVideoIsOpen(false);
+                      user.setAudioIsOpen(false);
+                    }
+                  });
+                  sendCallMessage({
+                    id: 'REQUEST_RECEIVING_MEDIA',
+                    token: app.sdkParams.token,
+                    chatId: config.callId,
+                    brokerAddress: config.callConfig.brokerAddress
+                  }, null, {});
+                // await config.users.stopAllReceivers();
+                // config.users.startAllReceivers();
+
+                case 8:
+                case "end":
+                  return _context.stop();
+              }
+            }
+          }, _callee);
+        })), 200);
+      };
+
+      while (failedPeers.length) {
+        _loop();
+      }
     }
 
     app.chatEvents.off('chatReady', socketConnectListener);
   }
 
   var failedPeers = [];
+  var peerFailedTime;
 
   function onPeerFailed(direction) {
+    peerFailedTime = new Date().getTime();
     failedPeers.push(direction);
-    console.log('debug onPeerFailed', {
-      direction: direction
-    }, 'app.messenger.chatState: ', app.messenger.chatState);
 
     if (app.messenger.chatState) {
       socketConnectListener();
@@ -52033,7 +52014,7 @@ function ScreenShareStateManager(app) {
 var _default = MultiTrackCallManager;
 exports["default"] = _default;
 
-},{"../../../utility/utility":298,"../../constants":287,"../../errorHandler":288,"../callServerManager":271,"./callUsers":279,"./peerConnectionManager":280,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/defineProperty":19,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/regenerator":28}],278:[function(require,module,exports){
+},{"../../../utility/utility":299,"../../constants":288,"../../errorHandler":289,"../callServerManager":271,"./callUsers":279,"./peerConnectionManager":280,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/defineProperty":19,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/regenerator":28}],278:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -52328,8 +52309,6 @@ function CallUser(app, user) {
       }))();
     },
     processTrackChange: function processTrackChange(conf) {
-      console.log('debug processTrackChange ', conf, config);
-
       if (conf.topic.indexOf('Vi-') > -1) {
         if (!config.videoIsOpen && conf.isReceiving) {
           publicized.startVideo(conf.topic.replace('Vi-', ''), conf);
@@ -52774,7 +52753,7 @@ function CallScreenShare(app, user) {
   return publicized;
 }
 
-},{"../../../utility/utility":298,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/helpers/toConsumableArray":25,"@babel/runtime/regenerator":28}],279:[function(require,module,exports){
+},{"../../../utility/utility":299,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/helpers/toConsumableArray":25,"@babel/runtime/regenerator":28}],279:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -53503,7 +53482,6 @@ var PeerConnectionManager = /*#__PURE__*/function () {
   }, {
     key: "_handlePeerFailed",
     value: function _handlePeerFailed() {
-      console.log('debug Peer failed detected', this._direction, this._peer.peerConnection.connectionState, this._peer.peerConnection.iceConnectionState);
       this._state = this._peerStates.FAILED;
 
       this._app.chatEvents.fireEvent('callEvents', {
@@ -54212,7 +54190,7 @@ function SharedData(app) {
 var _default = SharedData;
 exports["default"] = _default;
 
-},{"../constants":287,"../errorHandler":288}],283:[function(require,module,exports){
+},{"../constants":288,"../errorHandler":289}],283:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -54586,6 +54564,159 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = void 0;
 
+var _objectDestructuringEmpty2 = _interopRequireDefault(require("@babel/runtime/helpers/objectDestructuringEmpty"));
+
+var _constants = require("../../constants");
+
+var _utility = _interopRequireDefault(require("../../../utility/utility"));
+
+function InquiryCallParticipants(app) {
+  function inquiryCallParticipants(_ref, callback) {
+    (0, _objectDestructuringEmpty2["default"])(_ref);
+    var sendMessageParams = {
+      chatMessageVOType: _constants.chatMessageVOTypes.INQUIRY_CALL,
+      typeCode: app.sdkParams.generalTypeCode,
+      //params.typeCode,
+      subjectId: app.callsManager.currentCallId,
+      content: {}
+    };
+    return app.messenger.sendMessage(sendMessageParams, {
+      onResult: function onResult(result) {
+        var returnData = {
+          hasError: result.hasError,
+          cache: false,
+          errorMessage: result.errorMessage,
+          errorCode: result.errorCode
+        };
+
+        if (!returnData.hasError) {
+          var messageContent = result.result,
+              messageLength = messageContent.length,
+              resultData = {
+            participants: reformatCallParticipants(messageContent),
+            contentCount: result.contentCount
+          };
+          returnData.result = resultData;
+        }
+
+        callback && callback(returnData);
+        /**
+         * Delete callback so if server pushes response before
+         * cache, cache won't send data again
+         */
+
+        callback = undefined; // returnData.result.callId = app.callsManager.currentCallId;
+
+        if (!returnData.hasError) {
+          app.chatEvents.fireEvent('callEvents', {
+            type: 'ACTIVE_CALL_PARTICIPANTS',
+            result: returnData.result
+          });
+        }
+      }
+    });
+  }
+  /**
+   * Reformat Call Participants
+   *
+   * This functions reformats given Array of call Participants
+   * into proper call participant
+   *
+   * @access private
+   *
+   * @param {object}  participantsContent   Array of Call Participant Objects
+   * @param {int}    threadId              Id of call
+   *
+   * @return {object} Formatted Call Participant Array
+   */
+
+
+  function reformatCallParticipants(participantsContent) {
+    var returnData = [];
+
+    for (var i = 0; i < participantsContent.length; i++) {
+      returnData.push(formatDataToMakeCallParticipant(participantsContent[i]));
+    }
+
+    return returnData;
+  }
+  /**
+   * Format Data To Make Call Participant
+   *
+   * This functions reformats given JSON to proper Object
+   *
+   * @access private
+   *
+   * @param {object}  messageContent    Json object of thread taken from chat server
+   *
+   * @param threadId
+   * @return {object} participant Object
+   */
+
+
+  function formatDataToMakeCallParticipant(messageContent) {
+    /**
+     * + CallParticipantVO                   {object}
+     *    - id                           {int}
+     *    - joinTime                     {int}
+     *    - leaveTime                    {int}
+     *    - threadParticipant            {object}
+     *    - sendTopic                    {string}
+     *    - receiveTopic                 {string}
+     *    - brokerAddress                {string}
+     *    - active                       {boolean}
+     *    - callSession                  {object}
+     *    - callStatus                   {int}
+     *    - createTime                   {int}
+     *    - sendKey                      {string}
+     *    - mute                         {boolean}
+     */
+    var participant = {
+      id: messageContent.id,
+      joinTime: messageContent.joinTime,
+      leaveTime: messageContent.leaveTime,
+      sendTopic: messageContent.sendTopic,
+      receiveTopic: messageContent.receiveTopic,
+      brokerAddress: messageContent.brokerAddress,
+      active: messageContent.active,
+      callSession: messageContent.callSession,
+      callStatus: messageContent.callStatus,
+      createTime: messageContent.createTime,
+      sendKey: messageContent.sendKey,
+      mute: messageContent.mute
+    }; // Add Chat Participant if exist
+
+    if (messageContent.participantVO) {
+      participant.participantVO = messageContent.participantVO;
+    } // Add Call Session if exist
+
+
+    if (messageContent.callSession) {
+      participant.callSession = messageContent.callSession;
+    } // return participant;
+
+
+    return JSON.parse(JSON.stringify(participant));
+  }
+
+  return {
+    inquiryCallParticipants: inquiryCallParticipants
+  };
+}
+
+var _default = InquiryCallParticipants;
+exports["default"] = _default;
+
+},{"../../../utility/utility":299,"../../constants":288,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/helpers/objectDestructuringEmpty":23}],286:[function(require,module,exports){
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+
 var _constants = require("../constants");
 
 var _utility = _interopRequireDefault(require("../../utility/utility"));
@@ -54859,7 +54990,7 @@ function ReactionsMethods(app) {
 var _default = ReactionsMethods;
 exports["default"] = _default;
 
-},{"../../utility/utility":298,"../constants":287,"@babel/runtime/helpers/interopRequireDefault":20}],286:[function(require,module,exports){
+},{"../../utility/utility":299,"../constants":288,"@babel/runtime/helpers/interopRequireDefault":20}],287:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -55064,7 +55195,7 @@ function ThreadParticipantsMethods(app) {
 var _default = ThreadParticipantsMethods;
 exports["default"] = _default;
 
-},{"../constants":287}],287:[function(require,module,exports){
+},{"../constants":288}],288:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -55300,7 +55431,7 @@ var callMetaDataTypes = {
 };
 exports.callMetaDataTypes = callMetaDataTypes;
 
-},{}],288:[function(require,module,exports){
+},{}],289:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -55486,7 +55617,7 @@ function ErrorHandler(app) {
 var _default = ErrorHandler;
 exports["default"] = _default;
 
-},{"@babel/runtime/helpers/defineProperty":19,"@babel/runtime/helpers/interopRequireDefault":20}],289:[function(require,module,exports){
+},{"@babel/runtime/helpers/defineProperty":19,"@babel/runtime/helpers/interopRequireDefault":20}],290:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -55592,7 +55723,7 @@ function RequestBlocker() {
 var _default = RequestBlocker;
 exports["default"] = _default;
 
-},{}],290:[function(require,module,exports){
+},{}],291:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -55649,7 +55780,7 @@ function SDKParams() {
   };
 }
 
-},{}],291:[function(require,module,exports){
+},{}],292:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -55677,7 +55808,7 @@ function StoreEvents() {
   };
 }
 
-},{"@babel/runtime/helpers/interopRequireDefault":20,"events":169}],292:[function(require,module,exports){
+},{"@babel/runtime/helpers/interopRequireDefault":20,"events":169}],293:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -55709,7 +55840,7 @@ function Store(app) {
   };
 }
 
-},{"./eventEmitter":291,"./reactionsList":293,"./reactionsSummaries":294,"./threads":295,"./user":296}],293:[function(require,module,exports){
+},{"./eventEmitter":292,"./reactionsList":294,"./reactionsSummaries":295,"./threads":296,"./user":297}],294:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -55836,7 +55967,7 @@ var ReactionsListCache = /*#__PURE__*/function () {
 
 exports.ReactionsListCache = ReactionsListCache;
 
-},{"@babel/runtime/helpers/classCallCheck":17,"@babel/runtime/helpers/createClass":18,"@babel/runtime/helpers/interopRequireDefault":20}],294:[function(require,module,exports){
+},{"@babel/runtime/helpers/classCallCheck":17,"@babel/runtime/helpers/createClass":18,"@babel/runtime/helpers/interopRequireDefault":20}],295:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -56105,7 +56236,7 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
 
 exports.ReactionsSummariesCache = ReactionsSummariesCache;
 
-},{"@babel/runtime/helpers/classCallCheck":17,"@babel/runtime/helpers/createClass":18,"@babel/runtime/helpers/defineProperty":19,"@babel/runtime/helpers/interopRequireDefault":20}],295:[function(require,module,exports){
+},{"@babel/runtime/helpers/classCallCheck":17,"@babel/runtime/helpers/createClass":18,"@babel/runtime/helpers/defineProperty":19,"@babel/runtime/helpers/interopRequireDefault":20}],296:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -56281,7 +56412,7 @@ function ThreadObject(app, thread) {
   };
 }
 
-},{"@babel/runtime/helpers/defineProperty":19,"@babel/runtime/helpers/interopRequireDefault":20}],296:[function(require,module,exports){
+},{"@babel/runtime/helpers/defineProperty":19,"@babel/runtime/helpers/interopRequireDefault":20}],297:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -56317,7 +56448,7 @@ var SDKUser = /*#__PURE__*/function () {
 
 exports.SDKUser = SDKUser;
 
-},{"@babel/runtime/helpers/classCallCheck":17,"@babel/runtime/helpers/createClass":18,"@babel/runtime/helpers/interopRequireDefault":20}],297:[function(require,module,exports){
+},{"@babel/runtime/helpers/classCallCheck":17,"@babel/runtime/helpers/createClass":18,"@babel/runtime/helpers/interopRequireDefault":20}],298:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -56652,7 +56783,7 @@ function ChatMessaging(app, params) {
 var _default = ChatMessaging;
 exports["default"] = _default;
 
-},{"./lib/constants":287,"./lib/errorHandler":288,"./utility/utility":298,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/helpers/typeof":26,"dompurify":151}],298:[function(require,module,exports){
+},{"./lib/constants":288,"./lib/errorHandler":289,"./utility/utility":299,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/helpers/typeof":26,"dompurify":151}],299:[function(require,module,exports){
 (function (global){(function (){
 "use strict";
 
