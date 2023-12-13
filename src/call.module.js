@@ -2040,7 +2040,8 @@ function ChatCall(app, params) {
 
         app.requestBlocker.add({
             key: app.requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE,
-            uniqueId: sendMessageParams.uniqueId
+            uniqueId: sendMessageParams.uniqueId,
+            blockTimeSeconds: 2
         })
 
         return app.messenger.sendMessage(sendMessageParams, {
@@ -2089,7 +2090,8 @@ function ChatCall(app, params) {
         }
         app.requestBlocker.add({
             key: app.requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE,
-            uniqueId: sendMessageParams.uniqueId
+            uniqueId: sendMessageParams.uniqueId,
+            blockTimeSeconds: 2
         })
         return app.messenger.sendMessage(sendMessageParams, {
             onResult: function (result) {
@@ -2158,7 +2160,8 @@ function ChatCall(app, params) {
         }
         app.requestBlocker.add({
             key: app.requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE,
-            uniqueId: turnOnVideoData.uniqueId
+            uniqueId: turnOnVideoData.uniqueId,
+            blockTimeSeconds: 2
         })
         return app.messenger.sendMessage(turnOnVideoData, {
             onResult: function (result) {
@@ -2240,7 +2243,8 @@ function ChatCall(app, params) {
 
         app.requestBlocker.add({
             key: app.requestBlocker.limitedTypes.START_STOP_VIDEO_VOICE,
-            uniqueId: turnOffVideoData.uniqueId
+            uniqueId: turnOffVideoData.uniqueId,
+            blockTimeSeconds: 2
         });
         return app.messenger.sendMessage(turnOffVideoData, {
             onResult: function (result) {
