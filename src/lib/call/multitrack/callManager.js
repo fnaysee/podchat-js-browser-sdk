@@ -17,13 +17,20 @@ function MultiTrackCallManager({app, callId, callConfig}) {
         receivePeerManager: null
     };
 
-    let inquiryCallCounter = 0
+    let inquiryCallCounter = 0;
     function socketConnectListener() {
+        sendCallMessage({
+            id: 'REQUEST_RECEIVING_MEDIA',
+            token: app.sdkParams.token,
+            chatId: config.callId,
+            brokerAddress: config.callConfig.brokerAddress,
+        }, null, {});
+
         if(!failedPeers.length)
             return;
 
         if(!inquiryCallCounter) {
-            if (new Date().getTime() - (20 * 1000) > peerFailedTime) {
+            // if (new Date().getTime() - (10 * 1000) > peerFailedTime) {
                 inquiryCallCounter++;
                 app.call.inquiryCallParticipants.inquiryCallParticipants({}, result => {
                     if (!result.hasError) {
@@ -51,9 +58,9 @@ function MultiTrackCallManager({app, callId, callConfig}) {
                     }
                     // console.log('debug inquiryCallParticipants result', {result});
                 });
-            } else {
-                doReconnect();
-            }
+            // } else {
+            //     doReconnect();
+            // }
         }
 
         function doReconnect(){
@@ -87,8 +94,6 @@ function MultiTrackCallManager({app, callId, callConfig}) {
                 }, 200);
             }
         }
-
-        app.chatEvents.off('chatReady', socketConnectListener);
     }
 
     let failedPeers = [];
@@ -100,8 +105,6 @@ function MultiTrackCallManager({app, callId, callConfig}) {
 
         if (app.messenger.chatState) {
             socketConnectListener();
-        } else {
-            app.chatEvents.on('chatReady', socketConnectListener);
         }
     }
 
@@ -153,6 +156,8 @@ function MultiTrackCallManager({app, callId, callConfig}) {
 
         createPeerManager('send');
         createPeerManager('receive');
+
+        app.chatEvents.on('chatReady', socketConnectListener);
 
         if (app.call.sharedVariables.callDivId) {
             new Promise(resolve => {

@@ -55,44 +55,49 @@ function MultiTrackCallManager(_ref) {
   var inquiryCallCounter = 0;
 
   function socketConnectListener() {
+    sendCallMessage({
+      id: 'REQUEST_RECEIVING_MEDIA',
+      token: app.sdkParams.token,
+      chatId: config.callId,
+      brokerAddress: config.callConfig.brokerAddress
+    }, null, {});
     if (!failedPeers.length) return;
 
     if (!inquiryCallCounter) {
-      if (new Date().getTime() - 20 * 1000 > peerFailedTime) {
-        inquiryCallCounter++;
-        app.call.inquiryCallParticipants.inquiryCallParticipants({}, function (result) {
-          if (!result.hasError) {
-            inquiryCallCounter = 0;
-            doReconnect();
-          } else {
-            if (result.errorCode == 171) {
-              app.call.endCall({
-                callId: config.callId
-              }, null);
-              app.chatEvents.fireEvent('callEvents', {
-                type: 'YOU_DROPPED_FROM_CALL',
-                result: {
-                  callId: config.callId,
-                  userId: app.store.user.get().id
-                }
-              });
-            } else if (result.errorCode == 163) {
-              app.call.endCall({
-                callId: config.callId
-              }, null);
-              app.chatEvents.fireEvent('callEvents', {
-                type: 'CALL_ENDED',
-                callId: config.callId
-              });
-            }
+      // if (new Date().getTime() - (10 * 1000) > peerFailedTime) {
+      inquiryCallCounter++;
+      app.call.inquiryCallParticipants.inquiryCallParticipants({}, function (result) {
+        if (!result.hasError) {
+          inquiryCallCounter = 0;
+          doReconnect();
+        } else {
+          if (result.errorCode == 171) {
+            app.call.endCall({
+              callId: config.callId
+            }, null);
+            app.chatEvents.fireEvent('callEvents', {
+              type: 'YOU_DROPPED_FROM_CALL',
+              result: {
+                callId: config.callId,
+                userId: app.store.user.get().id
+              }
+            });
+          } else if (result.errorCode == 163) {
+            app.call.endCall({
+              callId: config.callId
+            }, null);
+            app.chatEvents.fireEvent('callEvents', {
+              type: 'CALL_ENDED',
+              callId: config.callId
+            });
+          }
 
-            app.callsManager.removeItem(config.callId);
-          } // console.log('debug inquiryCallParticipants result', {result});
+          app.callsManager.removeItem(config.callId);
+        } // console.log('debug inquiryCallParticipants result', {result});
 
-        });
-      } else {
-        doReconnect();
-      }
+      }); // } else {
+      //     doReconnect();
+      // }
     }
 
     function doReconnect() {
@@ -146,8 +151,6 @@ function MultiTrackCallManager(_ref) {
         _loop();
       }
     }
-
-    app.chatEvents.off('chatReady', socketConnectListener);
   }
 
   var failedPeers = [];
@@ -159,8 +162,6 @@ function MultiTrackCallManager(_ref) {
 
     if (app.messenger.chatState) {
       socketConnectListener();
-    } else {
-      app.chatEvents.on('chatReady', socketConnectListener);
     }
   }
 
@@ -210,6 +211,7 @@ function MultiTrackCallManager(_ref) {
 
     createPeerManager('send');
     createPeerManager('receive');
+    app.chatEvents.on('chatReady', socketConnectListener);
 
     if (app.call.sharedVariables.callDivId) {
       new Promise(function (resolve) {
