@@ -12,7 +12,8 @@ function CallUser(app, user) {
         audioIsOpen: false,
         topicMetaData: {
             audioLevelInterval: null
-        }
+        },
+        slowLinkTimeout: null
     };
 
     const publicized = {
@@ -137,6 +138,22 @@ function CallUser(app, user) {
                     onTrackCallback
                 })
             }
+        },
+        startSLowLink() {
+            app.chatEvents.fireEvent('callEvents', {
+                type: 'SLOW_LINK',
+                message: `Slow link`,
+                userId: config.userId
+            });
+
+            config.slowLinkTimeout && clearTimeout(config.slowLinkTimeout);
+            config.slowLinkTimeout = setTimeout(()=>{
+                app.chatEvents.fireEvent('callEvents', {
+                    type: 'SLOW_LINK_RESOLVED',
+                    message: `Slow link resolved`,
+                    userId: config.userId
+                });
+            }, 10000);
         },
         async destroy() {
             await publicized.destroyVideo();

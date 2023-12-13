@@ -618,26 +618,12 @@ function MultiTrackCallManager(_ref) {
     }
   }
 
-  var slowLinkTimeout;
-
   function handleSlowLink(jsonMessage) {
     console.log('handleSlowLink ', {
       jsonMessage: jsonMessage
     });
     var userId = config.users.findUserIdByClientId(jsonMessage.client);
-    app.chatEvents.fireEvent('callEvents', {
-      type: 'SLOW_LINK',
-      message: "Slow link",
-      userId: userId
-    });
-    slowLinkTimeout && clearTimeout(slowLinkTimeout);
-    slowLinkTimeout = setTimeout(function () {
-      app.chatEvents.fireEvent('callEvents', {
-        type: 'SLOW_LINK_RESOLVED',
-        message: "Slow link resolved",
-        userId: userId
-      });
-    }, 10000);
+    config.users.get(userId).startSLowLink();
   }
 
   function sendCallMetaData(params) {

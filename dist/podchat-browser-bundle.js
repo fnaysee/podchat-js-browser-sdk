@@ -51218,26 +51218,12 @@ function MultiTrackCallManager(_ref) {
     }
   }
 
-  var slowLinkTimeout;
-
   function handleSlowLink(jsonMessage) {
     console.log('handleSlowLink ', {
       jsonMessage: jsonMessage
     });
     var userId = config.users.findUserIdByClientId(jsonMessage.client);
-    app.chatEvents.fireEvent('callEvents', {
-      type: 'SLOW_LINK',
-      message: "Slow link",
-      userId: userId
-    });
-    slowLinkTimeout && clearTimeout(slowLinkTimeout);
-    slowLinkTimeout = setTimeout(function () {
-      app.chatEvents.fireEvent('callEvents', {
-        type: 'SLOW_LINK_RESOLVED',
-        message: "Slow link resolved",
-        userId: userId
-      });
-    }, 10000);
+    config.users.get(userId).startSLowLink();
   }
 
   function sendCallMetaData(params) {
@@ -52071,7 +52057,8 @@ function CallUser(app, user) {
     audioIsOpen: false,
     topicMetaData: {
       audioLevelInterval: null
-    }
+    },
+    slowLinkTimeout: null
   };
   var publicized = {
     userId: function userId() {
@@ -52225,6 +52212,21 @@ function CallUser(app, user) {
           }
         }, _callee2);
       }))();
+    },
+    startSLowLink: function startSLowLink() {
+      app.chatEvents.fireEvent('callEvents', {
+        type: 'SLOW_LINK',
+        message: "Slow link",
+        userId: config.userId
+      });
+      config.slowLinkTimeout && clearTimeout(config.slowLinkTimeout);
+      config.slowLinkTimeout = setTimeout(function () {
+        app.chatEvents.fireEvent('callEvents', {
+          type: 'SLOW_LINK_RESOLVED',
+          message: "Slow link resolved",
+          userId: config.userId
+        });
+      }, 10000);
     },
     destroy: function destroy() {
       return (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3() {

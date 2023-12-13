@@ -536,24 +536,11 @@ function MultiTrackCallManager({app, callId, callConfig}) {
         }
 
     }
-    let slowLinkTimeout;
+
     function handleSlowLink(jsonMessage){
         console.log('handleSlowLink ', {jsonMessage})
         let userId = config.users.findUserIdByClientId(jsonMessage.client)
-        app.chatEvents.fireEvent('callEvents', {
-            type: 'SLOW_LINK',
-            message: `Slow link`,
-            userId
-        });
-
-        slowLinkTimeout && clearTimeout(slowLinkTimeout);
-        slowLinkTimeout = setTimeout(()=>{
-            app.chatEvents.fireEvent('callEvents', {
-                type: 'SLOW_LINK_RESOLVED',
-                message: `Slow link resolved`,
-                userId
-            });
-        }, 10000);
+        config.users.get(userId).startSLowLink();
     }
 
     function sendCallMetaData(params) {
