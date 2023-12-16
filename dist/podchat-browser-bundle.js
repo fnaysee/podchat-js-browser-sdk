@@ -51062,6 +51062,7 @@ function MultiTrackCallManager(_ref) {
   }
 
   function handleProcessSdpOffer(jsonMessage) {
+    config.receivePeerManager.removeRequestTimeout(jsonMessage.uniqueId);
     config.receivePeerManager.handleProcessSDPOfferForReceiveTrack(jsonMessage, function () {});
   }
 
@@ -52165,7 +52166,8 @@ function CallUser(app, user) {
                     topic: config.user.audioTopicName,
                     mediaType: 1,
                     mline: conf && conf.mline,
-                    onTrackCallback: onTrackCallback
+                    onTrackCallback: onTrackCallback,
+                    onOpenFailure: onOpenFailure
                   });
                 }
 
@@ -52205,7 +52207,8 @@ function CallUser(app, user) {
                     topic: config.user.videoTopicName,
                     mediaType: 0,
                     mline: conf && conf.mline,
-                    onTrackCallback: onTrackCallback
+                    onTrackCallback: onTrackCallback,
+                    onOpenFailure: onOpenFailure
                   });
                 }
 
@@ -52426,6 +52429,21 @@ function CallUser(app, user) {
       }
     }
   };
+
+  function onOpenFailure(item) {
+    if (item.mediaType == 0) {
+      config.videoIsOpen = false;
+    } else if (item.mediaType == 1) {
+      config.audioIsOpen = false;
+    }
+
+    this._app.call.currentCall().sendCallMessage({
+      id: 'REQUEST_RECEIVING_MEDIA',
+      token: this._app.sdkParams.token,
+      chatId: this._callId,
+      brokerAddress: this._brokerAddress.brokerAddress
+    }, null, {});
+  }
 
   function onTrackCallback(line, track) {
     var stream = new MediaStream([track]);
@@ -53111,6 +53129,8 @@ var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/creat
 
 var _webrtcPeer = require("./webrtcPeer");
 
+var _utility = _interopRequireDefault(require("../../../utility/utility"));
+
 var PeerConnectionManager = /*#__PURE__*/function () {
   function PeerConnectionManager(_ref) {
     var app = _ref.app,
@@ -53131,6 +53151,7 @@ var PeerConnectionManager = /*#__PURE__*/function () {
     this._firstSub = true;
     this._canProcessNextTrack = true;
     this._isDestroyed = false;
+    this._requestTimeouts = {};
     this._peerStates = {
       DISCONNECTED: 0,
       CONNECTING: 1,
@@ -53347,8 +53368,11 @@ var PeerConnectionManager = /*#__PURE__*/function () {
           }]
         }, null, {});
       } else {
+        var uuid = _utility["default"].generateUUID();
+
         this._app.call.currentCall().sendCallMessage({
           id: 'UPDATE',
+          uniqueId: uuid,
           // chatId: getChatId(),
           // clientId: this._app.call.currentCall().users().get(this._app.store.user().id).user().clientId,
           token: this._app.sdkParams.token,
@@ -53363,6 +53387,49 @@ var PeerConnectionManager = /*#__PURE__*/function () {
             mediaType: item.mediaType
           }]
         }, null, {});
+
+        this.setRequestTimeout(uuid, {
+          callback: item.onOpenFailure,
+          item: item
+        });
+      }
+    }
+  }, {
+    key: "setRequestTimeout",
+    value: function setRequestTimeout(uuid, _ref3) {
+      var _this3 = this;
+
+      var callback = _ref3.callback,
+          item = _ref3.item;
+      this._requestTimeouts[uuid] = {
+        callback: callback,
+        timeout: setTimeout(function () {
+          _this3.removeFailedTrack(item);
+
+          _this3.processingCurrentTrackCompleted();
+
+          callback && callback(item);
+        }, 3000)
+      };
+    }
+  }, {
+    key: "removeFailedTrack",
+    value: function removeFailedTrack(item) {
+      this._addTrackQueue = this._addTrackQueue.filter(function (it) {
+        return it.topic != item.topic;
+      });
+      this._trackList = this._trackList.filter(function (it) {
+        return it.topic != item.topic;
+      });
+    }
+  }, {
+    key: "removeRequestTimeout",
+    value: function removeRequestTimeout(uuid) {
+      var record = this._requestTimeouts[uuid];
+
+      if (record) {
+        if (record.timeout) clearTimeout(record.timeout);
+        delete this._requestTimeouts[uuid];
       }
     }
   }, {
@@ -53378,13 +53445,14 @@ var PeerConnectionManager = /*#__PURE__*/function () {
   }, {
     key: "addTrack",
     value: function addTrack(data) {
-      if (this._direction == 'send') data.mline = this._nextTrackMid;
+      if (this._direction == 'send') {
+        data.mline = this._nextTrackMid;
+        this._nextTrackMid++;
+      }
 
       this._trackList.push(data);
 
       this._addTrackQueue.push(data);
-
-      this._nextTrackMid++;
 
       this._nextTrack();
     }
@@ -53535,22 +53603,22 @@ var PeerConnectionManager = /*#__PURE__*/function () {
   }, {
     key: "addIceCandidateToQueue",
     value: function addIceCandidateToQueue(candidate) {
-      var _this3 = this;
+      var _this4 = this;
 
       this.addIceCandidate(candidate)["catch"](function (error) {
         // console.log('debug addIceCandidateToQueue catch', error, this)
-        _this3._addIceQueue.push(candidate);
+        _this4._addIceQueue.push(candidate);
       });
     }
   }, {
     key: "watchConnectionStateChange",
     value: function watchConnectionStateChange() {
-      var _this4 = this;
+      var _this5 = this;
 
       this._peer.peerConnection.onsignalingstatechange = function (event) {
-        if (_this4._peer.peerConnection.signalingState === 'stable') {
-          _this4._addIceQueue.forEach(function (item) {
-            _this4.addIceCandidate(item);
+        if (_this5._peer.peerConnection.signalingState === 'stable') {
+          _this5._addIceQueue.forEach(function (item) {
+            _this5.addIceCandidate(item);
           });
         }
       };
@@ -53559,16 +53627,16 @@ var PeerConnectionManager = /*#__PURE__*/function () {
     key: "addIceCandidate",
     value: function () {
       var _addIceCandidate = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(data) {
-        var _this5 = this;
+        var _this6 = this;
 
         return _regenerator["default"].wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
                 return _context.abrupt("return", new Promise(function (resolve, reject) {
-                  _this5._peer.peerConnection.addIceCandidate(data)["catch"](function (err) {
+                  _this6._peer.peerConnection.addIceCandidate(data)["catch"](function (err) {
                     if (err) {
-                      console.warn("[peerConnectionManager addIceCandidate" + _this5._direction + "] " + err);
+                      console.warn("[peerConnectionManager addIceCandidate" + _this6._direction + "] " + err);
                       reject(err); // this._app.chatEvents.fireEvent('callEvents', {
                       //     type: 'CALL_ERROR',
                       //     code: 7000,
@@ -53620,7 +53688,7 @@ var PeerConnectionManager = /*#__PURE__*/function () {
   }, {
     key: "handleProcessSDPOfferForReceiveTrack",
     value: function handleProcessSDPOfferForReceiveTrack(jsonMessage, callback) {
-      var _this6 = this;
+      var _this7 = this;
 
       var topics = JSON.parse(jsonMessage.topic);
       var currentTrackData;
@@ -53632,23 +53700,23 @@ var PeerConnectionManager = /*#__PURE__*/function () {
         }
       });
 
-      this._peer.peerConnection.onicecandidate = function (_ref3) {
-        var candidate = _ref3.candidate;
+      this._peer.peerConnection.onicecandidate = function (_ref4) {
+        var candidate = _ref4.candidate;
 
-        _this6._app.call.currentCall().sendCallMessage({
+        _this7._app.call.currentCall().sendCallMessage({
           id: "RECIVE_ADD_ICE_CANDIDATE",
           // chatId: getChatId(),
           // clientId: this._app.call.currentCall().users().get(this._app.store.user().id).user().clientId,
-          brokerAddress: _this6._brokerAddress,
-          token: _this6._app.sdkParams.token,
-          chatId: _this6._callId,
+          brokerAddress: _this7._brokerAddress,
+          token: _this7._app.sdkParams.token,
+          chatId: _this7._callId,
           iceCandidate: JSON.stringify(candidate) // addition: [{mline: 0, topic: `Vi-send-${getChatId()}-12345678`}]
 
         }, null, {});
       };
 
-      this._peer.peerConnection.ontrack = function (_ref4) {
-        var transceiver = _ref4.transceiver;
+      this._peer.peerConnection.ontrack = function (_ref5) {
+        var transceiver = _ref5.transceiver;
         currentTrackData.track = transceiver.receiver.track;
         currentTrackData.onTrackCallback(currentTrackData, transceiver.receiver.track);
       };
@@ -53658,12 +53726,12 @@ var PeerConnectionManager = /*#__PURE__*/function () {
           return;
         }
 
-        _this6._app.call.currentCall().sendCallMessage({
+        _this7._app.call.currentCall().sendCallMessage({
           id: "RECIVE_SDP_ANSWER",
           sdpAnswer: sdpAnswer,
           // clientId: getClientId(),
-          token: _this6._app.sdkParams.token,
-          brokerAddress: _this6._brokerAddress,
+          token: _this7._app.sdkParams.token,
+          brokerAddress: _this7._brokerAddress,
           // brokerAddress: getBrokerAddress(),
           // chatId: getChatId(),
           addition: [{
@@ -53726,7 +53794,7 @@ var PeerConnectionManager = /*#__PURE__*/function () {
 var _default = PeerConnectionManager;
 exports["default"] = _default;
 
-},{"./webrtcPeer":281,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/classCallCheck":17,"@babel/runtime/helpers/createClass":18,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/regenerator":28}],281:[function(require,module,exports){
+},{"../../../utility/utility":299,"./webrtcPeer":281,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/classCallCheck":17,"@babel/runtime/helpers/createClass":18,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/regenerator":28}],281:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");

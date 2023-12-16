@@ -458,6 +458,7 @@ function MultiTrackCallManager(_ref) {
   }
 
   function handleProcessSdpOffer(jsonMessage) {
+    config.receivePeerManager.removeRequestTimeout(jsonMessage.uniqueId);
     config.receivePeerManager.handleProcessSDPOfferForReceiveTrack(jsonMessage, function () {});
   }
 

@@ -1,4 +1,5 @@
 import {WebrtcPeerConnection} from "./webrtcPeer";
+import Utility from "../../../utility/utility";
 
 class PeerConnectionManager {
     constructor({
@@ -7,7 +8,7 @@ class PeerConnectionManager {
                     direction,
                     rtcPeerConfig,
                     brokerAddress,
-                    onPeerFailed
+                    onPeerFailed,
                 }) {
         this._app = app;
         this._callId = callId;
@@ -20,6 +21,7 @@ class PeerConnectionManager {
         this._firstSub = true;
         this._canProcessNextTrack = true;
         this._isDestroyed = false;
+        this._requestTimeouts = {};
         this._peerStates = {
             DISCONNECTED: 0,
             CONNECTING: 1,
@@ -217,8 +219,10 @@ class PeerConnectionManager {
                 }]
             }, null, {});
         } else {
+            let uuid = Utility.generateUUID();
             this._app.call.currentCall().sendCallMessage({
                 id: 'UPDATE',
+                uniqueId: uuid,
                 // chatId: getChatId(),
                 // clientId: this._app.call.currentCall().users().get(this._app.store.user().id).user().clientId,
                 token: this._app.sdkParams.token,
@@ -233,6 +237,32 @@ class PeerConnectionManager {
                     mediaType: item.mediaType
                 }]
             }, null, {});
+            this.setRequestTimeout(uuid, {callback: item.onOpenFailure, item});
+        }
+    }
+
+    setRequestTimeout(uuid, {callback, item}) {
+        this._requestTimeouts[uuid] = {
+            callback,
+            timeout: setTimeout(() => {
+                this.removeFailedTrack(item);
+                this.processingCurrentTrackCompleted();
+                callback && callback(item);
+            }, 3000)
+        };
+    }
+
+    removeFailedTrack(item) {
+        this._addTrackQueue = this._addTrackQueue.filter(it => it.topic != item.topic);
+        this._trackList = this._trackList.filter(it => it.topic != item.topic);
+    }
+
+    removeRequestTimeout(uuid){
+        let record = this._requestTimeouts[uuid];
+        if(record) {
+            if(record.timeout)
+                clearTimeout(record.timeout);
+            delete this._requestTimeouts[uuid];
         }
     }
 
@@ -245,11 +275,13 @@ class PeerConnectionManager {
     }
 
     addTrack(data) {
-        if (this._direction == 'send')
+        if (this._direction == 'send') {
             data.mline = this._nextTrackMid;
+            this._nextTrackMid++;
+        }
+
         this._trackList.push(data);
         this._addTrackQueue.push(data);
-        this._nextTrackMid++;
         this._nextTrack();
     }
 

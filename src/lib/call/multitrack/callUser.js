@@ -110,7 +110,8 @@ function CallUser(app, user) {
                     topic: config.user.audioTopicName,
                     mediaType: 1,
                     mline: (conf && conf.mline),
-                    onTrackCallback
+                    onTrackCallback,
+                    onOpenFailure
                 });
             }
          },
@@ -135,7 +136,8 @@ function CallUser(app, user) {
                     topic: config.user.videoTopicName,
                     mediaType: 0,
                     mline: (conf && conf.mline),
-                    onTrackCallback
+                    onTrackCallback,
+                    onOpenFailure
                 })
             }
         },
@@ -283,6 +285,21 @@ function CallUser(app, user) {
                 }
             }
         },
+    }
+
+    function onOpenFailure(item) {
+        if(item.mediaType == 0) {
+            config.videoIsOpen = false;
+        } else if(item.mediaType == 1) {
+            config.audioIsOpen = false;
+        }
+
+            this._app.call.currentCall().sendCallMessage({
+                id: 'REQUEST_RECEIVING_MEDIA',
+                token: this._app.sdkParams.token,
+                chatId: this._callId,
+                brokerAddress: this._brokerAddress.brokerAddress,
+            }, null, {});
     }
 
     function onTrackCallback(line, track) {
@@ -467,7 +484,8 @@ function CallScreenShare(app, user) {
                     mediaType: 2,
                     isScreenShare: true,
                     mline: (conf && conf.mline),
-                    onTrackCallback
+                    onTrackCallback,
+                    onOpenFailure
                 })
             }
         },
@@ -540,6 +558,19 @@ function CallScreenShare(app, user) {
 
         if(config.user.video && app.call.currentCall().screenShareInfo.iAmOwner())
             publicized.startVideo(obj.topic);
+    }
+
+    function onOpenFailure(item) {
+        if(item.mediaType == 0) {
+            config.videoIsOpen = false;
+        }
+
+        this._app.call.currentCall().sendCallMessage({
+            id: 'REQUEST_RECEIVING_MEDIA',
+            token: this._app.sdkParams.token,
+            chatId: this._callId,
+            brokerAddress: this._brokerAddress.brokerAddress,
+        }, null, {});
     }
 
     function generateContainerElement() {

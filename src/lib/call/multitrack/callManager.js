@@ -324,8 +324,7 @@ function MultiTrackCallManager({app, callId, callConfig}) {
             app.store.messagesCallbacks[message.uniqueId] = callback;
         }
 
-        app.call.sharedVariables.asyncClient.send(data, function (res) {
-        });
+        app.call.sharedVariables.asyncClient.send(data, function (res) {});
 
         if (timeoutTime || app.call.sharedVariables.globalCallRequestTimeout > 0) {
             app.store.asyncRequestTimeouts[message.uniqueId] && clearTimeout(app.store.asyncRequestTimeouts[message.uniqueId]);
@@ -378,6 +377,7 @@ function MultiTrackCallManager({app, callId, callConfig}) {
     }
 
     function handleProcessSdpOffer(jsonMessage) {
+        config.receivePeerManager.removeRequestTimeout(jsonMessage.uniqueId);
         config.receivePeerManager.handleProcessSDPOfferForReceiveTrack(jsonMessage, () => {});
     }
 
