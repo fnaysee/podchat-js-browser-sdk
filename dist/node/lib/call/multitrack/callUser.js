@@ -402,11 +402,12 @@ function CallUser(app, user) {
       config.audioIsOpen = false;
     }
 
-    this._app.call.currentCall().sendCallMessage({
+    console.log('debug onOpenFailure : ', item, config);
+    app.call.currentCall().sendCallMessage({
       id: 'REQUEST_RECEIVING_MEDIA',
-      token: this._app.sdkParams.token,
-      chatId: this._callId,
-      brokerAddress: this._brokerAddress.brokerAddress
+      token: app.sdkParams.token,
+      chatId: config.callId,
+      brokerAddress: config.user.brokerAddress
     }, null, {});
   }
 
@@ -590,7 +591,8 @@ function CallScreenShare(app, user) {
           mediaType: 2,
           isScreenShare: true,
           mline: conf && conf.mline,
-          onTrackCallback: onTrackCallback
+          onTrackCallback: onTrackCallback,
+          onOpenFailure: onOpenFailure
         });
       }
     },
@@ -719,6 +721,19 @@ function CallScreenShare(app, user) {
 
     generateContainerElement();
     if (config.user.video && app.call.currentCall().screenShareInfo.iAmOwner()) publicized.startVideo(obj.topic);
+  }
+
+  function onOpenFailure(item) {
+    if (item.mediaType == 0) {
+      config.videoIsOpen = false;
+    }
+
+    app.call.currentCall().sendCallMessage({
+      id: 'REQUEST_RECEIVING_MEDIA',
+      token: app.sdkParams.token,
+      chatId: config.callId,
+      brokerAddress: config.user.brokerAddress
+    }, null, {});
   }
 
   function generateContainerElement() {

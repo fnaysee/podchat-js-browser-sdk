@@ -223,6 +223,7 @@ function MultiTrackCallManager(_ref) {
         if (callConfig.selfData) {
           callConfig.selfData.callId = config.callId;
           callConfig.selfData.cameraPaused = callConfig.cameraPaused;
+          callConfig.selfData.brokerAddress = config.callConfig.brokerAddress;
           config.users.addItem(callConfig.selfData); // callStateController.setupCallParticipant(params.selfData);
         }
 
@@ -243,6 +244,7 @@ function MultiTrackCallManager(_ref) {
             if (callConfig.clientsList[i].userId !== app.store.user.get().id) {
               callConfig.clientsList[i].callId = config.callId;
               callConfig.clientsList[i].cameraPaused = false;
+              callConfig.clientsList[i].brokerAddress = config.callConfig.brokerAddress;
               config.users.addItem(callConfig.clientsList[i]);
             }
           }
@@ -278,6 +280,7 @@ function MultiTrackCallManager(_ref) {
           }
 
           config.callConfig.screenShareObject.clientId = screenOwnerClientId;
+          config.callConfig.screenShareObject.brokerAddress = config.callConfig.brokerAddress;
           config.screenShareInfo.setOwner(config.callConfig.screenShareOwner);
           config.users.addItem(config.callConfig.screenShareObject, "screenShare");
         }

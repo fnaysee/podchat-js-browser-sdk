@@ -42084,7 +42084,7 @@ FilterXSS.prototype.process = function (html) {
 module.exports = FilterXSS;
 
 },{"./default":258,"./parser":260,"./util":261,"cssfilter":137}],263:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.48","date":"۱۴۰۲/۹/۲۲","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.7-snapshot.48","date":"۱۴۰۲/۹/۲۶","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],264:[function(require,module,exports){
 "use strict";
 
@@ -50827,6 +50827,7 @@ function MultiTrackCallManager(_ref) {
         if (callConfig.selfData) {
           callConfig.selfData.callId = config.callId;
           callConfig.selfData.cameraPaused = callConfig.cameraPaused;
+          callConfig.selfData.brokerAddress = config.callConfig.brokerAddress;
           config.users.addItem(callConfig.selfData); // callStateController.setupCallParticipant(params.selfData);
         }
 
@@ -50847,6 +50848,7 @@ function MultiTrackCallManager(_ref) {
             if (callConfig.clientsList[i].userId !== app.store.user.get().id) {
               callConfig.clientsList[i].callId = config.callId;
               callConfig.clientsList[i].cameraPaused = false;
+              callConfig.clientsList[i].brokerAddress = config.callConfig.brokerAddress;
               config.users.addItem(callConfig.clientsList[i]);
             }
           }
@@ -50882,6 +50884,7 @@ function MultiTrackCallManager(_ref) {
           }
 
           config.callConfig.screenShareObject.clientId = screenOwnerClientId;
+          config.callConfig.screenShareObject.brokerAddress = config.callConfig.brokerAddress;
           config.screenShareInfo.setOwner(config.callConfig.screenShareOwner);
           config.users.addItem(config.callConfig.screenShareObject, "screenShare");
         }
@@ -52437,11 +52440,12 @@ function CallUser(app, user) {
       config.audioIsOpen = false;
     }
 
-    this._app.call.currentCall().sendCallMessage({
+    console.log('debug onOpenFailure : ', item, config);
+    app.call.currentCall().sendCallMessage({
       id: 'REQUEST_RECEIVING_MEDIA',
-      token: this._app.sdkParams.token,
-      chatId: this._callId,
-      brokerAddress: this._brokerAddress.brokerAddress
+      token: app.sdkParams.token,
+      chatId: config.callId,
+      brokerAddress: config.user.brokerAddress
     }, null, {});
   }
 
@@ -52625,7 +52629,8 @@ function CallScreenShare(app, user) {
           mediaType: 2,
           isScreenShare: true,
           mline: conf && conf.mline,
-          onTrackCallback: onTrackCallback
+          onTrackCallback: onTrackCallback,
+          onOpenFailure: onOpenFailure
         });
       }
     },
@@ -52754,6 +52759,19 @@ function CallScreenShare(app, user) {
 
     generateContainerElement();
     if (config.user.video && app.call.currentCall().screenShareInfo.iAmOwner()) publicized.startVideo(obj.topic);
+  }
+
+  function onOpenFailure(item) {
+    if (item.mediaType == 0) {
+      config.videoIsOpen = false;
+    }
+
+    app.call.currentCall().sendCallMessage({
+      id: 'REQUEST_RECEIVING_MEDIA',
+      token: app.sdkParams.token,
+      chatId: config.callId,
+      brokerAddress: config.user.brokerAddress
+    }, null, {});
   }
 
   function generateContainerElement() {
@@ -53715,8 +53733,12 @@ var PeerConnectionManager = /*#__PURE__*/function () {
         }, null, {});
       };
 
-      this._peer.peerConnection.ontrack = function (_ref5) {
-        var transceiver = _ref5.transceiver;
+      this._peer.peerConnection.ontrack = function (infoData) {
+        var transceiver = infoData.transceiver;
+        console.log('DEBUG ', {
+          infoData: infoData,
+          transceiver: transceiver
+        });
         currentTrackData.track = transceiver.receiver.track;
         currentTrackData.onTrackCallback(currentTrackData, transceiver.receiver.track);
       };

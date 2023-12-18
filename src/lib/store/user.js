@@ -10,6 +10,10 @@ class SDKUser {
     setUser(data){
         this._user = data;
     }
+
+    isMe(userId){
+        return this._user.id == userId
+    }
 }
 
 export {SDKUser};

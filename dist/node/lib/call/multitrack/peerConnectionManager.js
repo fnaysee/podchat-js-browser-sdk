@@ -603,8 +603,12 @@ var PeerConnectionManager = /*#__PURE__*/function () {
         }, null, {});
       };
 
-      this._peer.peerConnection.ontrack = function (_ref5) {
-        var transceiver = _ref5.transceiver;
+      this._peer.peerConnection.ontrack = function (infoData) {
+        var transceiver = infoData.transceiver;
+        console.log('DEBUG ', {
+          infoData: infoData,
+          transceiver: transceiver
+        });
         currentTrackData.track = transceiver.receiver.track;
         currentTrackData.onTrackCallback(currentTrackData, transceiver.receiver.track);
       };

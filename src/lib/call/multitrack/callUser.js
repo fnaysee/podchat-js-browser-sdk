@@ -294,12 +294,12 @@ function CallUser(app, user) {
             config.audioIsOpen = false;
         }
 
-            this._app.call.currentCall().sendCallMessage({
-                id: 'REQUEST_RECEIVING_MEDIA',
-                token: this._app.sdkParams.token,
-                chatId: this._callId,
-                brokerAddress: this._brokerAddress.brokerAddress,
-            }, null, {});
+        app.call.currentCall().sendCallMessage({
+            id: 'REQUEST_RECEIVING_MEDIA',
+            token: app.sdkParams.token,
+            chatId: config.callId,
+            brokerAddress: config.user.brokerAddress,
+        }, null, {});
     }
 
     function onTrackCallback(line, track) {
@@ -565,11 +565,11 @@ function CallScreenShare(app, user) {
             config.videoIsOpen = false;
         }
 
-        this._app.call.currentCall().sendCallMessage({
+        app.call.currentCall().sendCallMessage({
             id: 'REQUEST_RECEIVING_MEDIA',
-            token: this._app.sdkParams.token,
-            chatId: this._callId,
-            brokerAddress: this._brokerAddress.brokerAddress,
+            token: app.sdkParams.token,
+            chatId: config.callId,
+            brokerAddress: config.user.brokerAddress,
         }, null, {});
     }
 

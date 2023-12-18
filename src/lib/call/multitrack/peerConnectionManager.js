@@ -500,8 +500,8 @@ class PeerConnectionManager {
                 // addition: [{mline: 0, topic: `Vi-send-${getChatId()}-12345678`}]
             }, null, {});
         };
-
-        this._peer.peerConnection.ontrack = ({transceiver}) => {
+        this._peer.peerConnection.ontrack = (infoData) => {
+            const transceiver = infoData.transceiver;
             currentTrackData.track = transceiver.receiver.track;
             currentTrackData.onTrackCallback(currentTrackData, transceiver.receiver.track);
         };

@@ -210,7 +210,7 @@ function ReactionsMethods(app) {
         }
 
         app.store.reactionSummaries.decreaseCount(messageContent.messageId, messageContent.reactionVO.reaction);
-        if(app.store.user.get().isMe(messageContent.reactionVO.participantVO.id))
+        if(app.store.user.isMe(messageContent.reactionVO.participantVO.id))
             app.store.reactionSummaries.removeMyReaction(messageContent.messageId);
 
         app.store.reactionsList.removeCachedData(messageContent.messageId, messageContent.reactionVO.reaction);
