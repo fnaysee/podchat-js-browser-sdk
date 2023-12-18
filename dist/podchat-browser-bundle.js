@@ -42084,7 +42084,7 @@ FilterXSS.prototype.process = function (html) {
 module.exports = FilterXSS;
 
 },{"./default":258,"./parser":260,"./util":261,"cssfilter":137}],263:[function(require,module,exports){
-module.exports={"version":"12.9.7","date":"۱۴۰۲/۹/۱۴","VersionInfo":"Release: true, Snapshot: false, Is For Test: false"}
+module.exports={"version":"12.9.7","date":"۱۴۰۲/۹/۲۷","VersionInfo":"Release: true, Snapshot: false, Is For Test: false"}
 },{}],264:[function(require,module,exports){
 "use strict";
 
@@ -51373,7 +51373,7 @@ function ReactionsMethods(app) {
     }
 
     app.store.reactionSummaries.decreaseCount(messageContent.messageId, messageContent.reactionVO.reaction);
-    if (app.store.user.get().isMe(messageContent.reactionVO.participantVO.id)) app.store.reactionSummaries.removeMyReaction(messageContent.messageId);
+    if (app.store.user.isMe(messageContent.reactionVO.participantVO.id)) app.store.reactionSummaries.removeMyReaction(messageContent.messageId);
     app.store.reactionsList.removeCachedData(messageContent.messageId, messageContent.reactionVO.reaction); // app.store.reactionsList.removeReactionCache(messageContent.messageId, messageContent.reactionVO.reaction);
 
     app.chatEvents.fireEvent('messageEvents', {
@@ -52653,7 +52653,7 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
       var message = this.getItem(messageId);
       if (!message) return;
 
-      if (this._app.store.user.get().isMe(userId)) {
+      if (this._app.store.user.isMe(userId)) {
         this._list[messageId].userReaction = {
           id: reactionId,
           reaction: reaction,
@@ -52891,6 +52891,11 @@ var SDKUser = /*#__PURE__*/function () {
     key: "setUser",
     value: function setUser(data) {
       this._user = data;
+    }
+  }, {
+    key: "isMe",
+    value: function isMe(userId) {
+      return this._user.id == userId;
     }
   }]);
   return SDKUser;
