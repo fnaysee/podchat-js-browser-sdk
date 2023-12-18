@@ -27,6 +27,11 @@ var SDKUser = /*#__PURE__*/function () {
     value: function setUser(data) {
       this._user = data;
     }
+  }, {
+    key: "isMe",
+    value: function isMe(userId) {
+      return this._user.id == userId;
+    }
   }]);
   return SDKUser;
 }();

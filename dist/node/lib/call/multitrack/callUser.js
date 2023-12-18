@@ -402,7 +402,6 @@ function CallUser(app, user) {
       config.audioIsOpen = false;
     }
 
-    console.log('debug onOpenFailure : ', item, config);
     app.call.currentCall().sendCallMessage({
       id: 'REQUEST_RECEIVING_MEDIA',
       token: app.sdkParams.token,

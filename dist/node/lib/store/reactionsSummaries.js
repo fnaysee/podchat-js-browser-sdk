@@ -211,7 +211,7 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
       var message = this.getItem(messageId);
       if (!message) return;
 
-      if (this._app.store.user.get().isMe(userId)) {
+      if (this._app.store.user.isMe(userId)) {
         this._list[messageId].userReaction = {
           id: reactionId,
           reaction: reaction,

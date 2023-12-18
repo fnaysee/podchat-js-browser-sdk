@@ -244,17 +244,31 @@ class PeerConnectionManager {
     setRequestTimeout(uuid, {callback, item}) {
         this._requestTimeouts[uuid] = {
             callback,
+            topic: item.topic,
             timeout: setTimeout(() => {
                 this.removeFailedTrack(item);
                 this.processingCurrentTrackCompleted();
                 callback && callback(item);
-            }, 3000)
+                delete this._requestTimeouts[uuid];
+            }, 5000)
         };
     }
 
     removeFailedTrack(item) {
         this._addTrackQueue = this._addTrackQueue.filter(it => it.topic != item.topic);
         this._trackList = this._trackList.filter(it => it.topic != item.topic);
+    }
+
+    requestReceiveError(uuid) {
+        if (this._requestTimeouts[uuid]) {
+            let item = this._trackList.find(item => {
+                return item && item.topic === this._requestTimeouts[uuid].topic;
+            });
+            this.removeRequestTimeout(uuid);
+            this.removeFailedTrack(item);
+            this.processingCurrentTrackCompleted();
+            item.onOpenFailure(item);
+        }
     }
 
     removeRequestTimeout(uuid){

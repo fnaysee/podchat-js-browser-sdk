@@ -76,9 +76,6 @@ function CallUsers(_ref) {
       for (var i in config.list) {
         var tags = {};
         var HTMLElements = config.list[i].getHTMLElements();
-        config.list[i] && console.log('HTMLElements:: ', {
-          HTMLElements: HTMLElements
-        }, config.list[i], config.list[i].user(), config.list[i].user().videoTopicName);
 
         if (config.list[i] && HTMLElements) {
           tags.container = HTMLElements.container;

@@ -379,7 +379,8 @@ function MultiTrackCallManager({app, callId, callConfig}) {
 
     function handleProcessSdpOffer(jsonMessage) {
         config.receivePeerManager.removeRequestTimeout(jsonMessage.uniqueId);
-        config.receivePeerManager.handleProcessSDPOfferForReceiveTrack(jsonMessage, () => {});
+        if(jsonMessage.topic && jsonMessage.topic.length)
+            config.receivePeerManager.handleProcessSDPOfferForReceiveTrack(jsonMessage, () => {});
     }
 
     function handleProcessSdpAnswer(jsonMessage) {
@@ -775,6 +776,7 @@ function MultiTrackCallManager({app, callId, callConfig}) {
                     break;
 
                 case 'ERROR':
+                    config.receivePeerManager.requestReceiveError(uniqueId)
                     publicized.raiseCallError(app.errorHandler.getFilledErrorObject({
                         ...errorList.CALL_SERVER_ERROR,
                         replacements: [JSON.stringify(message)]

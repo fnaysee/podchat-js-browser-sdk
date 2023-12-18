@@ -42084,7 +42084,7 @@ FilterXSS.prototype.process = function (html) {
 module.exports = FilterXSS;
 
 },{"./default":258,"./parser":260,"./util":261,"cssfilter":137}],263:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.48","date":"۱۴۰۲/۹/۲۶","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.7-snapshot.48","date":"۱۴۰۲/۹/۲۷","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],264:[function(require,module,exports){
 "use strict";
 
@@ -51066,7 +51066,7 @@ function MultiTrackCallManager(_ref) {
 
   function handleProcessSdpOffer(jsonMessage) {
     config.receivePeerManager.removeRequestTimeout(jsonMessage.uniqueId);
-    config.receivePeerManager.handleProcessSDPOfferForReceiveTrack(jsonMessage, function () {});
+    if (jsonMessage.topic && jsonMessage.topic.length) config.receivePeerManager.handleProcessSDPOfferForReceiveTrack(jsonMessage, function () {});
   }
 
   function handleProcessSdpAnswer(jsonMessage) {
@@ -51479,6 +51479,7 @@ function MultiTrackCallManager(_ref) {
           break;
 
         case 'ERROR':
+          config.receivePeerManager.requestReceiveError(uniqueId);
           publicized.raiseCallError(app.errorHandler.getFilledErrorObject(_objectSpread(_objectSpread({}, _errorHandler.errorList.CALL_SERVER_ERROR), {}, {
             replacements: [JSON.stringify(message)]
           })), null, true);
@@ -52440,7 +52441,6 @@ function CallUser(app, user) {
       config.audioIsOpen = false;
     }
 
-    console.log('debug onOpenFailure : ', item, config);
     app.call.currentCall().sendCallMessage({
       id: 'REQUEST_RECEIVING_MEDIA',
       token: app.sdkParams.token,
@@ -52900,9 +52900,6 @@ function CallUsers(_ref) {
       for (var i in config.list) {
         var tags = {};
         var HTMLElements = config.list[i].getHTMLElements();
-        config.list[i] && console.log('HTMLElements:: ', {
-          HTMLElements: HTMLElements
-        }, config.list[i], config.list[i].user(), config.list[i].user().videoTopicName);
 
         if (config.list[i] && HTMLElements) {
           tags.container = HTMLElements.container;
@@ -53421,13 +53418,15 @@ var PeerConnectionManager = /*#__PURE__*/function () {
           item = _ref3.item;
       this._requestTimeouts[uuid] = {
         callback: callback,
+        topic: item.topic,
         timeout: setTimeout(function () {
           _this3.removeFailedTrack(item);
 
           _this3.processingCurrentTrackCompleted();
 
           callback && callback(item);
-        }, 3000)
+          delete _this3._requestTimeouts[uuid];
+        }, 5000)
       };
     }
   }, {
@@ -53439,6 +53438,33 @@ var PeerConnectionManager = /*#__PURE__*/function () {
       this._trackList = this._trackList.filter(function (it) {
         return it.topic != item.topic;
       });
+    }
+  }, {
+    key: "requestReceiveError",
+    value: function requestReceiveError(uuid) {
+      var _this4 = this;
+
+      console.log('debug requestReceiveError 1', {
+        uuid: uuid
+      }, this._requestTimeouts[uuid]);
+
+      if (this._requestTimeouts[uuid]) {
+        console.log('debug requestReceiveError 2', {
+          uuid: uuid
+        });
+
+        var item = this._trackList.find(function (item) {
+          return item && item.topic === _this4._requestTimeouts[uuid].topic;
+        });
+
+        this.removeRequestTimeout(uuid);
+        console.log('debug requestReceiveError 3', {
+          item: item
+        });
+        this.removeFailedTrack(item);
+        this.processingCurrentTrackCompleted();
+        item.onOpenFailure(item);
+      }
     }
   }, {
     key: "removeRequestTimeout",
@@ -53621,22 +53647,22 @@ var PeerConnectionManager = /*#__PURE__*/function () {
   }, {
     key: "addIceCandidateToQueue",
     value: function addIceCandidateToQueue(candidate) {
-      var _this4 = this;
+      var _this5 = this;
 
       this.addIceCandidate(candidate)["catch"](function (error) {
         // console.log('debug addIceCandidateToQueue catch', error, this)
-        _this4._addIceQueue.push(candidate);
+        _this5._addIceQueue.push(candidate);
       });
     }
   }, {
     key: "watchConnectionStateChange",
     value: function watchConnectionStateChange() {
-      var _this5 = this;
+      var _this6 = this;
 
       this._peer.peerConnection.onsignalingstatechange = function (event) {
-        if (_this5._peer.peerConnection.signalingState === 'stable') {
-          _this5._addIceQueue.forEach(function (item) {
-            _this5.addIceCandidate(item);
+        if (_this6._peer.peerConnection.signalingState === 'stable') {
+          _this6._addIceQueue.forEach(function (item) {
+            _this6.addIceCandidate(item);
           });
         }
       };
@@ -53645,16 +53671,16 @@ var PeerConnectionManager = /*#__PURE__*/function () {
     key: "addIceCandidate",
     value: function () {
       var _addIceCandidate = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(data) {
-        var _this6 = this;
+        var _this7 = this;
 
         return _regenerator["default"].wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
                 return _context.abrupt("return", new Promise(function (resolve, reject) {
-                  _this6._peer.peerConnection.addIceCandidate(data)["catch"](function (err) {
+                  _this7._peer.peerConnection.addIceCandidate(data)["catch"](function (err) {
                     if (err) {
-                      console.warn("[peerConnectionManager addIceCandidate" + _this6._direction + "] " + err);
+                      console.warn("[peerConnectionManager addIceCandidate" + _this7._direction + "] " + err);
                       reject(err); // this._app.chatEvents.fireEvent('callEvents', {
                       //     type: 'CALL_ERROR',
                       //     code: 7000,
@@ -53706,7 +53732,7 @@ var PeerConnectionManager = /*#__PURE__*/function () {
   }, {
     key: "handleProcessSDPOfferForReceiveTrack",
     value: function handleProcessSDPOfferForReceiveTrack(jsonMessage, callback) {
-      var _this7 = this;
+      var _this8 = this;
 
       var topics = JSON.parse(jsonMessage.topic);
       var currentTrackData;
@@ -53721,13 +53747,13 @@ var PeerConnectionManager = /*#__PURE__*/function () {
       this._peer.peerConnection.onicecandidate = function (_ref4) {
         var candidate = _ref4.candidate;
 
-        _this7._app.call.currentCall().sendCallMessage({
+        _this8._app.call.currentCall().sendCallMessage({
           id: "RECIVE_ADD_ICE_CANDIDATE",
           // chatId: getChatId(),
           // clientId: this._app.call.currentCall().users().get(this._app.store.user().id).user().clientId,
-          brokerAddress: _this7._brokerAddress,
-          token: _this7._app.sdkParams.token,
-          chatId: _this7._callId,
+          brokerAddress: _this8._brokerAddress,
+          token: _this8._app.sdkParams.token,
+          chatId: _this8._callId,
           iceCandidate: JSON.stringify(candidate) // addition: [{mline: 0, topic: `Vi-send-${getChatId()}-12345678`}]
 
         }, null, {});
@@ -53735,10 +53761,6 @@ var PeerConnectionManager = /*#__PURE__*/function () {
 
       this._peer.peerConnection.ontrack = function (infoData) {
         var transceiver = infoData.transceiver;
-        console.log('DEBUG ', {
-          infoData: infoData,
-          transceiver: transceiver
-        });
         currentTrackData.track = transceiver.receiver.track;
         currentTrackData.onTrackCallback(currentTrackData, transceiver.receiver.track);
       };
@@ -53748,12 +53770,12 @@ var PeerConnectionManager = /*#__PURE__*/function () {
           return;
         }
 
-        _this7._app.call.currentCall().sendCallMessage({
+        _this8._app.call.currentCall().sendCallMessage({
           id: "RECIVE_SDP_ANSWER",
           sdpAnswer: sdpAnswer,
           // clientId: getClientId(),
-          token: _this7._app.sdkParams.token,
-          brokerAddress: _this7._brokerAddress,
+          token: _this8._app.sdkParams.token,
+          brokerAddress: _this8._brokerAddress,
           // brokerAddress: getBrokerAddress(),
           // chatId: getChatId(),
           addition: [{
@@ -55057,7 +55079,7 @@ function ReactionsMethods(app) {
     }
 
     app.store.reactionSummaries.decreaseCount(messageContent.messageId, messageContent.reactionVO.reaction);
-    if (app.store.user.get().isMe(messageContent.reactionVO.participantVO.id)) app.store.reactionSummaries.removeMyReaction(messageContent.messageId);
+    if (app.store.user.isMe(messageContent.reactionVO.participantVO.id)) app.store.reactionSummaries.removeMyReaction(messageContent.messageId);
     app.store.reactionsList.removeCachedData(messageContent.messageId, messageContent.reactionVO.reaction); // app.store.reactionsList.removeReactionCache(messageContent.messageId, messageContent.reactionVO.reaction);
 
     app.chatEvents.fireEvent('messageEvents', {
@@ -56328,7 +56350,7 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
       var message = this.getItem(messageId);
       if (!message) return;
 
-      if (this._app.store.user.get().isMe(userId)) {
+      if (this._app.store.user.isMe(userId)) {
         this._list[messageId].userReaction = {
           id: reactionId,
           reaction: reaction,
@@ -56566,6 +56588,11 @@ var SDKUser = /*#__PURE__*/function () {
     key: "setUser",
     value: function setUser(data) {
       this._user = data;
+    }
+  }, {
+    key: "isMe",
+    value: function isMe(userId) {
+      return this._user.id == userId;
     }
   }]);
   return SDKUser;
