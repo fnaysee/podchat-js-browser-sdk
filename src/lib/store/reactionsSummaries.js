@@ -12,10 +12,10 @@ let msgsReactionsStatus = {
 }
 
 class ReactionsSummariesCache {
-    constructor(props) {
+    constructor(app) {
         // super(props);
         this._list = {};
-        this._app = props.app;
+        this._app = app;
     }
 
     get list() {

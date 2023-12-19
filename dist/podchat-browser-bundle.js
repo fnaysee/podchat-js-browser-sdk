@@ -42084,7 +42084,7 @@ FilterXSS.prototype.process = function (html) {
 module.exports = FilterXSS;
 
 },{"./default":258,"./parser":260,"./util":261,"cssfilter":137}],263:[function(require,module,exports){
-module.exports={"version":"12.9.8-snapshot.0","date":"۱۴۰۲/۹/۲۷","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.8-snapshot.0","date":"۱۴۰۲/۹/۲۸","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],264:[function(require,module,exports){
 "use strict";
 
@@ -52472,11 +52472,11 @@ var msgsReactionsStatus = {
 };
 
 var ReactionsSummariesCache = /*#__PURE__*/function () {
-  function ReactionsSummariesCache(props) {
+  function ReactionsSummariesCache(app) {
     (0, _classCallCheck2["default"])(this, ReactionsSummariesCache); // super(props);
 
     this._list = {};
-    this._app = props.app;
+    this._app = app;
   }
 
   (0, _createClass2["default"])(ReactionsSummariesCache, [{
