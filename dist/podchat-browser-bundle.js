@@ -42084,7 +42084,7 @@ FilterXSS.prototype.process = function (html) {
 module.exports = FilterXSS;
 
 },{"./default":258,"./parser":260,"./util":261,"cssfilter":137}],263:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.48","date":"۱۴۰۲/۹/۲۷","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.7-snapshot.48","date":"۱۴۰۲/۹/۲۸","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],264:[function(require,module,exports){
 "use strict";
 
@@ -45555,7 +45555,7 @@ return JSON.parse(JSON.stringify(assistant));},formatDataToMakeAssistantHistoryL
      *    - userGroupHash                       {string}
      *    - leftWithHistory                     {boolean}
      *    - closed                              {boolean}
-     */var conversation={id:messageContent.id,joinDate:messageContent.joinDate,title:messageContent.title,inviter:undefined,participants:undefined,time:messageContent.time,lastMessage:messageContent.lastMessage,lastParticipantName:messageContent.lastParticipantName,group:messageContent.group,partner:messageContent.partner,lastParticipantImage:messageContent.lastParticipantImage,image:messageContent.image,description:messageContent.description,unreadCount:messageContent.unreadCount,lastSeenMessageId:messageContent.lastSeenMessageId,lastSeenMessageTime:messageContent.lastSeenMessageNanos?parseInt(parseInt(messageContent.lastSeenMessageTime)/1000)*1000000000+parseInt(messageContent.lastSeenMessageNanos):parseInt(messageContent.lastSeenMessageTime),lastMessageVO:undefined,pinMessageVO:undefined,partnerLastSeenMessageId:messageContent.partnerLastSeenMessageId,partnerLastSeenMessageTime:messageContent.partnerLastSeenMessageNanos?parseInt(parseInt(messageContent.partnerLastSeenMessageTime)/1000)*1000000000+parseInt(messageContent.partnerLastSeenMessageNanos):parseInt(messageContent.partnerLastSeenMessageTime),partnerLastDeliveredMessageId:messageContent.partnerLastDeliveredMessageId,partnerLastDeliveredMessageTime:messageContent.partnerLastDeliveredMessageNanos?parseInt(parseInt(messageContent.partnerLastDeliveredMessageTime)/1000)*1000000000+parseInt(messageContent.partnerLastDeliveredMessageNanos):parseInt(messageContent.partnerLastDeliveredMessageTime),archiveThread:messageContent.archiveThread,type:messageContent.type,metadata:messageContent.metadata,mute:messageContent.mute,participantCount:messageContent.participantCount,canEditInfo:messageContent.canEditInfo,canSpam:messageContent.canSpam,admin:messageContent.admin,mentioned:messageContent.mentioned,pin:messageContent.pin,uniqueName:messageContent.uniqueName,userGroupHash:messageContent.userGroupHash,leftWithHistory:messageContent.leftWithHistory,closed:messageContent.closed,seenByAnyAssistant:messageContent.seenByAnyAssistant};// Add inviter if exist
+     */var conversation={id:messageContent.id,joinDate:messageContent.joinDate,title:messageContent.title,inviter:undefined,participants:undefined,time:messageContent.time,lastMessage:messageContent.lastMessage,lastParticipantName:messageContent.lastParticipantName,group:messageContent.group,partner:messageContent.partner,lastParticipantImage:messageContent.lastParticipantImage,image:messageContent.image,description:messageContent.description,unreadCount:messageContent.unreadCount,lastSeenMessageId:messageContent.lastSeenMessageId,lastSeenMessageTime:messageContent.lastSeenMessageNanos?parseInt(parseInt(messageContent.lastSeenMessageTime)/1000)*1000000000+parseInt(messageContent.lastSeenMessageNanos):parseInt(messageContent.lastSeenMessageTime),lastMessageVO:undefined,pinMessageVO:undefined,partnerLastSeenMessageId:messageContent.partnerLastSeenMessageId,partnerLastSeenMessageTime:messageContent.partnerLastSeenMessageNanos?parseInt(parseInt(messageContent.partnerLastSeenMessageTime)/1000)*1000000000+parseInt(messageContent.partnerLastSeenMessageNanos):parseInt(messageContent.partnerLastSeenMessageTime),partnerLastDeliveredMessageId:messageContent.partnerLastDeliveredMessageId,partnerLastDeliveredMessageTime:messageContent.partnerLastDeliveredMessageNanos?parseInt(parseInt(messageContent.partnerLastDeliveredMessageTime)/1000)*1000000000+parseInt(messageContent.partnerLastDeliveredMessageNanos):parseInt(messageContent.partnerLastDeliveredMessageTime),archiveThread:messageContent.archiveThread,type:messageContent.type,metadata:messageContent.metadata,mute:messageContent.mute,participantCount:messageContent.participantCount,canEditInfo:messageContent.canEditInfo,canSpam:messageContent.canSpam,admin:messageContent.admin,mentioned:messageContent.mentioned,pin:messageContent.pin,uniqueName:messageContent.uniqueName,userGroupHash:messageContent.userGroupHash,leftWithHistory:messageContent.leftWithHistory,closed:messageContent.closed,seenByAnyAssistant:messageContent.seenByAnyAssistant,lastReactionVO:messageContent.lastReactionVO};// Add inviter if exist
 if(messageContent.inviter){conversation.inviter=threadParticipantsMethods.formatDataToMakeParticipant(messageContent.inviter,messageContent.id);}// Add participants list if exist
 if(messageContent.participants&&Array.isArray(messageContent.participants)){conversation.participants=[];for(var i=0;i<messageContent.participants.length;i++){var participantData=threadParticipantsMethods.formatDataToMakeParticipant(messageContent.participants[i],messageContent.id);if(participantData){conversation.participants.push(participantData);}}}// Add lastMessageVO if exist
 if(messageContent.lastMessageVO){conversation.lastMessageVO=formatDataToMakeMessage(messageContent.id,messageContent.lastMessageVO);}// Add pinMessageVO if exist
@@ -53444,23 +53444,12 @@ var PeerConnectionManager = /*#__PURE__*/function () {
     value: function requestReceiveError(uuid) {
       var _this4 = this;
 
-      console.log('debug requestReceiveError 1', {
-        uuid: uuid
-      }, this._requestTimeouts[uuid]);
-
       if (this._requestTimeouts[uuid]) {
-        console.log('debug requestReceiveError 2', {
-          uuid: uuid
-        });
-
         var item = this._trackList.find(function (item) {
           return item && item.topic === _this4._requestTimeouts[uuid].topic;
         });
 
         this.removeRequestTimeout(uuid);
-        console.log('debug requestReceiveError 3', {
-          item: item
-        });
         this.removeFailedTrack(item);
         this.processingCurrentTrackCompleted();
         item.onOpenFailure(item);

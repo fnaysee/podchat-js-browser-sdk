@@ -317,23 +317,12 @@ var PeerConnectionManager = /*#__PURE__*/function () {
     value: function requestReceiveError(uuid) {
       var _this4 = this;
 
-      console.log('debug requestReceiveError 1', {
-        uuid: uuid
-      }, this._requestTimeouts[uuid]);
-
       if (this._requestTimeouts[uuid]) {
-        console.log('debug requestReceiveError 2', {
-          uuid: uuid
-        });
-
         var item = this._trackList.find(function (item) {
           return item && item.topic === _this4._requestTimeouts[uuid].topic;
         });
 
         this.removeRequestTimeout(uuid);
-        console.log('debug requestReceiveError 3', {
-          item: item
-        });
         this.removeFailedTrack(item);
         this.processingCurrentTrackCompleted();
         item.onOpenFailure(item);

@@ -3675,7 +3675,8 @@ function Chat(params) {
       userGroupHash: messageContent.userGroupHash,
       leftWithHistory: messageContent.leftWithHistory,
       closed: messageContent.closed,
-      seenByAnyAssistant: messageContent.seenByAnyAssistant
+      seenByAnyAssistant: messageContent.seenByAnyAssistant,
+      lastReactionVO: messageContent.lastReactionVO
     }; // Add inviter if exist
 
     if (messageContent.inviter) {
