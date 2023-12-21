@@ -9,7 +9,6 @@ import buildConfig from "./buildConfig.json"
 import {deprecatedString, printIsDeprecate} from "./deprecateMethods";
 import xss from "xss"
 import ThreadParticipantsMethods from "./lib/chat/threadParticipantsMethods"
-
 import {
     chatMessageVOTypes,
     inviteeVOidTypes,
@@ -23,8 +22,8 @@ import {
     chatStickerTypes,
     customizeReactionTypes
 } from "./lib/constants";
-
 import ReactionsMethods from "./lib/chat/reactionsMethods";
+import ThreadMethods from "./lib/chat/threadMethods";
 
 function Chat(params) {
     /*******************************************************
@@ -34,6 +33,7 @@ function Chat(params) {
     const app = new App();
     const reactionsMethods = new ReactionsMethods(app);
     const threadParticipantsMethods = new ThreadParticipantsMethods(app);
+    const threadMethods = new ThreadMethods(app);
 
     app.sdkParams.appId = params.appId;
     app.sdkParams.token = params.token || "111";
@@ -2923,9 +2923,7 @@ function Chat(params) {
                  * Type 236    GET PIN MESSAGE
                  */
                 case chatMessageVOTypes.GET_PIN_MESSAGE:
-                    if (app.store.messagesCallbacks[uniqueId]) {
-                        app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
-                    }
+                    threadMethods.onGetPinMessages(uniqueId, messageContent, contentCount)
                     break;
 
                 /**
@@ -11945,21 +11943,7 @@ function Chat(params) {
             console.error(`Protocol ${proto} is not supported in SDK. Valid protocols: "webrtc", "websocket"`)
         }
     }
-    publicized.getPinMessages = function (params, callback) {
-        var sendData = {
-            chatMessageVOType: chatMessageVOTypes.GET_PIN_MESSAGE,
-            typeCode: app.sdkParams.generalTypeCode, //params.typeCode,
-            token: app.sdkParams.token,
-            content: params.content
-        };
-
-        return app.messenger.sendMessage(sendData, {
-            onResult: function (result) {
-
-                callback && callback(result);
-            }
-        });
-    };
+    publicized.getPinMessages = threadMethods.getPinMessages;
 
     publicized.lastMessageInfo = function (params, callback) {
         var sendData = {
