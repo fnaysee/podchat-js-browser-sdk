@@ -96,6 +96,9 @@ function ThreadsList(app) {
       if (localThreadIndex > -1) {
         delete list[localThreadIndex];
       }
+    },
+    removeAll: function removeAll() {
+      list = [];
     }
   };
   return threadsList;
@@ -104,7 +107,9 @@ function ThreadsList(app) {
 function ThreadObject(app, thread) {
   var config = {
     thread: thread,
-    latestReceivedMessage: null
+    isValid: true,
+    latestReceivedMessage: null,
+    pinMessageRequested: false
   };
 
   function makeSureUnreadCountExists(thread) {
@@ -114,7 +119,7 @@ function ThreadObject(app, thread) {
   }
 
   makeSureUnreadCountExists(config.thread);
-  return {
+  var publicized = {
     set: function set(thread) {
       makeSureUnreadCountExists(thread);
       config.thread = _objectSpread(_objectSpread({}, config.thread), thread);
@@ -173,6 +178,27 @@ function ThreadObject(app, thread) {
       set: function set(message) {
         config.latestReceivedMessage = message;
       }
+    },
+    pinMessage: {
+      hasPinMessage: function hasPinMessage() {
+        return config.thread.pinMessageVO;
+      },
+      isPinMessageRequested: function isPinMessageRequested() {
+        return config.pinMessageRequested;
+      },
+      setPinMessageRequested: function setPinMessageRequested(val) {
+        return config.pinMessageRequested = val;
+      },
+      setPinMessage: function setPinMessage(message) {
+        config.thread.pinMessageVO = message;
+      },
+      removePinMessage: function removePinMessage() {
+        config.thread.pinMessageVO = null;
+      }
+    },
+    isDataValid: function isDataValid() {
+      return config.isValid;
     }
   };
+  return publicized;
 }

@@ -44856,10 +44856,10 @@ function ChatCall(app, params) {
 var _default = ChatCall;
 exports["default"] = _default;
 
-},{"./lib/call/call":269,"./lib/call/callServerManager":271,"./lib/call/callsList":275,"./lib/call/deviceManager2":276,"./lib/constants":282,"./lib/errorHandler":283,"./utility/utility":293,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/defineProperty":19,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/helpers/objectDestructuringEmpty":23,"@babel/runtime/helpers/typeof":26,"@babel/runtime/regenerator":28}],265:[function(require,module,exports){
-'use strict';var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _app=_interopRequireDefault(require("./lib/app"));var _podasyncWsOnly=_interopRequireDefault(require("podasync-ws-only"));var _utility=_interopRequireDefault(require("./utility/utility"));var _call=_interopRequireDefault(require("./call.module"));var _messaging=_interopRequireDefault(require("./messaging.module"));var _buildConfig=_interopRequireDefault(require("./buildConfig.json"));var _deprecateMethods=require("./deprecateMethods");var _xss=_interopRequireDefault(require("xss"));var _threadParticipantsMethods=_interopRequireDefault(require("./lib/chat/threadParticipantsMethods"));var _constants=require("./lib/constants");var _reactionsMethods=_interopRequireDefault(require("./lib/chat/reactionsMethods"));function Chat(params){/*******************************************************
+},{"./lib/call/call":269,"./lib/call/callServerManager":271,"./lib/call/callsList":275,"./lib/call/deviceManager2":276,"./lib/constants":283,"./lib/errorHandler":284,"./utility/utility":294,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/defineProperty":19,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/helpers/objectDestructuringEmpty":23,"@babel/runtime/helpers/typeof":26,"@babel/runtime/regenerator":28}],265:[function(require,module,exports){
+'use strict';var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _toConsumableArray2=_interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));var _typeof2=_interopRequireDefault(require("@babel/runtime/helpers/typeof"));var _app=_interopRequireDefault(require("./lib/app"));var _podasyncWsOnly=_interopRequireDefault(require("podasync-ws-only"));var _utility=_interopRequireDefault(require("./utility/utility"));var _call=_interopRequireDefault(require("./call.module"));var _messaging=_interopRequireDefault(require("./messaging.module"));var _buildConfig=_interopRequireDefault(require("./buildConfig.json"));var _deprecateMethods=require("./deprecateMethods");var _xss=_interopRequireDefault(require("xss"));var _threadParticipantsMethods=_interopRequireDefault(require("./lib/chat/threadParticipantsMethods"));var _constants=require("./lib/constants");var _reactionsMethods=_interopRequireDefault(require("./lib/chat/reactionsMethods"));var _threadMethods=_interopRequireDefault(require("./lib/chat/threadMethods"));function Chat(params){/*******************************************************
      *          P R I V A T E   V A R I A B L E S          *
-     *******************************************************/var app=new _app["default"]();var reactionsMethods=new _reactionsMethods["default"](app);var threadParticipantsMethods=new _threadParticipantsMethods["default"](app);app.sdkParams.appId=params.appId;app.sdkParams.token=params.token||"111";app.sdkParams.generalTypeCode=params.typeCode||'default';app.sdkParams.typeCodeOwnerId=params.typeCodeOwnerId||null;app.sdkParams.mapApiKey=params.mapApiKey||'8b77db18704aa646ee5aaea13e7370f4f88b9e8c';app.sdkParams.productEnv=typeof navigator!='undefined'?navigator.product:'undefined';app.sdkParams.forceWaitQueueInMemory=params.forceWaitQueueInMemory&&typeof params.forceWaitQueueInMemory==='boolean'?params.forceWaitQueueInMemory:false;app.sdkParams.grantDeviceIdFromSSO=params.grantDeviceIdFromSSO&&typeof params.grantDeviceIdFromSSO==='boolean'?params.grantDeviceIdFromSSO:false;app.sdkParams.deliveryIntervalPitch=params.deliveryIntervalPitch||2000;app.sdkParams.seenIntervalPitch=params.seenIntervalPitch||2000;app.sdkParams.systemMessageIntervalPitch=params.systemMessageIntervalPitch||1000;app.sdkParams.socketAddress=params.socketAddress;app.sdkParams.serverName=params.serverName;app.sdkParams.wsConnectionWaitTime=params.wsConnectionWaitTime;app.sdkParams.connectionRetryInterval=params.connectionRetryInterval;app.sdkParams.msgPriority=params.msgPriority;app.sdkParams.messageTtl=params.messageTtl||10000;app.sdkParams.reconnectOnClose=params.reconnectOnClose;app.sdkParams.asyncLogging=params.asyncLogging;app.sdkParams.connectionCheckTimeout=params.connectionCheckTimeout;app.sdkParams.httpRequestTimeout=params.httpRequestTimeout>=0?params.httpRequestTimeout:0;app.sdkParams.asyncRequestTimeout=typeof params.asyncRequestTimeout==='number'&&params.asyncRequestTimeout>=0?params.asyncRequestTimeout:0;app.sdkParams.connectionCheckTimeoutThreshold=params.connectionCheckTimeoutThreshold;app.sdkParams.httpUploadRequestTimeout=params.httpUploadRequestTimeout>=0?params.httpUploadRequestTimeout:0;app.sdkParams.actualTimingLog=params.asyncLogging.actualTiming&&typeof params.asyncLogging.actualTiming==='boolean'?params.asyncLogging.actualTiming:false;app.sdkParams.consoleLogging=params.asyncLogging.consoleLogging&&typeof params.asyncLogging.consoleLogging==='boolean'?params.asyncLogging.consoleLogging:false;app.sdkParams.fullResponseObject=params.fullResponseObject||false;app.sdkParams.webrtcConfig=params.webrtcConfig?params.webrtcConfig:null;app.sdkParams.chatPingMessageInterval=params.chatPingMessageInterval;app.sdkParams.protocol=params.protocol;app.sdkParams.callRequestTimeout=typeof params.callRequestTimeout==='number'&&params.callRequestTimeout>=0?params.callRequestTimeout:10000;app.sdkParams.callOptions=params.callOptions;var asyncClient,peerId,oldPeerId,localDeviceId,//deviceId,
+     *******************************************************/var app=new _app["default"]();var reactionsMethods=new _reactionsMethods["default"](app);var threadParticipantsMethods=new _threadParticipantsMethods["default"](app);var threadMethods=new _threadMethods["default"](app);app.sdkParams.appId=params.appId;app.sdkParams.token=params.token||"111";app.sdkParams.generalTypeCode=params.typeCode||'default';app.sdkParams.typeCodeOwnerId=params.typeCodeOwnerId||null;app.sdkParams.mapApiKey=params.mapApiKey||'8b77db18704aa646ee5aaea13e7370f4f88b9e8c';app.sdkParams.productEnv=typeof navigator!='undefined'?navigator.product:'undefined';app.sdkParams.forceWaitQueueInMemory=params.forceWaitQueueInMemory&&typeof params.forceWaitQueueInMemory==='boolean'?params.forceWaitQueueInMemory:false;app.sdkParams.grantDeviceIdFromSSO=params.grantDeviceIdFromSSO&&typeof params.grantDeviceIdFromSSO==='boolean'?params.grantDeviceIdFromSSO:false;app.sdkParams.deliveryIntervalPitch=params.deliveryIntervalPitch||2000;app.sdkParams.seenIntervalPitch=params.seenIntervalPitch||2000;app.sdkParams.systemMessageIntervalPitch=params.systemMessageIntervalPitch||1000;app.sdkParams.socketAddress=params.socketAddress;app.sdkParams.serverName=params.serverName;app.sdkParams.wsConnectionWaitTime=params.wsConnectionWaitTime;app.sdkParams.connectionRetryInterval=params.connectionRetryInterval;app.sdkParams.msgPriority=params.msgPriority;app.sdkParams.messageTtl=params.messageTtl||10000;app.sdkParams.reconnectOnClose=params.reconnectOnClose;app.sdkParams.asyncLogging=params.asyncLogging;app.sdkParams.connectionCheckTimeout=params.connectionCheckTimeout;app.sdkParams.httpRequestTimeout=params.httpRequestTimeout>=0?params.httpRequestTimeout:0;app.sdkParams.asyncRequestTimeout=typeof params.asyncRequestTimeout==='number'&&params.asyncRequestTimeout>=0?params.asyncRequestTimeout:0;app.sdkParams.connectionCheckTimeoutThreshold=params.connectionCheckTimeoutThreshold;app.sdkParams.httpUploadRequestTimeout=params.httpUploadRequestTimeout>=0?params.httpUploadRequestTimeout:0;app.sdkParams.actualTimingLog=params.asyncLogging.actualTiming&&typeof params.asyncLogging.actualTiming==='boolean'?params.asyncLogging.actualTiming:false;app.sdkParams.consoleLogging=params.asyncLogging.consoleLogging&&typeof params.asyncLogging.consoleLogging==='boolean'?params.asyncLogging.consoleLogging:false;app.sdkParams.fullResponseObject=params.fullResponseObject||false;app.sdkParams.webrtcConfig=params.webrtcConfig?params.webrtcConfig:null;app.sdkParams.chatPingMessageInterval=params.chatPingMessageInterval;app.sdkParams.protocol=params.protocol;app.sdkParams.callRequestTimeout=typeof params.callRequestTimeout==='number'&&params.callRequestTimeout>=0?params.callRequestTimeout:10000;app.sdkParams.callOptions=params.callOptions;var asyncClient,peerId,oldPeerId,localDeviceId,//deviceId,
 //db,
 //queueDb,
 //hasCache = app.sdkParams.productEnv !== 'ReactNative' && typeof Dexie != 'undefined',
@@ -45363,7 +45363,7 @@ break;/**
                  * Type 234    LAST_MESSAGE_INFO
                  */case _constants.chatMessageVOTypes.LAST_MESSAGE_INFO:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
                  * Type 236    GET PIN MESSAGE
-                 */case _constants.chatMessageVOTypes.GET_PIN_MESSAGE:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
+                 */case _constants.chatMessageVOTypes.GET_PIN_MESSAGE:threadMethods.onGetPinMessages(uniqueId,messageContent,contentCount);break;/**
                  * Type 237    GET_THREAD_LIGHT
                  */case _constants.chatMessageVOTypes.GET_THREAD_LIGHT:if(app.store.messagesCallbacks[uniqueId]){app.store.messagesCallbacks[uniqueId](_utility["default"].createReturnData(false,'',0,messageContent,contentCount,uniqueId));}break;/**
                  * Type 238    REPLY_PRIVATELY
@@ -46831,8 +46831,7 @@ token:app.sdkParams.token,subjectId:threadId};return app.messenger.sendMessage(s
 token:app.sdkParams.token,subjectId:threadId};return app.messenger.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.chatStickerTypes=_constants.chatStickerTypes;publicized.addReaction=reactionsMethods.addReaction;publicized.getMyReaction=reactionsMethods.getMyReaction;publicized.replaceReaction=reactionsMethods.replaceReaction;publicized.removeReaction=reactionsMethods.removeReaction;publicized.getReactionList=reactionsMethods.getReactionList;publicized.getReactionsSummaries=reactionsMethods.getReactionsSummaries;publicized.version=function(){console.log("%c[SDK] Version: podchat-browser@"+_buildConfig["default"].version,"color:green; font-size:13px");console.log("%c[SDK] Build date:"+_buildConfig["default"].date,"color:green;font-size:13px");console.log("%c[SDK] Additional info: "+_buildConfig["default"].VersionInfo,"color:green;font-size:13px");return _buildConfig["default"];};publicized.changeProtocol=function(){var proto=arguments.length>0&&arguments[0]!==undefined?arguments[0]:"websocket";if(["webrtc","websocket","auto"].includes(proto)){if(proto!=protocolManager.getCurrentProtocol()){protocolManager.switchProtocol(proto.toLowerCase());// app.sdkParams.protocol = protocolSwitching.getCurrentProtocol();
 // asyncClient.logout();
 // initAsync();
-}else{console.warn("SDK is currently using the ".concat(proto," protocol. Nothing to do."));}}else{console.error("Protocol ".concat(proto," is not supported in SDK. Valid protocols: \"webrtc\", \"websocket\""));}};publicized.getPinMessages=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.GET_PIN_MESSAGE,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
-token:app.sdkParams.token,content:params.content};return app.messenger.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.lastMessageInfo=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.LAST_MESSAGE_INFO,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
+}else{console.warn("SDK is currently using the ".concat(proto," protocol. Nothing to do."));}}else{console.error("Protocol ".concat(proto," is not supported in SDK. Valid protocols: \"webrtc\", \"websocket\""));}};publicized.getPinMessages=threadMethods.getPinMessages;publicized.lastMessageInfo=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.LAST_MESSAGE_INFO,typeCode:app.sdkParams.generalTypeCode,//params.typeCode,
 token:app.sdkParams.token,content:params.content};return app.messenger.sendMessage(sendData,{onResult:function onResult(result){if(!result.hasError){var formattedData={};if(result.result&&Object.values(result.result).length){Object.entries(result.result).forEach(function(item){formattedData[item[0]]=formatDataToMakeMessage(item[0],item[1]);});result.result=formattedData;}}callback&&callback(result);}});};publicized.setAdminRole=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.SET_ADMIN_ROLE_TO_USER,typeCode:sdkParams.generalTypeCode,//params.typeCode,
 token:sdkParams.token,subjectId:params.threadId,content:params.content};return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.removeAdminRole=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.REMOVE_ADMIN_ROLE_FROM_USER,typeCode:sdkParams.generalTypeCode,//params.typeCode,
 token:sdkParams.token,subjectId:params.threadId,content:params.content};return chatMessaging.sendMessage(sendData,{onResult:function onResult(result){callback&&callback(result);}});};publicized.setRoleToUser=setRoleToUser;publicized.removeRoleFromUser=removeRoleFromUser;publicized.customizeReaction=function(params,callback){var sendData={chatMessageVOType:_constants.chatMessageVOTypes.CUSTOMIZE_REACTION,typeCode:sdkParams.generalTypeCode,//params.typeCode,
@@ -46840,7 +46839,7 @@ token:sdkParams.token,subjectId:params.threadId,content:{"reactionStatus":_const
 window.PodChat=Chat;}var _default=Chat;// })();
 exports["default"]=_default;
 
-},{"./buildConfig.json":263,"./call.module":264,"./deprecateMethods":266,"./lib/app":268,"./lib/chat/reactionsMethods":280,"./lib/chat/threadParticipantsMethods":281,"./lib/constants":282,"./messaging.module":292,"./utility/utility":293,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/helpers/toConsumableArray":25,"@babel/runtime/helpers/typeof":26,"podasync-ws-only":1,"xss":259}],266:[function(require,module,exports){
+},{"./buildConfig.json":263,"./call.module":264,"./deprecateMethods":266,"./lib/app":268,"./lib/chat/reactionsMethods":280,"./lib/chat/threadMethods":281,"./lib/chat/threadParticipantsMethods":282,"./lib/constants":283,"./messaging.module":293,"./utility/utility":294,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/helpers/toConsumableArray":25,"@babel/runtime/helpers/typeof":26,"podasync-ws-only":1,"xss":259}],266:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -47017,7 +47016,7 @@ function ChatEvents(app) {
 var _default = ChatEvents;
 exports["default"] = _default;
 
-},{"./utility/utility":293,"@babel/runtime/helpers/interopRequireDefault":20}],268:[function(require,module,exports){
+},{"./utility/utility":294,"@babel/runtime/helpers/interopRequireDefault":20}],268:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -47050,7 +47049,7 @@ function App() {
 var _default = App;
 exports["default"] = _default;
 
-},{"../events.module":267,"./errorHandler":283,"./requestBlocker":284,"./sdkParams":285,"./store":287,"@babel/runtime/helpers/interopRequireDefault":20}],269:[function(require,module,exports){
+},{"../events.module":267,"./errorHandler":284,"./requestBlocker":285,"./sdkParams":286,"./store":288,"@babel/runtime/helpers/interopRequireDefault":20}],269:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -47781,7 +47780,7 @@ function CallManager(_ref) {
           var user = config.users.get(app.store.user.get().id);
 
           if (user && user.user().video) {
-            user.videoTopicManager().restartMediaOnKeyFrame([2000, 4000, 8000, 12000]);
+            user.videoTopicManager().restartMediaOnKeyFrame(app.store.user.get().id, [2000, 4000, 8000, 12000]);
           }
 
           var screenShareuser = config.users.get('screenShare');
@@ -48403,7 +48402,7 @@ function ScreenShareStateManager(app) {
   };
 }
 
-},{"../../utility/utility":293,"../constants":282,"../errorHandler":283,"./callServerManager":271,"./callUsers":274,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/defineProperty":19,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/regenerator":28}],271:[function(require,module,exports){
+},{"../../utility/utility":294,"../constants":283,"../errorHandler":284,"./callServerManager":271,"./callUsers":274,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/defineProperty":19,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/regenerator":28}],271:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -49392,7 +49391,7 @@ function CallTopicManager(_ref) {
   return publicized;
 }
 
-},{"../../utility/utility":293,"../errorHandler":283,"./topicMetaDataManager":278,"./webrtcPeer":279,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/helpers/toConsumableArray":25,"@babel/runtime/regenerator":28}],273:[function(require,module,exports){
+},{"../../utility/utility":294,"../errorHandler":284,"./topicMetaDataManager":278,"./webrtcPeer":279,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/helpers/toConsumableArray":25,"@babel/runtime/regenerator":28}],273:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -50607,7 +50606,7 @@ function DeviceManager(app) {
 
 ;
 
-},{"../constants.js":282,"../errorHandler.js":283,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/regenerator":28}],277:[function(require,module,exports){
+},{"../constants.js":283,"../errorHandler.js":284,"@babel/runtime/helpers/asyncToGenerator":16,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/regenerator":28}],277:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -50784,7 +50783,7 @@ function SharedData(app) {
 var _default = SharedData;
 exports["default"] = _default;
 
-},{"../constants":282,"../errorHandler":283}],278:[function(require,module,exports){
+},{"../constants":283,"../errorHandler":284}],278:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -51431,7 +51430,118 @@ function ReactionsMethods(app) {
 var _default = ReactionsMethods;
 exports["default"] = _default;
 
-},{"../../utility/utility":293,"../constants":282,"@babel/runtime/helpers/interopRequireDefault":20}],281:[function(require,module,exports){
+},{"../../utility/utility":294,"../constants":283,"@babel/runtime/helpers/interopRequireDefault":20}],281:[function(require,module,exports){
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+
+var _constants = require("../constants");
+
+var _utility = _interopRequireDefault(require("../../utility/utility"));
+
+function ThreadMethods(app) {
+  var pinMessageRequests = {};
+
+  function getPinMessages(params, callback) {
+    var sendData = {
+      chatMessageVOType: _constants.chatMessageVOTypes.GET_PIN_MESSAGE,
+      typeCode: app.sdkParams.generalTypeCode,
+      //params.typeCode,
+      token: app.sdkParams.token // content: params.content
+
+    };
+
+    if (!params.uniqueId) {
+      sendData.uniqueId = _utility["default"].generateUUID();
+    }
+
+    if (!params.content || !params.content.length) {
+      return;
+    }
+
+    var mustRequestIds = [],
+        existingItems = [];
+    params.content.forEach(function (item) {
+      var thread = app.store.threads.findOrCreate({
+        id: item
+      });
+
+      if (!thread.isPinMessageRequested() && !thread.pinMessageVO) {
+        mustRequestIds.push(item);
+      } else if (thread.pinMessageVO) {
+        existingItems.push(JSON.parse(JSON.stringify({
+          id: thread.id,
+          pinMessageVO: thread.pinMessageVO
+        })));
+      }
+    });
+
+    if (existingItems.length) {
+      app.chatEvents.fireEvent('threadEvents', {
+        type: 'GET_PIN_MESSAGES',
+        result: existingItems,
+        uniqueId: sendData.uniqueId
+      });
+    }
+
+    if (mustRequestIds.length) {
+      pinMessageRequests[sendData.uniqueId] = mustRequestIds;
+      return app.messenger.sendMessage(sendData);
+    } //     onResult: function (result) {
+    //
+    //         callback && callback(result);
+    //     }
+    // });
+
+  }
+
+  function onGetPinMessages(uniqueId, messageContent, contentCount) {
+    if (pinMessageRequests[uniqueId]) {
+      var result = [];
+      pinMessageRequests[uniqueId].forEach(function (it) {
+        var th = app.store.threads.findOrCreate({
+          id: it.id
+        });
+        var serverResult = messageContent.length && messageContent.find(function (item) {
+          return item.id == th.id;
+        });
+
+        if (serverResult) {
+          th.pinMessage.setPinMessage(serverResult.pinMessageVO);
+          result.push(JSON.parse(JSON.stringify({
+            id: th.id,
+            pinMessageVO: serverResult.pinMessageVO
+          })));
+        }
+
+        th.pinMessage.setPinMessageRequested(true);
+      });
+      app.chatEvents.fireEvent('threadEvents', {
+        type: 'GET_PIN_MESSAGES',
+        result: result,
+        uniqueId: uniqueId
+      });
+    } // if (app.store.messagesCallbacks[uniqueId]) {
+    //     app.store.messagesCallbacks[uniqueId](Utility.createReturnData(false, '', 0, messageContent, contentCount, uniqueId));
+    // }
+
+  }
+
+  return {
+    getPinMessages: getPinMessages,
+    onGetPinMessages: onGetPinMessages
+  };
+}
+
+var _default = ThreadMethods;
+exports["default"] = _default;
+
+},{"../../utility/utility":294,"../constants":283,"@babel/runtime/helpers/interopRequireDefault":20}],282:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -51636,7 +51746,7 @@ function ThreadParticipantsMethods(app) {
 var _default = ThreadParticipantsMethods;
 exports["default"] = _default;
 
-},{"../constants":282}],282:[function(require,module,exports){
+},{"../constants":283}],283:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -51881,7 +51991,7 @@ var customizeReactionTypes = {
 };
 exports.customizeReactionTypes = customizeReactionTypes;
 
-},{}],283:[function(require,module,exports){
+},{}],284:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -52067,7 +52177,7 @@ function ErrorHandler(app) {
 var _default = ErrorHandler;
 exports["default"] = _default;
 
-},{"@babel/runtime/helpers/defineProperty":19,"@babel/runtime/helpers/interopRequireDefault":20}],284:[function(require,module,exports){
+},{"@babel/runtime/helpers/defineProperty":19,"@babel/runtime/helpers/interopRequireDefault":20}],285:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -52173,7 +52283,7 @@ function RequestBlocker() {
 var _default = RequestBlocker;
 exports["default"] = _default;
 
-},{}],285:[function(require,module,exports){
+},{}],286:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -52230,7 +52340,7 @@ function SDKParams() {
   };
 }
 
-},{}],286:[function(require,module,exports){
+},{}],287:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -52258,7 +52368,7 @@ function StoreEvents() {
   };
 }
 
-},{"@babel/runtime/helpers/interopRequireDefault":20,"events":169}],287:[function(require,module,exports){
+},{"@babel/runtime/helpers/interopRequireDefault":20,"events":169}],288:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -52281,16 +52391,16 @@ function Store(app) {
     threads: new _threads.ThreadsList(app),
     events: new _eventEmitter.StoreEvents(),
     reactionSummaries: new _reactionsSummaries.ReactionsSummariesCache(app),
+    reactionsList: new _reactionsList.ReactionsListCache(app),
     user: new _user.SDKUser(app),
     threadCallbacks: {},
     sendMessageCallbacks: {},
     messagesCallbacks: {},
-    asyncRequestTimeouts: {},
-    reactionsList: new _reactionsList.ReactionsListCache(app)
+    asyncRequestTimeouts: {}
   };
 }
 
-},{"./eventEmitter":286,"./reactionsList":288,"./reactionsSummaries":289,"./threads":290,"./user":291}],288:[function(require,module,exports){
+},{"./eventEmitter":287,"./reactionsList":289,"./reactionsSummaries":290,"./threads":291,"./user":292}],289:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -52417,7 +52527,7 @@ var ReactionsListCache = /*#__PURE__*/function () {
 
 exports.ReactionsListCache = ReactionsListCache;
 
-},{"@babel/runtime/helpers/classCallCheck":17,"@babel/runtime/helpers/createClass":18,"@babel/runtime/helpers/interopRequireDefault":20}],289:[function(require,module,exports){
+},{"@babel/runtime/helpers/classCallCheck":17,"@babel/runtime/helpers/createClass":18,"@babel/runtime/helpers/interopRequireDefault":20}],290:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -52686,7 +52796,7 @@ var ReactionsSummariesCache = /*#__PURE__*/function () {
 
 exports.ReactionsSummariesCache = ReactionsSummariesCache;
 
-},{"@babel/runtime/helpers/classCallCheck":17,"@babel/runtime/helpers/createClass":18,"@babel/runtime/helpers/defineProperty":19,"@babel/runtime/helpers/interopRequireDefault":20}],290:[function(require,module,exports){
+},{"@babel/runtime/helpers/classCallCheck":17,"@babel/runtime/helpers/createClass":18,"@babel/runtime/helpers/defineProperty":19,"@babel/runtime/helpers/interopRequireDefault":20}],291:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -52724,7 +52834,6 @@ function _objectSpread(target) {
   return target;
 }
 
-var list = [];
 var eventsList = {
   SINGLE_THREAD_UPDATE: "singleThreadUpdate",
   UNREAD_COUNT_UPDATED: 'unreadCountUpdated',
@@ -52732,7 +52841,8 @@ var eventsList = {
 };
 
 function ThreadsList(app) {
-  var threadsList = {
+  var list = [],
+      threadsList = {
     eventsList: eventsList,
     get: function get(id) {
       return list[threadsList.findIndex(id)];
@@ -52740,10 +52850,31 @@ function ThreadsList(app) {
     getAll: function getAll() {
       return list;
     },
+    getPinMessages: function getPinMessages(ids) {
+      var result = [];
+      ids.forEach(function (item) {
+        var th = threadsList.get(item);
+
+        if (th.getField('pinMessageVO')) {
+          result.push(th.getField('pinMessageVO'));
+        }
+      });
+      return result;
+    },
     findIndex: function findIndex(threadId) {
       return list.findIndex(function (item) {
         return (item === null || item === void 0 ? void 0 : item.get().id) == threadId;
       });
+    },
+    findOrCreate: function findOrCreate(thread) {
+      var th = threadsList.get(thread.id);
+
+      if (!th) {
+        //TODO: make sure we don't break unreadcount
+        th = threadsList.save(thread);
+      }
+
+      return th;
     },
     save: function save(thread) {
       var localThread;
@@ -52754,10 +52885,12 @@ function ThreadsList(app) {
         localThread = list[localThreadIndex];
       } else {
         localThread = new ThreadObject(app, thread);
+        localThreadIndex = 0;
         list = [localThread].concat(list);
       }
 
       app.store.events.emit(eventsList.SINGLE_THREAD_UPDATE, localThread.get());
+      return list[localThreadIndex];
     },
     saveMany: function saveMany(newThreads) {
       if (Array.isArray(newThreads)) {
@@ -52784,6 +52917,9 @@ function ThreadsList(app) {
       if (localThreadIndex > -1) {
         delete list[localThreadIndex];
       }
+    },
+    removeAll: function removeAll() {
+      list = [];
     }
   };
   return threadsList;
@@ -52792,7 +52928,9 @@ function ThreadsList(app) {
 function ThreadObject(app, thread) {
   var config = {
     thread: thread,
-    latestReceivedMessage: null
+    isValid: true,
+    latestReceivedMessage: null,
+    pinMessageRequested: false
   };
 
   function makeSureUnreadCountExists(thread) {
@@ -52802,13 +52940,16 @@ function ThreadObject(app, thread) {
   }
 
   makeSureUnreadCountExists(config.thread);
-  return {
+  var publicized = {
     set: function set(thread) {
       makeSureUnreadCountExists(thread);
       config.thread = _objectSpread(_objectSpread({}, config.thread), thread);
     },
     get: function get() {
       return config.thread;
+    },
+    getField: function getField(key) {
+      return JSON.parse(JSON.stringify(config.thread[key]));
     },
     update: function update(field, newValue) {
       config.thread[field] = newValue;
@@ -52858,11 +52999,32 @@ function ThreadObject(app, thread) {
       set: function set(message) {
         config.latestReceivedMessage = message;
       }
+    },
+    pinMessage: {
+      hasPinMessage: function hasPinMessage() {
+        return config.thread.pinMessageVO;
+      },
+      isPinMessageRequested: function isPinMessageRequested() {
+        return config.pinMessageRequested;
+      },
+      setPinMessageRequested: function setPinMessageRequested(val) {
+        return config.pinMessageRequested = val;
+      },
+      setPinMessage: function setPinMessage(message) {
+        config.thread.pinMessageVO = message;
+      },
+      removePinMessage: function removePinMessage() {
+        config.thread.pinMessageVO = null;
+      }
+    },
+    isDataValid: function isDataValid() {
+      return config.isValid;
     }
   };
+  return publicized;
 }
 
-},{"@babel/runtime/helpers/defineProperty":19,"@babel/runtime/helpers/interopRequireDefault":20}],291:[function(require,module,exports){
+},{"@babel/runtime/helpers/defineProperty":19,"@babel/runtime/helpers/interopRequireDefault":20}],292:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -52903,7 +53065,7 @@ var SDKUser = /*#__PURE__*/function () {
 
 exports.SDKUser = SDKUser;
 
-},{"@babel/runtime/helpers/classCallCheck":17,"@babel/runtime/helpers/createClass":18,"@babel/runtime/helpers/interopRequireDefault":20}],292:[function(require,module,exports){
+},{"@babel/runtime/helpers/classCallCheck":17,"@babel/runtime/helpers/createClass":18,"@babel/runtime/helpers/interopRequireDefault":20}],293:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -53238,7 +53400,7 @@ function ChatMessaging(app, params) {
 var _default = ChatMessaging;
 exports["default"] = _default;
 
-},{"./lib/constants":282,"./lib/errorHandler":283,"./utility/utility":293,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/helpers/typeof":26,"dompurify":151}],293:[function(require,module,exports){
+},{"./lib/constants":283,"./lib/errorHandler":284,"./utility/utility":294,"@babel/runtime/helpers/interopRequireDefault":20,"@babel/runtime/helpers/typeof":26,"dompurify":151}],294:[function(require,module,exports){
 (function (global){(function (){
 "use strict";
 

@@ -674,7 +674,7 @@ function CallManager(_ref) {
           var user = config.users.get(app.store.user.get().id);
 
           if (user && user.user().video) {
-            user.videoTopicManager().restartMediaOnKeyFrame([2000, 4000, 8000, 12000]);
+            user.videoTopicManager().restartMediaOnKeyFrame(app.store.user.get().id, [2000, 4000, 8000, 12000]);
           }
 
           var screenShareuser = config.users.get('screenShare');
