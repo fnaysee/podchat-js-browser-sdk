@@ -1,11 +1,11 @@
-let list = [];
 const eventsList = {
     SINGLE_THREAD_UPDATE: "singleThreadUpdate",
     UNREAD_COUNT_UPDATED: 'unreadCountUpdated',
     LAST_SEEN_MESSAGE_TIME_UPDATED: 'lastSeenMessageTimeUpdated',
 };
 function ThreadsList(app){
-    let threadsList = {
+    let list = [],
+        threadsList = {
         eventsList,
         get(id) {
             return list[threadsList.findIndex(id)];
@@ -13,8 +13,28 @@ function ThreadsList(app){
         getAll() {
             return list;
         },
+        getPinMessages(ids) {
+            let result = [];
+            ids.forEach(item => {
+                let th = threadsList.get(item);
+                if(th.getField('pinMessageVO')) {
+                    result.push(th.getField('pinMessageVO'));
+                }
+            });
+
+            return result;
+        },
         findIndex(threadId) {
             return list.findIndex(item => item?.get().id == threadId);
+        },
+        findOrCreate(thread) {
+            let th = threadsList.get(thread.id);
+            if(!th) {
+                //TODO: make sure we don't break unreadcount
+                th = threadsList.save(thread);
+            }
+
+            return th;
         },
         save(thread) {
             let localThread;
@@ -24,10 +44,11 @@ function ThreadsList(app){
                 localThread = list[localThreadIndex];
             } else {
                 localThread = new ThreadObject(app, thread);
+                localThreadIndex = 0;
                 list = [localThread].concat(list);
-
             }
             app.store.events.emit(eventsList.SINGLE_THREAD_UPDATE, localThread.get());
+            return list[localThreadIndex];
         },
         saveMany(newThreads) {
             if (Array.isArray(newThreads)) {
@@ -50,6 +71,9 @@ function ThreadsList(app){
             if(localThreadIndex > -1) {
                 delete list[localThreadIndex];
             }
+        },
+        removeAll() {
+            list = [];
         }
     };
 
@@ -59,12 +83,13 @@ function ThreadsList(app){
 function ThreadObject(app, thread) {
     let config = {
         thread,
-        latestReceivedMessage: null
+        isValid: true,
+        latestReceivedMessage: null,
+        pinMessageRequested: false,
     };
 
-
     function makeSureUnreadCountExists(thread){
-        if(!thread.unreadCount){
+        if(!thread.unreadCount) {
             if(config.thread.unreadCount)
                 thread.unreadCount = config.thread.unreadCount;
             else
@@ -74,13 +99,16 @@ function ThreadObject(app, thread) {
 
     makeSureUnreadCountExists(config.thread);
 
-    return {
+    let publicized = {
         set(thread) {
             makeSureUnreadCountExists(thread)
             config.thread = {...config.thread, ...thread}
         },
         get() {
             return config.thread;
+        },
+        getField(key) {
+            return JSON.parse(JSON.stringify(config.thread[key]));
         },
         update(field, newValue) {
             config.thread[field] = newValue;
@@ -121,16 +149,38 @@ function ThreadObject(app, thread) {
          */
         latestReceivedMessage: {
             getTime() {
-                return (config.latestReceivedMessage ? config.latestReceivedMessage.time : 0)
+                return (config.latestReceivedMessage ? config.latestReceivedMessage.time : 0);
             },
             get(){
-                return config.latestReceivedMessage
+                return config.latestReceivedMessage;
             },
             set(message) {
-                config.latestReceivedMessage = message
+                config.latestReceivedMessage = message;
             }
+        },
+        pinMessage: {
+            hasPinMessage() {
+                return config.thread.pinMessageVO;
+            },
+            isPinMessageRequested() {
+                return config.pinMessageRequested;
+            },
+            setPinMessageRequested(val) {
+                return config.pinMessageRequested = val;
+            },
+            setPinMessage(message) {
+                config.thread.pinMessageVO = message;
+            },
+            removePinMessage(){
+                config.thread.pinMessageVO = null;
+            }
+        },
+        isDataValid() {
+            return config.isValid;
         }
     };
+
+    return publicized;
 }
 
 export {ThreadsList}

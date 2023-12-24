@@ -20,11 +20,11 @@ function Store(app) {
     threads: new _threads.ThreadsList(app),
     events: new _eventEmitter.StoreEvents(),
     reactionSummaries: new _reactionsSummaries.ReactionsSummariesCache(app),
+    reactionsList: new _reactionsList.ReactionsListCache(app),
     user: new _user.SDKUser(app),
     threadCallbacks: {},
     sendMessageCallbacks: {},
     messagesCallbacks: {},
-    asyncRequestTimeouts: {},
-    reactionsList: new _reactionsList.ReactionsListCache(app)
+    asyncRequestTimeouts: {}
   };
 }

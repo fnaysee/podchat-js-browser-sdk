@@ -13,7 +13,6 @@ function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (O
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 
-var list = [];
 var eventsList = {
   SINGLE_THREAD_UPDATE: "singleThreadUpdate",
   UNREAD_COUNT_UPDATED: 'unreadCountUpdated',
@@ -21,7 +20,8 @@ var eventsList = {
 };
 
 function ThreadsList(app) {
-  var threadsList = {
+  var list = [],
+      threadsList = {
     eventsList: eventsList,
     get: function get(id) {
       return list[threadsList.findIndex(id)];
@@ -29,10 +29,31 @@ function ThreadsList(app) {
     getAll: function getAll() {
       return list;
     },
+    getPinMessages: function getPinMessages(ids) {
+      var result = [];
+      ids.forEach(function (item) {
+        var th = threadsList.get(item);
+
+        if (th.getField('pinMessageVO')) {
+          result.push(th.getField('pinMessageVO'));
+        }
+      });
+      return result;
+    },
     findIndex: function findIndex(threadId) {
       return list.findIndex(function (item) {
         return (item === null || item === void 0 ? void 0 : item.get().id) == threadId;
       });
+    },
+    findOrCreate: function findOrCreate(thread) {
+      var th = threadsList.get(thread.id);
+
+      if (!th) {
+        //TODO: make sure we don't break unreadcount
+        th = threadsList.save(thread);
+      }
+
+      return th;
     },
     save: function save(thread) {
       var localThread;
@@ -43,10 +64,12 @@ function ThreadsList(app) {
         localThread = list[localThreadIndex];
       } else {
         localThread = new ThreadObject(app, thread);
+        localThreadIndex = 0;
         list = [localThread].concat(list);
       }
 
       app.store.events.emit(eventsList.SINGLE_THREAD_UPDATE, localThread.get());
+      return list[localThreadIndex];
     },
     saveMany: function saveMany(newThreads) {
       if (Array.isArray(newThreads)) {
@@ -98,6 +121,9 @@ function ThreadObject(app, thread) {
     },
     get: function get() {
       return config.thread;
+    },
+    getField: function getField(key) {
+      return JSON.parse(JSON.stringify(config.thread[key]));
     },
     update: function update(field, newValue) {
       config.thread[field] = newValue;
