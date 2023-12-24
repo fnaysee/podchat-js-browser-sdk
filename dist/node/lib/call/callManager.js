@@ -680,7 +680,7 @@ function CallManager(_ref) {
           var screenShareuser = config.users.get('screenShare');
 
           if (screenShareuser && screenShareuser.user().video && config.screenShareInfo.isStarted() && config.screenShareInfo.iAmOwner()) {
-            screenShareuser.videoTopicManager().restartMediaOnKeyFrame([2000, 4000, 8000, 12000]);
+            screenShareuser.videoTopicManager().restartMediaOnKeyFrame('screenShare', [2000, 4000, 8000, 12000]);
           }
 
           break;

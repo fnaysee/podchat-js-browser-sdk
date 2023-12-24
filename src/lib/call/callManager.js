@@ -623,7 +623,7 @@ function CallManager({app, callId, callConfig}) {
                 case 'GET_KEY_FRAME':
                     let user = config.users.get(app.store.user.get().id);
                     if (user && user.user().video) {
-                        user.videoTopicManager().restartMediaOnKeyFrame([2000, 4000, 8000, 12000]);
+                        user.videoTopicManager().restartMediaOnKeyFrame(app.store.user.get().id, [2000, 4000, 8000, 12000]);
                     }
                     let screenShareuser = config.users.get('screenShare');
                     if (screenShareuser
@@ -631,7 +631,7 @@ function CallManager({app, callId, callConfig}) {
                         && config.screenShareInfo.isStarted()
                         && config.screenShareInfo.iAmOwner()
                     ) {
-                        screenShareuser.videoTopicManager().restartMediaOnKeyFrame([2000, 4000, 8000, 12000]);
+                        screenShareuser.videoTopicManager().restartMediaOnKeyFrame('screenShare', [2000, 4000, 8000, 12000]);
                     }
                     break;
 
