@@ -51109,6 +51109,7 @@ function MultiTrackCallManager(_ref) {
         return;
       }
 
+      config.sendPeerManager.processingCurrentTrackCompleted();
       app.sdkParams.consoleLogging && console.log("[SDK][handleProcessSdpAnswer]", jsonMessage);
     });
   }
@@ -51400,7 +51401,7 @@ function MultiTrackCallManager(_ref) {
 
         case 'SEND_COMPLETE':
           //For send connection 2
-          config.sendPeerManager.processingCurrentTrackCompleted();
+          // config.sendPeerManager.processingCurrentTrackCompleted();
           break;
 
         case 'RECEIVING_MEDIA': // Only for receiving topics from janus, first we subscribe
