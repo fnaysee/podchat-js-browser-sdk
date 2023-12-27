@@ -32,6 +32,10 @@ var errorList = {
     message: "[SDK] ERROR from call server: {errorMessage}",
     variables: ['{errorMessage}']
   },
+  INVALID_APP_ID: {
+    code: 12005,
+    message: "[SDK] AppId is not valid. it should be a string with maximum of 30 characters"
+  },
 
   /**
    * 12350-12399

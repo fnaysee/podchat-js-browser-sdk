@@ -35,7 +35,7 @@ function Chat(params) {
     const threadParticipantsMethods = new ThreadParticipantsMethods(app);
     const threadMethods = new ThreadMethods(app);
 
-    app.sdkParams.appId = params.appId;
+    app.sdkParams.appId = params.appId || 'PodChat';
     app.sdkParams.token = params.token || "111";
     app.sdkParams.generalTypeCode = params.typeCode || 'default';
     app.sdkParams.typeCodeOwnerId = params.typeCodeOwnerId || null;
@@ -389,8 +389,13 @@ function Chat(params) {
         initAsync = function () {
             var asyncGetReadyTime = new Date().getTime();
 
+            if(typeof appId != "string" || appId.length > 30) {
+                app.errorHandler.raiseError(errorList.INVALID_APP_ID, null, true, {});
+                return;
+            }
+
             asyncClient = new Async({
-                appId: app.sdkParams.appId,
+                appId,
                 protocol: protocolManager.getCurrentProtocol(),
                 queueHost: queueHost,
                 queuePort: queuePort,
