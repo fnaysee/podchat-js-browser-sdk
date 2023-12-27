@@ -24,6 +24,7 @@ import {
 } from "./lib/constants";
 import ReactionsMethods from "./lib/chat/reactionsMethods";
 import ThreadMethods from "./lib/chat/threadMethods";
+import {errorList} from "./lib/errorHandler"
 
 function Chat(params) {
     /*******************************************************
@@ -389,13 +390,16 @@ function Chat(params) {
         initAsync = function () {
             var asyncGetReadyTime = new Date().getTime();
 
-            if(typeof appId != "string" || appId.length > 30) {
+            if(typeof app.sdkParams.appId == "number") {
+                app.sdkParams.appId = app.sdkParams.appId.toString()
+            }
+            if(typeof app.sdkParams.appId != "string" || app.sdkParams.appId.length > 30) {
                 app.errorHandler.raiseError(errorList.INVALID_APP_ID, null, true, {});
                 return;
             }
 
             asyncClient = new Async({
-                appId,
+                appId: app.sdkParams.appId,
                 protocol: protocolManager.getCurrentProtocol(),
                 queueHost: queueHost,
                 queuePort: queuePort,
