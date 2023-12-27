@@ -2310,11 +2310,7 @@ function ChatCall(app, params) {
         if(!app.call.currentCall())
             return;
 
-        let me = app.call.currentCall().users().get(app.store.user.get().id);
-        if(!me || !me.user().video || !me.videoTopicManager().getPeer())
-            return;
-
-        me.videoTopicManager().pauseSendStream();
+        app.call.currentCall().pauseCamera();
         callback && callback();
     };
 
@@ -2322,37 +2318,27 @@ function ChatCall(app, params) {
         // let currentCall = callsManager().get(callsManager().currentCallId);
         if(!app.call.currentCall())
             return;
-
-        let me = app.call.currentCall().users().get(app.store.user.get().id);
-        if(!me || !me.user().videoTopicName || !me.videoTopicManager().getPeer())//!me.peers[me.videoTopicName]
-            return;
-
-        me.videoTopicManager().resumeSendStream();
+        app.call.currentCall().resumeCamera()
         callback && callback();
     };
-
     /**
      * Pauses mice-send without closing its topic
      * @param params
      * @param callback
      */
     this.pauseMice = function (params, callback) {
-        let me = app.call.currentCall().users().get(app.store.user.get().id);
-
-        if(!app.call.currentCall() || !me || !me.user().audioTopicName || !me.audioTopicManager().getPeer())//!me.peers[me.videoTopicName]
+        if(!app.call.currentCall())
             return;
 
-        me.audioTopicManager().pauseSendStream();
+        app.call.currentCall().pauseMice();
         callback && callback();
     };
 
     this.resumeMice = function (params, callback) {
-        let me = app.call.currentCall().users().get(app.store.user.get().id);
-
-        if(!app.call.currentCall || !me || !me.user().audioTopicName || !me.audioTopicManager().getPeer())//!me.peers[me.videoTopicName]
+        if(!app.call.currentCall())
             return;
 
-        me.audioTopicManager().resumeSendStream();
+        app.call.currentCall().resumeMice();
         callback && callback();
     };
 
@@ -2455,7 +2441,7 @@ function ChatCall(app, params) {
         });
     };
 
-    this.deviceManager = (app.call.sharedVariables.deviceManager ? app.call.sharedVariables.deviceManager : ( app.call.currentCall() ? currentCall().deviceManager() : null))
+    this.deviceManager = (app.call.sharedVariables.deviceManager ? app.call.sharedVariables.deviceManager : ( app.call.currentCall() ? app.call.currentCall().deviceManager() : null))
 
     this.resetCallStream = async function({userId, streamType = 'audio'}, callback) {
         if(!app.call.currentCall()) {

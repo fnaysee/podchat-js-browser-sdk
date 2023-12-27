@@ -186,6 +186,57 @@ function CallUser(app, user) {
         }, _callee2);
       }))();
     },
+    pauseVideoSendStream: function pauseVideoSendStream() {
+      var localStream = app.call.currentCall().deviceManager().mediaStreams.getVideoInput();
+      if (localStream) localStream.getTracks()[0].enabled = false;
+    },
+    pauseAudioSendStream: function pauseAudioSendStream() {
+      var localStream = app.call.currentCall().deviceManager().mediaStreams.getAudioInput();
+      if (localStream) localStream.getTracks()[0].enabled = false;
+    },
+    // pauseSendStream() {
+    //     let localStream;
+    //     switch (config.mediaType) {
+    //         case 'audio':
+    //             localStream = app.call.currentCall().deviceManager().mediaStreams.getAudioInput()
+    //             break;
+    //         case 'video':
+    //             if(config.isScreenShare) {
+    //                 localStream = app.call.currentCall().deviceManager().mediaStreams.getScreenShareInput();
+    //             } else {
+    //                 localStream = app.call.currentCall().deviceManager().mediaStreams.getVideoInput();
+    //             }
+    //     }
+    //     if(localStream)
+    //         localStream.getTracks()[0].enabled = false;
+    // },
+    resumeVideoSendStream: function resumeVideoSendStream() {
+      var localStream = app.call.currentCall().deviceManager().mediaStreams.getVideoInput();
+      if (localStream) localStream.getTracks()[0].enabled = true;
+    },
+    resumeAudioSendStream: function resumeAudioSendStream() {
+      var localStream = app.call.currentCall().deviceManager().mediaStreams.getAudioInput();
+      if (localStream) localStream.getTracks()[0].enabled = true;
+    },
+    // resumeSendStream() {
+    //     let localStream;
+    //     switch (config.mediaType) {
+    //         case 'audio':
+    //             localStream = app.call.currentCall().deviceManager().mediaStreams.getAudioInput();
+    //             break;
+    //         case 'video':
+    //             if(config.isScreenShare) {
+    //                 localStream = app.call.currentCall().deviceManager().mediaStreams.getScreenShareInput();
+    //             } else {
+    //                 localStream = app.call.currentCall().deviceManager().mediaStreams.getVideoInput();
+    //             }
+    //     }
+    //     if(localStream)
+    //         localStream.getTracks()[0].enabled = true;
+    //
+    //     // if(config.peer && config.peer.getLocalStream())
+    //     //     config.peer.getLocalStream().getTracks()[0].enabled = true;
+    // },
     startSLowLink: function startSLowLink() {
       app.chatEvents.fireEvent('callEvents', {
         type: 'SLOW_LINK',

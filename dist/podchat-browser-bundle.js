@@ -42084,7 +42084,7 @@ FilterXSS.prototype.process = function (html) {
 module.exports = FilterXSS;
 
 },{"./default":258,"./parser":260,"./util":261,"cssfilter":137}],263:[function(require,module,exports){
-module.exports={"version":"12.9.7-snapshot.48","date":"۱۴۰۲/۱۰/۳","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
+module.exports={"version":"12.9.7-snapshot.48","date":"۱۴۰۲/۱۰/۶","VersionInfo":"Release: false, Snapshot: true, Is For Test: true"}
 },{}],264:[function(require,module,exports){
 "use strict";
 
@@ -44506,19 +44506,14 @@ function ChatCall(app, params) {
     // let me = callUsers[store.user().id];
     // let currentCall = app.callsManager.get(callsManager().currentCallId);
     if (!app.call.currentCall()) return;
-    var me = app.call.currentCall().users().get(app.store.user.get().id);
-    if (!me || !me.user().video || !me.videoTopicManager().getPeer()) return;
-    me.videoTopicManager().pauseSendStream();
+    app.call.currentCall().pauseCamera();
     callback && callback();
   };
 
   this.resumeCamera = function (params, callback) {
     // let currentCall = callsManager().get(callsManager().currentCallId);
     if (!app.call.currentCall()) return;
-    var me = app.call.currentCall().users().get(app.store.user.get().id);
-    if (!me || !me.user().videoTopicName || !me.videoTopicManager().getPeer()) //!me.peers[me.videoTopicName]
-      return;
-    me.videoTopicManager().resumeSendStream();
+    app.call.currentCall().resumeCamera();
     callback && callback();
   };
   /**
@@ -44529,18 +44524,14 @@ function ChatCall(app, params) {
 
 
   this.pauseMice = function (params, callback) {
-    var me = app.call.currentCall().users().get(app.store.user.get().id);
-    if (!app.call.currentCall() || !me || !me.user().audioTopicName || !me.audioTopicManager().getPeer()) //!me.peers[me.videoTopicName]
-      return;
-    me.audioTopicManager().pauseSendStream();
+    if (!app.call.currentCall()) return;
+    app.call.currentCall().pauseMice();
     callback && callback();
   };
 
   this.resumeMice = function (params, callback) {
-    var me = app.call.currentCall().users().get(app.store.user.get().id);
-    if (!app.call.currentCall || !me || !me.user().audioTopicName || !me.audioTopicManager().getPeer()) //!me.peers[me.videoTopicName]
-      return;
-    me.audioTopicManager().resumeSendStream();
+    if (!app.call.currentCall()) return;
+    app.call.currentCall().resumeMice();
     callback && callback();
   };
 
@@ -44639,7 +44630,7 @@ function ChatCall(app, params) {
     });
   };
 
-  this.deviceManager = app.call.sharedVariables.deviceManager ? app.call.sharedVariables.deviceManager : app.call.currentCall() ? currentCall().deviceManager() : null;
+  this.deviceManager = app.call.sharedVariables.deviceManager ? app.call.sharedVariables.deviceManager : app.call.currentCall() ? app.call.currentCall().deviceManager() : null;
 
   this.resetCallStream = /*#__PURE__*/function () {
     var _ref8 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(_ref7, callback) {
@@ -47680,13 +47671,13 @@ function CallManager(_ref) {
           var user = config.users.get(app.store.user.get().id);
 
           if (user && user.user().video) {
-            user.videoTopicManager().restartMediaOnKeyFrame([2000, 4000, 8000, 12000]);
+            user.videoTopicManager().restartMediaOnKeyFrame(app.store.user.get().id, [2000, 4000, 8000, 12000]);
           }
 
           var screenShareuser = config.users.get('screenShare');
 
           if (screenShareuser && screenShareuser.user().video && config.screenShareInfo.isStarted() && config.screenShareInfo.iAmOwner()) {
-            screenShareuser.videoTopicManager().restartMediaOnKeyFrame([2000, 4000, 8000, 12000]);
+            screenShareuser.videoTopicManager().restartMediaOnKeyFrame('screenShare', [2000, 4000, 8000, 12000]);
           }
 
           break;
@@ -48156,6 +48147,29 @@ function CallManager(_ref) {
           }
         }, _callee4);
       }))();
+    },
+    pauseCamera: function pauseCamera() {
+      var me = config.users.get(app.store.user.get().id);
+      if (!me || !me.user().video || !me.videoTopicManager().getPeer()) return;
+      me.videoTopicManager().pauseSendStream();
+    },
+    resumeCamera: function resumeCamera() {
+      var me = config.users.get(app.store.user.get().id);
+      if (!me || !me.user().videoTopicName || !me.videoTopicManager().getPeer()) //!me.peers[me.videoTopicName]
+        return;
+      me.videoTopicManager().resumeSendStream();
+    },
+    pauseMice: function pauseMice() {
+      var me = config.users.get(app.store.user.get().id);
+      if (!me || !me.user().audioTopicName || !me.audioTopicManager().getPeer()) //!me.peers[me.videoTopicName]
+        return;
+      me.audioTopicManager().pauseSendStream();
+    },
+    resumeMice: function resumeMice() {
+      var me = config.users.get(app.store.user.get().id);
+      if (!me || !me.user().audioTopicName || !me.audioTopicManager().getPeer()) //!me.peers[me.videoTopicName]
+        return;
+      me.audioTopicManager().resumeSendStream();
     },
     onChatConnectionReconnect: function onChatConnectionReconnect() {
       return; //First count all failed topics
@@ -50838,7 +50852,7 @@ function MultiTrackCallManager(_ref) {
           app.chatEvents.fireEvent('callEvents', {
             type: 'CALL_RECORDING_STARTED',
             result: {
-              id: params.recordingOwner
+              id: callConfig.recordingOwner
             }
           });
         }
@@ -51902,6 +51916,29 @@ function MultiTrackCallManager(_ref) {
         }, _callee5);
       }))();
     },
+    pauseCamera: function pauseCamera() {
+      var me = config.users.get(app.store.user.get().id);
+      if (!me || !me.user().video || !me.user().videoTopicName) return;
+      me.pauseVideoSendStream();
+    },
+    resumeCamera: function resumeCamera() {
+      var me = config.users.get(app.store.user.get().id);
+      if (!me || !me.user().videoTopicName || !me.user().video) //!me.peers[me.videoTopicName]
+        return;
+      me.resumeVideoSendStream();
+    },
+    pauseMice: function pauseMice() {
+      var me = config.users.get(app.store.user.get().id);
+      if (!me || !me.user().audioTopicName || me.user().mute) //!me.peers[me.videoTopicName]
+        return;
+      me.pauseAudioSendStream();
+    },
+    resumeMice: function resumeMice() {
+      var me = config.users.get(app.store.user.get().id);
+      if (!me || !me.user().audioTopicName || me.user().mute) //!me.peers[me.videoTopicName]
+        return;
+      me.resumeAudioSendStream();
+    },
     onChatConnectionReconnect: function onChatConnectionReconnect() {
       return; //First count all failed topics
 
@@ -52224,6 +52261,57 @@ function CallUser(app, user) {
         }, _callee2);
       }))();
     },
+    pauseVideoSendStream: function pauseVideoSendStream() {
+      var localStream = app.call.currentCall().deviceManager().mediaStreams.getVideoInput();
+      if (localStream) localStream.getTracks()[0].enabled = false;
+    },
+    pauseAudioSendStream: function pauseAudioSendStream() {
+      var localStream = app.call.currentCall().deviceManager().mediaStreams.getAudioInput();
+      if (localStream) localStream.getTracks()[0].enabled = false;
+    },
+    // pauseSendStream() {
+    //     let localStream;
+    //     switch (config.mediaType) {
+    //         case 'audio':
+    //             localStream = app.call.currentCall().deviceManager().mediaStreams.getAudioInput()
+    //             break;
+    //         case 'video':
+    //             if(config.isScreenShare) {
+    //                 localStream = app.call.currentCall().deviceManager().mediaStreams.getScreenShareInput();
+    //             } else {
+    //                 localStream = app.call.currentCall().deviceManager().mediaStreams.getVideoInput();
+    //             }
+    //     }
+    //     if(localStream)
+    //         localStream.getTracks()[0].enabled = false;
+    // },
+    resumeVideoSendStream: function resumeVideoSendStream() {
+      var localStream = app.call.currentCall().deviceManager().mediaStreams.getVideoInput();
+      if (localStream) localStream.getTracks()[0].enabled = true;
+    },
+    resumeAudioSendStream: function resumeAudioSendStream() {
+      var localStream = app.call.currentCall().deviceManager().mediaStreams.getAudioInput();
+      if (localStream) localStream.getTracks()[0].enabled = true;
+    },
+    // resumeSendStream() {
+    //     let localStream;
+    //     switch (config.mediaType) {
+    //         case 'audio':
+    //             localStream = app.call.currentCall().deviceManager().mediaStreams.getAudioInput();
+    //             break;
+    //         case 'video':
+    //             if(config.isScreenShare) {
+    //                 localStream = app.call.currentCall().deviceManager().mediaStreams.getScreenShareInput();
+    //             } else {
+    //                 localStream = app.call.currentCall().deviceManager().mediaStreams.getVideoInput();
+    //             }
+    //     }
+    //     if(localStream)
+    //         localStream.getTracks()[0].enabled = true;
+    //
+    //     // if(config.peer && config.peer.getLocalStream())
+    //     //     config.peer.getLocalStream().getTracks()[0].enabled = true;
+    // },
     startSLowLink: function startSLowLink() {
       app.chatEvents.fireEvent('callEvents', {
         type: 'SLOW_LINK',

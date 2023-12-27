@@ -2396,19 +2396,14 @@ function ChatCall(app, params) {
     // let me = callUsers[store.user().id];
     // let currentCall = app.callsManager.get(callsManager().currentCallId);
     if (!app.call.currentCall()) return;
-    var me = app.call.currentCall().users().get(app.store.user.get().id);
-    if (!me || !me.user().video || !me.videoTopicManager().getPeer()) return;
-    me.videoTopicManager().pauseSendStream();
+    app.call.currentCall().pauseCamera();
     callback && callback();
   };
 
   this.resumeCamera = function (params, callback) {
     // let currentCall = callsManager().get(callsManager().currentCallId);
     if (!app.call.currentCall()) return;
-    var me = app.call.currentCall().users().get(app.store.user.get().id);
-    if (!me || !me.user().videoTopicName || !me.videoTopicManager().getPeer()) //!me.peers[me.videoTopicName]
-      return;
-    me.videoTopicManager().resumeSendStream();
+    app.call.currentCall().resumeCamera();
     callback && callback();
   };
   /**
@@ -2419,18 +2414,14 @@ function ChatCall(app, params) {
 
 
   this.pauseMice = function (params, callback) {
-    var me = app.call.currentCall().users().get(app.store.user.get().id);
-    if (!app.call.currentCall() || !me || !me.user().audioTopicName || !me.audioTopicManager().getPeer()) //!me.peers[me.videoTopicName]
-      return;
-    me.audioTopicManager().pauseSendStream();
+    if (!app.call.currentCall()) return;
+    app.call.currentCall().pauseMice();
     callback && callback();
   };
 
   this.resumeMice = function (params, callback) {
-    var me = app.call.currentCall().users().get(app.store.user.get().id);
-    if (!app.call.currentCall || !me || !me.user().audioTopicName || !me.audioTopicManager().getPeer()) //!me.peers[me.videoTopicName]
-      return;
-    me.audioTopicManager().resumeSendStream();
+    if (!app.call.currentCall()) return;
+    app.call.currentCall().resumeMice();
     callback && callback();
   };
 
@@ -2529,7 +2520,7 @@ function ChatCall(app, params) {
     });
   };
 
-  this.deviceManager = app.call.sharedVariables.deviceManager ? app.call.sharedVariables.deviceManager : app.call.currentCall() ? currentCall().deviceManager() : null;
+  this.deviceManager = app.call.sharedVariables.deviceManager ? app.call.sharedVariables.deviceManager : app.call.currentCall() ? app.call.currentCall().deviceManager() : null;
 
   this.resetCallStream = /*#__PURE__*/function () {
     var _ref8 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(_ref7, callback) {

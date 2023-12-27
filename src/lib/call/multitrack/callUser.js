@@ -141,6 +141,61 @@ function CallUser(app, user) {
                 })
             }
         },
+        pauseVideoSendStream() {
+            let localStream = app.call.currentCall().deviceManager().mediaStreams.getVideoInput()
+            if(localStream)
+                localStream.getTracks()[0].enabled = false;
+        },
+        pauseAudioSendStream() {
+            let localStream = app.call.currentCall().deviceManager().mediaStreams.getAudioInput()
+            if(localStream)
+                localStream.getTracks()[0].enabled = false;
+        },
+        // pauseSendStream() {
+        //     let localStream;
+        //     switch (config.mediaType) {
+        //         case 'audio':
+        //             localStream = app.call.currentCall().deviceManager().mediaStreams.getAudioInput()
+        //             break;
+        //         case 'video':
+        //             if(config.isScreenShare) {
+        //                 localStream = app.call.currentCall().deviceManager().mediaStreams.getScreenShareInput();
+        //             } else {
+        //                 localStream = app.call.currentCall().deviceManager().mediaStreams.getVideoInput();
+        //             }
+        //     }
+        //     if(localStream)
+        //         localStream.getTracks()[0].enabled = false;
+        // },
+        resumeVideoSendStream() {
+            let localStream = app.call.currentCall().deviceManager().mediaStreams.getVideoInput()
+            if(localStream)
+                localStream.getTracks()[0].enabled = true;
+        },
+        resumeAudioSendStream() {
+            let localStream = app.call.currentCall().deviceManager().mediaStreams.getAudioInput()
+            if(localStream)
+                localStream.getTracks()[0].enabled = true;
+        },
+        // resumeSendStream() {
+        //     let localStream;
+        //     switch (config.mediaType) {
+        //         case 'audio':
+        //             localStream = app.call.currentCall().deviceManager().mediaStreams.getAudioInput();
+        //             break;
+        //         case 'video':
+        //             if(config.isScreenShare) {
+        //                 localStream = app.call.currentCall().deviceManager().mediaStreams.getScreenShareInput();
+        //             } else {
+        //                 localStream = app.call.currentCall().deviceManager().mediaStreams.getVideoInput();
+        //             }
+        //     }
+        //     if(localStream)
+        //         localStream.getTracks()[0].enabled = true;
+        //
+        //     // if(config.peer && config.peer.getLocalStream())
+        //     //     config.peer.getLocalStream().getTracks()[0].enabled = true;
+        // },
         startSLowLink() {
             app.chatEvents.fireEvent('callEvents', {
                 type: 'SLOW_LINK',

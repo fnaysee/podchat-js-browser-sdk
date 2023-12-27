@@ -674,13 +674,13 @@ function CallManager(_ref) {
           var user = config.users.get(app.store.user.get().id);
 
           if (user && user.user().video) {
-            user.videoTopicManager().restartMediaOnKeyFrame([2000, 4000, 8000, 12000]);
+            user.videoTopicManager().restartMediaOnKeyFrame(app.store.user.get().id, [2000, 4000, 8000, 12000]);
           }
 
           var screenShareuser = config.users.get('screenShare');
 
           if (screenShareuser && screenShareuser.user().video && config.screenShareInfo.isStarted() && config.screenShareInfo.iAmOwner()) {
-            screenShareuser.videoTopicManager().restartMediaOnKeyFrame([2000, 4000, 8000, 12000]);
+            screenShareuser.videoTopicManager().restartMediaOnKeyFrame('screenShare', [2000, 4000, 8000, 12000]);
           }
 
           break;
@@ -1149,6 +1149,29 @@ function CallManager(_ref) {
           }
         }, _callee4);
       }))();
+    },
+    pauseCamera: function pauseCamera() {
+      var me = config.users.get(app.store.user.get().id);
+      if (!me || !me.user().video || !me.videoTopicManager().getPeer()) return;
+      me.videoTopicManager().pauseSendStream();
+    },
+    resumeCamera: function resumeCamera() {
+      var me = config.users.get(app.store.user.get().id);
+      if (!me || !me.user().videoTopicName || !me.videoTopicManager().getPeer()) //!me.peers[me.videoTopicName]
+        return;
+      me.videoTopicManager().resumeSendStream();
+    },
+    pauseMice: function pauseMice() {
+      var me = config.users.get(app.store.user.get().id);
+      if (!me || !me.user().audioTopicName || !me.audioTopicManager().getPeer()) //!me.peers[me.videoTopicName]
+        return;
+      me.audioTopicManager().pauseSendStream();
+    },
+    resumeMice: function resumeMice() {
+      var me = config.users.get(app.store.user.get().id);
+      if (!me || !me.user().audioTopicName || !me.audioTopicManager().getPeer()) //!me.peers[me.videoTopicName]
+        return;
+      me.audioTopicManager().resumeSendStream();
     },
     onChatConnectionReconnect: function onChatConnectionReconnect() {
       return; //First count all failed topics

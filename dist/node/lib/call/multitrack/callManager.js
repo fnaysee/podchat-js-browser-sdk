@@ -234,7 +234,7 @@ function MultiTrackCallManager(_ref) {
           app.chatEvents.fireEvent('callEvents', {
             type: 'CALL_RECORDING_STARTED',
             result: {
-              id: params.recordingOwner
+              id: callConfig.recordingOwner
             }
           });
         }
@@ -1296,6 +1296,29 @@ function MultiTrackCallManager(_ref) {
           }
         }, _callee5);
       }))();
+    },
+    pauseCamera: function pauseCamera() {
+      var me = config.users.get(app.store.user.get().id);
+      if (!me || !me.user().video || !me.user().videoTopicName) return;
+      me.pauseVideoSendStream();
+    },
+    resumeCamera: function resumeCamera() {
+      var me = config.users.get(app.store.user.get().id);
+      if (!me || !me.user().videoTopicName || !me.user().video) //!me.peers[me.videoTopicName]
+        return;
+      me.resumeVideoSendStream();
+    },
+    pauseMice: function pauseMice() {
+      var me = config.users.get(app.store.user.get().id);
+      if (!me || !me.user().audioTopicName || me.user().mute) //!me.peers[me.videoTopicName]
+        return;
+      me.pauseAudioSendStream();
+    },
+    resumeMice: function resumeMice() {
+      var me = config.users.get(app.store.user.get().id);
+      if (!me || !me.user().audioTopicName || me.user().mute) //!me.peers[me.videoTopicName]
+        return;
+      me.resumeAudioSendStream();
     },
     onChatConnectionReconnect: function onChatConnectionReconnect() {
       return; //First count all failed topics
